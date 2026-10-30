@@ -5,10 +5,27 @@
 
 import init, { FileSha256, WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
+import {runGpuHistoryReaderDemo} from "./session-gpu-reader-demo.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
+import { mountSessionLibrary } from "./session-library.js";
+import { mountSessionTimeline } from "./session-timeline.js";
+import {GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256} from "./gpu-checkpoint-build.js";
+import { runEventClockProbe } from "./event-clock-probe.js";
+import { runInputRecordingProbe } from "./input-recording-probe.js";
+import { runTimeEntropyProbe } from "./time-entropy-probe.js";
+import { runDeviceCompletionsProbe } from "./device-completions-probe.js";
+import {runNetworkCaptureProbe} from "./network-capture-probe.js";
+import {runSessionReplayProbe} from "./session-replay-probe.js";
+import {runSessionStreamedReplayProbe} from "./session-streamed-replay-probe.js";
+import {runSessionKeyframeProbe} from "./session-keyframe-probe.js";
+import {runSessionSeekProbe} from "./session-seek-probe.js";
+import {runUnrecordedControlProbe} from "./unrecorded-control-probe.js";
+import {runOwnedHttpProbe} from "./owned-http-probe.js";
+import {runGpuJournalStream} from "./gpu-journal-stream-probe.js";
+import {runWitnessPages} from "./witness-pages-probe.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -733,6 +750,7 @@ const bootProgress = createBootProgressSurface({
 const bootAlpineBtn = document.getElementById("boot-alpine");
 const bootAlpineFullBtn = document.getElementById("boot-alpine-full");
 let linuxCtl = null;
+let sessionLibrary = null;
 let linuxBootPromise = null;
 let linuxBootRequest = null;
 let linuxActiveRequest = null;
@@ -1013,6 +1031,7 @@ function clearLinuxControllerOwner(controller) {
     if (window.__linuxCtl === controller) window.__linuxCtl = null;
   } catch { /* page-only diagnostic */ }
   clearLinuxOwnerUi();
+  sessionLibrary?.ownerChanged();
   return true;
 }
 
@@ -1203,6 +1222,7 @@ function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = n
     key: requestKey,
     manifestUrl: opts.manifestUrl ?? null,
     imageManifestUrl: opts.imageManifestUrl ?? null,
+    sessionSoftware: opts.sessionSoftware === true,
     generation: ++linuxBootGeneration,
   };
   linuxBootRequest = request;
@@ -1231,8 +1251,9 @@ async function runLinuxBootOwned(opts, banner, request) {
   term.reset();
   // E5-T20e: do not let the guest probe virtio-snd before the AudioWorklet module has either
   // connected successfully or been explicitly downgraded to the context-only fallback.
-  await audioReady;
-  const audioBootEnabled = audioPipelineReady && audioSink !== null;
+  const softwareSession = opts.sessionSoftware === true;
+  if (!softwareSession) await audioReady;
+  const audioBootEnabled = !softwareSession && !opts.sessionGpuCheckpoint && audioPipelineReady && audioSink !== null;
   if (_workerRequested && !_workerAvailable) {
     term.writeln("\x1b[33m[whole-machine Worker unavailable; using explicit main-thread fallback]\x1b[0m");
   }
@@ -1276,9 +1297,9 @@ async function runLinuxBootOwned(opts, banner, request) {
     : 500_000;
   const websocketRelay = opts.slirpWebsocket ?? query.get("slirpWebsocket") ?? networkWebsocketEl?.value ?? "";
   const privateRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
-  const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
+  const slirpDoh = softwareSession ? "" : opts.slirpDoh ?? query.get("slirpDoh") ?? "";
   const selectedProvider = networkProviderEl?.value ?? "offline";
-  const slirpProvider = opts.slirpProvider ?? query.get("slirpProvider") ??
+  const slirpProvider = softwareSession ? "offline" : opts.slirpProvider ?? query.get("slirpProvider") ??
     (opts.slirpTailscale
       ? "tailscale"
       : query.has("slirpWebsocket") || websocketRelay
@@ -1287,7 +1308,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           ? "relay"
           : selectedProvider);
   const slirpRelay = slirpProvider === "websocket" ? websocketRelay : privateRelay;
-  const slirpTailscale = opts.slirpTailscale ?? (["tailscale", "headscale"].includes(slirpProvider) ? {
+  const slirpTailscale = softwareSession ? null : opts.slirpTailscale ?? (["tailscale", "headscale"].includes(slirpProvider) ? {
     workerUrl: "./tailscale-worker.js",
     config: {
       wasmUrl: "./tailscale-connect/main.wasm",
@@ -1364,7 +1385,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         : opts.virgl && opts.bootSnapshot !== false ? 600_000 : undefined,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
-      slirpNet: opts.slirpNet ?? (
+      slirpNet: softwareSession ? false : opts.slirpNet ?? (
         opts.fileTransfer || query.has("slirpNet") || slirpProvider !== "offline" || !!slirpDoh
       ),
       slirpProvider,
@@ -1382,10 +1403,10 @@ async function runLinuxBootOwned(opts, banner, request) {
       audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
       audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
       audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
-      captureSharedBuffer: microphoneRing?.sharedBuffer ?? null,
-      captureCapacityFrames: microphoneRing?.capacityFrames ?? 0,
-      captureSampleRateHz: microphoneRing ? microphoneSampleRateHz : 0,
-      enableMic: opts.enableMic ?? micEnabled,
+      captureSharedBuffer: softwareSession || opts.sessionGpuCheckpoint ? null : microphoneRing?.sharedBuffer ?? null,
+      captureCapacityFrames: softwareSession || opts.sessionGpuCheckpoint ? 0 : microphoneRing?.capacityFrames ?? 0,
+      captureSampleRateHz: !softwareSession && !opts.sessionGpuCheckpoint && microphoneRing ? microphoneSampleRateHz : 0,
+      enableMic: !softwareSession && !opts.sessionGpuCheckpoint && (opts.enableMic ?? micEnabled),
       onCaptureStart: (info) => {
         void microphoneCapture.onPcmStart(info);
       },
@@ -1462,7 +1483,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           }
         } catch {}
       },
-      onAgentOutput: (bytes) => agentSession.receive(bytes),
+      onAgentOutput: (bytes) => { if (!softwareSession) agentSession.receive(bytes); },
       onError: (e) => {
         if (!linuxRequestIsCurrent(request)) return;
         const message = e?.message || String(e);
@@ -1510,15 +1531,15 @@ async function runLinuxBootOwned(opts, banner, request) {
       gpuStatsTimer = setInterval(() => void publishGpu().catch(() => {}), 2000);
     }
     try {
-      agentSession.attach(bootController);
-      window.__agentChannel = agentSession.channel;
-      window.__desktopAgentChannel = agentSession.channel;
+      if (!softwareSession) agentSession.attach(bootController);
+      window.__agentChannel = softwareSession ? null : agentSession.channel;
+      window.__desktopAgentChannel = softwareSession ? null : agentSession.channel;
     } catch (error) {
       console.warn("wasm-vm: desktop agent bridge unavailable:", error?.message || error);
       agentSession.close("desktop agent unavailable");
     }
-    displayViewport?.setController(bootController);
-    flushMicrophoneGuestEvents(linuxCtl);
+    displayViewport?.setController(softwareSession ? null : bootController);
+    if (!softwareSession) flushMicrophoneGuestEvents(linuxCtl);
     updatePointerIndicator();
     const ctlForRelease = bootController;
     keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
@@ -1718,7 +1739,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady has already
     // fired through the deferred restored-ready block above.) Best-effort — a cold boot ignores this.
     try {
-      if (linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0d]));
+      if (!softwareSession && linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0d]));
     } catch { /* prompt nudge is best-effort */ }
     fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
     // E3-T24a: a lazy/chunked image reports no per-fetch bytes, so drive the byte-weighted `chunk`
@@ -1762,7 +1783,8 @@ async function runLinuxBootOwned(opts, banner, request) {
     // The guest is live and the input sink is attached. A desktop session owns the display canvas
     // as its keyboard/pointer surface; the editor profiles keep the terminal's original focus UX.
     if (_omarchyDesktopMode) displayCanvas?.focus();
-    else ui.focus();
+    else if (!softwareSession) ui.focus();
+    sessionLibrary?.ownerChanged();
   } catch (e) {
     setupFailed = true;
     if (bootController) {
@@ -1929,6 +1951,13 @@ function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
   const task = async () => {
     const streamStopError = await streamBarrier;
     if (streamStopError) throw streamStopError;
+    // A checkpoint opens with its exact pending UART bytes. IDE directory probes are commands
+    // too: do not append one to a paused software session before the user chooses Resume.
+    const owner = linuxCtl;
+    if (owner && linuxActiveRequest?.sessionSoftware && await owner.isPaused()) {
+      throw new GuestBridgeError("GUEST_PAUSED", "Checkpoint guest is paused; choose Resume before running commands");
+    }
+    if (owner !== linuxCtl) throw new GuestBridgeError("GUEST_STOPPED", "guest changed before an RPC started");
     return new Promise((resolve, reject) => {
       if (!linuxCtl) return reject(new GuestBridgeError("GUEST_UNAVAILABLE", "guest not up"));
       const quiet = options?.quiet === true;
@@ -2013,6 +2042,7 @@ function showGpuStatus(stats) {
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
+let desktopReady = false;
 let promptTail = "";
 let desktopReadinessGeneration = 0;
 let desktopReadinessTimer = null;
@@ -2028,6 +2058,7 @@ function watchOmarchyDesktop() {
       if (generation !== desktopReadinessGeneration || !guestReady) return;
       if (result.exit === 0 && hasOmarchyShellBar(JSON.parse(result.stdout))
         && presentation?.snapshot().successfulPresents > 0 && hasDesktopPixels(presentation.readPixels())) {
+        desktopReady = true;
         emitGuestLifecycleEvent("wvm:desktop-ready");
         return;
       }
@@ -2046,6 +2077,7 @@ function resetGuestReady() {
   desktopReadinessGeneration++;
   clearTimeout(desktopReadinessTimer);
   guestReady = false;
+  desktopReady = false;
   promptTail = "";
   try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
 }
@@ -2118,6 +2150,7 @@ async function bootOmarchy() {
     {
       manifestUrl: accelerated ? "./artifacts-omarchy-virgl.json" : "./artifacts-omarchy.json",
       virgl: accelerated,
+      gpuRuntime: accelerated && !query.has("noSnapshot") ? "published-factory-v1" : undefined,
       interactiveClock: accelerated ? "paced-on-keyboard" : undefined,
       gpuTrace: query.has("testHooks") && query.has("gpuTrace"),
       mode: "chunked",
@@ -2168,12 +2201,73 @@ async function bootOmarchy() {
     : { ok: false, error: lastBootError || "boot failed" };
 }
 
+async function preflightGpuSessionCandidate(id, checkpoint, database) {
+  const {SessionStore} = await import('./session-store.js');
+  const {SessionGpuCheckpoints} = await import('./session-gpu-checkpoints.js');
+  const store = await SessionStore.open(database);
+  let savedProfile;
+  try { savedProfile = (await store.withReadLease(() => new SessionGpuCheckpoints(store).admit(
+    id, checkpoint, GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256))).pair.profile; }
+  finally { await store.close(); }
+  // The candidate is signed, but its saved limits must also fit this physical browser GPU.
+  const [{qualifyVirglHost}, {selectCheckpointProfile}] = await Promise.all([
+    import('./renderer/virgl-command/production.mjs'),
+    import('./renderer/virgl-command/checkpoint-profile.mjs'),
+  ]);
+  const probe = new OffscreenCanvas(1, 1);
+  const gl = probe.getContext('webgl2', {antialias:false,alpha:true,depth:true,stencil:true,
+    failIfMajorPerformanceCaveat:true});
+  try { selectCheckpointProfile(await qualifyVirglHost(gl), savedProfile); }
+  finally { gl?.getExtension('WEBGL_lose_context')?.loseContext(); }
+}
+
 window.wvmDemo = {
   guestSession,
   isGuestUp: () => !!linuxCtl,
   async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
   async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
   async gpuStats() { return await linuxCtl?.gpuStats?.() ?? null; },
+  async captureGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
+    const controller = linuxCtl;
+    if (!controller?.gpuSessionConfiguration || !desktopReady) throw Error('A ready accelerated desktop is required');
+    const {SessionStore} = await import('./session-store.js');
+    const {SessionGpuCheckpoints} = await import('./session-gpu-checkpoints.js');
+    const store = await SessionStore.open(database);
+    try {
+      if (linuxCtl !== controller) throw Error('Accelerated guest changed before capture');
+      const result = await new SessionGpuCheckpoints(store).captureController(id, checkpoint, controller);
+      if (linuxCtl !== controller) throw Error('Accelerated guest changed during capture');
+      return result;
+    } finally { await store.close(); }
+  },
+  async preflightGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
+    if (linuxBootPromise) throw Error('Another guest is booting');
+    const incumbent = linuxCtl;
+    await preflightGpuSessionCandidate(id, checkpoint, database);
+    if (linuxBootPromise || linuxCtl !== incumbent) throw Error('Original guest changed during GPU admission');
+    return {admitted:true};
+  },
+  async restoreGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
+    if (linuxBootPromise) throw Error('Another guest is booting');
+    const query = new URLSearchParams(location.search);
+    const incumbent = linuxCtl;
+    // Reject a foreign, incomplete or unsupported pair before retiring the live owner.
+    await preflightGpuSessionCandidate(id, checkpoint, database);
+    if (linuxBootPromise || linuxCtl !== incumbent) throw Error('Original guest changed during GPU admission');
+    if (incumbent) await retireLinuxController(incumbent);
+    if (linuxCtl || linuxBootPromise) throw Error('Another guest owns the page');
+    const key = 'gpu-session-' + crypto.randomUUID();
+    const boot = await runLinuxBoot({manifestUrl:'./artifacts-omarchy-virgl.json',
+      sessionGpuCheckpoint:{database,id,checkpoint},virgl:true,mode:'chunked',
+      bootSnapshot:false,persist:false,slirpNet:false,slirpProvider:'offline',enableMic:false,
+      gpuTrace:query.has('testHooks')&&query.has('gpuTrace'),
+      fileTransfer:false,ramMib:1024,guestClock:'icount',icountDivider:64,
+      interactiveClock:'paced-on-keyboard',jit:true,quantum:500_000,imageLen:4*1024*1024*1024},
+    'restoring an accelerated session checkpoint',
+    {requestKey:key,onClaim:()=>{lastBootError=null;setGuestChip('omarchy');}});
+    if (boot.winner !== key || !linuxCtl) throw Error(lastBootError || 'Accelerated checkpoint did not restore');
+    return {restored:await linuxCtl.restoredFromBootSnapshot(),epoch:(await linuxCtl.gpuStats()).epoch};
+  },
   async loseGpuContext(when="now") { return await linuxCtl?.loseGpuContext?.(when) ?? false; },
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
@@ -2502,6 +2596,59 @@ window.wvmDemo = {
   },
 };
 
+// E9-T06: library actions share the ordinary page's one-controller ownership protocol.
+// Restore admission and actual-topology construction finish privately before the old guest retires.
+void mountSessionTimeline(document.getElementById('session-timeline'),{
+  pauseLive:async()=>{await linuxCtl?.pause();},
+}).then(timeline=>{if(_startupQuery.has('testHooks'))window.__sessionTimeline=timeline;});
+void mountSessionLibrary(document.getElementById("session-library"), {
+  current: () => linuxCtl ? {controller: linuxCtl, profile: Boolean(linuxActiveRequest?.sessionSoftware),
+    accelerated: Boolean(linuxCtl.gpuSessionConfiguration
+      && linuxActiveRequest?.manifestUrl === './artifacts-omarchy-virgl.json'),
+    ready: linuxActiveRequest?.manifestUrl === './artifacts-omarchy-virgl.json' ? desktopReady : guestReady} : null,
+  captureGpu: (id, checkpoint) => window.wvmDemo.captureGpuSession(id, checkpoint),
+  async replaceGpu({id, checkpoint}) {
+    if (!_omarchyDesktopMode) {
+      await window.wvmDemo.preflightGpuSession(id, checkpoint);
+      const destination = new URL(location.pathname, location.href);
+      for (const [key, value] of [['guest', 'omarchy'], ['gpu', '1'], ['desktop', '1'],
+        ['noAutoBoot', '1'], ['gpuSessionId', id], ['gpuSessionPoint', checkpoint]])
+        destination.searchParams.set(key, value);
+      destination.hash = 'ide';
+      location.assign(destination.href);
+      return {navigating:true};
+    }
+    await window.wvmDemo.restoreGpuSession(id, checkpoint);
+    return linuxCtl;
+  },
+  async replace(checkpoint) {
+    const response = await fetch("./session-software-fixture.json");
+    if (!response.ok) throw Error("Checkpoint guest configuration unavailable");
+    const fixture = await response.json();
+    const options = {sessionSoftware: true, manifestUrl: fixture.boot_manifest, mode: "chunked",
+      imageManifestUrl: fixture.image_manifest, baseUrl: fixture.base_url, bootProfileUrl: null,
+      persist: false, bootSnapshot: false, ramMib: fixture.ram_mib, bootargs: fixture.bootargs,
+      guestClock: "icount", icountDivider: 10, slirpNet: false, slirpProvider: "offline", enableMic: false,
+      sessionCheckpoint: checkpoint};
+    if (checkpoint) {
+      const candidate = await _bootLinux(options);
+      await stopLinuxController(candidate);
+    }
+    if (linuxBootPromise) await linuxBootPromise;
+    if (linuxCtl) await retireLinuxController(linuxCtl);
+    if (linuxCtl || linuxBootPromise) throw Error("Another guest owns the page");
+    const key = "session-" + crypto.randomUUID();
+    const boot = await runLinuxBoot(options, "offline checkpoint guest", {
+      requestKey: key, onClaim: () => {lastBootError = null; setGuestChip("alpine");},
+    });
+    if (boot.winner !== key || !linuxCtl) throw Error(lastBootError || "Checkpoint guest did not start");
+    return linuxCtl;
+  },
+}).then(library => {
+  sessionLibrary = library;
+  if (_startupQuery.has("testHooks")) window.__sessionLibrary = library;
+});
+
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
 // A serial console carries no out-of-band winsize, so resize is cooperative: if a guest is live
 // the button types the `stty rows R cols C` straight into it, so vi/top use the full area.
@@ -2589,6 +2736,36 @@ const metricTotal = document.getElementById("metric-total");
 const metricPass = document.getElementById("metric-pass");
 const metricFail = document.getElementById("metric-fail");
 const metricDone = document.getElementById("metric-done");
+const eventClockRun = document.getElementById("event-clock-run");
+const eventClockStatus = document.getElementById("event-clock-status");
+let eventClockRunning = false;
+let eventClockResult = null;
+let inputRecordingRunning=false,inputRecordingResult=null;
+const inputRecordingRun=document.getElementById('input-recording-run'),inputRecordingStatus=document.getElementById('input-recording-status');
+let networkCaptureRunning=false,networkCaptureResult=null;
+const networkCaptureRun=document.getElementById("network-capture-run"),networkCaptureStatus=document.getElementById("network-capture-status");
+let sessionReplayRunning=false,sessionReplayResult=null;
+const sessionReplayRun=document.getElementById("session-replay-run"),sessionReplayStatus=document.getElementById("session-replay-status");
+let streamedReplayResult=null;
+const streamedReplayRun=document.getElementById("streamed-replay-run"),streamedReplayStatus=document.getElementById("streamed-replay-status");
+let sessionKeyframeRunning=false,sessionKeyframeResult=null;
+const sessionKeyframeRun=document.getElementById("session-keyframe-run"),sessionKeyframeStatus=document.getElementById("session-keyframe-status");
+let gpuJournalRunning=false,gpuJournalResult=null;
+let gpuReaderResult=null;
+const gpuReaderRun=document.getElementById("gpu-history-reader-run"),gpuReaderStatus=document.getElementById("gpu-history-reader-status");
+let witnessPagesRunning=false,witnessPagesResult=null;
+const witnessPagesRun=document.getElementById("witness-pages-run"),witnessPagesStatus=document.getElementById("witness-pages-status");
+const gpuJournalRun=document.getElementById("gpu-journal-stream-run"),gpuJournalStatus=document.getElementById("gpu-journal-stream-status");
+let ownedHttpRunning=false,ownedHttpResult=null;
+const ownedHttpRun=document.getElementById("owned-http-run"),ownedHttpStatus=document.getElementById("owned-http-status");
+let unrecordedRunning=false,unrecordedResult=null;
+const unrecordedRun=document.getElementById("unrecorded-control-run"),unrecordedStatus=document.getElementById("unrecorded-control-status");
+let sessionSeekRunning=false,sessionSeekResult=null;
+const sessionSeekRun=document.getElementById("session-seek-run"),sessionSeekStatus=document.getElementById("session-seek-status");
+let deviceCompletionsRunning=false,deviceCompletionsResult=null;
+const deviceCompletionsRun=document.getElementById("device-completions-run"),deviceCompletionsStatus=document.getElementById("device-completions-status");
+let timeEntropyRunning=false,timeEntropyResult=null;
+const timeEntropyRun=document.getElementById('time-entropy-run'),timeEntropyStatus=document.getElementById('time-entropy-status');
 const suiteProgressBar = document.getElementById("suite-progress-bar");
 const hoverCard = document.getElementById("hover-card");
 const hoverName = document.getElementById("hover-name");
@@ -2887,6 +3064,7 @@ function renderRoadmap() {
         evEl,
         base: { status: cap.status, evidence: cap.evidence },
         names: capLiveNames(cap),
+        probe: cap.probe,
       });
     }
     card.append(head, makeEl("div", "epic-blurb", epic.blurb), list);
@@ -2895,7 +3073,67 @@ function renderRoadmap() {
 }
 
 function refreshRoadmapLive() {
+  const gpuReaderCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="gpu-history-reader");
+  document.getElementById("gpu-history-reader-pip").className="cap-pip "+(gpuReaderResult?.status==="passed"?"live":gpuReaderResult?.status==="failed"?"regressed":gpuReaderCap.status);
+  const witnessCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="witness-pages");
+  document.getElementById("witness-pages-pip").className="cap-pip "+(witnessPagesResult?.status==="passed"?"live":witnessPagesResult?.status==="failed"?"regressed":witnessCap.status);
+  const gpuJournalCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="gpu-journal-stream");
+  document.getElementById("gpu-journal-stream-pip").className="cap-pip "+(gpuJournalResult?.status==="passed"?"live":gpuJournalResult?.status==="failed"?"regressed":gpuJournalCap.status);
+  const httpCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="owned-http");
+  document.getElementById("owned-http-pip").className="cap-pip "+(ownedHttpResult?.status==="passed"?"live":ownedHttpResult?.status==="failed"?"regressed":httpCap.status);
+  const offCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="unrecorded-control");
+  document.getElementById("unrecorded-control-pip").className="cap-pip "+(unrecordedResult?.status==="passed"?"live":unrecordedResult?.status==="failed"?"regressed":offCap.status);
+  const replayCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-replay");
+  document.getElementById("session-replay-pip").className="cap-pip "+(sessionReplayResult?.status==="passed"?"live":sessionReplayResult?.status==="failed"?"regressed":replayCap.status);
+  const streamedCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="streamed-replay");
+  document.getElementById("streamed-replay-pip").className="cap-pip "+(streamedReplayResult?.status==="passed"?"live":streamedReplayResult?.status==="failed"?"regressed":streamedCap.status);
+  const keyframeCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-keyframe");
+  document.getElementById("session-keyframe-pip").className="cap-pip "+(sessionKeyframeResult?.status==="passed"?"live":sessionKeyframeResult?.status==="failed"?"regressed":keyframeCap.status);
+  const seekCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-seek");
+  document.getElementById("session-seek-pip").className="cap-pip "+(sessionSeekResult?.status==="passed"?"live":sessionSeekResult?.status==="failed"?"regressed":seekCap.status);
+  const networkCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="network-capture");
+  document.getElementById("network-capture-pip").className="cap-pip "+(networkCaptureResult?.status==="passed"?"live":networkCaptureResult?.status==="failed"?"regressed":networkCap.status);
+  const deviceCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="device-completions");
+  document.getElementById("device-completions-pip").className=`cap-pip ${deviceCompletionsResult?.status==="passed"?"live":deviceCompletionsResult?.status==="failed"?"regressed":deviceCap.status}`;
+  const clockCap = ROADMAP.flatMap(epic => epic.caps).find(cap => cap.probe === "event-clock");
+  document.getElementById("event-clock-pip").className = `cap-pip ${eventClockResult?.status === "passed" ? "live" : eventClockResult?.status === "failed" ? "regressed" : clockCap.status}`;
+  const sourceCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='time-entropy');
+  document.getElementById('time-entropy-pip').className=`cap-pip ${timeEntropyResult?.status==='passed'?'live':timeEntropyResult?.status==='failed'?'regressed':sourceCap.status}`;
+  const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
+  document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==="gpu-history-replay"){const state=gpuReaderResult?.replay?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":gpuReaderResult?.status==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Both long histories replayed through every authenticated witness window in private GPU workers · live in browser; full desktop qualification remains separate":rc.base.evidence;continue;}
+    if(rc.probe==="gpu-history-reader"){const state=gpuReaderResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Complete native input and disk histories read through bounded authenticated windows · live in browser; full desktop qualification remains separate":rc.base.evidence;continue;}
+    if(rc.probe==="witness-pages"){const state=witnessPagesResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"130 native state witnesses, bounded pages and complete storage-only archive transfer · live in browser; full desktop qualification remains separate":rc.base.evidence;continue;}
+    if(rc.probe==="gpu-journal-stream"){const state=gpuJournalResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"4,100 native inputs and 256 distinct block reads retained across bounded checkpoint intervals; a full parked-read keyframe replays to the final witness · live in browser; full desktop playback remains in qualification":rc.base.evidence;continue;}
+    if(rc.probe==="owned-http"){const state=ownedHttpResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Full Alpine fetches ten real HTTP bodies with recording off/on; closed-server replay matches the whole machine · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="unrecorded-control"){const state=unrecordedResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Linux boot excerpt runs with capture OFF and refuses history APIs · live in browser; no performance result":rc.base.evidence;continue;}
+    if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, exact interpreter/JIT state and rejected unbranched input · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="streamed-replay"){const state=streamedReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Two exact native windows, carried pending input and failed stale/malformed handoffs · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="session-keyframe"){const state=sessionKeyframeResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Two persisted RAM deltas, exact restore, missing ancestor refusal and shared retention · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="session-seek"){const state=sessionSeekResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Persisted keyframe seek, independent state digest and 100 superseded requests · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="network-capture"){const state=networkCaptureResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest network bytes, offline replay and transport suppression · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="device-completions"){const state=deviceCompletionsResult?.status;rc.pip.className=`cap-pip ${state==="passed"?"live":state==="failed"?"regressed":rc.base.status}`;if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest block including 1.125 MiB COW DMA, file-agent and audio, pending restore and durable completion order · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==='time-entropy'){
+      const state=timeEntropyResult?.status;rc.pip.className=`cap-pip ${state==='passed'?'live':state==='failed'?'regressed':rc.base.status}`;
+      if(rc.evEl)rc.evEl.textContent=state==='passed'?'Actual guest time/RNG, pause, exact replay and typed divergences · live in browser':state==='failed'?'Time/entropy check failed in this browser':rc.base.evidence;
+      continue;
+    }
+    if(rc.probe==='input-recording'){
+      const state=inputRecordingResult?.status;rc.pip.className=`cap-pip ${state==='passed'?'live':state==='failed'?'regressed':rc.base.status}`;
+      if(rc.evEl)rc.evEl.textContent=state==='passed'?'Guest UART/evdev delivery, durable reopen and live-input refusal · live in browser':state==='failed'?'Input recording check failed in this browser':rc.base.evidence;
+      continue;
+    }
+    if (rc.probe === "event-clock") {
+      const state = eventClockResult?.status;
+      rc.pip.className = `cap-pip ${state === "passed" ? "live" : state === "failed" ? "regressed" : rc.base.status}`;
+      if (rc.evEl) {
+        rc.evEl.textContent = state === "passed" ? "Interpreter/JIT boundaries, event order and restore · live in browser"
+          : state === "failed" ? "Execution boundary check failed in this browser" : rc.base.evidence;
+        rc.evEl.className = `cap-ev${state === "passed" ? " live" : state === "failed" ? " regressed" : ""}`;
+      }
+      continue;
+    }
     if (rc.names.length === 0) continue; // no live binding — keep static evidence
     let pass = 0;
     let done = 0;
@@ -2925,7 +3163,21 @@ function refreshRoadmapLive() {
 }
 
 function setInteractiveState() {
-  const busy = running || suiteRunning;
+  const busy = witnessPagesRunning ||gpuJournalRunning || ownedHttpRunning || unrecordedRunning || running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning || sessionKeyframeRunning || sessionSeekRunning;
+  witnessPagesRun.disabled=busy||!wasmReady;
+  gpuJournalRun.disabled=busy||!wasmReady;
+  gpuReaderRun.disabled=busy||!wasmReady;
+  ownedHttpRun.disabled=busy||!wasmReady;
+  unrecordedRun.disabled=busy||!wasmReady;
+  sessionReplayRun.disabled=busy||!wasmReady;
+  streamedReplayRun.disabled=busy||!wasmReady;
+  sessionKeyframeRun.disabled=busy||!wasmReady;
+  sessionSeekRun.disabled=busy||!wasmReady;
+  inputRecordingRun.disabled=busy||!wasmReady;
+  timeEntropyRun.disabled=busy||!wasmReady;
+  deviceCompletionsRun.disabled=busy||!wasmReady;
+  networkCaptureRun.disabled=busy||!wasmReady;
+  eventClockRun.disabled = busy || !wasmReady;
   runBtn.disabled = busy || !wasmReady;
   resetBtn.disabled = busy || !wasmReady;
   benchBtn.disabled = busy || !wasmReady;
@@ -3036,7 +3288,7 @@ async function runRiscvTest(name) {
 }
 
 async function runSuite() {
-  if (running || suiteRunning || !wasmReady) return;
+  if (witnessPagesRunning ||gpuJournalRunning || running || suiteRunning || !wasmReady) return;
   suiteRunning = true;
   suiteStopRequested = false;
   setInteractiveState();
@@ -3072,7 +3324,7 @@ async function runSuite() {
 // Run the current ELF on a FRESH machine (Reset semantics are automatic: every Run builds
 // a new WasmMachine, so there is no stale state to leak between runs).
 async function run() {
-  if (running || suiteRunning) return; // guard: ignore re-entrant/rapid clicks
+  if (witnessPagesRunning ||gpuJournalRunning || running || suiteRunning) return; // guard: ignore re-entrant/rapid clicks
   if (!currentElf) {
     setStatus("no ELF loaded");
     return;
@@ -3124,7 +3376,7 @@ async function run() {
 }
 
 function reset() {
-  if (running || suiteRunning) return;
+  if (witnessPagesRunning ||gpuJournalRunning || running || suiteRunning) return;
   term.reset();
   window.__consoleBytes = [];
   setStatus(`ready — ${currentName}`);
@@ -3148,7 +3400,7 @@ fileInput.addEventListener("change", async (ev) => {
 // the trace-off path and reports MIPS = retired / ms / 1000.
 const benchBtn = document.getElementById("bench");
 function runBench() {
-  if (running || suiteRunning) return;
+  if (witnessPagesRunning ||gpuJournalRunning || running || suiteRunning) return;
   running = true;
   setInteractiveState();
   setStatus("benchmarking…");
@@ -3175,6 +3427,134 @@ runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
 benchBtn.addEventListener("click", runBench);
 suiteRunBtn.addEventListener("click", runSuite);
+witnessPagesRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ witnessPagesRunning=true;witnessPagesResult=null;witnessPagesStatus.textContent='Recording native state witnesses…';setInteractiveState();refreshRoadmapLive();
+ try{
+  witnessPagesResult=await runWitnessPages({notify:row=>{witnessPagesStatus.textContent=`${row.witnesses}/130 native witnesses · ${row.checkpoints} saved checkpoints`;}});
+  witnessPagesStatus.textContent=witnessPagesResult.status==='passed'?'Passed · 130 native witnesses remain in authenticated pages after cleanup and a complete local archive transfer. Playback is still being qualified.':'Failed · '+(witnessPagesResult.error??'incomplete witness history').split('\n')[0];
+ }catch(error){witnessPagesResult={status:'failed',error:String(error)};witnessPagesStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__witnessPagesReport=witnessPagesResult;witnessPagesStatus.dataset.status=witnessPagesResult.status;witnessPagesRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+gpuReaderRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ gpuJournalRunning=true;gpuReaderResult=null;gpuReaderStatus.textContent='Recording and reading the complete test histories…';setInteractiveState();refreshRoadmapLive();
+ try{
+  gpuReaderResult=await runGpuHistoryReaderDemo({notify:row=>{gpuReaderStatus.textContent=row.stage==='replay'?row.message:`${row.variant==='count'?'Input':'Disk'} history · ${row.receipts} receipts`;}});
+  gpuReaderStatus.textContent='Passed · both complete histories replayed through every authenticated witness window in the browser.';
+ }catch(error){gpuReaderResult={status:'failed',failure:String(error)};gpuReaderStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__gpuHistoryReaderReport=gpuReaderResult;gpuReaderStatus.dataset.status=gpuReaderResult.status;gpuJournalRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+gpuJournalRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ gpuJournalRunning=true;gpuJournalResult=null;gpuJournalStatus.textContent='Recording the input and disk test histories…';setInteractiveState();refreshRoadmapLive();
+ try{
+  const recorded=await runGpuJournalStream({fullAtBlockMid:true,notify:row=>{gpuJournalStatus.textContent=`${row.variant==='count'?'Input':'Disk'} history · ${row.receipts} receipts · ${row.blocks} disk reads`;}});
+  gpuJournalResult={...recorded,status:recorded.status==='recorded'?'passed':'failed'};
+  gpuJournalStatus.textContent=gpuJournalResult.status==='passed'?'Passed · inputs and disk results are authenticated, and the parked full keyframe replays to the final witness. Full desktop playback is still being qualified.':'Failed · '+(recorded.cases.find(row=>row.error)?.error??'incomplete history').split('\n')[0];
+ }catch(error){gpuJournalResult={status:'failed',failure:String(error)};gpuJournalStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__gpuJournalStreamReport=gpuJournalResult;gpuJournalStatus.dataset.status=gpuJournalResult.status;gpuJournalRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+ownedHttpRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ ownedHttpRunning=true;ownedHttpResult=null;ownedHttpStatus.textContent='Booting Alpine for the HTTP check…';setInteractiveState();refreshRoadmapLive();
+ try{
+  ownedHttpResult=await runOwnedHttpProbe({onProgress:progress=>{ownedHttpStatus.textContent=progress.phase==='replay-start'?'Replaying with the live HTTP server closed…':progress.phase==='replay-end'?'Comparing the complete machine…':`Alpine ${progress.mode??''} · ${progress.server?.server?.requests?.reduce((a,b)=>a+b,0)??0}/10 HTTP requests`;}});
+  ownedHttpStatus.textContent=ownedHttpResult.status==='passed'?'Passed · ten real HTTP bodies agree with recording off/on and exact offline replay.':'Failed · '+ownedHttpResult.error;
+ }catch(error){ownedHttpResult={status:'failed',failure:String(error)};ownedHttpStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__ownedHttpReport=ownedHttpResult;ownedHttpStatus.dataset.status=ownedHttpResult.status;ownedHttpRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+unrecordedRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ unrecordedRunning=true;unrecordedResult=null;unrecordedStatus.textContent='Preparing Linux with recording off…';setInteractiveState();refreshRoadmapLive();
+ try{unrecordedResult=await runUnrecordedControlProbe({onProgress:message=>{unrecordedStatus.textContent=message;}});unrecordedStatus.textContent='Passed · Linux boot excerpt completed with recording off. Performance measurements remain pending.';}
+ catch(error){unrecordedResult={status:'failed',failure:String(error)};unrecordedStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__unrecordedControlReport=unrecordedResult;unrecordedStatus.dataset.status=unrecordedResult.status;unrecordedRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+sessionReplayRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||!wasmReady)return;
+ sessionReplayRunning=true;sessionReplayResult=null;sessionReplayStatus.textContent='Preparing the pinned Linux recording…';setInteractiveState();refreshRoadmapLive();
+ try{sessionReplayResult=await runSessionReplayProbe({onProgress:message=>{sessionReplayStatus.textContent=message;}});sessionReplayStatus.textContent='Passed · saved Alpine session matches interpreter and JIT replay, including disk DMA, and refuses unbranched input.';}
+ catch(error){sessionReplayResult={status:'failed',failure:String(error)};sessionReplayStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__sessionReplayReport=sessionReplayResult;sessionReplayStatus.dataset.status=sessionReplayResult.status;sessionReplayRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+streamedReplayRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ sessionReplayRunning=true;streamedReplayResult=null;streamedReplayStatus.textContent='Replaying two bounded Linux windows…';setInteractiveState();refreshRoadmapLive();
+ try{streamedReplayResult=await runSessionStreamedReplayProbe();streamedReplayStatus.textContent='Passed · exact native state and pending input cross the handoff; stale and malformed windows stop before guest work.';}
+ catch(error){streamedReplayResult={status:'failed',failure:String(error)};streamedReplayStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__streamedReplayReport=streamedReplayResult;streamedReplayStatus.dataset.status=streamedReplayResult.status;sessionReplayRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+sessionKeyframeRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||!wasmReady)return;
+ sessionKeyframeRunning=true;sessionKeyframeResult=null;sessionKeyframeStatus.textContent='Preparing exact Linux keyframes…';setInteractiveState();refreshRoadmapLive();
+ try{sessionKeyframeResult=await runSessionKeyframeProbe({onProgress:message=>{sessionKeyframeStatus.textContent=message;}});
+  sessionKeyframeStatus.textContent='Passed · two RAM deltas restore exact Linux state; missing ancestors refuse and shared pages survive deletion.';}
+ catch(error){sessionKeyframeResult={status:'failed',failure:String(error)};sessionKeyframeStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__sessionKeyframeReport=sessionKeyframeResult;
+  sessionKeyframeStatus.dataset.status=sessionKeyframeResult.status;sessionKeyframeRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+sessionSeekRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ sessionSeekRunning=true;sessionSeekResult=null;sessionSeekStatus.textContent='Preparing saved Linux history…';setInteractiveState();refreshRoadmapLive();
+ try{sessionSeekResult=await runSessionSeekProbe({onProgress:message=>{sessionSeekStatus.textContent=message;},
+  onRender:text=>{document.getElementById('session-seek-render').textContent=text;}});
+  sessionSeekStatus.textContent='Passed · exact keyframe seeks, forward/reverse steps and latest-only scrubbing.';}
+ catch(error){sessionSeekResult={status:'failed',failure:String(error)};sessionSeekStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__sessionSeekReport=sessionSeekResult;
+  sessionSeekStatus.dataset.status=sessionSeekResult.status;sessionSeekRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+networkCaptureRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
+ networkCaptureRunning=true;networkCaptureResult=null;networkCaptureStatus.textContent='Recording one safe request, then replaying offline…';setInteractiveState();refreshRoadmapLive();
+ try{networkCaptureResult=await runNetworkCaptureProbe();networkCaptureStatus.textContent='Passed · offline replays and timer order agree; one network request.';}
+ catch(error){networkCaptureResult={status:'failed',failure:String(error)};networkCaptureStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__networkCaptureReport=networkCaptureResult;networkCaptureStatus.dataset.status=networkCaptureResult.status;networkCaptureRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+deviceCompletionsRun.addEventListener('click',async()=>{
+  if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
+  deviceCompletionsRunning=true;deviceCompletionsResult=null;deviceCompletionsStatus.textContent='Recording and replaying device deliveries…';setInteractiveState();refreshRoadmapLive();
+  try{deviceCompletionsResult=await runDeviceCompletionsProbe();deviceCompletionsStatus.textContent='Passed · disk, file and audio bytes agree after replay and restore.';}
+  catch(error){deviceCompletionsResult={status:'failed',failure:String(error)};deviceCompletionsStatus.textContent='Failed · '+error.message;}
+  finally{if(_startupQuery.has('testHooks'))globalThis.__deviceCompletionsReport=deviceCompletionsResult;deviceCompletionsStatus.dataset.status=deviceCompletionsResult.status;deviceCompletionsRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+timeEntropyRun.addEventListener('click',async()=>{
+  if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
+  timeEntropyRunning=true;timeEntropyResult=null;timeEntropyStatus.textContent='Recording and replaying guest time and random bytes…';setInteractiveState();refreshRoadmapLive();
+  try{timeEntropyResult=await runTimeEntropyProbe({onPaused:_startupQuery.has('testHooks')?globalThis.__timeEntropyPausedHook:undefined});timeEntropyStatus.textContent='Passed · guest time and bytes agree; replay made zero live provider calls.';}
+  catch(error){timeEntropyResult={status:'failed',failure:String(error)};timeEntropyStatus.textContent='Failed · '+error.message;}
+  finally{if(_startupQuery.has('testHooks'))globalThis.__timeEntropyReport=timeEntropyResult;
+    timeEntropyStatus.dataset.status=timeEntropyResult.status;timeEntropyRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+inputRecordingRun.addEventListener('click',async()=>{
+  if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
+  inputRecordingRunning=true;inputRecordingResult=null;inputRecordingStatus.textContent='Checking delivered inputs and reopening the saved prefix…';setInteractiveState();refreshRoadmapLive();
+  try{inputRecordingResult=await runInputRecordingProbe();inputRecordingStatus.textContent='Passed · guest bytes, saved input order and replay input refusal agree.';}
+  catch(error){inputRecordingResult={status:'failed',failure:String(error)};inputRecordingStatus.textContent='Failed · '+error.message;}
+  finally{if(_startupQuery.has('testHooks'))globalThis.__inputRecordingReport=inputRecordingResult;
+    inputRecordingStatus.dataset.status=inputRecordingResult.status;inputRecordingRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+eventClockRun.addEventListener("click", async () => {
+  if (witnessPagesRunning ||gpuJournalRunning || running || suiteRunning || eventClockRunning || !wasmReady) return;
+  eventClockRunning = true;
+  eventClockResult = null;
+  eventClockStatus.textContent = "Checking exact execution boundaries…";
+  setInteractiveState();
+  refreshRoadmapLive();
+  try {
+    eventClockResult = await runEventClockProbe(WasmMachine);
+    eventClockStatus.textContent = "Passed · interpreter and JIT agree on stops, event order and restored counters.";
+  } catch (error) {
+    eventClockResult = {status: "failed", failure: String(error)};
+    eventClockStatus.textContent = `Failed · ${error.message}`;
+  } finally {
+    if (_startupQuery.has("testHooks")) globalThis.__eventClockReport = eventClockResult;
+    eventClockStatus.dataset.status = eventClockResult.status;
+    eventClockRunning = false;
+    refreshRoadmapLive();
+    setInteractiveState();
+  }
+});
 suiteStopBtn.addEventListener("click", () => {
   suiteStopRequested = true;
   setSuiteStatus("stopping...");
@@ -3315,6 +3695,9 @@ setInteractiveState();
       if (!button.disabled) void startGuestChoice(button.dataset.os);
     });
   }
+  // The launcher island (web/ui) presses these buttons; it waits for this marker so a press made
+  // while the manifests are still being probed is not lost.
+  document.documentElement.dataset.launcherReady = "true";
   if (_bootQ.has("testHooks")) {
     window.__runConfiguredAutoBootForTest = () => startGuestChoice(_guest, { navigateToDesktop: false });
     window.__linuxBootStateForTest = () => ({
@@ -3332,7 +3715,24 @@ setInteractiveState();
       return retireLinuxController(controller);
     };
   }
-  if (_guest && !linuxCtl && !_bootQ.has("noAutoBoot")) {
+  const gpuSessionId = _bootQ.get('gpuSessionId');
+  const gpuSessionPoint = _bootQ.get('gpuSessionPoint');
+  if (gpuSessionId !== null || gpuSessionPoint !== null) {
+    if (!_omarchyDesktopMode || _guest !== 'omarchy' || !_bootQ.has('noAutoBoot')
+      || !/^[A-Za-z0-9_.:/-]{1,64}$/.test(gpuSessionId ?? '')
+      || !/^[A-Za-z0-9_.:/-]{1,64}$/.test(gpuSessionPoint ?? '')) {
+      lastBootError = 'Invalid accelerated session route';
+      emitGuestLifecycleEvent('wvm:guest-error', {message:lastBootError});
+    } else {
+      setTimeout(() => {
+        void window.wvmDemo.restoreGpuSession(gpuSessionId, gpuSessionPoint).catch(error => {
+          lastBootError = error?.message || String(error);
+          emitGuestLifecycleEvent('wvm:guest-error', {message:lastBootError});
+          setStatus(`GPU checkpoint could not open: ${lastBootError}`);
+        });
+      }, 400);
+    }
+  } else if (_guest && !linuxCtl && !_bootQ.has("noAutoBoot")) {
     setTimeout(() => {
       try {
         // Invoke the production callback synchronously so its single-flight ownership is claimed

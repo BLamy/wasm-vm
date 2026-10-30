@@ -1,0 +1,192 @@
+{
+  "status": "passed",
+  "head": "c51133cacd48408e9ef054370b0503a32f645f32",
+  "wrapper_sha256": "042ba50eb5a3e9f7c582ce5075f1f9835a7b53a399613c42562634537abeff9d",
+  "receipt_sha256": "f0e4812a4d12c2b6fb114983d74fce71e3b3acfd6c552817775da50e18983de6",
+  "acceptance_report_sha256": "c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf",
+  "browser_report_sha256": "b1545206d012d50a4efa27bb32d25f92f7d62218bbe4a8075a4823c22c9b0226",
+  "files_checked": 442,
+  "commands": [
+    [
+      "retained-gpu-runtime",
+      0
+    ],
+    [
+      "policy",
+      0
+    ],
+    [
+      "format",
+      0
+    ],
+    [
+      "storage-clippy",
+      0
+    ],
+    [
+      "storage-native",
+      0
+    ],
+    [
+      "no-std-wasm",
+      0
+    ],
+    [
+      "adapter-native",
+      0
+    ],
+    [
+      "wasm-clippy",
+      0
+    ],
+    [
+      "wasm-build",
+      0
+    ],
+    [
+      "contract",
+      0
+    ],
+    [
+      "codec-node",
+      0
+    ],
+    [
+      "javascript",
+      0
+    ],
+    [
+      "browser-dependencies",
+      0
+    ],
+    [
+      "browser",
+      0
+    ]
+  ],
+  "browser_suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "retained_memory_delta": 2610144,
+  "critic": {
+    "faults": [
+      {
+        "fault": "object-length",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      },
+      {
+        "fault": "object-parts",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      },
+      {
+        "fault": "cursor-zero",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      },
+      {
+        "fault": "cursor-overflow",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      }
+    ],
+    "reuseFaults": [
+      {
+        "fault": "chunk-content",
+        "code": "Corrupt"
+      },
+      {
+        "fault": "object-content",
+        "code": "Corrupt"
+      }
+    ],
+    "publication": [
+      {
+        "fault": "stale-cursor",
+        "code": "StaleCommit"
+      },
+      {
+        "fault": "changed-object",
+        "code": "Corrupt"
+      },
+      {
+        "fault": "missing-chunk",
+        "code": "Corrupt"
+      }
+    ],
+    "platformFaults": [
+      {
+        "fault": "object-quota",
+        "code": "Quota"
+      },
+      {
+        "fault": "native-constraint",
+        "code": "Storage"
+      },
+      {
+        "fault": "throwing-observer",
+        "code": "accepted"
+      }
+    ],
+    "cancellation": "WriterClosed",
+    "cancelledRow": null,
+    "close": {
+      "store": "Closed",
+      "writer": "WriterClosed"
+    },
+    "closedAcquisition": "Closed",
+    "version": {
+      "closed": "Closed",
+      "oldOpen": "Storage"
+    },
+    "catalogCommit": "Bound",
+    "catalogList": "Bound",
+    "reacquired": true,
+    "restored": true,
+    "reopened": true
+  },
+  "gpu": {
+    "retired": 3999540,
+    "epoch": "0000000000000004",
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ],
+    "workers": [
+      "http://127.0.0.1:53498/gpu-runtime-worker.js"
+    ]
+  },
+  "trace_events": 1716,
+  "trace_console_errors": [],
+  "public_network_domains": {
+    "pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev": 3
+  },
+  "public_network_statuses": {
+    "200": 3
+  },
+  "clone_clean": true,
+  "alternates": false
+}

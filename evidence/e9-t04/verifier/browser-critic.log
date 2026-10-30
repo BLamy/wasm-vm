@@ -1,0 +1,150 @@
+{
+  "status": "passed",
+  "checks": {
+    "guards": {
+      "invalidDescriptors": [
+        "invalid historical disk root descriptor",
+        "invalid historical disk root descriptor",
+        "invalid historical disk root descriptor",
+        "invalid historical disk root descriptor",
+        "invalid historical disk root descriptor",
+        "invalid historical disk root descriptor"
+      ],
+      "incompatible": [
+        "historical disk roots require an ephemeral software chunked boot with bootSnapshot=false",
+        "historical disk roots require an ephemeral software chunked boot with bootSnapshot=false",
+        "historical disk roots require an ephemeral software chunked boot with bootSnapshot=false",
+        "historical disk roots require an ephemeral software chunked boot with bootSnapshot=false",
+        "historical disk roots require an ephemeral software chunked boot with bootSnapshot=false",
+        "historical disk roots require an ephemeral software chunked boot with bootSnapshot=false"
+      ],
+      "missingRoot": "MissingObject: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "running": "session_disk_capture: pause a software chunked guest without extra disks first",
+      "concurrent": "session_disk_capture: pause a software chunked guest without extra disks first",
+      "stoppedOwner": "session_disk_capture: owner stopped",
+      "stopped": "session_disk_capture: pause a software chunked guest without extra disks first",
+      "deltaBytes": 61,
+      "deltaMagic": "WVOD1",
+      "deltaBlocks": 0,
+      "beforeRetired": 0,
+      "afterRetired": 0
+    },
+    "io": {
+      "read": {
+        "pending": [
+          0
+        ],
+        "beforeClock": "{\"mode\":\"icount\",\"mtime\":\"49845501\",\"timebaseHz\":10000000,\"clockDiv\":10}",
+        "afterClock": "{\"mode\":\"icount\",\"mtime\":\"49845501\",\"timebaseHz\":10000000,\"clockDiv\":10}",
+        "beforeFetch": {
+          "fetches": 0,
+          "bytes": 0,
+          "error": null,
+          "cache": {
+            "hits": 0,
+            "misses": 27775,
+            "evictions": 0,
+            "residentBytes": 0,
+            "budgetBytes": 67108864
+          },
+          "prefetch": {
+            "issued": 0,
+            "used": 0,
+            "profileEntries": 0,
+            "accuracyPct": 0
+          }
+        },
+        "afterFetch": {
+          "fetches": 1,
+          "bytes": 131072,
+          "error": null,
+          "cache": {
+            "hits": 1,
+            "misses": 27791,
+            "evictions": 0,
+            "residentBytes": 131072,
+            "budgetBytes": 67108864
+          },
+          "prefetch": {
+            "issued": 0,
+            "used": 0,
+            "profileEntries": 0,
+            "accuracyPct": 0
+          }
+        },
+        "remaining": [],
+        "retired": 271489370,
+        "deltaBytes": 61
+      },
+      "write": {
+        "pressure": {
+          "pendingBlocks": 1,
+          "pendingBytes": 4096,
+          "flushWaiting": false,
+          "writeWaiting": true
+        },
+        "after": {
+          "pendingBlocks": 0,
+          "pendingBytes": 0,
+          "flushWaiting": false,
+          "writeWaiting": false
+        },
+        "beforeClock": "{\"mode\":\"icount\",\"mtime\":\"121885522\",\"timebaseHz\":10000000,\"clockDiv\":10}",
+        "afterClock": "{\"mode\":\"icount\",\"mtime\":\"121885522\",\"timebaseHz\":10000000,\"clockDiv\":10}",
+        "beforeGeneration": 0,
+        "generation": "1",
+        "blocks": 1,
+        "retired": 305152899,
+        "deltaBytes": 4165
+      },
+      "unsupported": "session_disk_unsupported",
+      "bounded": {
+        "pending": [
+          0
+        ],
+        "beforeClock": "{\"mode\":\"icount\",\"mtime\":\"49845496\",\"timebaseHz\":10000000,\"clockDiv\":10}",
+        "afterClock": "{\"mode\":\"icount\",\"mtime\":\"49845496\",\"timebaseHz\":10000000,\"clockDiv\":10}",
+        "error": "session_disk_busy_or_budget",
+        "fetch": {
+          "fetches": 80,
+          "bytes": 80,
+          "error": "chunk 0: RetriesExhausted { chunk: 0 }",
+          "cache": {
+            "hits": 0,
+            "misses": 26259,
+            "evictions": 0,
+            "residentBytes": 0,
+            "budgetBytes": 67108864
+          },
+          "prefetch": {
+            "issued": 0,
+            "used": 0,
+            "profileEntries": 0,
+            "accuracyPct": 0
+          }
+        }
+      },
+      "output": "[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024\r\n[    0.000000] Machine model: riscv-virtio,qemu\r\n[    0.000000] SBI specification v2.0 detected\r\n[    0.000000] SBI implementation ID=0x574d Version=0x100\r\n[    0.000000] SBI TIME extension detected\r\n[    0.000000] SBI IPI extension detected\r\n[    0.000000] SBI RFENCE extension detected\r\n[    0.000000] SBI SRST extension detected\r\n[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')\r\n[    0.000000] printk: bootconsole [sbi0] enabled\r\n[    0.000000] efi: UEFI not found.\r\n[    0.000000] Zone ranges:\r\n[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]\r\n[    0.000000]   Normal   empty\r\n[    0.000000] Movable zone start for each node\r\n[    0.000000] Early memory node ranges\r\n[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008fffffff]\r\n[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x000000008fffffff]\r\n[    0.000000] SBI HSM extension detected\r\n[    0.000000] Falling back to deprecated \"riscv,isa\"\r\n[    0.000000] riscv: base ISA extensions acdfim\r\n[    0.000000] riscv: ELF capabilities acdfim\r\n[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728\r\n[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i\r\n[    0.000000] Dentry cache hash table entries: 32768 (order: 6, 262144 bytes, linear)\r\n[    0.000000] Inode-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)\r\n[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 64512\r\n[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off\r\n[    0.000000] Virtual kernel memory layout:\r\n[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)\r\n[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)\r\n[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)\r\n[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)\r\n[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)\r\n[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000010000000   ( 256 MB)\r\n[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)\r\n[    0.000000] Memory: 216560K/262144K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 45584K reserved, 0K cma-reserved)\r\n[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1\r\n[    0.000000] rcu: Hierarchical RCU implementation.\r\n[    0.000000] rcu: \tRCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.\r\n[    0.000000] rcu: \tRCU debug extended QS entry/exit.\r\n[    0.000000] \tTracing variant of Tasks RCU enabled.\r\n[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.\r\n[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1\r\n[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0\r\n[    0.000000] riscv-intc: 64 local interrupts mapped\r\n[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.\r\n[    0.000000] riscv: providing IPIs using SBI IPI extension\r\n[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.\r\n[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns\r\n[    0.000002] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns\r\n[    0.001300] Console: colour dummy device 80x25\r\n[    0.001500] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)\r\n[    0.001657] pid_max: default: 32768 minimum: 301\r\n[    0.002165] LSM: initializing lsm=capability,integrity\r\n[    0.002892] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)\r\n[    0.003026] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)\r\n[    0.014514] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.\r\n[    0.015216] riscv: ELF compat mode unsupported\r\n[    0.015297] ASID allocator using 16 bits (65536 entries)\r\n[    0.016163] rcu: Hierarchical SRCU implementation.\r\n[    0.016238] rcu: \tMax phase no-delay instances is 1000.\r\n[    0.017849] EFI services will not be available.\r\n[    0.018689] smp: Bringing up secondary CPUs ...\r\n[    0.018797] smp: Brought up 1 node, 1 CPU\r\n[    0.021301] devtmpfs: initialized\r\n[    0.032140] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns\r\n[    0.032293] futex hash table entries: 256 (order: 2, 16384 bytes, linear)\r\n[    0.033335] pinctrl core: initialized pinctrl subsystem\r\n[    0.042947] NET: Registered PF_NETLINK/PF_ROUTE protocol family\r\n[    0.047392] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations\r\n[    0.047604] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations\r\n[    0.047930] audit: initializing netlink subsys (disabled)\r\n[    0.051218] thermal_sys: Registered thermal governor 'step_wise'\r\n[    0.051388] audit: type=2000 audit(0.044:1): state=initialized audit_enabled=0 res=1\r\n[    0.051629] cpuidle: using governor menu\r\n[    0.073233] cpu0: Ratio of byte access time to unaligned word access is 7.98, unaligned accesses are fast\r\n[    0.095175] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages\r\n[    0.095273] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page\r\n[    0.166140] raid6: int64x8  gen()    42 MB/s\r\n[    0.234711] raid6: int64x4  gen()    57 MB/s\r\n[    0.303050] raid6: int64x2  gen()    58 MB/s\r\n[    0.371646] raid6: int64x1  gen()    52 MB/s\r\n[    0.371728] raid6: using algorithm int64x2 gen() 58 MB/s\r\n[    0.440315] raid6: .... xor() 32 MB/s, rmw enabled\r\n[    0.440395] raid6: using intx1 recovery algorithm\r\n[    0.441351] ACPI: Interpreter disabled.\r\n[    0.442147] iommu: Default domain type: Translated\r\n[    0.442228] iommu: DMA domain TLB invalidation policy: strict mode\r\n[    0.445785] SCSI subsystem initialized\r\n[    0.449174] Advanced Linux Sound Architecture Driver Initialized.\r\n[    0.455282] clocksource: Switched to clocksource riscv_clocksource\r\n[    0.457517] pnp: PnP ACPI: disabled\r\n[    0.519437] NET: Registered PF_INET protocol family\r\n[    0.520838] IP idents hash table entries: 4096 (order: 3, 32768 bytes, linear)\r\n[    0.530066] tcp_listen_portaddr_hash hash table entries: 128 (order: 0, 4096 bytes, linear)\r\n[    0.530259] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)\r\n[    0.530413] TCP established hash table entries: 2048 (order: 2, 16384 bytes, linear)\r\n[    0.530787] TCP bind hash table entries: 2048 (order: 5, 131072 bytes, linear)\r\n[    0.532013] TCP: Hash tables configured (established 2048 bind 2048)\r\n[    0.532391] UDP hash table entries: 256 (order: 2, 24576 bytes, linear)\r\n[    0.532726] UDP-Lite hash table entries: 256 (order: 2, 24576 bytes, linear)\r\n[    0.533724] NET: Registered PF_UNIX/PF_LOCAL protocol family\r\n[    0.536702] RPC: Registered named UNIX socket transport module.\r\n[    0.536790] RPC: Registered udp transport module.\r\n[    0.536869] RPC: Registered tcp transport module.\r\n[    0.536949] RPC: Registered tcp-with-tls transport module.\r\n[    0.537034] RPC: Registered tcp NFSv4.1 backchannel transport module.\r\n[    0.537365] kvm [1]: hypervisor extension not available\r\n[    0.542780] workingset: timestamp_bits=46 max_order=16 bucket_order=0\r\n[    0.546335] NFS: Registering the id_resolver key type\r\n[    0.546609] Key type id_resolver registered\r\n[    0.546686] Key type id_legacy registered\r\n[    0.546890] nfs4filelayout_init: NFSv4 File Layout Driver Registering...\r\n[    0.547021] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...\r\n[    0.548180] 9p: Installing v9fs 9p2000 file system support\r\n[    1.701091] NET: Registered PF_ALG protocol family\r\n[    1.701192] xor: measuring software checksum speed\r\n[    1.720091]    8regs           :   174 MB/sec\r\n[    1.738981]    8regs_prefetch  :   174 MB/sec\r\n[    1.757888]    32regs          :   174 MB/sec\r\n[    1.776833]    32regs_prefetch :   173 MB/sec\r\n[    1.776917] xor: using function: 32regs (174 MB/sec)\r\n[    1.777232] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)\r\n[    1.777335] io scheduler mq-deadline registered\r\n[    1.777419] io scheduler kyber registered\r\n[    1.777572] io scheduler bfq registered\r\n[    1.799994] input: wasm-vm virtio keyboard as /devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0\r\n[    1.802524] input: wasm-vm virtio tablet as /devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1\r\n[    1.805076] input: wasm-vm virtio mouse as /devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2\r\n[    2.192197] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled\r\n[    2.205872] printk: console [ttyS0] disabled\r\n[    2.208182] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 15, base_baud = 230400) is a 16550A\r\n[    2.208394] printk: console [ttyS0] enabled\r\n[    2.208568] printk: bootconsole [sbi0] disabled\r\n[    2.208394] printk: console [ttyS0] enabled\r\n[    2.208568] printk: bootconsole [sbi0] disabled\r\n[    2.211155] SuperH (H)SCI(F) driver initialized\r\n[    2.225159] random: crng init done\r\n[    2.232100] [drm] features: -virgl +edid -resource_blob -host_visible\r\n[    2.232150] [drm] features: -context_init\r\n[    2.233130] [drm] number of scanouts: 1\r\n[    2.233246] [drm] number of cap sets: 0\r\n[    2.238286] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0\r\n[    2.407504] Console: switching to colour frame buffer device 160x50\r\n[    2.524938] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device\r\n[    2.559993] loop: module loaded\r\n[    2.560299] virtio_blk virtio0: 1/0/0 default/read/poll queues\r\n[    2.561626] virtio_blk virtio0: [vda] 1048576 512-byte logical blocks (537 MB/512 MiB)\r\n[    4.862123] mousedev: PS/2 mouse device common for all mice\r\n[    4.866979] goldfish_rtc 101000.rtc: registered as rtc0\r\n[    4.867162] goldfish_rtc 101000.rtc: setting system clock to 2026-10-18T00:08:58 UTC (1792282138)\r\n[    4.870421] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off\r\n[    4.870668] syscon-poweroff: probe of poweroff failed with error -16\r\n[    4.872886] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com\r\n[    4.875751] sdhci: Secure Digital Host Controller Interface driver\r\n[    4.875902] sdhci: Copyright(c) Pierre Ossman\r\n[    4.876978] sdhci-pltfm: SDHCI platform and OF driver helper\r\n[    4.887208] IPVS: Registered protocols (TCP, UDP)\r\n[    4.887459] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)\r\n[    4.888517] IPVS: ipvs loaded.\r\n[    4.888621] IPVS: [rr] scheduler registered.\r\n[    4.890393] Initializing XFRM netlink socket\r\n[    4.890767] NET: Registered PF_INET6 protocol family\r\n[    4.896566] Segment Routing with IPv6\r\n[    4.896848] In-situ OAM (IOAM) with IPv6\r\n[    4.897752] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver\r\n[    4.901512] NET: Registered PF_PACKET protocol family\r\n[    4.901851] Bridge firewalling registered\r\n[    4.902271] 8021q: 802.1Q VLAN Support v1.8\r\n[    4.902852] 9pnet: Installing 9P2000 support\r\n[    4.903261] Key type dns_resolver registered\r\n[    5.135348] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers\r\n[    5.147205] Btrfs loaded, zoned=no, fsverity=no\r\n[    5.154938] Legacy PMU implementation is available\r\n[    5.156037] clk: Disabling unused clocks\r\n[    5.156179] ALSA device list:\r\n[    5.156275]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6\r\n",
+      "expectedConsoleErrors": [
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }",
+        "lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }"
+      ],
+      "pageErrors": []
+    }
+  },
+  "errors": []
+}

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "unexpectedConsoleErrors": [],
+  "pageErrors": [],
+  "httpErrors": [],
+  "allowedFavicon404": [
+    {
+      "type": "console",
+      "messageType": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "args": [],
+      "location": {
+        "url": "https://wasm-vm.pages.dev/favicon.ico",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "time": 1282.163,
+      "pageId": "page@20704b56fff89f14b900bbf9d22cb881"
+    }
+  ],
+  "exact_public_assets": 18,
+  "trace_sha256": "f3c5e4d9651ff737f884b1f6e9cbef5537f400f68500065e89fbf0be530bd437"
+}

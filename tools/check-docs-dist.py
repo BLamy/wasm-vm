@@ -26,7 +26,7 @@ def fences(text):
 
 catalog = json.loads((DIST / "docs-content/catalog.json").read_text())
 ledger = json.loads((DIST / "docs-content/migration-ledger.json").read_text())
-require(catalog["docstreamVersion"] == "1.9.1", "Wrong published Docstream release")
+require(catalog["docstreamVersion"] == "1.33.0", "Wrong published Docstream release")
 hashes = {}
 for page in catalog["pages"]:
     target = DIST / "docs-content" / f"{page['id']}.md"
@@ -38,6 +38,12 @@ for page in catalog["pages"]:
     require(fences(text) == fences(original), f"Deployment changed a code example: {page['id']}")
     outside = re.sub(r"^\s*(`{3,})[^\n]*\n.*?^\s*\1\s*$", "", text, flags=re.M | re.S)
     require("](./index.html" not in outside and "](./landing.html" not in outside, f"Source-layout URL remains: {page['id']}")
+corpus = json.loads((DIST / "docs-content/search-corpus.json").read_text())
+require([entry["id"] for entry in corpus["pages"]] == [page["id"] for page in catalog["pages"]], "Search corpus page list drift")
+for entry in corpus["pages"]:
+    require(entry["content"] == (DIST / "docs-content" / entry["path"]).read_text(), f"Search corpus differs from published page: {entry['id']}")
+for image in re.findall(r"\]\(\./images/([^)\s]+)", "".join(entry["content"] for entry in corpus["pages"])):
+    require((DIST / "docs-content/images" / image).is_file(), f"Missing published guide image: {image}")
 for item in ledger["documents"]:
     if item.get("page"):
         require(item["publishedSha256"] == hashes[item["page"]], f"Published ledger hash drift: {item['path']}")
@@ -49,9 +55,11 @@ reader_revision = sha((DIST / "docs-bundle/reader.js").read_bytes())[:12]
 for name in ["docs.html", "docs-embedding.html", "docs-guest.html", "docs-containers.html", "docs-verification.html", "docs-explainers.html"]:
     html = (DIST / name).read_text()
     require(f"./docs-bundle/reader.js?rev={reader_revision}" in html, f"Reader cache identity drift: {name}")
-for name in ["index.html", "products.html", "security.html", "work-market.html", "roadmap.html"]:
+for name in ["index.html", "products.html", "security.html", "work-market.html", "roadmap.html", "case-studies.html", "case-study-riscv-os.html", "case-study-ai-sandboxing.html", "case-study-deterministic-simulation.html"]:
     html = (DIST / name).read_text()
-    require("./vendor/three/three.module.js" in html and "./node_modules/three" not in html, f"Missing vendored hero import: {name}")
+    # E0-T30: only the homepage still renders the three.js architecture model.
+    require("./node_modules/three" not in html, f"Unvendored three import: {name}")
+    require(("./vendor/three/three.module.js" in html) == (name == "index.html"), f"Vendored three import drift: {name}")
     require("./index.html" not in html and "./landing.html" not in html, f"Marketing route swap incomplete: {name}")
     for module in ["landing-page.js", "landing-benchmarks.js"]:
         if f"./{module}" in html:
@@ -68,7 +76,7 @@ require('id="panel-roadmap"' not in app and 'id="panel-docs"' not in app and 'do
 require(not (DIST / "docs-mount.js").exists(), "Retired docs iframe shipped")
 require('id="rm-lanes"' in (DIST / "roadmap.html").read_text(), "Marketing roadmap lacks task UI")
 require((DIST / "tasks.json").read_bytes() == (ROOT / "web/tasks.json").read_bytes(), "Published roadmap ledger drift")
-for name in ["index.html", "products.html", "security.html", "work-market.html", "roadmap.html"]:
+for name in ["index.html", "products.html", "security.html", "work-market.html", "roadmap.html", "case-studies.html", "case-study-riscv-os.html", "case-study-ai-sandboxing.html", "case-study-deterministic-simulation.html"]:
     text = (DIST / name).read_text()
     require('href="./app.html#ide"' in text, f"Demo entry does not target the launcher: {name}")
 require("__SW_VERSION__" not in (DIST / "sw.js").read_text(), "Service worker version not stamped")

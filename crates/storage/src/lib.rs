@@ -19,13 +19,18 @@ use sha2::{Digest, Sha256};
 
 mod blobstore;
 mod cache;
+pub mod checkpoint;
 mod dbmeta;
+pub mod disk_root;
 mod fetch;
 pub mod oci;
 mod overlay;
 mod overlay_delta;
 mod prefetch;
 mod pullthrough;
+pub mod session;
+pub mod session_publication;
+pub mod session_witness;
 mod snapmeta;
 mod writeback;
 pub use blobstore::{BlobBackend, BlobError, BlobId, BlobStore, MemBlobBackend, blob_id};

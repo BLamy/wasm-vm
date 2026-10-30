@@ -1,0 +1,79 @@
+{
+  "verdict": "verified",
+  "task": "E9-T09",
+  "accepted_base": "2dafe690",
+  "runtime_candidate": "b75afc6cf7e5037abbf206b838019d228c60a00a",
+  "final_source_harness": "be521e3ebca19089471c3b5a22c924916e953187",
+  "submission": "e44ed547a9b6f50981c1fa25c97d88bed5a0d34d",
+  "predictions": [
+    {
+      "id": "P1",
+      "status": "HELD"
+    },
+    {
+      "id": "P2",
+      "status": "HELD"
+    },
+    {
+      "id": "P3",
+      "status": "HELD"
+    },
+    {
+      "id": "P4",
+      "status": "HELD"
+    },
+    {
+      "id": "P5",
+      "status": "HELD"
+    },
+    {
+      "id": "P6",
+      "status": "HELD"
+    },
+    {
+      "id": "P7",
+      "status": "HELD"
+    },
+    {
+      "id": "P8",
+      "status": "HELD"
+    },
+    {
+      "id": "P9a",
+      "status": "HELD"
+    },
+    {
+      "id": "P10",
+      "status": "HELD"
+    },
+    {
+      "id": "P11",
+      "status": "HELD"
+    },
+    {
+      "id": "P12",
+      "status": "HELD"
+    },
+    {
+      "id": "P13",
+      "status": "HELD"
+    },
+    {
+      "id": "P14",
+      "status": "HELD"
+    },
+    {
+      "id": "P15",
+      "status": "HELD"
+    }
+  ],
+  "revised_plan": {
+    "original": "P9 planned a larger Wasmtime next-event-cap sabotage.",
+    "replacement": "P9a substituted a direct exact-seek-fence sabotage before execution because disk space was constrained. It fails the unchanged new core test at line171, observed1000 versus expected10. The abandoned specific mutation was not run or claimed."
+  },
+  "runtime_findings": [],
+  "coverage": "coverage.md; explicit declarative/diagnostic/unreachable-admission waivers only",
+  "promoted_test": "crates/jit-runtime/tests/e9_event_clock_critic.rs",
+  "promoted_test_sha256": "8216a282f29db856f37848df1aa1023d5614ece23b4e8c9df6b690ada270a02d",
+  "scope": "Common single-hart ICount event clock/mailbox and exact interpreter/actual JIT boundaries, native snapshots and bare-board ABI. Linux providers/continuous replay remain T10\u2013T14/checkpoints-only."
+}

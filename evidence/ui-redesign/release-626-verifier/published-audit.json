@@ -1,0 +1,2690 @@
+{
+  "head": "27e1f3acb369a4f9dd1ce5373b2727fb1530fbaa",
+  "publishedSource": "d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4",
+  "origin": "https://9f071e86.wasm-vm.pages.dev",
+  "bad": [],
+  "manifests": [
+    {
+      "file": "SHA256SUMS",
+      "sha256": "0f916f08892997d2988d242013620213b05e08c6a6bb3ea2b2669f6c3e9ec87d",
+      "files": 46
+    },
+    {
+      "file": "target-SHA256SUMS",
+      "sha256": "aaf3af98a393646333422a4996941e30ca1320ef680563f14cc00e6314247b14",
+      "files": 4
+    }
+  ],
+  "claimChanges": [
+    "evidence/ui-redesign/release-626/HEAD",
+    "evidence/ui-redesign/release-626/SHA256SUMS",
+    "evidence/ui-redesign/release-626/checkout-disk-full/cold-clone-run.py",
+    "evidence/ui-redesign/release-626/checkout-disk-full/cold-clone.log",
+    "evidence/ui-redesign/release-626/checkout-disk-full/failure-summary.json",
+    "evidence/ui-redesign/release-626/deploy-command.json",
+    "evidence/ui-redesign/release-626/deploy.log",
+    "evidence/ui-redesign/release-626/final-dist-sha256.json",
+    "evidence/ui-redesign/release-626/final-reconcile.py",
+    "evidence/ui-redesign/release-626/final-reconciliation.json",
+    "evidence/ui-redesign/release-626/metadata-refresh.json",
+    "evidence/ui-redesign/release-626/metadata-refresh.log",
+    "evidence/ui-redesign/release-626/post-repair-metadata-refresh.json",
+    "evidence/ui-redesign/release-626/post-repair-metadata-refresh.log",
+    "evidence/ui-redesign/release-626/pristine/cold-clone-dist-sha256.json",
+    "evidence/ui-redesign/release-626/pristine/cold-clone-run.py",
+    "evidence/ui-redesign/release-626/pristine/cold-clone.json",
+    "evidence/ui-redesign/release-626/pristine/cold-clone.log",
+    "evidence/ui-redesign/release-626/publish-final.py",
+    "evidence/ui-redesign/release-626/published-first-cache-body-failure/failure-summary.json",
+    "evidence/ui-redesign/release-626/published-first-cache-body-failure/published-smoke.json",
+    "evidence/ui-redesign/release-626/published-first-cache-body-failure/published-smoke.log",
+    "evidence/ui-redesign/release-626/published-first-cache-body-failure/published-smoke.mjs",
+    "evidence/ui-redesign/release-626/published-smoke.mjs",
+    "evidence/ui-redesign/release-626/published/deployed-manifests/artifacts-alpine.json",
+    "evidence/ui-redesign/release-626/published/deployed-manifests/artifacts-node-alpine.json",
+    "evidence/ui-redesign/release-626/published/deployed-manifests/artifacts-omarchy-virgl.json",
+    "evidence/ui-redesign/release-626/published/deployed-manifests/artifacts-omarchy.json",
+    "evidence/ui-redesign/release-626/published/deployed-manifests/artifacts.json",
+    "evidence/ui-redesign/release-626/published/published-cases-phone.png",
+    "evidence/ui-redesign/release-626/published/published-current-session-reference.png",
+    "evidence/ui-redesign/release-626/published/published-docs-desktop.png",
+    "evidence/ui-redesign/release-626/published/published-docs-phone.png",
+    "evidence/ui-redesign/release-626/published/published-docs-recordings.png",
+    "evidence/ui-redesign/release-626/published/published-home-desktop.png",
+    "evidence/ui-redesign/release-626/published/published-home-phone.png",
+    "evidence/ui-redesign/release-626/published/published-smoke.json",
+    "evidence/ui-redesign/release-626/published/published-smoke.log",
+    "evidence/ui-redesign/release-626/published/published-workspace.png",
+    "evidence/ui-redesign/release-626/refresh-final-metadata.py",
+    "evidence/ui-redesign/release-626/release-claim.json",
+    "evidence/ui-redesign/release-626/release-inputs.json",
+    "evidence/ui-redesign/release-626/release-manifest-records.tsv",
+    "evidence/ui-redesign/release-626/release-manifest-urls.txt",
+    "evidence/ui-redesign/release-626/reproducibility.json",
+    "evidence/ui-redesign/release-626/run-published-proof.py",
+    "evidence/ui-redesign/release-626/target-SHA256SUMS",
+    "tasks/epic-0-ignition/E0-T32-docstream-refresh.md"
+  ],
+  "staticArchivedMismatches": [],
+  "deployLogSha256": "36dd33cb484758b0a82c2898e5dd449d9373c985c3a16cc9179cfa9e21b9d144",
+  "checks": [
+    "25 published interface, documentation, manifest and runtime files match the staged deployment byte for byte",
+    "Published docs catalog identifies the pinned current Docstream release",
+    "Published catalog retains the four immutable current session contracts beside its historical inventory",
+    "Published homepage renders with its main starting action",
+    "Published docs load the reader and shared navigation",
+    "Published ranked search focuses the right section, renders the real Mermaid SVG and resolves the recording image",
+    "Published current session reference shows immutable source provenance and Markdown download",
+    "Nested Pages404 mounts library recovery controls and returns to the homepage",
+    "Published390px phone homepage fits and the menu opens the docs",
+    "Published phone library search opens the matched section, closes its overlay and keeps focus on the heading",
+    "All four published case-study routes load their shared navigation and fit390px",
+    "Published main action starts the real BusyBox guest and evaluates an arithmetic shell command",
+    "187 completed same-origin browser responses also match the staged deployment",
+    "Zero unexpected HTTP, console, page or requested-asset binding errors throughout the published smoke test"
+  ],
+  "cacheOnlyRecorderDiff": true,
+  "manifestURLChanges": [
+    {
+      "manifest": "artifacts.json",
+      "role": "kernel",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "manifest": "artifacts.json",
+      "role": "initramfs",
+      "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+      "size": 1151596,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz"
+    },
+    {
+      "manifest": "artifacts-alpine.json",
+      "role": "kernel",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "manifest": "artifacts-alpine.json",
+      "role": "rootfs",
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "size": 536870912,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4"
+    },
+    {
+      "manifest": "artifacts-node-alpine.json",
+      "role": "kernel",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "manifest": "artifacts-node-alpine.json",
+      "role": "rootfs",
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "size": 536870912,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4"
+    },
+    {
+      "manifest": "artifacts-node-alpine.json",
+      "role": "bootSnapshot",
+      "sha256": "f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0",
+      "size": 55211220,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0/releases/boot-snapshot/node-alpine-ready.snap.gz"
+    },
+    {
+      "manifest": "artifacts-omarchy.json",
+      "role": "kernel",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "size": 24208896,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image"
+    },
+    {
+      "manifest": "artifacts-omarchy.json",
+      "role": "bootSnapshot",
+      "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22",
+      "size": 210695930,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22/releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz"
+    },
+    {
+      "manifest": "artifacts-omarchy-virgl.json",
+      "role": "kernel",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "size": 24208896,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image"
+    },
+    {
+      "manifest": "artifacts-omarchy-virgl.json",
+      "role": "gpuCheckpoint",
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd",
+      "size": 204057731,
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd/releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair"
+    }
+  ],
+  "fixedMismatch": [],
+  "requestedMismatch": [],
+  "traces": [
+    {
+      "trace": "published-smoke",
+      "records": 284,
+      "completedSameOriginBodies": 80,
+      "omittedScriptBodies": [
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/landing-page.js?rev=a8dc5cea468b",
+          "path": "landing-page.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/landing-benchmarks.js?rev=6684c97e4134",
+          "path": "landing-benchmarks.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/hero-scene.js?rev=ac35169fc0ff",
+          "path": "hero-scene.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/vendor/three/three.module.js",
+          "path": "vendor/three/three.module.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.js?rev=0a1589548c88",
+          "path": "docs-bundle/reader.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-MEXED75X.js",
+          "path": "docs-bundle/features/chunk-MEXED75X.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-RDJI3AYG.js",
+          "path": "docs-bundle/features/chunk-RDJI3AYG.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-IPZFZIGH.js",
+          "path": "docs-bundle/features/chunk-IPZFZIGH.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-GAM65FTX.js",
+          "path": "docs-bundle/features/chunk-GAM65FTX.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-6FDQBZ6Z.js",
+          "path": "docs-bundle/features/chunk-6FDQBZ6Z.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/lazy-NGSQG3AA.js",
+          "path": "docs-bundle/features/lazy-NGSQG3AA.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-KZODYCKQ.js",
+          "path": "docs-bundle/features/chunk-KZODYCKQ.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-ZRCI2HFI.js",
+          "path": "docs-bundle/features/chunk-ZRCI2HFI.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-VVEVEBMX.js",
+          "path": "docs-bundle/features/chunk-VVEVEBMX.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/NV4XNBIS-QFPRWFAN.js",
+          "path": "docs-bundle/features/NV4XNBIS-QFPRWFAN.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-CI6UYDNQ.js",
+          "path": "docs-bundle/features/chunk-CI6UYDNQ.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-G5TBDEZO.js",
+          "path": "docs-bundle/features/chunk-G5TBDEZO.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-WW4UI3Z5.js",
+          "path": "docs-bundle/features/chunk-WW4UI3Z5.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-BSMZAGTF.js",
+          "path": "docs-bundle/features/chunk-BSMZAGTF.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-7FGKHIQB.js",
+          "path": "docs-bundle/features/chunk-7FGKHIQB.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-TFRZ4KN6.js",
+          "path": "docs-bundle/features/chunk-TFRZ4KN6.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-4QXXKJCR.js",
+          "path": "docs-bundle/features/chunk-4QXXKJCR.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-WMUEMNY4.js",
+          "path": "docs-bundle/features/chunk-WMUEMNY4.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-KHBPBMEI.js",
+          "path": "docs-bundle/features/chunk-KHBPBMEI.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-2ERFTDLL.js",
+          "path": "docs-bundle/features/chunk-2ERFTDLL.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.js?rev=0a1589548c88",
+          "path": "docs-bundle/reader.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-MEXED75X.js",
+          "path": "docs-bundle/features/chunk-MEXED75X.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-GAM65FTX.js",
+          "path": "docs-bundle/features/chunk-GAM65FTX.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-RDJI3AYG.js",
+          "path": "docs-bundle/features/chunk-RDJI3AYG.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-6FDQBZ6Z.js",
+          "path": "docs-bundle/features/chunk-6FDQBZ6Z.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-IPZFZIGH.js",
+          "path": "docs-bundle/features/chunk-IPZFZIGH.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/landing-benchmarks.js?rev=6684c97e4134",
+          "path": "landing-benchmarks.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/landing-page.js?rev=a8dc5cea468b",
+          "path": "landing-page.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/hero-scene.js?rev=ac35169fc0ff",
+          "path": "hero-scene.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/vendor/three/three.module.js",
+          "path": "vendor/three/three.module.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/vendor/xterm/addon-fit.js",
+          "path": "vendor/xterm/addon-fit.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/tabs.js",
+          "path": "tabs.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ide.js",
+          "path": "ide.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/vendor/xterm/xterm.js",
+          "path": "vendor/xterm/xterm.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/omarchy-startup-state.js",
+          "path": "omarchy-startup-state.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/cpu-isolation.js",
+          "path": "cpu-isolation.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/coi-serviceworker-register.js",
+          "path": "coi-serviceworker-register.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/main.js",
+          "path": "main.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/overlay-reset-target.js",
+          "path": "overlay-reset-target.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-timeline.js",
+          "path": "session-timeline.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-library.js",
+          "path": "session-library.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/roadmap.js",
+          "path": "roadmap.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/gpu-checkpoint-build.js",
+          "path": "gpu-checkpoint-build.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/linux-worker-host.js",
+          "path": "linux-worker-host.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/riscv-tests.js",
+          "path": "riscv-tests.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+          "path": "pkg/wasm_vm_wasm.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-gpu-reader-demo.js",
+          "path": "session-gpu-reader-demo.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/viewport.js",
+          "path": "src/sink/viewport.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/input/keyboard.js",
+          "path": "src/input/keyboard.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-keyframe-probe.js",
+          "path": "session-keyframe-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/device-completions-probe.js",
+          "path": "device-completions-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/event-clock-probe.js",
+          "path": "event-clock-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-replay-probe.js",
+          "path": "session-replay-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/guest-rpc.js",
+          "path": "guest-rpc.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/loader.js",
+          "path": "loader.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/unrecorded-control-probe.js",
+          "path": "unrecorded-control-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/omarchy-desktop-readiness.js",
+          "path": "omarchy-desktop-readiness.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/terminal.js",
+          "path": "terminal.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/input/pointer.js",
+          "path": "src/input/pointer.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/file-transfer.js",
+          "path": "file-transfer.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/input/reconciliation.js",
+          "path": "src/input/reconciliation.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/input/capture.js",
+          "path": "src/input/capture.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/microphone.js",
+          "path": "src/audio/microphone.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/capture-ring.js",
+          "path": "src/audio/capture-ring.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/input/held-keys.js",
+          "path": "src/input/held-keys.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/sink.js",
+          "path": "src/audio/sink.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-streamed-replay-probe.js",
+          "path": "session-streamed-replay-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/presentation.js",
+          "path": "src/sink/presentation.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/desktop-restore.js",
+          "path": "desktop-restore.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/gpu-journal-stream-probe.js",
+          "path": "gpu-journal-stream-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/input-recording-probe.js",
+          "path": "input-recording-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/owned-http-probe.js",
+          "path": "owned-http-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-seek-probe.js",
+          "path": "session-seek-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/cursor-controller.js",
+          "path": "src/sink/cursor-controller.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/network-capture-probe.js",
+          "path": "network-capture-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "path": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/time-entropy-probe.js",
+          "path": "time-entropy-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/witness-pages-probe.js",
+          "path": "witness-pages-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/boot-progress.js",
+          "path": "boot-progress.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-timeline-runtime.js",
+          "path": "session-timeline-runtime.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/desktop-agent-session.js",
+          "path": "desktop-agent-session.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/cold-counter-recycling.js",
+          "path": "cold-counter-recycling.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/autoplay.js",
+          "path": "src/audio/autoplay.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/linux-worker-protocol.js",
+          "path": "linux-worker-protocol.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-store.js",
+          "path": "session-store.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+          "path": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "path": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-gpu-replay.js",
+          "path": "session-gpu-replay.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/worklet.js",
+          "path": "src/audio/worklet.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/canvas2d.js",
+          "path": "src/sink/canvas2d.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+          "path": "session-pkg/wasm_vm_session.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/webgl.js",
+          "path": "src/sink/webgl.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-network.js",
+          "path": "session-network.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-block-transfer-probe.js",
+          "path": "session-block-transfer-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/gpu-history-reader-probe.js",
+          "path": "gpu-history-reader-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/task-quiescence.js",
+          "path": "task-quiescence.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/decoded-cache.js",
+          "path": "decoded-cache.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/snapshot-stream.js",
+          "path": "snapshot-stream.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-inputs.js",
+          "path": "session-inputs.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/guest-clock.js",
+          "path": "guest-clock.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/osc52.js",
+          "path": "osc52.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-gpu-journal.js",
+          "path": "session-gpu-journal.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-gpu-history-reader.js",
+          "path": "session-gpu-history-reader.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/frame-scheduler.js",
+          "path": "src/sink/frame-scheduler.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/capture-worklet.js",
+          "path": "src/audio/capture-worklet.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/visibility-scheduler.js",
+          "path": "src/sink/visibility-scheduler.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-checkpoints.js",
+          "path": "session-checkpoints.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/boot-asset-cache.js",
+          "path": "boot-asset-cache.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/boot-path.js",
+          "path": "boot-path.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/production.mjs",
+          "path": "renderer/virgl-command/production.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-seek.js",
+          "path": "session-seek.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/audio/ring.js",
+          "path": "src/audio/ring.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/cursor.js",
+          "path": "src/sink/cursor.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/admission-probe.js",
+          "path": "admission-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/input/keymap.js",
+          "path": "src/input/keymap.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/overlay-seed-identity.js",
+          "path": "overlay-seed-identity.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-devices.js",
+          "path": "session-devices.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/gpu-checkpoint.js",
+          "path": "gpu-checkpoint.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/paste.js",
+          "path": "paste.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/progress.js",
+          "path": "progress.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-witness-graph.js",
+          "path": "session-witness-graph.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-witness-archives.js",
+          "path": "session-witness-archives.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/desktop-agent-bridge.js",
+          "path": "desktop-agent-bridge.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-witness-pages.js",
+          "path": "session-witness-pages.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-keyframes.js",
+          "path": "session-keyframes.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-witness-graph-limits.js",
+          "path": "session-witness-graph-limits.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-witnesses.js",
+          "path": "session-witnesses.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/agent-channel.js",
+          "path": "agent-channel.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/checkpoint-codec.mjs",
+          "path": "renderer/virgl-command/checkpoint-codec.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/src/sink/present-backend.js",
+          "path": "src/sink/present-backend.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-gpu-frame-inspection.js",
+          "path": "session-gpu-frame-inspection.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/checkpoint-profile.mjs",
+          "path": "renderer/virgl-command/checkpoint-profile.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-disk-roots.js",
+          "path": "session-disk-roots.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-branch-format.js",
+          "path": "session-branch-format.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-gpu-replay-format.js",
+          "path": "session-gpu-replay-format.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/float-images.mjs",
+          "path": "renderer/virgl-command/float-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/multisample.mjs",
+          "path": "renderer/virgl-command/multisample.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/packed-unsigned-images.mjs",
+          "path": "renderer/virgl-command/packed-unsigned-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/integer-images.mjs",
+          "path": "renderer/virgl-command/integer-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/packed-normalized-images.mjs",
+          "path": "renderer/virgl-command/packed-normalized-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/floating-depth-images.mjs",
+          "path": "renderer/virgl-command/floating-depth-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/checkpoint.mjs",
+          "path": "renderer/virgl-command/checkpoint.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/color-images.mjs",
+          "path": "renderer/virgl-command/color-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/shared-exponent-images.mjs",
+          "path": "renderer/virgl-command/shared-exponent-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/packed-float-images.mjs",
+          "path": "renderer/virgl-command/packed-float-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/unorm-depth-images.mjs",
+          "path": "renderer/virgl-command/unorm-depth-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-shader/standard.mjs",
+          "path": "renderer/virgl-shader/standard.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/session-bundle-format.js",
+          "path": "session-bundle-format.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/decoder.mjs",
+          "path": "renderer/virgl-command/decoder.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/resources.mjs",
+          "path": "renderer/virgl-command/resources.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/checkpoint-dma.mjs",
+          "path": "renderer/virgl-command/checkpoint-dma.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/control-bridge.mjs",
+          "path": "renderer/virgl-command/control-bridge.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/floating-depth-gpu.mjs",
+          "path": "renderer/virgl-command/floating-depth-gpu.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/dimensional-depth-images.mjs",
+          "path": "renderer/virgl-command/dimensional-depth-images.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/shared-exponent-gpu.mjs",
+          "path": "renderer/virgl-command/shared-exponent-gpu.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/scanout.mjs",
+          "path": "renderer/virgl-command/scanout.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/state.mjs",
+          "path": "renderer/virgl-command/state.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/queries.mjs",
+          "path": "renderer/virgl-command/queries.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/cache.mjs",
+          "path": "renderer/virgl-command/cache.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-shader/index.mjs",
+          "path": "renderer/virgl-shader/index.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/constant-domain.mjs",
+          "path": "renderer/virgl-command/constant-domain.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/linux-worker.js",
+          "path": "linux-worker.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/linux-worker-protocol.js",
+          "path": "linux-worker-protocol.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/loader.js",
+          "path": "loader.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/boot-path.js",
+          "path": "boot-path.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/overlay-seed-identity.js",
+          "path": "overlay-seed-identity.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/gpu-checkpoint.js",
+          "path": "gpu-checkpoint.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/task-quiescence.js",
+          "path": "task-quiescence.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/guest-clock.js",
+          "path": "guest-clock.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/decoded-cache.js",
+          "path": "decoded-cache.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/boot-asset-cache.js",
+          "path": "boot-asset-cache.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/snapshot-stream.js",
+          "path": "snapshot-stream.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/admission-probe.js",
+          "path": "admission-probe.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/renderer/virgl-command/checkpoint-codec.mjs",
+          "path": "renderer/virgl-command/checkpoint-codec.mjs",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/gpu-checkpoint-build.js",
+          "path": "gpu-checkpoint-build.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/cold-counter-recycling.js",
+          "path": "cold-counter-recycling.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+          "path": "pkg/wasm_vm_wasm.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "path": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+          "path": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "path": "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        }
+      ],
+      "missingCompletedBodies": [],
+      "responseBodyCalls": 240,
+      "responseBodyFailures": [],
+      "unexpectedHTTP": [],
+      "unresolvedActions": [],
+      "recoveredPollAssertions": [],
+      "knownNested404ConsoleErrors": 1
+    },
+    {
+      "trace": "published-phone",
+      "records": 60,
+      "completedSameOriginBodies": 40,
+      "omittedScriptBodies": [
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/landing-page.js?rev=a8dc5cea468b",
+          "path": "landing-page.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/landing-benchmarks.js?rev=6684c97e4134",
+          "path": "landing-benchmarks.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/hero-scene.js?rev=ac35169fc0ff",
+          "path": "hero-scene.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/vendor/three/three.module.js",
+          "path": "vendor/three/three.module.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.js?rev=0a1589548c88",
+          "path": "docs-bundle/reader.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-GAM65FTX.js",
+          "path": "docs-bundle/features/chunk-GAM65FTX.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-MEXED75X.js",
+          "path": "docs-bundle/features/chunk-MEXED75X.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-6FDQBZ6Z.js",
+          "path": "docs-bundle/features/chunk-6FDQBZ6Z.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-IPZFZIGH.js",
+          "path": "docs-bundle/features/chunk-IPZFZIGH.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/features/chunk-RDJI3AYG.js",
+          "path": "docs-bundle/features/chunk-RDJI3AYG.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        },
+        {
+          "url": "https://9f071e86.wasm-vm.pages.dev/ui.js?rev=c4e7bb0de506",
+          "path": "ui.js",
+          "size": -1,
+          "mime": "application/javascript",
+          "api": false
+        }
+      ],
+      "missingCompletedBodies": [],
+      "responseBodyCalls": 50,
+      "responseBodyFailures": [],
+      "unexpectedHTTP": [],
+      "unresolvedActions": [],
+      "recoveredPollAssertions": [],
+      "knownNested404ConsoleErrors": 0
+    }
+  ],
+  "fixedBodiesMissing": [],
+  "requestedRawBodiesNotRetained": [
+    "landing-page.js",
+    "landing-benchmarks.js",
+    "hero-scene.js",
+    "ui.js",
+    "vendor/three/three.module.js",
+    "docs-bundle/reader.js",
+    "docs-bundle/features/chunk-MEXED75X.js",
+    "docs-bundle/features/chunk-RDJI3AYG.js",
+    "docs-bundle/features/chunk-IPZFZIGH.js",
+    "docs-bundle/features/chunk-GAM65FTX.js",
+    "docs-bundle/features/chunk-6FDQBZ6Z.js",
+    "docs-bundle/features/lazy-NGSQG3AA.js",
+    "docs-bundle/features/chunk-KZODYCKQ.js",
+    "docs-bundle/features/chunk-ZRCI2HFI.js",
+    "docs-bundle/features/chunk-VVEVEBMX.js",
+    "docs-bundle/features/NV4XNBIS-QFPRWFAN.js",
+    "docs-bundle/features/chunk-CI6UYDNQ.js",
+    "docs-bundle/features/chunk-G5TBDEZO.js",
+    "docs-bundle/features/chunk-WW4UI3Z5.js",
+    "docs-bundle/features/chunk-BSMZAGTF.js",
+    "docs-bundle/features/chunk-7FGKHIQB.js",
+    "docs-bundle/features/chunk-TFRZ4KN6.js",
+    "docs-bundle/features/chunk-4QXXKJCR.js",
+    "docs-bundle/features/chunk-WMUEMNY4.js",
+    "docs-bundle/features/chunk-KHBPBMEI.js",
+    "docs-bundle/features/chunk-2ERFTDLL.js",
+    "vendor/xterm/addon-fit.js",
+    "tabs.js",
+    "ide.js",
+    "vendor/xterm/xterm.js",
+    "omarchy-startup-state.js",
+    "cpu-isolation.js",
+    "coi-serviceworker-register.js",
+    "main.js",
+    "overlay-reset-target.js",
+    "session-timeline.js",
+    "session-library.js",
+    "roadmap.js",
+    "gpu-checkpoint-build.js",
+    "linux-worker-host.js",
+    "riscv-tests.js",
+    "pkg/wasm_vm_wasm.js",
+    "session-gpu-reader-demo.js",
+    "src/sink/viewport.js",
+    "src/input/keyboard.js",
+    "session-keyframe-probe.js",
+    "device-completions-probe.js",
+    "event-clock-probe.js",
+    "session-replay-probe.js",
+    "guest-rpc.js",
+    "loader.js",
+    "unrecorded-control-probe.js",
+    "omarchy-desktop-readiness.js",
+    "terminal.js",
+    "src/input/pointer.js",
+    "file-transfer.js",
+    "src/input/reconciliation.js",
+    "src/input/capture.js",
+    "src/audio/microphone.js",
+    "src/audio/capture-ring.js",
+    "src/input/held-keys.js",
+    "src/audio/sink.js",
+    "session-streamed-replay-probe.js",
+    "src/sink/presentation.js",
+    "desktop-restore.js",
+    "gpu-journal-stream-probe.js",
+    "input-recording-probe.js",
+    "owned-http-probe.js",
+    "session-seek-probe.js",
+    "src/sink/cursor-controller.js",
+    "network-capture-probe.js",
+    "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+    "time-entropy-probe.js",
+    "witness-pages-probe.js",
+    "boot-progress.js",
+    "session-timeline-runtime.js",
+    "desktop-agent-session.js",
+    "cold-counter-recycling.js",
+    "src/audio/autoplay.js",
+    "linux-worker-protocol.js",
+    "session-store.js",
+    "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+    "pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "session-gpu-replay.js",
+    "src/audio/worklet.js",
+    "src/sink/canvas2d.js",
+    "session-pkg/wasm_vm_session.js",
+    "src/sink/webgl.js",
+    "session-network.js",
+    "session-block-transfer-probe.js",
+    "gpu-history-reader-probe.js",
+    "task-quiescence.js",
+    "decoded-cache.js",
+    "snapshot-stream.js",
+    "session-inputs.js",
+    "guest-clock.js",
+    "osc52.js",
+    "session-gpu-journal.js",
+    "session-gpu-history-reader.js",
+    "src/sink/frame-scheduler.js",
+    "src/audio/capture-worklet.js",
+    "src/sink/visibility-scheduler.js",
+    "session-checkpoints.js",
+    "boot-asset-cache.js",
+    "boot-path.js",
+    "renderer/virgl-command/production.mjs",
+    "session-seek.js",
+    "src/audio/ring.js",
+    "src/sink/cursor.js",
+    "admission-probe.js",
+    "src/input/keymap.js",
+    "overlay-seed-identity.js",
+    "session-devices.js",
+    "gpu-checkpoint.js",
+    "paste.js",
+    "progress.js",
+    "session-witness-graph.js",
+    "session-witness-archives.js",
+    "desktop-agent-bridge.js",
+    "session-witness-pages.js",
+    "session-keyframes.js",
+    "session-witness-graph-limits.js",
+    "session-witnesses.js",
+    "agent-channel.js",
+    "renderer/virgl-command/checkpoint-codec.mjs",
+    "src/sink/present-backend.js",
+    "session-gpu-frame-inspection.js",
+    "renderer/virgl-command/checkpoint-profile.mjs",
+    "session-disk-roots.js",
+    "session-branch-format.js",
+    "session-gpu-replay-format.js",
+    "renderer/virgl-command/float-images.mjs",
+    "renderer/virgl-command/multisample.mjs",
+    "renderer/virgl-command/packed-unsigned-images.mjs",
+    "renderer/virgl-command/integer-images.mjs",
+    "renderer/virgl-command/packed-normalized-images.mjs",
+    "renderer/virgl-command/floating-depth-images.mjs",
+    "renderer/virgl-command/checkpoint.mjs",
+    "renderer/virgl-command/color-images.mjs",
+    "renderer/virgl-command/shared-exponent-images.mjs",
+    "renderer/virgl-command/packed-float-images.mjs",
+    "renderer/virgl-command/unorm-depth-images.mjs",
+    "renderer/virgl-shader/standard.mjs",
+    "session-bundle-format.js",
+    "renderer/virgl-command/decoder.mjs",
+    "renderer/virgl-command/resources.mjs",
+    "renderer/virgl-command/checkpoint-dma.mjs",
+    "renderer/virgl-command/control-bridge.mjs",
+    "renderer/virgl-command/floating-depth-gpu.mjs",
+    "renderer/virgl-command/dimensional-depth-images.mjs",
+    "renderer/virgl-command/shared-exponent-gpu.mjs",
+    "renderer/virgl-command/scanout.mjs",
+    "renderer/virgl-command/state.mjs",
+    "renderer/virgl-command/queries.mjs",
+    "renderer/virgl-command/cache.mjs",
+    "renderer/virgl-shader/index.mjs",
+    "renderer/virgl-command/constant-domain.mjs",
+    "linux-worker.js"
+  ],
+  "unjustifiedMissingBodies": [],
+  "retainedRequestedBodyCount": 29,
+  "recordedScriptDigestCount": 158,
+  "rawBodyRetentionQualification": "Playwright1.49.1 tracing.js:130 sets omitScripts: !options.live; harTracer.js:273 deliberately omits loaded script bytes. All requested response.body reads complete as Buffer; strict live SHA receipt binds187 distinct assets to frozen bytes.25 fixed API bodies and29 distinct requested non-script bodies are independently recomputed from trace resources. No full raw-script archival claim.",
+  "recordedBodies": [
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/",
+      "path": "index.html",
+      "sha256": "84a5db0f8fd9a8a94b0e1f10f0f238f7f942219471bb920cec544cd870e5522b",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/app",
+      "path": "app",
+      "sha256": "bfc9a4edbf8d539f2b09239c92d576ea3f73a53d8079ea30784cf95324f014d8",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/404",
+      "path": "404",
+      "sha256": "60ace161a2345a6a1b06800f90c85be32997054fb1c0a0ff4ac45a12435e7fc7",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs",
+      "path": "docs",
+      "sha256": "3ba159f5cb8f16722f25df0fdb1d224fd7012ab2fe9d2e7451c2a09a55a86d86",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/roadmap",
+      "path": "roadmap",
+      "sha256": "f632696b013c5436051f7b441c80b6a5a5ce98f4a4cf4a02e07435cad84bcd83",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.js",
+      "path": "ui.js",
+      "sha256": "c4e7bb0de5067de0df8e4832cfa7a0b63aaf5309c587cca2b64cb0d6c5c06967",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/main.js",
+      "path": "main.js",
+      "sha256": "bcd242caf54db8c37c66e850a887f66d63d7dd4dc0cf995803e32c11b7e4e085",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-studies",
+      "path": "case-studies",
+      "sha256": "c95cf2108819e7d62e93bc9305b9e273d3ca430e1dd4fb080f57d0ced73d1aeb",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-study-riscv-os",
+      "path": "case-study-riscv-os",
+      "sha256": "5dd64f1944867f3f4daef908cd71f20c982fdfd883191d3bacb74b1aeaeeb3ee",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-study-ai-sandboxing",
+      "path": "case-study-ai-sandboxing",
+      "sha256": "1dac3abf924b8fad33d69e7a0c4947ae4d06d9376e1c5aa49a32fcc2d77b1a2f",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-study-deterministic-simulation",
+      "path": "case-study-deterministic-simulation",
+      "sha256": "aac8f9d01720305df87d72c1f740b2b711e38e960f67ed95d68e99b2f19f34eb",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.js",
+      "path": "docs-bundle/reader.js",
+      "sha256": "0a1589548c888adf8b40d151a30822f785401c382447e853e30126c56b4e17e4",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.css",
+      "path": "docs-bundle/reader.css",
+      "sha256": "33e148c92f586ab66c80db7480f6b13aaefe0b1ae43190e14465ba3049092d4b",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/catalog.json",
+      "path": "docs-content/catalog.json",
+      "sha256": "378d7197bea2e739088a8470324f985b57a226dc2942afff1a9b97ac06441c75",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/search-corpus.json",
+      "path": "docs-content/search-corpus.json",
+      "sha256": "917bd865a9ae95e005c5d7c21e70e03163df4232c4dd0dec542799f4113bb9d9",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts.json",
+      "path": "artifacts.json",
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-alpine.json",
+      "path": "artifacts-alpine.json",
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-node-alpine.json",
+      "path": "artifacts-node-alpine.json",
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-omarchy.json",
+      "path": "artifacts-omarchy.json",
+      "sha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-omarchy-virgl.json",
+      "path": "artifacts-omarchy-virgl.json",
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "path": "session-pkg/wasm_vm_session_bg.wasm",
+      "sha256": "e3b3808e48698cc1f07d34081f736a86a3c599a8855d4222fbdff276823e010a",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/gpu-checkpoint-build.js",
+      "path": "gpu-checkpoint-build.js",
+      "sha256": "8ed33182214ddebe074ff5bbded084e581f68ca200119f0d4d105be06aeb6a47",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/catalog.json",
+      "path": "docs-content/catalog.json",
+      "sha256": "378d7197bea2e739088a8470324f985b57a226dc2942afff1a9b97ac06441c75",
+      "api": true
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/",
+      "path": "index.html",
+      "sha256": "84a5db0f8fd9a8a94b0e1f10f0f238f7f942219471bb920cec544cd870e5522b",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/runtime-compute-benchmarks.json?rev=3a2070175a1b",
+      "path": "runtime-compute-benchmarks.json",
+      "sha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/runtime-benchmarks.json?rev=a455f3d0c479",
+      "path": "runtime-benchmarks.json",
+      "sha256": "a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs?page=overview",
+      "path": "docs",
+      "sha256": "3ba159f5cb8f16722f25df0fdb1d224fd7012ab2fe9d2e7451c2a09a55a86d86",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.css?rev=33e148c92f58",
+      "path": "docs-bundle/reader.css",
+      "sha256": "33e148c92f586ab66c80db7480f6b13aaefe0b1ae43190e14465ba3049092d4b",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/catalog.json?rev=9fdc9e3e648e",
+      "path": "docs-content/catalog.json",
+      "sha256": "378d7197bea2e739088a8470324f985b57a226dc2942afff1a9b97ac06441c75",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/overview.md?sha=42f1b35bec9f",
+      "path": "docs-content/overview.md",
+      "sha256": "42f1b35bec9f1bc260d5dc0f4d815830f6aafb1aba3a132161cd13d9d6180387",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/search-corpus.json?rev=9fdc9e3e648e",
+      "path": "docs-content/search-corpus.json",
+      "sha256": "917bd865a9ae95e005c5d7c21e70e03163df4232c4dd0dec542799f4113bb9d9",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/time-travel.md?sha=773651ea027c",
+      "path": "docs-content/time-travel.md",
+      "sha256": "773651ea027ce0f77f93e5e19b97beea35faebca42a1f157201b6c5a1cb5e5c6",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/images/recordings.png",
+      "path": "docs-content/images/recordings.png",
+      "sha256": "a374c7bf2c21fa9e20ac15f0051ed8f8a057ca81a96a5b41e87e46db0d5b88d2",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/images/recordings.png",
+      "path": "docs-content/images/recordings.png",
+      "sha256": "a374c7bf2c21fa9e20ac15f0051ed8f8a057ca81a96a5b41e87e46db0d5b88d2",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs?page=current-docs-design-session-replay",
+      "path": "docs",
+      "sha256": "3ba159f5cb8f16722f25df0fdb1d224fd7012ab2fe9d2e7451c2a09a55a86d86",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.css?rev=33e148c92f58",
+      "path": "docs-bundle/reader.css",
+      "sha256": "33e148c92f586ab66c80db7480f6b13aaefe0b1ae43190e14465ba3049092d4b",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/catalog.json?rev=9fdc9e3e648e",
+      "path": "docs-content/catalog.json",
+      "sha256": "378d7197bea2e739088a8470324f985b57a226dc2942afff1a9b97ac06441c75",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/current-docs-design-session-replay.md?sha=504dd5ea94ce",
+      "path": "docs-content/current-docs-design-session-replay.md",
+      "sha256": "504dd5ea94ce693f6ffd3cc499e27fa5249d43171d141c55c4d263f150f6d476",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/",
+      "path": "index.html",
+      "sha256": "84a5db0f8fd9a8a94b0e1f10f0f238f7f942219471bb920cec544cd870e5522b",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/runtime-benchmarks.json?rev=a455f3d0c479",
+      "path": "runtime-benchmarks.json",
+      "sha256": "a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/runtime-compute-benchmarks.json?rev=3a2070175a1b",
+      "path": "runtime-compute-benchmarks.json",
+      "sha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/app?guest=busybox",
+      "path": "app",
+      "sha256": "bfc9a4edbf8d539f2b09239c92d576ea3f73a53d8079ea30784cf95324f014d8",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/session-library.css",
+      "path": "session-library.css",
+      "sha256": "bf78253a4944e1fcb255240d8c41bacd864bf637834451f2488064407196f435",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/vendor/xterm/xterm.css",
+      "path": "vendor/xterm/xterm.css",
+      "sha256": "ba8e6985669488981ccf40c0cefe3aba80722cb6c92de7ad628b0bd717faf2b6",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "path": "session-pkg/wasm_vm_session_bg.wasm",
+      "sha256": "e3b3808e48698cc1f07d34081f736a86a3c599a8855d4222fbdff276823e010a",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/assets/hello.elf",
+      "path": "assets/hello.elf",
+      "sha256": "d562f9ec53be1727d7f4a0cf0f114d282cb18a414f2747579d50836d97373f92",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-alpine.json",
+      "path": "artifacts-alpine.json",
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-node-alpine.json",
+      "path": "artifacts-node-alpine.json",
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts-omarchy.json",
+      "path": "artifacts-omarchy.json",
+      "sha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/artifacts.json",
+      "path": "artifacts.json",
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "api": false
+    },
+    {
+      "trace": "published-smoke",
+      "url": "https://9f071e86.wasm-vm.pages.dev/releases/boot-snapshot/busybox-ready.snap.gz",
+      "path": "releases/boot-snapshot/busybox-ready.snap.gz",
+      "sha256": "4263563b0d04342dc052c019cd6e3ab265e9e3234f8f7e7086755533e85a3098",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/",
+      "path": "index.html",
+      "sha256": "84a5db0f8fd9a8a94b0e1f10f0f238f7f942219471bb920cec544cd870e5522b",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/runtime-benchmarks.json?rev=a455f3d0c479",
+      "path": "runtime-benchmarks.json",
+      "sha256": "a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/runtime-compute-benchmarks.json?rev=3a2070175a1b",
+      "path": "runtime-compute-benchmarks.json",
+      "sha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs",
+      "path": "docs",
+      "sha256": "3ba159f5cb8f16722f25df0fdb1d224fd7012ab2fe9d2e7451c2a09a55a86d86",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/reader.css?rev=33e148c92f58",
+      "path": "docs-bundle/reader.css",
+      "sha256": "33e148c92f586ab66c80db7480f6b13aaefe0b1ae43190e14465ba3049092d4b",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/catalog.json?rev=9fdc9e3e648e",
+      "path": "docs-content/catalog.json",
+      "sha256": "378d7197bea2e739088a8470324f985b57a226dc2942afff1a9b97ac06441c75",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/overview.md?sha=42f1b35bec9f",
+      "path": "docs-content/overview.md",
+      "sha256": "42f1b35bec9f1bc260d5dc0f4d815830f6aafb1aba3a132161cd13d9d6180387",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/search-corpus.json?rev=9fdc9e3e648e",
+      "path": "docs-content/search-corpus.json",
+      "sha256": "917bd865a9ae95e005c5d7c21e70e03163df4232c4dd0dec542799f4113bb9d9",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/docs-content/storage.md?sha=2d8bc27bc675",
+      "path": "docs-content/storage.md",
+      "sha256": "2d8bc27bc67502d89f0211c9f94d1189b65081a87e86e213597773b7c9c2eae3",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-studies",
+      "path": "case-studies",
+      "sha256": "c95cf2108819e7d62e93bc9305b9e273d3ca430e1dd4fb080f57d0ced73d1aeb",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-study-riscv-os",
+      "path": "case-study-riscv-os",
+      "sha256": "5dd64f1944867f3f4daef908cd71f20c982fdfd883191d3bacb74b1aeaeeb3ee",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-study-ai-sandboxing",
+      "path": "case-study-ai-sandboxing",
+      "sha256": "1dac3abf924b8fad33d69e7a0c4947ae4d06d9376e1c5aa49a32fcc2d77b1a2f",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/case-study-deterministic-simulation",
+      "path": "case-study-deterministic-simulation",
+      "sha256": "aac8f9d01720305df87d72c1f740b2b711e38e960f67ed95d68e99b2f19f34eb",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/site.css",
+      "path": "site.css",
+      "sha256": "ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui.css?rev=74f187f16a37",
+      "path": "ui.css",
+      "sha256": "74f187f16a375cf416d58e57783018e1fe3aa5d362abfdbec1bd1458d301d83a",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "path": "ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "api": false
+    },
+    {
+      "trace": "published-phone",
+      "url": "https://9f071e86.wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "path": "ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "api": false
+    }
+  ],
+  "startClick": [
+    "call@545"
+  ],
+  "trustedKeyboard": [
+    {
+      "call": "call@887",
+      "text": "printf 'preview-%s\\n' $((40+2))\n"
+    }
+  ],
+  "arithmeticDOMSnapshots": [
+    "before@call@895"
+  ],
+  "focusedSearchAssertions": [
+    "call@200"
+  ],
+  "caseNavigations": [
+    "https://9f071e86.wasm-vm.pages.dev/case-studies.html",
+    "https://9f071e86.wasm-vm.pages.dev/case-study-riscv-os.html",
+    "https://9f071e86.wasm-vm.pages.dev/case-study-ai-sandboxing.html",
+    "https://9f071e86.wasm-vm.pages.dev/case-study-deterministic-simulation.html"
+  ],
+  "phoneTaps": [
+    "call@409",
+    "call@413",
+    "call@441",
+    "call@453"
+  ],
+  "firstFailure": {
+    "status": "failed",
+    "checkCount": 13,
+    "errors": [
+      "asset binding: docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+      "asset binding: ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2: response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier"
+    ]
+  }
+}

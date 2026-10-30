@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "base_head": "0adeb22d1135f015e95bfef91b23328017275045",
+  "scope": "Harness/evidence promotion only; prior frozen native/browser/deployment results carry forward unchanged",
+  "commands": [
+    [
+      "node",
+      "--check",
+      "tools/verify/e9-checkpoint-metadata-critic.mjs"
+    ],
+    [
+      "python3",
+      "-B",
+      "-c",
+      "from pathlib import Path; compile(Path('tools/verify/e9-checkpoint-milestone.py').read_bytes(),'milestone-driver','exec')"
+    ],
+    [
+      "node",
+      "tools/verify/e9-checkpoint-metadata-critic.mjs",
+      "--evidence",
+      "target/evidence/e9-t08-worker-final/browser",
+      "--output",
+      "target/evidence/e9-t08-verifier-promoted"
+    ]
+  ],
+  "promoted_report_sha256": "076281aa2ca3d88b882db278136ba9150ae5586c4522f128606551cfeb9f8555",
+  "critic_source_sha256": "d372c329048d513b9d8ec3ebf3476ed3474450c826269b56112efc922b0a3e17",
+  "wrapper_source_sha256": "044ad0a3045110119ac8cbcf10816b6ac0975bc7a4d1c780b8a70ddd59c499c8",
+  "actual_wrapper_admission_lines": [
+    72,
+    75
+  ],
+  "admission_assertions": 3,
+  "raw_original_equality": true,
+  "explicit_held_input": true
+}

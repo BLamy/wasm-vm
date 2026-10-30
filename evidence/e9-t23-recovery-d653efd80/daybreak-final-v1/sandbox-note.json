@@ -1,0 +1,13 @@
+{
+  "note": "The inherited descriptive route label in routing.json says read-only, but the actual thread/start request used workspace-write so the independent verifier can write its task/status/queue verdict. This note corrects the description without altering the original routing receipt.",
+  "actualRequestedModel": "gpt-daybreak-blue-latest",
+  "allowProviderModelFallback": false,
+  "requestedSandbox": "workspace-write",
+  "allowedCheckoutWrites": [
+    "E9-T23 Verification log/status",
+    "tasks/QUEUE.md",
+    "promoted verifier tests if warranted"
+  ],
+  "noImplementationEdits": true,
+  "collectorSha256": "2b64aaa57be78c13a8040c75c4a55e4d33b6ab561888243783370013e2b9bcc7"
+}

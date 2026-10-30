@@ -1,0 +1,185 @@
+{
+  "task": "E9-T03",
+  "predictionFile": "../predictions.md",
+  "status": "failed",
+  "origin": "http://127.0.0.1:51556",
+  "source": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f",
+  "sourceBytesUnchanged": true,
+  "crashes": [
+    {
+      "seed": 13411,
+      "cut": "chunk-durable",
+      "results": [
+        {
+          "granted": true
+        },
+        {
+          "granted": false,
+          "code": "WriterBusy"
+        }
+      ],
+      "winner": 0,
+      "paused": {
+        "phase": "chunk-durable",
+        "id": "verifier-race-13411",
+        "hash": "0a6fe8eaadf9eadd267ee8b444996b2a8d24a4c6c204a3dcb4ac305a3089088f"
+      },
+      "before": {
+        "revision": "1",
+        "manifestSha256": "0d61fcccd2f77efbe5290d7e5936de24150042e7262c36bec319f75cc79d0fe8"
+      },
+      "after": {
+        "revision": "1",
+        "manifestSha256": "0d61fcccd2f77efbe5290d7e5936de24150042e7262c36bec319f75cc79d0fe8"
+      },
+      "reacquired": true
+    },
+    {
+      "seed": 13412,
+      "cut": "object-durable",
+      "results": [
+        {
+          "granted": false,
+          "code": "WriterBusy"
+        },
+        {
+          "granted": true
+        }
+      ],
+      "winner": 1,
+      "paused": {
+        "phase": "object-durable",
+        "id": "verifier-race-13412",
+        "hash": "5760440a5ab55dd8708b4ccc4f4b7834d364c99c6c6b2546d0499694fa1b7be2"
+      },
+      "before": {
+        "revision": "1",
+        "manifestSha256": "3b1038cdd5bc780ac52acaafb65afe79b9692526f1ce817fca260a3febdedda3"
+      },
+      "after": {
+        "revision": "1",
+        "manifestSha256": "3b1038cdd5bc780ac52acaafb65afe79b9692526f1ce817fca260a3febdedda3"
+      },
+      "reacquired": true
+    },
+    {
+      "seed": 13413,
+      "cut": "before-commit",
+      "results": [
+        {
+          "granted": true
+        },
+        {
+          "granted": false,
+          "code": "WriterBusy"
+        }
+      ],
+      "winner": 0,
+      "paused": {
+        "phase": "before-commit",
+        "id": "verifier-race-13413",
+        "hash": null
+      },
+      "before": {
+        "revision": "1",
+        "manifestSha256": "f9947acc8f8da193e2338aba7cd0789804a701d3794c3e9420ab4c3b01a6fd26"
+      },
+      "after": {
+        "revision": "1",
+        "manifestSha256": "f9947acc8f8da193e2338aba7cd0789804a701d3794c3e9420ab4c3b01a6fd26"
+      },
+      "reacquired": true
+    },
+    {
+      "seed": 13414,
+      "cut": "commit-durable",
+      "results": [
+        {
+          "granted": false,
+          "code": "WriterBusy"
+        },
+        {
+          "granted": true
+        }
+      ],
+      "winner": 1,
+      "paused": {
+        "phase": "commit-durable",
+        "id": "verifier-race-13414",
+        "hash": null
+      },
+      "before": {
+        "revision": "1",
+        "manifestSha256": "2c33b897b7c37b53ec3622dcb77eeb70db4606bf05193e7722f8bf9591136ec5"
+      },
+      "after": {
+        "revision": "2",
+        "manifestSha256": "f3e41dbf6fada2aa846d6ae780598d25c9a546f8db01ccf9fff873697656717d"
+      },
+      "reacquired": true
+    }
+  ],
+  "tamper": [
+    {
+      "fault": "object-length",
+      "code": "Corrupt",
+      "listed": false,
+      "unavailable": true,
+      "rowRevision": "1",
+      "rowManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "beforeRevision": "1",
+      "beforeManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "restoredRevision": "1",
+      "restoredManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19"
+    },
+    {
+      "fault": "object-parts",
+      "code": "Corrupt",
+      "listed": false,
+      "unavailable": true,
+      "rowRevision": "1",
+      "rowManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "beforeRevision": "1",
+      "beforeManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "restoredRevision": "1",
+      "restoredManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19"
+    },
+    {
+      "fault": "cursor-zero",
+      "code": "Corrupt",
+      "listed": false,
+      "unavailable": true,
+      "rowRevision": "0",
+      "rowManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "beforeRevision": "1",
+      "beforeManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "restoredRevision": "1",
+      "restoredManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19"
+    },
+    {
+      "fault": "cursor-overflow",
+      "code": "Corrupt",
+      "listed": false,
+      "unavailable": true,
+      "rowRevision": "18446744073709551616",
+      "rowManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "beforeRevision": "1",
+      "beforeManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+      "restoredRevision": "1",
+      "restoredManifest": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19"
+    }
+  ],
+  "sabotage": {},
+  "errors": [],
+  "originalReload": {
+    "sessions": [
+      "session-a",
+      "session-b"
+    ],
+    "status": "passed"
+  },
+  "failure": {
+    "message": "page.evaluate: SessionStoreError: Manifest: session metadata: IndexOrder\n    at fail (http://127.0.0.1:51556/session-store.js:18:40)\n    at manifest (http://127.0.0.1:51556/session-store.js:31:19)\n    at #publish (http://127.0.0.1:51556/session-store.js:253:21)\n    at Object.publish (http://127.0.0.1:51556/session-store.js:121:52)\n    at http://127.0.0.1:51556/session-store.js:348:53\n    at run (http://127.0.0.1:51556/session-store.js:311:20)\n    at Object.publish (http://127.0.0.1:51556/session-store.js:348:35)\n    at eval (eval at evaluate (:234:30), <anonymous>:7:13)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: SessionStoreError: Manifest: session metadata: IndexOrder\n    at fail (http://127.0.0.1:51556/session-store.js:18:40)\n    at manifest (http://127.0.0.1:51556/session-store.js:31:19)\n    at #publish (http://127.0.0.1:51556/session-store.js:253:21)\n    at Object.publish (http://127.0.0.1:51556/session-store.js:121:52)\n    at http://127.0.0.1:51556/session-store.js:348:53\n    at run (http://127.0.0.1:51556/session-store.js:311:20)\n    at Object.publish (http://127.0.0.1:51556/session-store.js:348:35)\n    at eval (eval at evaluate (:234:30), <anonymous>:7:13)\n    at async <anonymous>:260:30\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-verifier/independent.mjs:123:30"
+  }
+}

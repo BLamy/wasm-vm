@@ -1,0 +1,41 @@
+{
+ "phone-current-machine-tap": {
+  "href": "#ide",
+  "urlBefore": "http://127.0.0.1:8232/app.html?nosw#ide",
+  "urlAfter": "http://127.0.0.1:8232/app.html?nosw#ide",
+  "sentinels": {
+   "document": "same-document",
+   "ide": "same-ide"
+  },
+  "sheetOpen": 0,
+  "menuFocused": true,
+  "errors": []
+ },
+ "phone-current-machine-keyboard": {
+  "href": "#ide",
+  "urlBefore": "http://127.0.0.1:8232/app.html?nosw#ide",
+  "urlAfter": "http://127.0.0.1:8232/app.html?nosw#ide",
+  "sentinels": {
+   "document": "same-document",
+   "ide": "same-ide"
+  },
+  "sheetOpen": 0,
+  "menuFocused": true,
+  "errors": []
+ },
+ "desktop-diagnostic-row-click": {
+  "landedOn": "/ui-kit.html",
+  "errors": []
+ },
+ "primary-foreground": {
+  "button": {
+   "color": "rgb(26, 19, 6)",
+   "background": "rgb(228, 168, 83)"
+  },
+  "link": {
+   "color": "rgb(26, 19, 6)",
+   "background": "rgb(228, 168, 83)"
+  },
+  "linkHref": "./app.html#ide"
+ }
+}

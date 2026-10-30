@@ -1,0 +1,8 @@
+seed=2 length=10 smc_at=517 final=654 digest=212451c807ba4fce6347b18753a1769fa0c6ed7c1e515e3074c3583d5c9ee556 real_compiled_blocks=55
+seed=7 length=3 smc_at=515 final=652 digest=7ae40d7719ba183f0bede296bb391f8084e2dfa2ece251ac2a877af47ff80546 real_compiled_blocks=193
+seed=29 length=5 smc_at=529 final=666 digest=6e36a494ba22c43feb5dbe38bcc812113c842c5ce115b46ad06a086277e58017 real_compiled_blocks=117
+seed=73 length=5 smc_at=515 final=652 digest=84c58723d593587de9002b89cbac98726ea48055a7c4a6fabe394f13ed0aa021 real_compiled_blocks=113
+seed=65537 length=5 smc_at=526 final=663 digest=77802e85d2a0da2529f35ece20abe9dcb8d79344709bdd21a431dd06dd6e26e4 real_compiled_blocks=116
+seed=3735928559 length=5 smc_at=528 final=665 digest=06895fbeb16a588ffee2e89046dd28dce44aa40328832ed50c93df526e130202 real_compiled_blocks=115
+seeded scalar/JIT/pending-restore attacks passed; executed_blocks=709
+checked nonwrapping MAX-16 span and terminal sequence/ordinal state passed

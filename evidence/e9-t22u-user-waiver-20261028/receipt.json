@@ -1,0 +1,96 @@
+{
+  "status": "cancelled-by-user",
+  "request": "can we please just skip the cold boot and replay you have been working on that one ticket for days",
+  "head": "f6efcba3bf318d1eab696f8fd38711aa3a5f91f1",
+  "acceptance": false,
+  "fullOriginalColdQualified": false,
+  "performanceBudgetsPassed": false,
+  "preservedRoot": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1",
+  "files": [
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/user-stop-request.json",
+      "bytes": 1446,
+      "sha256": "6c1f5eda5fadb98480c2af5f6d15a1d213f46dfa9db8bd76f5e738c3f7f99971"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/user-stop-process.json",
+      "bytes": 1055,
+      "sha256": "649e0a823edeaef2a3f8f19ba07e7f5180353bf4bfef6936012dfadf945283c9"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/resume.json",
+      "bytes": 2497,
+      "sha256": "e99e1b8ecb4b83fa6316604b094d60db6f6458714e5d5c43b8bda0f5f75ce83b"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/desktop/final.state",
+      "bytes": 19699223,
+      "sha256": "913604eb9109810bac03a29059ea21647ad2d13aac3819ac9c1082f6dc6c11a9"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/desktop/initial.state",
+      "bytes": 1776463,
+      "sha256": "d0d9145d6c50165fa62162766bce693cdae1a466860df978b73fa7b39c3adf66"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/desktop/sealed-before-execution.json",
+      "bytes": 4441851,
+      "sha256": "4735a9272f43efd803b80149d4ed5d35ba50afa0fd4f386c433a930d31170a4b"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/desktop/progress.json",
+      "bytes": 615,
+      "sha256": "8fdb8cafb727238f30d99e9a788a593a0831460ee809a365b922a70d7f13f6cb"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/preflight-tests.log",
+      "bytes": 1743,
+      "sha256": "18fcdb734943207cdd40d36319488ea9b9f2bc8b668c5a999bcd40be465cd3a6"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/identity-tests.log",
+      "bytes": 547,
+      "sha256": "367447552195e31635db70d1d1534f1133e170b6ce3e45a011cd42ceb632d3a6"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/native.log",
+      "bytes": 1959,
+      "sha256": "f46fc232e7be4c8e0ea198587668fd2785c410abf8331bc9b6145f3dd46b2b13"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/clippy.log",
+      "bytes": 72,
+      "sha256": "d7dae192715495fa89ccbe279af3efb9792c1dae1768228e369035e68a1df673"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/web-dist.log",
+      "bytes": 5920,
+      "sha256": "d6b1d650599a9b3fb6bf3419bc37f7ec9c93999891e7c4da671aecbe9d21c49b"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/demo/report.json",
+      "bytes": 10698,
+      "sha256": "47a5e601b9a861be45b6ab7b11c1776a4cb381652e7d8686ed30e4163d8936e6"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/demo-bytes.log",
+      "bytes": 221,
+      "sha256": "7c553e4b54121db7c618a25fb4d5c5061da77a63d6358561c9947cc10e1a04f5"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/diagnostic-wasm.log",
+      "bytes": 723,
+      "sha256": "77db3555db606054b3f939291c52df1f0ac5faf58e532ad6041c2d68e0dce17b"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run/diagnostic-identity.log",
+      "bytes": 105,
+      "sha256": "22005d0e709246ab0e8abb5e49385b09b5c4503fd5932adc6d46b8135fdbb3d0"
+    }
+  ]
+}

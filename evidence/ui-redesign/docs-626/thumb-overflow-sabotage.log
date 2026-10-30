@@ -1,0 +1,5 @@
+  ✘  1 [chromium] › ui-docs.spec.js:187:3 › phone 390: search from the library overlay, focus stays inside it, tables scroll (1.8s)
+    Expected: [32m0[39m
+    Received: [31m31[39m
+    > 222 |     expect(await overflowX(page)).toBe(0);
+  1 failed

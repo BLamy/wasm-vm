@@ -222,21 +222,27 @@ export async function attachProductionVirgl(machine, {presenter,onEvent = null,c
   let bridge=null,pendingCheckpoint=null;
   let lost = false, disposed = false, lastError = null, pendingLoss = false;
   const lose = () => { const extension=gl.getExtension("WEBGL_lose_context"); if(!extension)throw Error("Context loss injection unavailable");extension.loseContext(); };
-  canvas.addEventListener('webglcontextlost',event => { event.preventDefault(); if (disposed) return; lost=true; machine.invalidateVirgl(); bridge?.dispose(); onEvent?.({type:'context-lost'}); });
+  canvas.addEventListener('webglcontextlost',event => { event.preventDefault(); if (disposed) return; lost=true; let stopped=null;try{machine.invalidateVirgl();}catch(error){stopped=String(error.message);}bridge?.dispose();onEvent?.({type:'context-lost',...(stopped?{stopped}:{})}); });
   try {
     machine.attachVirgl(profile.hostWords,profile.formatRoles,profile.renderer,event => {
       const result = bridge?.apply(event) ?? {ok:false,error:{code:'bridge-poisoned',message:'GPU owner is not published'}};
-      if (onEvent) onEvent({type:'control',event:clean(event),result:clean(result)});
+      if (onEvent) {const saved={...event};delete saved.ownedTransport;onEvent({type:'control',event:clean(saved),result:clean(result)});}
       return result;
     });
     if(checkpoint) {
       const restored=await restoreProductionRenderer(checkpoint.renderer,{gl,profile,shaderBridge,transport,presenter});
       bridge=restored.bridge;
       if(restored.epoch!==checkpoint.epoch)throw Error('gpu_checkpoint: renderer epoch differs');
-      const epochs=machine.loadAcceleratedSnapshotBlob(checkpoint.native,checkpoint.witnessBytes);
-      if(epochs.savedEpoch!==checkpoint.epoch)throw Error('gpu_checkpoint: native epoch differs');
-      unwrap(bridge.rebaseCheckpointEpoch(epochs.savedEpoch,epochs.freshEpoch));
-      pendingCheckpoint={type:'checkpoint-loaded',savedEpoch:epochs.savedEpoch,freshEpoch:epochs.freshEpoch,sha256:checkpoint.sha256,rendererSha256:checkpoint.rendererSha256};
+      if(checkpoint.exactHistory===true) {
+        // The authenticated exact driver restores native state and its owned result frontier.
+        // Its fresh physical epoch is bound immediately before renderer activation.
+        pendingCheckpoint={type:'checkpoint-loaded',exactHistory:true,savedEpoch:restored.epoch,rendererSha256:checkpoint.rendererSha256};
+      } else {
+        const epochs=machine.loadAcceleratedSnapshotBlob(checkpoint.native,checkpoint.witnessBytes);
+        if(epochs.savedEpoch!==checkpoint.epoch)throw Error('gpu_checkpoint: native epoch differs');
+        unwrap(bridge.rebaseCheckpointEpoch(epochs.savedEpoch,epochs.freshEpoch));
+        pendingCheckpoint={type:'checkpoint-loaded',savedEpoch:epochs.savedEpoch,freshEpoch:epochs.freshEpoch,sha256:checkpoint.sha256,rendererSha256:checkpoint.rendererSha256};
+      }
     } else bridge=unwrap(createJournalledProductionBridge({gl,profile,shaderBridge,transport,presenter})).bridge;
   } catch (error) { bridge?.dispose(); throw error; }
   onEvent?.({type:'qualified',profile:clean(qualification)});
@@ -245,6 +251,7 @@ export async function attachProductionVirgl(machine, {presenter,onEvent = null,c
       if(!pendingCheckpoint)return false;
       if(disposed||lost)throw Error('gpu_checkpoint: staged owner was revoked');
       const event=pendingCheckpoint;pendingCheckpoint=null;
+      if(event.exactHistory) {event.freshEpoch=machine.exactGpuSessionEpoch();unwrap(bridge.rebaseCheckpointEpoch(event.savedEpoch,event.freshEpoch));}
       await bridge.activate();
       if(disposed||lost)throw Error('gpu_checkpoint: activation owner was revoked');
       onEvent?.({...event,clockState:machine.guestClockState()});return true;

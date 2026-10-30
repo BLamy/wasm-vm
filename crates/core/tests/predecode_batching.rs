@@ -70,6 +70,7 @@ fn classify(elf: &[u8], batch: bool) -> Verdict {
         RunOutcome::Trapped(t) => Verdict::Escaped(format!("trap {:?}", t.cause)),
         RunOutcome::MaxInstrs => Verdict::Timeout,
         RunOutcome::Reset(r) => Verdict::Escaped(format!("reset {r:?}")),
+        RunOutcome::SessionStopped(error) => Verdict::Escaped(format!("session stopped {error:?}")),
     }
 }
 

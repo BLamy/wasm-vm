@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>wasm-vm — RV64 in the browser</title>
     <link rel="stylesheet" href="./node_modules/@xterm/xterm/css/xterm.css" />
+    <link rel="stylesheet" href="./session-library.css" />
+    <link rel="stylesheet" href="./ui.css?rev=74f187f16a37" />
     <style>
       :root {
         color-scheme: dark;
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        --bg: #090b0f;
-        --panel: #10141b;
-        --panel-2: #151a22;
-        --line: #242b36;
-        --text: #eef2f7;
-        --muted: #9aa6b2;
-        --green: #2ea043;
-        --red: #f85149;
-        --amber: #f2c94c;
-        --cyan: #53d4ff;
+        /* Legacy page palette, retoned to the shared interface's warm ink (web/ui/src/styles.css)
+           so the header, ide.js's panes, the console and the diagnostics read as one surface.
+           --cyan is the historical name of the accent variable. */
+        --bg: #0e0d0b;
+        --panel: #151410;
+        --panel-2: #1c1a16;
+        --line: #2a2823;
+        --text: #ece8e1;
+        --muted: #b9b2a7;
+        --green: #8fbf86;
+        --red: #e0644f;
+        --amber: #e4a853;
+        --cyan: #e4a853;
       }
       * { box-sizing: border-box; }
       html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -39,7 +44,7 @@
         align-items: center;
         padding: 14px 18px;
         border-bottom: 1px solid var(--line);
-        background: linear-gradient(to bottom, rgba(13, 16, 21, 0.92), rgba(13, 16, 21, 0.82));
+        background: rgb(21 20 16 / 0.94); /* the shared warm bar (ui.css --bar, docs header) */
       }
       h1, h2 { letter-spacing: 0; }
       h1 {
@@ -56,28 +61,9 @@
         font: 12px ui-monospace, monospace;
         white-space: nowrap;
       }
-      .audio-autoplay-badge {
-        max-width: min(390px, 34vw);
-        padding: 4px 8px;
-        border: 1px solid rgba(242, 201, 76, 0.45);
-        border-radius: 6px;
-        color: var(--amber);
-        background: rgba(242, 201, 76, 0.08);
-        font: 11px ui-monospace, monospace;
-        line-height: 1.35;
-        text-align: right;
-      }
-      .audio-autoplay-badge[data-audio-state="unlocking"] {
-        border-color: rgba(83, 212, 255, 0.45);
-        color: var(--cyan);
-        background: rgba(83, 212, 255, 0.08);
-      }
-      .audio-autoplay-badge[data-audio-state="unavailable"] {
-        border-color: rgba(248, 81, 73, 0.45);
-        color: var(--red);
-        background: rgba(248, 81, 73, 0.08);
-      }
-      .audio-autoplay-badge[hidden] { display: none; }
+      /* main.js and src/audio/autoplay.js keep writing the autoplay state to this node (it stays
+         in the DOM, with its ids); it never shows in the header, whatever its hidden attribute. */
+      .audio-autoplay-badge { display: none !important; }
       main {
         display: grid;
         grid-template-columns: minmax(420px, 1fr) minmax(360px, 44vw);
@@ -108,6 +94,14 @@
         font: 12px ui-monospace, monospace;
         margin-top: 4px;
       }
+      #event-clock-pip, #input-recording-pip, #time-entropy-pip, #device-completions-pip, #network-capture-pip {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
       .actions, .controls {
         display: flex;
         gap: 8px;
@@ -117,7 +111,7 @@
       button, select {
         border: 1px solid var(--line);
         border-radius: 6px;
-        background: #1b222d;
+        background: var(--panel-2);
         color: var(--text);
         font-size: 13px;
         min-height: 32px;
@@ -311,7 +305,7 @@
       .hover-status.error { color: var(--red); }
       .hover-status.running { color: var(--cyan); }
       .console {
-        background: #0b0e14;
+        background: var(--bg);
       }
       .controls {
         justify-content: flex-end;
@@ -486,6 +480,11 @@
       .cap-ev.regressed { color: var(--red); }
 
       /* ── Site navigation ─────────────────────────────────────────────────────── */
+      /* Mount point for the shared nav (web/ui). Takes the header's free width; the version and
+         audio badges stay as plain siblings owned by main.js. A grid, because the island root
+         is reverted to library styles by the ui.css guard and so cannot take flex sizing from
+         this page; grid items stretch to their 1fr column without any rule on the child. */
+      .app-site-nav { flex: 1 1 auto; align-self: stretch; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-flow: column; align-items: center; gap: 16px; }
       nav.tabs {
         display: flex;
         gap: 4px;
@@ -673,87 +672,19 @@
         background: #143c31; border: 1px solid #287555; color: #d6ffe6;
         font-size: 12.5px; line-height: 1.5;
       }
-      /* OS picker: the Demo tab is a real guest launcher, not an implicit boot into whichever
-         artifact happened to be present on the host. Keep the picker visible until a choice owns
-         the VM, then let the existing IDE/terminal surface take over. */
-      .os-launcher {
-        padding: 28px clamp(18px, 4vw, 56px) 34px;
-        border-bottom: 1px solid var(--line);
-        background:
-          radial-gradient(circle at 12% 0%, rgba(83, 212, 255, .12), transparent 34%),
-          linear-gradient(180deg, #101720, #0c1016 72%);
-      }
+      /* Launcher. main.js shows/hides #os-launcher and drives the native [data-os] buttons,
+         graphics select and status inside .os-launcher-engine (kept, hidden); the visible launcher
+         is the web/ui island that operates them. */
+      .os-launcher { padding: clamp(28px, 6vw, 72px) clamp(18px, 5vw, 64px) 48px; background: var(--bg); }
       .os-launcher[hidden] { display: none; }
-      .os-launcher-kicker {
-        margin: 0 0 8px;
-        color: var(--cyan);
-        font: 11px ui-monospace, monospace;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-      }
-      .os-launcher h2 { margin: 0; font-size: 24px; text-transform: none; }
-      .os-launcher-copy {
-        max-width: 760px;
-        margin: 9px 0 20px;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.55;
-      }
-      .os-options {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
-        max-width: 1120px;
-      }
-      .os-option {
-        display: flex;
-        min-height: 148px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 15px;
-        border: 1px solid #2c3744;
-        border-radius: 11px;
-        background: rgba(16, 20, 27, .86);
-        color: var(--text);
-        text-align: left;
-        transition: border-color .16s, transform .16s, background .16s;
-      }
-      .os-option:hover:not(:disabled) {
-        border-color: var(--cyan);
-        background: #151f2b;
-        transform: translateY(-1px);
-      }
-      .os-option:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-      .os-option[data-os="omarchy"] {
-        border-color: #6b54a8;
-        background: linear-gradient(145deg, rgba(57, 37, 89, .68), rgba(16, 20, 27, .9));
-      }
-      .os-option[data-os="omarchy"]:hover:not(:disabled) { border-color: #c59cff; }
-      .os-option-title { font-size: 15px; font-weight: 700; }
-      .os-option-detail { color: var(--muted); font-size: 12px; line-height: 1.4; }
-      .os-option-meta {
-        margin-top: auto;
-        color: var(--green);
-        font: 11px ui-monospace, monospace;
-      }
-      .os-option-meta[data-state="checking"] { color: var(--amber); }
-      .os-option-meta[data-state="unavailable"] { color: var(--red); }
-      .os-launcher-status {
-        min-height: 18px;
-        margin: 15px 0 0;
-        color: var(--muted);
-        font: 12px ui-monospace, monospace;
-      }
+      .os-launcher-engine[hidden] { display: none !important; }
+      /* ?testHooks keeps the engine's own controls operable, as it does for the legacy workbench
+         and the E9 panels: the native launcher is shown beside the library one. */
+      :root.e2e-showall .os-launcher-engine[hidden] { display: block !important; }
+      .os-launcher-island { max-width: 880px; }
       #panel-ide:not([data-os-selected="true"]) #ide-root,
-      #panel-ide:not([data-os-selected="true"]) .console { display: none; }
-      @media (max-width: 980px) {
-        .os-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      }
-      @media (max-width: 560px) {
-        .os-options { grid-template-columns: 1fr; }
-        .os-launcher h2 { font-size: 21px; }
-      }
+      #panel-ide:not([data-os-selected="true"]) .console,
+      #panel-ide:not([data-os-selected="true"]) .ws-bar-host { display: none; }
       .network-config {
         display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 8px;
         margin: 6px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
@@ -847,17 +778,114 @@
       html.embed .ide-body, html.embed .ide-hsplit { display: none !important; }
       html.embed .ide-term-pane { height: 100vh !important; flex: 1 1 auto !important; }
 
+
+      /* ── Workspace layout (web/ui workspace island) ─────────────────────────────────────────
+         The island sets data-ws-view / -side / -editor / -pane on #ide-root. These rules place
+         ide.js's existing panes with a grid instead of moving them: .ide-body and .ide-editor-area
+         become display:contents so the side pane, editor rows, display and terminal are direct grid
+         items. Scoped to the ordinary app: the Omarchy desktop keeps its full-window layout, and
+         ?testHooks (html.e2e-showall) keeps the original activity bar / status bar workbench for
+         the core suite. */
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]):not(.embed) body {
+        display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
+      }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]):not(.embed) #panel-ide.active {
+        flex: 1 1 auto; height: auto; min-height: 0; display: flex; flex-direction: column;
+      }
+      :root:not(.e2e-showall) #panel-ide:not([data-os-selected="true"]) { overflow-y: auto; }
+      :root.e2e-showall .ws-bar-host, :root[data-wvm-desktop="omarchy"] .ws-bar-host,
+      :root.embed .ws-bar-host { display: none; }
+      .ws-bar-host { flex: 0 0 auto; border-bottom: 1px solid var(--line); background: var(--panel); }
+
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 0fr) auto minmax(0, 1fr);
+        grid-template-areas: "side tabs" "side tool" "side edit" "side split" "side main";
+      }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-body,
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-editor-area { display: contents; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root :is(.ide-activity, .ide-vsplit, .ide-hsplit, .ide-statusbar, .ide-term-bar) { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-side { grid-area: side; width: 320px; display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-side] .ide-side { display: flex; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-tabstrip { grid-area: tabs; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-editor-toolbar { grid-area: tool; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-editor-body { grid-area: edit; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root:not([data-ws-editor]) :is(.ide-tabstrip, .ide-editor-toolbar, .ide-editor-body) { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-editor] {
+        grid-template-rows: auto auto minmax(0, 1.25fr) auto minmax(0, 1fr);
+      }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-editor] .ide-term-pane,
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-editor] .ide-display-pane { border-top: 1px solid var(--line); }
+      /* Tool panes: ide.js's native file tree, transfers, container controls, editor tabs and
+         toolbar stay in the DOM as the engine's controls; the library projections beside them
+         (web/ui tool-panes.jsx) are what people see and press. */
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root :is(.ide-side-title, .ide-side-view, .ide-tabstrip, .ide-editor-toolbar, .ide-ctr-head, .ide-ctr-exec-head, .ide-ctr-exec-provenance, .ide-ctr-exec-form) { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-side] .ide-side { flex-direction: column; overflow: hidden; }
+
+      /* Main area: the terminal, or the guest display when chosen. */
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-pane { grid-area: main; height: auto !important; min-height: 0; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-display-pane { grid-area: main; flex: none; min-height: 0; border-bottom: 0; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root:not([data-ws-view="display"]) .ide-display-pane,
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-view="display"] .ide-term-pane { display: none; }
+
+      /* App header: one row at every width. The core version readout gives way below 1100 px (it
+         stays in the DOM for main.js) instead of wrapping under the nav. */
+      @media (max-width: 1100px) {
+        :root:not(.e2e-showall) body > header { flex-direction: row; align-items: center; }
+        :root:not(.e2e-showall) body > header .version { display: none; }
+      }
+      @media (max-width: 760px) {
+        :root:not(.e2e-showall) body > header { flex-wrap: wrap; gap: 4px 12px; padding: 4px 12px; }
+        :root:not(.e2e-showall) body > header .app-site-nav { flex: 1 1 100%; }
+      }
+
+      /* Recordings, saved sessions and self-checks: their controllers (session-timeline.js,
+         session-library.js and main.js's probes) keep these native panels as their inputs and
+         status. Once the workspace island is mounted, people use its library Recordings and
+         Self-checks panes instead; ?testHooks keeps the native panels visible for the E9 probes. */
+      :root:not(.e2e-showall)[data-wv-ui~="workspace"] #panel-ide > details.session-library { display: none; }
+      @media (min-width: 761px) {
+        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root:is([data-ws-side="recordings"], [data-ws-side="checks"]) .ide-side { width: 440px; }
+      }
+
+      /* xterm's FitAddon measures #term's computed width, which includes padding under the page's
+         border-box sizing, so padded #term gets a few columns too many and clips at the right
+         edge. In the workspace the padding sits on the console instead. */
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-scroll .console { padding: 10px 12px 12px 16px; }
+      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-scroll #term { padding: 0; }
+      @media (max-width: 760px) {
+        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-scroll .console { padding: 8px 6px 8px 10px; }
+      }
+
+      /* Phones: one pane at a time. Files, containers or the editor replace the main area until the
+         workspace bar's Back button closes them; the terminal otherwise has the full width. */
+      @media (max-width: 760px) {
+        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root {
+          grid-template-columns: minmax(0, 1fr);
+          grid-template-areas: "tabs" "tool" "edit" "split" "main";
+        }
+        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-side { grid-area: main; width: auto; border-right: 0; }
+        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-pane] :is(.ide-term-pane, .ide-display-pane) { display: none; }
+        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-pane="editor"] {
+          grid-template-rows: auto auto minmax(0, 1fr) 0 0;
+        }
+      }
     </style>
   </head>
   <body>
     <header>
-      <h1><a class="app-brand" href="./landing.html" title="Home">wasm<span>—</span>vm<i>/</i></a><span class="app-section">Demo</span></h1>
-      <nav class="tabs" aria-label="Primary navigation">
-        <a class="tab" href="./landing.html">Home</a>
-        <a class="tab" href="./roadmap.html">Roadmap</a>
-        <a class="tab" href="./docs.html">Docs</a>
-        <a class="tab active" data-tab="ide" href="#ide" aria-current="page">Demo</a>
-      </nav>
+      <!-- Shared site navigation (web/ui, @brett_lamy/ui). The static markup below is the no-JS
+           fallback; ui.js replaces it with the library-built nav once it loads. -->
+      <div class="app-site-nav" data-wv-ui="site-nav" data-current="app" data-diagnostics>
+        <h1><a class="app-brand" href="./landing.html" title="Home">wasm<span>—</span>vm<i>/</i></a><span class="app-section">Demo</span></h1>
+        <nav class="tabs" aria-label="Primary navigation">
+          <a class="tab" href="./landing.html">Home</a>
+          <a class="tab" href="./roadmap.html">Roadmap</a>
+          <a class="tab" href="./docs.html">Docs</a>
+          <a class="tab active" data-tab="ide" href="#ide" aria-current="page">Demo</a>
+        </nav>
+      </div>
       <span id="audio-autoplay-badge" class="audio-autoplay-badge" role="status" aria-live="polite">
         Audio muted until interaction — click or press a key to enable sound.
       </span>
@@ -925,47 +953,248 @@
 
     <!-- ══ TERMINAL TAB ════════════════════════════════════════════════════ -->
     <div id="panel-ide" class="panel active">
-      <section id="os-launcher" class="os-launcher" aria-labelledby="os-launcher-title">
-        <p class="os-launcher-kicker">RISC-V guest launcher</p>
-        <h2 id="os-launcher-title">Choose an operating system</h2>
-        <p class="os-launcher-copy">
-          Each option runs a real guest in this browser. The first warm launch downloads a checkpoint.
-          Later launches can reuse the cached copy. Omarchy is the graphical desktop.
-        </p>
-        <label for="desktop-graphics">Desktop graphics</label>
-        <select id="desktop-graphics">
-          <option value="gpu">GPU rendering · warm boot</option>
-          <option value="software">Software rendering · warm snapshot</option>
-        </select>
-        <output id="gpu-status" aria-live="polite"></output>
-        <a id="gpu-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=0#ide">Restart with software graphics</a>
-        <a id="gpu-cold-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=1&amp;noSnapshot=1#ide">Cold boot with GPU rendering</a>
-        <div class="os-options" role="list" aria-label="Operating system choices">
-          <button class="os-option" type="button" data-os="omarchy" role="listitem">
-            <span class="os-option-title">Omarchy</span>
-            <span class="os-option-detail">Open Hyprland with Chromium, LibreOffice, Node.js and Foot. The desktop fits your window and restores from a prepared checkpoint, with GPU compositing after a hardware check.</span>
-            <span class="os-option-meta" data-os-meta="omarchy" data-state="checking">checking image…</span>
-          </button>
-          <button class="os-option" type="button" data-os="node-alpine" role="listitem">
-            <span class="os-option-title">Alpine + Node.js</span>
-            <span class="os-option-detail">Container-capable Alpine with Node and npm already installed.</span>
-            <span class="os-option-meta" data-os-meta="node-alpine" data-state="checking">checking image…</span>
-          </button>
-          <button class="os-option" type="button" data-os="alpine" role="listitem">
-            <span class="os-option-title">Alpine Linux</span>
-            <span class="os-option-detail">Small container-capable Alpine host with lazy disk chunks and persistence.</span>
-            <span class="os-option-meta" data-os-meta="alpine" data-state="checking">checking image…</span>
-          </button>
-          <button class="os-option" type="button" data-os="busybox" role="listitem">
-            <span class="os-option-title">BusyBox Linux</span>
-            <span class="os-option-detail">Minimal initramfs shell with a verified fast restore and no disk download.</span>
-            <span class="os-option-meta" data-os-meta="busybox">ready · fast restore</span>
-          </button>
+      <section id="os-launcher" class="os-launcher" aria-label="Start a machine">
+        <div class="os-launcher-island" data-wv-ui="launcher">
+          <p>Loading the launcher…</p>
         </div>
-        <p id="os-launcher-status" class="os-launcher-status" role="status" aria-live="polite">
-          Select a guest to start the shared VM.
-        </p>
+        <!-- Engine inputs for main.js (startGuestChoice, manifest probes, Omarchy graphics, GPU
+             recovery). Hidden; the island above presses these buttons and writes the select. -->
+        <div class="os-launcher-engine" hidden>
+          <p class="os-launcher-kicker">RISC-V guest launcher</p>
+          <h2 id="os-launcher-title">Choose an operating system</h2>
+          <p class="os-launcher-copy">
+            Each option runs a real guest in this browser. The first warm launch downloads a checkpoint.
+            Later launches can reuse the cached copy. Omarchy is the graphical desktop.
+          </p>
+          <label for="desktop-graphics">Desktop graphics</label>
+          <select id="desktop-graphics">
+            <option value="gpu">GPU rendering · warm boot</option>
+            <option value="software">Software rendering · warm snapshot</option>
+          </select>
+          <output id="gpu-status" aria-live="polite"></output>
+          <a id="gpu-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=0#ide">Restart with software graphics</a>
+          <a id="gpu-cold-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=1&amp;noSnapshot=1#ide">Cold boot with GPU rendering</a>
+          <div class="os-options" role="list" aria-label="Operating system choices">
+            <button class="os-option" type="button" data-os="omarchy" role="listitem">
+              <span class="os-option-title">Omarchy</span>
+              <span class="os-option-detail">Open Hyprland with Chromium, LibreOffice, Node.js and Foot. The desktop fits your window and restores from a prepared checkpoint, with GPU compositing after a hardware check.</span>
+              <span class="os-option-meta" data-os-meta="omarchy" data-state="checking">checking image…</span>
+            </button>
+            <button class="os-option" type="button" data-os="node-alpine" role="listitem">
+              <span class="os-option-title">Alpine + Node.js</span>
+              <span class="os-option-detail">Container-capable Alpine with Node and npm already installed.</span>
+              <span class="os-option-meta" data-os-meta="node-alpine" data-state="checking">checking image…</span>
+            </button>
+            <button class="os-option" type="button" data-os="alpine" role="listitem">
+              <span class="os-option-title">Alpine Linux</span>
+              <span class="os-option-detail">Small container-capable Alpine host with lazy disk chunks and persistence.</span>
+              <span class="os-option-meta" data-os-meta="alpine" data-state="checking">checking image…</span>
+            </button>
+            <button class="os-option" type="button" data-os="busybox" role="listitem">
+              <span class="os-option-title">BusyBox Linux</span>
+              <span class="os-option-detail">Minimal initramfs shell with a verified fast restore and no disk download.</span>
+              <span class="os-option-meta" data-os-meta="busybox">ready · fast restore</span>
+            </button>
+          </div>
+          <p id="os-launcher-status" class="os-launcher-status" role="status" aria-live="polite">
+            Select a guest to start the shared VM.
+          </p>
+        </div>
       </section>
+      <details id="event-clock-panel" class="session-library">
+        <summary><span id="event-clock-pip" class="cap-pip in-progress" aria-hidden="true"></span> Execution boundary check</summary>
+        <p class="session-note">Run a small guest to check exact stops, queued events and restore on the interpreter and JIT.</p>
+        <div class="session-actions"><button id="event-clock-run" type="button" disabled>Check boundaries</button></div>
+        <p id="event-clock-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="network-capture-panel" class="session-library">
+        <summary><span id="network-capture-pip" class="cap-pip in-progress" aria-hidden="true"></span> Offline network check</summary>
+        <p class="session-note">Record one safe request, then replay the guest response six times without contacting the network again.</p>
+        <div class="session-actions"><button id="network-capture-run" type="button" disabled>Check offline network replay</button></div>
+        <p id="network-capture-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="witness-pages-panel" class="session-library">
+        <summary><span id="witness-pages-pip" class="cap-pip in-progress" aria-hidden="true"></span> Paged state witness storage check</summary>
+        <p class="session-note">Save 130 native machine state witnesses, retain their checkpoints, and transfer a complete local storage archive. This check takes several minutes and uses browser storage. Playback for these histories is still being qualified.</p>
+        <div class="session-actions"><button id="witness-pages-run" type="button" disabled>Check witness storage</button></div>
+        <p id="witness-pages-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="gpu-history-reader-panel" class="session-library">
+        <summary><span id="gpu-history-reader-pip" class="cap-pip in-progress" aria-hidden="true"></span> Complete GPU history read check</summary>
+        <p class="session-note">Read every input and disk result from two long test histories, then replay both through every authenticated witness window in a private GPU worker. This uses browser storage and can take several minutes. Full desktop qualification remains separate.</p>
+        <div class="session-actions"><button id="gpu-history-reader-run" type="button" disabled>Check complete GPU replay</button></div>
+        <p id="gpu-history-reader-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="gpu-journal-stream-panel" class="session-library">
+        <summary><span id="gpu-journal-stream-pip" class="cap-pip in-progress" aria-hidden="true"></span> Long GPU history recording check</summary>
+        <p class="session-note">Record 4,100 inputs and 256 distinct disk reads with a small test guest, then authenticate the saved histories. This uses local browser storage; full desktop playback is still being qualified.</p>
+        <div class="session-actions"><button id="gpu-journal-stream-run" type="button" disabled>Check long history recording</button></div>
+        <p id="gpu-journal-stream-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="owned-http-panel" class="session-library">
+        <summary><span id="owned-http-pip" class="cap-pip in-progress" aria-hidden="true"></span> Live HTTP and offline replay check</summary>
+        <p class="session-note">Boot Alpine with recording off and on, fetch ten 1 KiB responses from its local gateway, then close the server and replay the complete machine. This check takes a few minutes and reports no performance result.</p>
+        <div class="session-actions"><button id="owned-http-run" type="button" disabled>Check live HTTP replay</button></div>
+        <p id="owned-http-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="unrecorded-control-panel" class="session-library">
+        <summary><span id="unrecorded-control-pip" class="cap-pip partial" aria-hidden="true"></span> Recording disabled check</summary>
+        <p class="session-note">Run a short Linux boot excerpt with recording off and check that it cannot be used as saved history. This check reports no performance result.</p>
+        <div class="session-actions"><button id="unrecorded-control-run" type="button" disabled>Check recording is off</button></div>
+        <p id="unrecorded-control-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="session-replay-panel" class="session-library">
+        <summary><span id="session-replay-pip" class="cap-pip in-progress" aria-hidden="true"></span> Full Linux replay check</summary>
+        <p class="session-note">Record the pinned Alpine guest through a real disk read, reopen its saved event tape, and compare interpreter and JIT replay. This check takes a few minutes.</p>
+        <div class="session-actions"><button id="session-replay-run" type="button" disabled>Check saved-session replay</button></div>
+        <p id="session-replay-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="streamed-replay-panel" class="session-library">
+        <summary><span id="streamed-replay-pip" class="cap-pip in-progress" aria-hidden="true"></span> Streamed exact replay check</summary>
+        <p class="session-note">Replay a short Linux run through two bounded windows on one private machine. This checks the native state, pending input, and rejection of stale or malformed handoffs. The long GPU history is qualified separately.</p>
+        <div class="session-actions"><button id="streamed-replay-run" type="button" disabled>Check replay handoff</button></div>
+        <p id="streamed-replay-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="session-keyframe-panel" class="session-library">
+        <summary><span id="session-keyframe-pip" class="cap-pip in-progress" aria-hidden="true"></span> Incremental keyframe check</summary>
+        <p class="session-note">Capture two RAM deltas from the pinned Linux guest, restore a fresh private machine, and check ancestor loss and shared retention.</p>
+        <div class="session-actions"><button id="session-keyframe-run" type="button" disabled>Check incremental keyframes</button></div>
+        <p id="session-keyframe-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="session-seek-panel" class="session-library">
+        <summary><span id="session-seek-pip" class="cap-pip in-progress" aria-hidden="true"></span> Time-travel seek check</summary>
+        <p class="session-note">Restore a saved Linux keyframe, seek between checkpoints, step forward and back, and check that rapid scrubbing shows only the newest result.</p>
+        <div class="session-actions"><button id="session-seek-run" type="button" disabled>Check time-travel seeking</button></div>
+        <p id="session-seek-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+        <p id="session-seek-render" class="session-note" aria-live="polite"></p>
+      </details>
+      <details id="device-completions-panel" class="session-library">
+        <summary><span id="device-completions-pip" class="cap-pip in-progress" aria-hidden="true"></span> Device delivery check</summary>
+        <p class="session-note">Replay disk, file and audio results after delayed deliveries, then check that old callbacks cannot change a restored machine.</p>
+        <div class="session-actions"><button id="device-completions-run" type="button" disabled>Check device deliveries</button></div>
+        <p id="device-completions-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="time-entropy-panel" class="session-library">
+        <summary><span id="time-entropy-pip" class="cap-pip in-progress" aria-hidden="true"></span> Time and random input check</summary>
+        <p class="session-note">Record a guest reading time and random bytes, pause it, then replay with the host providers unavailable.</p>
+        <div class="session-actions"><button id="time-entropy-run" type="button" disabled>Check time and randomness</button></div>
+        <p id="time-entropy-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="input-recording-panel" class="session-library">
+        <summary><span id="input-recording-pip" class="cap-pip in-progress" aria-hidden="true"></span> Input recording check</summary>
+        <p class="session-note">Run a small guest to check delivered serial, keyboard and pointer bytes, saved event order, and rejection of live input during replay.</p>
+        <div class="session-actions"><button id="input-recording-run" type="button" disabled>Check delivered inputs</button></div>
+        <p id="input-recording-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="session-timeline" class="session-library session-timeline" open>
+        <summary>Time travel · session timeline</summary>
+        <p class="session-note">Open a completed software recording or an admitted exact GPU history, or record a short Linux boot sample. Replay uses a private machine and pauses the live guest. Older paced GPU snapshots remain checkpoint-only in Local saved sessions.</p>
+        <div class="session-fields">
+          <label>Saved recording<select data-timeline="sessions" aria-label="Timeline saved recording" disabled></select></label>
+          <button data-timeline="open" type="button" disabled>Open replay</button>
+          <button data-timeline="refresh" type="button" disabled>Refresh history</button>
+          <button data-timeline="record" type="button" disabled>Record Linux sample</button>
+          <button data-timeline="record-file" type="button" disabled>Record file example</button>
+          <button data-timeline="stop" type="button" disabled>Stop recording</button>
+        </div>
+        <div class="session-actions">
+          <button data-timeline="bundle-export" type="button" disabled>Export recording</button>
+          <button data-timeline="bundle-import" type="button" disabled>Import recording file</button>
+          <input data-timeline="bundle-file" type="file" accept=".wvsession,application/x-wasm-vm-session" aria-label="Local recording file" hidden disabled>
+          <button data-timeline="bundle-cancel" type="button" disabled>Cancel local transfer</button>
+          <button data-timeline="bundle-delete" type="button" disabled>Delete local recording</button>
+        </div>
+        <p class="session-note">Recording files contain guest memory and files, typed input and network payloads. Export and import stay on your device. Use the same app build; GPU recordings also require compatible hardware. Delete removes the local recording, while exported files remain on your device.</p>
+        <p data-timeline="bundle-details" class="session-note" aria-live="polite"></p>
+        <p data-timeline="mode">Live view · no replay restored</p>
+        <p data-timeline="active">Active replay: none</p>
+        <p data-timeline="position" aria-label="Active replay position">No position restored.</p>
+        <label>Scrub saved history<input data-timeline="scrub" type="range" min="0" max="1000" value="0" aria-label="Scrub saved history" disabled></label>
+        <div class="session-fields">
+          <label>Exact transition<input data-timeline="target" type="text" inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" value="0" disabled></label>
+          <button data-timeline="seek" type="button" disabled>Seek transition</button>
+          <button data-timeline="back" type="button" disabled>Step back</button>
+          <button data-timeline="forward" type="button" disabled>Step forward</button>
+          <button data-timeline="play" type="button" disabled>Play replay</button>
+          <button data-timeline="pause" type="button" disabled>Pause / cancel seek</button>
+        </div>
+        <p data-timeline="preview" class="session-note"></p>
+        <div class="session-actions"><button data-timeline="branch-create" type="button" disabled>Continue from here</button></div>
+        <p data-timeline="branch-origin" class="session-note" hidden></p>
+        <div data-timeline="branch-controls" hidden>
+          <p class="session-note">This continuation has its own inputs and writable files. Its saved parent stays unchanged. Networking stays offline; Go live explicitly refuses reuse of historical connections.</p>
+          <div class="session-actions">
+            <button data-timeline="branch-run" type="button" disabled>Run continuation</button>
+            <button data-timeline="branch-pause" type="button" disabled>Pause continuation</button>
+            <button data-timeline="branch-save" type="button" disabled>Save continuation</button>
+            <button data-timeline="branch-discard" type="button" disabled>Discard unsaved continuation</button>
+            <button data-timeline="branch-live" type="button" disabled>Go live</button>
+          </div>
+          <div class="session-fields">
+            <label>Serial input<input data-timeline="branch-input" type="text" maxlength="4096" autocomplete="off" spellcheck="false" disabled></label>
+            <button data-timeline="branch-send" type="button" disabled>Send input + Enter</button>
+          </div>
+        </div>
+        <div class="session-fields">
+          <label>Saved keyframe<select data-timeline="points" disabled></select></label>
+          <button data-timeline="point-go" type="button" disabled>Go to keyframe</button>
+          <label>Recorded event<select data-timeline="events" disabled></select></label>
+          <button data-timeline="event-go" type="button" disabled>Go to event</button>
+        </div>
+        <p class="session-note">Observation events navigate to the next transition boundary. The full position below identifies the restored state. The console shows its recorded serial output.</p>
+        <pre data-timeline="console" tabindex="0" aria-label="Replay serial console">Open a replay to view its console.</pre>
+        <details><summary>Active state digest</summary><code data-timeline="digest">No replay digest.</code></details>
+        <p data-timeline="status" role="status" aria-live="polite" aria-atomic="true">Reading saved sessions…</p>
+      </details>
+      <details id="session-library" class="session-library" open>
+        <summary>Local saved sessions</summary>
+        <p class="session-note">Save exact points in an offline software guest or a qualified accelerated desktop. Input recording also saves delivered input in order. A new guest or Open replaces the current guest.</p>
+        <div class="session-actions">
+          <label><input type="checkbox" data-session="time-entropy" disabled> Include time and random inputs</label>
+          <button type="button" data-session="input-start" disabled>Start input recording</button>
+          <button type="button" data-session="input-save" disabled>Save input prefix</button>
+          <button type="button" data-session="input-stop" disabled>Stop input recording</button>
+        </div>
+        <p class="session-note">Input prefixes remain incomplete until all replay adapters are available. Save commits pending inputs; Stop leaves the guest paused.</p>
+        <div class="session-actions">
+          <button type="button" data-session="new" disabled>New checkpoint guest</button>
+          <button type="button" data-session="gpu-new" disabled>New GPU desktop</button>
+          <button type="button" data-session="start" disabled>Start checkpoint recording</button>
+          <button type="button" data-session="checkpoint" disabled>Checkpoint</button>
+          <button type="button" data-session="stop" disabled>Stop recording</button>
+          <button type="button" data-session="retry" disabled>Retry recording</button>
+          <button type="button" data-session="resume" disabled>Resume guest</button>
+          <button type="button" data-session="gpu-capture" disabled>Save GPU desktop point</button>
+        </div>
+        <p class="session-note">A new GPU desktop starts from the pinned Omarchy image without a factory snapshot. Its first boot can take tens of minutes; save a point once the desktop is ready.</p>
+        <p data-session="active">Active: no checkpoint guest</p>
+        <div class="session-fields">
+          <label>Selected preview<select data-session="sessions" aria-label="Saved session" disabled></select></label>
+          <label>Exact restore point<select data-session="points" aria-label="Saved checkpoint" disabled></select></label>
+          <button type="button" data-session="open" disabled>Open checkpoint</button>
+          <button type="button" data-session="refresh" disabled>Refresh sessions</button>
+        </div>
+        <form class="session-fields">
+          <label>Session name<input data-session="name" aria-label="Session name" maxlength="96" required autocomplete="off" disabled /></label>
+          <button type="submit" data-session="rename" disabled>Rename session</button>
+        </form>
+        <div data-session="details" aria-label="Selected session details"></div>
+        <p data-session="storage" class="session-note" aria-live="polite">Reading storage usage…</p>
+        <div class="session-fields">
+          <label>Saved binary data limit (MiB)<input type="number" min="1" max="65536" step="1" data-session="limit-bytes" disabled /></label>
+          <label>Restore points per session<input type="number" min="1" max="4096" step="1" data-session="limit-points" disabled /></label>
+          <button type="button" data-session="limits-save" disabled>Save storage limits</button>
+        </div>
+        <div class="session-actions">
+          <button type="button" data-session="persist" disabled>Request persistent storage</button>
+          <button type="button" data-session="cleanup" disabled>Clean up unreachable data</button>
+          <button type="button" data-session="delete" disabled>Delete selected session</button>
+        </div>
+        <p data-session="status" role="status" aria-live="polite">Reading local checkpoints…</p>
+      </details>
+      <!-- Workspace toolbar (web/ui): main view, tools, settings. Lays out #ide-root through
+           data attributes; never wraps or moves the terminal, canvas or ide.js panes. -->
+      <div class="ws-bar-host" data-wv-ui="workspace"></div>
       <!-- IDE layout (explorer + editor + embedded terminal) is assembled by ide.js, which
            re-parents the existing .console section (with its #term xterm) into the bottom pane. -->
       <div id="ide-root"><!-- built by ide.js --></div>
@@ -1071,7 +1300,7 @@
             Drop files here to stream them into Alpine (two simultaneous uploads maximum).
           </div>
           <p id="file-transfer-status" class="file-transfer-status" role="status" aria-live="polite">
-            Boot Alpine to enable the private WVFT file-transfer agent.
+            Start an Alpine guest to copy files between this computer and the guest.
           </p>
           <ul id="file-transfer-list" class="transfer-list" aria-label="File transfers"></ul>
         </section>
@@ -1090,6 +1319,7 @@
     <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
     <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+    <script type="module" src="./ui.js?rev=76d15e673a14"></script>
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./ide.js"></script>
     <!-- E4-T22b: establish isolation/fallback before main.js evaluates any backend or wasm imports.

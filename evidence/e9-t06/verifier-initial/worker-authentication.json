@@ -1,0 +1,87 @@
+{
+  "status": "passed",
+  "head": "b97f739cdb161cb16f7d64ca983fb48fea80df76",
+  "receipt_sha256": "7fffff71f600b025104b7969092b417cb96a9453c3ab760d0a7f63c14359f07d",
+  "source_files": 16,
+  "payload_files": 553,
+  "bytes": 565183649,
+  "commands": [
+    {
+      "name": "policy",
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "seconds": 0.08710503578186035,
+      "exit_code": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "node",
+        "--check",
+        "web/session-library.js"
+      ],
+      "seconds": 0.03895401954650879,
+      "exit_code": 0
+    },
+    {
+      "name": "main-syntax",
+      "command": [
+        "node",
+        "--check",
+        "web/main.js"
+      ],
+      "seconds": 0.0476231575012207,
+      "exit_code": 0
+    },
+    {
+      "name": "worker-protocol",
+      "command": [
+        "node",
+        "--test",
+        "web/tests/e4-t32-worker-protocol.test.mjs"
+      ],
+      "seconds": 1.0488131046295166,
+      "exit_code": 0
+    },
+    {
+      "name": "browser-build",
+      "command": [
+        "make",
+        "web-build"
+      ],
+      "seconds": 31.898454189300537,
+      "exit_code": 0
+    },
+    {
+      "name": "contract",
+      "command": [
+        "python3",
+        "tools/verify/e9-session-contract.py"
+      ],
+      "seconds": 0.5758202075958252,
+      "exit_code": 0
+    },
+    {
+      "name": "retained-gpu",
+      "command": [
+        "python3",
+        "tools/verify/e9-retained-gpu-runtime.py"
+      ],
+      "seconds": 0.1896059513092041,
+      "exit_code": 0
+    },
+    {
+      "name": "browser",
+      "command": [
+        "node",
+        "tools/verify/e9-session-library-browser.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-worker-final/browser"
+      ],
+      "seconds": 321.3426465988159,
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "Metadata-only publication after independent actual Daybreak final verified verdict. Runtime and six reviewed deployment objects are unchanged.",
+  "sourceHead": "1ed64f104b21da67adb3ef1a87946138f61a9d29",
+  "runtimeSourceHead": "63374f7c1e546c922ba1c779f34b09fced5e1ad4",
+  "mainUrl": "https://wasm-vm.pages.dev/",
+  "deploymentUrl": "https://591247ac.wasm-vm.pages.dev",
+  "deployedAndVerified": true,
+  "liveObjects": 9,
+  "demoPassed": 127,
+  "demoFailed": 0,
+  "visibleTask": "E5.5-T07 verified",
+  "unexpectedErrors": 0,
+  "gpuScope": "Recorded SwiftShader launch is only for decorative demo/roadmap rendering, not guest GPU qualification.",
+  "physicalPhoneScope": "No new physical run or matching crash log. iPhone/iOS26.7.2 remains unverified. Developer Mode was not changed. No RSS measurement.",
+  "finalDaybreakAuditSha256": "510f65e4fe748984df933f5588bd5421895e2f4efe13e8128ad9cd1a3f2f4aaa",
+  "derivation": "The saved metadata hash observer adds tasks.json, roadmap.js and sw.js to the six-object production observer. The committed demo observer ran with E5_T18E_DEMO_URL=https://wasm-vm.pages.dev E5_DEMO_TASK=E5.5-T07 E5_DEMO_VERIFIED=1 E5_DEMO_SOFTWARE_GL=1 E5_DEMO_OUT=/private/tmp/e5-5-t07-verified-ledger-live-v1 node tools/verify/e5-t18e-demo-smoke.mjs."
+}

@@ -1,0 +1,193 @@
+{
+  "head": "087c69c54713db7598b296b45d0da3a8f91ba1d2",
+  "started": 1793234919.615272,
+  "passed": true,
+  "commands": [
+    {
+      "command": [
+        "node",
+        "tools/verify/software-snapshot-stream.mjs",
+        "/private/tmp/e5-5-t07-pristine-proof-v3/gate/staging"
+      ],
+      "exitCode": 0,
+      "elapsed": 28.728878021240234,
+      "log": "/private/tmp/e5-5-t07-pristine-proof-v3/gate/00.log",
+      "sha256": "1c5cde4ea72489869a6aa7b95ba3ab431677b22a70b341cb9ada268fa4233def"
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify/software-snapshot-warm-ui.mjs",
+        "/private/tmp/e5-5-t07-pristine-proof-v3/gate/warm-ui"
+      ],
+      "exitCode": 0,
+      "elapsed": 16.347134113311768,
+      "log": "/private/tmp/e5-5-t07-pristine-proof-v3/gate/01.log",
+      "sha256": "eba09c80250c470a1b997a0eb46d79d70da277976bfc11d9aafbe52b3ee22816"
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify/e5-t18e-demo-smoke.mjs"
+      ],
+      "exitCode": 0,
+      "elapsed": 12.786574125289917,
+      "log": "/private/tmp/e5-5-t07-pristine-proof-v3/gate/02.log",
+      "sha256": "ebc0c66c9941bf497af7c91e35b02dad8afbe072d5c9e862838b2aeef925a5a2"
+    }
+  ],
+  "carried": {
+    "head": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+    "originalOutcome": "failed",
+    "source": "/private/tmp/e5-5-t07-pristine-proof-v2/gate",
+    "gateSha256": "6cf018c5f05db7c00930f4066ecc417f0c205b92d669f2bdacd2bae695e69e3b",
+    "unchangedPassedCommands": [
+      {
+        "command": [
+          "python3",
+          "tools/check_task_policy.py"
+        ],
+        "exitCode": 0,
+        "elapsed": 0.13120603561401367,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/00.log",
+        "sha256": "daf2eaa22adf721579f3b80601bb428092575f9c0ff6c711c1ca70641c06d928"
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exitCode": 0,
+        "elapsed": 0.20070719718933105,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/01.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "exitCode": 0,
+        "elapsed": 1.6539781093597412,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/02.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "-p",
+          "wasm-vm-wasm",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0,
+        "elapsed": 9.985621929168701,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/03.log",
+        "sha256": "4d6977f030a19665c4038ff765eacdef97a740651104babcae5df0ea337c61dc"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "-p",
+          "wasm-vm-wasm",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--features",
+          "virgl-renderer",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0,
+        "elapsed": 16.828880786895752,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/04.log",
+        "sha256": "2d3759d3bd5a0fc1eb0056367cdbd2a0e76e87b47829e7fbc26b2c84c5457ad2"
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "-p",
+          "wasm-vm-wasm",
+          "--lib"
+        ],
+        "exitCode": 0,
+        "elapsed": 11.06419825553894,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/05.log",
+        "sha256": "457d114bca719bed8c8aa316121ed1f1f58d3550e1421aca25e3f3f4b077d32a"
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "-p",
+          "wasm-vm-core",
+          "--test",
+          "snapshot_coherence",
+          "--test",
+          "cpu_resume",
+          "--test",
+          "desktop_machine_resume",
+          "--test",
+          "desktop_machine_resume_verifier"
+        ],
+        "exitCode": 0,
+        "elapsed": 17.606995105743408,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/06.log",
+        "sha256": "c412c96ced3140b4e59a5a4cea84ed234cebf87830b1e14feffdd5ea8fd35022"
+      },
+      {
+        "command": [
+          "cargo",
+          "build",
+          "-p",
+          "wasm-vm-wasm-web",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--profile",
+          "wasm-release"
+        ],
+        "exitCode": 0,
+        "elapsed": 0.13700008392333984,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/07.log",
+        "sha256": "bcbedddd5fc8ee99168a7425af40e5a0b3b6794cdecdc45cd7357b00b95f51e7"
+      },
+      {
+        "command": [
+          "node",
+          "--test",
+          "web/tests/snapshot-stream.test.mjs"
+        ],
+        "exitCode": 0,
+        "elapsed": 0.14308977127075195,
+        "log": "/private/tmp/e5-5-t07-pristine-proof-v2/gate/08.log",
+        "sha256": "6ee1e8796f7512472eb7f0d82c23e36c3ba92a2792242773529cf2a5f5646e7d"
+      }
+    ],
+    "fixtureOnlyChanges": [
+      "Makefile",
+      "tools/verify/software-snapshot-gate.py"
+    ],
+    "evidence": {
+      "00.log": "daf2eaa22adf721579f3b80601bb428092575f9c0ff6c711c1ca70641c06d928",
+      "01.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "02.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "03.log": "4d6977f030a19665c4038ff765eacdef97a740651104babcae5df0ea337c61dc",
+      "04.log": "2d3759d3bd5a0fc1eb0056367cdbd2a0e76e87b47829e7fbc26b2c84c5457ad2",
+      "05.log": "457d114bca719bed8c8aa316121ed1f1f58d3550e1421aca25e3f3f4b077d32a",
+      "06.log": "c412c96ced3140b4e59a5a4cea84ed234cebf87830b1e14feffdd5ea8fd35022",
+      "07.log": "bcbedddd5fc8ee99168a7425af40e5a0b3b6794cdecdc45cd7357b00b95f51e7",
+      "08.log": "6ee1e8796f7512472eb7f0d82c23e36c3ba92a2792242773529cf2a5f5646e7d",
+      "09.log": "8c568c39cea0e6f04a2303e244c3e66245e8c8d68ec2fb638cfb318fdccd0da5",
+      "gate.json": "6cf018c5f05db7c00930f4066ecc417f0c205b92d669f2bdacd2bae695e69e3b"
+    }
+  },
+  "finished": 1793234977.492192
+}

@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "original_report_sha256": "1e2577042ba20e4ed3bd63fe0eb77efbd41371be85255689112ce40c39366efd",
+  "authenticated_original_files": 515,
+  "authenticated_packet_files": 51,
+  "source_head": "b5baad0a4b1cddcbd08299b438292258352b2c08",
+  "pinned_base_sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+  "retained_gpu_files": 47,
+  "retained_bootstrap_unchanged": true
+}

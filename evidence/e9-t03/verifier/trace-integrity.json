@@ -1,0 +1,15 @@
+{
+  "events": 1571,
+  "bad_lines": [],
+  "types": {
+    "context-options": 1,
+    "before": 218,
+    "after": 218,
+    "frame-snapshot": 395,
+    "log": 41,
+    "screencast-frame": 639,
+    "console": 43,
+    "input": 2,
+    "event": 14
+  }
+}

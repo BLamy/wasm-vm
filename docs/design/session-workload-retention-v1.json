@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "task": "E9-T22m",
+  "scope": "Supported local-only capacity for the unchanged original Omarchy qualification; this is a SessionStore setting, not a storage-format or workload change",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v9.json",
+    "sha256": "5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82"
+  },
+  "failedPrefix": {
+    "head": "45beaadaa7b4561b127e77796ea3849f981deedb",
+    "reportSha256": "99d146de6bf1cc0f31d8bf118e901f96fbaac2e822cdf8b2f15a6fa8811b463d",
+    "storageSha256": "3de6de06c5da89d7e38f7a05b46f48736086b670bc92f8e060343ca8130b62dd",
+    "closureReportSha256": "0788ce5fba4b1c1c035f47e04e145b91f3cec59850f08133accbc0749de37734",
+    "checkpointCount": 350,
+    "physicalBytes": 8589076999,
+    "chunks": 10268,
+    "objects": 2816,
+    "reachableChunks": 10116,
+    "reachableBytes": 8429693447,
+    "orphanChunks": 152,
+    "orphanBytes": 159383552,
+    "oldMaxBytes": 8589934592
+  },
+  "retention": {
+    "defaultMaxBytes": 2147483648,
+    "maxBytes": 17179869184,
+    "maxCheckpoints": 4096,
+    "scope": "Local desktop recording only; portable bundles remain capped by their existing independent policy"
+  },
+  "preflight": {
+    "reserveBytes": 1073741824,
+    "browserRule": "quota - current usage >= the next bounded staging phase plus reserveBytes; recheck after the 8 GiB prefix and before each later 512 MiB batch because Chrome grows quota with committed usage",
+    "hostRule": "filesystem available bytes at the Chrome profile/output location >= all new local payload plus all exported saved copies plus reserveBytes; this physical store proof has one new 16 GiB copy, while the later full cold run has both a fresh browser profile and a 16 GiB exported copy",
+    "physicalProofCopies": 1,
+    "fullColdRunCopies": 2
+  },
+  "unchanged": {
+    "workload": "original T01 amount and 50M transition checkpoint cadence",
+    "desktopClock": "one hart, ICount/64, interactive:null",
+    "archive": "4 GiB portable aggregate and individual blob policy",
+    "budgets": "all original T01 numeric performance limits"
+  }
+}

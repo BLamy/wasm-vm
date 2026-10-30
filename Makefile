@@ -237,10 +237,13 @@ fuzz-diff-smoke:
 web-build:
 	bash tools/build-virgl-runtime.sh
 	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
+	wasm-pack build crates/session-web --target web --profile wasm-release --out-name wasm_vm_session
 	cd web && npm ci --no-audit --no-fund
 	cd web && npm run build:docs
-	mkdir -p web/pkg web/assets/riscv-tests
+	cd web && npm run build:ui
+	mkdir -p web/pkg web/session-pkg web/assets/riscv-tests
 	cp -R crates/wasm-web/pkg/. web/pkg/
+	cp -R crates/session-web/pkg/. web/session-pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
 	cp tests/riscv-tests-bin/* web/assets/riscv-tests/
 	# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
@@ -436,6 +439,51 @@ verify-list: ; @bash tools/verify/list.sh
 .PHONY: check-task-policy
 check-task-policy:
 	python3 tools/check_task_policy.py
+
+# E9-T01 is documentation/fixture definition work, not an implemented replay engine.
+.PHONY: verify-E9-T01
+verify-E9-T01:
+	@python3 -B tools/verify/e9-session-contract.py
+
+.PHONY: verify-E9-T02
+verify-E9-T02:
+	python3 -B tools/verify/e9-session-manifest.py --output "$${E9_MANIFEST_EVIDENCE_DIR:-target/evidence/e9-manifest-final}"
+
+.PHONY: verify-E9-T03
+verify-E9-T03:
+	python3 -B tools/verify/e9-session-store.py --output "$${E9_STORE_EVIDENCE_DIR:-target/evidence/e9-session-store-final}"
+
+.PHONY: verify-E9-T04
+verify-E9-T04:
+	python3 -B tools/verify/e9-disk-roots.py --output "$${E9_DISK_EVIDENCE_DIR:-target/evidence/e9-disk-roots-final}"
+
+.PHONY: verify-E9-T05
+verify-E9-T05:
+	python3 -B tools/verify/e9-software-checkpoints.py --output "$${E9_CHECKPOINT_EVIDENCE_DIR:-target/evidence/e9-software-checkpoints-final}"
+
+.PHONY: verify-E9-T06
+verify-E9-T06:
+	python3 -B tools/verify/e9-session-library.py --output "$${E9_LIBRARY_EVIDENCE_DIR:-target/evidence/e9-session-library-final}"
+
+.PHONY: verify-E9-T08
+verify-E9-T08:
+	python3 -B tools/verify/e9-checkpoint-milestone.py --output "$${E9_MILESTONE_EVIDENCE_DIR:-target/evidence/e9-checkpoint-milestone-final}"
+
+.PHONY: verify-E9-T11
+verify-E9-T11:
+	python3 -B tools/verify/e9-time-entropy.py --output "$${E9_SOURCE_EVIDENCE_DIR:-target/evidence/e9-time-entropy-final}"
+
+.PHONY: verify-E9-T10
+verify-E9-T10:
+	@if [ -n "$${E9_INPUT_REUSE:-}" ]; then \
+	  python3 -B tools/verify/e9-input-recording-resume.py --recorded "$$E9_INPUT_REUSE" --output "$${E9_INPUT_EVIDENCE_DIR:-target/evidence/e9-input-recording-final}"; \
+	else \
+	  python3 -B tools/verify/e9-input-recording.py --output "$${E9_INPUT_EVIDENCE_DIR:-target/evidence/e9-input-recording-final}"; \
+	fi
+
+.PHONY: verify-E9-T09
+verify-E9-T09:
+	python3 -B tools/verify/e9-event-clock.py --output "$${E9_CLOCK_EVIDENCE_DIR:-target/evidence/e9-event-clock-final}"
 
 # E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
@@ -2623,7 +2671,6 @@ verify-E0-T27:
 	node --check web/tabs.js
 	node --check web/roadmap-page.js
 	node --check web/landing-page.js
-	node --check web/landing.js
 	node --check web/landing-benchmarks.js
 	bash -n tools/build-web-dist.sh
 	node tools/check-docs.mjs
@@ -2697,3 +2744,333 @@ verify-E5.5-T05d:
 	else \
 	  python3 tools/virgl-production/verify-omarchy-application-release.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --phase "$${OMARCHY_RELEASE_PHASE}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
 	fi
+
+.PHONY: verify-E9-T07
+verify-E9-T07:
+	python3 -B tools/verify/e9-session-retention.py --output "$${E9_RETENTION_EVIDENCE_DIR:-target/evidence/e9-session-retention-final}"
+
+.PHONY: verify-E9-T12
+verify-E9-T12:
+	python3 -B tools/verify/e9-device-completions.py --output "$${E9_DEVICE_EVIDENCE_DIR:-target/evidence/e9-device-completions-final}"
+
+.PHONY: verify-E9-T13
+verify-E9-T13:
+	python3 -B tools/verify/e9-network-capture.py --output "$${E9_NETWORK_EVIDENCE_DIR:-target/evidence/e9-network-capture-final}"
+
+.PHONY: verify-E9-T14
+verify-E9-T14:
+	python3 -B tools/verify/e9-deterministic-replay.py --output "$${E9_REPLAY_EVIDENCE_DIR:-target/evidence/e9-deterministic-replay-final}"
+
+.PHONY: verify-E9-T15
+verify-E9-T15:
+	cargo test -p wasm-vm-core --test e9_incremental_keyframes
+	cargo test -p wasm-vm-storage --test session_publication
+	cargo test -p wasm-vm-wasm --test software_checkpoint
+	$(MAKE) web-dist
+	node tools/verify/e9-keyframes-browser.mjs --output "$${E9_KEYFRAME_EVIDENCE_DIR:-target/evidence/e9-keyframes-final}"
+
+.PHONY: verify-E9-T16
+verify-E9-T16:
+	cargo test -p wasm-vm-core --test e9_seek
+	cargo test -p wasm-vm-core --test e9_deterministic_replay
+	$(MAKE) web-dist
+	node tools/verify/e9-seek-browser.mjs --output "$${E9_SEEK_EVIDENCE_DIR:-target/evidence/e9-seek-final}"
+
+.PHONY: verify-E9-T17
+verify-E9-T17:
+	node --test tools/virgl-production/pinned-chunk.test.mjs tools/virgl-production/e9-gpu-session-evidence.test.mjs
+	$(MAKE) web-dist
+	node tools/verify/e9-gpu-session-demo.mjs "$${E9_GPU_DEMO_EVIDENCE_DIR:-target/evidence/e9-gpu-demo-final}"
+	node tools/verify/e9-gpu-session-browser.mjs "$${E9_GPU_SESSION_EVIDENCE_DIR:-target/evidence/e9-gpu-session-final}"
+	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_SESSION_HISTORY=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_COLD_READY_MS=2700000 CRITIC_FAST_BOOT_HOLD_FAILURE_MS=60000 node tools/virgl-production/critic-fast-boots.mjs "$${E9_GPU_DESKTOP_EVIDENCE_DIR:-target/evidence/e9-gpu-desktop-final}"
+
+.PHONY: verify-E9-T18a
+verify-E9-T18a:
+	python3 -B tools/verify/e9-gpu-results.py --output "$${E9_GPU_RESULT_EVIDENCE_DIR:-target/evidence/e9-gpu-results-final}"
+
+.PHONY: verify-E9-T19
+verify-E9-T19:
+	python3 -B tools/verify/e9-timeline.py --output "$${E9_TIMELINE_EVIDENCE_DIR:-target/evidence/e9-timeline-final}"
+
+.PHONY: verify-E9-T18b
+verify-E9-T18b:
+	python3 -B tools/verify/e9-pending-gpu.py --output "$${E9_PENDING_GPU_EVIDENCE_DIR:-target/evidence/e9-pending-gpu-final}" --pending-status "$${E9_PENDING_GPU_STATUS:-verified}"
+
+.PHONY: verify-E9-T18c verify-E9-T18
+verify-E9-T18c:
+	python3 -B tools/verify/e9-gpu-replay.py --output "$${E9_GPU_REPLAY_EVIDENCE_DIR:-target/evidence/e9-gpu-replay-final}"
+
+# C records the native a/b gates and their independent byte oracles as well as
+# the durable physical-browser adapter. One frozen submission covers the whole epic slice.
+verify-E9-T18: verify-E9-T18c
+
+.PHONY: verify-E9-T20
+verify-E9-T20:
+	python3 -B tools/verify/e9-branch.py --output "$${E9_BRANCH_EVIDENCE_DIR:-target/evidence/e9-branch-final}"
+
+.PHONY: verify-E9-T21
+verify-E9-T21:
+	python3 -B tools/verify/e9-bundles.py --output "$${E9_BUNDLE_EVIDENCE_DIR:-target/evidence/e9-bundles-final}"
+
+.PHONY: verify-E9-T22a
+verify-E9-T22a:
+	python3 -B tools/verify/e9-unrecorded.py --output "$${E9_UNRECORDED_EVIDENCE_DIR:-target/evidence/e9-unrecorded-final}"
+
+.PHONY: verify-E9-T22b
+verify-E9-T22b:
+	python3 -B tools/verify/e9-owned-http.py --output "$${E9_OWNED_HTTP_EVIDENCE_DIR:-target/evidence/e9-owned-http-final}"
+
+# E9-T22e — bounded durable GPU journal windows, full local submission.
+.PHONY: verify-E9-T22e
+verify-E9-T22e:
+	python3 -B tools/verify/e9-gpu-journal-stream.py --output "$${E9_OUT:-target/evidence/e9-gpu-journal-stream-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22i
+verify-E9-T22i:
+	python3 -B tools/verify/e9-witness-pages.py --output target/evidence/e9-t22i-$$(date -u +%Y%m%dT%H%M%SZ)
+
+.PHONY: verify-E9-T22f
+verify-E9-T22f:
+	python3 -B tools/verify/e9-gpu-reader-stream.py --output "$${E9_OUT:-target/evidence/e9-t22f-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22g
+verify-E9-T22g:
+	python3 -B tools/verify/e9-streamed-replay.py --output "$${E9_OUT:-target/evidence/e9-t22g-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22h
+verify-E9-T22h:
+	python3 -B tools/verify/e9-gpu-whole-chain-replay.py --output "$${E9_OUT:-target/evidence/e9-t22h-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22j
+verify-E9-T22j:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22j-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out/native"; \
+	  out="$$(cd "$$out" && pwd -P)"; \
+	  E9_T22J_EVIDENCE="$$out/native" cargo test -p wasm-vm-core --features virgl-renderer,trace --test session_gpu_results --test e9_device_completions --test virtio_blk_quiesce -- --nocapture > "$$out/native.log" 2>&1; \
+	  $(MAKE) web-dist; \
+	  git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-gpu-journal-stream-browser.mjs --parked-full --output "$$out/browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+
+.PHONY: verify-E9-T22k
+verify-E9-T22k:
+	@set -eu; desktop="$${E9_T22K_DESKTOP:-target/evidence/e9-t22c-submission-b40712603/desktop}"; \
+	  test -f "$$desktop/saved/storage.json" || { echo "E9-T22k requires the saved failed C prefix: set E9_T22K_DESKTOP" >&2; exit 1; }; \
+	  out="$${E9_OUT:-target/evidence/e9-t22k-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test web/tests/e9-t22k-graph-limits.test.mjs > "$$out/policy.log" 2>&1; \
+	  $(MAKE) web-dist; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-local-witness-graph-repro.mjs --directory "$$desktop" --output "$$out/prefix"; \
+	  node tools/verify/e9-local-witness-graph-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-127-candidate.json" --output "$$out/exact-browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+.PHONY: verify-E9-T22l
+verify-E9-T22l:
+	@set -eu; desktop="$${E9_T22L_DESKTOP:-target/evidence/e9-t22c-submission-bcc6bc1c4/desktop}"; \
+	  test -f "$$desktop/saved/storage.json" && test -d "$$desktop/chrome-profile" || { echo "E9-T22l requires the saved failed C prefix: set E9_T22L_DESKTOP" >&2; exit 1; }; \
+	  out="$${E9_OUT:-target/evidence/e9-t22l-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  cargo fmt --all --check; \
+	  cargo test -p wasm-vm-storage --test session_local --test session_manifest --test session_publication; \
+	  cargo clippy -p wasm-vm-storage --all-targets -- -D warnings; \
+	  cargo clippy -p wasm-vm-session-web --target wasm32-unknown-unknown -- -D warnings; \
+	  node --test web/tests/e9-t22k-graph-limits.test.mjs > "$$out/policy.log" 2>&1; \
+	  $(MAKE) web-dist; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-local-manifest-repro.mjs --directory "$$desktop" --output "$$out/prefix"; \
+	  node tools/verify/e9-local-manifest-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-257-candidate.json" --output "$$out/exact-browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+
+.PHONY: verify-E9-T22m
+verify-E9-T22m:
+	@set -eu; desktop="$${E9_T22M_DESKTOP:-target/evidence/e9-t22c-submission-45beaadaa/desktop}"; \
+	  test -f "$$desktop/saved/storage.json" && test -f "$$desktop/retained-closure/report.json" || { echo "E9-T22m requires the retained failed C prefix: set E9_T22M_DESKTOP" >&2; exit 1; }; \
+	  out="$${E9_OUT:-target/evidence/e9-t22m-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-retention-capacity.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  cargo test -p wasm-vm-storage --test session_local > "$$out/portable-policy.log" 2>&1; \
+	  $(MAKE) web-dist; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-retention-capacity-browser.mjs --desktop "$$desktop" --output "$$out/exact-browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+
+.PHONY: verify-E9-T22n
+verify-E9-T22n:
+	@set -eu; desktop="$${E9_T22N_DESKTOP:-target/evidence/e9-t22c-submission-a161b0f8d/desktop}"; \
+	  test -f "$$desktop/report.json" && test -f "$$desktop/saved/storage.json" || { echo "E9-T22n requires the preserved eight-hour failed C export: set E9_T22N_DESKTOP" >&2; exit 1; }; \
+	  desktop="$$(cd "$$desktop" && pwd -P)"; \
+	  out="$${E9_OUT:-target/evidence/e9-t22n-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  E9_T22N_DESKTOP="$$desktop" node --test tools/verify/e9-workload-wall.test.mjs > "$$out/boundary-tests.log" 2>&1; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  E9_T22N_DESKTOP="$$desktop" node tools/verify/e9-workload-wall-browser.mjs --output "$$out/browser"; \
+	  mkdir "$$out/prefix"; ln -s "$$desktop/report.json" "$$out/prefix/report.json"; ln -s "$$desktop/saved" "$$out/prefix/saved"; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/prefix" --allow-incomplete
+
+.PHONY: verify-E9-T22q
+verify-E9-T22q:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22q-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  cargo fmt --all --check; \
+	  cargo clippy -p wasm-vm-core --features virgl-renderer,trace --all-targets -- -D warnings > "$$out/clippy.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features virgl-renderer,trace --lib --test session_gpu_results --test production_virgl_critic --test production_gpu_checkpoint_critic > "$$out/native.log" 2>&1; \
+	  cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown > "$$out/wasm.log" 2>&1; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-gpu-replay-browser.mjs --output "$$out/browser" --latch-proof > "$$out/browser.log" 2>&1; \
+	  python3 -B tools/verify/e9-gpu-replay-files.py --directory "$$out/browser" > "$$out/byte-oracle.log" 2>&1; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo" > "$$out/demo.log" 2>&1
+
+.PHONY: verify-E9-T22c
+verify-E9-T22c:
+	mkdir -p target/evidence
+	node --test tools/verify/e9-workload-schedule.test.mjs tools/verify/e9-workload-assets.test.mjs tools/verify/e9-workload-wall.test.mjs
+	set -eu; E9_QUALIFICATION_OUT="$${E9_OUT:-target/evidence/e9-t22c-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$E9_QUALIFICATION_OUT")"; \
+	  mkdir "$$E9_QUALIFICATION_OUT"; \
+	  node tools/verify/e9-workload-software-browser.mjs --output "$$E9_QUALIFICATION_OUT/software" && \
+	  python3 -B tools/verify/e9-workload-software-files.py --directory "$$E9_QUALIFICATION_OUT/software" && \
+	  node tools/verify/e9-workload-desktop-browser.mjs --output "$$E9_QUALIFICATION_OUT/desktop" && \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$E9_QUALIFICATION_OUT/desktop" && \
+	  python3 -B tools/verify/e9-workload-desktop-files.py --directory "$$E9_QUALIFICATION_OUT/desktop"
+
+.PHONY: verify-E9-T22r
+verify-E9-T22r:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22r-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-cold-prefix-budget.test.mjs tools/verify/e9-workload-assets.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-workload-desktop-browser.mjs --prefix --output "$$out/desktop" > "$$out/browser.log" 2>&1; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix > "$$out/closure.log" 2>&1; \
+	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" > "$$out/byte-oracle.log" 2>&1
+
+.PHONY: verify-E9-T22u
+verify-E9-T22u:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22u-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-corrected-cold-budget.test.mjs tools/verify/e9-corrected-cold-observation.test.mjs tools/verify/e9-replay-static-assets.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  python3 -B tools/verify/test_gpu_checkpoint_build.py > "$$out/identity-tests.log" 2>&1; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic \
+	    --test virtio_blk --test session_block_transfer > "$$out/native.log" 2>&1; \
+	  cargo clippy -p wasm-vm-wasm-web --target wasm32-unknown-unknown --features cold-block-diagnostic -- -D warnings > "$$out/clippy.log" 2>&1; \
+	  node --check tools/verify/e9-workload-desktop-browser.mjs; \
+	  node --check tools/verify/e9-workload-desktop-page.mjs; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-device-completions-browser.mjs --output "$$out/demo" > "$$out/demo.log" 2>&1; \
+	  python3 -B tools/verify/e9-block-transfer-files.py --directory "$$out/demo" > "$$out/demo-bytes.log" 2>&1; \
+	  wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm \
+	    --out-dir ../../target/e9-t22u-diagnostic-pkg --features cold-block-diagnostic \
+	    > "$$out/diagnostic-wasm.log" 2>&1; \
+	  python3 tools/gen-gpu-checkpoint-build.py --runtime-root web/dist \
+	    --wasm-package-root target/e9-t22u-diagnostic-pkg \
+	    --output target/e9-t22u-diagnostic-pkg/gpu-checkpoint-build.js > "$$out/diagnostic-identity.log" 2>&1; \
+	  node tools/verify/e9-workload-desktop-browser.mjs --corrected-block-prefix \
+	    --calibration-root "$${E9_CALIBRATION_ROOT:-target/evidence}" \
+	    --base-cache "$${E9_BASE_CACHE:-target/e9-workload-base-cache}" \
+	    --output "$$out/desktop" > "$$out/browser.log" 2>&1; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix \
+	    > "$$out/closure.log" 2>&1; \
+	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" \
+	    > "$$out/byte-oracle.log" 2>&1
+
+# A resource guard may stop the one original-cold capture after a complete
+# keyframe but before its final witness publication. This path authenticates
+# that saved graph, seals only the last recorded witness, and replays it.
+.PHONY: verify-E9-T22r-recovery
+verify-E9-T22r-recovery:
+	@set -eu; src="$${E9_SOURCE:?set E9_SOURCE to the failed original-cold desktop evidence directory}"; \
+	  src="$$(cd "$$src" && pwd -P)"; out="$${E9_OUT:-target/evidence/e9-t22r-recovery-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-cold-prefix-budget.test.mjs tools/verify/e9-workload-assets.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  node --check tools/verify/e9-cold-prefix-recovery.mjs; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-cold-prefix-recovery.mjs --source "$$src" --output "$$out/desktop" > "$$out/recovery.log" 2>&1; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix > "$$out/closure.log" 2>&1; \
+	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" > "$$out/byte-oracle.log" 2>&1
+
+.PHONY: verify-E9-T22o
+verify-E9-T22o:
+	@set -eu; src="$${E9_SOURCE:?set E9_SOURCE to the recovered exact cold-prefix desktop directory}"; \
+	  base="$${E9_BASE_REPORT:?set E9_BASE_REPORT to the authenticated complete offline base prefetch report}"; \
+	  src="$$(cd "$$src" && pwd -P)"; out="$${E9_OUT:-target/evidence/e9-t22o-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --check tools/verify/e9-cold-frontier-browser.mjs; \
+	  node --check tools/verify/e9-cold-frontier-worker.mjs; \
+	  node --check tools/verify/e9-cold-base-prefetch.mjs; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-cold-frontier-browser.mjs --source "$$src" --output "$$out/desktop" \
+	    --limit "$${E9_LIMIT:-25200000000}" --base-report "$$base" > "$$out/browser.log" 2>&1
+
+.PHONY: verify-E9-T22s
+# The closure oracle imports web/session-pkg. A cold clone has the pinned
+# committed package only under web/dist/session-pkg, so stage that copy first.
+verify-E9-T22s:
+	@set -eu; src="$${E9_SOURCE:?set E9_SOURCE to the recovered exact cold-prefix desktop directory}"; \
+	  base="$${E9_BASE_REPORT:?set E9_BASE_REPORT to the authenticated complete offline base prefetch report}"; \
+	  src="$$(cd "$$src" && pwd -P)"; out="$${E9_OUT:-target/evidence/e9-t22s-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  test -f web/dist/session-pkg/wasm_vm_session.js; \
+	  mkdir -p web/session-pkg; cp -R web/dist/session-pkg/. web/session-pkg/; \
+	  node --check tools/verify/e9-cold-block-error-browser.mjs; \
+	  node --check tools/verify/e9-cold-block-error-page.mjs; \
+	  node --check tools/verify/e9-cold-block-error-worker.mjs; \
+	  node --check tools/verify/e9-cold-block-error-attacks.mjs; \
+	  node --check tools/verify/e9-cold-block-base-integrity.mjs; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  cargo clippy -p wasm-vm-core --features cold-block-diagnostic -- -D warnings \
+	    > "$$out/diagnostic-clippy.log" 2>&1; \
+	  cargo test -p wasm-vm-core --test virtio_blk > "$$out/default-block-tests.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic --test virtio_blk > "$$out/diagnostic-block-tests.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic --lib capacity_park_is_not_a_completed_io_error \
+	    > "$$out/cow-capacity-test.log" 2>&1; \
+	  cargo check -p wasm-vm-wasm-web --target wasm32-unknown-unknown --features cold-block-diagnostic \
+	    > "$$out/diagnostic-wasm-check.log" 2>&1; \
+	  node tools/verify/e9-cold-block-error-attacks.mjs --source "$$src" --base-report "$$base" \
+	    --output "$$out/input-attacks" > "$$out/input-attacks.log" 2>&1; \
+	  wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm \
+	    --out-dir ../../target/e9-t22s-diagnostic-pkg --features cold-block-diagnostic \
+	    > "$$out/diagnostic-wasm-build.log" 2>&1; \
+	  node tools/verify/e9-cold-block-error-browser.mjs --source "$$src" --output "$$out/desktop" \
+	    --limit 14450000000 --base-report "$$base" > "$$out/browser.log" 2>&1
+
+.PHONY: verify-E9-T22t
+verify-E9-T22t:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22t-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  test -z "$$(git status --porcelain --untracked-files=all)"; \
+	  python3 tools/check_task_policy.py > "$$out/policy.log" 2>&1; \
+	  python3 tools/verify/build-e9-block-transfer-guest.py > "$$out/fixture.log" 2>&1; \
+	  git diff --exit-code -- web/assets/e9-block-transfer.elf web/assets/e9-block-transfer.json \
+	    tools/verify/e9-block-transfer-guest.listing; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  cargo clippy -p wasm-vm-core --all-targets --features cold-block-diagnostic,trace,virgl-renderer \
+	    -- -D warnings > "$$out/clippy.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic,trace,virgl-renderer \
+	    --lib --test session_block_transfer --test virtio_blk --test e9_device_completions \
+	    > "$$out/native.log" 2>&1; \
+	  cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown \
+	    > "$$out/no-std-wasm.log" 2>&1; \
+	  node --check web/session-block-transfer-probe.js; \
+	  node --check tools/verify/e9-device-completions-browser.mjs; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; \
+	  git diff --exit-code -- web/dist web/gpu-checkpoint-build.js web/tasks.json; \
+	  node tools/verify/e9-device-completions-browser.mjs --output "$$out/browser" \
+	    > "$$out/browser.log" 2>&1; \
+	  python3 -B tools/verify/e9-block-transfer-files.py --directory "$$out/browser" \
+	    > "$$out/oracle.log" 2>&1; \
+	  test -z "$$(git status --porcelain --untracked-files=all)"
+
+.PHONY: verify-E9-T23
+verify-E9-T23:
+	python3 -B tools/verify/e9-recovery.py --output "$${E9_OUT:-target/evidence/e9-t23-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+# Final bounded integration; original-cold Omarchy and performance campaign are waived.
+.PHONY: verify-E9-T24
+verify-E9-T24:
+	python3 -B tools/verify/e9-capstone.py --output "$${E9_OUT:-target/evidence/e9-t24-$$(date -u +%Y%m%dT%H%M%SZ)}" $${E9_RECORDED_INPUTS:+--recorded-inputs "$$E9_RECORDED_INPUTS"}
+
+# Bounded software warm restore staging; no original cold boot or long replay.
+.PHONY: verify-E5.5-T07
+verify-E5.5-T07:
+	node tools/fetch-omarchy-snapshot.mjs
+	python3 tools/verify/software-snapshot-gate.py

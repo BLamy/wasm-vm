@@ -1,0 +1,37 @@
+{
+  "verdict": "refuted",
+  "runtime_head": "354f0a6036221bd2b858558dc04f125f22a3323b",
+  "files": {
+    "aba-browser.json": "3b33677d9d01b3ab1e853d7f7c57e4eb337e2840dda60051dffce6adecf5785f",
+    "aba-browser.log": "7fac0d0bacbbb7a35073785c45bebaaec310bdc4c6340f7a84c81103656e1b3c",
+    "browser-critic-namespace-rejection.json": "a04a5fc27865eb69214d7fd2be2e6e1d49cafe7d2cbb5a7851dce59dde796b77",
+    "browser-critic-namespace-rejection.log": "05fcf343e589c88ec011e8b19e68c4bde70f4f8b9fabee0e558a1ae061d39a12",
+    "browser-critic.json": "a6a9508162a12119d7822cd25e770bd8f29b5552e5207294a7e48038f5562eff",
+    "browser-critic.log": "2a3a22ab3d4f99de56b3d4d71330f4b65aceff3dba4e065a68a4b1c2a46ff78e",
+    "clippy.log": "428e5c300021ad09663485500af26f80f293be7ea988d07be2da886d6215d3f0",
+    "files-interrogation.json": "3aa2df9171e607d633a2d1d4c88ac22e181faa2f0730fd9a0090287245ad7364",
+    "files-interrogation.log": "be8a66bfeaaa9c5a98de0dcc3f1a118125f490a6ec2cc740ea6783b5227ebf47",
+    "format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "interrogate-files.py": "9ec352768f0bdba1a9d94a4a525e7a763cb9883af07393dd0f5c2935342b9bfd",
+    "interrogate-worker.py": "323782fb626335d753545c3e42bb092df0637ef53c9d12607803d80b431ff493",
+    "native-gates.json": "b89828b6a36f5e91ac3109f8e28b0461f1367f62eb335dd235e7f744f239bd68",
+    "native.log": "a6863c4798ed5d41551e70911a6969f592b5f20818df5d8f630427c86cfa995f",
+    "predictions.md": "17778c737364ade120abc27c191dc03245b5a8df5b4de9365fced2cbed68b844",
+    "run-aba-browser.mjs": "370fe73ae1e9c7fedb0fd93c9827f04addf979c5bdf3bc59fb3c08db5ca28125",
+    "run-browser-critic.mjs": "c5a9ac45dc4a6ed33fad072bac05f8d9bf5b73bfdc5516f93b94ec69f22747f9",
+    "sabotage-driver.log": "bc8ae58d6aa0f842bcac788bd01cf5bf6a9b8c90ecf8015d1bd477d0b7ccdd78",
+    "sabotage.json": "bc8ae58d6aa0f842bcac788bd01cf5bf6a9b8c90ecf8015d1bd477d0b7ccdd78",
+    "sabotage.log": "8a6895582478a0cea1b4b97d4f868c788e504d78be74703cc361e1c9062d7fba",
+    "sabotage.py": "7688f3a4a62c5e9de5c13371f7626af95ba7f672ab1a35c6ca746e2b28bbc87d",
+    "worker-interrogation.json": "76c7e50b0b691125179541ad1281847f9f0ec49e8a3a2ac688065e4497bdb3cd"
+  },
+  "source_sha256": {
+    "crates/core/tests/e9_session_checkpoint_verifier.rs": "0a25fd6b5e81582f94ffdb288a5ae6e8a2e2ed880ba44b40e1a6aab3b70534b7",
+    "tools/verify/e9-software-checkpoints-critic.mjs": "878cc8a82f5e35ca1196f14b8d7d7a8df5d733658157583967fba920cc5311e3",
+    "tools/verify/e9-software-checkpoints-aba-critic.mjs": "d44e4eb4ad22efa74a6dd87890490bb8e199a415263753f92eb4957a8e1cd90d",
+    "tools/verify/e9-software-checkpoints-browser.mjs": "fa00000a5d82648a57a0bd7f7254b6310469c733b9e8e7c16e2f57b5f32fdb18",
+    "tools/verify/e9-software-checkpoints.py": "e48a542386422bbb46c064bc9c722f6a1b045a5cce8a2a0aeefc1efdba040ceb"
+  },
+  "cold_clone_run": false,
+  "public_deployment_run": false
+}

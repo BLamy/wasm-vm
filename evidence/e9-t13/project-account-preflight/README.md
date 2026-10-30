@@ -1,0 +1,5 @@
+# Project-account preflight
+
+The refreshed official Wrangler session is authenticated, but its current account has no wasm-vm Pages project. The ordinary deployment refuses with exit1 before returning a deployment URL. A bounded read-only query against the repo saved target account returns authentication error API10000. Account fingerprints differ. The same750-file payload remains unchanged at frozen runtime2f2aa7.
+
+This packet preserves the nonsecret command receipts, payload inventory, ordinary producer and sanitized account diagnosis. The original inventory report has a path-label error; its additive corrected report is preserved alongside it. All payload checks themselves passed. Actual account names/identifiers and private authentication/debug logs remain local. No credential material is copied. This is neither a successful publication nor a task verification verdict. Correct project-account authorization, publication/public-browser proof and the unfinished G9 independent charter remain required.

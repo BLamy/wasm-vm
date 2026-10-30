@@ -1,0 +1,15 @@
+Cloning into '/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-6asgaulm/repo'...
+done.
+HEAD is now at 29a590bb test(session): retain independent seeded event clock critic
+python3 -B tools/verify/e9-event-clock.py --output "${E9_CLOCK_EVIDENCE_DIR:-target/evidence/e9-event-clock-final}"
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-6asgaulm/repo/tools/verify/e9-event-clock.py", line 44, in <module>
+    assert (ROOT/'web'/name).read_bytes()==(ROOT/'web/dist'/name).read_bytes(),'stale dist: '+name
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1249, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-6asgaulm/repo/web/docs-content/storage.md'
+make: *** [verify-E9-T09] Error 1

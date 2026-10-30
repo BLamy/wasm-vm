@@ -1,0 +1,60 @@
+{
+  "source_commit": "2a7ab8a8fcf738498330d6e12fba3beb379c8e9a",
+  "scope": "identity only; no replay/acceleration/performance qualification",
+  "assets": [
+    {
+      "fixture": "software-alpine-v1",
+      "role": "kernel",
+      "path": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "result": "byte-identity-checked",
+      "local_asset": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/kernel/6.6.63/Image"
+    },
+    {
+      "fixture": "software-alpine-v1",
+      "role": "rootfs",
+      "path": "releases/rootfs/alpine-rootfs.ext4",
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "size": 536870912,
+      "result": "byte-identity-checked",
+      "local_asset": "/Users/blamy/Documents/Codex/wasm-vm/releases/rootfs/alpine-rootfs.ext4"
+    },
+    {
+      "fixture": "software-alpine-v1",
+      "role": "bootSnapshot",
+      "path": "releases/boot-snapshot/alpine-ready.snap.gz",
+      "sha256": "6d97bafb03ac907acfc863c491912bf318113057360c6ba9d401141bb9042095",
+      "size": 16260246,
+      "result": "byte-identity-checked",
+      "local_asset": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/boot-snapshot/alpine-ready.snap.gz"
+    },
+    {
+      "fixture": "software-alpine-v1",
+      "role": "overlayDelta",
+      "path": "releases/boot-snapshot/alpine-overlay-delta.bin.gz",
+      "sha256": "b7c2d27ec91c6404fdbadd4d98fed63b255d48ecd87629df7d6ed65369f80204",
+      "size": 104,
+      "result": "byte-identity-checked",
+      "local_asset": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/boot-snapshot/alpine-overlay-delta.bin.gz"
+    },
+    {
+      "fixture": "desktop-gpu-candidate-v1",
+      "role": "kernel",
+      "path": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "size": 24208896,
+      "result": "byte-identity-checked",
+      "local_asset": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/kernel/6.6.63-omarchy-evdev1024/Image"
+    },
+    {
+      "fixture": "desktop-gpu-candidate-v1",
+      "role": "gpuCheckpoint",
+      "path": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd",
+      "size": 204057731,
+      "result": "byte-identity-checked",
+      "local_asset": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair"
+    }
+  ]
+}

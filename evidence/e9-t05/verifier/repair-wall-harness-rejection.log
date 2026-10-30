@@ -1,0 +1,7 @@
+page.evaluate: RangeError: icountDivider requires guestClock=icount
+    at validateICountDivider (http://127.0.0.1:49894/guest-clock.js:37:32)
+    at startLinuxBoot (http://127.0.0.1:49894/loader.js:375:5)
+    at eval (eval at evaluate (:234:30), <anonymous>:104:34)
+    at async <anonymous>:260:30
+    at checkSoftwareCheckpointCritic (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-software-checkpoints-critic.mjs:5:29)
+    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-repair-browser-critic.mjs:29:23

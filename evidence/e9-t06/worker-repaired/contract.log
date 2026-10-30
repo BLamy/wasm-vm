@@ -1,0 +1,575 @@
+{
+  "anchors": [
+    {
+      "line": 3926,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "uart",
+      "symbol": "pub fn send_input("
+    },
+    {
+      "line": 3728,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "uart",
+      "symbol": "const INPUT_SLICE:"
+    },
+    {
+      "line": 3936,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "keyboard",
+      "symbol": "pub fn send_keyboard_event("
+    },
+    {
+      "line": 4015,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "keyboard",
+      "symbol": "pub fn sync_keyboard("
+    },
+    {
+      "line": 77,
+      "path": "web/src/input/reconciliation.js",
+      "source": "keyboard",
+      "symbol": "export"
+    },
+    {
+      "line": 279,
+      "path": "crates/core/src/dev/virtio/input/snapshot.rs",
+      "source": "keyboard",
+      "symbol": "fn encode_session("
+    },
+    {
+      "line": 4028,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "pointer",
+      "symbol": "pub fn send_tablet_event("
+    },
+    {
+      "line": 4053,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "pointer",
+      "symbol": "pub fn send_mouse_event("
+    },
+    {
+      "line": 4040,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "pointer",
+      "symbol": "pub fn sync_tablet("
+    },
+    {
+      "line": 4065,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "pointer",
+      "symbol": "pub fn sync_mouse("
+    },
+    {
+      "line": 3237,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "display",
+      "symbol": "pub fn set_display("
+    },
+    {
+      "line": 36,
+      "path": "web/display-resize.js",
+      "source": "display",
+      "symbol": "sendTabletEvent"
+    },
+    {
+      "line": 1296,
+      "path": "web/loader.js",
+      "source": "lifecycle",
+      "symbol": "guestClockLifecycle.resume()"
+    },
+    {
+      "line": 57,
+      "path": "web/guest-clock.js",
+      "source": "lifecycle",
+      "symbol": "createGuestClockLifecycle"
+    },
+    {
+      "line": 3581,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "lifecycle",
+      "symbol": "pub fn set_icount_divider("
+    },
+    {
+      "line": 116,
+      "path": "web/guest-clock.js",
+      "source": "lifecycle",
+      "symbol": "beforeKeyboardEvent("
+    },
+    {
+      "line": 4337,
+      "path": "crates/core/src/lib.rs",
+      "source": "mtime",
+      "symbol": "fn sample_wall_clock_now("
+    },
+    {
+      "line": 261,
+      "path": "crates/core/src/time.rs",
+      "source": "mtime",
+      "symbol": "pub fn sample_wall("
+    },
+    {
+      "line": 3595,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "mtime",
+      "symbol": "pub fn rebase_guest_clock("
+    },
+    {
+      "line": 153,
+      "path": "crates/core/src/time.rs",
+      "source": "mtime",
+      "symbol": "pub fn limit_deadline("
+    },
+    {
+      "line": 1436,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "rtc",
+      "symbol": "impl wasm_vm_core::dev::rtc::WallClock for JsWallClock"
+    },
+    {
+      "line": 155,
+      "path": "crates/core/src/dev/rtc.rs",
+      "source": "rtc",
+      "symbol": "pub fn poll("
+    },
+    {
+      "line": 178,
+      "path": "crates/core/src/dev/rtc.rs",
+      "source": "rtc",
+      "symbol": "TIME_LOW =>"
+    },
+    {
+      "line": 14,
+      "path": "crates/wasm/src/crypto_entropy.rs",
+      "source": "entropy",
+      "symbol": "getrandom::getrandom(out)"
+    },
+    {
+      "line": 170,
+      "path": "crates/core/src/dev/virtio/rng.rs",
+      "source": "entropy",
+      "symbol": "source.fill("
+    },
+    {
+      "line": 4251,
+      "path": "crates/core/src/lib.rs",
+      "source": "timers",
+      "symbol": "fn sync_sbi_timer("
+    },
+    {
+      "line": 4492,
+      "path": "crates/core/src/lib.rs",
+      "source": "timers",
+      "symbol": "fn wfi_fast_forward("
+    },
+    {
+      "line": 4538,
+      "path": "crates/core/src/lib.rs",
+      "source": "timers",
+      "symbol": "fn external_net_io_pending("
+    },
+    {
+      "line": 186,
+      "path": "crates/wasm/src/chunked.rs",
+      "source": "block-read",
+      "symbol": "fn read("
+    },
+    {
+      "line": 107,
+      "path": "crates/wasm/src/http_fetch.rs",
+      "source": "block-read",
+      "symbol": "pub async fn fetch_pending("
+    },
+    {
+      "line": 249,
+      "path": "crates/wasm/src/chunked.rs",
+      "source": "block-write",
+      "symbol": "fn flush("
+    },
+    {
+      "line": 192,
+      "path": "crates/wasm/src/idb_store.rs",
+      "source": "block-write",
+      "symbol": "pub async fn persist_overlay_batch("
+    },
+    {
+      "line": 4621,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "block-write",
+      "symbol": "pub fn set_disk_read_only("
+    },
+    {
+      "line": 3233,
+      "path": "crates/core/src/lib.rs",
+      "source": "dma",
+      "symbol": "self.drain_code_writes();"
+    },
+    {
+      "line": 470,
+      "path": "crates/core/src/dev/virtio/blk.rs",
+      "source": "dma",
+      "symbol": "pub fn service("
+    },
+    {
+      "line": 549,
+      "path": "crates/core/src/dev/virtio/net.rs",
+      "source": "dma",
+      "symbol": "st.backend.poll();"
+    },
+    {
+      "line": 67,
+      "path": "crates/core/src/dev/virtio/net.rs",
+      "source": "network",
+      "symbol": "pub trait NetBackend"
+    },
+    {
+      "line": 46,
+      "path": "crates/wasm/src/ws_transport.rs",
+      "source": "network",
+      "symbol": "onmessage"
+    },
+    {
+      "line": 100,
+      "path": "crates/wasm/src/worker_transport.rs",
+      "source": "network",
+      "symbol": "post_message"
+    },
+    {
+      "line": 1,
+      "path": "crates/wasm/src/doh_fetch.rs",
+      "source": "network",
+      "symbol": "fetch"
+    },
+    {
+      "line": 466,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "network-time",
+      "symbol": "js_sys::Date::now() - start"
+    },
+    {
+      "line": 67,
+      "path": "crates/slirp/src/lib.rs",
+      "source": "network-time",
+      "symbol": "SlirpLocalBackend"
+    },
+    {
+      "line": 239,
+      "path": "crates/wasm/src/browser_file_transfer.rs",
+      "source": "file-transfer",
+      "symbol": "impl BrowserFileTransfers"
+    },
+    {
+      "line": 4096,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "file-transfer",
+      "symbol": "pub fn begin_file_upload("
+    },
+    {
+      "line": 4163,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "file-transfer",
+      "symbol": "pub fn finish_file_download("
+    },
+    {
+      "line": 4187,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "file-transfer",
+      "symbol": "pub fn note_file_transfer_persist("
+    },
+    {
+      "line": 3355,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "agent",
+      "symbol": "pub fn send_agent_input("
+    },
+    {
+      "line": 3270,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "agent",
+      "symbol": "pub fn confirm_agent_hello("
+    },
+    {
+      "line": 58,
+      "path": "web/linux-worker-protocol.js",
+      "source": "agent",
+      "symbol": "sendAgentInput"
+    },
+    {
+      "line": 48,
+      "path": "crates/core/src/dev/virtio/console/session_snapshot.rs",
+      "source": "agent",
+      "symbol": "pub(crate) fn snapshot_session_or_resume("
+    },
+    {
+      "line": 135,
+      "path": "web/clipboard-service.js",
+      "source": "clipboard",
+      "symbol": "ClipboardService"
+    },
+    {
+      "line": 20,
+      "path": "web/desktop-agent-bridge.js",
+      "source": "clipboard",
+      "symbol": "createDesktopAgentBridge"
+    },
+    {
+      "line": 2144,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "audio-playback",
+      "symbol": "struct SharedAudioClock"
+    },
+    {
+      "line": 1858,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "audio-playback",
+      "symbol": "struct SharedAudioSink"
+    },
+    {
+      "line": 155,
+      "path": "crates/core/src/dev/virtio/snd/mod.rs",
+      "source": "audio-playback",
+      "symbol": "pub trait AudioClock"
+    },
+    {
+      "line": 176,
+      "path": "crates/core/src/dev/virtio/snd/snapshot.rs",
+      "source": "audio-playback",
+      "symbol": "fn session_admit("
+    },
+    {
+      "line": 2035,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "audio-capture",
+      "symbol": "struct SharedAudioCapture"
+    },
+    {
+      "line": 3510,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "audio-capture",
+      "symbol": "pub fn notify_capture_event("
+    },
+    {
+      "line": 4,
+      "path": "web/src/audio/microphone.js",
+      "source": "audio-capture",
+      "symbol": "getUserMedia"
+    },
+    {
+      "line": 3142,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "software-gpu",
+      "symbol": "gpu::NullSink"
+    },
+    {
+      "line": 1,
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "source": "software-gpu",
+      "symbol": "snapshot"
+    },
+    {
+      "line": 3214,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "software-gpu",
+      "symbol": "pub fn attach_display("
+    },
+    {
+      "line": 9,
+      "path": "crates/wasm/src/virgl_linux.rs",
+      "source": "gpu-results",
+      "symbol": "pub fn attach_virgl("
+    },
+    {
+      "line": 205,
+      "path": "crates/wasm/src/virgl_linux.rs",
+      "source": "gpu-results",
+      "symbol": "pub fn scatter_output("
+    },
+    {
+      "line": 324,
+      "path": "crates/wasm/src/virgl_linux.rs",
+      "source": "gpu-results",
+      "symbol": "pub fn complete("
+    },
+    {
+      "line": 262,
+      "path": "crates/wasm/src/virgl_host.rs",
+      "source": "gpu-results",
+      "symbol": "pub(crate) fn control_result("
+    },
+    {
+      "line": 279,
+      "path": "web/renderer/virgl-command/control-bridge.mjs",
+      "source": "gpu-results",
+      "symbol": "transport.complete("
+    },
+    {
+      "line": 62,
+      "path": "web/renderer/virgl-command/queries.mjs",
+      "source": "gpu-results",
+      "symbol": "gl.getQueryParameter("
+    },
+    {
+      "line": 253,
+      "path": "web/loader.js",
+      "source": "storage-control",
+      "symbol": "resumeAfterQuota"
+    },
+    {
+      "line": 2726,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "storage-control",
+      "symbol": "pub fn new_chunked_disk_with_extra("
+    },
+    {
+      "line": 4536,
+      "path": "crates/wasm/src/lib.rs",
+      "source": "storage-control",
+      "symbol": "pub fn advance_overlay_generation("
+    },
+    {
+      "line": 109,
+      "path": "crates/storage/src/disk_root.rs",
+      "source": "storage-control",
+      "symbol": "pub fn admit("
+    },
+    {
+      "line": 11,
+      "path": "crates/wasm/src/session_disk.rs",
+      "source": "storage-control",
+      "symbol": "pub async fn capture_disk_delta("
+    },
+    {
+      "line": 92,
+      "path": "web/session-disk-roots.js",
+      "source": "storage-control",
+      "symbol": "async restore("
+    },
+    {
+      "line": 1298,
+      "path": "web/loader.js",
+      "source": "storage-control",
+      "symbol": "const captureDiskDelta = async"
+    },
+    {
+      "line": 284,
+      "path": "crates/wasm/src/chunked.rs",
+      "source": "storage-control",
+      "symbol": "pub(crate) trait DiskSnapshot"
+    },
+    {
+      "line": 1271,
+      "path": "web/loader.js",
+      "source": "checkpoint-control",
+      "symbol": "const saveGpuCheckpoint = async"
+    },
+    {
+      "line": 40,
+      "path": "web/gpu-checkpoint.js",
+      "source": "checkpoint-control",
+      "symbol": "deriveGpuCheckpointWitness"
+    },
+    {
+      "line": 170,
+      "path": "web/renderer/virgl-command/checkpoint.mjs",
+      "source": "checkpoint-control",
+      "symbol": "createJournalledProductionBridge"
+    },
+    {
+      "line": 174,
+      "path": "web/renderer/virgl-command/checkpoint.mjs",
+      "source": "checkpoint-control",
+      "symbol": "restoreProductionRenderer"
+    },
+    {
+      "line": 49,
+      "path": "crates/wasm/src/virgl_linux.rs",
+      "source": "checkpoint-control",
+      "symbol": "pub fn drain_gpu_checkpoint_boundary("
+    },
+    {
+      "line": 91,
+      "path": "crates/wasm/src/virgl_linux.rs",
+      "source": "checkpoint-control",
+      "symbol": "pub fn load_accelerated_snapshot_blob("
+    },
+    {
+      "line": 32,
+      "path": "crates/wasm/src/session_checkpoint.rs",
+      "source": "checkpoint-control",
+      "symbol": "pub async fn capture_software_checkpoint("
+    },
+    {
+      "line": 43,
+      "path": "crates/wasm/src/software_checkpoint.rs",
+      "source": "checkpoint-control",
+      "symbol": "pub fn from_bytes("
+    },
+    {
+      "line": 68,
+      "path": "web/session-checkpoints.js",
+      "source": "checkpoint-control",
+      "symbol": "export class SessionCheckpoints"
+    }
+  ],
+  "content_sha256": {
+    "Makefile": "5f9f5da7646ccace4b1096872cd3d5cb87cbefbd00eb69b9bdf54599b3da9c63",
+    "docs/design/session-gpu-probe.c": "822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155",
+    "docs/design/session-replay-contract.json": "f23fca1396dbd68739d3ddf5626362016bdd85fe8e6d2dcdd3b66aff9b30645a",
+    "docs/design/session-replay.md": "50fe9240d0609f91ed927f3238bce4f1e26411f7768e4ef32be4f0a1e3b558cb",
+    "tools/verify/e9-session-contract.py": "c1aefae106fe13182daa86cf4c84197d9ab9a79382f8ee4dadf6d8614ef874c4"
+  },
+  "fixture_manifests": 2,
+  "fixture_qualification": {
+    "desktop-gpu-candidate-v1": "pending",
+    "software-alpine-v1": "pending"
+  },
+  "result": "direct-contract-check-passed",
+  "scope": "definitions and adapter identities only; no guest replay or performance claim",
+  "source_commit": "1afabe81e5545eb54da63faddc8214d81e474dc4",
+  "source_files": 41,
+  "source_rows": 23,
+  "source_sha256": {
+    "crates/core/src/dev/rtc.rs": "15d1a05661f4be977c8d924b7c86863ef6c531b8cac054e7887fffd4fbfd63fe",
+    "crates/core/src/dev/virtio/blk.rs": "71f70f6640c04dba993a35ae3a2397d26b7ef5a17fa932cd5aa8916c2842afdb",
+    "crates/core/src/dev/virtio/console/session_snapshot.rs": "be47837ca866288de760812158064ccb055de04eff7d93d41d3faa7e53273608",
+    "crates/core/src/dev/virtio/gpu/snapshot.rs": "44213a7452dccb5fed4f9969df03aaff64d2fc2c5a39c54ace4e1a563544b390",
+    "crates/core/src/dev/virtio/input/snapshot.rs": "3466ff2e5278c1cb29a63439a9208dd2d5efc3147ed063fece77c9e35dde3fce",
+    "crates/core/src/dev/virtio/net.rs": "80090a16b52bc63feab98a3dd6afeb3ba874500147031552e6aea7640bfd1387",
+    "crates/core/src/dev/virtio/rng.rs": "b1d38c4014b48171a4fb925ac66355df30216c43214869b7f845675e08960785",
+    "crates/core/src/dev/virtio/snd/mod.rs": "21294eb1046b260ee4efeaa6ac205513c3006243dd11a05ca2d2f2ea0cbf5eb6",
+    "crates/core/src/dev/virtio/snd/snapshot.rs": "20ba49acaff6cd0336a900dac65e05793a26e28a4e438c8a1a1894b0124603e7",
+    "crates/core/src/lib.rs": "e2f98415f38526c2f3e1e5e2972cd2bd6d4dd1bf4ed31ca65123dc46d2033e59",
+    "crates/core/src/time.rs": "f5c82f061100dc0f30c6281eae5d7103298622739b629312566348924257765f",
+    "crates/slirp/src/lib.rs": "7e08a064d78f516b775cfdf913351155bc9734445a9a063d761c0b7f385703c2",
+    "crates/storage/src/disk_root.rs": "dbe457d5d68b797d173f86bdbdd0d78c06a644e7de04c5440d060e62127e07c9",
+    "crates/wasm/src/browser_file_transfer.rs": "5ddc63e9b2e2a64b7587cb7ba7c25ac8da8331264be3790e92d4111dd8e22450",
+    "crates/wasm/src/chunked.rs": "53efe9ea5c755b7f0fb6e2de2efcfa58f96bd84748efb1b3980036a02c197d22",
+    "crates/wasm/src/crypto_entropy.rs": "762f6afe26f4658772d60a50d31efea71a912849d96bee7db1d4fc6a553a1b01",
+    "crates/wasm/src/doh_fetch.rs": "688c4efde913eef0a3147f96017dab7714067bc555f1ef0e5a2d5906936fee95",
+    "crates/wasm/src/http_fetch.rs": "db6719f76c0f33e3bc09ff1dac1856ee232b529a0aeb725a0b3116a5b4c414e7",
+    "crates/wasm/src/idb_store.rs": "643ce073069f674c9a4b25e42548d95d0e3d7815de3b1e44cf3429cf07f8fcc1",
+    "crates/wasm/src/lib.rs": "af0f55d5b54948218999e24c1b94b9bdc262d7a3f868240288fddf2e3bfb9668",
+    "crates/wasm/src/session_checkpoint.rs": "af0858d7e803c0c557b40ea0189a98d0af61426a069b4a67ad7afb66a778415e",
+    "crates/wasm/src/session_disk.rs": "b776982f672762b482df89b14ab27420e907a9342c326b2a59f8a96acf72cbae",
+    "crates/wasm/src/software_checkpoint.rs": "f0d475b1c599b3f3bd2eed77c6745c2ab4d6f79793bfcad74ca377536d4e1dbd",
+    "crates/wasm/src/virgl_host.rs": "32da1555bf5b1c751b94f8d52dd9cf0d46a1d7f6bfc62cdfded27dd0923b4d81",
+    "crates/wasm/src/virgl_linux.rs": "067dbbd59319a3bae79bcec2baf9b24dec71d765940c34eaf634c73b14189949",
+    "crates/wasm/src/worker_transport.rs": "709b19ae9d50cd6c7a139440b3465d37dac0046649ca66949f4e7e6eed753dbd",
+    "crates/wasm/src/ws_transport.rs": "7ed6747577246e9d464165e6fbd69fb58afcd8ca257b66ccbd50f17370e440bf",
+    "web/clipboard-service.js": "8e564d1f1696e7f0362878d056adabd44262040b253e96b0b1bbbb3126e815d6",
+    "web/desktop-agent-bridge.js": "95ead26788572195db822ffdfe7853ca6cbaf29f4397357d46ef24d63e6fa338",
+    "web/display-resize.js": "f22d8f465c6df49ccc2495e3724a756f4f554ee17bd4db83f19ed48965459f1e",
+    "web/gpu-checkpoint.js": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
+    "web/guest-clock.js": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
+    "web/linux-worker-protocol.js": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+    "web/loader.js": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+    "web/renderer/virgl-command/checkpoint.mjs": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af",
+    "web/renderer/virgl-command/control-bridge.mjs": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a",
+    "web/renderer/virgl-command/queries.mjs": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860",
+    "web/session-checkpoints.js": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+    "web/session-disk-roots.js": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
+    "web/src/audio/microphone.js": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+    "web/src/input/reconciliation.js": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d"
+  },
+  "task": "E9-T01"
+}

@@ -1,0 +1,258 @@
+{
+  "status": "passed",
+  "head": "0e47542da82440cffa347f0aff3513ea77e712e5",
+  "scope": "Bounded real MMIO GPU paged/delta proof; not full Omarchy or performance qualification",
+  "fixture": {
+    "version": 1,
+    "architecture": "rv64imac_zicsr-supervisor",
+    "scope": "Original MMIO GPU/query/disk fixture; not Linux/Mesa",
+    "sha256": "a393783a4d9ae15fdcd7cfd52e9cc95ea31acef1f43a7555c3dcbf4c3a83a4d9",
+    "bytes": 4224,
+    "symbols": {
+      "disk": {
+        "address": "0x000000008020b000",
+        "bytes": 8192
+      },
+      "diskBytes": {
+        "address": "0x0000000080202110",
+        "bytes": 512
+      },
+      "fence": {
+        "address": "0x0000000080200f30",
+        "bytes": 8
+      },
+      "gpu": {
+        "address": "0x000000008020f000",
+        "bytes": 8192
+      },
+      "pixels": {
+        "address": "0x0000000080202350",
+        "bytes": 16384
+      },
+      "queryData": {
+        "address": "0x0000000080202310",
+        "bytes": 64
+      },
+      "response": {
+        "address": "0x0000000080202000",
+        "bytes": 256
+      }
+    }
+  },
+  "recording": {
+    "id": "bounded-paged-gpu",
+    "states": [
+      {
+        "transition": "0",
+        "retired": "0",
+        "sequence": "0",
+        "ordinal": 0,
+        "phase": "before",
+        "id": "gpu-start",
+        "digest": "e3599683c80f6c25e7193675414ae79032c0d981ba50bd77cb5b9ea9c028baf8",
+        "ramDigest": "7c91248fee6cc097f18d3b7311dc7279d038bfc490c5d4925d5b911adec087fd",
+        "state": {
+          "file": "source-0.state",
+          "bytes": 7027,
+          "sha256": "2bb5c3103468382cc66de486687d776ef1eb67c149cd6d0224e14837c4f097b4"
+        }
+      },
+      {
+        "transition": "10000",
+        "retired": "9980",
+        "sequence": "3",
+        "ordinal": 1,
+        "phase": "before",
+        "id": "point-0",
+        "digest": "b94f031f167363382cfce1d886c24ce06616fcc34bf9060ce203c5a32679c6b0",
+        "ramDigest": "463c8b0637562e355156365d3572be252a7622f91d6648a3e4b3b03360bb720e",
+        "state": {
+          "file": "source-1.state",
+          "bytes": 7594,
+          "sha256": "f4930b313fe14d26a30be7f36cf34eec3e998aeb828e6e5502c4c68509a6362e"
+        }
+      },
+      {
+        "transition": "20000",
+        "retired": "19980",
+        "sequence": "8",
+        "ordinal": 0,
+        "phase": "before",
+        "id": "point-1",
+        "digest": "5dc014f4a8c02e0dd4d3cd095c16be3664b6f134ad278fc3ea08286ec12bec12",
+        "ramDigest": "091aeeda8d6787fbe94fce9b54cc790216e27627b7a4f020442a71b6456d5729",
+        "state": {
+          "file": "source-2.state",
+          "bytes": 7756,
+          "sha256": "772726071b16d0db73b03f5430bb9f3cbcb44389f6abce65f158045f6fcc8c20"
+        }
+      },
+      {
+        "transition": "60000",
+        "retired": "59980",
+        "sequence": "10",
+        "ordinal": 0,
+        "phase": "before",
+        "id": "point-2",
+        "digest": "7b66ace5e9f05a26795ecf5472db6e5df73b363f434da1f8e3df98df08c47d6f",
+        "ramDigest": "a5d8ebc14f4c2ddc5c16b4ab5a009de8e7bf572ed66effca43768fa4e03b50fc",
+        "state": {
+          "file": "source-3.state",
+          "bytes": 7878,
+          "sha256": "e29ff810a8f1f2f6c6fde63159c4426a567ff32a92a6b5e9c07152dc43a90572"
+        }
+      }
+    ],
+    "end": {
+      "transition": "690000",
+      "retired": "689834",
+      "sequence": "38",
+      "ordinal": 1,
+      "phase": "before",
+      "digest": "6c6e1481ca2a76ea72e9de7def6ca757006cf3c5fabf334a6468ec1975f03a0c",
+      "ramDigest": "ad17ac4f602fe15335a9cb6832960ff9e23702467b96c944a269a2fc161e5eca",
+      "state": {
+        "file": "source-4.state",
+        "bytes": 8047,
+        "sha256": "a4cd6fdbdaa427e805a6a68a0e98822a2537651c7f6f27dda316ab837c47ae79"
+      }
+    }
+  },
+  "replay": {
+    "windows": [
+      {
+        "from": "point-0",
+        "to": "point-1",
+        "incrementalStart": true,
+        "position": {
+          "transition": "20000",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "8",
+          "retired": "19980"
+        },
+        "digest": "5dc014f4a8c02e0dd4d3cd095c16be3664b6f134ad278fc3ea08286ec12bec12",
+        "expected": "5dc014f4a8c02e0dd4d3cd095c16be3664b6f134ad278fc3ea08286ec12bec12",
+        "state": {
+          "file": "replay-0.state",
+          "bytes": 7756,
+          "sha256": "772726071b16d0db73b03f5430bb9f3cbcb44389f6abce65f158045f6fcc8c20"
+        },
+        "replay": {
+          "paged": true,
+          "windows": 1,
+          "eventCursor": 8,
+          "wholeChain": false
+        }
+      },
+      {
+        "from": "point-1",
+        "to": "point-2",
+        "incrementalStart": true,
+        "position": {
+          "transition": "60000",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "10",
+          "retired": "59980"
+        },
+        "digest": "7b66ace5e9f05a26795ecf5472db6e5df73b363f434da1f8e3df98df08c47d6f",
+        "expected": "7b66ace5e9f05a26795ecf5472db6e5df73b363f434da1f8e3df98df08c47d6f",
+        "state": {
+          "file": "replay-1.state",
+          "bytes": 7878,
+          "sha256": "e29ff810a8f1f2f6c6fde63159c4426a567ff32a92a6b5e9c07152dc43a90572"
+        },
+        "replay": {
+          "paged": true,
+          "windows": 1,
+          "eventCursor": 10,
+          "wholeChain": false
+        }
+      }
+    ],
+    "tail": {
+      "from": "point-2",
+      "position": {
+        "transition": "690000",
+        "phase": "before",
+        "ordinal": 1,
+        "sequence": "38",
+        "retired": "689834"
+      },
+      "digest": "6c6e1481ca2a76ea72e9de7def6ca757006cf3c5fabf334a6468ec1975f03a0c",
+      "state": {
+        "file": "replay-2.state",
+        "bytes": 8047,
+        "sha256": "a4cd6fdbdaa427e805a6a68a0e98822a2537651c7f6f27dda316ab837c47ae79"
+      },
+      "replay": {
+        "paged": true,
+        "windows": 1,
+        "eventCursor": 38,
+        "wholeChain": true
+      }
+    },
+    "pixel": [
+      0,
+      255,
+      0,
+      255
+    ],
+    "incrementalStart": true,
+    "position": {
+      "transition": "690000",
+      "phase": "before",
+      "ordinal": 1,
+      "sequence": "38",
+      "retired": "689834"
+    },
+    "digest": "6c6e1481ca2a76ea72e9de7def6ca757006cf3c5fabf334a6468ec1975f03a0c"
+  },
+  "raw": [
+    {
+      "file": "source-0.state",
+      "bytes": 7027,
+      "sha256": "2bb5c3103468382cc66de486687d776ef1eb67c149cd6d0224e14837c4f097b4"
+    },
+    {
+      "file": "source-1.state",
+      "bytes": 7594,
+      "sha256": "f4930b313fe14d26a30be7f36cf34eec3e998aeb828e6e5502c4c68509a6362e"
+    },
+    {
+      "file": "source-2.state",
+      "bytes": 7756,
+      "sha256": "772726071b16d0db73b03f5430bb9f3cbcb44389f6abce65f158045f6fcc8c20"
+    },
+    {
+      "file": "source-3.state",
+      "bytes": 7878,
+      "sha256": "e29ff810a8f1f2f6c6fde63159c4426a567ff32a92a6b5e9c07152dc43a90572"
+    },
+    {
+      "file": "source-4.state",
+      "bytes": 8047,
+      "sha256": "a4cd6fdbdaa427e805a6a68a0e98822a2537651c7f6f27dda316ab837c47ae79"
+    },
+    {
+      "file": "replay-0.state",
+      "bytes": 7756,
+      "sha256": "772726071b16d0db73b03f5430bb9f3cbcb44389f6abce65f158045f6fcc8c20"
+    },
+    {
+      "file": "replay-1.state",
+      "bytes": 7878,
+      "sha256": "e29ff810a8f1f2f6c6fde63159c4426a567ff32a92a6b5e9c07152dc43a90572"
+    },
+    {
+      "file": "replay-2.state",
+      "bytes": 8047,
+      "sha256": "a4cd6fdbdaa427e805a6a68a0e98822a2537651c7f6f27dda316ab837c47ae79"
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "external": [],
+  "sockets": []
+}

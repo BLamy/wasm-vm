@@ -96,6 +96,22 @@ pub struct Submit3dCompletion {
 pub trait Submit3dSink {
     fn begin_job(&mut self, request: &Submit3dRequest) -> Result<(), Control3dError>;
     fn cancel_job(&mut self, key: Submit3dKey) -> Result<(), Control3dError>;
+    /// Recorded profiles require a request-bound, revocable completion sender.
+    /// A legacy sink refuses before starting uncompletable work.
+    fn begin_session_job(
+        &mut self,
+        _request: &Submit3dRequest,
+        _completion: Submit3dCompletionLease,
+    ) -> Result<(), Control3dError> {
+        Err(Control3dError::Unspecified)
+    }
+    fn begin_session_scanout(
+        &mut self,
+        _request: &Scanout3dRequest,
+        _completion: Submit3dCompletionLease,
+    ) -> Result<(), Control3dError> {
+        Err(Control3dError::Unspecified)
+    }
     /// Failure-atomic global display binding, enabled only by the scanout constructor.
     fn bind_scanout(&mut self, _event: &Scanout3dEvent) -> Result<(), Control3dError> {
         Err(Control3dError::Unspecified)
@@ -118,6 +134,8 @@ struct MailboxState {
     completion: Option<Submit3dCompletion>,
     scanout: bool,
     draw_limit: u32,
+    protected: bool,
+    incarnation: Rc<()>,
 }
 #[derive(Clone, Default)]
 pub struct Submit3dMailbox(Rc<RefCell<MailboxState>>);
@@ -133,9 +151,29 @@ impl Submit3dMailbox {
             ready: state.completion.is_some(),
         }
     }
-    pub fn post(&self, mut completion: Submit3dCompletion) -> Result<(), Control3dError> {
+    pub fn post(&self, completion: Submit3dCompletion) -> Result<(), Control3dError> {
+        if self.0.borrow().protected {
+            return Err(Control3dError::InvalidParameter);
+        }
+        self.receive(completion, None)
+    }
+    fn lease(&self, key: Submit3dKey) -> Submit3dCompletionLease {
+        Submit3dCompletionLease {
+            mailbox: self.clone(),
+            incarnation: self.0.borrow().incarnation.clone(),
+            key,
+        }
+    }
+    fn receive(
+        &self,
+        mut completion: Submit3dCompletion,
+        incarnation: Option<&Rc<()>>,
+    ) -> Result<(), Control3dError> {
         let mut state = self.0.borrow_mut();
-        if state.active != Some(completion.key) || state.completion.is_some() {
+        if incarnation.is_some_and(|value| !Rc::ptr_eq(value, &state.incarnation))
+            || state.active != Some(completion.key)
+            || state.completion.is_some()
+        {
             return Err(Control3dError::InvalidParameter);
         }
         // An exception after scatter may hide its consumed sequence from JS. Only
@@ -155,16 +193,95 @@ impl Submit3dMailbox {
         state.completion = Some(completion);
         Ok(())
     }
-    fn arm(&self, key: Submit3dKey, scanout: bool, draw_limit: u32) {
+    fn arm(&self, key: Submit3dKey, scanout: bool, draw_limit: u32, protected: bool) {
         *self.0.borrow_mut() = MailboxState {
             active: Some(key),
             scanout,
             draw_limit,
+            protected,
             ..MailboxState::default()
         };
     }
     fn revoke(&self) {
         *self.0.borrow_mut() = MailboxState::default();
+    }
+}
+
+/// A sender is minted at request admission. Its opaque incarnation is never
+/// serialized, so an authentic old callback cannot acquire a fresh owner's rights.
+#[derive(Clone)]
+pub struct Submit3dCompletionLease {
+    mailbox: Submit3dMailbox,
+    incarnation: Rc<()>,
+    key: Submit3dKey,
+}
+impl Submit3dCompletionLease {
+    pub fn key(&self) -> Submit3dKey {
+        self.key
+    }
+    /// Authorize DMA for the original recorded request before touching guest RAM.
+    /// Completion ownership alone is insufficient: a delayed gather/scatter must
+    /// not acquire a newly armed job that happens to reuse its numeric key.
+    pub fn authorize_transport(&self) -> Result<(), Control3dError> {
+        let state = self.mailbox.0.borrow();
+        if !state.protected
+            || !Rc::ptr_eq(&self.incarnation, &state.incarnation)
+            || state.active != Some(self.key)
+            || state.completion.is_some()
+        {
+            return Err(Control3dError::InvalidParameter);
+        }
+        Ok(())
+    }
+    pub fn post(&self, completion: Submit3dCompletion) -> Result<(), Control3dError> {
+        if completion.key != self.key {
+            return Err(Control3dError::InvalidParameter);
+        }
+        self.mailbox.receive(completion, Some(&self.incarnation))
+    }
+}
+
+#[cfg(test)]
+mod session_transport_authority_tests {
+    use super::*;
+
+    #[test]
+    fn dma_authority_is_bound_to_admission_and_ends_at_completion() {
+        let mailbox = Submit3dMailbox::new();
+        let key = Submit3dKey {
+            epoch: 1,
+            sequence: 9,
+        };
+        mailbox.arm(key, false, 256, true);
+        let original = mailbox.lease(key);
+        assert_eq!(original.authorize_transport(), Ok(()));
+        mailbox.revoke();
+        mailbox.arm(key, false, 256, true);
+        let fresh = mailbox.lease(key);
+        assert_eq!(
+            original.authorize_transport(),
+            Err(Control3dError::InvalidParameter)
+        );
+        assert_eq!(fresh.authorize_transport(), Ok(()));
+        fresh
+            .post(Submit3dCompletion {
+                key,
+                exchange_sequence: 0,
+                outcome: Ok(()),
+                gpu_complete: true,
+                applied_commands: 0,
+                draws: 0,
+            })
+            .unwrap();
+        assert_eq!(
+            fresh.authorize_transport(),
+            Err(Control3dError::InvalidParameter)
+        );
+        mailbox.arm(key, false, 256, false);
+        assert_eq!(
+            mailbox.lease(key).authorize_transport(),
+            Err(Control3dError::InvalidParameter)
+        );
     }
 }
 
@@ -303,6 +420,11 @@ pub(crate) struct Submit3dState {
     counters: Submit3dCounters,
     layered_dma: bool,
     production: bool,
+    pub(crate) result_tap: Option<crate::session_gpu::ControlResultTap>,
+    // Ephemeral host policy: the live OFF control still requires original-request leases.
+    owned_live_transport: bool,
+    admitted_completion: Option<Submit3dCompletion>,
+    physical_settled: bool,
 }
 impl Submit3dState {
     pub fn new(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
@@ -337,7 +459,18 @@ impl Submit3dState {
             counters: Submit3dCounters::default(),
             layered_dma,
             production: false,
+            result_tap: None,
+            owned_live_transport: false,
+            admitted_completion: None,
+            physical_settled: false,
         }
+    }
+    pub(crate) fn enable_owned_live_transport(&mut self) -> Result<(), Control3dError> {
+        if !self.production || self.pending.is_some() || self.result_tap.is_some() {
+            return Err(Control3dError::InvalidParameter);
+        }
+        self.owned_live_transport = true;
+        Ok(())
     }
     pub fn snapshot(&self) -> Submit3dSnapshot {
         let mailbox = self.mailbox.inspect();
@@ -358,15 +491,39 @@ impl Submit3dState {
                     .map(|r| r.backing.as_ref().map_or(0, |v| v.len() as u32))
                     .sum(),
                 last_exchange: mailbox.last_exchange,
-                completion_ready: mailbox.ready,
+                completion_ready: self.guest_ready(),
             }),
         }
     }
     pub(super) fn commit_checkpoint(&mut self, snapshot: Submit3dSnapshot) {
         self.mailbox.revoke();
         self.pending = None;
+        self.physical_settled = false;
+        self.admitted_completion = None;
         self.next_sequence = snapshot.next_sequence;
         self.counters = snapshot.counters;
+    }
+    pub(super) fn commit_pending_checkpoint(
+        &mut self,
+        pending: PendingSubmit3d,
+        last_exchange: u64,
+        completion: Submit3dCompletion,
+    ) {
+        let key = pending.request.key();
+        self.physical_settled = true;
+        self.mailbox.arm(
+            key,
+            matches!(pending.request, PendingRequest::Scanout(_)),
+            256,
+            true,
+        );
+        {
+            let mut mailbox = self.mailbox.0.borrow_mut();
+            mailbox.last_exchange = last_exchange;
+            mailbox.completion = Some(completion);
+        }
+        self.admitted_completion = None;
+        self.pending = Some(pending);
     }
     pub fn next_key(&self, epoch: u64) -> Result<Submit3dKey, Control3dError> {
         self.next_sequence
@@ -378,6 +535,7 @@ impl Submit3dState {
         })
     }
     pub fn begin(&mut self, pending: PendingSubmit3d) {
+        self.physical_settled = false;
         let key = pending.request.key();
         self.counters.admitted = self.counters.admitted.saturating_add(1);
         if pending.request.header().flags & super::protocol::FLAG_FENCE != 0 {
@@ -398,9 +556,18 @@ impl Submit3dState {
             key,
             matches!(pending.request, PendingRequest::Scanout(_)),
             if self.production { 256 } else { 64 },
+            self.result_tap.is_some() || self.owned_live_transport,
         );
         self.pending = Some(pending);
         let result = match &self.pending.as_ref().expect("installed pending").request {
+            PendingRequest::Render(r) if self.result_tap.is_some() || self.owned_live_transport => {
+                self.sink.begin_session_job(r, self.mailbox.lease(key))
+            }
+            PendingRequest::Scanout(r)
+                if self.result_tap.is_some() || self.owned_live_transport =>
+            {
+                self.sink.begin_session_scanout(r, self.mailbox.lease(key))
+            }
             PendingRequest::Render(r) => self.sink.begin_job(r),
             PendingRequest::Scanout(r) => self.sink.begin_scanout(r),
         };
@@ -415,33 +582,91 @@ impl Submit3dState {
             } else {
                 error
             };
-            let _ = self.mailbox.post(Submit3dCompletion {
-                key,
-                exchange_sequence: 0,
-                outcome: Err(error),
-                gpu_complete: error != Control3dError::BridgePoisoned,
-                applied_commands: 0,
-                draws: 0,
-            });
+            let _ = self.mailbox.receive(
+                Submit3dCompletion {
+                    key,
+                    exchange_sequence: 0,
+                    outcome: Err(error),
+                    gpu_complete: error != Control3dError::BridgePoisoned,
+                    applied_commands: 0,
+                    draws: 0,
+                },
+                None,
+            );
         }
     }
     pub fn bind_scanout(&mut self, event: &Scanout3dEvent) -> Result<(), Control3dError> {
-        self.sink.bind_scanout(event)
+        if let Some(tap) = &self.result_tap {
+            tap.scanout(event, &mut *self.sink)
+        } else {
+            self.sink.bind_scanout(event)
+        }
+    }
+    pub(crate) fn guest_ready(&self) -> bool {
+        if self.result_tap.is_some() {
+            self.admitted_completion.is_some()
+        } else {
+            self.mailbox.inspect().ready
+        }
+    }
+    pub(crate) fn physical_completion(&self) -> Option<Submit3dCompletion> {
+        self.mailbox.0.borrow().completion
+    }
+    pub(crate) fn validate_result(
+        &self,
+        completion: Submit3dCompletion,
+    ) -> Result<(), Control3dError> {
+        let state = self.mailbox.0.borrow();
+        if state.active != Some(completion.key)
+            || completion.exchange_sequence != state.last_exchange
+            || completion.applied_commands > 4096
+            || completion.draws > state.draw_limit
+            || state.scanout && (completion.applied_commands != 0 || completion.draws != 0)
+            || !completion.gpu_complete && completion.outcome != Err(Control3dError::BridgePoisoned)
+            || self.admitted_completion.is_some()
+        {
+            return Err(Control3dError::InvalidParameter);
+        }
+        Ok(())
+    }
+    pub(crate) fn cancel_physical(&mut self, key: Submit3dKey) -> Result<(), Control3dError> {
+        if self.physical_settled
+            || self
+                .physical_completion()
+                .is_some_and(|completion| completion.key == key && completion.gpu_complete)
+        {
+            // A rejected begin or an already finished job has no live physical
+            // work to cancel. An uncertain completion still requires cancellation.
+            Ok(())
+        } else {
+            self.sink.cancel_job(key)
+        }
+    }
+    pub(crate) fn admit_result(&mut self, completion: Submit3dCompletion) {
+        self.admitted_completion = Some(completion);
     }
     pub fn revoke(&mut self) {
+        self.admitted_completion = None;
         self.mailbox.revoke();
         if let Some(pending) = self.pending.take() {
             self.counters.cancelled = self.counters.cancelled.saturating_add(1);
-            let _ = self.sink.cancel_job(pending.request.key());
+            if !self.physical_settled {
+                let _ = self.sink.cancel_job(pending.request.key());
+            }
         }
     }
     pub fn take_ready(&mut self) -> Option<(PendingSubmit3d, Submit3dCompletion)> {
-        let completion = self.mailbox.0.borrow_mut().completion.take()?;
+        let completion = if self.result_tap.is_some() {
+            self.admitted_completion.take()?
+        } else {
+            self.mailbox.0.borrow_mut().completion.take()?
+        };
         let pending = self
             .pending
             .take()
             .expect("mailbox armed only for a pending head");
         self.mailbox.revoke();
+        self.physical_settled = false;
         Some((pending, completion))
     }
     pub fn completed(&mut self, c: Submit3dCompletion) {
@@ -482,7 +707,7 @@ impl Submit3dState {
         }
         if request.key != exchange.key
             || m.active != Some(exchange.key)
-            || m.ready
+            || (m.ready && self.result_tap.as_ref().is_none_or(|tap| !tap.replay()))
             || exchange.exchange_sequence != m.last_exchange + 1
             || exchange.exchange_sequence > MAX_EXCHANGES
         {
@@ -549,7 +774,7 @@ pub(crate) fn row_spans(
 ) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
     row_spans_limited(rows, entries, MAX_EXCHANGE_BYTES)
 }
-fn row_spans_limited(
+pub(super) fn row_spans_limited(
     rows: Submit3dRows,
     entries: &[BackingEntry],
     byte_limit: u64,
@@ -617,7 +842,7 @@ fn layered_row_spans(
 ) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
     layered_row_spans_limited(rows, layer_stride, layer_count, entries, MAX_EXCHANGE_BYTES)
 }
-fn layered_row_spans_limited(
+pub(super) fn layered_row_spans_limited(
     rows: Submit3dRows,
     layer_stride: u32,
     layer_count: u32,
@@ -893,7 +1118,7 @@ pub(crate) fn admit(
         trace: super::CommandTraceMeta::default(),
     })
 }
-fn validate_transfer(
+pub(super) fn validate_transfer(
     t: Transfer3d,
     r: &AcceptedResource3d,
     byte_limit: u64,
@@ -945,3 +1170,150 @@ fn validate_transfer(
 #[cfg(all(test, feature = "std"))]
 #[path = "submit3d_dimensional_tests.rs"]
 mod dimensional_span_tests;
+
+#[cfg(test)]
+mod completion_lease_tests {
+    use super::*;
+    #[test]
+    fn authentic_old_lease_cannot_post_after_same_numeric_key_is_rearmed() {
+        let mail = Submit3dMailbox::new();
+        let key = Submit3dKey {
+            epoch: 7,
+            sequence: 11,
+        };
+        let completion = Submit3dCompletion {
+            key,
+            exchange_sequence: 0,
+            outcome: Ok(()),
+            gpu_complete: true,
+            applied_commands: 1,
+            draws: 0,
+        };
+        mail.arm(key, false, 256, true);
+        let old = mail.lease(key);
+        assert_eq!(mail.post(completion), Err(Control3dError::InvalidParameter));
+        mail.revoke();
+        mail.arm(key, false, 256, true);
+        let fresh = mail.lease(key);
+        assert_eq!(old.post(completion), Err(Control3dError::InvalidParameter));
+        assert!(!mail.inspect().ready);
+        fresh.post(completion).unwrap();
+        assert!(mail.inspect().ready);
+        mail.revoke();
+        mail.arm(key, false, 256, true);
+        assert_eq!(
+            fresh.post(completion),
+            Err(Control3dError::InvalidParameter)
+        );
+        mail.lease(key).post(completion).unwrap();
+    }
+    #[test]
+    fn legacy_sink_refuses_both_session_callbacks_before_starting_host_work() {
+        struct Legacy;
+        impl Submit3dSink for Legacy {
+            fn begin_job(&mut self, _: &Submit3dRequest) -> Result<(), Control3dError> {
+                panic!("unbound legacy work must never start")
+            }
+            fn cancel_job(&mut self, _: Submit3dKey) -> Result<(), Control3dError> {
+                Ok(())
+            }
+        }
+        let key = Submit3dKey {
+            epoch: 1,
+            sequence: 1,
+        };
+        let mail = Submit3dMailbox::new();
+        mail.arm(key, false, 256, true);
+        let header = CtrlHeader {
+            ty: 0x207,
+            flags: 0,
+            fence_id: 0,
+            ctx_id: 2,
+            ring_idx: 0,
+            padding: [0; 3],
+        };
+        let request = Submit3dRequest {
+            key,
+            context: Control3dId {
+                id: 2,
+                generation: 1,
+            },
+            header,
+            resources: Vec::new(),
+            kind: Submit3dKind::Commands(Vec::new()),
+        };
+        assert_eq!(
+            Legacy.begin_session_job(&request, mail.lease(key)),
+            Err(Control3dError::Unspecified)
+        );
+        let scanout = Scanout3dRequest {
+            key,
+            header,
+            binding: super::super::scanout3d::Scanout3dBinding {
+                generation: 1,
+                rect: super::super::protocol::Rect {
+                    x: 0,
+                    y: 0,
+                    width: 1,
+                    height: 1,
+                },
+                target: super::super::scanout3d::Scanout3dTarget::Disabled,
+            },
+        };
+        assert_eq!(
+            Legacy.begin_session_scanout(&scanout, mail.lease(key)),
+            Err(Control3dError::Unspecified)
+        );
+        assert!(!mail.inspect().ready);
+    }
+}
+
+#[cfg(test)]
+mod verifier_completion_scheduling {
+    use super::*;
+    #[test]
+    fn verifier_authentic_old_lease_cannot_post_after_same_numeric_key_is_rearmed() {
+        for schedule in [3u64, 17, 47, 101] {
+            let mail = Submit3dMailbox::new();
+            let key = Submit3dKey {
+                epoch: schedule,
+                sequence: 9,
+            };
+            let done = Submit3dCompletion {
+                key,
+                exchange_sequence: 0,
+                outcome: Ok(()),
+                gpu_complete: true,
+                applied_commands: 1,
+                draws: 0,
+            };
+            mail.arm(key, false, 256, true);
+            let oldest = mail.lease(key);
+            assert_eq!(oldest.key(), key);
+            mail.revoke();
+            mail.arm(key, false, 256, true);
+            let middle = mail.lease(key);
+            if schedule % 3 == 0 {
+                middle.post(done).unwrap();
+                assert_eq!(oldest.post(done), Err(Control3dError::InvalidParameter));
+                assert!(mail.inspect().ready);
+            } else {
+                assert_eq!(oldest.post(done), Err(Control3dError::InvalidParameter));
+                assert!(!mail.inspect().ready);
+                middle.post(done).unwrap();
+            }
+            mail.revoke();
+            mail.arm(key, false, 256, true);
+            let latest = mail.lease(key);
+            assert_eq!(oldest.post(done), Err(Control3dError::InvalidParameter));
+            assert_eq!(middle.post(done), Err(Control3dError::InvalidParameter));
+            assert_eq!(mail.post(done), Err(Control3dError::InvalidParameter));
+            assert!(!mail.inspect().ready);
+            latest.post(done).unwrap();
+            assert_eq!(latest.post(done), Err(Control3dError::InvalidParameter));
+            println!(
+                "VERIFIER_LEASE schedule={schedule} same_numeric_key=true rearms=2 stale_and_unbound_refused=true fresh_once=true"
+            );
+        }
+    }
+}

@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "wasmBytes": 2650103,
+  "wasmSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+  "originalBytes": 7424,
+  "originalSha256": "fae60a2c334fedfe57e5a002a04698107604c223fcbfdf7de3e6d4fec50e7154",
+  "chunks": 2,
+  "maxChunk": 7422,
+  "sectionCount": 15,
+  "refusals": [
+    {
+      "name": "identity-19",
+      "want": "foreign_build",
+      "got": "foreign_build"
+    },
+    {
+      "name": "identity-55",
+      "want": "foreign_image",
+      "got": "foreign_image"
+    },
+    {
+      "name": "identity-79",
+      "want": "stale",
+      "got": "stale"
+    },
+    {
+      "name": "duplicate-tlv-tag",
+      "want": "corrupt",
+      "got": "corrupt"
+    },
+    {
+      "name": "section-length-overflow",
+      "want": "corrupt",
+      "got": "corrupt"
+    },
+    {
+      "name": "late-device-invalid-bool",
+      "want": "corrupt",
+      "got": "corrupt"
+    }
+  ]
+}

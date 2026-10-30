@@ -50,6 +50,16 @@ pub mod prof;
 pub mod ram;
 pub mod resume;
 pub mod sbi;
+pub mod session_clock;
+pub mod session_devices;
+#[cfg(feature = "virgl-renderer")]
+pub mod session_gpu;
+mod session_ingress;
+pub mod session_live;
+pub mod session_network;
+#[cfg(not(feature = "zicsr-stub"))]
+pub mod session_profile;
+pub mod session_replay;
 pub mod snapshot;
 pub mod softfloat;
 pub mod time;
@@ -69,6 +79,14 @@ use ram::Ram;
 enum RunCapture<'a, T: trace::TraceSink> {
     Unit,
     Traced(&'a mut T),
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ResumeView {
+    Current,
+    #[cfg(feature = "virgl-renderer")]
+    LogicalGpu,
+    RecordingBranch,
 }
 
 impl<T: trace::TraceSink> RunCapture<'_, T> {
@@ -118,6 +136,8 @@ pub enum RunOutcome {
     /// so the host can exit cleanly (poweroff/fail) or re-boot (reboot). NO `process::exit`
     /// happens in the core — the value is surfaced so the CLI and the wasm boundary decide.
     Reset(ExitReason),
+    /// An admitted exact-session run stopped before an effect it cannot represent safely.
+    SessionStopped(session_clock::SessionError),
 }
 
 /// E2-T17: why the guest reset the platform — the typed outcome of a syscon finisher write
@@ -271,9 +291,37 @@ fn restore_resume_queues(
     Ok(restored)
 }
 
+/// Passive architectural witness immediately after the first completed block
+/// failure, before the next guest instruction. This is diagnostic host state.
+#[cfg(feature = "cold-block-diagnostic")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct BlkFailureWitness {
+    pub position: session_clock::SessionPosition,
+    pub pc: u64,
+    pub ram_digest: [u8; 32],
+    pub guest_digest: [u8; 32],
+}
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
+    #[cfg(feature = "cold-block-diagnostic")]
+    first_blk_failure_witness: Option<BlkFailureWitness>,
+    /// Opt-in exact scheduling; ordinary machines retain their established run semantics.
+    session_clock: Option<session_clock::SessionClock>,
+    live_unrecorded: Option<session_live::LiveWork>,
+    session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
+    #[cfg(feature = "virgl-renderer")]
+    session_gpu: Option<session_gpu::GpuSession>,
+    /// Transient execution fence, never part of a quiescent saved machine.
+    session_fence: Option<u64>,
+    /// A replay's declared end. Unlike a per-run fence this survives between calls and is never
+    /// serialized into a guest checkpoint; a finished replay cannot silently become live.
+    session_replay_limit: Option<u64>,
+    /// Shared with ordinary device handles, including clones retained by the embedding.
+    host_ingress_gate: alloc::rc::Rc<session_ingress::SessionIngressGate>,
+    session_devices: Option<alloc::rc::Rc<core::cell::RefCell<session_devices::DeviceHub>>>,
+    session_network: Option<alloc::rc::Rc<core::cell::RefCell<session_network::NetworkHub>>>,
     htif: Option<Htif>,
     /// Last observed `tohost` value — the watch fires only on CHANGE, giving
     /// exactly-once semantics for command writes ("logged once", E0-T11).
@@ -949,6 +997,18 @@ impl Machine {
         let mut m = Self {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
+            #[cfg(feature = "cold-block-diagnostic")]
+            first_blk_failure_witness: None,
+            session_clock: None,
+            live_unrecorded: None,
+            session_sources: Default::default(),
+            #[cfg(feature = "virgl-renderer")]
+            session_gpu: None,
+            session_devices: None,
+            session_network: None,
+            session_fence: None,
+            session_replay_limit: None,
+            host_ingress_gate: alloc::rc::Rc::new(session_ingress::SessionIngressGate::default()),
             htif: None,
             last_tohost: 0,
             htif_commands: 0,
@@ -1555,6 +1615,11 @@ impl Machine {
         self.bus.ram().len()
     }
 
+    /// True while a two-phase incremental keyframe is awaiting durable publication.
+    pub fn ram_epoch_pending(&self) -> bool {
+        self.bus.ram().pending_dirty_pages().is_some()
+    }
+
     /// Linear-memory address of the guest RAM allocation. This is an integration seam for the
     /// wasm browser JIT's imported-memory fast path; callers must use the value only while this
     /// machine owns the allocation (the `Vec` is not resized during execution).
@@ -1580,7 +1645,9 @@ impl Machine {
             .as_ref()
             .expect("enable_plic before enable_uart16550");
         let line = dev::plic::Plic::irq_line(plic, platform::virt::UART0_IRQ as usize);
-        let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::uart16550::Uart16550::new()));
+        let mut uart = dev::uart16550::Uart16550::new();
+        uart.bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
+        let cell = alloc::rc::Rc::new(core::cell::RefCell::new(uart));
         self.bus
             .attach(
                 bus::mmap::UART0_BASE,
@@ -1874,6 +1941,11 @@ impl Machine {
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
     ) -> Result<alloc::vec::Vec<u8>, dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, None, None)
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned);
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -1889,12 +1961,19 @@ impl Machine {
         state.borrow_mut().mirror_legacy_input(exchange, &bytes)?;
         Ok(bytes)
     }
+
     #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_scatter(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
         bytes: &[u8],
     ) -> Result<(), dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, Some(bytes), None)
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned)
+                .map(|_| ());
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -1917,6 +1996,11 @@ impl Machine {
         layer_stride: u32,
         layer_count: u32,
     ) -> Result<alloc::vec::Vec<u8>, dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, None, Some((layer_stride, layer_count)))
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned);
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -1939,6 +2023,12 @@ impl Machine {
         layer_count: u32,
         bytes: &[u8],
     ) -> Result<(), dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, Some(bytes), Some((layer_stride, layer_count)))
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned)
+                .map(|_| ());
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -2101,6 +2191,9 @@ impl Machine {
         &mut self,
         backend: alloc::boxed::Box<dyn dev::virtio::net::NetBackend>,
     ) -> Result<(), &'static str> {
+        if self.session_network.is_some() {
+            return Err("qualified session network cannot install a live backend");
+        }
         let Some(control) = &self.net_backend else {
             return Err("virtio-net is not enabled");
         };
@@ -2126,6 +2219,15 @@ impl Machine {
             self.virtio.len() > 2,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_rng"
         );
+        let source: alloc::boxed::Box<dyn dev::virtio::rng::EntropySource> =
+            if self.live_unrecorded.is_some() {
+                source
+            } else {
+                alloc::boxed::Box::new(session_clock::sources::ObservedEntropy {
+                    source,
+                    hub: alloc::rc::Rc::clone(&self.session_sources),
+                })
+            };
         let (devhalf, state) = dev::virtio::rng::new(source);
         assert!(
             self.virtio[2]
@@ -2166,6 +2268,9 @@ impl Machine {
             dev::virtio::input::keyboard::keyboard_spec(),
             sink,
         );
+        state
+            .borrow_mut()
+            .bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
         assert!(
             self.virtio[slot_index]
                 .0
@@ -2224,6 +2329,9 @@ impl Machine {
         let (tablet, tablet_state) = dev::virtio::input::VirtioInput::new_with_state(
             dev::virtio::input::pointer::tablet_spec(),
         );
+        tablet_state
+            .borrow_mut()
+            .bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
         assert!(
             self.virtio[tablet_slot]
                 .0
@@ -2237,6 +2345,9 @@ impl Machine {
         let (mouse, mouse_state) = dev::virtio::input::VirtioInput::new_with_state(
             dev::virtio::input::pointer::mouse_spec(),
         );
+        mouse_state
+            .borrow_mut()
+            .bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
         assert!(
             self.virtio[mouse_slot]
                 .0
@@ -2425,6 +2536,16 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
+        if self.live_unrecorded.is_some() {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "unrecorded_control",
+            });
+        }
+        if self.session_replay_limit.is_some() {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "replay_active",
+            });
+        }
         #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
@@ -2536,6 +2657,9 @@ impl Machine {
     pub fn save_desktop_snapshot(
         &mut self,
     ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
+        if self.live_unrecorded.is_some() {
+            return Err(desktop_snapshot::DesktopSnapshotSaveError::UnrecordedControl);
+        }
         #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(
@@ -2731,6 +2855,14 @@ impl Machine {
     ) -> alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>> {
         let plic = self.plic.as_ref().expect("enable_plic before enable_rtc");
         let line = dev::plic::Plic::irq_line(plic, platform::virt::RTC_IRQ as usize);
+        let clock: alloc::boxed::Box<dyn dev::rtc::WallClock> = if self.live_unrecorded.is_some() {
+            clock
+        } else {
+            alloc::boxed::Box::new(session_clock::sources::ObservedRtc {
+                source: clock,
+                hub: alloc::rc::Rc::clone(&self.session_sources),
+            })
+        };
         let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::rtc::GoldfishRtc::new(clock)));
         self.bus
             .attach(
@@ -2855,6 +2987,118 @@ impl Machine {
             .unwrap_or_default()
     }
 
+    /// Arm a passive one-shot observation of the first completed virtio-blk
+    /// `S_IOERR`. Diagnostic metadata never enters guest state or snapshots.
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn enable_first_blk_failure_diagnostic(&mut self) {
+        self.first_blk_failure_witness = None;
+        if let Some((state, _)) = &self.blk {
+            state.borrow_mut().enable_first_failure_diagnostic();
+        }
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn first_blk_failure(&self) -> Option<dev::virtio::blk::BlkFailure> {
+        self.blk
+            .as_ref()
+            .and_then(|(state, _)| state.borrow().first_failure())
+    }
+
+    /// Inspect the exact guest bytes and queue indices of parked block chains
+    /// without servicing or completing them.
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn parked_blk_witnesses(&self) -> alloc::vec::Vec<dev::virtio::blk::ParkedBlkWitness> {
+        use crate::bus::mmap::DRAM_BASE;
+        let Some((state, Some(queue))) = &self.blk else {
+            return alloc::vec::Vec::new();
+        };
+        let Some(slot) = self.virtio.first() else {
+            return alloc::vec::Vec::new();
+        };
+        let used_addr = slot.0.borrow().queue(0).device;
+        let (_, shadow_index) = queue.ring_indices();
+        let ram = self.bus.ram().as_bytes();
+        let read = |addr: u64, length: usize| -> Option<&[u8]> {
+            let offset = usize::try_from(addr.checked_sub(DRAM_BASE)?).ok()?;
+            ram.get(offset..offset.checked_add(length)?)
+        };
+        let Some(guest_index_bytes) = used_addr.checked_add(2).and_then(|addr| read(addr, 2))
+        else {
+            return alloc::vec::Vec::new();
+        };
+        let guest_index = u16::from_le_bytes([guest_index_bytes[0], guest_index_bytes[1]]);
+        let Some(next_slot_addr) = used_addr
+            .checked_add(4)
+            .and_then(|addr| addr.checked_add(8 * u64::from(shadow_index % queue.size())))
+        else {
+            return alloc::vec::Vec::new();
+        };
+        let Some(next_head_bytes) = read(next_slot_addr, 4) else {
+            return alloc::vec::Vec::new();
+        };
+        let next_head = u32::from_le_bytes(next_head_bytes.try_into().unwrap());
+        state
+            .borrow()
+            .diagnostic_parked_chains()
+            .into_iter()
+            .filter_map(|(chain, reason)| {
+                let status = chain.writable().last()?;
+                let status_addr = status
+                    .addr
+                    .checked_add(u64::from(status.len).checked_sub(1)?)?;
+                let status_byte = *read(status_addr, 1)?.first()?;
+                Some(dev::virtio::blk::ParkedBlkWitness {
+                    head: chain.head,
+                    reason,
+                    status_addr,
+                    status_byte,
+                    used_shadow_index: shadow_index,
+                    used_guest_index: guest_index,
+                    next_used_slot_head: next_head,
+                })
+            })
+            .collect()
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn first_blk_failure_witness(&self) -> Option<BlkFailureWitness> {
+        self.first_blk_failure_witness
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    fn capture_first_blk_failure_witness(&mut self) {
+        use sha2::{Digest, Sha256};
+        if self.first_blk_failure_witness.is_some() {
+            return;
+        }
+        let Some(failure) = self.first_blk_failure() else {
+            return;
+        };
+        let (Some(position), Some(ram_digest)) = (failure.event_position, failure.ram_digest)
+        else {
+            return;
+        };
+        let pc = self.hart.regs.pc;
+        let mut digest = Sha256::new();
+        digest.update(b"wasm-vm-first-block-guest-v1\0");
+        digest.update(position.transition.to_le_bytes());
+        digest.update(position.retired.to_le_bytes());
+        digest.update(position.phase.label().as_bytes());
+        digest.update(position.ordinal.to_le_bytes());
+        digest.update(position.sequence.to_le_bytes());
+        digest.update(pc.to_le_bytes());
+        for index in 0..32u8 {
+            digest.update(self.hart.regs.read(index).to_le_bytes());
+        }
+        digest.update(ram_digest);
+        self.first_blk_failure_witness = Some(BlkFailureWitness {
+            position,
+            pc,
+            ram_digest,
+            guest_digest: digest.finalize().into(),
+        });
+    }
+
     /// E3-T02: the chunks that parked virtio-blk reads are waiting on — what a lazy-fetch layer must
     /// load next. Empty unless a `WouldBlock`-returning backend has parked reads. After the layer
     /// populates these chunks, the next run-loop boundary re-services the parked reads and completes them.
@@ -2918,6 +3162,11 @@ impl Machine {
     /// to one terminal. Without a sink, SBI console output is dropped (machine still runs).
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn sbi_set_console(&mut self, sink: alloc::boxed::Box<dyn dev::console::ConsoleSink>) {
+        // A replay profile installs its output sink before the driver starts. It is configuration,
+        // not input; once the driver owns the machine, the sink cannot be replaced unbranched.
+        if self.session_replay_limit.is_some() {
+            return;
+        }
         self.sbi_state.console_out = Some(sink);
     }
 
@@ -2925,6 +3174,9 @@ impl Machine {
     /// `getchar`). Non-blocking semantics are the callee's: an empty queue reads 0 / -1.
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn sbi_push_input(&mut self, bytes: &[u8]) {
+        if !self.host_ingress_gate.allows_host() {
+            return;
+        }
         self.sbi_state.console_in.extend(bytes.iter().copied());
     }
 
@@ -3192,13 +3444,134 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        self.save_resume_inner(None)
+        if self.session_clock.is_some() {
+            return self.save_session_resume();
+        }
+        self.save_resume_inner(None, false, true)
+    }
+
+    /// Coherent software history boundary, retaining logical input ledgers and queue frames.
+    /// Extra disks and host-driven clocks require separate recording adapters.
+    pub fn save_session_resume(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        self.save_resume_inner(None, true, true)
+    }
+
+    pub fn can_capture_recording_branch(&self) -> bool {
+        let ready = self.host_ingress_gate.replay_active()
+            && self.session_replay_limit.is_some()
+            && self.extra_blk.is_empty()
+            && self.guest_clock_mode() == time::TimeMode::ICount
+            && self.session_device_replay() == Ok(true)
+            && self.session_network_replay() == Ok(true)
+            && self.session_sources.borrow().replay()
+            && self.session_position().is_some_and(|p| {
+                p.phase == session_clock::SessionPhase::Before && p.sequence < u64::MAX
+            });
+        #[cfg(feature = "virgl-renderer")]
+        if self.control3d_proof_installed() {
+            return ready && self.gpu_recording_branch_ready();
+        }
+        ready
+    }
+
+    /// Copy a selected replay into an initial recording image without changing its owner.
+    /// The image omits queued parent effects and prefetched GPU results. GPU continuations
+    /// require a completed command boundary; pending commands remain replayable but cannot fork.
+    /// The caller must restore into a fresh record-mode owner and apply the offline policy.
+    pub fn capture_recording_branch(
+        &mut self,
+        renderer_digest: Option<&[u8; 32]>,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_CLOCK,
+        };
+        if !self.can_capture_recording_branch() {
+            return Err(bad);
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        if renderer_digest.is_some() {
+            return Err(bad);
+        }
+        let bytes = self.save_resume_inner_projected(
+            renderer_digest,
+            true,
+            true,
+            ResumeView::RecordingBranch,
+        )?;
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(digest) = renderer_digest {
+            return dev::virtio::gpu::checkpoint::seal_resume(bytes, digest).map_err(|_| bad);
+        }
+        Ok(bytes)
+    }
+
+    /// Admit a continuation only into a fresh recording owner. Restore never reopens
+    /// the parent's ingress, and this owner's network policy cannot be cleared by a snapshot.
+    pub fn restore_recording_branch(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: Option<&[u8; 32]>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_CLOCK,
+        };
+        if self.session_position() != Some(Default::default())
+            || self.session_pending_events() != 0
+            || self.session_replay_limit.is_some()
+            || self.host_ingress_gate.replay_active()
+            || !self.host_ingress_gate.allows_host()
+            || self.session_device_replay() != Ok(false)
+            || self.session_network_replay() != Ok(false)
+            || self.session_branch_offline() != Ok(false)
+            || !self.session_sources.borrow().active()
+            || self.session_sources.borrow().replay()
+        {
+            return Err(bad);
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        if renderer_digest.is_some() {
+            return Err(bad);
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(digest) = renderer_digest {
+            self.load_gpu_result_resume(blob, digest)?;
+        } else {
+            self.load_session_resume(blob)?;
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        self.load_session_resume(blob)?;
+        self.keep_session_branch_offline().map_err(|_| bad)
+    }
+
+    /// Non-RAM half of an incremental software keyframe. The caller stores the frozen dirty
+    /// pages separately and binds their content-addressed objects to this exact checkpoint.
+    /// This is never a stand-alone restore image: the RAM base and every ancestor delta must
+    /// be reconstructed and authenticated before `load_session_state_without_ram` is called.
+    pub fn save_session_state_without_ram(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        self.save_resume_inner(None, true, false)
     }
 
     /// Service only original GPU queue work and completion mailboxes while the guest is paused.
     /// No instruction, guest clock tick, other device poll or translated block executes here.
     #[cfg(feature = "virgl-renderer")]
     pub fn drain_accelerated_checkpoint_boundary(&mut self) -> Result<bool, &'static str> {
+        if self.live_unrecorded.is_some() {
+            return Err("unrecorded control has no checkpoint history");
+        }
         if !self.control3d_proof_installed() {
             return Err("qualified renderer required");
         }
@@ -3229,7 +3602,7 @@ impl Machine {
         &mut self,
         renderer_digest: &[u8; 32],
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        let bytes = self.save_resume_inner(Some(renderer_digest))?;
+        let bytes = self.save_resume_inner(Some(renderer_digest), false, true)?;
         dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| {
             crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
@@ -3237,14 +3610,117 @@ impl Machine {
         })
     }
 
+    /// Exact ICount GPU history, including physically settled work whose guest fence
+    /// is genuinely pending. The separately reconstructed renderer is digest-bound.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn save_gpu_result_resume(
+        &mut self,
+        renderer_digest: &[u8; 32],
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if self.session_gpu.is_none()
+            || self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+            || self.session_replay_limit.is_some()
+            || self.session_pending_events() != 0
+        {
+            return Err(bad);
+        }
+        let bytes = self.save_resume_inner(Some(renderer_digest), true, true)?;
+        dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| bad)
+    }
+
+    /// Non-RAM GPU history state; the authenticated page graph supplies its RAM.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn save_gpu_result_state_without_ram(
+        &mut self,
+        renderer_digest: &[u8; 32],
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if self.session_gpu.is_none()
+            || self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+            || self.session_replay_limit.is_some()
+            || self.session_pending_events() != 0
+        {
+            return Err(bad);
+        }
+        let bytes = self.save_resume_inner(Some(renderer_digest), true, false)?;
+        dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| bad)
+    }
+
+    /// Versioned guest-state witness. Physical readiness, live handles, delivery mode
+    /// and prefetched tape bodies do not change architectural state. RAM, all native
+    /// devices, disk, complete logical GPU state and pending intent remain covered.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn gpu_session_state_digest(&mut self) -> Result<[u8; 32], crate::resume::SnapshotError> {
+        use sha2::{Digest, Sha256};
+        let bytes = self.gpu_session_state_witness_bytes()?;
+        let mut hash = Sha256::new();
+        hash.update(b"wasm-vm-gpu-guest-state-v1\0");
+        hash.update((bytes.len() as u64).to_le_bytes());
+        hash.update(&bytes);
+        hash.update(self.snapshot().mem_digest);
+        Ok(hash.finalize().into())
+    }
+
+    /// Read-only component evidence for the versioned logical witness. This
+    /// contains a non-restorable logical GPU section and no RAM payload.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn gpu_session_state_witness_bytes(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+            || self.session_pending_events() != 0
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::SESSION_GPU,
+            });
+        }
+        self.save_resume_inner_projected(None, true, false, ResumeView::LogicalGpu)
+    }
+
     fn save_resume_inner(
         &mut self,
         gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
+        include_ram: bool,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        self.save_resume_inner_projected(
+            gpu_witness,
+            exact_inputs,
+            include_ram,
+            ResumeView::Current,
+        )
+    }
+
+    fn save_resume_inner_projected(
+        &mut self,
+        gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
+        include_ram: bool,
+        view: ResumeView,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if self.live_unrecorded.is_some() {
+            return Err(crate::resume::SnapshotError::UnrecordedControl);
+        }
+        let branch = view == ResumeView::RecordingBranch;
+        #[cfg(feature = "virgl-renderer")]
+        let logical_gpu = view == ResumeView::LogicalGpu;
+        #[cfg(not(feature = "virgl-renderer"))]
+        let logical_gpu = false;
         #[cfg(not(feature = "virgl-renderer"))]
         let _ = gpu_witness;
         #[cfg(feature = "virgl-renderer")]
-        if self.control3d_proof_installed() && gpu_witness.is_none() {
+        if self.control3d_proof_installed() && gpu_witness.is_none() && !logical_gpu {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             });
@@ -3257,11 +3733,32 @@ impl Machine {
             let Some((state, ..)) = &self.gpu else {
                 return Err(error);
             };
-            if witness.iter().all(|b| *b == 0) || state.borrow().checkpoint_ready().is_err() {
+            if witness.iter().all(|b| *b == 0)
+                || (if exact_inputs {
+                    state.borrow().result_checkpoint_ready()
+                } else {
+                    state.borrow().checkpoint_ready()
+                })
+                .is_err()
+            {
                 return Err(error);
             }
         }
-        self.quiesce()?;
+        if exact_inputs {
+            // Only section 20 can preserve a parked block descriptor. An exact snapshot
+            // cannot service a legacy chain without moving its guest boundary, so fail
+            // closed when the owned device adapter is absent (even with session network).
+            if self.session_devices.is_none()
+                && let Some((reason, in_flight)) = self
+                    .blk
+                    .as_ref()
+                    .and_then(|(state, _)| state.borrow().residual())
+            {
+                return Err(crate::resume::SnapshotError::NotQuiesced { reason, in_flight });
+            }
+        } else {
+            self.quiesce()?;
+        }
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
         let mut w = SnapshotWriter::new(
             &self.coherence.core_hash,
@@ -3269,7 +3766,9 @@ impl Machine {
             self.coherence.generation,
         );
         w.section(section::CPU, &self.hart.to_snapshot());
-        w.section(section::RAM, &self.bus.ram().to_snapshot());
+        if include_ram {
+            w.section(section::RAM, &self.bus.ram().to_snapshot());
+        }
         if let Some(clint) = &self.clint {
             w.section(section::CLINT, &clint.borrow().to_snapshot());
         }
@@ -3286,6 +3785,20 @@ impl Machine {
         }
         if let Some((rtc, _)) = &self.rtc {
             w.section(section::RTC, &rtc.borrow().to_snapshot());
+        }
+        if let Some(payload) = self.session_devices_snapshot().map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_DEVICES,
+            }
+        })? {
+            w.section(section::SESSION_DEVICES, &payload);
+        }
+        if let Some(payload) = self.session_network_snapshot().map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_NETWORK,
+            }
+        })? {
+            w.section(section::SESSION_NETWORK, &payload);
         }
         // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
         // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
@@ -3314,8 +3827,12 @@ impl Machine {
         if let (Some((state, rx_vq, tx_vq)), Some((slot, _))) = (&self.net, self.virtio.get(1)) {
             let mut v = alloc::vec::Vec::new();
             slot.borrow().snapshot_transport(&mut v);
+            let st = state.borrow();
+            let [_, reset_pending] = st.session_flags();
+            // The next service drops reset-invalidated ring views before using them.
+            // Encode their canonical absence without polling or delivering owned RX.
             for q in [rx_vq, tx_vq] {
-                match q {
+                match q.as_ref().filter(|_| !reset_pending) {
                     Some(vq) => {
                         v.push(1);
                         let (la, ui) = vq.ring_indices();
@@ -3328,7 +3845,6 @@ impl Machine {
                     }
                 }
             }
-            let st = state.borrow();
             v.extend_from_slice(&st.rx_dropped.to_le_bytes());
             v.extend_from_slice(&st.tx_count.to_le_bytes());
             v.extend_from_slice(&st.rx_count.to_le_bytes());
@@ -3343,15 +3859,44 @@ impl Machine {
                 .0
                 .borrow()
                 .snapshot_transport(&mut v);
-            append_resume_queue(&mut v, vq);
-            append_resume_queue(&mut v, cursor_vq);
+            for (index, queue) in [vq, cursor_vq].into_iter().enumerate() {
+                let software_empty_cache =
+                    exact_inputs && gpu_witness.is_none() && queue.is_none() && {
+                        let transport = self.virtio[*slot_index].0.borrow();
+                        let ring = transport.queue(index);
+                        ring.ready && dev::virtio::queue::Virtqueue::new(ring, 256).is_ok()
+                    };
+                if (logical_gpu || software_empty_cache) && queue.is_none() {
+                    // None is an unmaterialized cache of the initial (0,0)
+                    // ring cursors. Restore may create that cache to redraw a
+                    // cursor without any guest queue activity. Restorable software
+                    // sessions canonicalize only valid, ready rings. Transport and
+                    // every actual cursor remain part of the witness.
+                    v.extend_from_slice(&[1, 0, 0, 0, 0]);
+                } else {
+                    append_resume_queue(&mut v, queue);
+                }
+            }
             let gpu = state.borrow();
             #[cfg(feature = "virgl-renderer")]
-            let payload = if let Some(witness) = gpu_witness {
-                gpu.to_gpu_checkpoint(witness).map_err(|_| {
+            let payload = if logical_gpu {
+                let (epoch, queue, cursor) = self.gpu_logical_coordinates().map_err(|_| {
                     crate::resume::SnapshotError::BadComponentState {
-                        tag: section::VIRTIO_GPU,
+                        tag: section::SESSION_GPU,
                     }
+                })?;
+                gpu.logical_session_bytes(epoch, queue, cursor)
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    })?
+            } else if let Some(witness) = gpu_witness {
+                (if exact_inputs {
+                    gpu.to_gpu_result_checkpoint(witness)
+                } else {
+                    gpu.to_gpu_checkpoint(witness)
+                })
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_GPU,
                 })?
             } else {
                 gpu.to_snapshot()
@@ -3367,11 +3912,21 @@ impl Machine {
                     })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_GPU, &v);
+            #[cfg(feature = "virgl-renderer")]
+            if gpu_witness.is_some() && exact_inputs {
+                let frontier = self.encode_gpu_frontier_for_view(&v, branch).map_err(|_| {
+                    crate::resume::SnapshotError::BadComponentState {
+                        tag: section::SESSION_GPU,
+                    }
+                })?;
+                w.section(section::SESSION_GPU, &frontier);
+            }
         }
         if let Some((state, eventq, statusq)) = &self.keyboard {
-            // A physical key/button belongs to the old host session. Turn it into a protected
-            // release frame before encoding so a fresh target cannot inherit a stuck key.
-            state.borrow_mut().release_all();
+            // Desktop reconnects release physical keys; session history retains exact ledgers.
+            if !exact_inputs {
+                state.borrow_mut().release_all();
+            }
             let mut v = alloc::vec::Vec::new();
             self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT]
                 .0
@@ -3379,16 +3934,19 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, eventq);
             append_resume_queue(&mut v, statusq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_KEYBOARD,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_KEYBOARD, &v);
         }
         if let Some((state, eventq, statusq)) = &self.tablet {
-            state.borrow_mut().release_all();
+            if !exact_inputs {
+                state.borrow_mut().release_all();
+            }
             let mut v = alloc::vec::Vec::new();
             self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT]
                 .0
@@ -3396,16 +3954,19 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, eventq);
             append_resume_queue(&mut v, statusq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_TABLET,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_TABLET, &v);
         }
         if let Some((state, eventq, statusq)) = &self.mouse {
-            state.borrow_mut().release_all();
+            if !exact_inputs {
+                state.borrow_mut().release_all();
+            }
             let mut v = alloc::vec::Vec::new();
             self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT]
                 .0
@@ -3413,11 +3974,12 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, eventq);
             append_resume_queue(&mut v, statusq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_MOUSE,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_MOUSE, &v);
         }
@@ -3433,11 +3995,17 @@ impl Machine {
                 append_resume_queue(&mut v, queue);
             }
             v.extend_from_slice(&SND_RESUME_LAYOUT_VERSION.to_le_bytes());
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(
+                    exact_inputs,
+                    self.session_devices
+                        .as_ref()
+                        .is_some_and(|hub| hub.borrow().capture),
+                )
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_SND,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_SND, &v);
         }
@@ -3466,7 +4034,10 @@ impl Machine {
             ] {
                 append_resume_queue(&mut v, q);
             }
-            console.state.borrow().snapshot_resume(&mut v);
+            console
+                .state
+                .borrow()
+                .snapshot_session_or_resume(&mut v, exact_inputs)?;
             w.section(section::VIRTIO_CONSOLE, &v);
         }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
@@ -3480,6 +4051,48 @@ impl Machine {
         // interrupt lands at a different instruction (E3-T12b timer-placement).
         clock.extend_from_slice(&self.sbi_state.stimecmp.to_le_bytes());
         w.section(section::CLOCK, &clock);
+        if let Some(clock) = &self.session_clock {
+            if self.guest_clock_mode() != time::TimeMode::ICount {
+                return Err(crate::resume::SnapshotError::BadComponentState {
+                    tag: section::SESSION_CLOCK,
+                });
+            }
+            #[cfg(feature = "virgl-renderer")]
+            let encoded = if branch {
+                clock.encode_recording_branch()
+            } else if logical_gpu {
+                clock.encode_guest_state()
+            } else {
+                clock.encode()
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let encoded = if branch {
+                clock.encode_recording_branch()
+            } else {
+                clock.encode()
+            };
+            let payload = encoded.map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_CLOCK,
+            })?;
+            w.section(section::SESSION_CLOCK, &payload);
+        }
+        if self
+            .session_sources
+            .borrow()
+            .policy()
+            .is_some_and(|policy| policy != self.source_policy())
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_SOURCES,
+            });
+        }
+        if let Some(payload) = self.session_sources.borrow().checkpoint().map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_SOURCES,
+            }
+        })? {
+            w.section(section::SESSION_SOURCES, &payload);
+        }
         Ok(w.finish())
     }
 
@@ -3494,7 +4107,118 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
-        self.load_resume_inner(blob, None).map(|_| ())
+        if self.session_clock.is_some() {
+            return self.load_session_resume(blob);
+        }
+        self.load_resume_inner(blob, None, false, false).map(|_| ())
+    }
+
+    /// Validate every component and the complete topology before exact software restore.
+    /// This creates no physical-input release, guest instruction or host clock rebase.
+    pub fn load_session_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        self.load_resume_inner(blob, None, true, false).map(|_| ())
+    }
+
+    /// Commit the non-RAM half of an incremental software keyframe after a private candidate's
+    /// RAM has been reconstructed from its authenticated full base and all ancestor page chunks.
+    /// The target header still must match the candidate's build, base image and disk generation.
+    pub fn load_session_state_without_ram(
+        &mut self,
+        blob: &[u8],
+        expected_ram_digest: &[u8; 32],
+    ) -> Result<(), crate::resume::SnapshotError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        if &self.snapshot().mem_digest != expected_ram_digest {
+            return Err(crate::resume::SnapshotError::RamDigestMismatch);
+        }
+        // Exact replay candidates fence ordinary host ingress. Restoring an authenticated
+        // keyframe is a recorded state transition, so its device visitors need the same narrow
+        // scope that ReplayDriver uses for its initial full checkpoint.
+        let ingress_gate = alloc::rc::Rc::clone(&self.host_ingress_gate);
+        let _recorded = ingress_gate
+            .replay_active()
+            .then(|| ingress_gate.recorded_scope());
+        self.load_resume_inner(blob, None, true, true).map(|_| ())
+    }
+
+    /// Seed only RAM from an authenticated full ancestor into a private target candidate.
+    /// Its overlay generation may differ from the target generation: intermediate immutable
+    /// disk roots are checked by the session store, while the final non-RAM snapshot is checked
+    /// against the target disk generation by `load_session_state_without_ram`.
+    pub fn seed_session_ram_from_full_resume(
+        &mut self,
+        blob: &[u8],
+    ) -> Result<(), crate::resume::SnapshotError> {
+        use crate::resume::{ComponentSnapshot, SectionReader, SnapshotError, section};
+        if self.live_unrecorded.is_some() {
+            return Err(SnapshotError::UnrecordedControl);
+        }
+        if self.session_replay_limit.is_some() {
+            return Err(SnapshotError::ReplayActive);
+        }
+        let (header, sections) = SectionReader::new(blob)?;
+        if header.core_hash != self.coherence.core_hash {
+            return Err(SnapshotError::CoreHashMismatch);
+        }
+        if header.base_image_hash != self.coherence.base_image_hash {
+            return Err(SnapshotError::BaseImageMismatch);
+        }
+        let mut ram = None;
+        for section in sections {
+            let section = section?;
+            if section.tag == section::RAM && ram.replace(section.payload).is_some() {
+                return Err(SnapshotError::BadComponentState { tag: section::RAM });
+            }
+        }
+        let payload = ram.ok_or(SnapshotError::BadComponentState { tag: section::RAM })?;
+        crate::resume::validate_sparse(payload, self.bus.ram().len())?;
+        self.bus.ram_mut().restore(payload)
+    }
+
+    /// Apply one independently authenticated, bounded page object to a private candidate.
+    /// The caller must authenticate all ancestor objects and compare the final full-RAM digest
+    /// before committing the target's CPU and device snapshot.
+    pub fn apply_session_ram_delta_chunk(
+        &mut self,
+        bytes: &[u8],
+    ) -> Result<usize, crate::ram::RamDeltaError> {
+        if self.live_unrecorded.is_some() {
+            return Err(crate::ram::RamDeltaError::NotCapturing);
+        }
+        if self.session_replay_limit.is_some() {
+            return Err(crate::ram::RamDeltaError::ReplayActive);
+        }
+        self.bus.ram_mut().apply_delta_chunk(bytes)
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    pub fn seed_gpu_session_ram_from_full_resume(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let payload =
+            dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest).map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: crate::resume::section::VIRTIO_GPU,
+                }
+            })?;
+        self.seed_session_ram_from_full_resume(payload)
     }
 
     /// Restore only the native half of a matching, independently reconstructed GPU checkpoint.
@@ -3506,25 +4230,111 @@ impl Machine {
         blob: &[u8],
         renderer_digest: &[u8; 32],
     ) -> Result<(u64, u64), crate::resume::SnapshotError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
         let payload =
             dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest).map_err(|_| {
                 crate::resume::SnapshotError::BadComponentState {
                     tag: crate::resume::section::VIRTIO_GPU,
                 }
             })?;
-        self.load_resume_inner(payload, Some(renderer_digest))?
+        self.load_resume_inner(payload, Some(renderer_digest), false, false)?
             .ok_or(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             })
+    }
+
+    /// Restore the exact native GPU result frontier without issuing guest commands
+    /// or physical jobs. The embedding reconstructs the paired renderer beforehand.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn load_gpu_result_resume(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+    ) -> Result<(u64, u64), crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if self.session_gpu.is_none()
+            || self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+        {
+            return Err(bad);
+        }
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
+        let payload = dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest)
+            .map_err(|_| bad.clone())?;
+        self.load_resume_inner(payload, Some(renderer_digest), true, false)?
+            .ok_or(bad)
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn load_recorded_gpu_history(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+        ram_digest: Option<&[u8; 32]>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if !self.host_ingress_gate.replay_active()
+            || self.session_replay_limit.is_some()
+            || self.session_gpu_replay() != Ok(true)
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+        {
+            return Err(bad);
+        }
+        let payload = dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest)
+            .map_err(|_| bad.clone())?;
+        if ram_digest.is_some_and(|expected| self.snapshot().mem_digest != *expected) {
+            return Err(crate::resume::SnapshotError::RamDigestMismatch);
+        }
+        self.load_resume_inner_with_purpose(
+            payload,
+            Some(renderer_digest),
+            true,
+            ram_digest.is_some(),
+            true,
+        )?
+        .ok_or(bad)?;
+        Ok(())
     }
 
     fn load_resume_inner(
         &mut self,
         blob: &[u8],
         gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
+        ram_already_restored: bool,
     ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
+        self.load_resume_inner_with_purpose(
+            blob,
+            gpu_witness,
+            exact_inputs,
+            ram_already_restored,
+            false,
+        )
+    }
+
+    fn load_resume_inner_with_purpose(
+        &mut self,
+        blob: &[u8],
+        gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
+        ram_already_restored: bool,
+        recorded_gpu_history: bool,
+    ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
+        if self.live_unrecorded.is_some() {
+            return Err(crate::resume::SnapshotError::UnrecordedControl);
+        }
         #[cfg(not(feature = "virgl-renderer"))]
-        let _ = gpu_witness;
+        let _ = (gpu_witness, recorded_gpu_history);
         #[cfg(feature = "virgl-renderer")]
         if (self.control3d_proof_installed() && gpu_witness.is_none())
             || (gpu_witness.is_some() && !self.control3d_proof_installed())
@@ -3551,11 +4361,157 @@ impl Machine {
         for sec in reader {
             sections.push(sec?);
         }
+        // Admission is transactional: malformed positions, queues or RAM destinations cannot
+        // change CPU/RAM/devices first. Active sessions never accept a clock-less old snapshot.
+        let clock_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_CLOCK)
+            .collect();
+        let session_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_CLOCK,
+        };
+        if clock_sections.len() != usize::from(self.session_clock.is_some()) {
+            return Err(session_bad());
+        }
+        let staged_session_clock = if let Some(sec) = clock_sections.first() {
+            if self.guest_clock_mode() != time::TimeMode::ICount {
+                return Err(session_bad());
+            }
+            let clock =
+                session_clock::SessionClock::decode(sec.payload).map_err(|_| session_bad())?;
+            clock
+                .validate_addresses(self.bus.ram().base(), self.bus.ram().len())
+                .map_err(|_| session_bad())?;
+            Some(clock)
+        } else {
+            None
+        };
+        let source_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_SOURCES)
+            .collect();
+        let source_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_SOURCES,
+        };
+        if source_sections.len() != usize::from(self.session_sources_active()) {
+            return Err(source_bad());
+        }
+        let staged_source_cursor = if let Some(sec) = source_sections.first() {
+            let clock = staged_session_clock.as_ref().ok_or_else(source_bad)?;
+            let cursor = self
+                .session_sources
+                .borrow()
+                .check_checkpoint(sec.payload, clock.position.sequence)
+                .map_err(|_| source_bad())?;
+            let native = sections
+                .iter()
+                .find(|s| s.tag == section::CLOCK)
+                .ok_or_else(source_bad)?;
+            if native.payload.len() != 24
+                || u64::from_le_bytes(native.payload[8..16].try_into().unwrap())
+                    != u64::from(self.session_sources.borrow().policy().unwrap().divider)
+            {
+                return Err(source_bad());
+            }
+            Some(cursor)
+        } else {
+            None
+        };
+        let device_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_DEVICES)
+            .collect();
+        let device_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_DEVICES,
+        };
+        if device_sections.len() != usize::from(self.session_devices.is_some()) {
+            return Err(device_bad());
+        }
+        let staged_devices = device_sections
+            .first()
+            .map(|sec| {
+                self.check_session_devices_snapshot(
+                    sec.payload,
+                    staged_session_clock
+                        .as_ref()
+                        .ok_or_else(device_bad)?
+                        .position
+                        .sequence,
+                    if ram_already_restored {
+                        None
+                    } else {
+                        sections
+                            .iter()
+                            .find(|section| section.tag == section::RAM)
+                            .map(|section| section.payload)
+                    },
+                )
+                .map_err(|_| device_bad())
+            })
+            .transpose()?;
+        let network_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_NETWORK)
+            .collect();
+        let network_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_NETWORK,
+        };
+        if network_sections.len() != usize::from(self.session_network.is_some()) {
+            return Err(network_bad());
+        }
+        let staged_network = network_sections
+            .first()
+            .map(|sec| {
+                self.check_session_network_snapshot(
+                    sec.payload,
+                    staged_session_clock
+                        .as_ref()
+                        .ok_or_else(network_bad)?
+                        .position
+                        .sequence,
+                )
+                .map_err(|_| network_bad())
+            })
+            .transpose()?;
         #[cfg(feature = "virgl-renderer")]
-        if gpu_witness.is_some() {
-            // The accelerated envelope is an exact machine boundary. Missing, duplicate or
+        let gpu_result_mode = gpu_witness.is_some() && exact_inputs && self.session_gpu.is_some();
+        #[cfg(not(feature = "virgl-renderer"))]
+        let gpu_result_mode = false;
+        if sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_GPU)
+            .count()
+            != usize::from(gpu_result_mode)
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_GPU,
+            });
+        }
+        let strict_topology = exact_inputs || self.session_network.is_some();
+        #[cfg(feature = "virgl-renderer")]
+        let strict_topology = strict_topology || gpu_witness.is_some();
+        if strict_topology {
+            // An exact envelope requires every component once. Missing, duplicate or
             // unknown sections must not leave destination CPU/RAM/device state mixed with it.
-            let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
+            let mut expected = alloc::vec![section::CPU, section::CLOCK];
+            if !ram_already_restored {
+                expected.push(section::RAM);
+            }
+            if staged_session_clock.is_some() {
+                expected.push(section::SESSION_CLOCK);
+            }
+            if staged_source_cursor.is_some() {
+                expected.push(section::SESSION_SOURCES);
+            }
+            if staged_devices.is_some() {
+                expected.push(section::SESSION_DEVICES);
+            }
+            if staged_network.is_some() {
+                expected.push(section::SESSION_NETWORK);
+            }
+            if gpu_result_mode {
+                expected.push(section::SESSION_GPU);
+            }
             for (tag, present) in [
                 (section::CLINT, self.clint.is_some()),
                 (section::PLIC, self.plic.is_some()),
@@ -3580,7 +4536,11 @@ impl Machine {
             actual.sort_unstable();
             if actual != expected {
                 return Err(crate::resume::SnapshotError::BadComponentState {
-                    tag: section::VIRTIO_GPU,
+                    tag: if exact_inputs {
+                        section::CPU
+                    } else {
+                        section::VIRTIO_GPU
+                    },
                 });
             }
         }
@@ -3620,10 +4580,17 @@ impl Machine {
                 }
                 section::CLOCK => {
                     let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
-                    reader.u64()?;
-                    reader.u64()?;
+                    let phase = reader.u64()?;
+                    let divider = reader.u64()?;
                     reader.u64()?;
                     reader.finish()?;
+                    if (exact_inputs || staged_session_clock.is_some())
+                        && (!(1..=1024).contains(&divider) || phase >= divider)
+                    {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
                 }
                 section::VIRTIO_BLK | section::VIRTIO_NET => {
                     let (slot_index, queue_count, counter_count) = if sec.tag == section::VIRTIO_BLK
@@ -3661,17 +4628,24 @@ impl Machine {
                             });
                         };
                         staged_gpu_checkpoint = Some(
-                            state
-                                .borrow()
-                                .prepare_gpu_checkpoint(
+                            (if gpu_result_mode {
+                                state.borrow().prepare_gpu_result_checkpoint(
                                     payload,
                                     witness,
                                     self.ram_base(),
                                     self.ram_len() as u64,
                                 )
-                                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
-                                    tag: sec.tag,
-                                })?,
+                            } else {
+                                state.borrow().prepare_gpu_checkpoint(
+                                    payload,
+                                    witness,
+                                    self.ram_base(),
+                                    self.ram_len() as u64,
+                                )
+                            })
+                            .map_err(|_| {
+                                crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                            })?,
                         );
                         continue;
                     }
@@ -3685,40 +4659,75 @@ impl Machine {
                     let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
                         dev::virtio::input::keyboard::keyboard_spec(),
                     );
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_TABLET => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
                     let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
                         dev::virtio::input::pointer::tablet_spec(),
                     );
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_MOUSE => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
                     let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
                         dev::virtio::input::pointer::mouse_spec(),
                     );
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_SND => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 4)?;
-                    let mut device = dev::virtio::snd::VirtioSnd::new();
-                    device.restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    let device = dev::virtio::snd::VirtioSnd::new();
+                    device
+                        .state_handle()
+                        .borrow_mut()
+                        .restore_resume_snapshot(
+                            payload,
+                            exact_inputs,
+                            self.session_devices
+                                .as_ref()
+                                .is_some_and(|hub| hub.borrow().capture),
+                        )
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
+                    if !device
+                        .state_handle()
+                        .borrow()
+                        .capture_addresses_valid(self.bus.ram().base(), self.bus.ram().len())
+                    {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
+                    if staged_devices.as_ref().is_some_and(|restore| {
+                        !restore.sound_matches(&device.state_handle().borrow())
+                    }) {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
                 }
                 section::VIRTIO_CONSOLE => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
                     let mut state = dev::virtio::console::ConsoleState::new();
                     let mut reader = crate::resume::Reader::new(payload, sec.tag);
-                    state.restore_resume(&mut reader)?;
+                    state.restore_session_or_resume(&mut reader, exact_inputs)?;
                     reader.finish()?;
                 }
                 section::VIRTIO_RNG => {
@@ -3732,6 +4741,48 @@ impl Machine {
                 _ => {}
             }
         }
+        #[cfg(feature = "virgl-renderer")]
+        let staged_gpu_frontier = if gpu_result_mode {
+            let bad = || crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_GPU,
+            };
+            let frontier = sections
+                .iter()
+                .find(|s| s.tag == section::SESSION_GPU)
+                .ok_or_else(bad)?;
+            let gpu = sections
+                .iter()
+                .find(|s| s.tag == section::VIRTIO_GPU)
+                .ok_or_else(bad)?;
+            let ram = if ram_already_restored {
+                None
+            } else {
+                Some(
+                    sections
+                        .iter()
+                        .find(|s| s.tag == section::RAM)
+                        .ok_or_else(bad)?
+                        .payload,
+                )
+            };
+            Some(
+                self.prepare_gpu_frontier(
+                    frontier.payload,
+                    gpu.payload,
+                    staged_gpu_checkpoint.as_mut().ok_or_else(bad)?,
+                    staged_session_clock.as_ref().ok_or_else(bad)?,
+                    ram,
+                    if recorded_gpu_history {
+                        session_gpu::checkpoint::RestorePurpose::RecordedHistory
+                    } else {
+                        session_gpu::checkpoint::RestorePurpose::SameMode
+                    },
+                )
+                .map_err(|_| bad())?,
+            )
+        } else {
+            None
+        };
         for sec in &sections {
             match sec.tag {
                 section::VIRTIO_GPU => {
@@ -3799,9 +4850,12 @@ impl Machine {
                         reader.u16()?;
                     }
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                     *eventq = queues.remove(0);
                     *statusq = queues.remove(0);
                 }
@@ -3823,9 +4877,18 @@ impl Machine {
                         reader.u16()?;
                     }
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(
+                            payload,
+                            exact_inputs,
+                            self.session_devices
+                                .as_ref()
+                                .is_some_and(|hub| hub.borrow().capture),
+                        )
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                     *controlq = queues.remove(0);
                     *eventq = queues.remove(0);
                     *txq = queues.remove(0);
@@ -3891,6 +4954,10 @@ impl Machine {
                     self.clock_div = clock_div;
                     self.sbi_state.stimecmp = stimecmp;
                 }
+                section::SESSION_CLOCK
+                | section::SESSION_SOURCES
+                | section::SESSION_DEVICES
+                | section::SESSION_NETWORK => {} // validated above; commit only after every component
                 section::VIRTIO_BLK => {
                     let slot = self
                         .virtio
@@ -3992,7 +5059,7 @@ impl Machine {
                     console
                         .state
                         .borrow_mut()
-                        .restore_resume(&mut state_reader)?;
+                        .restore_session_or_resume(&mut state_reader, exact_inputs)?;
                     state_reader.finish()?;
                     console.port0_receiveq = restored_queues.remove(0);
                     console.port0_transmitq = restored_queues.remove(0);
@@ -4009,17 +5076,35 @@ impl Machine {
                 | section::VIRTIO_TABLET
                 | section::VIRTIO_MOUSE
                 | section::VIRTIO_SND
-                | section::VIRTIO_RNG => {}
+                | section::VIRTIO_RNG
+                | section::SESSION_GPU => {}
                 other => {
                     return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
                 }
             }
         }
+        if let Some(restore) = staged_devices {
+            self.restore_session_devices(restore);
+        }
+        if let Some(restore) = staged_network {
+            self.restore_session_network(restore);
+        }
+        self.session_clock = staged_session_clock;
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(frontier) = staged_gpu_frontier {
+            frontier.commit(self);
+        }
+        if let Some(cursor) = staged_source_cursor {
+            self.session_sources.borrow_mut().restore_cursor(cursor);
+        }
+        self.session_fence = None;
         // Agent TX still in guest RAM belongs to the saved application session, including any
         // pending HELLO. Complete it without forwarding bytes into the new host Channel. Do this
         // after every section (RAM need not precede console in the container), before any guest
         // execution can post fresh descriptors or observe completions and reuse old ones.
-        if let Some(console) = &mut self.console {
+        if let Some(console) = &mut self.console
+            && !exact_inputs
+        {
             let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
             dev::virtio::console::discard_resume_agent_tx(
                 &slot,
@@ -4349,6 +5434,9 @@ impl Machine {
     /// Fractional progress toward the next tick is conservatively quantized to the new divisor.
     /// Host configuration only: the existing resume clock section already stores both fields.
     pub fn set_icount_divider(&mut self, divider: u64) -> Result<(), &'static str> {
+        if self.live_unrecorded.is_some() {
+            return Err("unrecorded profile clock is fixed");
+        }
         if !(1..=1024).contains(&divider) {
             return Err("ICount divider must be an integer from 1 to 1024");
         }
@@ -4493,6 +5581,15 @@ impl Machine {
         self.keyboard
             .as_ref()
             .is_some_and(|(state, _, _)| state.borrow().awaiting_host_key_release())
+    }
+
+    /// Ordinary and capture-OFF live execution use the same host wake conditions.
+    /// Exact recording/replay retains its separately ordered external-pending policy.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_wake_io_pending(&self) -> bool {
+        self.external_net_io_pending()
+            || self.external_gpu_io_pending()
+            || self.external_keyboard_io_pending()
     }
 
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
@@ -5163,6 +6260,7 @@ impl Machine {
         self.hart.csr.retire_span(retired);
         self.advance_clock_by(retired);
         self.irqstats.on_retire_n(retired);
+        self.advance_session(retired, retired);
         if let Some(exec) = self.executor.as_mut() {
             exec.note_jit_retired(retired);
         }
@@ -5226,6 +6324,20 @@ impl Machine {
                 });
             };
             ran_any = true;
+            // A compiled span sees one device boundary at entry; account for the boundaries
+            // it skipped before returning. A trapping instruction also has a boundary, even
+            // though it does not retire, so its span needs one additional tick.
+            if self.session_clock.is_some()
+                && let Some((uart, _)) = &self.uart
+            {
+                let skipped = match &step {
+                    BlockStep::Committed { retired, .. } | BlockStep::Budget { retired } => {
+                        retired.saturating_sub(1)
+                    }
+                    BlockStep::Trapped { retired, .. } => *retired,
+                };
+                uart.borrow_mut().tick_by(skipped);
+            }
             match step {
                 BlockStep::Budget { retired } => {
                     debug_assert!(retired > 0 && retired <= block_budget);
@@ -5265,7 +6377,7 @@ impl Machine {
                             work_used,
                         });
                     }
-                    if !chaining {
+                    if !chaining || self.session_clock.is_some() {
                         break Some(JitProgress {
                             result: Ok(()),
                             work_used,
@@ -5445,7 +6557,7 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     fn direct_chain_budget(&self, remaining_work: u64) -> (u64, bool) {
         let mut budget = remaining_work.clamp(1, JIT_DIRECT_CHAIN_FUEL);
-        if !self.interrupt_batching() || self.wall_time.is_some() {
+        if self.session_clock.is_some() || !self.interrupt_batching() || self.wall_time.is_some() {
             return (remaining_work, false);
         }
 
@@ -5496,6 +6608,12 @@ impl Machine {
         // consume exactly the remaining instruction attempts without overshoot.
         let (nops, terminator) = {
             let b = self.block_cache.get(phys)?;
+            // A compiled observation must not see counters stamped at block entry. Until its
+            // provider adapter exists, observable/MMIO/system work stays in the exact interpreter.
+            // Pure compute/control blocks still execute in the real JIT, bounded before entry.
+            if self.session_clock.is_some() && !session_clock::jit_safe(b) {
+                return None;
+            }
             (b.ops.len() as u64, b.ops.last().map(|o| o.instr))
         };
         if nops == 0 || nops > remaining_work {
@@ -5730,6 +6848,9 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     #[inline(never)]
     fn boundary_sync_full(&mut self) {
+        self.sync_session_devices();
+        #[cfg(feature = "cold-block-diagnostic")]
+        let diagnostic_position = self.session_position();
         let mut idle = true;
         // E5-T04: host-owned virtio devices may have requested a config change through a
         // retained state handle (for example a GPU canvas resize).  Latch those requests
@@ -5777,6 +6898,10 @@ impl Machine {
         // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
         // completed request's used-ring interrupt lands this same boundary.
         if let Some((state, vq)) = blk {
+            #[cfg(feature = "cold-block-diagnostic")]
+            state
+                .borrow_mut()
+                .set_first_failure_position(diagnostic_position);
             idle &= dev::virtio::blk::service(&virtio[0].0, vq, state, bus);
         }
         // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
@@ -5890,6 +7015,8 @@ impl Machine {
         // does NOT touch this — the device sync above is still per-retire.)
         self.drain_code_writes();
         self.boundary_jit_pump();
+        // Finalize derived lifecycle cancellation after queue service, before any paused callback.
+        self.sync_session_devices();
         // Idle devices stay idle until a fabric MMIO access (epoch bump) or a new run call.
         self.fabric_idle_epoch = idle.then(|| self.fabric_epoch.get());
     }
@@ -5924,14 +7051,21 @@ impl Machine {
         self.irqstats.on_wfi();
         self.hart.last_was_wfi = false;
         self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+        if let Some(work) = &mut self.live_unrecorded {
+            work.idle_pending = true;
+            return;
+        }
+        if let Some(clock) = &mut self.session_clock {
+            // Idle advancement is a separate, fenceable transition. Owned pending-state controls
+            // at the new boundary are delivered before deciding whether the timer may advance.
+            clock.idle_pending = true;
+            return;
+        }
         // E2-T23b: no interrupt was pending this boundary (next_interrupt returned None before
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
         // `sleep` into near-real-time. No-op if no timer armed.
-        if !self.external_net_io_pending()
-            && !self.external_gpu_io_pending()
-            && !self.external_keyboard_io_pending()
-        {
+        if !self.external_wake_io_pending() {
             self.wfi_fast_forward();
         }
     }
@@ -6046,6 +7180,7 @@ impl Machine {
             // The loop body's successful-retire accounting (profiling is off here).
             self.advance_clock();
             self.irqstats.on_retire(); // E2-T20 progress denominator
+            self.advance_live_work(1, 1);
             if self.hart.last_was_wfi {
                 self.after_wfi_retire();
             }
@@ -6075,6 +7210,7 @@ impl Machine {
         self.hart.csr.retire_span(n);
         self.advance_clock_by(n);
         self.irqstats.on_retire_n(n);
+        self.advance_live_work(n, n);
     }
 
     fn run_capture_inner<T: trace::TraceSink>(
@@ -6108,17 +7244,46 @@ impl Machine {
         // body: batching (hence the cache) on, no hot-PC profiler, no HTIF mailbox. (Debug
         // triggers are re-checked per block below: a CSR write can arm them.)
         #[cfg(not(feature = "zicsr-stub"))]
-        let tail_ok = batching && !self.profiling && self.htif.is_none();
+        let tail_ok =
+            batching && !self.profiling && self.htif.is_none() && self.session_clock.is_none();
         #[cfg(all(test, not(feature = "zicsr-stub")))]
         let tail_ok = tail_ok && !self.replay_tail_off;
 
-        let mut remaining_work = max_instrs;
+        #[cfg(not(feature = "zicsr-stub"))]
+        let source_capture = self.session_sources_active();
+        let mut remaining_work = self.live_work_budget(max_instrs);
+        if max_instrs != 0 && remaining_work == 0 {
+            return RunOutcome::SessionStopped(
+                if self
+                    .live_unrecorded
+                    .is_some_and(|work| work.retired == u64::MAX)
+                {
+                    session_clock::SessionError::RetiredExhausted
+                } else {
+                    session_clock::SessionError::TransitionExhausted
+                },
+            );
+        }
         while remaining_work != 0 {
+            #[cfg(not(feature = "zicsr-stub"))]
+            match self.prepare_session_transition() {
+                Ok(session_clock::Preparation::Ready) => {}
+                Ok(session_clock::Preparation::Fence) => return RunOutcome::MaxInstrs,
+                Ok(session_clock::Preparation::IdleAdvanced) => {
+                    remaining_work -= 1;
+                    continue;
+                }
+                Err(error) => return RunOutcome::SessionStopped(error),
+            }
             // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
             // instruction ends the run before the next one executes.
             #[cfg(not(feature = "zicsr-stub"))]
             if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
                 return RunOutcome::Reset(reason);
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if source_capture && let Err(error) = self.begin_source_scope() {
+                return RunOutcome::SessionStopped(error);
             }
             // E4-T05 Phase C: when interrupt batching is on, the device-fabric re-sync + the
             // `next_interrupt` sampling below run ONLY at a block boundary (once per DecodedBlock,
@@ -6131,7 +7296,8 @@ impl Machine {
             // batching OFF (incl. cache-on/batching-off, the byte-identical mode) this is `true`
             // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
             #[cfg(not(feature = "zicsr-stub"))]
-            let sample_boundary = !batching || self.at_block_boundary();
+            let sample_boundary =
+                self.session_clock.is_some() || !batching || self.at_block_boundary();
             // CSR writes that change PMP are block terminators. Invalidate decoded/compiled code
             // at that next boundary before the JIT or cursor can reuse permissions from the old
             // configuration. Direct host mutations between run calls are caught by the entry sync.
@@ -6146,6 +7312,29 @@ impl Machine {
             if sample_boundary {
                 self.boundary_sync();
             }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if let Some(hub) = &self.session_network
+                && let Some(error) = hub.borrow().error
+            {
+                return RunOutcome::SessionStopped(session_clock::SessionError::Network(error));
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if let Some(hub) = &self.session_devices
+                && let Some(error) = hub.borrow().error
+            {
+                return RunOutcome::SessionStopped(session_clock::SessionError::DeviceCompletion(
+                    error,
+                ));
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if source_capture && let Err(error) = self.commit_source_scope() {
+                return RunOutcome::SessionStopped(error);
+            }
+            // A completed descriptor is visible to the guest before this
+            // boundary retires its next instruction. Snapshot only the first
+            // such failure, without yielding or changing the event cadence.
+            #[cfg(feature = "cold-block-diagnostic")]
+            self.capture_first_blk_failure_witness();
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
             // next instruction — sepc/mepc then points at the resume address (the interrupted
@@ -6158,6 +7347,7 @@ impl Machine {
                 let epc = self.hart.regs.pc;
                 self.hart.take_interrupt(cause, to_s, epc);
                 self.irqstats.on_interrupt(cause); // E2-T20 storm counter
+                self.advance_session(1, 0);
                 self.storm_check(); // CRITIC #1: an INTERRUPT storm must be detected too
                 // Preserve the established `run(N)` contract: a taken boundary interrupt consumes
                 // one bounded work slot even though it retires no guest instruction.
@@ -6179,7 +7369,7 @@ impl Machine {
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
             let jit_attempt = if jit_on && sample_boundary && !capture.wants_records() {
-                self.try_jit_block(remaining_work)
+                self.try_jit_block(self.session_dispatch_budget(remaining_work))
             } else {
                 None
             };
@@ -6200,6 +7390,10 @@ impl Machine {
             };
             #[cfg(feature = "zicsr-stub")]
             let (step_result, work_used) = (capture.step(self, false), 1u64);
+            #[cfg(not(feature = "zicsr-stub"))]
+            if source_capture && let Err(error) = self.commit_source_scope() {
+                return RunOutcome::SessionStopped(error);
+            }
             debug_assert!(work_used > 0 && work_used <= remaining_work);
             remaining_work -= work_used;
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
@@ -6210,6 +7404,7 @@ impl Machine {
             if !ran_via_jit && step_result.is_ok() {
                 self.advance_clock();
                 self.irqstats.on_retire(); // E2-T20 progress denominator
+                self.advance_session(1, 1);
                 // E4-T01: hot-PC sampling — only when armed, and only 1-in-~1024 retires (a jittered
                 // stride) so the histogram write is off the per-instruction hot path. We record the
                 // guest VIRTUAL PC: it is what `System.map` symbolizes and the guest-virtual address
@@ -6250,6 +7445,7 @@ impl Machine {
                         fid,
                         &args,
                     );
+                    self.advance_session(1, 0);
                     // E2-T06 SRST: a requested shutdown ends the run NOW — the guest never
                     // executes another instruction (spec: system_reset does not return).
                     if let Some(code) = self.sbi_state.shutdown {
@@ -6294,11 +7490,13 @@ impl Machine {
                         self.hart.csr.mtvec_base()
                     };
                     if handler == 0 {
+                        self.advance_live_work(1, 0);
                         return RunOutcome::Trapped(trap);
                     }
                     let epc = self.hart.regs.pc;
                     self.hart.take_trap(trap, epc);
                     self.irqstats.on_exception(trap.cause as u64); // E2-T20 storm counter
+                    self.advance_session(1, 0);
                     self.storm_check(); // livelock/storm: a trap just landed — cheap to check
                 }
                 #[cfg(feature = "zicsr-stub")]

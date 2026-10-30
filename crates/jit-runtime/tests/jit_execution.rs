@@ -685,6 +685,9 @@ mod riscv_tests_gate {
             RunOutcome::Trapped(t) => Verdict::Escaped(format!("trap {:?}", t.cause)),
             RunOutcome::MaxInstrs => Verdict::Timeout,
             RunOutcome::Reset(r) => Verdict::Escaped(format!("reset {r:?}")),
+            RunOutcome::SessionStopped(error) => {
+                Verdict::Escaped(format!("session stopped {error:?}"))
+            }
         }
     }
 
@@ -1026,6 +1029,9 @@ mod jit_config_matrix {
             RunOutcome::Trapped(t) => Verdict::Escaped(format!("trap {:?}", t.cause)),
             RunOutcome::MaxInstrs => Verdict::Timeout,
             RunOutcome::Reset(r) => Verdict::Escaped(format!("reset {r:?}")),
+            RunOutcome::SessionStopped(error) => {
+                Verdict::Escaped(format!("session stopped {error:?}"))
+            }
         }
     }
 

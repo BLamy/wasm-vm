@@ -1,0 +1,5 @@
+Built page ready; running live compliance suite
+Checking authenticated storage limits, shared references and prior store attacks
+Starting actual offline guest through library control
+Quota pause/retry and real shared checkpoint restore passed
+Retention: actual quota pause/retry, shared restore, crash recovery, varied leases and honest eviction passed.

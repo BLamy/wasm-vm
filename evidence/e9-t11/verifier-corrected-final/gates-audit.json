@@ -1,0 +1,241 @@
+{
+  "status": "passed",
+  "runs": [
+    {
+      "source": "e9-t11-worker-corrected-final",
+      "native": [
+        {
+          "gate": "core-native",
+          "passed": 399,
+          "test_binaries": 1
+        },
+        {
+          "gate": "execution-and-device-native",
+          "passed": 58,
+          "test_binaries": 13
+        },
+        {
+          "gate": "jit-native",
+          "passed": 49,
+          "test_binaries": 8
+        },
+        {
+          "gate": "boundary-native",
+          "passed": 49,
+          "test_binaries": 2
+        },
+        {
+          "gate": "storage-native",
+          "passed": 141,
+          "test_binaries": 8
+        }
+      ],
+      "native_total": 696,
+      "suite": {
+        "passed": 127,
+        "failed": 0
+      },
+      "console_errors": [],
+      "replay_provider_calls": [
+        {
+          "rtc": 0,
+          "entropy": 0
+        },
+        {
+          "rtc": 0,
+          "entropy": 0
+        },
+        {
+          "rtc": 0,
+          "entropy": 0
+        }
+      ],
+      "pause_ms": 273.4750000014901,
+      "refusals": [
+        "ClockPolicyMismatch",
+        "MissingRecord",
+        "MalformedObservation",
+        "Length",
+        "Kind",
+        "Position",
+        "ExtraRecords"
+      ],
+      "durable_prefixes": [
+        {
+          "backend": "main-thread",
+          "events": 413,
+          "end": {
+            "transition": "527",
+            "phase": "before",
+            "ordinal": 1,
+            "sequence": "413",
+            "retired": "526"
+          },
+          "done": "poweroff"
+        },
+        {
+          "backend": "whole-machine-worker",
+          "events": 413,
+          "end": {
+            "transition": "527",
+            "phase": "before",
+            "ordinal": 1,
+            "sequence": "413",
+            "retired": "526"
+          },
+          "done": "poweroff"
+        }
+      ],
+      "retained_gpu": {
+        "qualified": true,
+        "lost": false,
+        "poisoned": false,
+        "epoch": "0000000000000004",
+        "retired": 2499808,
+        "drawn": [
+          {
+            "epoch": "0000000000000004",
+            "sequence": null,
+            "bindingGeneration": "0000000000000329",
+            "resource": {
+              "generation": "0000000000000010",
+              "id": 13
+            },
+            "status": "drawn",
+            "presentation": {
+              "backend": "canvas2d",
+              "resourceWidth": 1280,
+              "resourceHeight": 800
+            }
+          }
+        ]
+      },
+      "node": {
+        "tests": 81,
+        "pass": 81,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "source": "e9-t11-cold-corrected-final/acceptance",
+      "native": [
+        {
+          "gate": "core-native",
+          "passed": 399,
+          "test_binaries": 1
+        },
+        {
+          "gate": "execution-and-device-native",
+          "passed": 58,
+          "test_binaries": 13
+        },
+        {
+          "gate": "jit-native",
+          "passed": 49,
+          "test_binaries": 8
+        },
+        {
+          "gate": "boundary-native",
+          "passed": 49,
+          "test_binaries": 2
+        },
+        {
+          "gate": "storage-native",
+          "passed": 141,
+          "test_binaries": 8
+        }
+      ],
+      "native_total": 696,
+      "suite": {
+        "passed": 127,
+        "failed": 0
+      },
+      "console_errors": [],
+      "replay_provider_calls": [
+        {
+          "rtc": 0,
+          "entropy": 0
+        },
+        {
+          "rtc": 0,
+          "entropy": 0
+        },
+        {
+          "rtc": 0,
+          "entropy": 0
+        }
+      ],
+      "pause_ms": 248.44500000029802,
+      "refusals": [
+        "ClockPolicyMismatch",
+        "MissingRecord",
+        "MalformedObservation",
+        "Length",
+        "Kind",
+        "Position",
+        "ExtraRecords"
+      ],
+      "durable_prefixes": [
+        {
+          "backend": "main-thread",
+          "events": 413,
+          "end": {
+            "transition": "527",
+            "phase": "before",
+            "ordinal": 1,
+            "sequence": "413",
+            "retired": "526"
+          },
+          "done": "poweroff"
+        },
+        {
+          "backend": "whole-machine-worker",
+          "events": 413,
+          "end": {
+            "transition": "527",
+            "phase": "before",
+            "ordinal": 1,
+            "sequence": "413",
+            "retired": "526"
+          },
+          "done": "poweroff"
+        }
+      ],
+      "retained_gpu": {
+        "qualified": true,
+        "lost": false,
+        "poisoned": false,
+        "epoch": "0000000000000004",
+        "retired": 2999712,
+        "drawn": [
+          {
+            "epoch": "0000000000000004",
+            "sequence": null,
+            "bindingGeneration": "0000000000000329",
+            "resource": {
+              "generation": "0000000000000010",
+              "id": 13
+            },
+            "status": "drawn",
+            "presentation": {
+              "backend": "canvas2d",
+              "resourceWidth": 1280,
+              "resourceHeight": 800
+            }
+          }
+        ]
+      },
+      "node": {
+        "tests": 81,
+        "pass": 81,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    }
+  ]
+}

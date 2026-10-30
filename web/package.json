@@ -12,13 +12,18 @@
     "test:keyboard-hardening": "node --test tests/held-keys.test.mjs tests/keyboard-bridge.test.mjs",
     "test:keyboard-reconciliation": "node --test tests/modifier-lock-reconciliation.test.mjs tests/keyboard-bridge.test.mjs tests/held-keys.test.mjs",
     "build:docs": "node ../tools/build-docs.mjs",
-    "check:docs": "node ../tools/check-docs.mjs"
+    "check:docs": "node ../tools/check-docs.mjs",
+    "build:ui": "node ../tools/build-ui.mjs"
   },
   "dependencies": {
-    "@brett_lamy/docstream": "1.9.1",
+    "@brett_lamy/docstream": "1.33.0",
+    "@brett_lamy/ui": "5.10.1",
+    "@fontsource-variable/ibm-plex-sans": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
     "@xterm/addon-fit": "0.10.0",
     "@xterm/xterm": "5.5.0",
     "react": "19.3.0",
+    "react-aria": "3.53.1",
     "react-dom": "19.3.0",
     "three": "0.160.1"
   },

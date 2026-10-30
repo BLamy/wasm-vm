@@ -23,121 +23,125 @@ const ROOT = "/root";
 const _ideQuery = new URLSearchParams(location.search);
 const _ideGuest = (_ideQuery.get("guest") || _ideQuery.get("boot") || _ideQuery.get("os") || "").toLowerCase();
 const OMARCHY_DESKTOP_MODE = _ideQuery.get("desktop") === "1" && _ideGuest === "omarchy";
-if (OMARCHY_DESKTOP_MODE) document.documentElement.dataset.wvmDesktop = "omarchy";
+if (OMARCHY_DESKTOP_MODE) {
+  document.documentElement.dataset.wvmDesktop = "omarchy";
+  document.getElementById("session-library")?.removeAttribute("open");
+}
 
 // ── styles (injected; no dependency on index.html CSS) ───────────────────────
 const css = `
 /* The IDE fills the whole panel below the header (VSCode-style full-bleed, no card). */
 #panel-ide.active { display: flex; flex-direction: column; height: calc(100vh - 51px); min-height: 0; }
 #ide-root { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow: hidden;
-  background: var(--panel, #0d1117); color: var(--text, #d6deeb);
+  background: var(--panel, var(--panel)); color: var(--text, var(--text));
   font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 .ide-body { display: flex; flex: 1 1 auto; min-height: 0; }
 
 /* Resize handles — sidebar width (col-resize) and terminal height (row-resize). */
-.ide-vsplit { flex: 0 0 6px; cursor: col-resize; background: transparent; z-index: 5; border-left: 1px solid var(--line, #232a35); }
-.ide-hsplit { flex: 0 0 6px; cursor: row-resize; background: transparent; z-index: 5; border-top: 1px solid var(--line, #232a35); }
-.ide-vsplit:hover, .ide-vsplit.drag, .ide-hsplit:hover, .ide-hsplit.drag { background: rgba(83,212,255,.35); }
+.ide-vsplit { flex: 0 0 6px; cursor: col-resize; background: transparent; z-index: 5; border-left: 1px solid var(--line, var(--line)); }
+.ide-hsplit { flex: 0 0 6px; cursor: row-resize; background: transparent; z-index: 5; border-top: 1px solid var(--line, var(--line)); }
+.ide-vsplit:hover, .ide-vsplit.drag, .ide-hsplit:hover, .ide-hsplit.drag { background: rgba(228,168,83,.35); }
 
 /* Activity bar */
 .ide-activity { flex: 0 0 48px; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 8px 0; background: #0a0d13; border-right: 1px solid var(--line, #232a35); }
+  padding: 8px 0; background: var(--bg); border-right: 1px solid var(--line, var(--line)); }
 .ide-act-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
   font-size: 20px; cursor: pointer; background: none; border: 0; border-left: 2px solid transparent;
-  color: #8fa3bf; border-radius: 0; opacity: .7; }
+  color: var(--muted); border-radius: 0; opacity: .7; }
 .ide-act-btn:hover { opacity: 1; }
-.ide-act-btn.active { opacity: 1; color: #d6deeb; border-left-color: var(--cyan, #53d4ff); }
+.ide-act-btn.active { opacity: 1; color: var(--text); border-left-color: var(--cyan, #53d4ff); }
 .ide-act-spacer { flex: 1 1 auto; }
 
 /* Sidebar */
 .ide-side { flex: 0 0 264px; display: flex; flex-direction: column; min-width: 0;
-  border-right: 1px solid var(--line, #232a35); background: var(--panel, #0d1117); overflow: hidden; }
+  border-right: 1px solid var(--line, var(--line)); background: var(--panel, var(--panel)); overflow: hidden; }
 .ide-side.collapsed { display: none; }
 .ide-side-title { flex: 0 0 auto; padding: 8px 12px; font-size: 11px; letter-spacing: .6px;
-  text-transform: uppercase; color: #8fa3bf; border-bottom: 1px solid var(--line, #232a35); }
+  text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line, var(--line)); }
 .ide-side-view { display: none; flex-direction: column; min-height: 0; flex: 1 1 auto; }
 .ide-side-view.active { display: flex; }
 #ide-explorer { flex: 1 1 auto; overflow: auto; padding: 4px 0; min-height: 80px; }
-.ide-side-ft { flex: 0 0 auto; border-top: 1px solid var(--line, #232a35); overflow: auto; max-height: 46%; }
+.ide-files-actions { flex: 0 0 auto; padding: 6px 12px; border-bottom: 1px solid var(--line, var(--line)); }
+.ide-side-ft { flex: 0 0 auto; border-top: 1px solid var(--line, var(--line)); overflow: auto; max-height: 46%; }
 .ide-side-ft .file-transfer { margin: 0; border: 0; border-radius: 0; background: transparent; }
 
 /* Docker sidebar */
 .ide-dk { flex: 1 1 auto; overflow: auto; display: flex; flex-direction: column; }
 .ide-dk-sec { padding: 6px 0; }
-.ide-dk-h { padding: 8px 12px 4px; font-size: 10.5px; letter-spacing: .5px; text-transform: uppercase; color: #6f8097; }
+.ide-dk-h { padding: 8px 12px 4px; font-size: 10.5px; letter-spacing: .5px; text-transform: uppercase; color: #8c867c; }
 .ide-dk-row { display: flex; align-items: center; gap: 8px; padding: 6px 12px; cursor: default; }
-.ide-dk-row:hover { background: var(--panel-2, #151a22); }
+.ide-dk-row:hover { background: var(--panel-2, var(--panel-2)); }
 .ide-dk-row .nm { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ide-dk-row .sub { color: #6f8097; font-size: 11px; }
+.ide-dk-row .sub { color: #8c867c; font-size: 11px; }
 .ide-dk-ctr { cursor: pointer; align-items: flex-start; }
 .ide-dk-ctr .nm { min-width: 0; white-space: normal; line-height: 1.35; }
 .ide-dk-ctr .nm .sub { display: block; overflow-wrap: anywhere; }
 .ide-dk-section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .ide-dk-section-head .ide-dk-h { flex: 1 1 auto; }
 .ide-dk-ctr-actions { display: flex; flex: 0 0 auto; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-.ide-dk-ctr-meta { display: block; color: #8fa3bf; font-size: 10.5px; overflow-wrap: anywhere; }
+.ide-dk-ctr-meta { display: block; color: var(--muted); font-size: 10.5px; overflow-wrap: anywhere; }
 .ide-dk-ctr-error { margin: 0 12px 6px; padding: 6px 8px; border: 1px solid #6e3b3b;
   border-radius: 5px; color: #f0b0b0; background: #251719; font-size: 11px; line-height: 1.4; }
 .ide-dk-ctr-action { color: #f2c94c; font-size: 10.5px; }
-.ide-dk-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: #5a6b82; }
+.ide-dk-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: #77726a; }
 .ide-dk-dot.running { background: var(--green, #2ea043); box-shadow: 0 0 0 3px rgba(46,160,67,.2); }
-.ide-mini { background: #234; color: #cfe3ff; border: 1px solid #2b5278; border-radius: 6px;
+.ide-mini { background: var(--panel-2); color: var(--text); border: 1px solid #3a362f; border-radius: 6px;
   padding: 3px 9px; cursor: pointer; font: inherit; font-size: 11px; }
-.ide-mini:hover:not(:disabled) { background: #2b5278; }
+.ide-mini:hover:not(:disabled) { background: #3a362f; }
 .ide-mini.run { border-color: #287555; background: #143c31; color: #d6ffe6; }
 .ide-mini:disabled { opacity: .4; cursor: not-allowed; }
-.ide-dk-note { padding: 12px; color: #7d8ba0; line-height: 1.55; font-size: 12px; }
-.ide-dk-runtime { padding: 8px 0 10px; border-bottom: 1px solid var(--line, #232a35); }
-.ide-dk-runtime-status { padding: 4px 12px 8px; color: #cdd6f4; line-height: 1.45; font-size: 12px; }
+.ide-dk-note { padding: 12px; color: #8c867c; line-height: 1.55; font-size: 12px; }
+.ide-dk-runtime { padding: 8px 0 10px; border-bottom: 1px solid var(--line, var(--line)); }
+.ide-dk-runtime-status { padding: 4px 12px 8px; color: var(--text); line-height: 1.45; font-size: 12px; }
 .ide-dk-runtime-status[data-state="available"] { color: #9ad29a; }
 .ide-dk-runtime-status[data-state="unavailable"], .ide-dk-runtime-status[data-state="error"] { color: #f0c6a0; }
 .ide-dk-runtime > .ide-mini { margin: 0 12px 4px; }
-.ide-dk-resume { padding: 2px 0 10px; border-bottom: 1px solid var(--line, #232a35); }
-.ide-dk-resume-status { padding: 3px 12px 7px; color: #9fb0c7; line-height: 1.45; font-size: 11px; }
+.ide-dk-resume { padding: 2px 0 10px; border-bottom: 1px solid var(--line, var(--line)); }
+.ide-dk-resume-status { padding: 3px 12px 7px; color: var(--muted); line-height: 1.45; font-size: 11px; }
 .ide-dk-resume[data-decision="resume"] .ide-dk-resume-status { color: #9ad29a; }
 .ide-dk-resume[data-decision="stale"] .ide-dk-resume-status,
 .ide-dk-resume[data-state="error"] .ide-dk-resume-status { color: #f0c6a0; }
 .ide-dk-resume-actions { display: flex; gap: 6px; padding: 0 12px; }
-.ide-dk-image-detail { margin: -2px 12px 8px; padding: 8px; border: 1px solid var(--line, #232a35);
-  border-radius: 6px; background: #0b0f15; font-size: 11px; line-height: 1.45; }
-.ide-dk-image-detail .title { color: #d6deeb; font-weight: 600; margin-bottom: 5px; }
+.ide-dk-image-detail { margin: -2px 12px 8px; padding: 8px; border: 1px solid var(--line, var(--line));
+  border-radius: 6px; background: var(--panel); font-size: 11px; line-height: 1.45; }
+.ide-dk-image-detail .title { color: var(--text); font-weight: 600; margin-bottom: 5px; }
 .ide-dk-image-detail dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 8px; margin: 0; }
-.ide-dk-image-detail dt { color: #6f8097; }
-.ide-dk-image-detail dd { min-width: 0; margin: 0; color: #cdd6f4; overflow-wrap: anywhere; }
-.ide-dk-inspect-raw { max-height: 180px; overflow: auto; margin: 7px 0 0; color: #8fa3bf; white-space: pre-wrap; }
+.ide-dk-image-detail dt { color: #8c867c; }
+.ide-dk-image-detail dd { min-width: 0; margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.ide-dk-inspect-raw { max-height: 180px; overflow: auto; margin: 7px 0 0; color: var(--muted); white-space: pre-wrap; }
 .ide-dk-run-state { padding: 5px 12px 7px; color: #9ad29a; font-size: 11px; line-height: 1.4; }
 .ide-dk-run-state[data-state="starting"] { color: #f2c94c; }
 .ide-dk-run-state[data-state="failed"] { color: #f0a0a0; }
 
 /* Editor area */
-.ide-editor-area { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #0b0f15; }
+.ide-editor-area { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--panel); }
 .ide-tabstrip { flex: 0 0 auto; display: flex; align-items: stretch; overflow-x: auto; min-height: 35px;
-  background: #0a0d13; border-bottom: 1px solid var(--line, #232a35); }
+  background: var(--bg); border-bottom: 1px solid var(--line, var(--line)); }
 .ide-tab { display: flex; align-items: center; gap: 7px; padding: 0 10px; max-width: 220px; cursor: pointer;
-  color: #8fa3bf; background: #0d1117; border-right: 1px solid var(--line, #232a35); white-space: nowrap; font-size: 12.5px; }
-.ide-tab:hover { color: #d6deeb; }
-.ide-tab.active { color: #d6deeb; background: #0b0f15; border-top: 1px solid var(--cyan, #53d4ff); }
+  color: var(--muted); background: var(--panel); border-right: 1px solid var(--line, var(--line)); white-space: nowrap; font-size: 12.5px; }
+.ide-tab:hover { color: var(--text); }
+.ide-tab.active { color: var(--text); background: var(--panel); border-top: 1px solid var(--cyan, #53d4ff); }
 .ide-tab .t-nm { overflow: hidden; text-overflow: ellipsis; }
 .ide-tab .t-dirty { color: #f0c674; }
 .ide-tab .t-close { width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 4px; opacity: .6; }
-.ide-tab .t-close:hover { background: #2b3646; opacity: 1; }
+.ide-tab .t-close:hover { background: #3a362f; opacity: 1; }
 
 .ide-editor-toolbar { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; padding: 6px 12px;
-  border-bottom: 1px solid var(--line, #232a35); background: #0d1117; }
-.ide-crumb { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8fa3bf; }
-.ide-crumb b { color: #d6deeb; }
-.ide-status { color: #8fa3bf; font-size: 12px; }
+  border-bottom: 1px solid var(--line, var(--line)); background: var(--panel); }
+.ide-crumb { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+.ide-crumb b { color: var(--text); }
+.ide-status { color: var(--muted); font-size: 12px; }
 .ide-status.err { color: #f0a0a0; } .ide-status.ok { color: #9ad29a; }
-.ide-save { background: #234; color: #cfe3ff; border: 1px solid #2b5278; border-radius: 7px; padding: 4px 13px; cursor: pointer; font: inherit; }
-.ide-save:hover:not(:disabled) { background: #2b5278; }
+.ide-save { background: var(--panel-2); color: var(--text); border: 1px solid #3a362f; border-radius: 7px; padding: 4px 13px; cursor: pointer; font: inherit; }
+.ide-save:hover:not(:disabled) { background: #3a362f; }
 .ide-save:disabled { opacity: .4; cursor: not-allowed; }
 
 /* Guest display surface — the virtio-gpu canvas stays visible above the source editor. */
 .ide-display-pane { flex: 0 0 190px; min-height: 96px; display: flex; flex-direction: column;
-  background: #05070a; border-bottom: 1px solid var(--line, #232a35); }
+  background: #000; border-bottom: 1px solid var(--line, var(--line)); }
 .ide-display-head { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 5px 12px;
-  color: #8fa3bf; background: #0a0d13; border-bottom: 1px solid var(--line, #232a35); font-size: 11px; }
+  color: var(--muted); background: var(--bg); border-bottom: 1px solid var(--line, var(--line)); font-size: 11px; }
 .ide-display-head .sp { flex: 1 1 auto; }
 .ide-display-status { color: #9ad29a; }
 .ide-display-viewport { flex: 1 1 auto; min-width: 0; min-height: 0; position: relative; overflow: hidden; background: #000; }
@@ -145,46 +149,46 @@ const css = `
 
 .ide-editor-body { flex: 1 1 auto; display: flex; min-height: 0; position: relative; }
 #ide-editor-wrap { flex: 1 1 auto; display: flex; min-width: 0; }
-.ide-gutter { flex: 0 0 auto; padding: 8px 8px 8px 12px; text-align: right; color: #4a5a72;
-  background: #0b0f15; border-right: 1px solid var(--line, #232a35); user-select: none;
+.ide-gutter { flex: 0 0 auto; padding: 8px 8px 8px 12px; text-align: right; color: #5f5a52;
+  background: var(--panel); border-right: 1px solid var(--line, var(--line)); user-select: none;
   overflow: hidden; white-space: pre; line-height: 1.5; font: inherit; }
 .ide-textarea { flex: 1 1 auto; resize: none; border: 0; outline: 0; padding: 8px 12px;
-  background: #0b0f15; color: #d6deeb; font: inherit; line-height: 1.5; tab-size: 4; white-space: pre; overflow: auto; }
-.ide-textarea:disabled { color: #5a6b82; }
+  background: var(--panel); color: var(--text); font: inherit; line-height: 1.5; tab-size: 4; white-space: pre; overflow: auto; }
+.ide-textarea:disabled { color: #77726a; }
 
 .ide-ctr-panel { flex: 1 1 auto; display: none; flex-direction: column; min-width: 0; min-height: 0; }
 .ide-ctr-panel.active { display: flex; }
 .ide-ctr-head { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-  border-bottom: 1px solid var(--line, #232a35); flex-wrap: wrap; }
-.ide-ctr-head .id { color: #8fa3bf; }
-.ide-ctr-head label { display: flex; align-items: center; gap: 5px; color: #8fa3bf; font-size: 12px; }
+  border-bottom: 1px solid var(--line, var(--line)); flex-wrap: wrap; }
+.ide-ctr-head .id { color: var(--muted); }
+.ide-ctr-head label { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; }
 .ide-ctr-logs { flex: 1 1 auto; overflow: auto; margin: 0; padding: 10px 12px; white-space: pre-wrap;
-  word-break: break-word; color: #cdd6f4; background: #0b0e14; font-size: 12px; line-height: 1.5; }
-.ide-ctr-stream-state { color: #8fa3bf; font-size: 11px; }
+  word-break: break-word; color: var(--text); background: var(--bg); font-size: 12px; line-height: 1.5; }
+.ide-ctr-stream-state { color: var(--muted); font-size: 11px; }
 .ide-ctr-stream-state[data-state="following"] { color: #9ad29a; }
 .ide-ctr-stream-state[data-state="stopping"] { color: #f2c94c; }
 .ide-ctr-stream-state[data-state="error"] { color: #f0a0a0; }
 .ide-ctr-exec { flex: 0 0 auto; display: flex; flex-direction: column; gap: 6px; padding: 8px 12px;
-  border-top: 1px solid var(--line, #232a35); background: #0d1117; }
+  border-top: 1px solid var(--line, var(--line)); background: var(--panel); }
 .ide-ctr-exec-head, .ide-ctr-exec-form { display: flex; align-items: center; gap: 6px; min-width: 0; }
-.ide-ctr-exec-head strong { color: #d6deeb; font-size: 12px; }
+.ide-ctr-exec-head strong { color: var(--text); font-size: 12px; }
 .ide-ctr-exec-head .sp { flex: 1 1 auto; }
-.ide-ctr-exec-status { color: #8fa3bf; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ide-ctr-exec-status { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ide-ctr-exec-status[data-state="active"] { color: #9ad29a; }
 .ide-ctr-exec-status[data-state="starting"], .ide-ctr-exec-status[data-state="stopping"] { color: #f2c94c; }
 .ide-ctr-exec-status[data-state="error"] { color: #f0a0a0; }
-.ide-ctr-exec-provenance { color: #8fa3bf; font-size: 10.5px; overflow-wrap: anywhere; }
+.ide-ctr-exec-provenance { color: var(--muted); font-size: 10.5px; overflow-wrap: anywhere; }
 .ide-ctr-exec-output { max-height: 180px; overflow: auto; margin: 0; padding: 6px 8px; white-space: pre-wrap;
-  word-break: break-word; color: #cdd6f4; background: #0b0e14; border: 1px solid var(--line, #232a35);
+  word-break: break-word; color: var(--text); background: var(--bg); border: 1px solid var(--line, var(--line));
   font-size: 11.5px; line-height: 1.45; }
 .ide-ctr-exec .p { color: var(--green, #2ea043); align-self: center; }
-.ide-ctr-exec input { flex: 1 1 auto; min-width: 0; background: #0b0f15; color: #d6deeb;
-  border: 1px solid var(--line, #232a35); border-radius: 6px; padding: 5px 9px; font: inherit; outline: none; }
+.ide-ctr-exec input { flex: 1 1 auto; min-width: 0; background: var(--panel); color: var(--text);
+  border: 1px solid var(--line, var(--line)); border-radius: 6px; padding: 5px 9px; font: inherit; outline: none; }
 .ide-ctr-exec input:focus { border-color: var(--cyan, #53d4ff); }
-.ide-ctr-exec input:disabled { color: #5a6b82; }
+.ide-ctr-exec input:disabled { color: #77726a; }
 
-.ide-editor-ph { margin: auto; padding: 22px 18px; color: #7d8ba0; line-height: 1.6; font-size: 12.5px; text-align: center; max-width: 380px; }
-.ide-explorer-ph { padding: 22px 18px; color: #7d8ba0; line-height: 1.6; font-size: 12.5px; }
+.ide-editor-ph { margin: auto; padding: 22px 18px; color: #8c867c; line-height: 1.6; font-size: 12.5px; text-align: center; max-width: 380px; }
+.ide-explorer-ph { padding: 22px 18px; color: #8c867c; line-height: 1.6; font-size: 12.5px; }
 .ide-spin { display: inline-block; animation: ide-spin 1s linear infinite; }
 @keyframes ide-spin { to { transform: rotate(360deg); } }
 
@@ -193,17 +197,17 @@ const css = `
 .ide-tree .ide-tree { padding-left: 14px; }
 .ide-node { display: flex; align-items: center; gap: 5px; padding: 3px 10px; cursor: pointer;
   white-space: nowrap; user-select: none; border-radius: 5px; }
-.ide-node:hover { background: var(--panel-2, #151a22); }
-.ide-node.sel { background: #1c2c44; color: #cfe3ff; }
-.ide-node .tw { width: 12px; text-align: center; color: #5a6b82; font-size: 10px; flex: 0 0 auto; }
+.ide-node:hover { background: var(--panel-2, var(--panel-2)); }
+.ide-node.sel { background: #2e2a23; color: var(--text); }
+.ide-node .tw { width: 12px; text-align: center; color: #77726a; font-size: 10px; flex: 0 0 auto; }
 .ide-node .ic { flex: 0 0 auto; }
 .ide-node .nm { overflow: hidden; text-overflow: ellipsis; }
 
 /* Terminal pane */
 .ide-term-pane { flex: 0 0 auto; height: 280px; min-height: 80px; display: flex; flex-direction: column;
-  background: var(--panel, #0d1117); overflow: hidden; }
+  background: var(--panel, var(--panel)); overflow: hidden; }
 .ide-term-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 4px 12px;
-  background: #0a0d13; border-bottom: 1px solid var(--line, #232a35); font-size: 11px; color: #8fa3bf; }
+  background: var(--bg); border-bottom: 1px solid var(--line, var(--line)); font-size: 11px; color: var(--muted); }
 .ide-term-bar .sp { flex: 1 1 auto; }
 /* root@<guest> chip — shows which guest userland the CLI is running in (busybox / alpine). */
 .ide-term-who { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
@@ -213,16 +217,16 @@ const css = `
 .ide-keyboard-state { color: #9ad29a; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; }
 .ide-keyboard-state[data-captured="false"] { color: #f2c94c; border-color: rgba(242, 201, 76, 0.4); }
-.ide-keyboard-debug { color: #aab7c4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
+.ide-keyboard-debug { color: var(--muted); border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; max-width: 34vw; overflow: hidden;
   text-overflow: ellipsis; }
 .ide-pointer-state { color: #9ad29a; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; }
 .ide-pointer-state[data-mode="relative"] { color: #9fc8ff; border-color: rgba(83, 212, 255, 0.4); }
-.ide-pointer-debug { color: #aab7c4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
+.ide-pointer-debug { color: var(--muted); border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; max-width: 22vw; overflow: hidden;
   text-overflow: ellipsis; }
-.ide-microphone-state { color: #cdd6f4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
+.ide-microphone-state { color: var(--text); border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; }
 .ide-microphone-state[data-state="live"] { color: #9ad29a; border-color: rgba(63, 185, 80, 0.45); }
 .ide-microphone-state[data-state="denied"], .ide-microphone-state[data-state="revoked"] {
@@ -242,19 +246,19 @@ const css = `
 
 /* Status bar */
 .ide-statusbar { flex: 0 0 auto; display: flex; align-items: center; gap: 0; height: 24px;
-  background: #0a5cc2; color: #eaf2ff; font-size: 11.5px; position: relative; }
+  background: var(--panel-2); color: var(--text); font-size: 11.5px; position: relative; }
 .ide-sb-item { display: flex; align-items: center; gap: 6px; padding: 0 10px; height: 100%; cursor: default; }
 .ide-sb-item.btn { cursor: pointer; }
 .ide-sb-item.btn:hover { background: rgba(255,255,255,.15); }
 .ide-sb-sp { flex: 1 1 auto; }
 .ide-sb-dot { width: 8px; height: 8px; border-radius: 50%; background: #f2c94c; }
 .ide-sb-dot.ready { background: #7ee787; }
-.ide-sb-dot.off { background: #cdd6f4; }
+.ide-sb-dot.off { background: var(--text); }
 .ide-net-pop { position: absolute; right: 8px; bottom: 28px; width: min(560px, 92vw); z-index: 30;
-  background: var(--panel-2, #151a22); border: 1px solid var(--line, #232a35); border-radius: 10px;
+  background: var(--panel-2, var(--panel-2)); border: 1px solid var(--line, var(--line)); border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0,0,0,.5); padding: 12px; display: none; }
 .ide-net-pop.open { display: block; }
-.ide-net-pop .file, .ide-net-pop h4 { color: #d6deeb; }
+.ide-net-pop .file, .ide-net-pop h4 { color: var(--text); }
 
 /* Omarchy is a desktop session, not an editor session. Keep the same guest display/controller,
    but promote its viewport to the whole page and remove every VS Code surface around it. */
@@ -281,6 +285,15 @@ html[data-wvm-desktop="omarchy"][data-gpu-boot-error="true"] .os-launcher:not([h
 html[data-wvm-desktop="omarchy"] #panel-ide.active {
   display: flex; height: 100vh; min-height: 100vh; overflow: hidden;
 }
+html[data-wvm-desktop="omarchy"] #panel-ide > details.session-library:not(#session-library) {
+  display: none !important;
+}
+html[data-wvm-desktop="omarchy"] #session-library {
+  position: fixed; top: 12px; right: 12px; z-index: 20;
+  width: min(540px, calc(100vw - 24px)); max-height: calc(100vh - 24px);
+  margin: 0; overflow: auto;
+}
+html[data-wvm-desktop="omarchy"] #session-library:not([open]) { width: auto; }
 html[data-wvm-desktop="omarchy"] #ide-root {
   position: relative; flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;
 }
@@ -304,7 +317,7 @@ html[data-wvm-desktop="omarchy"] .ide-display-canvas {
 .omarchy-desktop-toolbar {
   position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 10;
   display: flex; align-items: center; gap: 9px; min-height: 38px; padding: 6px 9px;
-  color: #d6deeb; background: rgba(10, 13, 19, .88); border: 1px solid rgba(83, 212, 255, .28);
+  color: var(--text); background: rgba(10, 13, 19, .88); border: 1px solid rgba(83, 212, 255, .28);
   border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); backdrop-filter: blur(8px);
   opacity: 0; transition: opacity .16s ease;
 }
@@ -314,12 +327,12 @@ html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="error"],
 html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="halted"] { opacity: 1; }
 .omarchy-desktop-toolbar[hidden] { display: none; }
 .omarchy-desktop-toolbar .brand { color: #fff; font-weight: 700; }
-.omarchy-desktop-toolbar .status { color: #9fb0c7; font-size: 11px; }
+.omarchy-desktop-toolbar .status { color: var(--muted); font-size: 11px; }
 .omarchy-desktop-toolbar .sp { flex: 1 1 auto; }
 .omarchy-desktop-toolbar button { min-height: 27px; padding: 3px 9px; font-size: 11px; }
 .omarchy-boot-overlay {
   position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
-  padding: 20px; background: rgba(0, 0, 0, .72); color: #d6deeb; pointer-events: auto;
+  padding: 20px; background: rgba(0, 0, 0, .72); color: var(--text); pointer-events: auto;
 }
 .omarchy-boot-overlay[hidden] { display: none; }
 .omarchy-boot-overlay[data-interactive="true"] {
@@ -341,14 +354,14 @@ html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="halted"] {
   border-radius: 10px; background: rgba(10, 13, 19, .95); box-shadow: 0 14px 38px rgba(0, 0, 0, .5);
 }
 .omarchy-boot-card h1 { margin: 0 0 8px; color: #fff; font: 600 16px ui-sans-serif, system-ui, sans-serif; }
-.omarchy-boot-status { min-height: 1.4em; color: #9fb0c7; line-height: 1.45; }
+.omarchy-boot-status { min-height: 1.4em; color: var(--muted); line-height: 1.45; }
 .omarchy-boot-status[data-state="error"] { color: #ffb4b4; }
 .omarchy-boot-progress { width: 100%; height: 7px; margin: 13px 0 8px; accent-color: #53d4ff; }
 .omarchy-boot-progress[hidden] { display: none; }
 .omarchy-boot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .omarchy-boot-actions button { min-height: 30px; padding: 5px 10px; font: inherit; font-size: 11px; }
 .omarchy-boot-log { max-height: min(38vh, 260px); overflow: auto; margin: 12px 0 0; padding: 9px;
-  border: 1px solid var(--line, #232a35); border-radius: 6px; background: #05070a; color: #cdd6f4;
+  border: 1px solid var(--line, var(--line)); border-radius: 6px; background: #000; color: var(--text);
   white-space: pre-wrap; word-break: break-word; font-size: 11px; line-height: 1.45; }
 .omarchy-boot-log[hidden] { display: none; }
 `;
@@ -518,6 +531,7 @@ if (root) {
       <div class="ide-side" id="ide-side">
         <div class="ide-side-title" id="ide-side-title">Explorer</div>
         <div class="ide-side-view active" id="ide-view-files">
+          <div class="ide-files-actions"><button class="ide-mini" id="ide-files-refresh" type="button" title="List /root again">Refresh</button></div>
           <div id="ide-explorer"></div>
           <div class="ide-side-ft" id="ide-side-ft"></div>
         </div>
@@ -1445,11 +1459,26 @@ if (root) {
     } else { stopPsPoll(); }
   }
   q("#ide-act-files").addEventListener("click", () => selectSideView("files"));
+  // The tree is listed once per boot; this re-lists it so files created since then appear.
+  q("#ide-files-refresh").addEventListener("click", () => { if (cliGuestServicesSession()) void loadTree(); });
   q("#ide-act-docker").addEventListener("click", () => selectSideView("docker"));
   q("#ide-act-collapse").addEventListener("click", () => sideEl.classList.toggle("collapsed"));
 
   // ── Terminal toolbar + AUTO-FIT ─────────────────────────────────────────────
-  q("#ide-term-clear").addEventListener("click", () => window.__term?.clear?.());
+  // main.js's terminal wrapper exposes the xterm instance as .term but no clear() of its own, so
+  // the old call did nothing. xterm's clear() drops the scrollback and keeps the prompt line.
+  q("#ide-term-clear").addEventListener("click", () => {
+    const ui = window.__term;
+    if (typeof ui?.clear === "function") ui.clear();
+    else ui?.term?.clear?.();
+  });
+  // The guest pointer bridge forwards pointerdown on #term to the guest and cancels its default,
+  // which also cancels the mousedown xterm uses to take focus. Without this, once a button or a
+  // settings sheet had focus, clicking the terminal could not give keyboard input back to the
+  // guest. Focus only; pointer forwarding and the keyboard capture policy are unchanged.
+  q("#ide-term-pane").addEventListener("pointerdown", () => {
+    if (!document.activeElement?.classList?.contains("xterm-helper-textarea")) window.wvmDemo?.focusTerminal?.();
+  });
   // Fit the terminal to its pane automatically — on window resize AND when the pane is resized
   // (dragged) or the Demo tab becomes visible. No manual "Fit" button. Debounced.
   let fitTimer = null;

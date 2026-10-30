@@ -1,0 +1,88 @@
+{
+  "head": "25e65f56b1b2918634083aa733426e291029e093",
+  "started": 1792282313.870861,
+  "clone": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo",
+  "output": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t04-cold-final",
+  "status": "failed",
+  "commands": [
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+      "command": [
+        "git",
+        "clone",
+        "--local",
+        "--no-checkout",
+        "--single-branch",
+        "--branch",
+        "codex/e9-disk-roots",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "init",
+        "--cone"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "set",
+        ".cargo",
+        ".github",
+        "bench",
+        "compliance",
+        "configs",
+        "crates",
+        "deploy",
+        "design",
+        "docs",
+        "fuzz",
+        "guest",
+        "releases",
+        "renderer",
+        "tasks",
+        "tests",
+        "third_party",
+        "tools",
+        "web",
+        "evidence/e5-t26p",
+        "evidence/e5-t11c",
+        "evidence/e9-t04"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo",
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "25e65f56b1b2918634083aa733426e291029e093"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo",
+      "command": [
+        "make",
+        "verify-E9-T04"
+      ],
+      "exit_code": 2
+    }
+  ],
+  "environment": "RUSTFLAGS, RUSTDOCFLAGS, RUST_LOG, all CARGO_* and GIT_* unset; trusted toolchain directories prepended",
+  "checkout": "Pristine cone checkout of every source/configuration directory and release, plus required historical compile-time fixtures and this task evidence. Only unrelated historical evidence binaries are excluded; Docstream reads its pinned historical prose directly from immutable Git blobs.",
+  "objects": "Normal local clone with hardlinked immutable objects; no alternates or inherited target/npm caches",
+  "failure": "['make', 'verify-E9-T04']",
+  "finished": 1792282661.0377831,
+  "wrapper_sha256": "c8bd8a8f4172d4a673daad8d5004863e0c776af9f95f7968225b170dd8d8539e"
+}

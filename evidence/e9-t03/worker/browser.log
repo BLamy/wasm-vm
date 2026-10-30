@@ -1,0 +1,2 @@
+IndexedDB assertions passed; restoring the authenticated GPU factory pair.
+Session store: two reloads, 96 MiB bounded stream, four real tab terminations, twenty two-tab races and corruption refusals passed.

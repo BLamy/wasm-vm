@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Case studies — wasm-vm</title>
+  <meta name="description" content="Projects exploring what a real RISC-V Linux machine in a browser tab makes possible, with finished work separated from plans.">
+  <meta name="theme-color" content="#151410"><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./ui.css?rev=74f187f16a37"><link rel="stylesheet" href="./site.css">
+</head>
+<body class="wv-site wv-case">
+<a class="wv-skip" href="#main">Skip to content</a><header class="wv-site-header"><div class="wv-site-wrap" data-wv-ui="site-nav" data-current="case-studies"><nav class="wv-site-fallback-nav" aria-label="Primary navigation"><a href="./">wasm-vm</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./app.html#ide">Open the machine</a></nav></div></header>
+<main id="main">
+  <section class="inner-hero wv-site-wrap">
+    <h1>Case studies</h1>
+    <p class="lede">What people are building, or planning to build, on a RISC-V Linux machine in a browser tab. Each study says what has actually run and what is still a plan.</p>
+    <a class="wv-text-link" href="./app.html#ide">Open the live machine →</a>
+  </section>
+  <section class="editorial-section wv-site-wrap" aria-labelledby="featured-title">
+    <h2 id="featured-title">Featured</h2>
+    <div class="editorial-body">
+      <ul class="case-list">
+        <li class="case-item">
+          <span class="case-status">In progress · Phase 0</span>
+          <h3><a href="./case-study-riscv-os.html">Prompting a RISC-V phone OS</a></h3>
+          <p>RV-Phone plans an Alpine riscv64 and Sxmo userland, a portrait display, and a simulated LTE modem. The phone image has not booted in wasm-vm yet; the case study lays out the build-and-verify loop.</p>
+        </li>
+        <li class="case-item">
+          <span class="case-status">Architecture study · proposed hosted deployment</span>
+          <h3><a href="./case-study-ai-sandboxing.html">AI Sandboxing</a></h3>
+          <p>An agent inside wasm-vm, a sandboxed browser, and a surrounding Firecracker microVM. Why layered isolation matters, what a browser escape can cost, and which boundaries still need to be proven.</p>
+        </li>
+        <li class="case-item">
+          <span class="case-status">Workflow study · integration proposed</span>
+          <h3><a href="./case-study-deterministic-simulation.html">Deterministic simulation + time travel debugging</a></h3>
+          <p>Inspired by celld: explore rare execution orders, preserve a failing run, and inspect the states that explain it. A proposed workflow connecting simulation, recorded evidence and regression tests.</p>
+        </li>
+        <li class="case-item">
+          <span class="case-status">Your project</span>
+          <h3><a href="https://github.com/BLamy/wasm-vm/issues" rel="noopener">What are you building? ↗</a></h3>
+          <p>If you booted a distro, ported a tool, or prototyped an OS image in wasm-vm, tell us what ran and how you verified it.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+<footer class="wv-site-footer"><div class="wv-site-wrap"><p>wasm-vm · a RISC-V computer in a browser</p><nav aria-label="Footer"><a href="./app.html#ide">App</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./products.html">Product direction</a><a href="./security.html">Security</a><a href="https://github.com/BLamy/wasm-vm">Source on GitHub</a></nav></div></footer>
+<script type="module" src="./ui.js?rev=c4e7bb0de506"></script>
+</body>
+</html>

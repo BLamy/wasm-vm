@@ -1,0 +1,78 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import fs from 'node:fs/promises';
+import {createHash}from'node:crypto';
+import {frozenWorkloadSchedule,scheduledTransition,verifyFrozenWorkloadOffers,verifyUartActivityLedger,verifyFullUartOffer,verifyGuestInputMarkers}from'./e9-workload-schedule.mjs';
+const raw=await fs.readFile(new URL('../../docs/design/session-replay-contract.json',import.meta.url));
+assert.equal(createHash('sha256').update(raw).digest('hex'),'646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1');
+const contract=JSON.parse(raw),copy=value=>structuredClone(value);
+function offers(){return frozenWorkloadSchedule(contract).map((frame,i)=>({channel:1,bytes:[...frame.bytes],transition:String(12345+500000*(i+1)),retired:String(9000+i),sequence:String(200+i),phase:'before',ordinal:2,outcome:['0',String(frame.bytes.length),String(frame.bytes.length),'0']}));}
+test('original endpoints, bytes and ten appended rewrites are sealed',()=>{
+ const rows=frozenWorkloadSchedule(contract);assert.equal(rows.length,100);assert.equal(rows[0].text,"printf 'E9_INPUT_%03d\\n' 1\n");assert.equal(rows[99].offset,'50000000');
+ assert.deepEqual(rows.filter(row=>row.rewriteIndex!==null).map(row=>row.rewriteIndex),[1,2,3,4,5,6,7,8,9,10]);
+ assert(rows[9].text.endsWith('busybox wget -qO /root/e9-session/http http://10.0.2.2:9191/e9/1; sha256sum /root/e9-session/state /root/e9-session/http\n'));
+ assert.equal(scheduledTransition('12345','500000'),'512345');assert.equal(scheduledTransition('12345','50000000'),'50012345');
+});
+test('raw accepted source offers, not host-request counters, prove the schedule',()=>{
+ const rows=offers();const setup={...rows[0],bytes:[...new TextEncoder().encode('advance\n')]};assert.deepEqual(verifyFrozenWorkloadOffers(contract,'12345',[setup,...rows]),{offers:100,rewrites:10,origin:'12345',first:'512345',last:'50012345'});
+ const queued=copy(rows);queued[49].outcome[2]=String(Number(queued[49].outcome[1])+16);assert.equal(verifyFrozenWorkloadOffers(contract,'12345',queued).offers,100);
+ for(const mutate of [r=>r.pop(),r=>r.push(copy(r[99])),r=>{r[0].transition='512346';},r=>{r[49].outcome[2]='0';},r=>{r[99].bytes.push(32);},r=>{r[70].sequence=r[69].sequence;}]){const changed=copy(rows);mutate(changed);assert.throws(()=>verifyFrozenWorkloadOffers(contract,'12345',changed));}
+});
+test('amount drift and u64 overflow refuse before any scheduling',()=>{
+ const changed=copy(contract);changed.workload.schedule.input_frames=99;assert.throws(()=>frozenWorkloadSchedule(changed),/original amounts/);
+ assert.throws(()=>scheduledTransition('18446744073709551615','1'),/overflow/);assert.throws(()=>scheduledTransition('01','500000'),/unsigned/);
+});
+
+test('every auxiliary UART offer must have exactly one byte-identified producer',()=>{
+ const rows=offers(),extra={...rows[0],sequence:'199',bytes:[...new TextEncoder().encode('advance\n')]};
+ extra.outcome=['0',String(extra.bytes.length),String(extra.bytes.length),'0'];rows.unshift(extra);
+ const hash=value=>createHash('sha256').update(value).digest('hex');
+ const ledger=rows.map(row=>({kind:row===extra?'advance':'scheduled',channel:1,transition:row.transition,retired:row.retired,sequence:row.sequence,phase:row.phase,ordinal:row.ordinal,sha256:hash(Uint8Array.from(row.bytes)),bytes:row.bytes.length}));
+ assert.equal(verifyUartActivityLedger(contract,'12345',rows,ledger,hash).total,101);
+ assert.throws(()=>verifyUartActivityLedger(contract,'12345',rows,ledger.slice(1),hash),/complete UART ledger/);
+ const altered=copy(ledger);altered[0].sha256='0'.repeat(64);assert.throws(()=>verifyUartActivityLedger(contract,'12345',rows,altered,hash),/byte identity/);
+ const partial=copy(rows);partial[0].outcome[1]='0';assert.throws(()=>verifyUartActivityLedger(contract,'12345',partial,ledger,hash),/accepted in full/);
+ const overlap=copy(ledger);overlap[0].sequence=overlap[1].sequence;assert.throws(()=>verifyUartActivityLedger(contract,'12345',rows,overlap,hash),/disjoint/);
+});
+test('a duplicated auxiliary receipt cannot reuse one producer and hide another',()=>{
+ const scheduled=offers(),a={...scheduled[0],sequence:'198',bytes:[65]},b={...scheduled[0],sequence:'199',bytes:[65]};
+ a.outcome=['0','1','1','0'];b.outcome=['0','1','2','0'];
+ const rows=[a,b,...scheduled],hash=value=>createHash('sha256').update(value).digest('hex');
+ const ledger=rows.map(row=>({kind:row===a?'setup':row===b?'advance':'scheduled',channel:1,
+  transition:row.transition,retired:row.retired,sequence:row.sequence,phase:row.phase,ordinal:row.ordinal,
+  sha256:hash(Uint8Array.from(row.bytes)),bytes:row.bytes.length}));
+ assert.equal(verifyUartActivityLedger(contract,'12345',rows,ledger,hash).total,102);
+ const substituted=copy(rows);substituted[1]=copy(substituted[0]);
+ assert.throws(()=>verifyUartActivityLedger(contract,'12345',substituted,ledger,hash),/one-to-one classified UART offer/);
+});
+test('binary tool transfer is authenticated without decoding arbitrary bytes as UTF-8',()=>{
+ const rows=offers(),binary={...rows[0],sequence:'198',bytes:[0x1f,0x8b,0xff,0,0x80],outcome:['0','5','5','0']};rows.unshift(binary);
+ const hash=value=>createHash('sha256').update(value).digest('hex');
+ const ledger=rows.map(row=>({kind:row===binary?'tool-transfer':'scheduled',channel:1,transition:row.transition,retired:row.retired,sequence:row.sequence,phase:row.phase,ordinal:row.ordinal,sha256:hash(Uint8Array.from(row.bytes)),bytes:row.bytes.length}));
+ assert.equal(verifyFrozenWorkloadOffers(contract,'12345',rows).offers,100);
+ assert.equal(verifyUartActivityLedger(contract,'12345',rows,ledger,hash).byKind['tool-transfer'],1);
+ const altered=copy(ledger);altered[0].sha256='0'.repeat(64);assert.throws(()=>verifyUartActivityLedger(contract,'12345',rows,altered,hash),/byte identity/);
+});
+test('a second accepted UART offer can inherit the first offer pending depth',()=>{
+ assert(verifyFullUartOffer(['0','2048','2048','0'],2048));
+ assert(verifyFullUartOffer(['0','2048','3072','0'],2048));
+ for(const outcome of [['0','1024','3072','0'],['1','2048','3072','0'],['0','2048','1024','0'],['0','2048','1048577','0'],['0','2048','3072','1']])
+  assert.throws(()=>verifyFullUartOffer(outcome,2048),/accepted in full/);
+});
+test('100 output markers accept only authenticated adjacent echo collisions',()=>{
+ const lines=Array.from({length:100},(_,i)=>'E9_INPUT_'+String(i+1).padStart(3,'0'));
+ const check=text=>verifyGuestInputMarkers(text,contract,'12345',offers());
+ assert.equal(check(lines.join('\n')+'\n').lines,100);
+ const next=frozenWorkloadSchedule(contract)[9].text.trimEnd().split('\n');
+ const echoPrefix=next[1].slice(0,next[1].indexOf(' /root'));
+ const collision=[...lines];collision.splice(8,1,next[0],echoPrefix+lines[8]);
+ const accepted=check(collision.join('\n')+'\n');
+ assert.deepEqual(accepted.interleaved,[{index:9,following:10,echoPrefix}]);
+ assert.throws(()=>check(lines.map(line=>'JUNK_'+line).join('\n')+'\n'),/adjacent echo interleaving/);
+ assert.throws(()=>check(lines.concat(lines[0]).join('\n')+'\n'),/exactly once/);
+ assert.throws(()=>check(lines.slice(1).join('\n')+'\n'),/exactly once/);
+ assert.throws(()=>check(lines.map(line=>line+'-junk').join('\n')+'\n'),/exactly once/);
+ const other=frozenWorkloadSchedule(contract)[19].text.trimEnd().split('\n');
+ const wrong=[...lines];wrong.splice(8,1,other[0],other[1].slice(0,other[1].indexOf(' /root'))+lines[8]);
+ assert.throws(()=>check(wrong.join('\n')+'\n'),/adjacent echo interleaving/);
+});

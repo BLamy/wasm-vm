@@ -1,0 +1,53 @@
+
+Running 9 tests using 1 worker
+
+(node:51567) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[e4-t32 JIT latency] {"inputMs":40.47499996423721,"rpcMs":11.394999980926514,"rpcError":null,"clientRpc":{"calls":23,"completed":23,"pending":0,"averageMs":15.696086956107099,"maxMs":42.560000002384186},"status":"linux: restored","terminal":"[execution: whole-machine-worker; fast interpreter; JIT enabled, threshold 512; quantum 500000]printf '\\n__WVBEGIN_mvvgspip1\\n'; yes >/dev/null & p=$!; printf '\\n__JITREAD_%s\\n' \"$$\"; read x; echo JIT_INPUT_$x; kill $p; wait $p 2>/dev/null; echo JIT_WARM_DONE; printf '\\n__WVEND_mvvgspip1_%s\\n' \"$?\"__WVBEGIN_mvvgspip1__JITREAD_44responsive_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxJIT_INPUT_responsive_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxJIT_WARM_DONE__WVEND_mvvgspip1_0[1]+  Terminated                 yes 1>/dev/null~ #  "}
+  ✓  1 [chromium] › e4-t32-whole-worker.spec.js:5:1 › explicit isolated JIT actually executes translated blocks in the whole-machine worker (4.7s)
+  ✘  2 [chromium] › e4-t32-whole-worker.spec.js:112:1 › default JIT keeps whole-machine BusyBox rAF/input responsive (132ms)
+(node:51646) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [chromium] › e4-t32-whole-worker.spec.js:282:1 › worker routes legacy-interpreter and exact quantum options before its first slice (2.0s)
+  ✓  4 [chromium] › e4-t32-whole-worker.spec.js:302:1 › worker timer-yield fallback preserves forward progress and interactive RPC/input (2.8s)
+  ✓  5 [chromium] › e4-t32-whole-worker.spec.js:365:1 › real Node autoboot owns BusyBox races until teardown, then permits a new flavor (2.8s)
+  ✓  6 [chromium] › e4-t32-whole-worker.spec.js:562:1 › a pre-READY Worker construction failure clears its unowned boot claim (294ms)
+  ✓  7 [chromium] › e4-t32-whole-worker.spec.js:599:1 › worker protocol failure becomes a clean fatal state; worker=0 remains explicit fallback (3.3s)
+[e4-t32 deterministic parity] {"worker":{"initialDigest":"51192ac2d11483594d7f95afe845e024c64bfab20f107e1e165d7262d7a7d1a6","doneState":"exited:0","digest":"b666595d3aab60ccaa590daa664e9fc4ba81909908a2a50b53ea4db3e8912068","computedOutput":"__E4T32_PARITY_42","output":"\r\nprintf '\\n__WVBEGIN_mvvgt1q30\\n'; ls -la '/root'; printf '\\n__WVEND_mvvgt1q30_%s\\n' \"$?\"\r\nprintf '\\n__E4T32_PARITY_%s\\n' \"$((21 * 2))\"; poweroff -f\r\n~ # \r\n~ # printf '\\n__WVBEGIN_mvvgt1q30\\n'; ls -la '/root'; printf '\\n__WVEND_mvvgt1q3\r\r\n0_%s\\n' \"$?\"\r\n\r\n__WVBEGIN_mvvgt1q30\r\ntotal 0\r\ndrwx------    2 0        0               40 Nov 14  2024 \u001b[1;34m.\u001b[m\r\ndrwxrwxrwt    8 0        0              200 Sep  9 17:25 \u001b[1;34m..\u001b[m\r\n\r\n__WVEND_mvvgt1q30_0\r\n~ # printf '\\n__E4T32_PARITY_%s\\n' \"$((21 * 2))\"; poweroff -f\r\n\r\n__E4T32_PARITY_42\r\n[    3.430633] reboot: Power down\r\n\r\nstate sha256=b666595d3aab60ccaa590daa664e9fc4ba81909908a2a50b53ea4db3e8912068\r\n"},"main":{"initialDigest":"51192ac2d11483594d7f95afe845e024c64bfab20f107e1e165d7262d7a7d1a6","doneState":"exited:0","digest":"e89bfc7bdb4d0dacabbddbe5de0152ee594c002083160a7db5246ac7aa6da144","computedOutput":"__E4T32_PARITY_42","output":"\r\nprintf '\\n__WVBEGIN_mvvgt37n0\\n'; ls -la '/root'; printf '\\n__WVEND_mvvgt37n0_%s\\n' \"$?\"\r\nprintf '\\n__E4T32_PARITY_%s\\n' \"$((21 * 2))\"; poweroff -f\r\n~ # \r\n~ # printf '\\n__WVBEGIN_mvvgt37n0\\n'; ls -la '/root'; printf '\\n__WVEND_mvvgt37n\r\r\n0_%s\\n' \"$?\"\r\n\r\n__WVBEGIN_mvvgt37n0\r\ntotal 0\r\ndrwx------    2 0        0               40 Nov 14  2024 \u001b[1;34m.\u001b[m\r\ndrwxrwxrwt    8 0        0              200 Sep  9 17:25 \u001b[1;34m..\u001b[m\r\n\r\n__WVEND_mvvgt37n0_0\r\n~ # printf '\\n__E4T32_PARITY_%s\\n' \"$((21 * 2))\"; poweroff -f\r\n\r\n__E4T32_PARITY_42\r\n[    3.430633] reboot: Power down\r\n\r\nstate sha256=e89bfc7bdb4d0dacabbddbe5de0152ee594c002083160a7db5246ac7aa6da144\r\n"}}
+  ✓  8 [chromium] › e4-t32-whole-worker.spec.js:650:1 › paused restore has deterministic initial-RAM, computed-output, and terminal-state parity (4.9s)
+  ✓  9 [chromium] › e4-t32-whole-worker.spec.js:727:1 › a post-READY setup failure tears down its single Worker owner (2.3s)
+
+
+  1) [chromium] › e4-t32-whole-worker.spec.js:112:1 › default JIT keeps whole-machine BusyBox rAF/input responsive 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'runBusybox')
+        at eval (eval at evaluate (:234:30), <anonymous>:3:40)
+        at UtilityScript.evaluate (<anonymous>:236:17)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (/private/tmp/base626/web/eval at evaluate (:234:30), <anonymous>:3:40)
+        at UtilityScript.evaluate (/private/tmp/base626/web/<anonymous>:236:17)
+        at UtilityScript.<anonymous> (/private/tmp/base626/web/<anonymous>:1:44)
+        at /private/tmp/base626/web/tests/e4-t32-whole-worker.spec.js:135:25
+
+    Error: page.waitForFunction: Test ended.
+
+      137 |     return Promise.all([window.wvmDemo.runBusybox(), window.wvmDemo.runBusybox()]);
+      138 |   });
+    > 139 |   await page.waitForFunction(() => window.wvmDemo?.isGuestReady(), null, { timeout: 180_000 });
+          |              ^
+      140 |   expect(await bootPair).toEqual([{ ok: true }, { ok: true }]);
+      141 |   expect(await page.evaluate(() => globalThis.__e4t32WorkerCounts.constructed)).toBe(1);
+      142 |   await expect(page.locator("#boot-progress-bar")).toHaveAttribute("data-ready", "true");
+        at /private/tmp/base626/web/tests/e4-t32-whole-worker.spec.js:139:14
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/e4-t32-whole-worker-defaul-291e6-usyBox-rAF-input-responsive-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/e4-t32-whole-worker-defaul-291e6-usyBox-rAF-input-responsive-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e4-t32-whole-worker.spec.js:112:1 › default JIT keeps whole-machine BusyBox rAF/input responsive 
+  8 passed (24.3s)

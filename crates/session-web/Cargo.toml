@@ -1,0 +1,21 @@
+[package]
+name = "wasm-vm-session-web"
+description = "Independent browser session metadata and bounded hashing adapters"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-vm-storage = { path = "../storage" }
+wasm-bindgen.workspace = true
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+sha2 = { version = "0.10", default-features = false }
+
+[package.metadata.wasm-pack.profile.custom]
+wasm-opt = ['-O3']

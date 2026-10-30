@@ -33,7 +33,7 @@ export function createLinuxTerminal(containerEl) {
     scrollback: 5000,
     fontFamily: "ui-monospace, monospace",
     fontSize: 13,
-    theme: { background: "#0b0e14", foreground: "#cdd6f4" },
+    theme: { background: "#0e0d0b", foreground: "#ece8e1", cursor: "#e4a853", selectionBackground: "#4a4135" },
     // E3-T22b: we OWN paste framing (framePaste: newline normalization + bracketed wrap + embedded
     // end-marker neutralization). Tell xterm not to also add 200~/201~, so paste is never double-framed
     // and the paste-injection defense is ours, not the library's.

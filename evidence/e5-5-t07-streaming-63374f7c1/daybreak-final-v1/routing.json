@@ -1,0 +1,148 @@
+{
+  "requestedModel": "gpt-daybreak-blue-latest",
+  "cyberAccessProgram": "daybreakBlue",
+  "route": "fresh actual Daybreak FINAL verifier; only task/evidence/promoted-test writes allowed",
+  "started": "2026-10-29T01:22:40.049Z",
+  "status": "completed",
+  "sandbox": {
+    "mode": "workspace-write",
+    "networkAccess": true
+  },
+  "allowProviderModelFallback": false,
+  "messages": [
+    "I’m beginning the fresh final verifier pass. I’ll first lock the task scope, exact commits, diff, and falsifiable predictions; then I’ll inspect the carried audit and publication evidence, independently probe the live asset identities and continuation guard, and only afterward author the verification log/status and regenerate policy-controlled queue metadata.",
+    "Orientation is complete: the runtime boundary is confined to the previously reviewed streaming commit, while the post-review source change is only the Makefile bootstrap plus stricter receipt-resume validation; commits after the deployment source are evidence/task metadata. I’m freezing concrete predictions now, before opening the detailed audit and publication reports or making fresh network probes.",
+    "The carried Daybreak package is intact and route-bound exactly as required; its audit digest matches, and the frozen clone remains clean at the harness-only continuation head. Publication receipts also preserve the deliberate failures (403 hash probe and favicon-classification run) instead of rewriting them. I’m now checking the publication index, observer derivation, and fresh live bytes independently.",
+    "The fresh live probe independently matched all six published objects byte-for-byte, including the 2,650,103-byte Wasm, and every response was HTTP/2 200 with `must-revalidate`, COOP `same-origin`, and COEP `credentialless`. The live functional receipt also contains the exact 634,769,246-byte staged event, restored/ready sequence, 56 trusted keys, and independent guest readback. I’m executing the bounded novel continuation attack now against a private copied receipt; the frozen clone itself stays read-only.",
+    "The novel guard attack held: after one carried log was tampered, the real `087c69c54` gate exited 1 with an empty command list—before any browser or acceptance command—while the frozen clone remained byte-clean before and after. All index entries, source/runtime digests, failed receipts, deploy cleanup, and simulator scope also reconcile. I found no scoped contradiction or uncovered runtime hunk, so I’m preparing the verified verdict and policy-controlled status update; the actual-Wasm scratch probe will not be promoted because its stable assertions already overlap the promoted staging/ownership tests and recurring actual-Wasm/full-oracle target.",
+    "VERDICT: verified\n\nE5.5-T07 and its main-site publication satisfy all scoped criteria.\n\n- Six live assets independently matched reviewed hashes and required isolation/cache headers.\n- Live warm restore staged 634,769,246 bytes, reached ready, and returned the guest echo successfully.\n- Novel continuation attack rejected a tampered carried log before executing any command.\n- Prepublication HELD findings and all genuine failed receipts remain unchanged.\n- Physical-iPhone, GPU, RSS/performance, cold-boot, and decompressor-internal claims remain explicitly out of scope.\n- No implementation, deployment, commit, push, merge, hardware, or settings changes were made.\n\nTask status is now verified in [E5.5-T07](</Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tasks/epic-5.5-omarchy/E5.5-T07-streamed-software-warm-restore.md:210>), and the regenerated [queue](</Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tasks/QUEUE.md:797>) reports 555/755 verified. Policy and diff checks pass.\n\nFinal audit: [audit.md](/private/tmp/e5-5-t07-daybreak-final-v1/audit.md) — SHA-256 `510f65e4fe748984df933f5588bd5421895e2f4efe13e8128ad9cd1a3f2f4aaa`."
+  ],
+  "commands": [
+    {
+      "command": "/bin/zsh -lc \"pwd && git status --short && git rev-parse HEAD && git rev-parse e437bcf4e && rg --files -g 'AGENTS.md' -g 'tasks/*E5*' -g 'tasks/*e5*' -g 'evidence/e5-5-t07-streaming-63374f7c1/**' | sed -n '1,240p'\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"rg -l 'E5\\\\.5-T07|e5-5-t07' tasks | sort && git log --oneline --decorate -8 && git diff --stat 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..e437bcf4eeba226303be9e4656504c9132feed32 && git diff --name-status 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..e437bcf4eeba226303be9e4656504c9132feed32\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'cat AGENTS.md >/private/tmp/e5-5-t07-daybreak-final-v1-agents-read.txt && cat tasks/epic-5.5-omarchy/E5.5-T07-streamed-software-warm-restore.md && git diff --no-ext-diff --unified=80 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..087c69c54 -- Makefile tools/verify/software-snapshot-gate.py tasks/epic-5.5-omarchy/E5.5-T07-streamed-software-warm-restore.md tasks/QUEUE.md && git diff --name-status 9341693b29909767a1426431c7f181c8e5c338c0..e437bcf4eeba226303be9e4656504c9132feed32'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"git diff --stat 62889bef7..63374f7c1 && git diff --name-status 62889bef7..63374f7c1 && git diff --no-ext-diff --unified=40 62889bef7..63374f7c1 -- crates web tools Makefile | sed -n '1,2200p'\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git log --oneline --reverse --ancestry-path 625''^..e437bcf4e 2>/dev/null || true; git show --stat --oneline 3043f5490; git show --stat --oneline 63374f7c1; git diff --name-status 3043f5490''^..63374f7c1 | sed -n '\"'1,240p'\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'mkdir -p /private/tmp/e5-5-t07-daybreak-final-v1'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'cat evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-deploy-v1/report.json && cat evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-hashes-v1/report.json && cat evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-hashes-v2/report.json && cat evidence/e5-5-t07-streaming-63374f7c1/publication-v1/simulator-public-observation.json'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"shasum -a 256 evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/audit.md evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/file-index.json evidence/e5-5-t07-streaming-63374f7c1/publication-v1/file-index.json && sed -n '1,280p' evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/audit.md && cat evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/routing.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git diff --name-status 63374f7c1..0144c662b && git diff --name-status 0144c662b..087c69c54 && git diff --name-status 087c69c54..41340e973 && git diff --name-status 41340e973..9341693b2 && git diff --name-status 9341693b2..e437bcf4e && git status --short && git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b rev-parse HEAD && git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b status --short'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'cat evidence/e5-5-t07-streaming-63374f7c1/pristine-v1/receipt.json; cat evidence/e5-5-t07-streaming-63374f7c1/pristine-v2/receipt.json; cat evidence/e5-5-t07-streaming-63374f7c1/pristine-v3/receipt.json'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'diff -u tools/verify/software-snapshot-warm-ui.mjs evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-warm.mjs || true; diff -u evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-warm.mjs evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-warm-v2.mjs || true; shasum -a 256 tools/verify/software-snapshot-warm-ui.mjs'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"node - <<'NODE'\nconst fs=require('fs'),crypto=require('crypto'),path=require('path');\nfor(const rel of ['evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/file-index.json','evidence/e5-5-t07-streaming-63374f7c1/publication-v1/file-index.json']){\n const idx=JSON.parse(fs.readFileSync(rel)); console.log(rel, Array.isArray(idx)?'array':Object.keys(idx));\n const rows=Array.isArray(idx)?idx:(idx.files||idx.entries); let bad=[];\n for(const row of rows){const p=path.resolve(path.dirname(rel),row.path); const b=fs.readFileSync(p); const h=crypto.createHash('sha256').update(b).digest('hex'); if(h\"'!==row.sha256 || (row.bytes!=null&&b.length!==row.bytes))bad.push({path:row.path,h,expected:row.sha256,bytes:b.length,expectedBytes:row.bytes});}\n console.log(JSON.stringify({rows:rows.length,bad},null,2));\n}\nNODE\nnode - <<'\"'NODE'\nconst fs=require('fs');\nfor(const rel of ['evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-v1/report.json','evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-v2/report.json']){\n const r=JSON.parse(fs.readFileSync(rel)); console.log(rel, Object.keys(r));\n const pick={passed:r.passed,status:r.status,url:r.url,errors:r.errors,httpErrors:r.httpErrors,waivedFaviconErrors:r.waivedFaviconErrors,staged:r.staged,restored:r.restored,ready:r.ready,echo:r.echo,independentReadback:r.independentReadback,keys:r.keys}; console.log(JSON.stringify(pick,null,2));\n}\nNODE\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'shasum -a 256 crates/wasm/src/lib.rs crates/wasm/src/snapshot_staging.rs web/loader.js web/snapshot-stream.js web/dist/pkg/wasm_vm_wasm.js web/dist/pkg/wasm_vm_wasm_bg.wasm web/artifacts-omarchy.json web/dist/artifacts-omarchy.json web/artifacts-omarchy-virgl.json && git diff --binary f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..63374f7c1e546c922ba1c779f34b09fced5e1ad4 | shasum -a 256 && git diff --binary 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..087c69c54713db7598b296b45d0da3a8f91ba1d2 | shasum -a 256'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'set -eu\nbase=/private/tmp/e5-5-t07-daybreak-final-v1/live\nmkdir -p \"$base\"\nfor p in pkg/wasm_vm_wasm_bg.wasm pkg/wasm_vm_wasm.js loader.js snapshot-stream.js gpu-checkpoint-build.js artifacts-omarchy.json; do\n  n=${p//'\"\\\\//__}\n  curl --fail --silent --show-error --location --dump-header \\\"\"'$base/$n.headers\" --output \"$base/$n.body\" -H '\"'Cache-Control: no-cache' -H 'User-Agent: E5.5-T07-final-verifier/1.0' \\\"https://wasm-vm.pages.dev/\"'$p?e5final=20261028a\"\ndone\nshasum -a 256 \"$base\"/*.body\nwc -c \"$base\"/*.body\nfor h in \"$base\"/*.headers; do grep -Ei '\"'\"'^(HTTP/|cache-control:|cross-origin-opener-policy:|cross-origin-embedder-policy:|content-type:)'\"' \\\"\"'$h\"; done'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '1,80p' evidence/e5-5-t07-streaming-63374f7c1/publication-v1/file-index.json; sed -n '1,80p' evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/file-index.json; rg -n -- '--branch|wasm-vm|626dde6c|25 MiB|25MiB|git status|HEAD|Uploaded|Success|pages.dev' evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-deploy-v1/deploy.log; shasum -a 256 tools/deploy-cloudflare.sh evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-publish.py\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '1,120p' evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-publish.py; sed -n '1,70p' evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-deploy-v1/deploy.log; rg -n -- '--branch|pages deploy|CLOUDFLARE_PAGES_BRANCH' tools/deploy-cloudflare.sh evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-publish.py\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"node - <<'NODE'\nconst fs=require('fs'),crypto=require('crypto'),path=require('path');\nfor(const rel of ['evidence/e5-5-t07-streaming-63374f7c1/daybreak-prepublication-v1/file-index.json','evidence/e5-5-t07-streaming-63374f7c1/publication-v1/file-index.json']){\n const dir=path.dirname(rel), idx=JSON.parse(fs.readFileSync(rel)); let bad=[];\n for(const [name,row] of Object.entries(idx)){const b=fs.readFileSync(path.join(dir,name));const h=crypto.createHash('sha256').update(b).digest('hex');if(h\"'!==row.sha256||b.length!==row.bytes)bad.push({name,h,expected:row.sha256,bytes:b.length,expectedBytes:row.bytes});}\n function walk(d,p='\"''){let a=[];for(const e of fs.readdirSync(d,{withFileTypes:true})){const n=p?\"'`${p}/${e.name}`:e.name;if(e.isDirectory())a.push(...walk(path.join(d,e.name),n));else if(n!=='\"'file-index.json')a.push(n);}return a;}\n const actual=walk(dir).sort(), listed=Object.keys(idx).sort();\n console.log(JSON.stringify({rel,listed:listed.length,actual:actual.length,bad,missingFromIndex:actual.filter(x=>\"'!idx[x]),missingOnDisk:listed.filter(x=>!actual.includes(x))},null,2));\n}\nNODE'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"node - <<'NODE'\nconst fs=require('fs');\nfor(const v of ['v1','v2']){const p=\"'`evidence/e5-5-t07-streaming-63374f7c1/publication-v1/e5-5-t07-live-${v}/report.json`,r=JSON.parse(fs.readFileSync(p));\nconst events=r.events.filter(e=>e.type!=='\"'wvm:guest-progress'||String(e.detail?.phase).match(/staged|restored|ready/));\nconsole.log(JSON.stringify({v,head:r.head,passed:r.passed,baseSourceSha256:r.baseSourceSha256,browser:r.browser,url:r.url,errors:r.errors,httpErrors:r.httpErrors,waived:r.waivedFaviconErrors,events,trustedKeys:r.trustedKeys,readbacks:r.readbacks,echo:r.echo,canvases:r.canvases,screenshotSha256:r.screenshotSha256,echoScreenshotSha256:r.echoScreenshotSha256},null,2));}\nNODE\nshasum -a 256 evidence/e5-5-t07-streaming-63374f7c1/publication-v1/simulator-public-echo.png\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"node - <<'NODE'\nconst fs=require('fs');const p='evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1/gate.json',r=JSON.parse(fs.readFileSync(p));console.log(JSON.stringify({head:r.head,passed:r.passed,failure:r.failure,commands:r.commands.map(x=>({command:x.command,exitCode:x.exitCode,log:x.log,sha256:x.sha256}))},null,2));\nNODE\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"set -eu\nsrc='/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1'\ndst='/private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior'\ncp -R \\\"\"'$src\" \"$dst\"\nperl -pi -e '\"'s#/Users/blamy/Documents/Codex/\\\\.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1#/private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior#g' \\\"\"'$dst/gate.json\"\nnode -e \"const r=require('\"'\"'$dst/gate.json'\"'); console.log(r.commands[0].log,r.commands[9].command[2])\\\"\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"xxd -g 1 -l 200 /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior/00.log; sed -n '1,20p' /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior/00.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"set +e\nclone='/private/tmp/e5-5-t07-pristine-pinned-0144c662b'\nprior='/private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior'\nout='/private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-output'\ngit -C \\\"\"'$clone\" status --porcelain --untracked-files=all > /private/tmp/e5-5-t07-daybreak-final-v1/clone-status-before.txt\nE5_STREAM_RESUME=\"$prior\" E5_STREAM_OUT=\"$out\" python3 \"$clone/tools/verify/software-snapshot-gate.py\" > /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-run.log 2>&1\ncode=$?\ngit -C \"$clone\" status --porcelain --untracked-files=all > /private/tmp/e5-5-t07-daybreak-final-v1/clone-status-after.txt\nprintf '\"'exit=%s\\\\n' \\\"\"'$code\"\ncat /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-run.log\ncat \"$out/gate.json\"\nprintf '\"'before-bytes='; wc -c < /private/tmp/e5-5-t07-daybreak-final-v1/clone-status-before.txt\nprintf 'after-bytes='; wc -c < /private/tmp/e5-5-t07-daybreak-final-v1/clone-status-after.txt\nexit 0\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 - <<'PY'\nimport hashlib,json,subprocess\nfrom pathlib import Path\nclone=Path('/private/tmp/e5-5-t07-pristine-pinned-0144c662b')\nprior=Path('/private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior')\nr=json.loads((prior/'gate.json').read_text())\nchanged=subprocess.check_output(['git','diff','--name-only',r['head'],'HEAD'],cwd=clone,text=True).splitlines()\nactual=hashlib.sha256((prior/'00.log').read_bytes()).hexdigest()\nprint({'priorPassed':r['passed'],'rows':len(r['commands']),'prefixExitCodes':[x['exitCode'] for x in r['commands'][:11]],'failedExitCode':r['commands'][11]['exitCode'],'changed':changed,'storedLog0':r['commands'][0]['sha256'],'actualLog0':actual,'mismatch':actual\"'!=r['\"'commands'][0]['sha256'],'outputCommands':json.loads(Path('/private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-output/gate.json').read_text())['commands']})\nPY\nshasum -a 256 /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior/gate.json /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-prior/00.log /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-output/gate.json /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-run.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"node - <<'NODE'\nconst fs=require('fs'),path=require('path');const root='evidence/e5-5-t07-streaming-63374f7c1';\nfunction walk(d){return fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);}\nfor(const p of walk(root).filter(x=>x.endsWith('.json'))){try{const r=JSON.parse(fs.readFileSync(p));if(r.status==='failed'||r.passed===false||r.originalOutcome==='failed')console.log(JSON.stringify({path:p,status:r.status,passed:r.passed,originalOutcome:r.originalOutcome,failure:r.failure,head:r.head}));}catch{}}\nNODE\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"cat evidence/e5-5-t07-streaming-63374f7c1/pristine-v3/fetch.log; cat evidence/e5-5-t07-streaming-63374f7c1/pristine-v3/missing-browser-acceptance.log; node - <<'NODE'\nconst fs=require('fs');const r=JSON.parse(fs.readFileSync('evidence/e5-5-t07-streaming-63374f7c1/pristine-v3/gate/gate.json'));console.log(JSON.stringify({head:r.head,passed:r.passed,carried:{head:r.carried?.head,originalOutcome:r.carried?.originalOutcome,gateSha256:r.carried?.gateSha256,unchangedCount:r.carried?.unchangedPassedCommands?.length,fixtureOnlyChanges:r.carried?.fixtureOnlyChanges,evidenceCount:Object.keys(r.carried?.evidence||{}).length},commands:r.commands.map(x=>({command:x.command,exitCode:x.exitCode,sha256:x.sha256}))},null,2));\nNODE\nshasum -a 256 evidence/e5-5-t07-streaming-63374f7c1/pristine-v1/receipt.json evidence/e5-5-t07-streaming-63374f7c1/pristine-v2/receipt.json evidence/e5-5-t07-streaming-63374f7c1/pristine-v3/receipt.json evidence/e5-5-t07-streaming-63374f7c1/pristine-v3/missing-browser-acceptance.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'shasum -a 256 /private/tmp/e5-5-t07-daybreak-final-v1/predictions.md /private/tmp/e5-5-t07-daybreak-final-v1/audit.md /private/tmp/e5-5-t07-daybreak-final-v1/verdict.md /private/tmp/e5-5-t07-daybreak-final-v1/continuation-tamper-output/gate.json && git status --short'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'python3 tools/check_task_policy.py'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 tools/build_queue.py && git diff --check && git status --short && git diff -- tasks/epic-5.5-omarchy/E5.5-T07-streamed-software-warm-restore.md tasks/QUEUE.md | sed -n '1,320p'\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"git diff --name-only && git diff --check && python3 tools/check_task_policy.py && git status --short && rg -n '\"'^status:|independent Daybreak final|'\"\\\\*\\\\*555 / 755|E5\\\\.5-T07.*Stream the software' tasks/epic-5.5-omarchy/E5.5-T07-streamed-software-warm-restore.md tasks/QUEUE.md && shasum -a 256 /private/tmp/e5-5-t07-daybreak-final-v1/audit.md /private/tmp/e5-5-t07-daybreak-final-v1/verdict.md\"",
+      "exitCode": 0
+    }
+  ],
+  "errors": [],
+  "model": "gpt-daybreak-blue-latest",
+  "threadId": "01a18540-8452-7b61-aff1-e9d6e0fc9b35",
+  "turnId": "01a18540-87b5-7053-9cc4-6ed706d6f73f",
+  "rootCompletion": {
+    "threadId": "01a18540-8452-7b61-aff1-e9d6e0fc9b35",
+    "turnId": "01a18540-87b5-7053-9cc4-6ed706d6f73f"
+  },
+  "turnError": null,
+  "finished": "2026-10-29T01:26:29.192Z"
+}

@@ -20,10 +20,12 @@
 //! clock via [`Uart16550::tick`] (deterministic — retire-driven, native == wasm).
 
 use alloc::collections::VecDeque;
+use alloc::rc::Rc;
 use alloc::vec::Vec;
 
 use crate::bus::BusFault;
 use crate::mmio::{MmioDevice, Width};
+use crate::session_ingress::SessionIngressGate;
 
 /// RX FIFO depth (16550).
 const FIFO_DEPTH: usize = 16;
@@ -75,6 +77,8 @@ pub struct Uart16550 {
     timeout_latched: bool,
     /// Output bytes since the last drain.
     out: Vec<u8>,
+    /// Not serialized: a retained host handle cannot bypass a replay's input fence.
+    host_ingress_gate: Option<Rc<SessionIngressGate>>,
 }
 
 impl Default for Uart16550 {
@@ -118,6 +122,9 @@ impl crate::resume::ComponentSnapshot for Uart16550 {
     }
 
     fn restore(&mut self, p: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        if !self.host_ingress_allowed() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
         let err = || crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION };
         // Fixed prefix: 7 regs + 3 bool latches + u32 idle_ticks = 14 bytes, then the rx length word.
         if p.len() < 14 + 4 {
@@ -174,6 +181,7 @@ impl crate::resume::ComponentSnapshot for Uart16550 {
             idle_ticks,
             timeout_latched,
             out,
+            host_ingress_gate: self.host_ingress_gate.clone(),
         };
         Ok(())
     }
@@ -195,12 +203,26 @@ impl Uart16550 {
             idle_ticks: 0,
             timeout_latched: false,
             out: Vec::new(),
+            host_ingress_gate: None,
         }
+    }
+
+    pub(crate) fn bind_host_ingress_gate(&mut self, gate: Rc<SessionIngressGate>) {
+        self.host_ingress_gate = Some(gate);
+    }
+
+    fn host_ingress_allowed(&self) -> bool {
+        self.host_ingress_gate
+            .as_ref()
+            .is_none_or(|gate| gate.allows_host())
     }
 
     /// Host input: append to the RX FIFO. Bytes beyond 16 are DROPPED with LSR.OE set
     /// (16550 overrun semantics — the FIFO contents stay intact, new data is lost).
     pub fn push_input(&mut self, bytes: &[u8]) {
+        if !self.host_ingress_allowed() {
+            return;
+        }
         for &b in bytes {
             if self.rx.len() >= FIFO_DEPTH {
                 self.overrun = true;
@@ -221,7 +243,16 @@ impl Uart16550 {
 
     /// Drain everything the guest transmitted since the last call.
     pub fn take_output(&mut self) -> Vec<u8> {
+        if !self.host_ingress_allowed() {
+            return Vec::new();
+        }
         core::mem::take(&mut self.out)
+    }
+
+    /// Inspect bytes awaiting the host's recorded output-drain boundary. The guest-visible
+    /// UART snapshot includes this buffer, so replay must drain it at the same transition.
+    pub fn pending_output(&self) -> &[u8] {
+        &self.out
     }
 
     /// Advance the character-timeout clock one step (the run loop calls this per retired
@@ -233,13 +264,32 @@ impl Uart16550 {
     /// loop's cue that the UART cannot change its interrupt level on its own.
     pub fn tick(&mut self) -> bool {
         if !self.rx.is_empty() && !self.timeout_latched {
-            self.idle_ticks = self.idle_ticks.saturating_add(1);
-            if self.idle_ticks >= CHAR_TIMEOUT_TICKS {
-                self.timeout_latched = true;
-            }
+            self.tick_by(1);
             return true;
         }
         false
+    }
+
+    /// Additional instruction boundaries retired inside a compiled block. The first boundary
+    /// was already counted by the run loop before entering the block.
+    pub(crate) fn tick_by(&mut self, boundaries: u64) {
+        if boundaries == 0 || self.rx.is_empty() || self.timeout_latched {
+            return;
+        }
+        self.idle_ticks = self
+            .idle_ticks
+            .saturating_add(u32::try_from(boundaries).unwrap_or(u32::MAX));
+        if self.idle_ticks >= CHAR_TIMEOUT_TICKS {
+            self.timeout_latched = true;
+        }
+    }
+
+    /// Number of further retired instructions allowed before the timeout boundary must be
+    /// sampled. A compiled span stops there so an enabled UART interrupt is taken precisely.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub(crate) fn ticks_until_timeout(&self) -> Option<u64> {
+        (!self.rx.is_empty() && !self.timeout_latched)
+            .then(|| u64::from(CHAR_TIMEOUT_TICKS.saturating_sub(self.idle_ticks)))
     }
 
     /// FCR trigger level in bytes (FCR bits 7:6) — 1/4/8/14.
@@ -500,6 +550,22 @@ mod tests {
         assert_eq!(u.read_reg(2) & 0x0F, IIR_CHAR_TIMEOUT);
         assert_eq!(u.read_reg(0), b'b');
         assert!(!u.irq_level(), "FIFO empty → line low");
+    }
+
+    #[test]
+    fn oversized_compiled_span_saturates_timeout_counter() {
+        let mut u = Uart16550::new();
+        fifo_on(&mut u, 2);
+        u.write_reg(1, IER_ERBFI);
+        u.push_input(b"x");
+        u.tick_by(u64::MAX);
+        assert_eq!(u.idle_ticks, u32::MAX);
+        assert!(u.timeout_latched);
+        assert_eq!(u.read_reg(2) & 0x0f, IIR_CHAR_TIMEOUT);
+        u.tick_by(1);
+        assert_eq!(u.idle_ticks, u32::MAX);
+        assert_eq!(u.read_reg(0), b'x');
+        assert_eq!(u.idle_ticks, 0);
     }
 
     /// Overrun: 16-byte cap, new bytes dropped, FIFO contents intact, OE cleared by LSR read.

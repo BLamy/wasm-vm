@@ -9,10 +9,39 @@ use crate::bus::{Bus, BusFault, mmap};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OutOfMemory;
 
+/// Session keyframes store and deduplicate RAM in fixed 4 KiB pages.
+pub const KEYFRAME_PAGE_BYTES: usize = 4096;
+/// One independently content-addressed object in the session store.
+pub const KEYFRAME_CHUNK_MAX_BYTES: usize = 4 << 20;
+const DELTA_MAGIC: &[u8; 8] = b"WVRAMD01";
+const DELTA_HEADER_BYTES: usize = 24;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RamDeltaError {
+    NotCapturing,
+    ReplayActive,
+    Bound,
+    Malformed,
+    WrongRam,
+    OutOfMemory,
+}
+
+/// A previous dirty-page capture has not yet been committed or abandoned.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DirtyEpochBusy;
+
 /// Byte-array RAM mapped at `base`, addressed by guest physical address.
 pub struct Ram {
     base: u64,
     data: Vec<u8>,
+    /// Writes since the last committed keyframe (or since a capture began).
+    dirty: Vec<u64>,
+    recorder_dirty_enabled: bool,
+    /// Frozen page set being persisted. A failed publication unions it back into `dirty`;
+    /// writes during publication remain in `dirty` regardless of the outcome.
+    pending_dirty: Option<Vec<u64>>,
+    /// Diagnostic count of direct browser-JIT stores whose host callback marked a page.
+    direct_store_marks: u64,
 }
 
 impl Ram {
@@ -30,7 +59,19 @@ impl Ram {
         let mut data = Vec::new();
         data.try_reserve_exact(bytes).map_err(|_| OutOfMemory)?;
         data.resize(bytes, 0);
-        Ok(Self { base, data })
+        let pages = bytes.div_ceil(KEYFRAME_PAGE_BYTES);
+        let words = pages.div_ceil(64);
+        let mut dirty = Vec::new();
+        dirty.try_reserve_exact(words).map_err(|_| OutOfMemory)?;
+        dirty.resize(words, 0);
+        Ok(Self {
+            base,
+            data,
+            dirty,
+            recorder_dirty_enabled: true,
+            pending_dirty: None,
+            direct_store_marks: 0,
+        })
     }
 
     /// Size of this RAM in bytes.
@@ -95,6 +136,213 @@ impl Ram {
         Ok(off as usize)
     }
 
+    #[inline]
+    fn mark_dirty_offset(&mut self, offset: usize, len: usize) {
+        if len == 0 || !self.recorder_dirty_enabled {
+            return;
+        }
+        let first = offset / KEYFRAME_PAGE_BYTES;
+        let last = (offset + len - 1) / KEYFRAME_PAGE_BYTES;
+        for page in first..=last {
+            self.dirty[page / 64] |= 1u64 << (page % 64);
+        }
+    }
+
+    /// Account for stores that bypass the checked `Bus` store methods. The soft-MMU fast
+    /// path uses this after writing into its borrowed RAM slice.
+    pub fn mark_dirty_physical_range(&mut self, addr: u64, len: u64) -> Result<(), BusFault> {
+        let offset = self.range(addr, len)?;
+        self.mark_dirty_offset(offset, len as usize);
+        Ok(())
+    }
+
+    /// Direct browser-JIT stores write through the shared Wasm memory before calling back.
+    /// Keep a separate witness so a test can prove this path executed, rather than merely
+    /// counting an interpreted fast store.
+    pub fn mark_jit_dirty_physical_range(&mut self, addr: u64, len: u64) -> Result<(), BusFault> {
+        self.mark_dirty_physical_range(addr, len)?;
+        if self.recorder_dirty_enabled {
+            self.direct_store_marks = self.direct_store_marks.saturating_add(1);
+        }
+        Ok(())
+    }
+
+    pub fn direct_store_marks(&self) -> u64 {
+        self.direct_store_marks
+    }
+
+    /// Freeze the dirty set for an asynchronously published keyframe. A second capture cannot
+    /// begin until the first one is committed or abandoned. New writes go to a fresh bitmap.
+    pub fn recorder_dirty_tracking(&self) -> bool {
+        self.recorder_dirty_enabled
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub(crate) fn disable_recorder_dirty_tracking(&mut self) -> Result<(), DirtyEpochBusy> {
+        if self.pending_dirty.is_some() {
+            return Err(DirtyEpochBusy);
+        }
+        self.recorder_dirty_enabled = false;
+        self.dirty = Vec::new();
+        Ok(())
+    }
+
+    pub fn begin_dirty_epoch(&mut self) -> Result<(), DirtyEpochBusy> {
+        if !self.recorder_dirty_enabled || self.pending_dirty.is_some() {
+            return Err(DirtyEpochBusy);
+        }
+        let mut fresh = Vec::new();
+        fresh
+            .try_reserve_exact(self.dirty.len())
+            .map_err(|_| DirtyEpochBusy)?;
+        fresh.resize(self.dirty.len(), 0);
+        self.pending_dirty = Some(core::mem::replace(&mut self.dirty, fresh));
+        Ok(())
+    }
+
+    /// Commit the frozen set after durable publication, or merge it back on failure.
+    pub fn finish_dirty_epoch(&mut self, committed: bool) -> Result<(), DirtyEpochBusy> {
+        let pending = self.pending_dirty.take().ok_or(DirtyEpochBusy)?;
+        if !committed {
+            for (current, old) in self.dirty.iter_mut().zip(pending) {
+                *current |= old;
+            }
+        }
+        Ok(())
+    }
+
+    /// Frozen dirty-page count; `None` means no capture is active.
+    pub fn pending_dirty_pages(&self) -> Option<usize> {
+        self.pending_dirty
+            .as_ref()
+            .map(|bits| bits.iter().map(|word| word.count_ones() as usize).sum())
+    }
+
+    /// Return the page's current bytes only if it belongs to the frozen dirty set. The final
+    /// page may be shorter than 4 KiB. Callers hold the guest paused until publication.
+    pub fn pending_page(&self, page: usize) -> Option<&[u8]> {
+        let bits = self.pending_dirty.as_ref()?;
+        let word = *bits.get(page / 64)?;
+        if word & (1u64 << (page % 64)) == 0 {
+            return None;
+        }
+        let start = page.checked_mul(KEYFRAME_PAGE_BYTES)?;
+        self.data.get(
+            start
+                ..self
+                    .data
+                    .len()
+                    .min(start.saturating_add(KEYFRAME_PAGE_BYTES)),
+        )
+    }
+
+    /// The number of addressable keyframe pages, including a possibly short final page.
+    pub fn page_count(&self) -> usize {
+        self.data.len().div_ceil(KEYFRAME_PAGE_BYTES)
+    }
+
+    /// Emit at most one 4 MiB object from the frozen dirty bitmap. The cursor is the first
+    /// page not yet considered; the returned cursor advances past the last emitted page. This
+    /// avoids staging a guest-sized delta in either Rust or the browser main thread.
+    pub fn next_pending_delta_chunk(
+        &self,
+        from_page: usize,
+    ) -> Result<Option<(usize, Vec<u8>)>, RamDeltaError> {
+        if self.pending_dirty.is_none() {
+            return Err(RamDeltaError::NotCapturing);
+        }
+        if from_page > self.page_count() || self.data.len() > u64::MAX as usize {
+            return Err(RamDeltaError::Bound);
+        }
+        let estimate = self
+            .pending_dirty_pages()
+            .unwrap_or(0)
+            .min((KEYFRAME_CHUNK_MAX_BYTES - DELTA_HEADER_BYTES) / (6 + KEYFRAME_PAGE_BYTES));
+        let mut bytes = Vec::new();
+        bytes
+            .try_reserve_exact(DELTA_HEADER_BYTES + estimate * (6 + KEYFRAME_PAGE_BYTES))
+            .map_err(|_| RamDeltaError::OutOfMemory)?;
+        bytes.extend_from_slice(DELTA_MAGIC);
+        bytes.extend_from_slice(&1u32.to_le_bytes());
+        bytes.extend_from_slice(&(self.data.len() as u64).to_le_bytes());
+        bytes.extend_from_slice(&0u32.to_le_bytes());
+        let mut count = 0u32;
+        let mut cursor = from_page;
+        while cursor < self.page_count() {
+            if let Some(page) = self.pending_page(cursor) {
+                if bytes.len() + 6 + page.len() > KEYFRAME_CHUNK_MAX_BYTES {
+                    break;
+                }
+                let index = u32::try_from(cursor).map_err(|_| RamDeltaError::Bound)?;
+                let length = u16::try_from(page.len()).map_err(|_| RamDeltaError::Bound)?;
+                bytes.extend_from_slice(&index.to_le_bytes());
+                bytes.extend_from_slice(&length.to_le_bytes());
+                bytes.extend_from_slice(page);
+                count += 1;
+            }
+            cursor += 1;
+        }
+        if count == 0 {
+            return Ok(None);
+        }
+        bytes[20..24].copy_from_slice(&count.to_le_bytes());
+        Ok(Some((cursor, bytes)))
+    }
+
+    /// Validate the complete chunk before the first byte changes. The caller authenticates the
+    /// object's SHA-256 and ancestor order; this parser enforces canonical page bounds/order.
+    pub fn apply_delta_chunk(&mut self, bytes: &[u8]) -> Result<usize, RamDeltaError> {
+        if bytes.len() < DELTA_HEADER_BYTES || bytes.len() > KEYFRAME_CHUNK_MAX_BYTES {
+            return Err(RamDeltaError::Bound);
+        }
+        if &bytes[..8] != DELTA_MAGIC || bytes[8..12] != 1u32.to_le_bytes() {
+            return Err(RamDeltaError::Malformed);
+        }
+        let ram_len = u64::from_le_bytes(bytes[12..20].try_into().unwrap());
+        if ram_len != self.data.len() as u64 {
+            return Err(RamDeltaError::WrongRam);
+        }
+        let count = u32::from_le_bytes(bytes[20..24].try_into().unwrap()) as usize;
+        if count == 0 || count > KEYFRAME_CHUNK_MAX_BYTES / (6 + KEYFRAME_PAGE_BYTES) + 1 {
+            return Err(RamDeltaError::Bound);
+        }
+        let mut slices = Vec::new();
+        slices
+            .try_reserve_exact(count)
+            .map_err(|_| RamDeltaError::OutOfMemory)?;
+        let mut at = DELTA_HEADER_BYTES;
+        let mut previous = None;
+        for _ in 0..count {
+            let record = bytes.get(at..at + 6).ok_or(RamDeltaError::Malformed)?;
+            let index = u32::from_le_bytes(record[..4].try_into().unwrap()) as usize;
+            let length = u16::from_le_bytes(record[4..6].try_into().unwrap()) as usize;
+            let start = index
+                .checked_mul(KEYFRAME_PAGE_BYTES)
+                .ok_or(RamDeltaError::Bound)?;
+            if start >= self.data.len() || previous.is_some_and(|old| index <= old) {
+                return Err(RamDeltaError::Malformed);
+            }
+            let expected = KEYFRAME_PAGE_BYTES.min(self.data.len() - start);
+            if length != expected {
+                return Err(RamDeltaError::Malformed);
+            }
+            at += 6;
+            let end = at.checked_add(length).ok_or(RamDeltaError::Bound)?;
+            bytes.get(at..end).ok_or(RamDeltaError::Malformed)?;
+            slices.push((start, at, end));
+            at = end;
+            previous = Some(index);
+        }
+        if at != bytes.len() {
+            return Err(RamDeltaError::Malformed);
+        }
+        for (start, begin, end) in slices {
+            self.data[start..start + end - begin].copy_from_slice(&bytes[begin..end]);
+            self.mark_dirty_offset(start, end - begin);
+        }
+        Ok(count)
+    }
+
     /// Loader escape hatch: copy out `buf.len()` bytes starting at `addr`.
     /// Byte-granular (no alignment requirement); fails `Access` without partial reads.
     pub fn read_slice(&self, addr: u64, buf: &mut [u8]) -> Result<(), BusFault> {
@@ -115,6 +363,7 @@ impl Ram {
     pub fn write_slice(&mut self, addr: u64, data: &[u8]) -> Result<(), BusFault> {
         let off = self.range(addr, data.len() as u64)?;
         self.data[off..off + data.len()].copy_from_slice(data);
+        self.mark_dirty_offset(off, data.len());
         Ok(())
     }
 }
@@ -138,6 +387,7 @@ macro_rules! impl_store {
             const W: usize = size_of::<$ty>();
             let i = self.index(addr, W as u64)?;
             self.data[i..i + W].copy_from_slice(&val.to_le_bytes());
+            self.mark_dirty_offset(i, W);
             Ok(())
         }
     };
@@ -172,6 +422,7 @@ macro_rules! impl_fast_store {
             match self.fast_bytes_mut::<W>(addr) {
                 Some(bytes) => {
                     *bytes = val.to_le_bytes();
+                    self.mark_dirty_physical_range(addr, W as u64)?;
                     Ok(())
                 }
                 None => Err(BusFault::Access),
@@ -287,6 +538,97 @@ mod tests {
     }
 
     #[test]
+    fn dirty_epochs_keep_cpu_dma_and_intervening_writes_until_commit() {
+        let mut r = Ram::new(KEYFRAME_PAGE_BYTES * 3 + 7).unwrap();
+        let base = r.base();
+        r.store32(base, 0x1020_3040).unwrap();
+        r.ram_store8(base + KEYFRAME_PAGE_BYTES as u64, 0x5a)
+            .unwrap();
+        r.write_slice(base + (KEYFRAME_PAGE_BYTES * 2 - 2) as u64, &[1, 2, 3, 4])
+            .unwrap();
+        assert!(r.begin_dirty_epoch().is_ok());
+        assert_eq!(r.pending_dirty_pages(), Some(3));
+        assert_eq!(r.begin_dirty_epoch(), Err(DirtyEpochBusy));
+        assert_eq!(&r.pending_page(0).unwrap()[..4], &[0x40, 0x30, 0x20, 0x10]);
+        assert_eq!(r.pending_page(3), None);
+
+        // A raw browser JIT store has already written memory; the physical-store log still
+        // marks it for the *next* epoch while the previous capture is in flight.
+        r.mark_jit_dirty_physical_range(base + (KEYFRAME_PAGE_BYTES * 3) as u64, 1)
+            .unwrap();
+        assert_eq!(r.direct_store_marks(), 1);
+        assert_eq!(r.pending_dirty_pages(), Some(3));
+        r.finish_dirty_epoch(true).unwrap();
+        r.begin_dirty_epoch().unwrap();
+        assert_eq!(r.pending_dirty_pages(), Some(1));
+        assert_eq!(r.pending_page(3).unwrap().len(), 7);
+        r.finish_dirty_epoch(false).unwrap();
+        r.begin_dirty_epoch().unwrap();
+        assert_eq!(r.pending_dirty_pages(), Some(1));
+        r.finish_dirty_epoch(true).unwrap();
+    }
+
+    #[test]
+    fn restored_ram_and_write_back_to_old_value_stay_dirty() {
+        use crate::resume::ComponentSnapshot;
+        let mut r = Ram::new(KEYFRAME_PAGE_BYTES * 2).unwrap();
+        let base = r.base();
+        r.store8(base + 10, 0x77).unwrap();
+        r.store8(base + 10, 0).unwrap();
+        r.begin_dirty_epoch().unwrap();
+        assert_eq!(r.pending_dirty_pages(), Some(1));
+        assert_eq!(r.pending_page(0).unwrap()[10], 0);
+        r.finish_dirty_epoch(true).unwrap();
+
+        let bytes = r.to_snapshot();
+        r.restore(&bytes).unwrap();
+        r.begin_dirty_epoch().unwrap();
+        assert_eq!(r.pending_dirty_pages(), Some(2));
+        r.finish_dirty_epoch(true).unwrap();
+    }
+
+    #[test]
+    fn delta_chunks_round_trip_and_late_corruption_is_atomic() {
+        let size = KEYFRAME_PAGE_BYTES * 1025 + 17;
+        let mut source = Ram::new(size).unwrap();
+        let base = source.base();
+        for page in 0..1025 {
+            source
+                .write_slice(base + (page * KEYFRAME_PAGE_BYTES) as u64, &[page as u8])
+                .unwrap();
+        }
+        source
+            .write_slice(base + (1025 * KEYFRAME_PAGE_BYTES) as u64, &[0x71; 17])
+            .unwrap();
+        source.begin_dirty_epoch().unwrap();
+        let mut chunks = Vec::new();
+        let mut cursor = 0;
+        while let Some((next, chunk)) = source.next_pending_delta_chunk(cursor).unwrap() {
+            assert!(next > cursor && chunk.len() <= KEYFRAME_CHUNK_MAX_BYTES);
+            chunks.push(chunk);
+            cursor = next;
+        }
+        assert_eq!(chunks.len(), 2);
+        let mut restored = Ram::new(size).unwrap();
+        for chunk in &chunks {
+            restored.apply_delta_chunk(chunk).unwrap();
+        }
+        assert_eq!(restored.as_bytes(), source.as_bytes());
+
+        let before = restored.as_bytes().to_vec();
+        let mut corrupt = chunks[0].clone();
+        // The last record's length is checked after every earlier record was parsed, before
+        // any page may change. A content-addressed store would also reject this hash change.
+        let last = corrupt.len() - KEYFRAME_PAGE_BYTES - 2;
+        corrupt[last..last + 2].copy_from_slice(&1u16.to_le_bytes());
+        assert_eq!(
+            restored.apply_delta_chunk(&corrupt),
+            Err(RamDeltaError::Malformed)
+        );
+        assert_eq!(restored.as_bytes(), before);
+    }
+
+    #[test]
     fn extreme_addresses_fault_without_overflow_panics() {
         // Runs with debug_assertions on in `cargo test` dev profile: any wrapping
         // arithmetic would panic here instead of returning Access.
@@ -395,7 +737,18 @@ impl crate::resume::ComponentSnapshot for Ram {
     fn restore(&mut self, payload: &[u8]) -> Result<(), crate::resume::SnapshotError> {
         // Validate every run before modifying existing RAM; do not allocate a second guest-sized
         // growable buffer whose reallocation can exhaust the wasm32 address space at1GiB.
-        crate::resume::restore_sparse_into(payload, &mut self.data)
+        crate::resume::restore_sparse_into(payload, &mut self.data)?;
+        for word in &mut self.dirty {
+            *word = u64::MAX;
+        }
+        // Remove bits beyond the final addressable page so a later capture never exports them.
+        let remaining = self.page_count() % 64;
+        if let Some(last) = self.dirty.last_mut()
+            && remaining != 0
+        {
+            *last = (1u64 << remaining) - 1;
+        }
+        Ok(())
     }
 }
 

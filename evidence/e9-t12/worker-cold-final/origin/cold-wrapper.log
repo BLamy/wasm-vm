@@ -1,0 +1,7 @@
+failed /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t12-worker-cold-final
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t12-worker-cold-wrapper.py", line 34, in <module>
+    run(['make','verify-E9-T12'],source)
+  File "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t12-worker-cold-wrapper.py", line 24, in run
+    report['commands'].append({'command':command,'cwd':str(cwd),'exit_code':r.returncode});(out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n');assert r.returncode==0,command
+AssertionError: ['make', 'verify-E9-T12']

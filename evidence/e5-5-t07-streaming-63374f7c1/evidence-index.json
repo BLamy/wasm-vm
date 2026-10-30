@@ -1,0 +1,335 @@
+{
+  "task": "E5.5-T07",
+  "runtimeHead": "63374f7c1e546c922ba1c779f34b09fced5e1ad4",
+  "fixtureHead": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+  "pr": "https://github.com/BLamy/wasm-vm/pull/626",
+  "status": "worker-evidence; not verifier acceptance",
+  "preservedFailures": [
+    "original frozen gate failed only at obsolete roadmap lookup after eleven passed commands",
+    "continuation-v1 failed at a decorative GPU context while Mac was locked",
+    "development failed manifest route and initial guest missing-file response preserved in target/evidence"
+  ],
+  "localDevelopment": [
+    "target/evidence/software-snapshot-stream-dev1",
+    "target/evidence/software-snapshot-stream-dev2",
+    "target/evidence/software-snapshot-warm-ui-dev1",
+    "target/evidence/software-snapshot-warm-ui-dev2",
+    "target/evidence/software-snapshot-warm-ui-dev3"
+  ],
+  "files": {
+    "device-summary.json": {
+      "bytes": 303,
+      "sha256": "ea9ff08ec7df64315b8d6a12e565fa74d3bb6dbb86f7adc57274b9b68af86314"
+    },
+    "e5-5-t07-demo-continuation-v1/00.log": {
+      "bytes": 5967,
+      "sha256": "c08e84c9a3a7d698b69b603de9b90b383f61d0ff02fcbaf5f9e70363b5aba291"
+    },
+    "e5-5-t07-demo-continuation-v1/gate.json": {
+      "bytes": 7906,
+      "sha256": "13a1912d16a7c3572478f976af80b0de32c930a656e9a4bfc67bee9dbd0669ed"
+    },
+    "e5-5-t07-demo-continuation-v2/00.log": {
+      "bytes": 4289,
+      "sha256": "ebc0c66c9941bf497af7c91e35b02dad8afbe072d5c9e862838b2aeef925a5a2"
+    },
+    "e5-5-t07-demo-continuation-v2/demo/demo-suite.json": {
+      "bytes": 8126,
+      "sha256": "1846b70131598d479840ee3d3fabd309b484e33986e5597830adde8baf41227e"
+    },
+    "e5-5-t07-demo-continuation-v2/demo/demo-suite.png": {
+      "bytes": 719885,
+      "sha256": "d51b524849536ed01ca7f752c23f563dc1fb6a82a9d286f72143d73cdbca7043"
+    },
+    "e5-5-t07-demo-continuation-v2/gate.json": {
+      "bytes": 7809,
+      "sha256": "16e34778732966a5b4b652cf4692edebf499f4175e354e55f4d538e927b67d71"
+    },
+    "e5-5-t07-frozen-v1/00.log": {
+      "bytes": 34,
+      "sha256": "daf2eaa22adf721579f3b80601bb428092575f9c0ff6c711c1ca70641c06d928"
+    },
+    "e5-5-t07-frozen-v1/01.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e5-5-t07-frozen-v1/02.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "e5-5-t07-frozen-v1/03.log": {
+      "bytes": 72,
+      "sha256": "fecede7c2157efe2f16c8c8b9dce94b0fb4dd384dca8207046c8bf7636eb0ffe"
+    },
+    "e5-5-t07-frozen-v1/04.log": {
+      "bytes": 72,
+      "sha256": "8c233a54790c4800d3dd585436af679aa838da259bfdb129412e2d51cdb75cdc"
+    },
+    "e5-5-t07-frozen-v1/05.log": {
+      "bytes": 4718,
+      "sha256": "7f8a2862b2adcb31d1c19dcacf7fbadbe3560aafb86768f377198580c143b451"
+    },
+    "e5-5-t07-frozen-v1/06.log": {
+      "bytes": 2871,
+      "sha256": "7edaf5cf0d320d5c16a4c6657265fac59dcb46aa9e390f82683451551ffb1dab"
+    },
+    "e5-5-t07-frozen-v1/07.log": {
+      "bytes": 79,
+      "sha256": "573ea7846a03a7ecbe8a0221f0c83a9fb63cf644fd2df89b5175978421cde855"
+    },
+    "e5-5-t07-frozen-v1/08.log": {
+      "bytes": 425,
+      "sha256": "b63a47e65f1b34a935890b0569bce9b725aef92265fe5c4e7bc22d0bb23ffc85"
+    },
+    "e5-5-t07-frozen-v1/09.log": {
+      "bytes": 1404,
+      "sha256": "1c5cde4ea72489869a6aa7b95ba3ab431677b22a70b341cb9ada268fa4233def"
+    },
+    "e5-5-t07-frozen-v1/10.log": {
+      "bytes": 661,
+      "sha256": "89fae9554b442d8c9bfcd72fd916c8cb9a53e90001af0e298902cc682f3b0372"
+    },
+    "e5-5-t07-frozen-v1/11.log": {
+      "bytes": 327,
+      "sha256": "885fdd2b0b14ca14764986ad00a4cdaa7eafa8c4960136b3789edfc7e50bb484"
+    },
+    "e5-5-t07-frozen-v1/gate.json": {
+      "bytes": 5481,
+      "sha256": "64711b53dff07acc7ab5670ada6990c71a96f3f6d329664deac83824ab4c6e93"
+    },
+    "e5-5-t07-frozen-v1/staging/report.json": {
+      "bytes": 5814,
+      "sha256": "58848c85f6783b030df8174f636ac7846cce3096a5ca8271fd1ada38d8adcece"
+    },
+    "e5-5-t07-frozen-v1/warm-ui/report.json": {
+      "bytes": 292827,
+      "sha256": "c1caeafce4c3bdfafe6035b6d3b58a399abf21eda4b90d0deb0a400bc75cd0d8"
+    },
+    "e5-5-t07-frozen-v1/warm-ui/software-warm-echo.png": {
+      "bytes": 32276,
+      "sha256": "1d9477e1eb90124b1184dd8e1c291f8148fba365a16c1fe9b2b57fe21d728807"
+    },
+    "e5-5-t07-frozen-v1/warm-ui/software-warm-restored.png": {
+      "bytes": 27330,
+      "sha256": "3ca29c058589a008fee3384d77a96aca3901b672141c515b0c1a505d747fe92a"
+    },
+    "e5-5-t07-frozen-v1/warm-ui/software-warm-typed.png": {
+      "bytes": 26443,
+      "sha256": "3bde22a888d8082f96017c437a80439cdaa66d81469359626326000582e609e7"
+    },
+    "initial-diagnostic/audit.md": {
+      "bytes": 6592,
+      "sha256": "6529f7543bcfb9e38ab63b9ec7b3830ba07733d973aa63b0fbe947b739435d56"
+    },
+    "initial-diagnostic/routing.json": {
+      "bytes": 12861,
+      "sha256": "1d68c551b1ae59c4f6a431f5309a185517e509b0105a262fb18cc491cb4ff5f8"
+    },
+    "initial-diagnostic/verdict.md": {
+      "bytes": 575,
+      "sha256": "f90a33e82124bb7695943098c58855fc7b3a4f75616018b99333eaf03f5e2aae"
+    },
+    "pristine-v1/checkout.log": {
+      "bytes": 134,
+      "sha256": "5ddf59a4c250bb493d766f9e289165a5397ff2a67b3096e92f5a2ba504a50e97"
+    },
+    "pristine-v1/receipt.json": {
+      "bytes": 2080,
+      "sha256": "54234a4a7e4d650193225c227ae8a876edc7e3e3a9b73e404bfecf1f494f568d"
+    },
+    "pristine-v1/renderer-build.log": {
+      "bytes": 1641,
+      "sha256": "a2948a3b9b7158a7ba39b8a921936cc3e043a4bdcf3714ae5d3e6708e6a9ad80"
+    },
+    "pristine-v1/sparse.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pristine-v1/wasm-build.log": {
+      "bytes": 2855,
+      "sha256": "d38986409c805326f0f695356fa482640a27ee6486097cbc3bf1be7308a63ea6"
+    },
+    "pristine-v1-built/wasm_vm_wasm.js": {
+      "bytes": 196292,
+      "sha256": "992ca2e4fce3878e4bb3583af1b0c43872e7cedce70c0d598cf74b87160254f7"
+    },
+    "pristine-v1-built/wasm_vm_wasm_bg.wasm": {
+      "bytes": 2633541,
+      "sha256": "4aae7ad32ab000918149e7a96b0abc089b20d844d0e9636ec0c48f377865b0cf"
+    },
+    "pristine-v1-controller.py": {
+      "bytes": 4051,
+      "sha256": "ea8e355217246689bc3521749e14847b94cb34d18966b8fa2f17574619864ea3"
+    },
+    "pristine-v2/acceptance.log": {
+      "bytes": 1857,
+      "sha256": "37b01605397e122db91b83107d237f635e9c186fa6203cab753631d0e50a8874"
+    },
+    "pristine-v2/checkout.log": {
+      "bytes": 134,
+      "sha256": "5ddf59a4c250bb493d766f9e289165a5397ff2a67b3096e92f5a2ba504a50e97"
+    },
+    "pristine-v2/gate/00.log": {
+      "bytes": 34,
+      "sha256": "daf2eaa22adf721579f3b80601bb428092575f9c0ff6c711c1ca70641c06d928"
+    },
+    "pristine-v2/gate/01.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pristine-v2/gate/02.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pristine-v2/gate/03.log": {
+      "bytes": 2744,
+      "sha256": "4d6977f030a19665c4038ff765eacdef97a740651104babcae5df0ea337c61dc"
+    },
+    "pristine-v2/gate/04.log": {
+      "bytes": 2346,
+      "sha256": "2d3759d3bd5a0fc1eb0056367cdbd2a0e76e87b47829e7fbc26b2c84c5457ad2"
+    },
+    "pristine-v2/gate/05.log": {
+      "bytes": 7231,
+      "sha256": "457d114bca719bed8c8aa316121ed1f1f58d3550e1421aca25e3f3f4b077d32a"
+    },
+    "pristine-v2/gate/06.log": {
+      "bytes": 4874,
+      "sha256": "c412c96ced3140b4e59a5a4cea84ed234cebf87830b1e14feffdd5ea8fd35022"
+    },
+    "pristine-v2/gate/07.log": {
+      "bytes": 79,
+      "sha256": "bcbedddd5fc8ee99168a7425af40e5a0b3b6794cdecdc45cd7357b00b95f51e7"
+    },
+    "pristine-v2/gate/08.log": {
+      "bytes": 425,
+      "sha256": "6ee1e8796f7512472eb7f0d82c23e36c3ba92a2792242773529cf2a5f5646e7d"
+    },
+    "pristine-v2/gate/09.log": {
+      "bytes": 3569,
+      "sha256": "8c568c39cea0e6f04a2303e244c3e66245e8c8d68ec2fb638cfb318fdccd0da5"
+    },
+    "pristine-v2/gate/gate.json": {
+      "bytes": 4108,
+      "sha256": "6cf018c5f05db7c00930f4066ecc417f0c205b92d669f2bdacd2bae695e69e3b"
+    },
+    "pristine-v2/npm.log": {
+      "bytes": 407,
+      "sha256": "7bc62ddf9b7f9418c1d0c8dbbec824dadfd91924e470112955803533c65eedb4"
+    },
+    "pristine-v2/receipt.json": {
+      "bytes": 3402,
+      "sha256": "c785fc33cefd7e495a127f0168517ee04b4b2b307cd67fd6693ad2082c9a8b8b"
+    },
+    "pristine-v2/renderer-build.log": {
+      "bytes": 1641,
+      "sha256": "a2948a3b9b7158a7ba39b8a921936cc3e043a4bdcf3714ae5d3e6708e6a9ad80"
+    },
+    "pristine-v2/setup-note.json": {
+      "bytes": 432,
+      "sha256": "3be645c7d28755b0286e2a71296df5fc90d85d70d579bf79c9931cc4ed5d42fc"
+    },
+    "pristine-v2/sparse.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pristine-v2/wasm-build.log": {
+      "bytes": 2867,
+      "sha256": "5fcf97666cf03228eac269c8d61555379c95777041a7e3bb379b6938b4ba446b"
+    },
+    "pristine-v2-controller.py": {
+      "bytes": 4743,
+      "sha256": "3d09884153d4227e4c88ba13236e1b19c376e734dfb014907f36258dd9f59143"
+    },
+    "pristine-v3/checkout.log": {
+      "bytes": 81,
+      "sha256": "2fc82ba9e97852519732f875b894368babd77931f98146b4787d66fc76d23727"
+    },
+    "pristine-v3/fetch.log": {
+      "bytes": 241,
+      "sha256": "a64c1bc44d21bfe07afee08e15725c4510f3e33e203775d1b1b0d63b49140b10"
+    },
+    "pristine-v3/gate/00.log": {
+      "bytes": 1404,
+      "sha256": "1c5cde4ea72489869a6aa7b95ba3ab431677b22a70b341cb9ada268fa4233def"
+    },
+    "pristine-v3/gate/01.log": {
+      "bytes": 661,
+      "sha256": "eba09c80250c470a1b997a0eb46d79d70da277976bfc11d9aafbe52b3ee22816"
+    },
+    "pristine-v3/gate/02.log": {
+      "bytes": 4289,
+      "sha256": "ebc0c66c9941bf497af7c91e35b02dad8afbe072d5c9e862838b2aeef925a5a2"
+    },
+    "pristine-v3/gate/demo/demo-suite.json": {
+      "bytes": 8126,
+      "sha256": "7f44f38377e938a2449a64beca9a00bdf249f29eb60c19f7c36449f6a3d15beb"
+    },
+    "pristine-v3/gate/demo/demo-suite.png": {
+      "bytes": 722625,
+      "sha256": "65252a5f60e703978071464b56ffbc42230acfdde411f735ec364e9e5fd41672"
+    },
+    "pristine-v3/gate/gate.json": {
+      "bytes": 6241,
+      "sha256": "aaa8e3a48da0422a63646bf483ba7c906bcd0e4450be2cc34fb829fa3472ad60"
+    },
+    "pristine-v3/gate/staging/report.json": {
+      "bytes": 5814,
+      "sha256": "951a4b6a4f5de45a675bf48009c5835e22ce67f5d919b935486a4197fe2423fb"
+    },
+    "pristine-v3/gate/warm-ui/report.json": {
+      "bytes": 117365,
+      "sha256": "7dbf790ae0b51914b624860768731d743f81fc689ddace191bdcd0a73faa1f27"
+    },
+    "pristine-v3/gate/warm-ui/software-warm-echo.png": {
+      "bytes": 29012,
+      "sha256": "0fce1b5650436e13d1c322c08a98a36f5a2d7c5ac4ebb9b49f8cce026b87d701"
+    },
+    "pristine-v3/gate/warm-ui/software-warm-restored.png": {
+      "bytes": 27330,
+      "sha256": "3ca29c058589a008fee3384d77a96aca3901b672141c515b0c1a505d747fe92a"
+    },
+    "pristine-v3/gate/warm-ui/software-warm-typed.png": {
+      "bytes": 26443,
+      "sha256": "3bde22a888d8082f96017c437a80439cdaa66d81469359626326000582e609e7"
+    },
+    "pristine-v3/missing-browser-acceptance.log": {
+      "bytes": 763,
+      "sha256": "9225f9e6eac2523681e28cd455d2f6bfc86e3b61fe511d20ab6c58d3c751245c"
+    },
+    "pristine-v3/receipt.json": {
+      "bytes": 2352,
+      "sha256": "4db8c96ebade72ae3be61c6d268e30bfcdaf5426585da42aba902b57a3368fc3"
+    },
+    "pristine-v3-controller.py": {
+      "bytes": 3023,
+      "sha256": "a998d1b5b291a1c7bffaf3900a7ec80792d5e576508b27605768bfd4198500cd"
+    },
+    "simulator-cleanup.json": {
+      "bytes": 428,
+      "sha256": "ea953473afc0d727e37a9d011b6d3b094063b4161c25093e35255ba706f2cd6d"
+    },
+    "simulator-stream-echo.png": {
+      "bytes": 227802,
+      "sha256": "93af7981fb5947e63a9515c769e5ce0c4919500809efc5eb443bcfbb24eacb58"
+    },
+    "simulator-stream-observation.json": {
+      "bytes": 1515,
+      "sha256": "2ec2ea4f386bb06ca6cb157cea2af5f177fa16b543c2fb4208f034a75269449c"
+    }
+  },
+  "pristine": {
+    "initialWrongCompilerOutcome": "failed and preserved",
+    "pinnedInitialOutcome": "failed at absent externally hosted gzip and preserved",
+    "continuationOutcome": "passed; same pinned independently compiled experiment, only fixture bootstrap and remaining three browser checks",
+    "runtimeHead": "63374f7c1e546c922ba1c779f34b09fced5e1ad4",
+    "finalFixtureHead": "087c69c54",
+    "notClaimed": [
+      "second empty target in continuation",
+      "physical iPhone compatibility",
+      "physical OOM cause",
+      "GPU compatibility",
+      "numeric performance qualification"
+    ]
+  }
+}

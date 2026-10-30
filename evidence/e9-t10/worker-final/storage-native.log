@@ -1,0 +1,217 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_storage-e33d3e2b58cfd10e)
+
+running 106 tests
+test blobstore::blobstore_tests::missing_blob_is_a_miss_not_a_crash ... ok
+test blobstore::blobstore_tests::a_repeated_digest_is_stored_once_dedupe ... ok
+test blobstore::blobstore_tests::eviction_stops_cleanly_when_only_pinned_blobs_remain ... ok
+test blobstore::blobstore_tests::a_zero_length_blob_round_trips ... ok
+test blobstore::blobstore_tests::pinned_blobs_are_never_evicted_even_over_budget ... ok
+test blobstore::blobstore_tests::lru_eviction_removes_least_recently_used_unpinned_first ... ok
+test blobstore::blobstore_tests::put_then_get_round_trips_by_content_address ... ok
+test blobstore::blobstore_tests::put_self_heals_a_blob_the_backend_lost_out_of_band ... ok
+test blobstore::blobstore_tests::put_expected_refuses_wrong_bytes_and_stores_nothing ... ok
+test blobstore::blobstore_tests::verified_on_read_catches_truncation ... ok
+test cache::tests::all_pinned_allows_bounded_overshoot ... ok
+test cache::tests::chunk_source_impl_reads_current_bytes ... ok
+test blobstore::blobstore_tests::verified_on_read_evicts_wrong_bytes_under_a_correct_key ... ok
+test blobstore::blobstore_tests::right_bytes_under_a_wrong_key_do_not_verify ... ok
+test cache::tests::clock_gives_a_referenced_chunk_a_second_chance ... ok
+test blobstore::blobstore_tests::two_images_sharing_a_layer_store_it_once ... ok
+test cache::tests::growing_replace_still_honours_the_budget ... ok
+test cache::tests::metrics_track_hits_misses_and_replace_in_place ... ok
+test cache::tests::pinned_chunks_never_evicted_even_over_budget ... ok
+test cache::tests::prefetch_accuracy_counts_hits_on_prefetched_chunks ... ok
+test cache::tests::single_chunk_larger_than_budget_is_admitted ... ok
+test cache::tests::stays_within_budget_and_counts_evictions ... ok
+test fetch::tests::blob_request_is_inclusive_byte_range_over_single_file ... ok
+test fetch::tests::classify_response_covers_206_200_and_the_range_ignored_case ... ok
+test fetch::tests::classify_response_retryable_vs_permanent_statuses ... ok
+test dbmeta::tests::from_bytes_rejects_bad_magic_length_and_unknown_version ... ok
+test fetch::tests::retry_policy_bounds_and_backoff_never_overflow ... ok
+test dbmeta::tests::meta_round_trips_a_durable_generation_and_reads_legacy_as_zero ... ok
+test fetch::tests::split_request_is_content_addressed_url_no_range ... ok
+test dbmeta::tests::seeded_store_name_is_exactly_namespaced_without_changing_legacy ... ok
+test fetch::tests::chunk_request_out_of_range_and_bad_chunk_size_are_typed_errors ... ok
+test fetch::tests::chunk_store_caches_only_verified_bytes ... ok
+test fetch::tests::plan_fetches_dedups_resident_inflight_and_repeats ... ok
+test oci::tests::classify_recognizes_both_whiteout_forms ... ok
+test oci::tests::descent_through_symlink_ancestor_is_rejected ... ok
+test oci::tests::file_replaces_directory_and_directory_replaces_file ... ok
+test oci::tests::hardlink_keeps_old_content_when_target_is_overridden ... ok
+test oci::tests::hardlink_survives_whiteout_of_its_target ... ok
+test oci::tests::later_layer_overrides_earlier_file ... ok
+test oci::tests::opaque_after_same_layer_file_keeps_it ... ok
+test oci::tests::opaque_directory_drops_lower_contents_but_keeps_this_layers ... ok
+test oci::tests::symlink_and_hardlink_apply ... ok
+test oci::tests::unsafe_paths_are_rejected ... ok
+test dbmeta::tests::store_name_is_namespaced_by_base_binding ... ok
+test oci::tests::whiteout_deletes_a_lower_file_and_is_not_materialized ... ok
+test oci::tests::whiteout_of_a_directory_removes_the_whole_subtree ... ok
+test dbmeta::tests::meta_round_trips_and_binds_to_the_base ... ok
+test overlay_delta::tests::rejects_bad_magic ... ok
+test overlay_delta::tests::rejects_truncated ... ok
+test overlay_delta::tests::round_trips ... ok
+test prefetch::tests::boot_prefetch_returns_next_needed_chunks_up_to_the_cap ... ok
+test overlay::tests::out_of_range_io_is_a_typed_error ... ok
+test prefetch::tests::prefetch_tracker_measures_accuracy ... ok
+test prefetch::tests::readahead_triggers_only_on_a_three_access_forward_run ... ok
+test prefetch::tests::readahead_resets_on_a_non_sequential_jump ... ok
+test prefetch::tests::readahead_window_zero_disables ... ok
+test pullthrough::pullthrough_tests::a_fetch_error_propagates ... ok
+test pullthrough::pullthrough_tests::a_duplicate_digest_within_one_pull_is_deduped ... ok
+test pullthrough::pullthrough_tests::a_poisoned_source_is_refused_and_caches_nothing ... ok
+test pullthrough::pullthrough_tests::a_corrupted_cache_layer_is_refetched_not_trusted ... ok
+test pullthrough::pullthrough_tests::an_empty_pull_fetches_nothing ... ok
+test pullthrough::pullthrough_tests::a_re_pull_is_all_hits_and_zero_network_bytes ... ok
+test pullthrough::pullthrough_tests::shared_layers_are_fetched_once_across_images ... ok
+test dbmeta::tests::check_rejects_a_different_or_rechunked_base ... ok
+test pullthrough::pullthrough_tests::first_pull_fetches_all_layers ... ok
+test snapmeta::tests::chunk_count_math ... ok
+test overlay::tests::base_binding_refuses_the_wrong_base ... ok
+test snapmeta::tests::expected_chunk_len_last_is_remainder ... ok
+test overlay_delta::tests::seed_decision_reuses_only_exact_repeat ... ok
+test snapmeta::tests::meta_rejects_bad_magic_and_length ... ok
+test snapmeta::tests::meta_rejects_inconsistent_chunk_count ... ok
+test overlay_delta::tests::seed_decision_rejects_invalid_meta_and_orphan_blocks ... ok
+test overlay::tests::unwritten_reads_hit_the_base_exactly ... ok
+test snapmeta::tests::meta_round_trips ... ok
+test overlay_delta::tests::seed_decision_allows_fresh_empty_store ... ok
+test snapmeta::tests::reassemble_empty_blob ... ok
+test overlay::tests::partial_block_write_merges_over_base ... ok
+test snapmeta::tests::store_name_is_namespaced_hex ... ok
+test overlay_delta::tests::seed_decision_rejects_changed_extra_and_missing_blocks ... ok
+test tests::critic_overflow_shaped_inputs_are_typed_errors ... ok
+test tests::from_json_parses_ignores_unknown_fields_and_errors_typed ... ok
+test tests::manifest_validation_rejects_hostile_edits ... ok
+test tests::lazy_read_assembles_present_chunks_and_reports_first_missing ... ok
+test snapmeta::tests::reassemble_detects_oversized_final_chunk ... ok
+test tests::unvalidated_manifest_never_panics ... ok
+test tests::offset_math_edge_cases ... ok
+test snapmeta::tests::reassemble_detects_short_chunk ... ok
+test tests::verify_chunk_accepts_correct_and_rejects_corruption ... ok
+test snapmeta::tests::reassemble_detects_missing_chunk ... ok
+test tests::critic_base_hash_canonicalization_is_stable ... ok
+test tests::from_image_produces_a_valid_roundtripping_manifest ... ok
+test writeback::tests::overlay_disk_reads_merge_over_base_through_write_back ... ok
+test overlay::tests::repeated_rewrite_never_leaks_stale_base ... ok
+test writeback::tests::re_dirty_during_flush_is_not_lost ... ok
+test writeback::tests::rewrite_after_flush_is_unpersisted_again ... ok
+test writeback::tests::barrier_taken_and_cleared_by_persist_round ... ok
+test writeback::tests::post_barrier_writes_do_not_extend_the_barrier ... ok
+test writeback::tests::re_dirtied_barrier_block_keeps_flush_waiting ... ok
+test writeback::tests::from_loaded_reopen_has_all_blocks_persisted ... ok
+test writeback::tests::mark_persisted_only_clears_matching_generations ... ok
+test writeback::tests::a_shared_queue_lets_an_external_persister_drain_the_overlays_writes ... ok
+test writeback::tests::writes_are_tracked_unpersisted_until_marked ... ok
+test snapmeta::tests::reassemble_round_trips_multi_chunk ... ok
+test tests::chunk_math_roundtrips ... ok
+test cache::tests::random_trace_never_serves_wrong_bytes_and_accounting_holds ... ok
+test overlay::tests::overlay_is_observationally_identical_to_a_flat_model ... ok
+
+test result: ok. 106 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.37s
+
+     Running tests/checkpoint_context.rs (target/debug/deps/checkpoint_context-b0a02dfb918660fb)
+
+running 2 tests
+test exact_cursor_and_keys ... ok
+test refuse_shapes_versions_and_unrecorded_modes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/disk_root.rs (target/debug/deps/disk_root-c0f9be3aaeea7534)
+
+running 8 tests
+test snapshot_backends_require_durability_and_ownership ... ok
+test golden_exact_generation ... ok
+test payload_failure_cannot_publish_a_partial_disk ... ok
+test identities_refuse_before_loading ... ok
+test deleting_child_pins_preserves_shared_ancestors ... ok
+test schema_order_and_bounds ... ok
+test private_forks_restore_in_reverse ... ok
+test seeded_interleavings_keep_owned_roots_stable ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+     Running tests/disk_root_verifier.rs (target/debug/deps/disk_root_verifier-9f2aa87e21b6a148)
+
+running 1 test
+test equal_generation_tail_and_shared_blocks_survive_sibling_reclamation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/session_manifest.rs (target/debug/deps/session_manifest-681c3aaf0ca79d63)
+
+running 10 tests
+test golden_wide_positions ... ok
+test incomplete_capture_prefix_preserves_events_but_never_admits_as_replay ... ok
+test topology_and_index_attacks ... ok
+test unavailable_history_is_preserved ... ok
+test gpu_checkpoint_binding ... ok
+test noncanonical_numbers_and_hashes ... ok
+test schema_duplicates_and_bounds ... ok
+test identities_and_capture_admission ... ok
+test topology_requires_capture ... ok
+test event_and_chunk_integrity ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/session_manifest_critic.rs (target/debug/deps/session_manifest_critic-26996613427e1428)
+
+running 8 tests
+duplicate/foreign payload rejected: "storage":"inline","storage":"inline"
+duplicate/foreign payload rejected: "storage":"blob","storage":"inline"
+duplicate/foreign payload rejected: "storage":"inline","foreign_required":true
+exact decimal sequence 9007199254740991
+duplicate/foreign payload rejected: "storage":"inline","bytes":[99]
+exact decimal sequence 9007199254740992
+test duplicate_payload_discriminants_and_foreign_fields_are_refused ... ok
+exact decimal sequence 9007199254740993
+exact decimal sequence 18446744073709551415
+internal asset binding refused: vm
+missing and blob-deserializer wide integer/hash paths refused
+test missing_wide_fields_and_invalid_blob_numbers_are_malformed ... ok
+device identity refused: id
+internal asset binding refused: wasm
+GPU identity refused: renderer_build
+device identity refused: kind
+internal asset binding refused: kernel
+matching hash with foreign byte length is unavailable
+test adjacent_wide_positions_and_length_identity ... ok
+internal asset binding refused: base
+device identity refused: mmio_base
+GPU identity refused: profile
+device identity refused: mmio_length
+GPU checkpoint payload length refused
+test valid_gpu_renderer_and_profile_refuse_independently ... ok
+device identity refused: irq
+device identity refused: state_version
+test every_device_field_is_an_immutable_identity ... ok
+entrypoint validation, invalid labels/assets and both event-range overflow paths refused
+test public_entrypoints_propagate_validation_and_shape_refusals ... ok
+authenticated order/duplicate/count attacks refused; same-coordinate paused sequences preserved
+test authenticated_duplicate_phase_and_count_attacks ... ok
+bounded manifest encoder refused valid oversized index encoding
+bounded event/chunk encoders refused serialized byte overflow
+test serialization_caps_and_invalid_token_paths ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests/session_publication.rs (target/debug/deps/session_publication-0d890bbb25da13e0)
+
+running 6 tests
+test append_refuses_replaced_checkpoint_or_event ... ok
+test append_extends_a_wide_position_without_rewriting_its_prefix ... ok
+test append_refuses_foreign_identity_and_policy ... ok
+test references_deduplicate_direct_assets_and_roots ... ok
+test discover_verified_event_payloads_and_refuse_unindexed_bytes ... ok
+test conflicting_lengths_and_malformed_indexes_never_publish ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests wasm_vm_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

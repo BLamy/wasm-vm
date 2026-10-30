@@ -1,0 +1,54 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
++   'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }'
++ ]
+- []
+
+    at file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t04/verifier/run-browser-critic.mjs:27:9 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }',
+    'lazy fetch failed — chunk 0: RetriesExhausted { chunk: 0 }'
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

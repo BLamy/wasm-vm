@@ -1,0 +1,19 @@
+{
+  "version": 7,
+  "task": "E9-T22c",
+  "scope": "Untimed original Omarchy qualification with recorded COW-only root serial getty; all v5 asset, workload, browser, retention and budget pins are inherited unchanged",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v6.json",
+    "sha256": "5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0"
+  },
+  "desktopBootstrap": {
+    "reason": "The pinned sanitized image has neither sudo nor visudo and autologins omarchy on ttyS0. The frozen T01 workload writes /root and stages a tool under /usr/local/bin. A recorded COW-only serial-getty override supplies the required root shell without changing the immutable base image or production site.",
+    "bootargs": "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i",
+    "rescuePrompt": "PID-1 Bash root prompt before systemd",
+    "gettyPath": "/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf",
+    "gettyOverride": "[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n",
+    "gettyMode": "0644",
+    "handoff": "Write and hash-verify only the guest COW serial-getty override, sync it, then exec the original /sbin/init as PID 1; require the new ttyS0 root prompt to report uid 0, HOME=/root and the exact override hash.",
+    "evidence": "The initial witness precedes the bootstrap. Classify every bootstrap UART offer and disk completion in the saved journal, preserve immutable image/manifest hashes, and compare the complete end state during replay. This is a local qualification session, not a production image change."
+  }
+}

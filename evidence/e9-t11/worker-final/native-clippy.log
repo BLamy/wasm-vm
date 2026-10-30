@@ -1,0 +1,7 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/slirp)
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-runtime)
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/wasm)
+    Checking wasm-vm-cli v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.76s

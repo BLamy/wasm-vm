@@ -1,0 +1,186 @@
+{
+  "frozen_head": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+  "provisional": false,
+  "predictions": [
+    {
+      "prediction": "P1",
+      "result": "HELD",
+      "observed": "Chromium quota=1/overrideActive=true at 49268762 bytes; actual append reported Quota, paused owner, no recording/locks; revision1 prefix frame e0d396a6/root53e56050 preserved.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/quota",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/e9-t07-verifier/raw-tuples.json#/witnesses/prefixAfterQuota",
+          "sha256": "44fe5d484f3e1c74c7bab3ee803e09da856b3f69b3a94c300cd60523d4c616e3"
+        }
+      ]
+    },
+    {
+      "prediction": "P2",
+      "result": "HELD",
+      "observed": "Retry produced revision2 and changed RAM/root while preserving point1. Deleted-history retry and independent same-revision replacement returned HistoryChanged; same-revision attack made zero owner calls, left replacement intact and no locks.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/retried",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/replacement",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P3",
+      "result": "HELD",
+      "observed": "Migration preserved original row/bytes at v2; payloadBytes=9010 unchanged by sibling publication. Point/byte limit transactions refused atomically. Independent duplicate MiB parts counted once; only one competing unique MiB writer could fit the final 2-MiB budget.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/migration",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/accounting",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P4",
+      "result": "HELD",
+      "observed": "Parent deletion reduced payloadBytes 60970545 -> 46484443; all10 synthetic shared refs, indirect event payload, complete-map disk leaves and both real surviving sessions retain original hashes. Sibling restarts produce exact 23,860,091-byte frame and shared-prefix file/shell memory.",
+      "citations": [
+        {
+          "ref": "target/e9-t07-verifier/raw-tuples.json",
+          "sha256": "44fe5d484f3e1c74c7bab3ee803e09da856b3f69b3a94c300cd60523d4c616e3"
+        },
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/siblingAfterDelete",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        }
+      ]
+    },
+    {
+      "prediction": "P5",
+      "result": "HELD",
+      "observed": "Both durable-row-deletion and pre-sweep-commit renderer crashes reopen safely in worker and independently rehashed recovery graph; every retained hash and canonical manifest match original, and retry cleanup succeeds.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/crashes",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/crashes",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P6",
+      "result": "HELD",
+      "observed": "Missing surviving machine bytes, malformed disk root, unknown extension and descriptor mutation reject sweeping. UI missing-root-leaf deletion says Cleanup refused with Repair/delete/retry, successful repair cleanup, incomplete label retry. Named missing rows cannot Open.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/storage",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/ui/checks/refused",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/ui/checks/labelFailure",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P7",
+      "result": "HELD",
+      "observed": "Independent inverse collector pause excludes writer/read/delete/cleanup.32 simultaneous varied rounds exercise both lease winners and recheck every original hash and surviving canonical manifest. Generic reader failure and failed retry release their leases.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/inverse",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/schedules",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/ui/checks/readFailure",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P8",
+      "result": "HELD",
+      "observed": "Visible limits/persistence/storage controls work; granted/denied/unavailable outcomes are explicit. Confirm cancellation preserves parent. Quota/cleanup/label errors expose working retry/delete actions. Worker390px screenshot has no horizontal overflow.",
+      "citations": [
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/persistence",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/evidence/e9-t07-worker-final/browser/report.json#/checks/mobile",
+          "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/ui",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P9",
+      "result": "HELD",
+      "observed": "All added executable runtime line regions hit after exact-source UTF-16 coverage merge, including direct-loader restored-session lease via copied original profile. Generated mirrors and51-file software runtime cb49b911 match; archived47-file GPU runtime22295002 matches and still draws. Defensive sub-branch exclusions are listed in coverage notes; this is not a full branch-coverage claim.",
+      "citations": [
+        {
+          "ref": "target/e9-t07-verifier/coverage-audit.json",
+          "sha256": "6e9abb27f357c792919e45aac65a065827a864aa462deae34eb831fc2c879869"
+        },
+        {
+          "ref": "target/e9-t07-verifier/runtime-identities.json",
+          "sha256": "82c3523a8b996bee2c1df5223a1a75dddc5a6961921819bce430065a36f0c46f"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json#/checks/direct",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    },
+    {
+      "prediction": "P10",
+      "result": "HELD",
+      "observed": "Frozen worker21 gates and final clean-source21 gates pass. Original failed production recording retains completed storage/19-asset assertions; separate independent raw oracle and actual GPU57-asset boot complete an honest composite. Original failed run remains failed on R2 connection reset; no product semantics changed. Promoted critic passes against the original local recording.",
+      "citations": [
+        {
+          "ref": "evidence/e9-t07/public/provenance.json",
+          "sha256": "8d1334f0c0148f2090b1e930995ecdf9f2a870111dc02ef3af53631d292b5bab"
+        },
+        {
+          "ref": "target/e9-t07-verifier/cold-receipts.json",
+          "sha256": "a739400e7daf520787df53b3ff5990f64f497357b66aa113a1aa97b92aafe878"
+        },
+        {
+          "ref": "target/e9-t07-verifier/public-partial-receipts.json",
+          "sha256": "c77adfaed7e3eec05e990ea933020183ac5da9be0cd16e9c224364ba98da82c2"
+        },
+        {
+          "ref": "target/e9-t07-verifier/public-gpu-receipts.json",
+          "sha256": "83ae641705675b88a9c88d68e0874d91c83b3a73b9d7e10030ee536c713ab404"
+        },
+        {
+          "ref": "target/evidence/e9-t07-verifier-promoted/report.json",
+          "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860"
+        }
+      ]
+    }
+  ],
+  "verdict": "verified",
+  "submission_head": "cb9af8ca9274e087f75e2237fa085fa21436bc4c"
+}

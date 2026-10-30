@@ -1,0 +1,6 @@
+{"byte_offset":32,"transition":384,"retired":384,"sequence":1,"phase":"observe","ordinal":1,"kind":"RtcPoll","host_ns":123}
+{"byte_offset":78,"transition":390,"retired":390,"sequence":2,"phase":"observe","ordinal":1,"kind":"RtcPoll","host_ns":123}
+{"byte_offset":124,"transition":396,"retired":396,"sequence":3,"phase":"observe","ordinal":1,"kind":"RtcPoll","host_ns":123}
+{"byte_offset":170,"transition":402,"retired":402,"sequence":4,"phase":"observe","ordinal":1,"kind":"RtcPoll","host_ns":123}
+{"byte_offset":216,"transition":408,"retired":408,"sequence":5,"phase":"observe","ordinal":1,"kind":"RtcPoll","host_ns":123}
+{"byte_offset":262,"transition":414,"retired":414,"sequence":6,"phase":"observe","ordinal":1,"kind":"RtcPoll","host_ns":123}

@@ -1,0 +1,11 @@
+{
+  "stopped": [
+    {
+      "pid": 31834,
+      "command": "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python tools/verify/software-snapshot-serve.py 8774"
+    }
+  ],
+  "time": 1793234984.3117929,
+  "simulatorTabCleanup": "CUA closed only the newly created localhost tab; restored pre-existing public wasm-vm tab",
+  "settingsChanged": []
+}

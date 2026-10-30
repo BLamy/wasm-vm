@@ -1,0 +1,40 @@
+{
+  "status": "failed",
+  "head": "f6efcba3bf318d1eab696f8fd38711aa3a5f91f1",
+  "scope": "Resume the same independently cloned exact-head proof after pre-guest host-capacity refusal; locally compiled outputs are retained, no external compiled cache borrowed",
+  "initialPristine": {
+    "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-pristine-f6efcba3bf31/pristine.json",
+    "sha256": "c75bee1e52d820b461c537ec6dab3a38cdbfe806c971b4ce4445bf1903f00067"
+  },
+  "refusedAdmission": {
+    "path": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-pristine-f6efcba3bf31/run/desktop/report.json",
+    "sha256": "e2442dec2253a54d8328ecbb616059011bf814ecee45eec004e4378e7371c7b8",
+    "guestCreated": false
+  },
+  "controllerSha256": "40805f5b38f56756c657dbb7e4bbd6f90ccf7f23a63e286e77d66137cd8997f0",
+  "makeExecutable": "/usr/bin/make",
+  "started": "2026-10-28T19:27:56.007655+00:00",
+  "priorChecks": {
+    "run/preflight-tests.log": "306037161b2ebfba31882afc50d367d729b962f37e524dc5a04aa4ea9c857350",
+    "run/identity-tests.log": "f798750dfbcb77b4bf73241759db16754a7aa8dc68d398feaad008822b204e2c",
+    "run/fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "run/native.log": "2a00ca92632b206a6a66a83806c28c2021b3dad1e585ea199a4b5771fdd6917c",
+    "run/clippy.log": "9302853afd155dac37cb0597c7d91929fa6880f4a2f86cc9c69312d7b1322d88",
+    "run/web-dist.log": "25cb87155a184466684f886aa57fbd11de9a0b4eed91447f848bd151de10706d",
+    "run/demo/report.json": "073aef9ae3a7f0bf3a36fa773359519d45d02cfcb7de4d5e3fe70acf29661832",
+    "run/demo-bytes.log": "7c553e4b54121db7c618a25fb4d5c5061da77a63d6358561c9947cc10e1a04f5",
+    "run/diagnostic-wasm.log": "acf94e266d748ec84a00ca56e2b4d462bf137c14cd1e1ef771ab214add81d49a",
+    "run/diagnostic-identity.log": "22005d0e709246ab0e8abb5e49385b09b5c4503fd5932adc6d46b8135fdbb3d0"
+  },
+  "externalInputArguments": {
+    "E9_CALIBRATION_ROOT": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/e9-cold-calibration",
+    "E9_BASE_CACHE": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/e9-workload-base-cache",
+    "E9_OUT": "/Users/blamy/Documents/Codex/.e9-t22u-pristine-f6efcba3bf31/target/evidence/e9-t22u-resume-f6efcba3bf31-v1/run"
+  },
+  "gatePid": 60352,
+  "sleepAssertionPid": 60353,
+  "exitCode": -15,
+  "sleepAssertionExitCode": 0,
+  "dirtyAfter": "",
+  "finished": "2026-10-28T19:40:59.360097+00:00"
+}

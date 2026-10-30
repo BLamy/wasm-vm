@@ -117,6 +117,8 @@ pub struct FileTransferSlotDiagnostic {
 /// (`with_connector`), guest TCP and UDP flows to non-local IPs are NATed outbound synchronously.
 pub struct SlirpLocalBackend {
     stack: SlirpStack,
+    local_http: Option<crate::local_http::LocalHttpService>,
+    egress_bytes: usize,
     gateway_mac: [u8; 6],
     dhcp: DhcpServer,
     dns: Option<Box<dyn DnsService>>,
@@ -152,6 +154,8 @@ impl SlirpLocalBackend {
     pub fn new(gateway_mac: [u8; 6], clock: Box<dyn Fn() -> i64>) -> Self {
         Self {
             stack: SlirpStack::new(gateway_mac),
+            local_http: None,
+            egress_bytes: 0,
             gateway_mac,
             dhcp: DhcpServer::new(),
             dns: None,
@@ -173,6 +177,44 @@ impl SlirpLocalBackend {
             flows: BTreeMap::new(),
             udp_flows: BTreeMap::new(),
             last_background_poll_ms: None,
+        }
+    }
+
+    /// Pure dequeue for the owned pump: unlike NetBackend::rx, this never services I/O.
+    pub(crate) fn take_owned_egress(&mut self) -> Option<Vec<u8>> {
+        let frame = self.egress.pop_front();
+        if let Some(bytes) = &frame {
+            self.egress_bytes -= bytes.len();
+        }
+        frame
+    }
+
+    /// Opt into the one bounded local HTTP endpoint. No outbound transport is installed.
+    pub(crate) fn register_e9_local_http(
+        &mut self,
+    ) -> Result<crate::HttpStatsHandle, crate::HttpError> {
+        if self.egress.len() > crate::local_http::MAX_EGRESS_FRAMES
+            || self.egress_bytes > crate::local_http::MAX_EGRESS_BYTES
+        {
+            return Err(crate::HttpError::EgressLimit);
+        }
+        if self.connector.is_some()
+            || self.dns.is_some()
+            || self.manager.flow_count() != 0
+            || self.file_transfer.active_transfers() != 0
+            || !self.pending_dns.is_empty()
+        {
+            return Err(crate::HttpError::UnsupportedEndpoint);
+        }
+        self.stack.register_http()?;
+        let (service, stats) = crate::local_http::LocalHttpService::new();
+        self.local_http = Some(service);
+        Ok(stats)
+    }
+
+    pub fn close_local_http(&mut self) {
+        if let Some(service) = &mut self.local_http {
+            service.fail(&mut self.stack, None);
         }
     }
 
@@ -370,10 +412,20 @@ impl SlirpLocalBackend {
             .saturating_add(file_tx)
             .saturating_add(self.file_transfer.buffered_bytes())
             .saturating_add(
+                self.local_http
+                    .as_ref()
+                    .map_or(0, |http| http.buffered_bytes()),
+            )
+            .saturating_add(
                 self.connector
                     .as_ref()
                     .map_or(0, |connector| connector.buffered_bytes()),
             )
+    }
+
+    #[cfg(test)]
+    pub(crate) fn egress_len_for_test(&self) -> usize {
+        self.egress.len()
     }
 
     /// Number of live NATed TCP + UDP flows, exposed for acceptance/diagnostic assertions.
@@ -934,18 +986,35 @@ impl SlirpLocalBackend {
         let now = (self.clock)();
         self.stack.poll(now);
         self.stack.run_dhcp(&self.dhcp);
-        self.submit_udp_dns(now);
-        self.pump_dns_tcp(now);
-        self.pump_file_transfer(now);
-        self.poll_dns_completions();
-        self.pump_dns_tcp(now);
-        self.pump_file_transfer(now);
-        self.pump();
-        self.pump_udp();
-        self.expire();
+        if let Some(http) = &mut self.local_http {
+            http.pump(&mut self.stack, now);
+        } else {
+            self.submit_udp_dns(now);
+            self.pump_dns_tcp(now);
+            self.pump_file_transfer(now);
+            self.poll_dns_completions();
+            self.pump_dns_tcp(now);
+            self.pump_file_transfer(now);
+            self.pump();
+            self.pump_udp();
+            self.expire();
+        }
         // Flush any TCP segments the pump enqueued (data to the guest, FIN/RST) onto the wire.
         self.stack.poll(now);
+        if self.stack.bounded_queue_overflow()
+            && let Some(http) = &mut self.local_http
+        {
+            http.fail(&mut self.stack, Some(crate::HttpError::EgressLimit));
+        }
         for f in self.stack.take_egress() {
+            if let Some(http) = &mut self.local_http
+                && (self.egress.len() >= crate::local_http::MAX_EGRESS_FRAMES
+                    || self.egress_bytes + f.len() > crate::local_http::MAX_EGRESS_BYTES)
+            {
+                http.fail(&mut self.stack, Some(crate::HttpError::EgressLimit));
+                break;
+            }
+            self.egress_bytes += f.len();
             self.egress.push_back(f);
         }
     }
@@ -967,12 +1036,17 @@ impl NetBackend for SlirpLocalBackend {
             || !self.pending_dns.is_empty()
             || self.dns.as_ref().is_some_and(|dns| dns.pending())
             || self.file_transfer.active_transfers() > 0
+            || self
+                .local_http
+                .as_ref()
+                .is_some_and(|http| http.pending() || !self.egress.is_empty())
     }
 
     fn poll(&mut self) {
         if self.connector.is_none()
             && self.dns.is_none()
             && self.file_transfer.active_transfers() == 0
+            && self.local_http.is_none()
         {
             return;
         }
@@ -1000,11 +1074,16 @@ impl NetBackend for SlirpLocalBackend {
         if self.egress.is_empty()
             && (self.connector.is_some()
                 || self.dns.is_some()
-                || self.file_connections.iter().any(Option::is_some))
+                || self.file_connections.iter().any(Option::is_some)
+                || self.local_http.is_some())
         {
             self.service();
         }
-        self.egress.pop_front()
+        let frame = self.egress.pop_front();
+        if let Some(bytes) = &frame {
+            self.egress_bytes -= bytes.len();
+        }
+        frame
     }
 
     fn rx_ready(&self) -> bool {
@@ -1428,6 +1507,20 @@ mod tests {
         let mut apkt = ArpPacket::new_unchecked(frame.payload_mut());
         arp.emit(&mut apkt);
         buf
+    }
+
+    #[test]
+    fn owned_egress_dequeue_cannot_service_a_waiting_real_arp_request() {
+        let mut backend = SlirpLocalBackend::new(GW_MAC, Box::new(|| 0));
+        backend.register_e9_local_http().unwrap();
+        backend.stack.inject(guest_arp_request());
+        assert!(backend.take_owned_egress().is_none());
+        backend.poll();
+        let response = backend
+            .take_owned_egress()
+            .expect("the explicit poll services the waiting ARP");
+        assert_eq!(&response[12..14], &[8, 6]);
+        assert!(backend.take_owned_egress().is_none());
     }
 
     #[test]

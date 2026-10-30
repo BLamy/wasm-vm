@@ -1,0 +1,90 @@
+{
+  "360": {
+    "label": {
+      "x": 257,
+      "y": 428.515625,
+      "width": 51,
+      "height": 31
+    },
+    "after": {
+      "content": "\"\"",
+      "position": "absolute",
+      "top": "-7px",
+      "bottom": "-7px"
+    },
+    "samples": [
+      {
+        "name": "above+6",
+        "y": 422.515625,
+        "hit": true,
+        "before": "on",
+        "after": "off"
+      },
+      {
+        "name": "centre",
+        "y": 444.015625,
+        "hit": true,
+        "before": "off",
+        "after": "on"
+      },
+      {
+        "name": "below+6",
+        "y": 465.515625,
+        "hit": true,
+        "before": "on",
+        "after": "off"
+      },
+      {
+        "name": "above+12",
+        "y": 416.515625,
+        "hit": false,
+        "before": "off",
+        "after": "off"
+      }
+    ]
+  },
+  "390": {
+    "label": {
+      "x": 287,
+      "y": 428.515625,
+      "width": 51,
+      "height": 31
+    },
+    "after": {
+      "content": "\"\"",
+      "position": "absolute",
+      "top": "-7px",
+      "bottom": "-7px"
+    },
+    "samples": [
+      {
+        "name": "above+6",
+        "y": 422.515625,
+        "hit": true,
+        "before": "on",
+        "after": "off"
+      },
+      {
+        "name": "centre",
+        "y": 444.015625,
+        "hit": true,
+        "before": "off",
+        "after": "on"
+      },
+      {
+        "name": "below+6",
+        "y": 465.515625,
+        "hit": true,
+        "before": "on",
+        "after": "off"
+      },
+      {
+        "name": "above+12",
+        "y": 416.515625,
+        "hit": false,
+        "before": "off",
+        "after": "off"
+      }
+    ]
+  }
+}

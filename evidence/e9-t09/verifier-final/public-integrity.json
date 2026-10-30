@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "head": "be521e3ebca19089471c3b5a22c924916e953187",
+  "report_sha256": "07d6410e1d7652be28246870dea0a4210758c7de5bd06439e887e294cdd53ef0",
+  "source_files": 34,
+  "evidence_files": 522,
+  "identical_held_original_frames_and_traces": [
+    "wide-delivered.resume",
+    "paused-control.resume",
+    "jit-600-q1-before.resume",
+    "jit-600-q64-after.resume",
+    "jit-605-q7-after.resume",
+    "jit-605-q64-after.resume",
+    "jit-605-q1-before.resume",
+    "jit-601-q1-before.resume",
+    "jit-605-q1-after.resume",
+    "jit-601-q64-after.resume",
+    "jit-mailbox-q128.resume",
+    "jit-mailbox-q7.resume",
+    "wfi-after-interrupt.resume",
+    "jit-605-q7-before.resume",
+    "jit-600-q1-after.resume",
+    "wfi-before-idle.resume",
+    "jit-600-q7-after.resume",
+    "jit-601-q7-before.resume",
+    "wide-queued.resume",
+    "jit-600-q64-before.resume",
+    "jit-605-q64-before.resume",
+    "jit-601-q7-after.resume",
+    "jit-mailbox-q1.resume",
+    "jit-601-q64-before.resume",
+    "wfi-after-idle.resume",
+    "jit-600-q7-before.resume",
+    "wfi-held.resume",
+    "jit-601-q1-after.resume",
+    "jit-600-q1.trace",
+    "jit-601-q1.trace",
+    "jit-601-q64.trace",
+    "jit-600-q7.trace",
+    "jit-601-q7.trace",
+    "jit-mailbox-q128.trace",
+    "jit-mailbox-q7.trace",
+    "jit-mailbox-q1.trace",
+    "jit-600-q64.trace",
+    "jit-605-q64.trace",
+    "jit-605-q1.trace",
+    "jit-605-q7.trace"
+  ],
+  "browser_assets": 9,
+  "gpu_assets": 58,
+  "gpu": {
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "retired": 2499808,
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  }
+}

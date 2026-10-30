@@ -1,0 +1,1027 @@
+# 77ab6346592d56beea21944ccdc4a073f9b4d301
+Docs checks passed: 1533 source documents accounted for; 155 pages parsed/round-tripped; 236 local links; 181 unchanged code blocks.
+check-docs-dist: ok
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:54] "GET /artifacts.json HTTP/1.1" 200 -
+
+Running 19 tests using 1 worker
+
+(node:27504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+  ✓  1 [chromium] › benchmarks-home.spec.js:3:1 › homepage shows the unified Node system workload matrix (355ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+  ✓  2 [chromium] › landing-hero.spec.js:11:1 › landing renders the architecture model and no decorative background (235ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs.html?page=overview HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /roadmap.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /roadmap-page.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:55] "GET /roadmap.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /tasks.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /products.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /work-market.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /security.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /404.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /case-study-ai-sandboxing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /case-study-deterministic-simulation.html HTTP/1.1" 200 -
+  ✓  3 [chromium] › ui-public.spec.js:57:3 › every public route at 1280px: shared nav, no errors, no overflow (1.1s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:56] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs.html?page=overview HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /roadmap.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /roadmap.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /roadmap-page.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /tasks.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /products.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /work-market.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /security.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /404.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /case-study-ai-sandboxing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:57] "GET /case-study-deterministic-simulation.html HTTP/1.1" 200 -
+  ✓  4 [chromium] › ui-public.spec.js:57:3 › every public route at 1440px: shared nav, no errors, no overflow (1.2s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs.html?page=overview HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /roadmap.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /roadmap.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /roadmap-page.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /tasks.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /products.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /work-market.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:58] "GET /security.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /404.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /case-study-ai-sandboxing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /case-study-deterministic-simulation.html HTTP/1.1" 200 -
+  ✓  5 [chromium] › ui-public.spec.js:57:3 › every public route at 390px: shared nav, no errors, no overflow (1.2s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs.html?page=overview HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:18:59] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /roadmap.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /roadmap.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /roadmap-page.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /tasks.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /products.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /work-market.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /security.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /404.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /case-study-ai-sandboxing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:00] "GET /case-study-deterministic-simulation.html HTTP/1.1" 200 -
+  ✓  6 [chromium] › ui-public.spec.js:57:3 › every public route at 360px: shared nav, no errors, no overflow (1.2s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /index.html?guest=busybox HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-library.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /tabs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /ide.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /omarchy-startup-state.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /coi-serviceworker-register.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /cpu-isolation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /main.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /sw.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /riscv-tests.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-gpu-reader-demo.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /linux-worker-host.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-library.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /event-clock-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-timeline.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /input-recording-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /time-entropy-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /device-completions-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /network-capture-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-streamed-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-keyframe-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /unrecorded-control-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-seek-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /gpu-journal-stream-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /owned-http-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /witness-pages-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /terminal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /file-transfer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /boot-progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /guest-rpc.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/input/capture.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/input/keyboard.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/input/held-keys.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/input/reconciliation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/autoplay.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/sink.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/input/pointer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/microphone.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/capture-ring.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/presentation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/viewport.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /desktop-agent-session.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/cursor-controller.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /cold-counter-recycling.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /desktop-restore.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /omarchy-desktop-readiness.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /gpu-history-reader-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-gpu-history-reader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-store.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-gpu-replay.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /boot-path.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /gpu-checkpoint.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /task-quiescence.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /decoded-cache.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /guest-clock.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /boot-asset-cache.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /snapshot-stream.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /admission-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-timeline-runtime.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-checkpoints.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-inputs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-pkg/wasm_vm_session.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-devices.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-network.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-block-transfer-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-gpu-journal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-seek.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/production.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-witness-pages.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-witness-graph.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /osc52.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-witness-archives.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /paste.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/input/keymap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/ring.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/capture-worklet.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/audio/worklet.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/canvas2d.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/webgl.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/frame-scheduler.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/visibility-scheduler.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /agent-channel.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /desktop-agent-bridge.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-keyframes.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/cursor.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/checkpoint-profile.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/checkpoint-codec.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-gpu-frame-inspection.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-gpu-replay-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-witnesses.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-witness-graph-limits.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-branch-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-disk-roots.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/checkpoint.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/multisample.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/resources.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-shader/standard.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/decoder.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/color-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/float-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/packed-float-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/shared-exponent-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/integer-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/packed-unsigned-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/packed-normalized-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/floating-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/unorm-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /src/sink/present-backend.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/control-bridge.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-bundle-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/checkpoint-dma.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/dimensional-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/shared-exponent-gpu.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/floating-depth-gpu.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/scanout.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/state.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/queries.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-shader/index.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/cache.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /renderer/virgl-command/constant-domain.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /session-pkg/wasm_vm_session_bg.wasm HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /assets/hello.elf HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:01] "GET /artifacts-omarchy.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /linux-worker.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /cold-counter-recycling.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /artifacts.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /releases/initramfs/initramfs.cpio.gz HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:02] "GET /releases/boot-snapshot/busybox-ready.snap.gz HTTP/1.1" 200 -
+  ✓  7 [chromium] › ui-public.spec.js:79:1 › homepage: one primary action, and it starts the real BusyBox guest (2.7s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:04] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+  ✓  8 [chromium] › ui-public.spec.js:101:1 › architecture model: library layer and motion controls drive the real scene (1.5s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:05] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+  ✓  9 [chromium] › ui-public.spec.js:126:1 › architecture model: reduced motion starts paused (274ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+  ✓  10 [chromium] › ui-public.spec.js:135:1 › architecture model: without WebGL the text fallback still follows the library control (217ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /index.html?embed=1&noAutoBoot HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-library.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /tabs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /ide.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /omarchy-startup-state.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /coi-serviceworker-register.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /cpu-isolation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /main.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /sw.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /riscv-tests.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-gpu-reader-demo.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /linux-worker-host.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-library.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /input-recording-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /event-clock-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-timeline.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /time-entropy-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /device-completions-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /network-capture-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-streamed-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-keyframe-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /owned-http-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-seek-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /unrecorded-control-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /witness-pages-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /gpu-journal-stream-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /terminal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /file-transfer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /boot-progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /guest-rpc.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/input/capture.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/input/held-keys.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/input/reconciliation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/autoplay.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/input/keyboard.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/sink.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/capture-ring.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/microphone.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/presentation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/input/pointer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/viewport.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/cursor-controller.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /desktop-agent-session.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /cold-counter-recycling.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /desktop-restore.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /gpu-history-reader-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-gpu-history-reader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-store.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /omarchy-desktop-readiness.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-gpu-replay.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /boot-path.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /task-quiescence.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /gpu-checkpoint.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /guest-clock.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /boot-asset-cache.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /decoded-cache.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /admission-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /snapshot-stream.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-checkpoints.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-timeline-runtime.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-inputs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-pkg/wasm_vm_session.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-block-transfer-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-devices.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-network.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-seek.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-gpu-journal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-witness-pages.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-witness-graph.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-witness-archives.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/production.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /osc52.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /paste.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/input/keymap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/ring.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/worklet.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/webgl.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/canvas2d.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/audio/capture-worklet.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/visibility-scheduler.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/frame-scheduler.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/cursor.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /desktop-agent-bridge.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /agent-channel.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-keyframes.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-witnesses.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-witness-graph-limits.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-gpu-replay-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/checkpoint-codec.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/checkpoint-profile.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-gpu-frame-inspection.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-disk-roots.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-branch-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-bundle-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/checkpoint.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/multisample.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-shader/standard.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/resources.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/decoder.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/color-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/float-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/integer-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/packed-float-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/shared-exponent-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/packed-unsigned-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/packed-normalized-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/floating-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/unorm-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /src/sink/present-backend.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/control-bridge.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/checkpoint-dma.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/shared-exponent-gpu.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/dimensional-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/floating-depth-gpu.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/scanout.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/state.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/queries.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-shader/index.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/cache.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /renderer/virgl-command/constant-domain.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /session-pkg/wasm_vm_session_bg.wasm HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /assets/hello.elf HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /artifacts-omarchy.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /linux-worker.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /cold-counter-recycling.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /artifacts.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:06] "GET /releases/initramfs/initramfs.cpio.gz HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:07] "GET /releases/boot-snapshot/busybox-ready.snap.gz HTTP/1.1" 200 -
+  ✓  11 [chromium] › ui-public.spec.js:149:1 › homepage: embedded session and measurement tables (every figure from its JSON) (1.6s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs.html?page=overview HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:08] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:09] "GET /docs-content/migration-ledger.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-content/quickstart.md?sha=80bfe5b66707 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-embedding.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-content/embedding.md?sha=1501764c76d8 HTTP/1.1" 200 -
+  ✓  12 [chromium] › ui-public.spec.js:188:1 › docs: search, subject filter, archive, source link, history and outline (1.9s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs.html?page=overview HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:10] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+  ✓  13 [chromium] › ui-public.spec.js:232:1 › docs on a phone: Browse docs opens the library; its own Close or a choice closes it (875ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /roadmap.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /roadmap-page.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /roadmap.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:11] "GET /tasks.json HTTP/1.1" 200 -
+  ✓  14 [chromium] › ui-public.spec.js:258:1 › roadmap: library search, view, filters and task detail operate roadmap.js (2.1s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /index.html?nosw&guest=busybox HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-library.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /tabs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /ide.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /omarchy-startup-state.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /coi-serviceworker-register.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /cpu-isolation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /main.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /riscv-tests.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-gpu-reader-demo.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /linux-worker-host.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-library.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-timeline.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /time-entropy-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /event-clock-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /input-recording-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /device-completions-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /network-capture-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-streamed-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-keyframe-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-seek-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /unrecorded-control-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /gpu-journal-stream-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /owned-http-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /witness-pages-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /terminal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /boot-progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /file-transfer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/input/keyboard.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/input/capture.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /guest-rpc.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/input/held-keys.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/input/reconciliation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/audio/sink.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/audio/autoplay.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/audio/capture-ring.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/audio/microphone.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/input/pointer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/sink/presentation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/sink/cursor-controller.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /src/sink/viewport.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /desktop-agent-session.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /desktop-restore.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /omarchy-desktop-readiness.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /cold-counter-recycling.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /gpu-history-reader-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-store.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-gpu-history-reader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /linux-worker-protocol.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /session-gpu-replay.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /overlay-seed-identity.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /gpu-checkpoint.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /boot-path.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /guest-clock.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:13] "GET /decoded-cache.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /boot-asset-cache.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /task-quiescence.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /snapshot-stream.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /admission-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-timeline-runtime.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-checkpoints.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-network.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-block-transfer-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-devices.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-seek.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-inputs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-gpu-journal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-pkg/wasm_vm_session.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/production.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-witness-pages.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-witness-graph.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-witness-archives.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /osc52.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /paste.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/input/keymap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/audio/worklet.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/audio/ring.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/audio/capture-worklet.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/sink/webgl.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/sink/canvas2d.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/sink/cursor.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/sink/visibility-scheduler.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/sink/frame-scheduler.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /desktop-agent-bridge.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-keyframes.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /agent-channel.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-witnesses.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-witness-graph-limits.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/checkpoint-profile.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-gpu-frame-inspection.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/checkpoint-codec.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-gpu-replay-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-disk-roots.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-branch-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/checkpoint.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/multisample.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-shader/standard.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/decoder.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/resources.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/color-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/float-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/packed-float-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/integer-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/shared-exponent-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/packed-unsigned-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/packed-normalized-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/floating-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /src/sink/present-backend.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/unorm-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-bundle-format.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/control-bridge.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/checkpoint-dma.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/dimensional-depth-images.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/shared-exponent-gpu.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/floating-depth-gpu.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/scanout.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/state.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/queries.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-shader/index.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/cache.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /renderer/virgl-command/constant-domain.mjs HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /session-pkg/wasm_vm_session_bg.wasm HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /assets/hello.elf HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /artifacts-alpine.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /artifacts-node-alpine.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /artifacts-omarchy.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /linux-worker.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /artifacts.json HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /releases/kernel/6.6.63/Image HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /releases/initramfs/initramfs.cpio.gz HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:14] "GET /releases/boot-snapshot/busybox-ready.snap.gz HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/reader.js?rev=b3584228dce3 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/reader.css?rev=dee1dbfe330f HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/features/chunk-HG2MDBL3.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/features/chunk-GAM65FTX.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/features/chunk-MEXED75X.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-content/catalog.json?rev=150d684a9560 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-bundle/assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:15] "GET /docs-content/overview.md?sha=8ca157ba82b2 HTTP/1.1" 200 -
+  ✓  15 [chromium] › ui-public.spec.js:298:1 › app: Docs opens in a new tab and the running guest is untouched (2.1s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /case-study-ai-sandboxing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /case-study-deterministic-simulation.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /security.html HTTP/1.1" 200 -
+  ✓  16 [chromium] › ui-public.spec.js:317:1 › case studies: home list, index and three articles keep their stories, statuses and anchors (512ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:16] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:17] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+  ✓  17 [chromium] › ui-public.spec.js:370:1 › case studies on a phone: the comparison table stacks, nothing overflows, nav reaches them (1.4s)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /index.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /session-library.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /tabs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ide.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /omarchy-startup-state.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /coi-serviceworker-register.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /cpu-isolation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /main.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /sw.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /riscv-tests.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /session-gpu-reader-demo.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /linux-worker-host.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /session-library.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /session-timeline.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /event-clock-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mException occurred during processing of request from ('127.0.0.1', 64405)
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mException occurred during processing of request from ('127.0.0.1', 64403)
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mException occurred during processing of request from ('127.0.0.1', 64410)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /input-recording-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mException occurred during processing of request from ('127.0.0.1', 64406)
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mException occurred during processing of request from ('127.0.0.1', 64412)
+[2m[WebServer] [22mTraceback (most recent call last):
+[2m[WebServer] [22mTraceback (most recent call last):
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 683, in process_request_thread
+[2m[WebServer] [22m    self.finish_request(request, client_address)
+[2m[WebServer] [22mTraceback (most recent call last):
+[2m[WebServer] [22mTraceback (most recent call last):
+[2m[WebServer] [22mTraceback (most recent call last):
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 683, in process_request_thread
+[2m[WebServer] [22m    self.finish_request(request, client_address)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 683, in process_request_thread
+[2m[WebServer] [22m    self.finish_request(request, client_address)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 683, in process_request_thread
+[2m[WebServer] [22m    self.finish_request(request, client_address)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 360, in finish_request
+[2m[WebServer] [22m    self.RequestHandlerClass(request, client_address, self)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 360, in finish_request
+[2m[WebServer] [22m    self.RequestHandlerClass(request, client_address, self)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 360, in finish_request
+[2m[WebServer] [22m    self.RequestHandlerClass(request, client_address, self)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 683, in process_request_thread
+[2m[WebServer] [22m    self.finish_request(request, client_address)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 660, in __init__
+[2m[WebServer] [22m    super().__init__(*args, **kwargs)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 660, in __init__
+[2m[WebServer] [22m    super().__init__(*args, **kwargs)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 747, in __init__
+[2m[WebServer] [22m    self.handle()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 660, in __init__
+[2m[WebServer] [22m    super().__init__(*args, **kwargs)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 360, in finish_request
+[2m[WebServer] [22m    self.RequestHandlerClass(request, client_address, self)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 747, in __init__
+[2m[WebServer] [22m    self.handle()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 747, in __init__
+[2m[WebServer] [22m    self.handle()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 660, in __init__
+[2m[WebServer] [22m    super().__init__(*args, **kwargs)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 360, in finish_request
+[2m[WebServer] [22m    self.RequestHandlerClass(request, client_address, self)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 434, in handle
+[2m[WebServer] [22m    self.handle_one_request()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 747, in __init__
+[2m[WebServer] [22m    self.handle()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 660, in __init__
+[2m[WebServer] [22m    super().__init__(*args, **kwargs)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 422, in handle_one_request
+[2m[WebServer] [22m    method()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 434, in handle
+[2m[WebServer] [22m    self.handle_one_request()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 747, in __init__
+[2m[WebServer] [22m    self.handle()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 434, in handle
+[2m[WebServer] [22m    self.handle_one_request()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 422, in handle_one_request
+[2m[WebServer] [22m    method()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 434, in handle
+[2m[WebServer] [22m    self.handle_one_request()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 422, in handle_one_request
+[2m[WebServer] [22m    method()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 667, in do_GET
+[2m[WebServer] [22m    self.copyfile(f, self.wfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 434, in handle
+[2m[WebServer] [22m    self.handle_one_request()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 667, in do_GET
+[2m[WebServer] [22m    self.copyfile(f, self.wfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 422, in handle_one_request
+[2m[WebServer] [22m    method()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 667, in do_GET
+[2m[WebServer] [22m    self.copyfile(f, self.wfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 867, in copyfile
+[2m[WebServer] [22m    shutil.copyfileobj(source, outputfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 667, in do_GET
+[2m[WebServer] [22m    self.copyfile(f, self.wfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 422, in handle_one_request
+[2m[WebServer] [22m    method()
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 867, in copyfile
+[2m[WebServer] [22m    shutil.copyfileobj(source, outputfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 867, in copyfile
+[2m[WebServer] [22m    shutil.copyfileobj(source, outputfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py", line 208, in copyfileobj
+[2m[WebServer] [22m    fdst_write(buf)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py", line 208, in copyfileobj
+[2m[WebServer] [22m    fdst_write(buf)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 826, in write
+[2m[WebServer] [22m    self._sock.sendall(b)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 826, in write
+[2m[WebServer] [22m    self._sock.sendall(b)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py", line 208, in copyfileobj
+[2m[WebServer] [22m    fdst_write(buf)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 867, in copyfile
+[2m[WebServer] [22m    shutil.copyfileobj(source, outputfile)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 667, in do_GET
+[2m[WebServer] [22m    self.copyfile(f, self.wfile)
+[2m[WebServer] [22mBrokenPipeError: [Errno 32] Broken pipe
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py", line 208, in copyfileobj
+[2m[WebServer] [22m    fdst_write(buf)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 867, in copyfile
+[2m[WebServer] [22m    shutil.copyfileobj(source, outputfile)
+[2m[WebServer] [22mBrokenPipeError: [Errno 32] Broken pipe
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 826, in write
+[2m[WebServer] [22m    self._sock.sendall(b)
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mBrokenPipeError: [Errno 32] Broken pipe
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/shutil.py", line 208, in copyfileobj
+[2m[WebServer] [22m    fdst_write(buf)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 826, in write
+[2m[WebServer] [22m    self._sock.sendall(b)
+[2m[WebServer] [22m  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 826, in write
+[2m[WebServer] [22m    self._sock.sendall(b)
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22mBrokenPipeError: [Errno 32] Broken pipe
+[2m[WebServer] [22mBrokenPipeError: [Errno 32] Broken pipe
+[2m[WebServer] [22m----------------------------------------
+[2m[WebServer] [22m----------------------------------------
+  ✓  18 [chromium] › ui-public.spec.js:390:3 › standalone public actions have 44 px phone targets at 390px (533ms)
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /case-study-riscv-os.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /site.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui.css?rev=74f187f16a37 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui.js?rev=76d15e673a14 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:18] "GET /ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /landing.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /landing-page.js?rev=a8dc5cea468b HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /landing-benchmarks.js?rev=bd2d35a68a59 HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /hero-scene.js?rev=ac35169fc0ff HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /node_modules/three/build/three.module.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /runtime-benchmarks.json?rev=__RUNTIME_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /runtime-compute-benchmarks.json?rev=__RUNTIME_COMPUTE_BENCHMARK_VERSION__ HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /case-studies.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /index.html HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /node_modules/@xterm/xterm/css/xterm.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-library.css HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /node_modules/@xterm/xterm/lib/xterm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /node_modules/@xterm/addon-fit/lib/addon-fit.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /tabs.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /ide.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /omarchy-startup-state.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /coi-serviceworker-register.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /cpu-isolation.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /main.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /sw.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /pkg/wasm_vm_wasm.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /riscv-tests.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-gpu-reader-demo.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /roadmap.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /linux-worker-host.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /loader.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /overlay-reset-target.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-library.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-timeline.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /gpu-checkpoint-build.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /event-clock-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /input-recording-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /time-entropy-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /device-completions-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /network-capture-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-streamed-replay-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-keyframe-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /session-seek-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /unrecorded-control-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /owned-http-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /gpu-journal-stream-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /witness-pages-probe.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /terminal.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /file-transfer.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /boot-progress.js HTTP/1.1" 200 -
+[2m[WebServer] [22m127.0.0.1 - - [30/Oct/2026 18:19:19] "GET /guest-rpc.js HTTP/1.1" 200 -
+  ✓  19 [chromium] › ui-public.spec.js:390:3 › standalone public actions have 44 px phone targets at 360px (485ms)
+
+  Slow test file: [chromium] › ui-public.spec.js (20.7s)
+  Consider splitting slow test files to speed up parallel execution
+  19 passed (25.5s)
+dist: 38 rev stamps across 31 pages, 112 shipped scripts scanned
+dist: /old/docs/missing-topic served the recovery page with 10 root-resolved links
+dist: 12 public pages loaded, 185 same-origin links and assets answered
+dist: PASS

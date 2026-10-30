@@ -1,0 +1,24 @@
+Cloning into '/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo'...
+done.
+HEAD is now at 7ac83e66 test(session): freeze repaired checkpoint proof for cold verification
+python3 -B tools/verify/e9-software-checkpoints.py --output "${E9_CHECKPOINT_EVIDENCE_DIR:-target/evidence/e9-software-checkpoints-final}"
+policy
+format
+core-clippy
+storage-clippy
+boundary-clippy
+core-native
+checkpoint-native
+frame-native
+storage-native
+boundary-native
+adapter-native
+no-std-wasm
+boundary-wasm-clippy
+adapter-wasm-clippy
+browser-build
+shared-node-wasm
+worker-protocol
+contract
+retained-gpu
+browser

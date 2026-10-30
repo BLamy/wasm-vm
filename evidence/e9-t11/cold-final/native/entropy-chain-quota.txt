@@ -1,0 +1,5 @@
+position=SessionPosition { transition: 1, retired: 1, phase: Observe, ordinal: 5, sequence: 256 }
+rng_calls=5
+used_idx=0
+all_dma_zero=true
+error=QueueFull

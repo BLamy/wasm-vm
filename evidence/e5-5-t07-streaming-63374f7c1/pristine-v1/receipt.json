@@ -1,0 +1,74 @@
+{
+  "status": "failed",
+  "scope": "shallow filtered independent pristine source clone; rebuilt Wasm browser artifact; bounded warm acceptance only",
+  "started": 1793234120.832082,
+  "clone": "/private/tmp/e5-5-t07-pristine-0144c662b",
+  "commands": [
+    {
+      "label": "sparse",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "--stdin"
+      ],
+      "exitCode": 0,
+      "seconds": 0.021034955978393555,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "checkout",
+      "command": [
+        "git",
+        "checkout",
+        "codex/omarchy-streamed-software-restore"
+      ],
+      "exitCode": 0,
+      "seconds": 20.926609992980957,
+      "logSha256": "5ddf59a4c250bb493d766f9e289165a5397ff2a67b3096e92f5a2ba504a50e97"
+    },
+    {
+      "label": "renderer-build",
+      "command": [
+        "bash",
+        "tools/build-virgl-runtime.sh"
+      ],
+      "exitCode": 0,
+      "seconds": 6.67637300491333,
+      "logSha256": "a2948a3b9b7158a7ba39b8a921936cc3e043a4bdcf3714ae5d3e6708e6a9ad80"
+    },
+    {
+      "label": "wasm-build",
+      "command": [
+        "wasm-pack",
+        "build",
+        "crates/wasm-web",
+        "--target",
+        "web",
+        "--profile",
+        "wasm-release",
+        "--out-name",
+        "wasm_vm_wasm"
+      ],
+      "exitCode": 0,
+      "seconds": 93.13855814933777,
+      "logSha256": "d38986409c805326f0f695356fa482640a27ee6486097cbc3bf1be7308a63ea6"
+    }
+  ],
+  "head": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+  "initialStatus": "",
+  "initialTargetAbsent": true,
+  "alternatesAbsent": true,
+  "shallow": "true",
+  "built": {
+    "wasm_vm_wasm_bg.wasm": {
+      "sha256": "4aae7ad32ab000918149e7a96b0abc089b20d844d0e9636ec0c48f377865b0cf",
+      "shippedSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "bytes": 2633541,
+      "identical": false
+    }
+  },
+  "failure": "AssertionError('wasm_vm_wasm_bg.wasm cold output differs')",
+  "finished": 1793234241.979508
+}

@@ -1,0 +1,10 @@
+{
+  "before": "17f619d8a31e2b5a835d92e95f2a8f86f55d189f",
+  "head": "2d7b3414d0b16a744a246236f275870e51ba88a4",
+  "changed_paths": [
+    "web/dist/sw.js",
+    "web/dist/tasks.json",
+    "web/tasks.json"
+  ],
+  "task_status": "verified"
+}

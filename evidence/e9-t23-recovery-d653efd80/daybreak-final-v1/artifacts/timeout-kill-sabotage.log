@@ -1,0 +1,2 @@
+task-policy
+{"status": "failed", "output": "/private/tmp/e9-t23-final.x5Cldg/repo/target/evidence/e9-t23-timeout-kill-sabotage", "failure": "Command '['python3', '-c', 'import signal,time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)']' timed out after 0.1 seconds"}

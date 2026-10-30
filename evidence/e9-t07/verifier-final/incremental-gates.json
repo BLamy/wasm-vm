@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "product_head": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+  "submission_head": "cb9af8ca9274e087f75e2237fa085fa21436bc4c",
+  "scope": "Test/policy/evidence-only promotion. Frozen runtime/native/wasm/browser/cold/public results carry forward; no unrelated gates rerun.",
+  "commands": [
+    "node --check tools/verify/e9-session-retention-critic.mjs",
+    "node --check tools/verify/e9-session-retention-critic-ui.mjs",
+    "compile(tools/verify/e9-session-retention.py, exec)",
+    "GIT_OPTIONAL_LOCKS=0 node tools/verify/e9-session-retention-critic.mjs --recording-report target/evidence/e9-t07-worker-final/browser/report.json --output target/evidence/e9-t07-verifier-promoted"
+  ],
+  "promoted_report_sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860",
+  "source_sha256": {
+    "web/session-store.js": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df",
+    "web/session-library.js": "bfaaafdfa66efeb31f3eefbbcc8e53da291b9da8418a81df4f45172730b9e2da",
+    "web/loader.js": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d",
+    "tools/verify/e9-session-retention-critic.mjs": "88661c728d40a11ab1288fd9c6136b60f5a63f8f9f1199a11985287ad5fe7391",
+    "tools/verify/e9-session-retention-critic-ui.mjs": "1279229c7fe4a8a9466768e939c2b324dee57047ab61015dfd97dde4ab1d92c6"
+  },
+  "wrapper_sha256": "a7b520ba50abc6f4126e6382512e86003f89d7c8ce7127ea928bcf748a815894"
+}

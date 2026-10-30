@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "scope": "Worker regression evidence following fresh critic refutation: unchanged old runtime accepts owner-erased checkpoint (red); repair rejects owner-erased and request-and-owner-erased checkpoints transactionally, preserving live lease; valid future capture descriptor restores before deadline. Self-check only, not verifier verdict.",
+  "reaudited_runtime_sources": [
+    {
+      "path": "crates/core/src/dev/virtio/snd/mod.rs",
+      "before": "ddd178109e87d255694ec859b45f71620a2abea36781047c92d1e3e85f8db2e7",
+      "after": "4701aa9db527b4b50e340e2d16d8e563895da01d2504a38a6318bc43ae69bbf3"
+    },
+    {
+      "path": "crates/core/src/session_devices/codec.rs",
+      "before": "49fd435727efb6ec5bb6ec172c1cb0d002a4989c13abc3d7b73f62631c57ac97",
+      "after": "11411d2fb5b568ec44330d0d41a33e5aa421dbe3100e1d8c0e15ffb82d8f2261"
+    }
+  ],
+  "files": [
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-orphan-red/orphaned-capture-false.resume",
+      "source_bytes": 19610,
+      "source_sha256": "bb64f5b8a82261207e0cae4a36acfebce483c9a357f64f14ec5d627f1064473b",
+      "gzip": "red-orphaned-capture-false.resume.gz",
+      "gzip_sha256": "eb17a638fc371b595484c93098490fa09485b126d724e67abd300c70d21870ce"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-orphan-repair-precheck/orphaned-capture-false.resume",
+      "source_bytes": 19610,
+      "source_sha256": "bb64f5b8a82261207e0cae4a36acfebce483c9a357f64f14ec5d627f1064473b",
+      "gzip": "green-orphaned-capture-false.resume.gz",
+      "gzip_sha256": "eb17a638fc371b595484c93098490fa09485b126d724e67abd300c70d21870ce"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-orphan-repair-precheck/orphaned-capture-source.resume",
+      "source_bytes": 19610,
+      "source_sha256": "6aaf7c89c27265810deb091b831babd72c346972f206cff8456105a10a60ac76",
+      "gzip": "green-orphaned-capture-source.resume.gz",
+      "gzip_sha256": "4e612218a8706d921cd9d14e2a43c7e99db81670558c7cb1224bb1073ce1037b"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-orphan-repair-precheck/orphaned-capture-true.resume",
+      "source_bytes": 19592,
+      "source_sha256": "0d25fdfd79a412912cb431ab1746dce9b47e6e9e38587dc603e6b561f7aebfd6",
+      "gzip": "green-orphaned-capture-true.resume.gz",
+      "gzip_sha256": "a8fc30f550de6638110dbb29eef0112dfdabf3954a933359d266158911514092"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-future-precheck/capture-future.resume",
+      "source_bytes": 19573,
+      "source_sha256": "e2031b7017c513d1a0efcb91c35aebe8a190272729af94af85898a6b25fa2c4d",
+      "gzip": "future-capture-future.resume.gz",
+      "gzip_sha256": "fb0f1ca55e94dd12324c90e940f43a696bc0f81165bbed429253d2a8a70fa2bc"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-future-precheck/capture-future.trace",
+      "source_bytes": 291303,
+      "source_sha256": "421764e599022c894d0ff33c1f6bda7811254f8352f6dc1cec937ab6d2398acf",
+      "gzip": "future-capture-future.trace.gz",
+      "gzip_sha256": "5b7ee26093082e743d9822abfa92d6c291717fca7d3854e33e45ee62b9283487"
+    }
+  ],
+  "finished": 1792335913.035429
+}

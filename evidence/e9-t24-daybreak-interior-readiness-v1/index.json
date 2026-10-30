@@ -1,0 +1,40 @@
+{
+  "scope": "Actual Daybreak diagnostic only, not final acceptance; no runtime repair or guard relaxation warranted",
+  "files": [
+    {
+      "path": "diagnostic.md",
+      "bytes": 8154,
+      "sha256": "84a01079e3ec141f290e6ff94199cb2b8b29e3fc9287c9d7fdca30098ef6553e"
+    },
+    {
+      "path": "prediction.md",
+      "bytes": 787,
+      "sha256": "658d5ac180f58ab22d3169506c3de282d2bdf764bbed59988d2c743928225223"
+    },
+    {
+      "path": "routing.json",
+      "bytes": 17543,
+      "sha256": "66ece5f9c86156df4f4cbf39b1f9d8e41dc5af42a0986dc1c60650c523937672"
+    },
+    {
+      "path": "report.md",
+      "bytes": 1486,
+      "sha256": "03ccbf57251620660d7bca24f6769b5ad9b768194a74862aca374a3d137678dc"
+    },
+    {
+      "path": "verdict.md",
+      "bytes": 333,
+      "sha256": "d5ca01552229c8513bac482bd47e79d721f8939e711df34eda54f3381670126b"
+    },
+    {
+      "path": "gpu-report-focus.json",
+      "bytes": 7507,
+      "sha256": "13b86c38b8b1d373e69ed0e7b0d395680248e62a680159a155d532d2633b5398"
+    },
+    {
+      "path": "trace-citations.jsonl",
+      "bytes": 7070,
+      "sha256": "17367e151e2a69a71808280d6ba363ffb0a401ea37625dc9fcb8bdb71d7fd89f"
+    }
+  ]
+}

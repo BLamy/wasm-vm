@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-cold-final/acceptance/browser/pinned-base.ext4",
+  "bytes": 536870912,
+  "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+  "manifest_sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+  "chunks": 4096,
+  "unique_chunks": 227
+}

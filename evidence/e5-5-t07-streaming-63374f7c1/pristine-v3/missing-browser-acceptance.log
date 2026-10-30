@@ -1,0 +1,7 @@
+node tools/fetch-omarchy-snapshot.mjs
+Downloaded and verified Omarchy snapshot: 98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22
+python3 tools/verify/software-snapshot-gate.py
+{"index": 0, "exitCode": 0, "elapsed": 28.728878021240234, "command": ["node", "tools/verify/software-snapshot-stream.mjs", "/private/tmp/e5-5-t07-pristine-proof-v3/gate/staging"]}
+{"index": 1, "exitCode": 0, "elapsed": 16.347134113311768, "command": ["node", "tools/verify/software-snapshot-warm-ui.mjs", "/private/tmp/e5-5-t07-pristine-proof-v3/gate/warm-ui"]}
+{"index": 2, "exitCode": 0, "elapsed": 12.786574125289917, "command": ["node", "tools/verify/e5-t18e-demo-smoke.mjs"]}
+{"passed": true, "out": "/private/tmp/e5-5-t07-pristine-proof-v3/gate", "failure": null}

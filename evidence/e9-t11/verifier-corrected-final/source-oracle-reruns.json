@@ -1,0 +1,81 @@
+{
+  "status": "passed",
+  "frozen_original_sha256": "f3e7b826b825d5ca29995fd7071e58cd93459c3c50365157f72335378012d760",
+  "change": "Only source-oracle output location redirected; sealed evidence read-only.",
+  "runs": [
+    {
+      "label": "worker-native",
+      "command": [
+        "python3",
+        "-B",
+        "target/evidence/e9-t11-verifier/corrected/worker-native-oracle.py",
+        "--directory",
+        "target/evidence/e9-t11-worker-corrected-final/native"
+      ],
+      "exit_code": 0,
+      "script_sha256": "c113612d20f3640dfbfd16b120da52593b4939d058c3beb9d664590fa25ae6d5",
+      "output_sha256": "2666e2f04c96441207724efad989e5123b3950dba09825fd8820514e98228ccf",
+      "result": {
+        "status": "passed",
+        "workloads": 2,
+        "prefixes": 0
+      }
+    },
+    {
+      "label": "worker-browser",
+      "command": [
+        "python3",
+        "-B",
+        "target/evidence/e9-t11-verifier/corrected/worker-browser-oracle.py",
+        "--directory",
+        "target/evidence/e9-t11-worker-corrected-final/browser",
+        "--browser"
+      ],
+      "exit_code": 0,
+      "script_sha256": "4b7d1d945efdf0fb31a85bb21ffde43301e3dd841870f951e54ffad5a31c3e43",
+      "output_sha256": "5afd4a057aba9f86613467b81b1870e84398ee124c287f4cc503954107aae7cb",
+      "result": {
+        "status": "passed",
+        "workloads": 1,
+        "prefixes": 2
+      }
+    },
+    {
+      "label": "cold-native",
+      "command": [
+        "python3",
+        "-B",
+        "target/evidence/e9-t11-verifier/corrected/cold-native-oracle.py",
+        "--directory",
+        "target/evidence/e9-t11-cold-corrected-final/acceptance/native"
+      ],
+      "exit_code": 0,
+      "script_sha256": "400aad632ab338a13f7523a3c626e973c0be3963822cbc4ca1475edf3fc20cce",
+      "output_sha256": "2666e2f04c96441207724efad989e5123b3950dba09825fd8820514e98228ccf",
+      "result": {
+        "status": "passed",
+        "workloads": 2,
+        "prefixes": 0
+      }
+    },
+    {
+      "label": "cold-browser",
+      "command": [
+        "python3",
+        "-B",
+        "target/evidence/e9-t11-verifier/corrected/cold-browser-oracle.py",
+        "--directory",
+        "target/evidence/e9-t11-cold-corrected-final/acceptance/browser",
+        "--browser"
+      ],
+      "exit_code": 0,
+      "script_sha256": "4a57dbd7c6799b633aa64333a491ac5aedf3d4cf345b7d7eaef846d614937c25",
+      "output_sha256": "14c8c0c20582a8b0a553dcacadac4aa017b99202b02b090143c91375c2311377",
+      "result": {
+        "status": "passed",
+        "workloads": 1,
+        "prefixes": 2
+      }
+    }
+  ]
+}

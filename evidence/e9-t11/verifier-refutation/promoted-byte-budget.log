@@ -1,0 +1,10 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running tests/e9_time_entropy.rs (target/debug/deps/e9_time_entropy-389bc7ef893037ab)
+
+running 1 test
+HELD byte_soft_fence: first_transition=2 first_retired=2 first_receipts=3 first_bytes=3145728 first_host_calls=3 final_transition=4 final_retired=4 final_receipts=4 final_bytes=4194304 final_host_calls=4 replay_host_calls=0 used_idx=4 first_and_final_frames_equal=true
+test critic_byte_budget::byte_soft_fence_yields_between_complete_transitions_without_duplicate_entropy ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.67s
+

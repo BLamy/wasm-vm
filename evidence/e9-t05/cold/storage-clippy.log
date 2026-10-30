@@ -1,0 +1,17 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling zerocopy v0.8.52
+   Compiling serde_core v1.0.228
+   Compiling quote v1.0.46
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+    Checking once_cell v1.21.4
+    Checking memchr v2.8.2
+    Checking tempfile v3.27.0
+    Checking rusty-fork v0.3.1
+   Compiling syn v2.0.118
+   Compiling serde_derive v1.0.228
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking proptest v1.11.0
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/storage)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.52s

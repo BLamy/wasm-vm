@@ -75,7 +75,11 @@ impl Audit {
         if !self.seen.insert(file.clone()) {
             return;
         }
-        let parsed = syn::parse_file(&std::fs::read_to_string(&file).unwrap()).unwrap();
+        let parsed = syn::parse_file(
+            &std::fs::read_to_string(&file)
+                .unwrap_or_else(|error| panic!("audit source {}: {error}", file.display())),
+        )
+        .unwrap();
         let old_file = std::mem::replace(&mut self.file, file);
         let old_directory = std::mem::replace(&mut self.directory, directory);
         self.visit_file(&parsed);
@@ -143,14 +147,25 @@ impl<'ast> Visit<'ast> for Audit {
                     None
                 }
             });
-            let file = explicit.map(|p| self.directory.join(p)).unwrap_or_else(|| {
-                let flat = self.directory.join(format!("{}.rs", item.ident));
-                if flat.exists() {
-                    flat
-                } else {
-                    directory.join("mod.rs")
-                }
-            });
+            let file = explicit
+                .map(|p| {
+                    // An external module's #[path] is relative to its source file, while an
+                    // inline module can have a nested module directory.
+                    let beside_source = self.file.parent().unwrap().join(&p);
+                    if beside_source.exists() {
+                        beside_source
+                    } else {
+                        self.directory.join(p)
+                    }
+                })
+                .unwrap_or_else(|| {
+                    let flat = self.directory.join(format!("{}.rs", item.ident));
+                    if flat.exists() {
+                        flat
+                    } else {
+                        directory.join("mod.rs")
+                    }
+                });
             self.file(file, directory);
         }
     }

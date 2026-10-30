@@ -23,6 +23,7 @@ use super::mmio::VirtioMmio;
 use super::queue::{DescriptorChain, Virtqueue};
 use crate::bus::Bus;
 use crate::mmio::SystemBus;
+use crate::session_ingress::SessionIngressGate;
 
 /// Virtio device id assigned to an input device.
 pub const VIRTIO_INPUT_DEVICE_ID: u32 = 18;
@@ -138,6 +139,8 @@ impl PendingFrame {
 /// Shared state between the transport-facing input device and the queue service.
 pub struct InputState {
     status_sink: Box<dyn InputStatusSink>,
+    /// Not serialized: all retained host/UI handles share the machine's replay admission gate.
+    host_ingress_gate: Option<Rc<SessionIngressGate>>,
     /// Optional host-injection contract copied from the device declaration. Raw `enqueue_event`
     /// remains available to transport fixtures, while the public host frame API refuses events
     /// the selected device did not advertise.
@@ -170,6 +173,7 @@ impl InputState {
     ) -> Self {
         Self {
             status_sink,
+            host_ingress_gate: None,
             capabilities,
             kicked: [false; 2],
             reset_pending: false,
@@ -187,10 +191,23 @@ impl InputState {
         }
     }
 
+    pub(crate) fn bind_host_ingress_gate(&mut self, gate: Rc<SessionIngressGate>) {
+        self.host_ingress_gate = Some(gate);
+    }
+
+    fn host_ingress_allowed(&self) -> bool {
+        self.host_ingress_gate
+            .as_ref()
+            .is_none_or(|gate| gate.allows_host())
+    }
+
     /// Queue one already-framed transport event for the eventq.  `inject_event`/`sync` below are
     /// the host-facing API; this primitive keeps the T10b queue fixture useful without requiring a
     /// synthetic SYN_REPORT.
     pub fn enqueue_event(&mut self, event: InputEvent) {
+        if !self.host_ingress_allowed() {
+            return;
+        }
         let events = alloc::vec![event];
         self.pending_event_count = self.pending_event_count.saturating_add(1);
         self.pending_frames.push_back(PendingFrame::new(events));
@@ -202,6 +219,9 @@ impl InputState {
     /// staging budget is full, later events are counted as part of the eventual whole-frame drop
     /// rather than growing an unbounded allocation.
     pub fn inject_event(&mut self, event_type: u16, code: u16, value: i32) -> bool {
+        if !self.host_ingress_allowed() {
+            return false;
+        }
         let event = InputEvent::new(event_type, code, value);
         if !self.accepts_host_event(event) {
             self.rejected_events = self.rejected_events.saturating_add(1);
@@ -214,8 +234,36 @@ impl InputState {
         true
     }
 
+    /// Exact bounded host publication intent: accepted-event count, retained-event count, then
+    /// the retained wire events and the SYN_REPORT that sync will submit. The count also records
+    /// overflowed staging, whose whole-frame drop must remain reproducible. This is observational.
+    pub fn session_host_frame(&self) -> Option<Vec<u8>> {
+        let size = self
+            .staged_frame
+            .len()
+            .checked_add(1)?
+            .checked_mul(INPUT_EVENT_SIZE)?
+            .checked_add(12)?;
+        if size > crate::session_clock::MAX_PAYLOAD {
+            return None;
+        }
+        let mut out = Vec::with_capacity(size);
+        out.extend_from_slice(&(self.staged_event_count as u64).to_le_bytes());
+        out.extend_from_slice(&(self.staged_frame.len() as u32).to_le_bytes());
+        for event in &self.staged_frame {
+            out.extend_from_slice(&event.to_bytes());
+        }
+        if self.staged_event_count != 0 {
+            out.extend_from_slice(&InputEvent::new(EV_SYN, SYN_REPORT, 0).to_bytes());
+        }
+        Some(out)
+    }
+
     /// Finish the current frame with `EV_SYN/SYN_REPORT` and enqueue it atomically.
     pub fn sync(&mut self) {
+        if !self.host_ingress_allowed() {
+            return;
+        }
         if self.staged_event_count == 0 {
             // A rejected-only host frame must not turn into a stray SYN_REPORT. This also keeps
             // the stream contract exact: every emitted frame has at least one accepted payload
@@ -249,16 +297,59 @@ impl InputState {
         snapshot::encode(self)
     }
 
+    /// Exact session state, including delivered and suppressed key/button ledgers.
+    /// Unlike a desktop reconnect, this does not synthesize a release or mutate the source.
+    pub fn to_session_snapshot(&self) -> Result<Vec<u8>, InputSnapshotError> {
+        snapshot::encode_session(self)
+    }
+
+    /// Validate the entire session envelope before replacing queue and ledger state.
+    pub fn restore_session_snapshot(&mut self, payload: &[u8]) -> Result<(), InputSnapshotError> {
+        if !self.host_ingress_allowed() {
+            return Err(InputSnapshotError::ReplayIngress);
+        }
+        snapshot::restore_session(self, payload)
+    }
+
+    pub(crate) fn to_resume_snapshot(&self, exact: bool) -> Result<Vec<u8>, InputSnapshotError> {
+        if exact {
+            self.to_session_snapshot()
+        } else {
+            self.to_snapshot()
+        }
+    }
+
+    pub(crate) fn restore_resume_snapshot(
+        &mut self,
+        payload: &[u8],
+        exact: bool,
+    ) -> Result<(), InputSnapshotError> {
+        if exact {
+            self.restore_session_snapshot(payload)
+        } else {
+            self.restore_snapshot(payload).map(|_| ())
+        }
+    }
+
     /// Restore a desktop checkpoint and return the release frame needed to clear host-held input.
     pub fn restore_snapshot(
         &mut self,
         payload: &[u8],
     ) -> Result<InputRestoreReport, InputSnapshotError> {
+        if !self.host_ingress_allowed() {
+            return Err(InputSnapshotError::ReplayIngress);
+        }
         snapshot::restore(self, payload)
     }
 
     /// Release every key or button whose down transition reached the guest.
     pub fn release_all(&mut self) -> InputRestoreReport {
+        if !self.host_ingress_allowed() {
+            return InputRestoreReport {
+                host_held_set_discarded: false,
+                release_events: Vec::new(),
+            };
+        }
         let release_events = self.take_release_frame();
         if !release_events.is_empty() {
             self.pending_event_count = self
@@ -309,6 +400,9 @@ impl InputState {
     /// Change the pending-event budget for deterministic stress fixtures.  Lowering it immediately
     /// applies the same whole-frame policy used when a new frame arrives.
     pub fn set_pending_event_budget(&mut self, budget: usize) {
+        if !self.host_ingress_allowed() {
+            return;
+        }
         self.pending_event_budget = budget;
         self.enforce_pending_budget();
     }

@@ -164,7 +164,7 @@ export const ROADMAP = [
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
       { name: "Omarchy full-screen desktop and fresh warm launch", status: "in-progress", evidence: "E5.5-T03c verifies coherent SDR snapshot rendering and host-side viewport fitting. E5.5-T03e verifies hash-checked persistent boot-file caching and accurate restore phases, including zero boot-artifact downloads on production reload. Guest sessions remain ephemeral. E5.5-T03a is blocked on the pending T03d input-latency remedy; responsive desktop and guest modesets are not yet verified." },
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
-      { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5.5-T03al bounds snapshot container allocation for the 1 GiB Omarchy guest. E5-T26f still requires Chromium save/reload/restore, keyboard, drag, cursor and gesture-audio proof; desktop responsiveness remains unresolved." },
+      { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5.5-T03al bounds snapshot container allocation for the 1 GiB Omarchy guest. E5.5-T07 verifies streamed software warm restore without the expanded JavaScript snapshot copy; physical iPhone compatibility remains unverified. E5-T26f still requires Chromium save/reload/restore, keyboard, drag, cursor and gesture-audio proof; desktop responsiveness remains unresolved." },
       { name: "Opt-in desktop monotonic clock", status: "verified", evidence: "E5-T26i: real worker rdtime and restore/pause lifecycle verified; measured wall mode did not improve interaction latency, so icount remains the default" },
       { name: "Deterministic guest timer-rate selection", status: "verified", evidence: "E5-T26j: explicit divider and real-worker restore verified. E5.5-T03bd adds paired host-time measurements and clock/phase/resume oracles. Four clock candidates failed the browser speed gate against the current runtime and were discarded; no additional speedup is claimed. The timer-rate experiment was negative; default ten and F's two-second requirement remain unchanged." },
       { name: "Bounded decoded-block cache selection", status: "verified", evidence: "E5-T26k: strict 4096/16384 selection, coherent restore and Chromium comparison verified; fewer decoded builds did not satisfy F, so default 4096 and the two-second requirement remain unchanged" },
@@ -214,6 +214,47 @@ export const ROADMAP = [
     blurb: "Cancelled 2026-07-06 — superseded by E3.5 OCI Workloads. The record/replay ideas may return as their own epic.",
     caps: [],
   },
+  {
+    epic: "E9",
+    title: "Session Time Travel",
+    status: "verified",
+    blurb: "Verified bounded Linux/GPU time travel: saved recordings, exact seeks and steps, private branches and local recording files. Full Omarchy cold qualification and performance budgets remain deferred and unproven.",
+    caps: [
+      { name: "Durable multi-session history store", status: "verified", evidence: "E9-T03: bounded IndexedDB chunks, atomic commit cursors, reload/crash and two-tab writer proofs" },
+      { name: "Immutable historical disk roots", status: "verified", evidence: "E9-T04: private COW restores, exact base/generation bindings and shared-block retention" },
+      { name: "Coherent software machine checkpoints", status: "verified", evidence: "E9-T05: exact native/input/disk tuple, atomic publication and private reload restore" },
+      { name: "Local saved-session library", status: "verified", evidence: "E9-T06: real checkpoint controls, durable names and exact paused reopen" },
+      { name: "Storage limits and shared-data deletion", status: "verified", evidence: "E9-T07: quota prefix, shared restore, crash recovery and independent verification" },
+      { name: "Retention and reload milestone", status: "verified", evidence: "E9-T08: independently verified two-guest reload, file/RAM/input, quota, and deletion proof" },
+      { name: "Exact event clock and bounded execution", status: "verified", probe: "event-clock", evidence: "E9-T09: independently verified exact stops, ordered effects, WFI/timers and restore on interpreter/JIT" },
+      { name: "Delivered user input recording", status: "verified", probe: "input-recording", evidence: "E9-T10: guest input adapters, durable prefixes and replay ingress firewall" },
+      { name: "Guest time and entropy recording", status: "verified", probe: "time-entropy", evidence: "E9-T11: independently verified RTC/entropy replay, stable JIT polling and zero live providers" },
+      { name: "Offline network recording", status: "verified", probe: "network-capture", evidence: "E9-T13: real guest Ethernet intents, owned replies, exact delivery positions and zero live replay transport" },
+      { name: "Owned device completion recording", status: "verified", probe: "device-completions", evidence: "E9-T12/T22t: authenticated base payloads, bounded large guest block DMA, real agent/audio DMA and revocable callback leases" },
+      { name: "Saved full Linux replay", status: "verified", probe: "session-replay", evidence: "E9-T14: pinned Alpine session, durable event tape, interpreter/JIT state digests, first-divergence and unbranched-input checks" },
+      { name: "Bounded native replay handoff", status: "verified", probe: "streamed-replay", evidence: "E9-T22g: Daybreak verified one private machine across bounded exact replay windows; full GPU workload qualification remains separate" },
+      { name: "Incremental RAM keyframes", status: "verified", probe: "session-keyframe", evidence: "E9-T15: independently verified bounded dirty-page deltas, exact private restore, ancestor refusal and shared retention" },
+      { name: "Seeking and reverse-step", status: "verified", probe: "session-seek", evidence: "E9-T16: independently verified transition fences, keyframe lookup and latest-request ownership" },
+      { name: "Accelerated desktop keyframes", status: "verified", evidence: "E9-T17: independently verified Omarchy points, exact scanout restore, fresh owners, trusted input and library reopen" },
+      { name: "Native owned GPU results", status: "verified", evidence: "E9-T18a–c: independently verified exact 32 MiB DMA and owned result/fence admission through the production browser bridge" },
+      { name: "Pending GPU result keyframes", status: "verified", evidence: "E9-T18b–c: independently verified pending-work restore, recorded results and fresh callback leases in native and physical GPU replay" },
+      { name: "Guest-visible GPU replay", status: "verified", evidence: "E9-T18c: independently verified durable RV64 GPU results, private seek and physical canvas in 1 GiB pure ICount/64; full Omarchy and performance qualification are deferred; bounded integration is tracked by T24" },
+      { name: "Accessible session timeline", status: "verified", evidence: "E9-T19: independently verified saved Linux restoration, real console output, accessible controls and cancellation ownership" },
+      { name: "Branches from saved history", status: "verified", evidence: "E9-T20: Daybreak verified isolated software/GPU continuations, real Linux files, private COW/input state, retained local assets and permanent offline network policy" },
+      { name: "Paged state witness storage", status: "verified", probe: "witness-pages", evidence: "E9-T22i: Daybreak verified bounded durable state witnesses, complete cleanup and storage-only archive transfer; playback remains gated" },
+      { name: "Large local session metadata", status: "verified", evidence: "E9-T22l: Daybreak verified exact saved-checkpoint continuation above the portable 4 GiB cap, bounded local admission, atomic rejection and unchanged portable archive limits" },
+      { name: "Large local saved-data retention", status: "verified", evidence: "E9-T22m: Daybreak verified 16 GiB local retention admission, exact quota refusal, orphan cleanup and process-restart reopen against the original Omarchy prefix; full desktop qualification is deferred and unproven" },
+      { name: "Bounded GPU history reads", status: "verified", probe: "gpu-history-reader", evidence: "E9-T22f: Daybreak verified complete native receipt/body/witness authentication before bounded cursor delivery" },
+      { name: "Bounded GPU browser replay", status: "verified", probe: "gpu-history-replay", evidence: "E9-T22h: Daybreak verified authenticated witnessed windows through the browser timeline; full Omarchy qualification is deferred and unproven" },
+      { name: "Exact GPU QueueNotify checkpoints", status: "verified", evidence: "E9-T22q: Daybreak verified control and cursor wake-up latches, unnotified descriptor replay through the next witness, and a two-queue notification race; original-cold Omarchy qualification is deferred" },
+      { name: "Long GPU journal recording", status: "verified", probe: "gpu-journal-stream", evidence: "E9-T22e: Daybreak verified bounded native input/block recording, saved-byte authentication and failure recovery. E9-T22j verified a full keyframe with an owned block read parked after completion; full Omarchy qualification is deferred" },
+      { name: "Owned live HTTP with zero-egress replay", status: "verified", probe: "owned-http", evidence: "E9-T22b: Daybreak-verified fixed local Slirp HTTP provider; full Alpine OFF/ON bodies, exact closed-server replay and zero replay egress" },
+      { name: "Live execution with recording disabled", status: "verified", probe: "unrecorded-control", evidence: "Capture-OFF fixed profiles verified with full Alpine file/input work and physical GPU fixtures (E9-T22a); full desktop and performance qualification are deferred" },
+      { name: "Recording and replay recovery", status: "verified", evidence: "E9-T23: actual Daybreak verified codec mutations, durable crash cuts, quota/GC schedules and real Linux/physical GPU recovery" },
+      { name: "Bounded time-travel integration", status: "verified", evidence: "E9-T24: actual Daybreak verified real Linux input/files/network, physical GPU witnesses, fresh-profile seek/step/transfer and the main public release; full Omarchy and numeric performance claims excluded" },
+      { name: "Local recording bundles", status: "verified", evidence: "E9-T21: Daybreak verified bounded software/GPU archives, authenticated closure and fresh-profile replay; matching installed runtime required" },
+    ],
+  },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -226,14 +267,14 @@ export const ROADMAP = [
 
 const STATUS = {
   verified: { label: "verified", color: "var(--green)", cls: "st-verified" },
-  implemented: { label: "implemented", color: "#4a9eff", cls: "st-implemented" },
-  "evidence-needed": { label: "evidence-needed", color: "#4a9eff", cls: "st-implemented" },
+  implemented: { label: "implemented", color: "#7fa2c9", cls: "st-implemented" },
+  "evidence-needed": { label: "evidence-needed", color: "#7fa2c9", cls: "st-implemented" },
   "in-progress": { label: "in progress", color: "var(--amber)", cls: "st-progress" },
-  pending: { label: "pending", color: "#6b7684", cls: "st-pending" },
+  pending: { label: "pending", color: "#77726a", cls: "st-pending" },
   blocked: { label: "blocked", color: "var(--red)", cls: "st-blocked" },
-  "verification-debt": { label: "verification debt", color: "#b17ce0", cls: "st-debt" },
-  cancelled: { label: "cancelled", color: "#5a6470", cls: "st-cancelled" },
-  decomposed: { label: "decomposed", color: "#7c8aa0", cls: "st-decomposed" },
+  "verification-debt": { label: "verification debt", color: "#a98aa0", cls: "st-debt" },
+  cancelled: { label: "cancelled", color: "#5f5a52", cls: "st-cancelled" },
+  decomposed: { label: "decomposed", color: "#8c867c", cls: "st-decomposed" },
 };
 
 function statusMeta(s) {
@@ -618,7 +659,7 @@ function render() {
     // Cancelled tickets are excluded from the overall count (they don't gate completion).
     const totalCounted = state.data.tasks.filter((t) => t.status !== "cancelled").length;
     const visibleCounted = visible.filter((t) => t.status !== "cancelled").length;
-    countEl.textContent = `${visibleCounted} of ${totalCounted} issues`;
+    countEl.textContent = `${visibleCounted} of ${totalCounted} tasks`;
   }
 
   if (state.view === "timeline") {
@@ -627,7 +668,7 @@ function render() {
   }
 
   if (!groups.length) {
-    lanes.append(h("div", "rm-empty", "No issues match the current filters."));
+    lanes.append(h("div", "rm-empty", "No tasks match the current filters."));
     return;
   }
 

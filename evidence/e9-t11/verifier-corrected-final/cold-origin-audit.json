@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "wrapper_sha256": "b93a1793ef72c1c56506bdd2637ec41dd182724b8965b00ffc9d1ce82e811095",
+  "wrapper_delta": "Only output directory renamed from already-audited original wrapper.",
+  "clone": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t11-e14e4312b9ee",
+  "git_metadata": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t11-cold-e14e4312b9ee.git",
+  "alternates": false,
+  "clone_tracked_or_untracked_status": [],
+  "initial_target_entries": [],
+  "clone_sources_authenticated": 51,
+  "environment_audit": "Wrapper excludes RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG, all CARGO_*/GIT_*; creates new target before acceptance, never copies compiler or node_modules."
+}

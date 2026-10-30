@@ -1,0 +1,8 @@
+{
+  "status": "environment-failed-before-build",
+  "head": "2d7b3414d0b16a744a246236f275870e51ba88a4",
+  "stage": "git checkout",
+  "reason": "Full tracked tree is 15.75 GB (15.40 GB historical evidence); only9.6 GiB available. Checkout exhausted disk before any build or acceptance.",
+  "cleanup": "Stopped process exit1; removed only owned partial /tmp/wasm-vm-ui-pristine-13h2u_2y; space recovered.",
+  "retry": "Fresh Git clone; source code checked out from Git; all tracked historical evidence materialized with APFS clonefile and verified against Git; no ignored build/dependency products copied."
+}

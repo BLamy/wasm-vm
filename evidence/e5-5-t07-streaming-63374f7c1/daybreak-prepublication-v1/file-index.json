@@ -1,0 +1,70 @@
+{
+  "audit.md": {
+    "bytes": 16541,
+    "sha256": "45cc8530008dca54eb170b02374d71a314651e886b5bd7104e315c46311f14a0"
+  },
+  "predictions.md": {
+    "bytes": 3503,
+    "sha256": "d1140ccf074cf6feee3831589fb72f2644e356e09bc73da9e73467110f429b41"
+  },
+  "report.md": {
+    "bytes": 4087,
+    "sha256": "743efd22adaf1093ab8923dbfb1d1a88187a07e3def8e4725c64195a1bc4c266"
+  },
+  "routing.json": {
+    "bytes": 29395,
+    "sha256": "61f5279b9837e0c59206b924a5dd760cc382958f97613bac518dab35983058f7"
+  },
+  "scratch/actual-wasm-boundary.log": {
+    "bytes": 910,
+    "sha256": "ecbd3bd4f03b00ec44e79283433853d6379528fd6cea6d9d6dd0937b03c0f9e3"
+  },
+  "scratch/actual-wasm-boundary.mjs": {
+    "bytes": 5792,
+    "sha256": "f2f7ca469eb92a55a3262e55ecf9e4ac57de5d6ef1ceda7f1bc1c062e12c3887"
+  },
+  "scratch/compare-wasm-metadata.log": {
+    "bytes": 3449,
+    "sha256": "18c83b39b847b169c8924a845c6501e3fa86aeab07154bde715aaab309daa40b"
+  },
+  "scratch/compare-wasm-metadata.mjs": {
+    "bytes": 2112,
+    "sha256": "fb55e0cd40ca212da1b091aacf02ebdd273bcf7f0ec03e500c9a95cbd0a5f7fe"
+  },
+  "scratch/exploratory-device-byte-failed.log": {
+    "bytes": 430,
+    "sha256": "4889fd3c836b796696bfc172144932d4e5db8729930ecf62791fd908d9021d41"
+  },
+  "scratch/exploratory-overstrict-failed.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scratch/live-wasm.bin": {
+    "bytes": 2645647,
+    "sha256": "00159a8cb8f880b0dc88412c5a7009e8a74dfa546c47c36dd0d6859125873a87"
+  },
+  "scratch/pristine-own-full-acceptance.log": {
+    "bytes": 573,
+    "sha256": "19446a07b507dbe3296e907edddad46904830ba6d8fcb708b66ac48f93c8be7b"
+  },
+  "scratch/pristine-own-full-acceptance.mjs": {
+    "bytes": 2756,
+    "sha256": "e29698d35a76ae9622b9446f3e89019ae4a874c83ca1645236e4c79362721fb5"
+  },
+  "scratch/sabotage-cleanup-check.log": {
+    "bytes": 491,
+    "sha256": "321aaa974695ee86b56d64d1dd8e05373683cdc32d25978fd4a71021b35139a0"
+  },
+  "scratch/sabotage-cleanup-check.mjs": {
+    "bytes": 843,
+    "sha256": "5c8f48e20585b9b797886ca9da6365e33d663458a4b5dcdbb1b6a5c45fc81a4b"
+  },
+  "scratch/snapshot-stream-sabotaged.mjs": {
+    "bytes": 2654,
+    "sha256": "9c1e7b1250887744a588957a8978f665e7e7934b846e48b8775fa65de2ac2ede"
+  },
+  "verdict.md": {
+    "bytes": 664,
+    "sha256": "b72e951687713dde94160815c2298a4c7bae307d71400493d74aeeb838223bc4"
+  }
+}

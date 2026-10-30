@@ -1,0 +1,1135 @@
+{
+  "task": "E9-T06",
+  "attack": "N1 stale compatible preview loses durable point before keyboard Open",
+  "implementation": "b97f739cdb161cb16f7d64ca983fb48fea80df76",
+  "prediction": "Admission rejects before owner replacement; active controller and raw tuple remain unchanged",
+  "started": "2026-10-18T05:28:47.637Z",
+  "status": "failed",
+  "errors": [],
+  "keyboard": [
+    {
+      "tag": "BUTTON",
+      "control": "new",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "sessions",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "new",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "sessions",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "points",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "new",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "sessions",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "points",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "open",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "new",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "start",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "resume",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "sessions",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "new",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "start",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "resume",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "sessions",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "control": "points",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "control": "open",
+      "outline": "solid"
+    }
+  ],
+  "served": [
+    {
+      "path": "/app.html",
+      "sha256": "04e585fb0a24ada5d3747a49d68afe9a306d3038e831de5b0f07e81721574bba",
+      "bytes": 50732
+    },
+    {
+      "path": "/session-library.css",
+      "sha256": "f43c0a1741ce267fca52a2603218de67ac3844e4e7a4ad9d9c976beac0bfa235",
+      "bytes": 1622
+    },
+    {
+      "path": "/vendor/xterm/xterm.css",
+      "sha256": "ba8e6985669488981ccf40c0cefe3aba80722cb6c92de7ad628b0bd717faf2b6",
+      "bytes": 5559
+    },
+    {
+      "path": "/vendor/xterm/xterm.js",
+      "sha256": "1f991ac3b4b283ebf96e60ae23a00a52765dd3a2e46fa6fdda9f1aab032f7495",
+      "bytes": 289441
+    },
+    {
+      "path": "/vendor/xterm/addon-fit.js",
+      "sha256": "bdaefa370b1bfc42ee88d46fe6072400902a4d4b2d45cd93438dda9b23c97089",
+      "bytes": 1497
+    },
+    {
+      "path": "/tabs.js",
+      "sha256": "373349ebda7a6da13a5864a5ba0c4356cd38a08ab68a8d7476b9ff1978685548",
+      "bytes": 1005
+    },
+    {
+      "path": "/ide.js",
+      "sha256": "ed280704025dede7801a51b3c5606cbbec6adaf606fe5fa991088f5a57baadc8",
+      "bytes": 141450
+    },
+    {
+      "path": "/omarchy-startup-state.js",
+      "sha256": "43fceb29bae3140c1cd25e4102706da110ce04fdcc553b207265aff3dcbafaca",
+      "bytes": 4152
+    },
+    {
+      "path": "/cpu-isolation.js",
+      "sha256": "b4a675d7a5f622d92fa486ae7d4bc0556130f99855772984fe05a0eeff6a092d",
+      "bytes": 5756
+    },
+    {
+      "path": "/coi-serviceworker-register.js",
+      "sha256": "86c5571dc7e1088c3938073e6edc913423030a6dcc90060780278d69f0c8cb4c",
+      "bytes": 2991
+    },
+    {
+      "path": "/main.js",
+      "sha256": "713efe5bc7ff73f489713bd971e8bda9bbed44f355af15c1e1b852d45e9c0746",
+      "bytes": 158292
+    },
+    {
+      "path": "/pkg/wasm_vm_wasm.js",
+      "sha256": "932c829007f02bfba5e12e5abc8628631f9b2c2228a6e139343318b87c65e79a",
+      "bytes": 132062
+    },
+    {
+      "path": "/roadmap.js",
+      "sha256": "a7af6ec4b58bf760a91761d1e850daefb9cd4219d8331ac4c6c5a3fc1e161c22",
+      "bytes": 58711
+    },
+    {
+      "path": "/riscv-tests.js",
+      "sha256": "444101ff3f82a222368b662065d93969aeddaa991151b69cbe03c04dc39886b5",
+      "bytes": 3087
+    },
+    {
+      "path": "/linux-worker-host.js",
+      "sha256": "65ea5ed32b5642a9e102803e0f6b09b4a02ce891ff72b7e480859fa8c7f0247d",
+      "bytes": 4051
+    },
+    {
+      "path": "/loader.js",
+      "sha256": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+      "bytes": 98531
+    },
+    {
+      "path": "/overlay-reset-target.js",
+      "sha256": "2aee312f3dae8544ef21eb284231cc79384260b5484a698d69d24b1549cad098",
+      "bytes": 540
+    },
+    {
+      "path": "/session-library.js",
+      "sha256": "b140c6be3382b349ff5236c147f473e4ae5b1d7999a90d24993e4a8c2fd3d4b8",
+      "bytes": 15622
+    },
+    {
+      "path": "/terminal.js",
+      "sha256": "fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae",
+      "bytes": 11452
+    },
+    {
+      "path": "/file-transfer.js",
+      "sha256": "d0eed6ba7f0594a166cee9aea832550575709e07a11100504bf7c5c41ff7e646",
+      "bytes": 26272
+    },
+    {
+      "path": "/boot-progress.js",
+      "sha256": "5e1e5155623204b2e106b3c05087e2188f2341769e05388e9dd272044aa2359e",
+      "bytes": 4127
+    },
+    {
+      "path": "/guest-rpc.js",
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "bytes": 3995
+    },
+    {
+      "path": "/src/input/keyboard.js",
+      "sha256": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67",
+      "bytes": 6948
+    },
+    {
+      "path": "/src/input/capture.js",
+      "sha256": "ae0a676d181ec9118118378e5767f755ae89ff8890f60ef9bd45a4f6ed70f369",
+      "bytes": 11472
+    },
+    {
+      "path": "/src/input/held-keys.js",
+      "sha256": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a",
+      "bytes": 4516
+    },
+    {
+      "path": "/src/input/reconciliation.js",
+      "sha256": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+      "bytes": 6655
+    },
+    {
+      "path": "/src/audio/sink.js",
+      "sha256": "1eb73a14bb3b3308e61a793c84d963ac75204c3f03dcb9d2ed220473081f6417",
+      "bytes": 12043
+    },
+    {
+      "path": "/src/audio/capture-ring.js",
+      "sha256": "d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176",
+      "bytes": 3268
+    },
+    {
+      "path": "/src/audio/autoplay.js",
+      "sha256": "d6f9982a0310c16a67a9c58d0b65f20c214e35429eb60c286766cfafc6ffa9c2",
+      "bytes": 10547
+    },
+    {
+      "path": "/src/audio/microphone.js",
+      "sha256": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+      "bytes": 16079
+    },
+    {
+      "path": "/src/input/pointer.js",
+      "sha256": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5",
+      "bytes": 24902
+    },
+    {
+      "path": "/src/sink/presentation.js",
+      "sha256": "e3baf28bb99120554099a665e5bc3865ab7ca594cedd554140d0862569a9d2b3",
+      "bytes": 23590
+    },
+    {
+      "path": "/src/sink/viewport.js",
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "bytes": 11016
+    },
+    {
+      "path": "/desktop-agent-session.js",
+      "sha256": "98bd5cabd71e0483b15f5e00816675b5377ef633a69e71838d14a1d3efeca798",
+      "bytes": 5113
+    },
+    {
+      "path": "/src/sink/cursor-controller.js",
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0",
+      "bytes": 15467
+    },
+    {
+      "path": "/desktop-restore.js",
+      "sha256": "49a1c6e2104b821ce983a447e7d126909a18482288ff5386929bc742c5c46151",
+      "bytes": 3896
+    },
+    {
+      "path": "/cold-counter-recycling.js",
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "bytes": 1614
+    },
+    {
+      "path": "/omarchy-desktop-readiness.js",
+      "sha256": "f940ec6b9f1e3702ecc0038c6986a75aac1e72779e474dfc0329e385d84f7473",
+      "bytes": 1836
+    },
+    {
+      "path": "/linux-worker-protocol.js",
+      "sha256": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+      "bytes": 32433
+    },
+    {
+      "path": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "bytes": 437
+    },
+    {
+      "path": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "bytes": 1314
+    },
+    {
+      "path": "/boot-path.js",
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "bytes": 2867
+    },
+    {
+      "path": "/overlay-seed-identity.js",
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "bytes": 692
+    },
+    {
+      "path": "/gpu-checkpoint-build.js",
+      "sha256": "d1e6416becc54bced193f83a0a9d408aaba6a98a700f62bc5b9dd769c7727a89",
+      "bytes": 340
+    },
+    {
+      "path": "/task-quiescence.js",
+      "sha256": "514888d3f3fd4bb73afcd7f86559b8e79f47d9558450abf762d12a885b28ea02",
+      "bytes": 1025
+    },
+    {
+      "path": "/guest-clock.js",
+      "sha256": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
+      "bytes": 7094
+    },
+    {
+      "path": "/decoded-cache.js",
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "bytes": 1412
+    },
+    {
+      "path": "/gpu-checkpoint.js",
+      "sha256": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
+      "bytes": 7331
+    },
+    {
+      "path": "/boot-asset-cache.js",
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "bytes": 9253
+    },
+    {
+      "path": "/admission-probe.js",
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c",
+      "bytes": 819
+    },
+    {
+      "path": "/paste.js",
+      "sha256": "9cd015e36130f8b4bcb18a91b8cc06f32a2199ce32527abf65bb433bafeaeff7",
+      "bytes": 2256
+    },
+    {
+      "path": "/progress.js",
+      "sha256": "871b963702d62708622f41a3131003feb670c9e07a160de02ee37b89b5e97167",
+      "bytes": 8163
+    },
+    {
+      "path": "/src/input/keymap.js",
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada",
+      "bytes": 13680
+    },
+    {
+      "path": "/osc52.js",
+      "sha256": "89132eee9f4ca5ca1cc45596518b4cef77ee7bb8f773ac37cf98839fbeb3e18c",
+      "bytes": 6183
+    },
+    {
+      "path": "/src/audio/ring.js",
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893",
+      "bytes": 12823
+    },
+    {
+      "path": "/src/audio/worklet.js",
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+      "bytes": 4123
+    },
+    {
+      "path": "/src/sink/canvas2d.js",
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+      "bytes": 3751
+    },
+    {
+      "path": "/src/audio/capture-worklet.js",
+      "sha256": "1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a",
+      "bytes": 4322
+    },
+    {
+      "path": "/src/sink/webgl.js",
+      "sha256": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+      "bytes": 9381
+    },
+    {
+      "path": "/src/sink/frame-scheduler.js",
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d",
+      "bytes": 6059
+    },
+    {
+      "path": "/src/sink/visibility-scheduler.js",
+      "sha256": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80",
+      "bytes": 5475
+    },
+    {
+      "path": "/desktop-agent-bridge.js",
+      "sha256": "95ead26788572195db822ffdfe7853ca6cbaf29f4397357d46ef24d63e6fa338",
+      "bytes": 2993
+    },
+    {
+      "path": "/src/sink/cursor.js",
+      "sha256": "be4619b7f049b4a468bdbfbc20602d4d514775b710d2abc6ccdc370406e63c7b",
+      "bytes": 16477
+    },
+    {
+      "path": "/renderer/virgl-command/checkpoint-codec.mjs",
+      "sha256": "a744a9c9bc0f5fb0543d929429f00dfae55fac7afc6563447d789f2bd3fd6eff",
+      "bytes": 5017
+    },
+    {
+      "path": "/agent-channel.js",
+      "sha256": "2bd1a2ed1a4afa7bc3ca514afb333b851db76425cc7383462102fae392705ac1",
+      "bytes": 39591
+    },
+    {
+      "path": "/src/sink/present-backend.js",
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7",
+      "bytes": 4367
+    },
+    {
+      "path": "/session-store.js",
+      "sha256": "fab02e48194d3376d90ff69aa67a7eabb095b56d427023b10fcca7818f3f684f",
+      "bytes": 17897
+    },
+    {
+      "path": "/session-checkpoints.js",
+      "sha256": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+      "bytes": 9969
+    },
+    {
+      "path": "/session-disk-roots.js",
+      "sha256": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
+      "bytes": 7349
+    },
+    {
+      "path": "/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+      "bytes": 1864397
+    },
+    {
+      "path": "/session-pkg/wasm_vm_session.js",
+      "sha256": "960fe8947a66cc5da863c72dd98272443381c81ad7fc53d0c4886c644834ed81",
+      "bytes": 13440
+    },
+    {
+      "path": "/assets/hello.elf",
+      "sha256": "d562f9ec53be1727d7f4a0cf0f114d282cb18a414f2747579d50836d97373f92",
+      "bytes": 5536
+    },
+    {
+      "path": "/artifacts-alpine.json",
+      "sha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece",
+      "bytes": 774
+    },
+    {
+      "path": "/session-pkg/wasm_vm_session_bg.wasm",
+      "sha256": "55f61b58a41413e37769d05cd0de6949df181c8b1931c17beab5410caaeb25df",
+      "bytes": 386124
+    },
+    {
+      "path": "/artifacts-node-alpine.json",
+      "sha256": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857",
+      "bytes": 795
+    },
+    {
+      "path": "/artifacts-omarchy.json",
+      "sha256": "8882c19e523318a0ee7d13131889308680967ef530070e1756c59ad48a6f9f25",
+      "bytes": 915
+    },
+    {
+      "path": "/src/audio/worklet.js",
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+      "bytes": 4123
+    },
+    {
+      "path": "/src/audio/ring.js",
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893",
+      "bytes": 12823
+    },
+    {
+      "path": "/session-software-fixture.json",
+      "sha256": "58649de67da288681450b226d20b4f373bfc6db2583f3d061e6cebda3fa479b8",
+      "bytes": 539
+    },
+    {
+      "path": "/linux-worker.js",
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "bytes": 1188
+    },
+    {
+      "path": "/loader.js",
+      "sha256": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+      "bytes": 98531
+    },
+    {
+      "path": "/linux-worker-protocol.js",
+      "sha256": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+      "bytes": 32433
+    },
+    {
+      "path": "/pkg/wasm_vm_wasm.js",
+      "sha256": "932c829007f02bfba5e12e5abc8628631f9b2c2228a6e139343318b87c65e79a",
+      "bytes": 132062
+    },
+    {
+      "path": "/boot-path.js",
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "bytes": 2867
+    },
+    {
+      "path": "/overlay-seed-identity.js",
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "bytes": 692
+    },
+    {
+      "path": "/gpu-checkpoint.js",
+      "sha256": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
+      "bytes": 7331
+    },
+    {
+      "path": "/gpu-checkpoint-build.js",
+      "sha256": "d1e6416becc54bced193f83a0a9d408aaba6a98a700f62bc5b9dd769c7727a89",
+      "bytes": 340
+    },
+    {
+      "path": "/task-quiescence.js",
+      "sha256": "514888d3f3fd4bb73afcd7f86559b8e79f47d9558450abf762d12a885b28ea02",
+      "bytes": 1025
+    },
+    {
+      "path": "/guest-clock.js",
+      "sha256": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
+      "bytes": 7094
+    },
+    {
+      "path": "/decoded-cache.js",
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "bytes": 1412
+    },
+    {
+      "path": "/boot-asset-cache.js",
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "bytes": 9253
+    },
+    {
+      "path": "/admission-probe.js",
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c",
+      "bytes": 819
+    },
+    {
+      "path": "/cold-counter-recycling.js",
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "bytes": 1614
+    },
+    {
+      "path": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "bytes": 437
+    },
+    {
+      "path": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "bytes": 1314
+    },
+    {
+      "path": "/renderer/virgl-command/checkpoint-codec.mjs",
+      "sha256": "a744a9c9bc0f5fb0543d929429f00dfae55fac7afc6563447d789f2bd3fd6eff",
+      "bytes": 5017
+    },
+    {
+      "path": "/session-store.js",
+      "sha256": "fab02e48194d3376d90ff69aa67a7eabb095b56d427023b10fcca7818f3f684f",
+      "bytes": 17897
+    },
+    {
+      "path": "/session-pkg/wasm_vm_session.js",
+      "sha256": "960fe8947a66cc5da863c72dd98272443381c81ad7fc53d0c4886c644834ed81",
+      "bytes": 13440
+    },
+    {
+      "path": "/session-checkpoints.js",
+      "sha256": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+      "bytes": 9969
+    },
+    {
+      "path": "/session-disk-roots.js",
+      "sha256": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
+      "bytes": 7349
+    },
+    {
+      "path": "/session-pkg/wasm_vm_session_bg.wasm",
+      "sha256": "55f61b58a41413e37769d05cd0de6949df181c8b1931c17beab5410caaeb25df",
+      "bytes": 386124
+    },
+    {
+      "path": "/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+      "bytes": 1864397
+    },
+    {
+      "path": "/linux-worker.js",
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "bytes": 1188
+    },
+    {
+      "path": "/loader.js",
+      "sha256": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+      "bytes": 98531
+    },
+    {
+      "path": "/linux-worker-protocol.js",
+      "sha256": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+      "bytes": 32433
+    },
+    {
+      "path": "/pkg/wasm_vm_wasm.js",
+      "sha256": "932c829007f02bfba5e12e5abc8628631f9b2c2228a6e139343318b87c65e79a",
+      "bytes": 132062
+    },
+    {
+      "path": "/boot-path.js",
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "bytes": 2867
+    },
+    {
+      "path": "/overlay-seed-identity.js",
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "bytes": 692
+    },
+    {
+      "path": "/gpu-checkpoint-build.js",
+      "sha256": "d1e6416becc54bced193f83a0a9d408aaba6a98a700f62bc5b9dd769c7727a89",
+      "bytes": 340
+    },
+    {
+      "path": "/gpu-checkpoint.js",
+      "sha256": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
+      "bytes": 7331
+    },
+    {
+      "path": "/task-quiescence.js",
+      "sha256": "514888d3f3fd4bb73afcd7f86559b8e79f47d9558450abf762d12a885b28ea02",
+      "bytes": 1025
+    },
+    {
+      "path": "/guest-clock.js",
+      "sha256": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
+      "bytes": 7094
+    },
+    {
+      "path": "/decoded-cache.js",
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "bytes": 1412
+    },
+    {
+      "path": "/boot-asset-cache.js",
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "bytes": 9253
+    },
+    {
+      "path": "/admission-probe.js",
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c",
+      "bytes": 819
+    },
+    {
+      "path": "/cold-counter-recycling.js",
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "bytes": 1614
+    },
+    {
+      "path": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "bytes": 437
+    },
+    {
+      "path": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "bytes": 1314
+    },
+    {
+      "path": "/renderer/virgl-command/checkpoint-codec.mjs",
+      "sha256": "a744a9c9bc0f5fb0543d929429f00dfae55fac7afc6563447d789f2bd3fd6eff",
+      "bytes": 5017
+    },
+    {
+      "path": "/session-store.js",
+      "sha256": "fab02e48194d3376d90ff69aa67a7eabb095b56d427023b10fcca7818f3f684f",
+      "bytes": 17897
+    },
+    {
+      "path": "/session-pkg/wasm_vm_session.js",
+      "sha256": "960fe8947a66cc5da863c72dd98272443381c81ad7fc53d0c4886c644834ed81",
+      "bytes": 13440
+    },
+    {
+      "path": "/session-checkpoints.js",
+      "sha256": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+      "bytes": 9969
+    },
+    {
+      "path": "/session-disk-roots.js",
+      "sha256": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
+      "bytes": 7349
+    },
+    {
+      "path": "/session-pkg/wasm_vm_session_bg.wasm",
+      "sha256": "55f61b58a41413e37769d05cd0de6949df181c8b1931c17beab5410caaeb25df",
+      "bytes": 386124
+    },
+    {
+      "path": "/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+      "bytes": 1864397
+    }
+  ],
+  "initialRows": [
+    "Unavailable build",
+    "Beta saved session",
+    "Alpha saved session",
+    "library-incomplete · incomplete"
+  ],
+  "activeBefore": {
+    "sha256": "599fd981f229ea7c99600f274f6ae16873b940352ffd64e74f748abf7f96e73b",
+    "bytes": 23861239,
+    "paused": true,
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 0,
+      "totalSliceMs": 0,
+      "averageSliceMs": 0,
+      "maxSliceMs": 0,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 0
+        },
+        {
+          "leMs": 8,
+          "count": 0
+        },
+        {
+          "leMs": 16,
+          "count": 0
+        },
+        {
+          "leMs": 32,
+          "count": 0
+        },
+        {
+          "leMs": 64,
+          "count": 0
+        },
+        {
+          "leMs": 128,
+          "count": 0
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 0,
+      "requestedInstructions": 0,
+      "retiredInstructions": 0,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 0,
+      "outputBytes": 0,
+      "inputCalls": 0,
+      "inputBytes": 0,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 0,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+    "point": "point-c0ada506-63e9-4421-9574-503fdd3b6a11"
+  },
+  "preview": {
+    "id": "session-97581a46-990d-4e7b-b3b5-1351fd59b1ba",
+    "compatible": true,
+    "point": "point-cd5947ac-3326-45ec-83ec-4a84cb43d214",
+    "state": "ready",
+    "details": "2 exact restore points · 71.2 MiB referenced data (shared data may be counted by other sessions)\n\nCapture window 16.8 seconds\n\nRuntime c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc · Wasm 71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027 · image bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46\n\nCheckpoints only. No event replay or history from before recording was enabled."
+  },
+  "deleted": {
+    "id": "session-97581a46-990d-4e7b-b3b5-1351fd59b1ba",
+    "point": "point-cd5947ac-3326-45ec-83ec-4a84cb43d214",
+    "object": {
+      "sha256": "08af608a97fd4f7b8f6e193d4c7bb2c3e50e635659910cfbc2250822d9ff7bd0",
+      "length": "23896148"
+    },
+    "priorParts": 23,
+    "descriptorPresentAfter": false
+  },
+  "afterUi": {
+    "sameOwner": true,
+    "state": "incomplete",
+    "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+    "point": "point-c0ada506-63e9-4421-9574-503fdd3b6a11",
+    "status": "Corrupt: 08af608a97fd4f7b8f6e193d4c7bb2c3e50e635659910cfbc2250822d9ff7bd0. The last committed checkpoint is preserved."
+  },
+  "activeAfter": {
+    "sha256": "599fd981f229ea7c99600f274f6ae16873b940352ffd64e74f748abf7f96e73b",
+    "bytes": 23861239,
+    "paused": true,
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 0,
+      "totalSliceMs": 0,
+      "averageSliceMs": 0,
+      "maxSliceMs": 0,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 0
+        },
+        {
+          "leMs": 8,
+          "count": 0
+        },
+        {
+          "leMs": 16,
+          "count": 0
+        },
+        {
+          "leMs": 32,
+          "count": 0
+        },
+        {
+          "leMs": 64,
+          "count": 0
+        },
+        {
+          "leMs": 128,
+          "count": 0
+        },
+        {
+          "leMs": 256,
+          "count": 0
+        },
+        {
+          "leMs": 512,
+          "count": 0
+        },
+        {
+          "leMs": 1000,
+          "count": 0
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 0,
+      "requestedInstructions": 0,
+      "retiredInstructions": 0,
+      "fetchWaits": 0,
+      "fetchRequestedChunks": 0,
+      "fetchWaitTotalMs": 0,
+      "fetchWaitMaxMs": 0,
+      "outputCalls": 0,
+      "outputBytes": 0,
+      "inputCalls": 0,
+      "inputBytes": 0,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 0,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+    "point": "point-c0ada506-63e9-4421-9574-503fdd3b6a11"
+  },
+  "transitions": [
+    {
+      "state": "loading",
+      "busy": "false",
+      "status": "Reading local checkpoints…",
+      "active": "",
+      "disabled": [
+        "new",
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "sessions",
+        "points",
+        "open",
+        "refresh",
+        "name",
+        "rename"
+      ]
+    },
+    {
+      "state": "loading",
+      "busy": "false",
+      "status": "Reading selected preview; the active guest is unchanged…",
+      "active": "",
+      "disabled": [
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "points",
+        "open"
+      ]
+    },
+    {
+      "state": "incompatible",
+      "busy": "false",
+      "status": "Incompatible saved build or profile. Opening is disabled; the active guest is unchanged.",
+      "active": "",
+      "disabled": [
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "open"
+      ]
+    },
+    {
+      "state": "incompatible",
+      "busy": "false",
+      "status": "Incompatible saved build or profile. Opening is disabled; the active guest is unchanged.",
+      "active": "",
+      "disabled": [
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "open"
+      ]
+    },
+    {
+      "state": "loading",
+      "busy": "false",
+      "status": "Reading selected preview; the active guest is unchanged…",
+      "active": "",
+      "disabled": [
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "points",
+        "open"
+      ]
+    },
+    {
+      "state": "ready",
+      "busy": "false",
+      "status": "Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.",
+      "active": "",
+      "disabled": [
+        "start",
+        "checkpoint",
+        "stop",
+        "resume"
+      ]
+    },
+    {
+      "state": "ready",
+      "busy": "false",
+      "status": "Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.",
+      "active": "",
+      "disabled": [
+        "start",
+        "checkpoint",
+        "stop",
+        "resume"
+      ]
+    },
+    {
+      "state": "restoring",
+      "busy": "true",
+      "status": "Preparing the guest…",
+      "active": "",
+      "disabled": [
+        "new",
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "sessions",
+        "points",
+        "open",
+        "refresh",
+        "name",
+        "rename"
+      ]
+    },
+    {
+      "state": "restoring",
+      "busy": "true",
+      "status": "Preparing the guest…",
+      "active": "",
+      "disabled": [
+        "new",
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "sessions",
+        "points",
+        "open",
+        "refresh",
+        "name",
+        "rename"
+      ]
+    },
+    {
+      "state": "ready",
+      "busy": "true",
+      "status": "Exact checkpoint restored paused. Preview selection never changes the active guest. Choose Resume to continue.",
+      "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+      "disabled": [
+        "new",
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "sessions",
+        "points",
+        "open",
+        "refresh",
+        "name",
+        "rename"
+      ]
+    },
+    {
+      "state": "ready",
+      "busy": "false",
+      "status": "Exact checkpoint restored paused. Preview selection never changes the active guest. Choose Resume to continue.",
+      "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+      "disabled": [
+        "checkpoint",
+        "stop"
+      ]
+    },
+    {
+      "state": "loading",
+      "busy": "false",
+      "status": "Reading selected preview; the active guest is unchanged…",
+      "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+      "disabled": [
+        "checkpoint",
+        "stop",
+        "points",
+        "open"
+      ]
+    },
+    {
+      "state": "ready",
+      "busy": "false",
+      "status": "Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.",
+      "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+      "disabled": [
+        "checkpoint",
+        "stop"
+      ]
+    },
+    {
+      "state": "restoring",
+      "busy": "true",
+      "status": "Preparing the guest…",
+      "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+      "disabled": [
+        "new",
+        "start",
+        "checkpoint",
+        "stop",
+        "resume",
+        "sessions",
+        "points",
+        "open",
+        "refresh",
+        "name",
+        "rename"
+      ]
+    },
+    {
+      "state": "incomplete",
+      "busy": "false",
+      "status": "Corrupt: 08af608a97fd4f7b8f6e193d4c7bb2c3e50e635659910cfbc2250822d9ff7bd0. The last committed checkpoint is preserved.",
+      "active": "session-a0b4ba2e-0d83-4685-a5a1-177436719409",
+      "disabled": [
+        "checkpoint",
+        "stop"
+      ]
+    }
+  ],
+  "layout": {
+    "right": 390,
+    "viewport": 390,
+    "scroll": 586,
+    "client": 388
+  },
+  "failure": {
+    "message": "The expression evaluated to a falsy value:\n\n  assert.ok(report.layout.right<=report.layout.viewport+1&&report.layout.scroll<=report.layout.client+1)\n",
+    "stack": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(report.layout.right<=report.layout.viewport+1&&report.layout.scroll<=report.layout.client+1)\n\n    at file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-verifier/n1.mjs:139:10"
+  },
+  "finished": "2026-10-18T05:29:20.495Z"
+}

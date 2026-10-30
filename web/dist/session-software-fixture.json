@@ -1,0 +1,11 @@
+{
+  "profile": "rv64-linux-software-v1",
+  "boot_manifest": "./artifacts-alpine.json",
+  "image_manifest": "./session-alpine-image.json",
+  "image_manifest_sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+  "base_url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-alpine/",
+  "raw_image_sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+  "raw_image_bytes": 536870912,
+  "ram_mib": 256,
+  "bootargs": "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i"
+}

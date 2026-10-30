@@ -1,0 +1,27 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running tests/e9_event_clock_critic.rs (target/debug/deps/e9_event_clock_critic-02014cf76bc9d5b0)
+
+running 2 tests
+guest_read=false alarm=true record_quantum=6 replay_quantum=6 observations=6 replay_host_calls=0
+guest_read=true alarm=false record_quantum=8 replay_quantum=1 observations=4 replay_host_calls=0
+
+thread 'time_entropy::armed_rtc_samples_replay_across_actual_compiled_dispatch_budgets' (2484620) panicked at crates/jit-runtime/tests/e9_event_clock_critic.rs:273:13:
+assertion `left == right` failed: quantum=1, stopped=Some(SessionPosition { transition: 385, retired: 385, phase: Before, ordinal: 0, sequence: 1 })
+  left: Err(SourceDivergence(SourceDivergence { reason: Position, position: SessionPosition { transition: 385, retired: 385, phase: Observe, ordinal: 1, sequence: 2 }, expected: 2, observed: 2 }))
+ right: Ok(MaxInstrs)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test time_entropy::armed_rtc_samples_replay_across_actual_compiled_dispatch_budgets ... FAILED
+guest_read=true alarm=false record_quantum=8 replay_quantum=8 observations=4 replay_host_calls=0
+guest_read=true alarm=false record_quantum=1 replay_quantum=1 observations=4 replay_host_calls=0
+guest_read=true alarm=false record_quantum=1 replay_quantum=8 observations=4 replay_host_calls=0
+test time_entropy::guest_rtc_read_after_compiled_compute_replays_across_budgets ... ok
+
+failures:
+
+failures:
+    time_entropy::armed_rtc_samples_replay_across_actual_compiled_dispatch_budgets
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.15s
+
+error: test failed, to rerun pass `-p wasm-vm-jit-runtime --test e9_event_clock_critic`

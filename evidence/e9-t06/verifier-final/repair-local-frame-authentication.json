@@ -1,0 +1,140 @@
+{
+  "segments": [
+    70,
+    82,
+    82,
+    78
+  ],
+  "aggregate_entries": 312,
+  "raw_frames": [
+    {
+      "name": "before-admission",
+      "sha256": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+      "bytes": 23862607,
+      "input_hex": "65395f71756575653d616c7068612d7175657565640a",
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [],
+          "tablet": [],
+          "mouse": []
+        }
+      }
+    },
+    {
+      "name": "after-admission",
+      "sha256": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+      "bytes": 23862607,
+      "input_hex": "65395f71756575653d616c7068612d7175657565640a",
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [],
+          "tablet": [],
+          "mouse": []
+        }
+      }
+    },
+    {
+      "name": "after-initial-failure",
+      "sha256": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+      "bytes": 23862607,
+      "input_hex": "65395f71756575653d616c7068612d7175657565640a",
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [],
+          "tablet": [],
+          "mouse": []
+        }
+      }
+    }
+  ],
+  "repair_report_sha256": "4b83676473c08680b2435dcb930f986f09153bb79ace65dddbff092dc82fd5ce",
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "errors": [],
+  "gpu": {
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "retired": 3999540,
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  }
+}

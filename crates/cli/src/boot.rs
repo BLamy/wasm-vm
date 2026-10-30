@@ -1240,6 +1240,10 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 );
                 return ExitCode::from(101);
             }
+            RunOutcome::SessionStopped(error) => {
+                eprintln!("wasm-vm: session stopped: {error:?}");
+                return ExitCode::from(104);
+            }
             RunOutcome::MaxInstrs => {
                 // A profiled boot stops itself at the userland marker (also a MaxInstrs return);
                 // don't mislabel that as hitting the budget (critic C3).

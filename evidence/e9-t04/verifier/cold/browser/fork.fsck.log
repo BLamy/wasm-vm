@@ -1,0 +1,13 @@
+e2fsck 1.47.0 (5-Feb-2023)
+root: recovering journal
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+Feature orphan_present is set but orphan file is clean.
+Clear? yes
+
+
+root: ***** FILE SYSTEM WAS MODIFIED *****
+root: 1286/32768 files (0.1% non-contiguous), 13297/131072 blocks

@@ -1,0 +1,2 @@
+errors []
+terminal tail ["[fast-boot: restoring host from a build-time snapshot instead of booting Linux]","[fast-boot: host ready in 0.97s (restored, no Linux boot)]","[execution: whole-machine-worker; fast interpreter; JIT enabled, threshold 512; quantum 500000]"]

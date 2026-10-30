@@ -1,0 +1,137 @@
+{
+  "status": "passed",
+  "url": "https://wasm-vm.pages.dev/",
+  "started": "2026-10-29T01:07:15.212Z",
+  "expected": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d"
+    },
+    {
+      "path": "pkg/wasm_vm_wasm.js",
+      "sha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14"
+    },
+    {
+      "path": "loader.js",
+      "sha256": "94b9199ebea64916c386a47286d38ba393783d819b6299ffd7e9464ed65ed829"
+    },
+    {
+      "path": "snapshot-stream.js",
+      "sha256": "77faf0310717d00c232391f5e11d61a7df91dd668ebc7f7149584f1445943198"
+    },
+    {
+      "path": "gpu-checkpoint-build.js",
+      "sha256": "8ed33182214ddebe074ff5bbded084e581f68ca200119f0d4d105be06aeb6a47"
+    },
+    {
+      "path": "artifacts-omarchy.json",
+      "sha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750"
+    }
+  ],
+  "browser": "156.0.8078.49",
+  "files": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "bytes": 2650103,
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "expectedSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "headers": {
+        "content-type": "application/wasm",
+        "content-length": null,
+        "etag": "W/\"6c239b0ace5fca0f429798798ff15a06\"",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "credentialless",
+        "cf-cache-status": null
+      }
+    },
+    {
+      "path": "pkg/wasm_vm_wasm.js",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "bytes": 193900,
+      "sha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+      "expectedSha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+      "headers": {
+        "content-type": "application/javascript",
+        "content-length": null,
+        "etag": "W/\"06f94b79f7f075dcdac600a54d1380ec\"",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "credentialless",
+        "cf-cache-status": null
+      }
+    },
+    {
+      "path": "loader.js",
+      "url": "https://wasm-vm.pages.dev/loader.js",
+      "status": 200,
+      "bytes": 112322,
+      "sha256": "94b9199ebea64916c386a47286d38ba393783d819b6299ffd7e9464ed65ed829",
+      "expectedSha256": "94b9199ebea64916c386a47286d38ba393783d819b6299ffd7e9464ed65ed829",
+      "headers": {
+        "content-type": "application/javascript",
+        "content-length": null,
+        "etag": "W/\"295e903f202cc541de85a04e4d3fa8cc\"",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "credentialless",
+        "cf-cache-status": null
+      }
+    },
+    {
+      "path": "snapshot-stream.js",
+      "url": "https://wasm-vm.pages.dev/snapshot-stream.js",
+      "status": 200,
+      "bytes": 2593,
+      "sha256": "77faf0310717d00c232391f5e11d61a7df91dd668ebc7f7149584f1445943198",
+      "expectedSha256": "77faf0310717d00c232391f5e11d61a7df91dd668ebc7f7149584f1445943198",
+      "headers": {
+        "content-type": "application/javascript",
+        "content-length": null,
+        "etag": "W/\"ba59e7f960720ada0fbdcd60c3004835\"",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "credentialless",
+        "cf-cache-status": null
+      }
+    },
+    {
+      "path": "gpu-checkpoint-build.js",
+      "url": "https://wasm-vm.pages.dev/gpu-checkpoint-build.js",
+      "status": 200,
+      "bytes": 340,
+      "sha256": "8ed33182214ddebe074ff5bbded084e581f68ca200119f0d4d105be06aeb6a47",
+      "expectedSha256": "8ed33182214ddebe074ff5bbded084e581f68ca200119f0d4d105be06aeb6a47",
+      "headers": {
+        "content-type": "application/javascript",
+        "content-length": null,
+        "etag": "W/\"b00b4cc59a1793287377c33fea25aa31\"",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "credentialless",
+        "cf-cache-status": null
+      }
+    },
+    {
+      "path": "artifacts-omarchy.json",
+      "url": "https://wasm-vm.pages.dev/artifacts-omarchy.json",
+      "status": 200,
+      "bytes": 1362,
+      "sha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750",
+      "expectedSha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750",
+      "headers": {
+        "content-type": "application/json",
+        "content-length": null,
+        "etag": "W/\"09c88bfa3cde22f29309543ea9958e7f\"",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-embedder-policy": "credentialless",
+        "cf-cache-status": null
+      }
+    }
+  ],
+  "finished": "2026-10-29T01:07:17.228Z"
+}

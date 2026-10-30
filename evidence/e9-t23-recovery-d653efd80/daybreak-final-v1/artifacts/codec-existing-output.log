@@ -1,0 +1,14 @@
+node:internal/fs/promises:1564
+  return await PromisePrototypeThen(
+         ^
+
+Error: EEXIST: file already exists, mkdir '/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-final-verifier/novel-codecs'
+    at async Object.mkdir (node:internal/fs/promises:1564:10)
+    at async file:///Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tools/verify/e9-recovery-codecs.mjs:12:46 {
+  errno: -17,
+  code: 'EEXIST',
+  syscall: 'mkdir',
+  path: '/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-final-verifier/novel-codecs'
+}
+
+Node.js v24.20.0

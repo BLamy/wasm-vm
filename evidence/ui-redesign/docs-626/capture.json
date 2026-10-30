@@ -1,0 +1,48 @@
+{
+  "360": {
+    "quickstartOverflow": 0,
+    "firstResult": "./docs.html?page=time-travel#move-through-history",
+    "landed": [
+      "?page=time-travel#move-through-history",
+      "move-through-history",
+      95
+    ],
+    "landedOverflow": 0,
+    "errors": []
+  },
+  "390": {
+    "quickstartOverflow": 0,
+    "firstResult": "./docs.html?page=time-travel#move-through-history",
+    "landed": [
+      "?page=time-travel#move-through-history",
+      "move-through-history",
+      95
+    ],
+    "landedOverflow": 0,
+    "currentProvenance": "Current referenceSource: docs/design/session-format.md @ c396efe1e ↗",
+    "errors": []
+  },
+  "1280": {
+    "quickstartOverflow": 0,
+    "firstResult": "./docs.html?page=time-travel#move-through-history",
+    "landed": [
+      "?page=time-travel#move-through-history",
+      "move-through-history",
+      95
+    ],
+    "landedOverflow": 0,
+    "errors": []
+  },
+  "1440": {
+    "quickstartOverflow": 0,
+    "firstResult": "./docs.html?page=time-travel#move-through-history",
+    "landed": [
+      "?page=time-travel#move-through-history",
+      "move-through-history",
+      95
+    ],
+    "landedOverflow": 0,
+    "currentProvenance": "Current referenceSource: docs/design/session-format.md @ c396efe1e ↗",
+    "errors": []
+  }
+}

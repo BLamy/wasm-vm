@@ -6,8 +6,8 @@ use wasm_vm_core::dev::virtio::gpu::control3d::{
     Resource3dMetadata,
 };
 use wasm_vm_core::dev::virtio::gpu::submit3d::{
-    Submit3dBacking, Submit3dExchange, Submit3dKey, Submit3dKind, Submit3dRequest, Submit3dRows,
-    Submit3dSink,
+    Submit3dBacking, Submit3dCompletionLease, Submit3dExchange, Submit3dKey, Submit3dKind,
+    Submit3dRequest, Submit3dRows, Submit3dSink,
 };
 #[wasm_bindgen(inline_js = r#"
 // Do not invoke result accessors or assimilate promises. The Rust sink is synchronous.
@@ -224,11 +224,63 @@ fn marshal_submission(request: &Submit3dRequest) -> Result<Object, JsValue> {
     Ok(out)
 }
 
-pub(crate) struct JsSubmitSink(pub(crate) Function);
+pub(crate) struct JsSubmitSink {
+    pub(crate) callback: Function,
+    owner: Option<crate::virgl_session_transport::MachineGpuOwner>,
+}
+impl JsSubmitSink {
+    #[cfg(feature = "virgl-control-proof")]
+    pub(crate) fn legacy(callback: Function) -> Self {
+        Self {
+            callback,
+            owner: None,
+        }
+    }
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn for_machine(
+        callback: Function,
+        owner: crate::virgl_session_transport::MachineGpuOwner,
+    ) -> Self {
+        Self {
+            callback,
+            owner: Some(owner),
+        }
+    }
+    pub(crate) fn own_transport(
+        &self,
+        event: &Object,
+        lease: Submit3dCompletionLease,
+    ) -> Result<(), Control3dError> {
+        let owner = self
+            .owner
+            .as_ref()
+            .ok_or(Control3dError::InvalidParameter)?;
+        lease.authorize_transport()?;
+        if owner.stopped.get() || owner.machine.upgrade().is_none() {
+            return Err(Control3dError::InvalidParameter);
+        }
+        set(
+            event,
+            "ownedTransport",
+            crate::virgl_session_transport::WasmGpuTransport::new(owner.clone(), lease),
+        )
+        .map_err(|_| Control3dError::BridgePoisoned)
+    }
+}
 impl Submit3dSink for JsSubmitSink {
+    fn begin_session_job(
+        &mut self,
+        request: &Submit3dRequest,
+        lease: Submit3dCompletionLease,
+    ) -> Result<(), Control3dError> {
+        let event = marshal_submission(request).map_err(|_| Control3dError::BridgePoisoned)?;
+        self.own_transport(&event, lease)?;
+        control_result(invoke(&self.callback, &event))
+    }
+
     fn begin_job(&mut self, request: &Submit3dRequest) -> Result<(), Control3dError> {
         let event = marshal_submission(request).map_err(|_| Control3dError::BridgePoisoned)?;
-        control_result(invoke(&self.0, &event))
+        control_result(invoke(&self.callback, &event))
     }
 
     fn cancel_job(&mut self, key: Submit3dKey) -> Result<(), Control3dError> {
@@ -239,7 +291,7 @@ impl Submit3dSink for JsSubmitSink {
             set(&event, "sequence", hex(key.sequence))
         })()
         .map_err(|_| Control3dError::BridgePoisoned)?;
-        control_result(invoke(&self.0, &event))
+        control_result(invoke(&self.callback, &event))
     }
 }
 pub(crate) fn address(value: &str) -> Result<u64, JsError> {

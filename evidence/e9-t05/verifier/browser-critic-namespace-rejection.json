@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "checks": null,
+  "errors": [],
+  "error": {
+    "message": "page.evaluate: SessionStoreError: Namespace\n    at fail (http://127.0.0.1:65320/session-store.js:18:40)\n    at need (http://127.0.0.1:65320/session-store.js:19:61)\n    at SessionStore.open (http://127.0.0.1:65320/session-store.js:83:5)\n    at eval (eval at evaluate (:234:30), <anonymous>:51:32)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: SessionStoreError: Namespace\n    at fail (http://127.0.0.1:65320/session-store.js:18:40)\n    at need (http://127.0.0.1:65320/session-store.js:19:61)\n    at SessionStore.open (http://127.0.0.1:65320/session-store.js:83:5)\n    at eval (eval at evaluate (:234:30), <anonymous>:51:32)\n    at async <anonymous>:260:30\n    at checkSoftwareCheckpointCritic (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-software-checkpoints-critic.mjs:5:29)\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-browser-critic.mjs:29:23"
+  },
+  "trace": {
+    "path": "target/evidence/e9-t05-critic-trace.zip",
+    "sha256": "c471bd84d2b11efbb4a88b6412b355a4d65a24a64d5fa0fb53acfd00a927d9cb"
+  },
+  "coverage": {
+    "path": "target/evidence/e9-t05-critic-coverage.json",
+    "sha256": "8c22fab19100f8dc3daf7b315b7e68c782cb235a9bf0bab61c90d68fe98fd0ac"
+  }
+}

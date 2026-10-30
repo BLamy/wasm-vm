@@ -1,0 +1,8 @@
+--- a/crates/core/src/session_clock.rs
++++ b/crates/core/src/session_clock.rs
+@@
+-        if self.session_fence == Some(clock.position.transition) {
++        // Verifier sabotage in an ignored core source copy only.
++        if false && self.session_fence == Some(clock.position.transition) {
+             return Ok(Preparation::Fence);
+         }

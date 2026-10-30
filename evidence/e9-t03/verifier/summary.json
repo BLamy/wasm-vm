@@ -1,0 +1,55 @@
+{
+  "status": "verified",
+  "runtime_head": "8461ae9f661deb0841dabf00ab9b99e1fd431e2f",
+  "submission_head": "29329ca472b5c8ab72915ddf4bdd08c0bb847e82",
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD",
+    "P9": "HELD"
+  },
+  "P9": "HELD: one final-head pristine clone passed at c51133cacd48408e9ef054370b0503a32f645f32",
+  "worker_original_receipts": 420,
+  "worker_trace_events": 1571,
+  "independent_seeds": [
+    13411,
+    13412,
+    13413,
+    13414
+  ],
+  "independent_crash_revisions": [
+    "1",
+    "1",
+    "1",
+    "2"
+  ],
+  "metadata_corruption_cases": 4,
+  "promoted_critic_cases": {
+    "metadata": 4,
+    "immutable_reuse": 2,
+    "final_transaction": 3,
+    "cancellation": 1,
+    "explicit_close": 1,
+    "platform_faults": 3,
+    "version_change": 1,
+    "pending_acquisition_close": 1,
+    "catalog_bounds": 2
+  },
+  "sabotage": {
+    "original": "NotAppend",
+    "guard_removed": "accepted",
+    "rejection_assertion": "failed as required"
+  },
+  "combined_nonempty_runtime_lines_uncovered": [],
+  "retained_predecessor_files": 47,
+  "initial_scratch_fixture_note": "Independent crash/race and metadata attacks completed before a malformed sabotage setup checkpoint was rejected with IndexOrder. The narrow corrected supplement then passed and detected the removed guard. No runtime change or repeated held attack was needed.",
+  "waived_branch_ranges": 5,
+  "cold_files_checked": 442,
+  "cold_receipt_sha256": "f0e4812a4d12c2b6fb114983d74fce71e3b3acfd6c552817775da50e18983de6",
+  "cold_acceptance_sha256": "c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf"
+}

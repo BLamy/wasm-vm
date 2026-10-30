@@ -1,0 +1,49 @@
+{
+  "ui.js": {
+    "bytes": 686308,
+    "sha256": "99fb55f94f0a164b43e621c82ccaf2e52d0aaf33df4e724115c4c0e5a80d9099"
+  },
+  "ui.css": {
+    "bytes": 261152,
+    "sha256": "c46fc0216d7d55f05ed72cc8fc4f65ab91e35ba9a7e3b42cb2ff49bda60fe00e"
+  },
+  "assets": {
+    "ibm-plex-mono-latin-400-normal-A2WATXFY.woff2": 14708,
+    "ibm-plex-mono-latin-500-normal-33HAQIPI.woff2": 14888,
+    "ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2": 45712
+  },
+  "libraryModules": [
+    "components/animated-height.js",
+    "components/badge.js",
+    "components/button.js",
+    "components/dialog.js",
+    "components/input.js",
+    "components/label.js",
+    "components/list-box.js",
+    "components/list.js",
+    "components/popover.js",
+    "components/segmented.js",
+    "components/select.js",
+    "components/sheet.js",
+    "components/switch.js",
+    "components/text-field.js",
+    "components/text-morph.js",
+    "lib/icon-shapes/chat.js",
+    "lib/icon-shapes/pencilkit.js",
+    "lib/icon-shapes/workbench.js",
+    "lib/icon.js",
+    "lib/motion.js",
+    "lib/primitives.js",
+    "lib/row-label.js",
+    "lib/theme.js",
+    "lib/tokens.generated.js",
+    "lib/utils.js"
+  ],
+  "stubbedCss": [
+    "node_modules/@brett_lamy/docstream-editor/node_modules/@brett_lamy/docstream/dist/docs/math.js -> katex/dist/katex.min.css",
+    "node_modules/@brett_lamy/docstream-editor/node_modules/@brett_lamy/docstream/dist/replay/ReplayStageImpl.js -> rrweb/dist/style.css",
+    "node_modules/@brett_lamy/ui/dist/components/markdown-view.js -> @brett_lamy/docstream/styles.css",
+    "node_modules/@brett_lamy/ui/node_modules/@brett_lamy/docstream/dist/docs/math.js -> katex/dist/katex.min.css",
+    "node_modules/@brett_lamy/ui/node_modules/@brett_lamy/docstream/dist/replay/ReplayStageImpl.js -> rrweb/dist/style.css"
+  ]
+}

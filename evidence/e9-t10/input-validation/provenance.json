@@ -1,0 +1,35 @@
+{
+  "task": "E9-T10",
+  "status": "passed",
+  "head": "dc5fab60d1b0e4c6c92bc78169232c9d3622825e",
+  "command": [
+    "node",
+    "target/e9-t10-input-validation.mjs",
+    "--output",
+    "target/evidence/e9-t10-input-validation-final"
+  ],
+  "driver_sha256": "261bdc341f84ecba4137bffc7265ac94f52044a10068f9e9ccdd9f314a716c34",
+  "time": 1792321169.1790478,
+  "files": [
+    {
+      "path": "browser-trace.zip",
+      "bytes": 1655709,
+      "sha256": "792bc4d19a6977431132e140f991fe5cfc92eeff38b6bef0b544fe08739d353b"
+    },
+    {
+      "path": "guard.png",
+      "bytes": 230941,
+      "sha256": "c3f27650a55de02aaa1494749159afa3a93fd8dd9fa218d5bfa871e0fdd83637"
+    },
+    {
+      "path": "javascript-coverage.json.gz",
+      "bytes": 439395,
+      "sha256": "c5ed107e8d05698e3f50914bdda24e29433e132bf366b0d91d232ff74d7774ac"
+    },
+    {
+      "path": "report.json",
+      "bytes": 1175,
+      "sha256": "0c8e3c5a5977874653b44c9df5a4d25f949106460d94080250c26f297e8b2895"
+    }
+  ]
+}

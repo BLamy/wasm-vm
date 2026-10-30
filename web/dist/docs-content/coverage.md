@@ -28,6 +28,10 @@ Plain-text licenses, notices, diagnostic transcripts, fixture text, manifests, g
 
 This ledger is an immutable inventory of the stated migration revision. Later task logs and release evidence keep their own source revisions; the current [desktop guide](./docs.html?page=desktop) names the application-image evidence separately. A reference's native **Properties** sheet exposes its exact original revision and SHA-256. Guide properties identify authored explanations, not an independent verification result.
 
+## Current references
+
+Four session references are published separately from this inventory, from exact blobs at revision `c396efe1ecd061721865a5929235e6d0a6268561` (the PR 626 stack): [Session replay](./docs.html?page=current-docs-design-session-replay), [Session format](./docs.html?page=current-docs-design-session-format), [Session store](./docs.html?page=current-docs-design-session-store), [GPU history reader](./docs.html?page=current-docs-design-session-gpu-history-reader). Each page's **Properties** sheet carries that revision and the source SHA-256. They are not counted in the dispositions above and do not change the migration ledger.
+
 ## Inspect the complete ledger
 
 [Download the full document-by-document migration ledger](./docs-content/migration-ledger.json).
@@ -36,4 +40,4 @@ Use the reader's **Archive ledger** to search every preserved source path. The R
 
 ## Package and build
 
-The reader uses the exact `@brett_lamy/docstream@1.9.1` npm release, including read-only document properties and native task-state icons. Run `npm run build:docs` and `npm run check:docs` in `web/` to regenerate the corpus, bundles, and validation receipt.
+The reader uses the exact `@brett_lamy/docstream@1.33.0` npm release, including read-only document properties and native task-state icons. Run `npm run build:docs` and `npm run check:docs` in `web/` to regenerate the corpus, bundles, and validation receipt.

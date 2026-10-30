@@ -1,0 +1,10 @@
+# Public receipt predictions — before public report inspection
+
+The root reports the public recording completed and is sealing its packet. No public report or packet has been opened by this session yet.
+
+- F7a: original target/evidence/e9-t05-public-final/report.json is passed, not development, errors [], head 3508ad16ca0de135f06e6f7cc8d2fb4b3a879332, URL rooted at https://wasm-vm.pages.dev/; suite 127/0 and roadmap pip verified. Its retained critical HTTP asset receipts match local frozen distribution lengths/digests and include the exact Wasm/runtime identity already authenticated by F4.
+- F7b: independently reading the exported public before/restored raw frames produces identical bytes and all five component digests plus 16 native sections; saved/restored sparse RAM agrees and advanced RAM differs. Actual pending UART/held keyboard and paused restore with zero instructions agree with browser records. Guest memory witness is memory-before/queued-before; files are saved/restored e9:before\n and advanced e9:after\n. The recorded independent filesystem oracle matches the exported bytes.
+- F7c: existing recorded native component/frame refusals, bounded original I/O/timeout/recovery, direct-loader success/refusals/source preservation and both repaired producer-buffer schedules agree with their claims, without a new scenario execution. Retained GPU is qualified, not lost or poisoned, with a physical fresh-epoch draw after 2,499,808 retired instructions.
+- F7d: once the root seals and supplies its SHA, every public original and compact copy/gzip alias authenticates, and trace/screenshots correspond to the final passed report. Fresh public HTTP byte checks, when present in the packet, match current dist. Deployment log names the reported deployment and successful production alias. Runtime/tests/dependencies remain frozen; publication commits change evidence/task catalog/service-worker metadata only.
+
+Tracked writes and status changes remain on hold until the root signals a clean write interval.

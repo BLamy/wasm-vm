@@ -1,0 +1,223 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.40s
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-f7466d3184546d7e)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.29s
+
+     Running tests/e9_event_clock.rs (target/debug/deps/e9_event_clock-725e8bbf63d46938)
+
+running 8 tests
+test paused_controls_keep_sequence_and_ordinal_without_executing_a_transition ... ok
+test pending_boolean_controls_restore_before_their_exact_delivery ... ok
+test delivered_traps_and_firmware_calls_do_not_fabricate_retirements ... ok
+wide transition=9007199254740995 retired=9007199254740995 sequence=9007199254740994
+test precision_pending_queue_and_exhaustion_survive_real_snapshot_restore ... ok
+owned cache=false position=SessionPosition { transition: 42, retired: 42, phase: Before, ordinal: 0, sequence: 3 } state=b3f2c1d77a066a3ab9852a4821d2f4ec275cfb004378928e8dce2973914aeffc
+wfi quantum=1 position=SessionPosition { transition: 3, retired: 1, phase: Before, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+owned cache=true position=SessionPosition { transition: 42, retired: 42, phase: Before, ordinal: 0, sequence: 3 } state=b3f2c1d77a066a3ab9852a4821d2f4ec275cfb004378928e8dce2973914aeffc
+test owned_events_stop_before_delivery_and_invalidate_decoded_code ... ok
+test malformed_clock_queue_is_refused_before_any_machine_mutation ... ok
+wfi quantum=2 position=SessionPosition { transition: 3, retired: 1, phase: Before, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+wfi quantum=7 position=SessionPosition { transition: 3, retired: 1, phase: Before, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+test bounded_mailbox_and_unsupported_scheduling_refuse_before_effects ... ok
+wfi quantum=129 position=SessionPosition { transition: 3, retired: 1, phase: Before, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+test wfi_idle_and_timer_delivery_are_separate_restorable_transitions ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.80s
+
+     Running tests/e9_input_boundary.rs (target/debug/deps/e9_input_boundary-92ababb44082c42f)
+
+running 3 tests
+test reserve_before_effect_and_refuse_undrained_receipts ... ok
+test owned_host_input_stops_execution_and_survives_snapshot_before_acknowledgement ... ok
+test malformed_host_mailbox_never_mutates_a_restore_destination ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/e9_time_entropy.rs (target/debug/deps/e9_time_entropy-389bc7ef893037ab)
+
+running 11 tests
+test source_admission_is_atomic_for_invalid_policy_tape_and_existing_clock ... ok
+test provider_observation_outside_execution_cannot_read_the_host_or_resume ... ok
+test oversized_guest_entropy_request_refuses_before_allocation_dma_or_publication ... ok
+test captured_entropy_chain_quota_refuses_all_dma_and_cannot_continue ... ok
+test unavailable_entropy_is_a_recorded_failure_replayed_without_a_host_call ... ok
+test entropy_length_intent_diverges_before_dma_or_queue_publication ... ok
+test receipt_budget_yields_at_a_complete_transition_and_resumes_without_duplicate_reads ... ok
+test frozen_policy_and_unconsumed_log_tail_refuse_without_host_observation ... ok
+test source_checkpoints_bind_policy_and_cursor_before_destination_mutation ... ok
+test malformed_policies_lengths_and_reordered_or_exhausted_records_are_typed ... ok
+test guest_observations_replay_under_hostile_providers_and_different_quanta ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.17s
+
+     Running tests/predecode_batching.rs (target/debug/deps/predecode_batching-beece590fb808c57)
+
+running 3 tests
+mtimecmp latency: pending@40, delivered@129 (latency 89)
+test mtimecmp_midblock_latency_is_bounded ... ok
+hello: batched deterministic — 83 retires, hash 0xec6e61a286135dfd
+loops: batched deterministic — 48 retires, hash 0xb39f666fdc661b5d
+memops: batched deterministic — 117 retires, hash 0x7b228482bdef09dd
+test native_batched_runs_are_deterministic ... ok
+batching verdict-identical across 128 riscv-tests ELFs (18 rv64mi)
+test riscv_tests_pass_or_fail_unchanged_with_batching ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 58.10s
+
+     Running tests/production_keyboard_host_wait.rs (target/debug/deps/production_keyboard_host_wait-fe4185965c6852c4)
+
+running 2 tests
+PACED_KEYBOARD phase=staged cached=false actual=0 expected=0 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=absent cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=quiet cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=pending cached=false actual=0 expected=0 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=refused cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=delivered cached=false actual=0 expected=0 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=dropped cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=break cached=false actual=100000 expected=100000 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=staged cached=false initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=reset cached=false actual=100000 expected=100000 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending cached=false initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=staged cached=true actual=0 expected=0 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=delivered cached=false initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=pending cached=true actual=0 expected=0 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-break cached=false initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=delivered cached=true actual=0 expected=0 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=break cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=break cached=true actual=100000 expected=100000 trace=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-release-all cached=false initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+PACED_KEYBOARD phase=reset cached=true actual=100000 expected=100000 trace=dd8c58e8d6e657e4
+test paced_idle_still_honors_original_keyboard_waits_and_transport_reset ... ok
+KEYBOARD_LIFECYCLE phase=release-all cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=reset cached=false initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_RETIRE cached=false initial=0 actual=2 trace_retires=128 trace_hash=f1ab8763a78f2b25
+KEYBOARD_LIFECYCLE phase=absent cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=quiet cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=refused cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=dropped cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=staged cached=false initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending cached=false initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=delivered cached=false initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-break cached=false initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=break cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-release-all cached=false initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=release-all cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=reset cached=false initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_RETIRE cached=false initial=500000 actual=500002 trace_retires=128 trace_hash=f1ab8763a78f2b25
+KEYBOARD_LIFECYCLE phase=absent cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=quiet cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=refused cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=dropped cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=staged cached=true initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending cached=true initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=delivered cached=true initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-break cached=true initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=break cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-release-all cached=true initial=0 deadline=5000000000 actual=0 expected=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=release-all cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=reset cached=true initial=0 deadline=5000000000 actual=5000000000 expected=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_RETIRE cached=true initial=0 actual=2 trace_retires=128 trace_hash=f1ab8763a78f2b25
+KEYBOARD_LIFECYCLE phase=absent cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=quiet cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=refused cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=dropped cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=staged cached=true initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending cached=true initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=delivered cached=true initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-break cached=true initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=break cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=pending-release-all cached=true initial=500000 deadline=5000500000 actual=500000 expected=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=release-all cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_LIFECYCLE phase=reset cached=true initial=500000 deadline=5000500000 actual=5000500000 expected=5000500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_RETIRE cached=true initial=500000 actual=500002 trace_retires=128 trace_hash=f1ab8763a78f2b25
+test original_keyboard_lifecycle_preserves_wait_and_releases_idle_jump ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.51s
+
+     Running tests/production_keyboard_wfi_critic.rs (target/debug/deps/production_keyboard_wfi_critic-0dfcdd5610b15857)
+
+running 2 tests
+KEYBOARD_WFI cached=false deadline=500000 held=false original_used=0 actual_mtime=500000 expected_mtime=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=false initial=37 busy_ticks=4 used=8 settled_mtime=500037 trace_retires=259 trace_hash=5af09e729e0aa754
+KEYBOARD_WFI cached=false deadline=500000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=false initial=1234567 busy_ticks=4 used=8 settled_mtime=1734567 trace_retires=259 trace_hash=5af09e729e0aa754
+KEYBOARD_WFI cached=false deadline=5000000000 held=false original_used=0 actual_mtime=5000000000 expected_mtime=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=true initial=37 busy_ticks=4 used=8 settled_mtime=500037 trace_retires=259 trace_hash=5af09e729e0aa754
+KEYBOARD_WFI cached=false deadline=5000000000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=true initial=1234567 busy_ticks=4 used=8 settled_mtime=1734567 trace_retires=259 trace_hash=5af09e729e0aa754
+test two_original_keys_require_both_breaks_and_never_freeze_busy_retirement ... ok
+KEYBOARD_WFI cached=true deadline=500000 held=false original_used=0 actual_mtime=500000 expected_mtime=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=true deadline=500000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=true deadline=5000000000 held=false original_used=0 actual_mtime=5000000000 expected_mtime=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=true deadline=5000000000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+test original_delivered_keyboard_make_preserves_host_turn_before_idle_jump ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+     Running tests/snapshot_coherence.rs (target/debug/deps/snapshot_coherence-317ef40baba57ffc)
+
+running 5 tests
+test overlay_generation_is_monotonic ... ok
+test same_snapshot_refused_after_overlay_advances ... ok
+test bumped_overlay_generation_is_refused_before_mutation ... ok
+test changed_base_hash_is_refused_before_mutation ... ok
+test matching_base_and_generation_restores ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/virtio_console.rs (target/debug/deps/virtio_console-0c9d604e90d2d161)
+
+running 4 tests
+test desktop_restore_uses_live_agent_and_retains_host_reconciliation_state ... ok
+test virtio_console_machine_registers_and_services_named_agent_port_without_uart_aliasing ... ok
+test missing_agent_early_refusal_clears_dirty_presentation_and_restores_cold_devices ... ok
+test resume_restores_console_transport_and_restarts_the_host_application_generation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/virtio_keyboard.rs (target/debug/deps/virtio_keyboard-cb0c7db36ca4396f)
+
+running 2 tests
+test keyboard_registers_in_slot_three_without_disturbing_gpu_or_empty_slots ... ok
+test keyboard_led_status_order_survives_reset_and_queue_re_setup ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/virtio_keyboard_guest_stream.rs (target/debug/deps/virtio_keyboard_guest_stream-7d9d3ed0f59d7b90)
+
+running 2 tests
+test one_keydown_has_no_transport_repeat_and_undeclared_edge_is_not_in_fixture ... ok
+test keyboard_make_break_stream_matches_serial_fixture ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/virtio_pointer.rs (target/debug/deps/virtio_pointer-bb2c65d2539bf558)
+
+running 3 tests
+test hostile_pointer_injection_is_rejected_without_cross_device_state_changes ... ok
+test pointer_devices_have_stable_slots_and_complete_isolated_frames ... ok
+test pointer_wheel_evtest_fixture_has_signed_detents_and_balanced_buttons ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/wfi_fast_forward_critic.rs (target/debug/deps/wfi_fast_forward_critic-199fe91a66d86cb0)
+
+running 6 tests
+test due_mtimecmp_fires_before_wfi_no_jump ... ok
+test jump_lands_exactly_on_mtimecmp_no_overshoot ... ok
+test masked_pending_interrupt_wfi_time_behavior ... ok
+test idle_wfi_jumps_to_deadline_and_timer_fires_immediately ... ok
+test no_timer_armed_means_no_jump ... ok
+test external_network_io_suppresses_wfi_deadline_jump ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

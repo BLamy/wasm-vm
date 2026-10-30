@@ -1,0 +1,9 @@
+python3 -B tools/verify/e9-session-manifest.py --output "${E9_MANIFEST_EVIDENCE_DIR:-target/evidence/e9-manifest-final}"
+policy
+format
+wasm-format
+storage-clippy
+storage-native
+no-std-wasm
+wasm-clippy
+wasm-node

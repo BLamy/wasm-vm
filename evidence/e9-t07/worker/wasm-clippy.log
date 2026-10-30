@@ -1,0 +1,22 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.20.3
+    Checking serde_core v1.0.228
+    Checking zmij v1.0.21
+    Checking generic-array v0.14.7
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+   Compiling wasm-bindgen v0.2.126
+   Compiling syn v2.0.118
+    Checking serde_json v1.0.150
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking serde v1.0.228
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Checking wasm-vm-session-web v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/session-web)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.82s

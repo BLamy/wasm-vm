@@ -1,0 +1,21 @@
+{
+  "name": "wasm-vm-session-web",
+  "type": "module",
+  "description": "Independent browser session metadata and bounded hashing adapters",
+  "version": "0.0.1",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BLamy/wasm-vm"
+  },
+  "files": [
+    "wasm_vm_session_bg.wasm",
+    "wasm_vm_session.js",
+    "wasm_vm_session.d.ts"
+  ],
+  "main": "wasm_vm_session.js",
+  "types": "wasm_vm_session.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

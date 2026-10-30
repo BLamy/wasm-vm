@@ -21,6 +21,13 @@ if content.is_dir():
         text = (content / f"{page['id']}.md").read_text()
         page["sha256"] = hashlib.sha256(text.encode()).hexdigest()
     catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")) + "\n")
+    # E0-T32: the lazily loaded search corpus carries the same (route-swapped) published Markdown.
+    corpus_path = content / "search-corpus.json"
+    if corpus_path.is_file():
+        corpus = json.loads(corpus_path.read_text())
+        for entry in corpus["pages"]:
+            entry["content"] = (content / entry["path"]).read_text()
+        corpus_path.write_text(json.dumps(corpus, ensure_ascii=False, separators=(",", ":")) + "\n")
     ledger_path = content / "migration-ledger.json"
     ledger = json.loads(ledger_path.read_text())
     hashes = {page["id"]:page["sha256"] for page in catalog["pages"]}
@@ -31,7 +38,10 @@ if content.is_dir():
 bundle = dist / "docs-bundle"
 if bundle.is_dir():
     for asset in bundle.glob("*.js"):
-        text = asset.read_text().replace('href:"./index.html#ide"', 'href:"./app.html#ide"').replace('href:"./landing.html"', 'href:"./"')
+        # The reader bundle carries the shared nav's route table (web/ui/src/routes.js) as quoted
+        # strings; apply the same root swap as the HTML pages and ui.js.
+        text = re.sub(r'(["\'])\./index\.html', r'\1./app.html', asset.read_text())
+        text = re.sub(r'(["\'])\./landing\.html(["\'#])', r'\1./\2', text)
         asset.write_text(text)
     revision = hashlib.sha256((bundle / "reader.js").read_bytes()).hexdigest()[:12]
     for name in ["docs.html", "docs-embedding.html", "docs-guest.html", "docs-containers.html", "docs-verification.html", "docs-explainers.html"]:

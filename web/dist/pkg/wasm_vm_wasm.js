@@ -1,7 +1,8 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
 
 
 /**
@@ -60,6 +61,445 @@ export class FileSha256 {
 }
 if (Symbol.dispose) FileSha256.prototype[Symbol.dispose] = FileSha256.prototype.free;
 
+export class SessionDeviceLease {
+    static __wrap(ptr) {
+        const obj = Object.create(SessionDeviceLease.prototype);
+        obj.__wbg_ptr = ptr;
+        SessionDeviceLeaseFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SessionDeviceLeaseFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_sessiondevicelease_free(ptr, 0);
+    }
+}
+if (Symbol.dispose) SessionDeviceLease.prototype[Symbol.dispose] = SessionDeviceLease.prototype.free;
+
+export class SessionNetworkLease {
+    static __wrap(ptr) {
+        const obj = Object.create(SessionNetworkLease.prototype);
+        obj.__wbg_ptr = ptr;
+        SessionNetworkLeaseFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SessionNetworkLeaseFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_sessionnetworklease_free(ptr, 0);
+    }
+}
+if (Symbol.dispose) SessionNetworkLease.prototype[Symbol.dispose] = SessionNetworkLease.prototype.free;
+
+/**
+ * Bounded, fixed real RV64 workload used by the public time/entropy check. This proof board
+ * cannot load a Linux session, acquire network/media adapters, or execute past its declared end.
+ */
+export class SessionSourceProbe {
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SessionSourceProbeFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_sessionsourceprobe_free(ptr, 0);
+    }
+    /**
+     * @param {any} code
+     * @param {string} transition
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {string} retired
+     */
+    applyRecordedLifecycle(code, transition, sequence, ordinal, retired) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.sessionsourceprobe_applyRecordedLifecycle(this.__wbg_ptr, code, ptr0, len0, ptr1, len1, ordinal, ptr2, len2);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {any} code
+     */
+    control(code) {
+        const ret = wasm.sessionsourceprobe_control(this.__wbg_ptr, code);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    finishReplay() {
+        const ret = wasm.sessionsourceprobe_finishReplay(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    frame() {
+        const ret = wasm.sessionsourceprobe_frame(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    guestBytes() {
+        const ret = wasm.sessionsourceprobe_guestBytes(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {any}
+     */
+    hostReads() {
+        const ret = wasm.sessionsourceprobe_hostReads(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {any} divider
+     * @param {Uint8Array | null | undefined} tape
+     * @param {any} host_mode
+     */
+    constructor(divider, tape, host_mode) {
+        const ret = wasm.sessionsourceprobe_new(divider, isLikeNone(tape) ? 0 : addToExternrefTable0(tape), host_mode);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        this.__wbg_ptr = ret[0];
+        SessionSourceProbeFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    observationTape() {
+        const ret = wasm.sessionsourceprobe_observationTape(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    policy() {
+        const ret = wasm.sessionsourceprobe_policy(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {any}
+     */
+    position() {
+        const ret = wasm.sessionsourceprobe_position(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} target
+     * @param {any} quantum
+     * @returns {any}
+     */
+    runUntil(target, quantum) {
+        const ptr0 = passStringToWasm0(target, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.sessionsourceprobe_runUntil(this.__wbg_ptr, ptr0, len0, quantum);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeDeliveries() {
+        const ret = wasm.sessionsourceprobe_takeDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {string}
+     */
+    traceText() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.sessionsourceprobe_traceText(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+}
+if (Symbol.dispose) SessionSourceProbe.prototype[Symbol.dispose] = SessionSourceProbe.prototype.free;
+
+/**
+ * A single owned Wasm allocation filled by bounded decompressor chunks. It exposes no raw
+ * pointer or full-size JS export; ownership is consumed exactly once at restore.
+ */
+export class SnapshotBuffer {
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SnapshotBufferFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_snapshotbuffer_free(ptr, 0);
+    }
+    /**
+     * Uint8Array is a JS handle, not Vec<u8>: copy directly into the one staging allocation.
+     * @param {Uint8Array} chunk
+     */
+    append(chunk) {
+        const ret = wasm.snapshotbuffer_append(this.__wbg_ptr, chunk);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {number}
+     */
+    byteLength() {
+        const ret = wasm.snapshotbuffer_byteLength(this.__wbg_ptr);
+        return ret >>> 0;
+    }
+    /**
+     * @param {number} expected
+     */
+    constructor(expected) {
+        const ret = wasm.snapshotbuffer_new(expected);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        this.__wbg_ptr = ret[0];
+        SnapshotBufferFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @returns {string}
+     */
+    sha256() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.snapshotbuffer_sha256(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+}
+if (Symbol.dispose) SnapshotBuffer.prototype[Symbol.dispose] = SnapshotBuffer.prototype.free;
+
+export class WasmGpuTransport {
+    static __wrap(ptr) {
+        const obj = Object.create(WasmGpuTransport.prototype);
+        obj.__wbg_ptr = ptr;
+        WasmGpuTransportFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        WasmGpuTransportFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_wasmgputransport_free(ptr, 0);
+    }
+    /**
+     * Does not borrow Machine: a sink may complete synchronously during dispatch.
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} outcome_code
+     * @param {boolean} gpu_complete
+     * @param {number} applied_commands
+     * @param {number} draws
+     */
+    complete(epoch, sequence, exchange_sequence, outcome_code, gpu_complete, applied_commands, draws) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmgputransport_complete(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, outcome_code, gpu_complete, applied_commands, draws);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Exact identities and row arithmetic are validated by core before RAM access.
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @returns {any}
+     */
+    gatherInput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmgputransport_gatherInput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @param {number} layer_stride
+     * @param {number} layer_count
+     * @returns {any}
+     */
+    gatherLayeredInput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count, layer_stride, layer_count) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmgputransport_gatherLayeredInput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, layer_stride, layer_count);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @param {number} layer_stride
+     * @param {number} layer_count
+     * @param {Uint8Array} bytes
+     * @returns {any}
+     */
+    scatterLayeredOutput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count, layer_stride, layer_count, bytes) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ptr6 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len6 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmgputransport_scatterLayeredOutput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, layer_stride, layer_count, ptr6, len6);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @param {Uint8Array} bytes
+     * @returns {any}
+     */
+    scatterOutput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count, bytes) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ptr6 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len6 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmgputransport_scatterOutput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, ptr6, len6);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+}
+if (Symbol.dispose) WasmGpuTransport.prototype[Symbol.dispose] = WasmGpuTransport.prototype.free;
+
 /**
  * E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
  * Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
@@ -98,6 +538,42 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0];
+    }
+    /**
+     * Trusted replay adapter seam. Every supplied key and outcome is checked; ordinary input
+     * methods cannot reach it. T14 will own authenticated cursor admission and execution.
+     * @param {any} channel
+     * @param {string} transition
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {string} retired
+     * @param {Uint8Array} bytes
+     * @param {Array<any>} expected
+     */
+    applyRecordedInput(channel, transition, sequence, ordinal, retired, bytes, expected) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_applyRecordedInput(this.__wbg_ptr, channel, ptr0, len0, ptr1, len1, ordinal, ptr2, len2, bytes, expected);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {Uint8Array} bytes
+     * @returns {number}
+     */
+    applySoftwareRamDeltaChunk(bytes) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_applySoftwareRamDeltaChunk(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] >>> 0;
     }
     /**
      * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
@@ -187,6 +663,31 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * @param {Uint8Array} native
+     * @param {any} queues
+     * @param {Uint8Array | null} [renderer_digest]
+     */
+    beginExactBranch(native, queues, renderer_digest) {
+        const ret = wasm.wasmlinux_beginExactBranch(this.__wbg_ptr, native, queues, isLikeNone(renderer_digest) ? 0 : addToExternrefTable0(renderer_digest));
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {Uint8Array} initial_resume
+     * @param {Array<any>} events
+     * @param {Array<any>} witnesses
+     * @param {any} end
+     * @param {any | null} [initial_queues]
+     * @param {any | null} [gpu_options]
+     */
+    beginExactReplay(initial_resume, events, witnesses, end, initial_queues, gpu_options) {
+        const ret = wasm.wasmlinux_beginExactReplay(this.__wbg_ptr, initial_resume, events, witnesses, end, isLikeNone(initial_queues) ? 0 : addToExternrefTable0(initial_queues), isLikeNone(gpu_options) ? 0 : addToExternrefTable0(gpu_options));
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {number} slot
      * @param {string} name
      * @param {number} total
@@ -229,6 +730,16 @@ export class WasmLinux {
         }
     }
     /**
+     * @returns {boolean}
+     */
+    canContinueExactBranch() {
+        const ret = wasm.wasmlinux_canContinueExactBranch(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
+    }
+    /**
      * @param {number} id
      */
     cancelFileDownload(id) {
@@ -247,6 +758,55 @@ export class WasmLinux {
         }
     }
     /**
+     * @returns {any}
+     */
+    cancelOwnedLocalHttp() {
+        const ret = wasm.wasmlinux_cancelOwnedLocalHttp(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Own a bounded disk delta after draining original disk work, without retiring instructions.
+     * The owner must keep execution paused and join this Promise before releasing storage. Each
+     * pass resolves actual pending fetch/durability work before retrying native quiescence.
+     * The exact u64 generation is encoded without crossing the legacy f64 generation API.
+     * @returns {Promise<Uint8Array>}
+     */
+    captureDiskDelta() {
+        const ret = wasm.wasmlinux_captureDiskDelta(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * Synchronous owned copy of the selected replay. Callers never receive its mutable VM.
+     * @param {Uint8Array | null} [renderer_digest]
+     * @returns {any}
+     */
+    captureExactBranch(renderer_digest) {
+        const ret = wasm.wasmlinux_captureExactBranch(this.__wbg_ptr, isLikeNone(renderer_digest) ? 0 : addToExternrefTable0(renderer_digest));
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Freeze RAM pages, CPU/devices and the genuine pending result frontier together.
+     * The caller owns the paused guest until finishSoftwareRamEpoch acknowledges publication.
+     * @param {Uint8Array} renderer_digest
+     * @param {boolean} full
+     * @returns {any}
+     */
+    captureExactGpuKeyframe(renderer_digest, full) {
+        const ptr0 = passArray8ToWasm0(renderer_digest, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureExactGpuKeyframe(this.__wbg_ptr, ptr0, len0, full);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * Exact COW bytes from the same ephemeral disk backend used by the guest.
      * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
      * @returns {Uint8Array}
@@ -257,6 +817,53 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Native witness only, deliberately not an admitted full provider checkpoint.
+     * @returns {any}
+     */
+    captureInputWitness() {
+        const ret = wasm.wasmlinux_captureInputWitness(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Begin a full keyframe and freeze the dirty set until its store publication resolves.
+     * @param {Uint8Array} context_bytes
+     * @returns {Promise<Uint8Array>}
+     */
+    captureSoftwareBaseKeyframe(context_bytes) {
+        const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureSoftwareBaseKeyframe(this.__wbg_ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+     * The loader fences all host mutations and execution until this bounded Promise settles.
+     * Pending block fetches/durability drain without CPU execution; final serialization has no
+     * await, callback or borrow release between architectural state, COW map and UART queues.
+     * @param {Uint8Array} context_bytes
+     * @returns {Promise<Uint8Array>}
+     */
+    captureSoftwareCheckpoint(context_bytes) {
+        const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureSoftwareCheckpoint(this.__wbg_ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+     * Capture CPU/devices/disk/host queues while RAM is represented by separately streamed
+     * dirty-page objects. The caller must hold the guest paused until it acknowledges the epoch.
+     * @param {Uint8Array} context_bytes
+     * @returns {Promise<Uint8Array>}
+     */
+    captureSoftwareDeltaKeyframe(context_bytes) {
+        const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureSoftwareDeltaKeyframe(this.__wbg_ptr, ptr0, len0);
+        return ret;
     }
     /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
@@ -304,6 +911,25 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0] !== 0;
+    }
+    /**
+     * Append exactly one bounded window to the same private VM. The supplied predecessor and
+     * expected host queues are owned copies of the authenticated prior endpoint. Every mismatch
+     * poisons this candidate before the next tape or guest work is admitted.
+     * @param {string} predecessor
+     * @param {Array<any>} events
+     * @param {Array<any>} witnesses
+     * @param {any} end
+     * @param {any} expected_queues
+     * @param {any | null} [gpu_options]
+     */
+    continueExactReplay(predecessor, events, witnesses, end, expected_queues, gpu_options) {
+        const ptr0 = passStringToWasm0(predecessor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_continueExactReplay(this.__wbg_ptr, ptr0, len0, events, witnesses, end, expected_queues, isLikeNone(gpu_options) ? 0 : addToExternrefTable0(gpu_options));
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * @param {number} id
@@ -394,6 +1020,192 @@ export class WasmLinux {
         }
     }
     /**
+     * @returns {boolean}
+     */
+    exactBranchNetworkOffline() {
+        const ret = wasm.wasmlinux_exactBranchNetworkOffline(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
+    }
+    /**
+     * @param {SessionDeviceLease} lease
+     * @param {any} status
+     * @param {any} frames
+     * @param {Uint8Array} bytes
+     */
+    exactCompleteDeviceRequest(lease, status, frames, bytes) {
+        _assertClass(lease, SessionDeviceLease);
+        const ret = wasm.wasmlinux_exactCompleteDeviceRequest(this.__wbg_ptr, lease.__wbg_ptr, status, frames, bytes);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {SessionNetworkLease} lease
+     * @param {Uint8Array} input
+     */
+    exactCompleteNetworkEvent(lease, input) {
+        _assertClass(lease, SessionNetworkLease);
+        const ret = wasm.wasmlinux_exactCompleteNetworkEvent(this.__wbg_ptr, lease.__wbg_ptr, input);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    exactDeviceRequests() {
+        const ret = wasm.wasmlinux_exactDeviceRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {string}
+     */
+    exactGpuSessionEpoch() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_exactGpuSessionEpoch(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    exactGpuSessionState() {
+        const ret = wasm.wasmlinux_exactGpuSessionState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {string}
+     */
+    exactGpuSessionTopology() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_exactGpuSessionTopology(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    exactGpuSessionWitness() {
+        const ret = wasm.wasmlinux_exactGpuSessionWitness(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} id
+     * @returns {SessionDeviceLease}
+     */
+    exactLeaseDeviceRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_exactLeaseDeviceRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionDeviceLease.__wrap(ret[0]);
+    }
+    /**
+     * @param {string} id
+     * @returns {SessionNetworkLease}
+     */
+    exactLeaseNetworkRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_exactLeaseNetworkRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionNetworkLease.__wrap(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    exactNetworkRequests() {
+        const ret = wasm.wasmlinux_exactNetworkRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Return the complete native/host predecessor after a bounded replay window. The receipt
+     * is observational; continuation recomputes it from the still-private candidate.
+     * @returns {string}
+     */
+    exactReplayFrontier() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_exactReplayFrontier(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    exactSessionHostQueues() {
+        const ret = wasm.wasmlinux_exactSessionHostQueues(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {boolean} include_resume
+     * @returns {any}
+     */
+    exactSessionWitness(include_resume) {
+        const ret = wasm.wasmlinux_exactSessionWitness(this.__wbg_ptr, include_resume);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -455,6 +1267,15 @@ export class WasmLinux {
      */
     finishFileDownload(id, success) {
         const ret = wasm.wasmlinux_finishFileDownload(this.__wbg_ptr, id, success);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {boolean} committed
+     */
+    finishSoftwareRamEpoch(committed) {
+        const ret = wasm.wasmlinux_finishSoftwareRamEpoch(this.__wbg_ptr, committed);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -615,6 +1436,26 @@ export class WasmLinux {
         }
         return takeFromExternrefTable0(ret[0]);
     }
+    /**
+     * Pause=0, resume=1, stop=2. These controls consume the same ordered before-boundary keys.
+     * @param {any} control
+     */
+    inputLifecycle(control) {
+        const ret = wasm.wasmlinux_inputLifecycle(this.__wbg_ptr, control);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    inputPosition() {
+        const ret = wasm.wasmlinux_inputPosition(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
     invalidateVirgl() {
         const ret = wasm.wasmlinux_invalidateVirgl(this.__wbg_ptr);
         if (ret[1]) {
@@ -674,6 +1515,12 @@ export class WasmLinux {
         const ptr0 = passArray8ToWasm0(blob, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_loadSnapshotBlob(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    markExactBranchReplayOffline() {
+        const ret = wasm.wasmlinux_markExactBranchReplayOffline(this.__wbg_ptr);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -872,6 +1719,107 @@ export class WasmLinux {
         return WasmLinux.__wrap(ret[0]);
     }
     /**
+     * Fresh one-GiB, pure ICount/64 GPU session. Historical paced profiles do not enter here.
+     * This uses the production Linux platform assembly, including owned I/O providers.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @param {boolean} replay
+     * @returns {WasmLinux}
+     */
+    static newExactGpuSession(kernel, manifest_json, bootargs, output, replay) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newExactGpuSession(ptr0, len0, ptr1, len1, ptr2, len2, output, replay);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
+     * Pinned 256 MiB RV64 Linux software-session images. It installs owned block, network,
+     * agent, RTC and entropy boundaries before boot, and never creates a live transport while
+     * replaying. The caller supplies the immutable base chunks to the recording broker.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @param {boolean} replay
+     * @returns {WasmLinux}
+     */
+    static newExactSession(kernel, manifest_json, bootargs, output, replay) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newExactSession(ptr0, len0, ptr1, len1, ptr2, len2, output, replay);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
+     * Same one-GiB pure ICount/64 owned-provider profile without a recorder.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @returns {WasmLinux}
+     */
+    static newUnrecordedGpuSession(kernel, manifest_json, bootargs, output) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newUnrecordedGpuSession(ptr0, len0, ptr1, len1, ptr2, len2, output);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
+     * Same pinned software profile and owned providers, with all capture disabled.
+     * This live control cannot create, restore, export or masquerade as recorded history.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @returns {WasmLinux}
+     */
+    static newUnrecordedSession(kernel, manifest_json, bootargs, output) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newUnrecordedSession(ptr0, len0, ptr1, len1, ptr2, len2, output);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
+     * @param {number} from_page
+     * @returns {any}
+     */
+    nextSoftwareRamDeltaChunk(from_page) {
+        const ret = wasm.wasmlinux_nextSoftwareRamDeltaChunk(this.__wbg_ptr, from_page);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
      * flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
      * transfer — does not accrue against the WVFT idle-timeout budget. No-op when nothing is
@@ -900,6 +1848,16 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * Opt into only 10.0.2.2:9191/e9/1..10, once for this VM's lifetime.
+     * The core refuses replay/offline construction before entering the factory.
+     */
+    openOwnedLocalHttp() {
+        const ret = wasm.wasmlinux_openOwnedLocalHttp(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
      * exactly in an `f64` for every realistic generation count.
      * @returns {number}
@@ -910,6 +1868,33 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0];
+    }
+    /**
+     * Independent payload-free tripwire. No replay VM or snapshot owns this value.
+     * @returns {string}
+     */
+    static ownedLocalHttpFactoryEntries() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.wasmlinux_ownedLocalHttpFactoryEntries();
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+     * Aggregate counters only; no additional frame, request or observation history.
+     * @returns {any}
+     */
+    ownedLocalHttpState() {
+        const ret = wasm.wasmlinux_ownedLocalHttpState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
@@ -925,6 +1910,16 @@ export class WasmLinux {
         var v1 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
         wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
         return v1;
+    }
+    /**
+     * @returns {number}
+     */
+    pendingSoftwareRamPages() {
+        const ret = wasm.wasmlinux_pendingSoftwareRamPages(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] >>> 0;
     }
     /**
      * E3-T05: durably flush the overlay's pending writes to IndexedDB. Resolves to the number of
@@ -961,6 +1956,28 @@ export class WasmLinux {
      */
     persistStats() {
         const ret = wasm.wasmlinux_persistStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Install the same owned observation adapter that T14's replay driver installs before its
+     * initial full restore. This candidate has no live providers and no admitted replay plan.
+     */
+    prepareSoftwareKeyframeCandidate() {
+        const ret = wasm.wasmlinux_prepareSoftwareKeyframeCandidate(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Fixed 64-step work budget. Drain `more` before executing another CPU chunk;
+     * `blocked` requires capturing observations or letting the guest consume RX.
+     * @returns {any}
+     */
+    pumpOwnedLocalHttp() {
+        const ret = wasm.wasmlinux_pumpOwnedLocalHttp(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1014,6 +2031,12 @@ export class WasmLinux {
         const ret = wasm.wasmlinux_relinquishSnapshotWriter(this.__wbg_ptr);
         return ret;
     }
+    requestExactBranchGoLive() {
+        const ret = wasm.wasmlinux_requestExactBranchGoLive(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
      * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
@@ -1063,6 +2086,66 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * Consume one streamed container without another JS-to-Wasm snapshot copy. The same complete
+     * framing, identity and transactional component checks run before any guest mutation.
+     * @param {SnapshotBuffer} buffer
+     * @returns {string}
+     */
+    restoreSnapshotBuffer(buffer) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            _assertClass(buffer, SnapshotBuffer);
+            var ptr0 = buffer.__destroy_into_raw();
+            const ret = wasm.wasmlinux_restoreSnapshotBuffer(this.__wbg_ptr, ptr0);
+            var ptr2 = ret[0];
+            var len2 = ret[1];
+            if (ret[3]) {
+                ptr2 = 0; len2 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred3_0 = ptr2;
+            deferred3_1 = len2;
+            return getStringFromWasm0(ptr2, len2);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        }
+    }
+    /**
+     * Only a private seeded candidate is admitted by the loader. Native callers additionally get
+     * a complete byte comparison of its COW map, not merely a generation comparison (siblings may
+     * share generations). All fallible checks precede the first CPU/device/host-queue mutation.
+     * @param {Uint8Array} bytes
+     * @param {Uint8Array} expected_context
+     */
+    restoreSoftwareCheckpoint(bytes, expected_context) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(expected_context, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_restoreSoftwareCheckpoint(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {Uint8Array} bytes
+     * @param {Uint8Array} expected_context
+     * @param {Uint8Array} expected_ram_digest
+     */
+    restoreSoftwareDeltaKeyframe(bytes, expected_context, expected_ram_digest) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(expected_context, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passArray8ToWasm0(expected_ram_digest, wasm.__wbindgen_malloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_restoreSoftwareDeltaKeyframe(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
      * blob is held by one Rust allocation while the coherence header is checked and the machine is
      * restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
@@ -1087,6 +2170,31 @@ export class WasmLinux {
      */
     runChunk(max_instrs, persist_max_dirty_bytes) {
         const ret = wasm.wasmlinux_runChunk(this.__wbg_ptr, max_instrs, isLikeNone(persist_max_dirty_bytes) ? Number.MAX_SAFE_INTEGER : (persist_max_dirty_bytes) >>> 0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * One cancellable browser replay quantum. The caller owns the candidate until `reached`
+     * and can discard it between calls without publishing any partial machine state.
+     * @param {any} target
+     * @param {number} quantum
+     * @returns {any}
+     */
+    runExactReplayChunkTo(target, quantum) {
+        const ret = wasm.wasmlinux_runExactReplayChunkTo(this.__wbg_ptr, target, quantum);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {number} quantum
+     * @returns {any}
+     */
+    runExactReplayToEnd(quantum) {
+        const ret = wasm.wasmlinux_runExactReplayToEnd(this.__wbg_ptr, quantum);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1202,6 +2310,47 @@ export class WasmLinux {
         }
     }
     /**
+     * @param {Uint8Array} native
+     * @param {Uint8Array} renderer_digest
+     */
+    seedExactGpuRam(native, renderer_digest) {
+        const ptr0 = passArray8ToWasm0(native, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(renderer_digest, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_seedExactGpuRam(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Private restore candidate: validate the full ancestor envelope, then seed only RAM.
+     * Its disk generation may be older than the target; the final delta envelope is bound to
+     * the target candidate's disk generation before CPU/devices are committed.
+     * @param {Uint8Array} base_frame
+     */
+    seedSoftwareRamFromCheckpoint(base_frame) {
+        const ptr0 = passArray8ToWasm0(base_frame, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_seedSoftwareRamFromCheckpoint(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * The exact journal's T14 initial checkpoint is already a full native resume. Admit its
+     * strict empty-queue envelope as a RAM ancestor without asking T14 to duplicate 256 MiB.
+     * @param {Uint8Array} frame
+     */
+    seedSoftwareRamFromExactStart(frame) {
+        const ptr0 = passArray8ToWasm0(frame, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_seedSoftwareRamFromExactStart(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
      * Returning the accepted byte count lets the page Channel fail closed on bounded
      * backpressure instead of silently reporting that a frame was delivered.
@@ -1268,6 +2417,16 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @returns {any}
+     */
+    sessionSourcePolicy() {
+        const ret = wasm.wasmlinux_sessionSourcePolicy(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Arm after restore, before execution; not exposed as a general Worker mutation RPC.
@@ -1397,6 +2556,15 @@ export class WasmLinux {
         }
     }
     /**
+     * @param {boolean} relative
+     */
+    setInputPointerMode(relative) {
+        const ret = wasm.wasmlinux_setInputPointerMode(this.__wbg_ptr, relative);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -1409,6 +2577,43 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0] !== 0;
+    }
+    /**
+     * Device map of the standard Linux constructor, using the authoritative platform constants.
+     * @returns {string}
+     */
+    softwareCheckpointTopology() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.wasmlinux_softwareCheckpointTopology(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+     * @returns {string}
+     */
+    softwareRamDigest() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_softwareRamDigest(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
     }
     /**
      * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
@@ -1427,6 +2632,23 @@ export class WasmLinux {
         const ptr0 = passArray8ToWasm0(base_id, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_stampBootSnapshotIdentity(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Begin an input-only prefix at the caller's paused initial checkpoint. Provider completeness
+     * is deliberately not asserted here. Replay mode installs an ingress firewall, not a runner.
+     * @param {boolean} replay
+     */
+    startInputCapture(replay) {
+        const ret = wasm.wasmlinux_startInputCapture(this.__wbg_ptr, replay);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    startInputSourceCapture() {
+        const ret = wasm.wasmlinux_startInputSourceCapture(this.__wbg_ptr);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -1494,11 +2716,53 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * Receipts and every owned readback transfer atomically out of the native window.
+     * @returns {any}
+     */
+    takeExactGpuBatch() {
+        const ret = wasm.wasmlinux_takeExactGpuBatch(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeExactSessionDeliveries() {
+        const ret = wasm.wasmlinux_takeExactSessionDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * @param {number} id
      * @returns {Uint8Array}
      */
     takeFileDownloadChunk(id) {
         const ret = wasm.wasmlinux_takeFileDownloadChunk(this.__wbg_ptr, id);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeInputDeliveries() {
+        const ret = wasm.wasmlinux_takeInputDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Actual work and capture-state diagnostics for the explicit OFF control only.
+     * @returns {any}
+     */
+    unrecordedControlState() {
+        const ret = wasm.wasmlinux_unrecordedControlState(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1548,6 +2812,46 @@ export class WasmMachine {
         wasm.__wbg_wasmmachine_free(ptr, 0);
     }
     /**
+     * @param {SessionDeviceLease} lease
+     * @param {any} status
+     * @param {any} frames
+     * @param {Uint8Array} bytes
+     */
+    completeDeviceRequest(lease, status, frames, bytes) {
+        _assertClass(lease, SessionDeviceLease);
+        const ret = wasm.wasmmachine_completeDeviceRequest(this.__wbg_ptr, lease.__wbg_ptr, status, frames, bytes);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {SessionNetworkLease} lease
+     * @param {Uint8Array} input
+     */
+    completeNetworkEvent(lease, input) {
+        _assertClass(lease, SessionNetworkLease);
+        const ret = wasm.wasmmachine_completeNetworkEvent(this.__wbg_ptr, lease.__wbg_ptr, input);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    deliverEventBoundary() {
+        const ret = wasm.wasmmachine_deliverEventBoundary(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    deviceRequests() {
+        const ret = wasm.wasmmachine_deviceRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E4-T29 Phase 2: attach the in-wasm (browser) JIT executor to this machine and arm tier-up.
      * Mirrors the native CLI `--jit` wiring (constructs the executor, calls `set_executor`, turns on
      * the block cache + interrupt batching + hotness discovery) so a booted browser guest executes
@@ -1581,6 +2885,27 @@ export class WasmMachine {
         }
     }
     /**
+     * @returns {any}
+     */
+    eventPosition() {
+        const ret = wasm.wasmmachine_eventPosition(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} cursor
+     */
+    finishNetworkReplay(cursor) {
+        const ptr0 = passStringToWasm0(cursor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_finishNetworkReplay(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
      * E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
@@ -1595,6 +2920,38 @@ export class WasmMachine {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * @param {string} configuration
+     * @param {any} replay
+     */
+    installDeviceSession(configuration, replay) {
+        const ptr0 = passStringToWasm0(configuration, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_installDeviceSession(this.__wbg_ptr, ptr0, len0, replay);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {any} replay
+     */
+    installNetworkSession(replay) {
+        const ret = wasm.wasmmachine_installNetworkSession(this.__wbg_ptr, replay);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Diagnostic witness for direct Wasm JIT stores that entered RAM's dirty-page path.
+     * @returns {number}
+     */
+    jitDirectStoreMarks() {
+        const ret = wasm.wasmmachine_jitDirectStoreMarks(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0];
+    }
+    /**
      * E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
      * Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
      * @returns {any}
@@ -1605,6 +2962,32 @@ export class WasmMachine {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} id
+     * @returns {SessionDeviceLease}
+     */
+    leaseDeviceRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_leaseDeviceRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionDeviceLease.__wrap(ret[0]);
+    }
+    /**
+     * @param {string} id
+     * @returns {SessionNetworkLease}
+     */
+    leaseNetworkRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_leaseNetworkRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionNetworkLease.__wrap(ret[0]);
     }
     /**
      * Load a bare-metal rv64 ELF. A malformed image throws a `JsError` naming the
@@ -1619,6 +3002,47 @@ export class WasmMachine {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @returns {string}
+     */
+    networkCursor() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmmachine_networkCursor(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    networkRequests() {
+        const ret = wasm.wasmmachine_networkRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {boolean}
+     */
+    networkSessionReplay() {
+        const ret = wasm.wasmmachine_networkSessionReplay(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * Construct a machine with `ram_mib` MiB of zeroed guest RAM and a UART0 console
@@ -1648,6 +3072,22 @@ export class WasmMachine {
         return ret[0] >>> 0;
     }
     /**
+     * @param {string} address
+     * @param {any} length
+     * @returns {Uint8Array}
+     */
+    readDeviceMemory(address, length) {
+        const ptr0 = passStringToWasm0(address, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_readDeviceMemory(this.__wbg_ptr, ptr0, len0, length);
+        if (ret[3]) {
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        return v2;
+    }
+    /**
      * The 33 architectural registers as a `BigUint64Array`: `[pc, x0, x1, …, x31]`.
      * @returns {BigUint64Array}
      */
@@ -1657,6 +3097,55 @@ export class WasmMachine {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} transition
+     * @param {string} retired
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {Uint8Array} bytes
+     */
+    replayDeviceCompletion(transition, retired, sequence, ordinal, bytes) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_replayDeviceCompletion(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, ordinal, bytes);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {string} transition
+     * @param {string} retired
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {Uint8Array} input
+     */
+    replayNetworkEvent(transition, retired, sequence, ordinal, input) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_replayNetworkEvent(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, ordinal, input);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {Uint8Array} bytes
+     */
+    restoreEventCheckpoint(bytes) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_restoreEventCheckpoint(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * Run up to `max_instrs` instructions, returning a status object:
@@ -1670,6 +3159,32 @@ export class WasmMachine {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} transition
+     * @param {number} max_work
+     * @returns {any}
+     */
+    runEventUntil(transition, max_work) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_runEventUntil(this.__wbg_ptr, ptr0, len0, max_work);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    saveEventCheckpoint() {
+        const ret = wasm.wasmmachine_saveEventCheckpoint(this.__wbg_ptr);
+        if (ret[3]) {
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        return v1;
     }
     /**
      * Explicit boot diagnostic only; does not enable profiling or change JIT policy.
@@ -1750,6 +3265,73 @@ export class WasmMachine {
         }
     }
     /**
+     * @param {string} transition
+     * @param {boolean} pending
+     * @returns {string}
+     */
+    stageEventPending(transition, pending) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.wasmmachine_stageEventPending(this.__wbg_ptr, ptr0, len0, pending);
+            var ptr2 = ret[0];
+            var len2 = ret[1];
+            if (ret[3]) {
+                ptr2 = 0; len2 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred3_0 = ptr2;
+            deferred3_1 = len2;
+            return getStringFromWasm0(ptr2, len2);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        }
+    }
+    /**
+     * Own a RAM payload now; apply it only at the named before-transition boundary. This is the
+     * common effect path used by forthcoming provider adapters, not a live browser callback.
+     * @param {string} transition
+     * @param {string} address
+     * @param {Uint8Array} bytes
+     * @returns {string}
+     */
+    stageEventWrite(transition, address, bytes) {
+        let deferred4_0;
+        let deferred4_1;
+        try {
+            const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ptr1 = passStringToWasm0(address, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len1 = WASM_VECTOR_LEN;
+            const ret = wasm.wasmmachine_stageEventWrite(this.__wbg_ptr, ptr0, len0, ptr1, len1, bytes);
+            var ptr3 = ret[0];
+            var len3 = ret[1];
+            if (ret[3]) {
+                ptr3 = 0; len3 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred4_0 = ptr3;
+            deferred4_1 = len3;
+            return getStringFromWasm0(ptr3, len3);
+        } finally {
+            wasm.__wbindgen_free(deferred4_0, deferred4_1, 1);
+        }
+    }
+    /**
+     * Select a single-hart deterministic board and begin a fresh exact coordinate. Validate
+     * host numbers before wasm integer coercion; wide event positions always use strings.
+     * @param {any} harts
+     * @param {any} divider
+     */
+    startEventClock(harts, divider) {
+        const ret = wasm.wasmmachine_startEventClock(this.__wbg_ptr, harts, divider);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * SHA-256 of guest RAM as 64 lowercase hex chars (matches the CLI `--dump-state`).
      * @returns {string}
      */
@@ -1783,6 +3365,36 @@ export class WasmMachine {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0] >>> 0;
+    }
+    /**
+     * @returns {any}
+     */
+    takeDeviceDeliveries() {
+        const ret = wasm.wasmmachine_takeDeviceDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeEventDeliveries() {
+        const ret = wasm.wasmmachine_takeEventDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeNetworkDeliveries() {
+        const ret = wasm.wasmmachine_takeNetworkDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Take and clear the accumulated canonical trace.
@@ -1896,6 +3508,68 @@ export function seedOverlayDelta(manifest_json, delta_bytes, seed_identity) {
     var len2 = WASM_VECTOR_LEN;
     const ret = wasm.seedOverlayDelta(ptr0, len0, ptr1, len1, ptr2, len2);
     return ret;
+}
+
+/**
+ * Installed exact GPU identity, without constructing or restoring a machine.
+ * @returns {string}
+ */
+export function sessionExactGpuIdentity() {
+    let deferred2_0;
+    let deferred2_1;
+    try {
+        const ret = wasm.sessionExactGpuIdentity();
+        var ptr1 = ret[0];
+        var len1 = ret[1];
+        if (ret[3]) {
+            ptr1 = 0; len1 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred2_0 = ptr1;
+        deferred2_1 = len1;
+        return getStringFromWasm0(ptr1, len1);
+    } finally {
+        wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+    }
+}
+
+/**
+ * Decode the small native envelope before durable publication or replay admission.
+ * @param {Uint8Array} bytes
+ * @returns {any}
+ */
+export function sessionGpuResultInfo(bytes) {
+    const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionGpuResultInfo(ptr0, len0);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return takeFromExternrefTable0(ret[0]);
+}
+
+/**
+ * Inspect only an already authenticated SESSION_CLOCK section. This API creates no VM.
+ * @param {any} value
+ * @returns {string}
+ */
+export function sessionInspectClockOrigin(value) {
+    let deferred2_0;
+    let deferred2_1;
+    try {
+        const ret = wasm.sessionInspectClockOrigin(value);
+        var ptr1 = ret[0];
+        var len1 = ret[1];
+        if (ret[3]) {
+            ptr1 = 0; len1 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred2_0 = ptr1;
+        deferred2_1 = len1;
+        return getStringFromWasm0(ptr1, len1);
+    } finally {
+        wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+    }
 }
 
 /**
@@ -2097,6 +3771,10 @@ function __wbg_get_imports() {
             return ret;
         }, arguments); },
         __wbg_buffer_0f212447ac64c53b: function(arg0) {
+            const ret = arg0.buffer;
+            return ret;
+        },
+        __wbg_buffer_54b87055582c8a81: function(arg0) {
             const ret = arg0.buffer;
             return ret;
         },
@@ -2331,6 +4009,14 @@ function __wbg_get_imports() {
             const ret = invokeJitBlock(arg0, arg1 >>> 0, arg2 >>> 0);
             return ret;
         },
+        __wbg_isArray_0677c962b281d01a: function(arg0) {
+            const ret = Array.isArray(arg0);
+            return ret;
+        },
+        __wbg_keys_58421f8f96795607: function(arg0) {
+            const ret = Object.keys(arg0);
+            return ret;
+        },
         __wbg_length_1f0964f4a5e2c6d8: function(arg0) {
             const ret = arg0.length;
             return ret;
@@ -2491,6 +4177,14 @@ function __wbg_get_imports() {
         },
         __wbg_open_72e5234a49d5f85d: function() { return handleError(function (arg0, arg1, arg2, arg3) {
             const ret = arg0.open(getStringFromWasm0(arg1, arg2), arg3 >>> 0);
+            return ret;
+        }, arguments); },
+        __wbg_ownedClockOriginBytes_2d4d6c614e78e9d9: function() { return handleError(function (arg0, arg1) {
+            const ret = ownedClockOriginBytes(arg0, arg1 >>> 0);
+            return ret;
+        }, arguments); },
+        __wbg_parse_1c0d8a8656d7e016: function() { return handleError(function (arg0, arg1) {
+            const ret = JSON.parse(getStringFromWasm0(arg0, arg1));
             return ret;
         }, arguments); },
         __wbg_performance_3ef602e13d6c3b56: function(arg0) {
@@ -2707,38 +4401,42 @@ function __wbg_get_imports() {
         __wbg_warn_b1370d804fa3e259: function(arg0) {
             console.warn(arg0);
         },
+        __wbg_wasmgputransport_new: function(arg0) {
+            const ret = WasmGpuTransport.__wrap(arg0);
+            return ret;
+        },
         __wbg_wasmlinux_new: function(arg0) {
             const ret = WasmLinux.__wrap(arg0);
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 31, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 29, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270);
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 92, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2);
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 92, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3);
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 92, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4);
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 92, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_4);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__had759ba7c4081673);
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 115, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1);
             return ret;
         },
         __wbindgen_cast_0000000000000007: function(arg0) {
@@ -2775,28 +4473,28 @@ function __wbg_get_imports() {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
         "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import2,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import2,
     };
 }
 
-function wasm_bindgen__convert__closures_____invoke__had759ba7c4081673(arg0, arg1) {
-    wasm.wasm_bindgen__convert__closures_____invoke__had759ba7c4081673(arg0, arg1);
+function wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1(arg0, arg1) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1(arg0, arg1);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_2(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_2(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_3(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_3(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_4(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_4(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56(arg0, arg1, arg2) {
@@ -2818,6 +4516,21 @@ const __wbindgen_enum_WorkerType = ["classic", "module"];
 const FileSha256Finalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_filesha256_free(ptr, 1));
+const SessionDeviceLeaseFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_sessiondevicelease_free(ptr, 1));
+const SessionNetworkLeaseFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_sessionnetworklease_free(ptr, 1));
+const SessionSourceProbeFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_sessionsourceprobe_free(ptr, 1));
+const SnapshotBufferFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_snapshotbuffer_free(ptr, 1));
+const WasmGpuTransportFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_wasmgputransport_free(ptr, 1));
 const WasmLinuxFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_wasmlinux_free(ptr, 1));
@@ -2829,6 +4542,12 @@ function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();
     wasm.__wbindgen_externrefs.set(idx, obj);
     return idx;
+}
+
+function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+        throw new Error(`expected instance of ${klass.name}`);
+    }
 }
 
 const CLOSURE_DTORS = (typeof FinalizationRegistry === 'undefined')

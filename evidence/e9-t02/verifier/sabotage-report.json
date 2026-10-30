@@ -1,0 +1,26 @@
+{
+  "status": "detected",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/sabotage-storage/Cargo.toml",
+    "--test",
+    "session_manifest",
+    "gpu_checkpoint_binding",
+    "--",
+    "--exact",
+    "--nocapture"
+  ],
+  "expected_exit": "nonzero assertion failure",
+  "observed_exit": 101,
+  "mutation": {
+    "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/sabotage-storage/src/session.rs",
+    "before": "(\"GPU\", a.gpu == b.gpu),",
+    "after": "(\"GPU\", true),"
+  },
+  "frozen_source_sha256": "4d2db19241a6df151b24104017d1856825d238704eb8f4473aefa856b9c639be",
+  "mutated_source_sha256": "82767919013eadd50e47efe924ac511142a23b91b3109771ab48f763792bfba3",
+  "log_sha256": "d4dbac430b55c33abdf398657568bc1f5c45dfa12d8bc7a3f572ff596b67df57"
+}

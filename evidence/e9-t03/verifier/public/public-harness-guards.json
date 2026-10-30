@@ -1,0 +1,72 @@
+{
+  "source_sha256": "b0a899326474e21e5900e64ecf11084190b04bc897dfa500047100df15ccc5a3",
+  "cases": [
+    {
+      "name": "fresh 304 refused",
+      "errors": [
+        "AssertionError [ERR_ASSERTION]: 304 without a verified cached body: /session-store.js"
+      ]
+    },
+    {
+      "name": "bad 200 cannot authorize later 304",
+      "errors": [
+        "AssertionError [ERR_ASSERTION]: published source drift /session-store.js\n+ actual - expected\n\n+ '8be77b518cf3368d07bc98182a564c62ee86a35ae31423ba6bf9727a85562417'\n- '0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f'\n",
+        "AssertionError [ERR_ASSERTION]: 304 without a verified cached body: /session-store.js"
+      ]
+    },
+    {
+      "name": "verified 200 authorizes 304 but not 404",
+      "revalidation": {
+        "url": "https://wasm-vm.pages.dev/session-store.js",
+        "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f"
+      },
+      "otherStatusRejected": true
+    },
+    {
+      "name": "exact favicon404",
+      "ignored": true,
+      "recorded": [
+        {
+          "url": "https://wasm-vm.pages.dev/favicon.ico",
+          "text": "Failed to load resource: server responded with status 404 ()"
+        }
+      ]
+    },
+    {
+      "name": "script mentions favicon404",
+      "ignored": false,
+      "recorded": [
+        "favicon 404"
+      ]
+    },
+    {
+      "name": "foreign origin favicon404",
+      "ignored": false,
+      "recorded": [
+        "status 404"
+      ]
+    },
+    {
+      "name": "query favicon404",
+      "ignored": false,
+      "recorded": [
+        "status 404"
+      ]
+    },
+    {
+      "name": "favicon500",
+      "ignored": false,
+      "recorded": [
+        "status 500"
+      ]
+    },
+    {
+      "name": "unattributed favicon404",
+      "ignored": false,
+      "recorded": [
+        "favicon 404"
+      ]
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "task_status": "verified",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

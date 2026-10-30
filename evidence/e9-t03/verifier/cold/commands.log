@@ -1,0 +1,18 @@
+Cloning into '/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo'...
+done.
+HEAD is now at c51133ca test(session): promote adversarial storage proof
+python3 -B tools/verify/e9-session-store.py --output "${E9_STORE_EVIDENCE_DIR:-target/evidence/e9-session-store-final}"
+retained-gpu-runtime
+policy
+format
+storage-clippy
+storage-native
+no-std-wasm
+adapter-native
+wasm-clippy
+wasm-build
+contract
+codec-node
+javascript
+browser-dependencies
+browser

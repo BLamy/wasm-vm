@@ -1,0 +1,6 @@
+  ✘  1 [chromium] › ui-public.spec.js:57:3 › every public route at 390px: shared nav, no errors, no overflow (272ms)
+    [31m+     "name": "Open the full app →",[39m
+    [31m+     "name": "All case studies →",[39m
+    [31m+     "name": "Open the docs →",[39m
+    > 71 |         expect(await smallTargets(page), route).toEqual([]);
+  1 failed

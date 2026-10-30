@@ -1,0 +1,40 @@
+{
+  "trace_sha256": "40555f504bffffd42b0cd530f894a5bf12f3b585e82c0a496442f24e913d0d70",
+  "snapshot_points": [
+    {
+      "file": "trace.trace",
+      "line": 892,
+      "type": "frame-snapshot",
+      "snapshotName": "after@call@275",
+      "matching": "Quota. Recording paused;"
+    },
+    {
+      "file": "trace.trace",
+      "line": 1137,
+      "type": "frame-snapshot",
+      "snapshotName": "after@call@355",
+      "matching": "Saved session deleted."
+    },
+    {
+      "file": "trace.trace",
+      "line": 1228,
+      "type": "frame-snapshot",
+      "snapshotName": "after@call@373",
+      "matching": "Exact checkpoint restored paused."
+    },
+    {
+      "file": "trace.trace",
+      "line": 1516,
+      "type": "frame-snapshot",
+      "snapshotName": "after@call@455",
+      "matching": "Saved session deleted."
+    },
+    {
+      "file": "trace.trace",
+      "line": 1669,
+      "type": "frame-snapshot",
+      "snapshotName": "after@call@493",
+      "matching": "Exact checkpoint restored paused."
+    }
+  ]
+}

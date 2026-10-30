@@ -1,0 +1,9 @@
+{
+  "status": "preparing",
+  "initialFailure": "preserved failed v1 strict-byte comparison",
+  "cause": "sparse harness omitted tracked rust-toolchain.toml; actual compiler1.98 instead of parent and repo pin1.96",
+  "newClone": "/private/tmp/e5-5-t07-pristine-pinned-0144c662b",
+  "targetInitialRequirement": "must be absent in NEW clone",
+  "oldClone": "preserved untouched with own compiled output",
+  "time": 1793234527.987137
+}

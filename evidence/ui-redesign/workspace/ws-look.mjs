@@ -1,0 +1,12 @@
+import { chromium } from "/Users/blamy/.codex/worktrees/ui-redesign/wasm-vm/web/node_modules/@playwright/test/index.mjs";
+const [, , url, out, w = "1280", h = "900", mobile] = process.argv;
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: +w, height: +h }, isMobile: !!mobile, hasTouch: !!mobile, deviceScaleFactor: mobile ? 2 : 1 });
+const errs = [];
+p.on("console", (m) => m.type() === "error" && errs.push(m.text()));
+p.on("pageerror", (e) => errs.push("pageerror " + e.message));
+await p.goto(url);
+await p.waitForTimeout(2500);
+console.log("errors:", JSON.stringify(errs.slice(0, 6)), "overflowX", await p.evaluate(() => document.documentElement.scrollWidth - innerWidth));
+await p.screenshot({ path: out });
+await b.close();

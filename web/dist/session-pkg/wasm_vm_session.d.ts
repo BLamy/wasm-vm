@@ -1,0 +1,102 @@
+/* tslint:disable */
+/* eslint-disable */
+
+/**
+ * Incremental session-object hashing lives beside metadata, independently of the VM bundle.
+ */
+export class SessionSha256 {
+    free(): void;
+    [Symbol.dispose](): void;
+    finish(): string;
+    constructor();
+    update(bytes: Uint8Array): void;
+}
+
+export function sessionAdmitDiskRoot(bytes: Uint8Array, image: string, generation: string): Uint8Array;
+
+export function sessionCanonicalImage(text: string): Uint8Array;
+
+export function sessionCheckAppend(previous: Uint8Array, candidate: Uint8Array): void;
+
+export function sessionCheckLocalAppend(previous: Uint8Array, candidate: Uint8Array): void;
+
+export function sessionDiskRootReferences(bytes: Uint8Array): Uint8Array;
+
+export function sessionEventReferences(manifest: Uint8Array, chunk: Uint8Array): Uint8Array;
+
+/**
+ * Canonical bounded record batch -> immutable index. The caller stores these exact bytes.
+ */
+export function sessionIndexEventChunk(bytes: Uint8Array): Uint8Array;
+
+export function sessionLocalEventReferences(manifest: Uint8Array, chunk: Uint8Array): Uint8Array;
+
+export function sessionLocalManifestReferences(bytes: Uint8Array): Uint8Array;
+
+export function sessionManifestReferences(bytes: Uint8Array): Uint8Array;
+
+export function sessionValidateCheckpointContext(bytes: Uint8Array): Uint8Array;
+
+export function sessionValidateDiskRoot(bytes: Uint8Array): Uint8Array;
+
+export function sessionValidateLocalManifest(bytes: Uint8Array): Uint8Array;
+
+export function sessionValidateManifest(bytes: Uint8Array): Uint8Array;
+
+/**
+ * Strict canonical v2 page codec; whole-chain authentication belongs to the durable store.
+ */
+export function sessionValidateWitnessPage(bytes: Uint8Array): Uint8Array;
+
+export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
+
+export interface InitOutput {
+    readonly memory: WebAssembly.Memory;
+    readonly __wbg_sessionsha256_free: (a: number, b: number) => void;
+    readonly sessionAdmitDiskRoot: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number, number];
+    readonly sessionCanonicalImage: (a: number, b: number) => [number, number, number, number];
+    readonly sessionCheckAppend: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly sessionCheckLocalAppend: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly sessionDiskRootReferences: (a: number, b: number) => [number, number, number, number];
+    readonly sessionEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly sessionIndexEventChunk: (a: number, b: number) => [number, number, number, number];
+    readonly sessionLocalEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly sessionLocalManifestReferences: (a: number, b: number) => [number, number, number, number];
+    readonly sessionManifestReferences: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateLocalManifest: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateManifest: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateWitnessPage: (a: number, b: number) => [number, number, number, number];
+    readonly sessionsha256_finish: (a: number) => [number, number, number, number];
+    readonly sessionsha256_new: () => number;
+    readonly sessionsha256_update: (a: number, b: number, c: number) => [number, number];
+    readonly __wbindgen_externrefs: WebAssembly.Table;
+    readonly __wbindgen_malloc: (a: number, b: number) => number;
+    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+    readonly __externref_table_dealloc: (a: number) => void;
+    readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+    readonly __wbindgen_start: () => void;
+}
+
+export type SyncInitInput = BufferSource | WebAssembly.Module;
+
+/**
+ * Instantiates the given `module`, which can either be bytes or
+ * a precompiled `WebAssembly.Module`.
+ *
+ * @param {{ module: SyncInitInput }} module - Passing `SyncInitInput` directly is deprecated.
+ *
+ * @returns {InitOutput}
+ */
+export function initSync(module: { module: SyncInitInput } | SyncInitInput): InitOutput;
+
+/**
+ * If `module_or_path` is {RequestInfo} or {URL}, makes a request and
+ * for everything else, calls `WebAssembly.instantiate` directly.
+ *
+ * @param {{ module_or_path: InitInput | Promise<InitInput> }} module_or_path - Passing `InitInput` directly is deprecated.
+ *
+ * @returns {Promise<InitOutput>}
+ */
+export default function __wbg_init (module_or_path?: { module_or_path: InitInput | Promise<InitInput> } | InitInput | Promise<InitInput>): Promise<InitOutput>;

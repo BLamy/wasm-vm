@@ -1,0 +1,4471 @@
+{
+  "status": "HELD",
+  "head": "6b043fdc10603b015a6e9fbc5c299bc81790850b",
+  "prediction": "P11: real guest DOM pointer integration, independently seeded, direct and serialized transport; atomic journal rejection and replay firewall",
+  "cases": [
+    {
+      "seed": 2654435769,
+      "serialized": false,
+      "x": 21,
+      "y": 75,
+      "tx": 6881,
+      "ty": 24575,
+      "dx": -12,
+      "dy": 2,
+      "guestBytes": [
+        82,
+        0,
+        10,
+        3,
+        0,
+        0,
+        0,
+        225,
+        26,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        255,
+        95,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        225,
+        26,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        255,
+        95,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        2,
+        0,
+        0,
+        0,
+        244,
+        255,
+        255,
+        255,
+        2,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        68
+      ],
+      "guestSha256": "2e00537f44ea275e39d5b5e055aa3b3bda2d3edeb3526b1c0a27cd2f2746266a",
+      "kernelSha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+      "receipts": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "2",
+          "ordinal": 2,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "3",
+          "ordinal": 3,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "4",
+          "ordinal": 4,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "5",
+          "ordinal": 5,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "6",
+          "ordinal": 6,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "7",
+          "ordinal": 7,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "8",
+          "ordinal": 8,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "9",
+          "ordinal": 9,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "10",
+          "ordinal": 10,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "10",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "11",
+          "ordinal": 11,
+          "channel": 15,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "12",
+          "ordinal": 12,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            244,
+            255,
+            255,
+            255
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "13",
+          "ordinal": 13,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "14",
+          "ordinal": 14,
+          "channel": 8,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            244,
+            255,
+            255,
+            255,
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "15",
+          "ordinal": 15,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "16",
+          "ordinal": 16,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "17",
+          "ordinal": 17,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "18",
+          "ordinal": 18,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "7",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "19",
+          "ordinal": 19,
+          "channel": 15,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "20",
+          "ordinal": 20,
+          "channel": 1,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "1",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "21",
+          "ordinal": 21,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "22",
+          "ordinal": 22,
+          "channel": 2,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "23",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "24",
+          "ordinal": 2,
+          "channel": 16,
+          "bytes": [
+            2
+          ],
+          "outcome": [
+            "0",
+            "2",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "end": {
+        "transition": "10000",
+        "retired": "10000",
+        "phase": "before",
+        "sequence": "24",
+        "ordinal": 2,
+        "replay": false,
+        "paused": true,
+        "stopped": true
+      },
+      "manifest": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "id": "pointer-2654435769-false",
+        "machine": {
+          "vm_build": "f057046de4b479ace2c56447d7717824a237590eace81ea0ab866c9ca66f9e87",
+          "wasm_build": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+          "base_image": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+          "kernel": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+          "initramfs": null,
+          "ram_bytes": "16777216",
+          "harts": 1,
+          "devices": [
+            {
+              "id": "uart0",
+              "kind": "uart16550",
+              "mmio_base": "268435456",
+              "mmio_length": 256,
+              "irq": 10,
+              "state_version": 1
+            },
+            {
+              "id": "clint",
+              "kind": "clint",
+              "mmio_base": "33554432",
+              "mmio_length": 65536,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "plic",
+              "kind": "plic",
+              "mmio_base": "201326592",
+              "mmio_length": 6291456,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "rtc",
+              "kind": "goldfish-rtc",
+              "mmio_base": "1052672",
+              "mmio_length": 4096,
+              "irq": 11,
+              "state_version": 1
+            },
+            {
+              "id": "slot0",
+              "kind": "virtio-blk",
+              "mmio_base": "268439552",
+              "mmio_length": 4096,
+              "irq": 1,
+              "state_version": 1
+            },
+            {
+              "id": "slot1",
+              "kind": "virtio-net",
+              "mmio_base": "268443648",
+              "mmio_length": 4096,
+              "irq": 2,
+              "state_version": 1
+            },
+            {
+              "id": "slot2",
+              "kind": "virtio-rng",
+              "mmio_base": "268447744",
+              "mmio_length": 4096,
+              "irq": 3,
+              "state_version": 1
+            },
+            {
+              "id": "slot3",
+              "kind": "virtio-keyboard",
+              "mmio_base": "268451840",
+              "mmio_length": 4096,
+              "irq": 4,
+              "state_version": 1
+            },
+            {
+              "id": "slot4",
+              "kind": "virtio-tablet",
+              "mmio_base": "268455936",
+              "mmio_length": 4096,
+              "irq": 5,
+              "state_version": 1
+            },
+            {
+              "id": "slot5",
+              "kind": "virtio-mouse",
+              "mmio_base": "268460032",
+              "mmio_length": 4096,
+              "irq": 6,
+              "state_version": 1
+            },
+            {
+              "id": "slot6",
+              "kind": "virtio-snd",
+              "mmio_base": "268464128",
+              "mmio_length": 4096,
+              "irq": 7,
+              "state_version": 1
+            },
+            {
+              "id": "slot7",
+              "kind": "virtio-gpu2d",
+              "mmio_base": "268468224",
+              "mmio_length": 4096,
+              "irq": 8,
+              "state_version": 1
+            },
+            {
+              "id": "slot8",
+              "kind": "virtio-console",
+              "mmio_base": "268472320",
+              "mmio_length": 4096,
+              "irq": 9,
+              "state_version": 1
+            }
+          ],
+          "gpu": null
+        },
+        "policy": {
+          "mode": "capture-prefix",
+          "profile": "rv64-linux-software-v1",
+          "event_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "checkpoint_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "boundary_version": 1,
+          "clock": {
+            "mode": "icount",
+            "divider": 10,
+            "timebase_hz": "10000000",
+            "interactive": null
+          },
+          "required_inputs": [
+            "uart",
+            "keyboard",
+            "pointer",
+            "display",
+            "agent",
+            "clipboard",
+            "file-transfer",
+            "lifecycle"
+          ]
+        },
+        "assets": [
+          {
+            "role": "vm",
+            "content": {
+              "sha256": "f057046de4b479ace2c56447d7717824a237590eace81ea0ab866c9ca66f9e87",
+              "length": "2247"
+            }
+          },
+          {
+            "role": "wasm",
+            "content": {
+              "sha256": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+              "length": "1919430"
+            }
+          },
+          {
+            "role": "kernel",
+            "content": {
+              "sha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+              "length": "3984"
+            }
+          },
+          {
+            "role": "base",
+            "content": {
+              "sha256": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+              "length": "210"
+            }
+          }
+        ],
+        "begin": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "end": {
+          "transition": "10000",
+          "phase": "before",
+          "ordinal": 2,
+          "sequence": "24",
+          "retired": "10000"
+        },
+        "events": [
+          {
+            "first": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 1,
+              "sequence": "1",
+              "retired": "0"
+            },
+            "last": {
+              "transition": "10000",
+              "phase": "before",
+              "ordinal": 2,
+              "sequence": "24",
+              "retired": "10000"
+            },
+            "count": 24,
+            "content": {
+              "sha256": "d312592fd6eadb6f319305f906bf8726801260c6c46f98b30fc515961480df85",
+              "length": "10563"
+            }
+          }
+        ],
+        "checkpoints": [
+          {
+            "id": "input-witness",
+            "position": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 0,
+              "sequence": "0",
+              "retired": "0"
+            },
+            "next_sequence": "1",
+            "machine": {
+              "sha256": "47fad7f22d1ad034fcaa8894806cef43423becce25754cb4a5a0ba04ef0096a1",
+              "length": "12827"
+            },
+            "disk_root": "bddc5bfc06ae454b4a45346adb2d88f60da83752751fe19fa7fec1bdb246b6fe",
+            "gpu": null
+          }
+        ],
+        "extensions": []
+      },
+      "replay": {
+        "error": "Error: live input is forbidden during replay",
+        "diagnostic": null,
+        "cursor": {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "0",
+          "ordinal": 0,
+          "replay": true,
+          "paused": true,
+          "stopped": false
+        }
+      },
+      "atomicStageRejected": true
+    },
+    {
+      "seed": 2654435769,
+      "serialized": true,
+      "x": 21,
+      "y": 75,
+      "tx": 6881,
+      "ty": 24575,
+      "dx": -12,
+      "dy": 2,
+      "guestBytes": [
+        82,
+        0,
+        10,
+        3,
+        0,
+        0,
+        0,
+        225,
+        26,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        255,
+        95,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        225,
+        26,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        255,
+        95,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        2,
+        0,
+        0,
+        0,
+        244,
+        255,
+        255,
+        255,
+        2,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        68
+      ],
+      "guestSha256": "2e00537f44ea275e39d5b5e055aa3b3bda2d3edeb3526b1c0a27cd2f2746266a",
+      "kernelSha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+      "receipts": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "2",
+          "ordinal": 2,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "3",
+          "ordinal": 3,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "4",
+          "ordinal": 4,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "5",
+          "ordinal": 5,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "6",
+          "ordinal": 6,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            225,
+            26,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            255,
+            95,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "7",
+          "ordinal": 7,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "8",
+          "ordinal": 8,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "9",
+          "ordinal": 9,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "10",
+          "ordinal": 10,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "10",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "11",
+          "ordinal": 11,
+          "channel": 15,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "12",
+          "ordinal": 12,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            244,
+            255,
+            255,
+            255
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "13",
+          "ordinal": 13,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "14",
+          "ordinal": 14,
+          "channel": 8,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            244,
+            255,
+            255,
+            255,
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "15",
+          "ordinal": 15,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "16",
+          "ordinal": 16,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "17",
+          "ordinal": 17,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "18",
+          "ordinal": 18,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "7",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "19",
+          "ordinal": 19,
+          "channel": 15,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "20",
+          "ordinal": 20,
+          "channel": 1,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "1",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "21",
+          "ordinal": 21,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "22",
+          "ordinal": 22,
+          "channel": 2,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "23",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "24",
+          "ordinal": 2,
+          "channel": 16,
+          "bytes": [
+            2
+          ],
+          "outcome": [
+            "0",
+            "2",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "end": {
+        "transition": "10000",
+        "retired": "10000",
+        "phase": "before",
+        "sequence": "24",
+        "ordinal": 2,
+        "replay": false,
+        "paused": true,
+        "stopped": true
+      },
+      "manifest": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "id": "pointer-2654435769-true",
+        "machine": {
+          "vm_build": "74763bb0e451a6c334afaf65e32cd29322a3c1898a8005a96b391f54ff12b449",
+          "wasm_build": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+          "base_image": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+          "kernel": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+          "initramfs": null,
+          "ram_bytes": "16777216",
+          "harts": 1,
+          "devices": [
+            {
+              "id": "uart0",
+              "kind": "uart16550",
+              "mmio_base": "268435456",
+              "mmio_length": 256,
+              "irq": 10,
+              "state_version": 1
+            },
+            {
+              "id": "clint",
+              "kind": "clint",
+              "mmio_base": "33554432",
+              "mmio_length": 65536,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "plic",
+              "kind": "plic",
+              "mmio_base": "201326592",
+              "mmio_length": 6291456,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "rtc",
+              "kind": "goldfish-rtc",
+              "mmio_base": "1052672",
+              "mmio_length": 4096,
+              "irq": 11,
+              "state_version": 1
+            },
+            {
+              "id": "slot0",
+              "kind": "virtio-blk",
+              "mmio_base": "268439552",
+              "mmio_length": 4096,
+              "irq": 1,
+              "state_version": 1
+            },
+            {
+              "id": "slot1",
+              "kind": "virtio-net",
+              "mmio_base": "268443648",
+              "mmio_length": 4096,
+              "irq": 2,
+              "state_version": 1
+            },
+            {
+              "id": "slot2",
+              "kind": "virtio-rng",
+              "mmio_base": "268447744",
+              "mmio_length": 4096,
+              "irq": 3,
+              "state_version": 1
+            },
+            {
+              "id": "slot3",
+              "kind": "virtio-keyboard",
+              "mmio_base": "268451840",
+              "mmio_length": 4096,
+              "irq": 4,
+              "state_version": 1
+            },
+            {
+              "id": "slot4",
+              "kind": "virtio-tablet",
+              "mmio_base": "268455936",
+              "mmio_length": 4096,
+              "irq": 5,
+              "state_version": 1
+            },
+            {
+              "id": "slot5",
+              "kind": "virtio-mouse",
+              "mmio_base": "268460032",
+              "mmio_length": 4096,
+              "irq": 6,
+              "state_version": 1
+            },
+            {
+              "id": "slot6",
+              "kind": "virtio-snd",
+              "mmio_base": "268464128",
+              "mmio_length": 4096,
+              "irq": 7,
+              "state_version": 1
+            },
+            {
+              "id": "slot7",
+              "kind": "virtio-gpu2d",
+              "mmio_base": "268468224",
+              "mmio_length": 4096,
+              "irq": 8,
+              "state_version": 1
+            },
+            {
+              "id": "slot8",
+              "kind": "virtio-console",
+              "mmio_base": "268472320",
+              "mmio_length": 4096,
+              "irq": 9,
+              "state_version": 1
+            }
+          ],
+          "gpu": null
+        },
+        "policy": {
+          "mode": "capture-prefix",
+          "profile": "rv64-linux-software-v1",
+          "event_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "checkpoint_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "boundary_version": 1,
+          "clock": {
+            "mode": "icount",
+            "divider": 10,
+            "timebase_hz": "10000000",
+            "interactive": null
+          },
+          "required_inputs": [
+            "uart",
+            "keyboard",
+            "pointer",
+            "display",
+            "agent",
+            "clipboard",
+            "file-transfer",
+            "lifecycle"
+          ]
+        },
+        "assets": [
+          {
+            "role": "vm",
+            "content": {
+              "sha256": "74763bb0e451a6c334afaf65e32cd29322a3c1898a8005a96b391f54ff12b449",
+              "length": "2247"
+            }
+          },
+          {
+            "role": "wasm",
+            "content": {
+              "sha256": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+              "length": "1919430"
+            }
+          },
+          {
+            "role": "kernel",
+            "content": {
+              "sha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+              "length": "3984"
+            }
+          },
+          {
+            "role": "base",
+            "content": {
+              "sha256": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+              "length": "210"
+            }
+          }
+        ],
+        "begin": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "end": {
+          "transition": "10000",
+          "phase": "before",
+          "ordinal": 2,
+          "sequence": "24",
+          "retired": "10000"
+        },
+        "events": [
+          {
+            "first": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 1,
+              "sequence": "1",
+              "retired": "0"
+            },
+            "last": {
+              "transition": "10000",
+              "phase": "before",
+              "ordinal": 2,
+              "sequence": "24",
+              "retired": "10000"
+            },
+            "count": 24,
+            "content": {
+              "sha256": "d312592fd6eadb6f319305f906bf8726801260c6c46f98b30fc515961480df85",
+              "length": "10563"
+            }
+          }
+        ],
+        "checkpoints": [
+          {
+            "id": "input-witness",
+            "position": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 0,
+              "sequence": "0",
+              "retired": "0"
+            },
+            "next_sequence": "1",
+            "machine": {
+              "sha256": "47fad7f22d1ad034fcaa8894806cef43423becce25754cb4a5a0ba04ef0096a1",
+              "length": "12827"
+            },
+            "disk_root": "bddc5bfc06ae454b4a45346adb2d88f60da83752751fe19fa7fec1bdb246b6fe",
+            "gpu": null
+          }
+        ],
+        "extensions": []
+      },
+      "replay": {
+        "error": null,
+        "diagnostic": {
+          "reason": "pointer-mode-error",
+          "mode": "relative",
+          "error": "live input is forbidden during replay"
+        },
+        "cursor": {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "0",
+          "ordinal": 0,
+          "replay": true,
+          "paused": true,
+          "stopped": false
+        }
+      },
+      "atomicStageRejected": true
+    },
+    {
+      "seed": 2752095587,
+      "serialized": false,
+      "x": 45,
+      "y": 58,
+      "tx": 14745,
+      "ty": 19005,
+      "dx": -8,
+      "dy": 8,
+      "guestBytes": [
+        82,
+        0,
+        10,
+        3,
+        0,
+        0,
+        0,
+        153,
+        57,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        61,
+        74,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        153,
+        57,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        61,
+        74,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        2,
+        0,
+        0,
+        0,
+        248,
+        255,
+        255,
+        255,
+        2,
+        0,
+        1,
+        0,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        68
+      ],
+      "guestSha256": "50c27cf1ec8a1c30a0b4769d444d61ddf883236bd87d27414997d180b51903db",
+      "kernelSha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+      "receipts": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "2",
+          "ordinal": 2,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "3",
+          "ordinal": 3,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "4",
+          "ordinal": 4,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "5",
+          "ordinal": 5,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "6",
+          "ordinal": 6,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "7",
+          "ordinal": 7,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "8",
+          "ordinal": 8,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "9",
+          "ordinal": 9,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "10",
+          "ordinal": 10,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "10",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "11",
+          "ordinal": 11,
+          "channel": 15,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "12",
+          "ordinal": 12,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            248,
+            255,
+            255,
+            255
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "13",
+          "ordinal": 13,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            1,
+            0,
+            8,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "14",
+          "ordinal": 14,
+          "channel": 8,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            248,
+            255,
+            255,
+            255,
+            2,
+            0,
+            1,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "15",
+          "ordinal": 15,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "16",
+          "ordinal": 16,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "17",
+          "ordinal": 17,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "18",
+          "ordinal": 18,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "7",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "19",
+          "ordinal": 19,
+          "channel": 15,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "20",
+          "ordinal": 20,
+          "channel": 1,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "1",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "21",
+          "ordinal": 21,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "22",
+          "ordinal": 22,
+          "channel": 2,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "23",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "24",
+          "ordinal": 2,
+          "channel": 16,
+          "bytes": [
+            2
+          ],
+          "outcome": [
+            "0",
+            "2",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "end": {
+        "transition": "10000",
+        "retired": "10000",
+        "phase": "before",
+        "sequence": "24",
+        "ordinal": 2,
+        "replay": false,
+        "paused": true,
+        "stopped": true
+      },
+      "manifest": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "id": "pointer-2752095587-false",
+        "machine": {
+          "vm_build": "eafc7dffbd7e09b90578a5c455d3c225a67121162d1d3cbd0a289376f8df6641",
+          "wasm_build": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+          "base_image": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+          "kernel": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+          "initramfs": null,
+          "ram_bytes": "16777216",
+          "harts": 1,
+          "devices": [
+            {
+              "id": "uart0",
+              "kind": "uart16550",
+              "mmio_base": "268435456",
+              "mmio_length": 256,
+              "irq": 10,
+              "state_version": 1
+            },
+            {
+              "id": "clint",
+              "kind": "clint",
+              "mmio_base": "33554432",
+              "mmio_length": 65536,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "plic",
+              "kind": "plic",
+              "mmio_base": "201326592",
+              "mmio_length": 6291456,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "rtc",
+              "kind": "goldfish-rtc",
+              "mmio_base": "1052672",
+              "mmio_length": 4096,
+              "irq": 11,
+              "state_version": 1
+            },
+            {
+              "id": "slot0",
+              "kind": "virtio-blk",
+              "mmio_base": "268439552",
+              "mmio_length": 4096,
+              "irq": 1,
+              "state_version": 1
+            },
+            {
+              "id": "slot1",
+              "kind": "virtio-net",
+              "mmio_base": "268443648",
+              "mmio_length": 4096,
+              "irq": 2,
+              "state_version": 1
+            },
+            {
+              "id": "slot2",
+              "kind": "virtio-rng",
+              "mmio_base": "268447744",
+              "mmio_length": 4096,
+              "irq": 3,
+              "state_version": 1
+            },
+            {
+              "id": "slot3",
+              "kind": "virtio-keyboard",
+              "mmio_base": "268451840",
+              "mmio_length": 4096,
+              "irq": 4,
+              "state_version": 1
+            },
+            {
+              "id": "slot4",
+              "kind": "virtio-tablet",
+              "mmio_base": "268455936",
+              "mmio_length": 4096,
+              "irq": 5,
+              "state_version": 1
+            },
+            {
+              "id": "slot5",
+              "kind": "virtio-mouse",
+              "mmio_base": "268460032",
+              "mmio_length": 4096,
+              "irq": 6,
+              "state_version": 1
+            },
+            {
+              "id": "slot6",
+              "kind": "virtio-snd",
+              "mmio_base": "268464128",
+              "mmio_length": 4096,
+              "irq": 7,
+              "state_version": 1
+            },
+            {
+              "id": "slot7",
+              "kind": "virtio-gpu2d",
+              "mmio_base": "268468224",
+              "mmio_length": 4096,
+              "irq": 8,
+              "state_version": 1
+            },
+            {
+              "id": "slot8",
+              "kind": "virtio-console",
+              "mmio_base": "268472320",
+              "mmio_length": 4096,
+              "irq": 9,
+              "state_version": 1
+            }
+          ],
+          "gpu": null
+        },
+        "policy": {
+          "mode": "capture-prefix",
+          "profile": "rv64-linux-software-v1",
+          "event_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "checkpoint_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "boundary_version": 1,
+          "clock": {
+            "mode": "icount",
+            "divider": 10,
+            "timebase_hz": "10000000",
+            "interactive": null
+          },
+          "required_inputs": [
+            "uart",
+            "keyboard",
+            "pointer",
+            "display",
+            "agent",
+            "clipboard",
+            "file-transfer",
+            "lifecycle"
+          ]
+        },
+        "assets": [
+          {
+            "role": "vm",
+            "content": {
+              "sha256": "eafc7dffbd7e09b90578a5c455d3c225a67121162d1d3cbd0a289376f8df6641",
+              "length": "2247"
+            }
+          },
+          {
+            "role": "wasm",
+            "content": {
+              "sha256": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+              "length": "1919430"
+            }
+          },
+          {
+            "role": "kernel",
+            "content": {
+              "sha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+              "length": "3984"
+            }
+          },
+          {
+            "role": "base",
+            "content": {
+              "sha256": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+              "length": "210"
+            }
+          }
+        ],
+        "begin": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "end": {
+          "transition": "10000",
+          "phase": "before",
+          "ordinal": 2,
+          "sequence": "24",
+          "retired": "10000"
+        },
+        "events": [
+          {
+            "first": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 1,
+              "sequence": "1",
+              "retired": "0"
+            },
+            "last": {
+              "transition": "10000",
+              "phase": "before",
+              "ordinal": 2,
+              "sequence": "24",
+              "retired": "10000"
+            },
+            "count": 24,
+            "content": {
+              "sha256": "4f1652c4c4e517fa8b17bfe72cd748db10d5422a378d458c3f13ea23e478e0cd",
+              "length": "10559"
+            }
+          }
+        ],
+        "checkpoints": [
+          {
+            "id": "input-witness",
+            "position": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 0,
+              "sequence": "0",
+              "retired": "0"
+            },
+            "next_sequence": "1",
+            "machine": {
+              "sha256": "47fad7f22d1ad034fcaa8894806cef43423becce25754cb4a5a0ba04ef0096a1",
+              "length": "12827"
+            },
+            "disk_root": "bddc5bfc06ae454b4a45346adb2d88f60da83752751fe19fa7fec1bdb246b6fe",
+            "gpu": null
+          }
+        ],
+        "extensions": []
+      },
+      "replay": {
+        "error": "Error: live input is forbidden during replay",
+        "diagnostic": null,
+        "cursor": {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "0",
+          "ordinal": 0,
+          "replay": true,
+          "paused": true,
+          "stopped": false
+        }
+      },
+      "atomicStageRejected": true
+    },
+    {
+      "seed": 2752095587,
+      "serialized": true,
+      "x": 45,
+      "y": 58,
+      "tx": 14745,
+      "ty": 19005,
+      "dx": -8,
+      "dy": 8,
+      "guestBytes": [
+        82,
+        0,
+        10,
+        3,
+        0,
+        0,
+        0,
+        153,
+        57,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        61,
+        74,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        153,
+        57,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        61,
+        74,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        2,
+        0,
+        0,
+        0,
+        248,
+        255,
+        255,
+        255,
+        2,
+        0,
+        1,
+        0,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        68
+      ],
+      "guestSha256": "50c27cf1ec8a1c30a0b4769d444d61ddf883236bd87d27414997d180b51903db",
+      "kernelSha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+      "receipts": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "2",
+          "ordinal": 2,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "3",
+          "ordinal": 3,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "4",
+          "ordinal": 4,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "5",
+          "ordinal": 5,
+          "channel": 5,
+          "bytes": [
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "6",
+          "ordinal": 6,
+          "channel": 6,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            153,
+            57,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            61,
+            74,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "7",
+          "ordinal": 7,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "8",
+          "ordinal": 8,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "9",
+          "ordinal": 9,
+          "channel": 5,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "8",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "10",
+          "ordinal": 10,
+          "channel": 6,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "10",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "11",
+          "ordinal": 11,
+          "channel": 15,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "12",
+          "ordinal": 12,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            248,
+            255,
+            255,
+            255
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "13",
+          "ordinal": 13,
+          "channel": 7,
+          "bytes": [
+            2,
+            0,
+            1,
+            0,
+            8,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "14",
+          "ordinal": 14,
+          "channel": 8,
+          "bytes": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            248,
+            255,
+            255,
+            255,
+            2,
+            0,
+            1,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "15",
+          "ordinal": 15,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "16",
+          "ordinal": 16,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "17",
+          "ordinal": 17,
+          "channel": 7,
+          "bytes": [
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "18",
+          "ordinal": 18,
+          "channel": 8,
+          "bytes": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "outcome": [
+            "0",
+            "7",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "19",
+          "ordinal": 19,
+          "channel": 15,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "20",
+          "ordinal": 20,
+          "channel": 1,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "1",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "21",
+          "ordinal": 21,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "22",
+          "ordinal": 22,
+          "channel": 2,
+          "bytes": [
+            33
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "23",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "10000",
+          "retired": "10000",
+          "phase": "before",
+          "sequence": "24",
+          "ordinal": 2,
+          "channel": 16,
+          "bytes": [
+            2
+          ],
+          "outcome": [
+            "0",
+            "2",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "end": {
+        "transition": "10000",
+        "retired": "10000",
+        "phase": "before",
+        "sequence": "24",
+        "ordinal": 2,
+        "replay": false,
+        "paused": true,
+        "stopped": true
+      },
+      "manifest": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "id": "pointer-2752095587-true",
+        "machine": {
+          "vm_build": "91abe88a213894ff0aeaebad69a4fa2c682a46ef78750c4aa792c71553343c21",
+          "wasm_build": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+          "base_image": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+          "kernel": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+          "initramfs": null,
+          "ram_bytes": "16777216",
+          "harts": 1,
+          "devices": [
+            {
+              "id": "uart0",
+              "kind": "uart16550",
+              "mmio_base": "268435456",
+              "mmio_length": 256,
+              "irq": 10,
+              "state_version": 1
+            },
+            {
+              "id": "clint",
+              "kind": "clint",
+              "mmio_base": "33554432",
+              "mmio_length": 65536,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "plic",
+              "kind": "plic",
+              "mmio_base": "201326592",
+              "mmio_length": 6291456,
+              "irq": 0,
+              "state_version": 1
+            },
+            {
+              "id": "rtc",
+              "kind": "goldfish-rtc",
+              "mmio_base": "1052672",
+              "mmio_length": 4096,
+              "irq": 11,
+              "state_version": 1
+            },
+            {
+              "id": "slot0",
+              "kind": "virtio-blk",
+              "mmio_base": "268439552",
+              "mmio_length": 4096,
+              "irq": 1,
+              "state_version": 1
+            },
+            {
+              "id": "slot1",
+              "kind": "virtio-net",
+              "mmio_base": "268443648",
+              "mmio_length": 4096,
+              "irq": 2,
+              "state_version": 1
+            },
+            {
+              "id": "slot2",
+              "kind": "virtio-rng",
+              "mmio_base": "268447744",
+              "mmio_length": 4096,
+              "irq": 3,
+              "state_version": 1
+            },
+            {
+              "id": "slot3",
+              "kind": "virtio-keyboard",
+              "mmio_base": "268451840",
+              "mmio_length": 4096,
+              "irq": 4,
+              "state_version": 1
+            },
+            {
+              "id": "slot4",
+              "kind": "virtio-tablet",
+              "mmio_base": "268455936",
+              "mmio_length": 4096,
+              "irq": 5,
+              "state_version": 1
+            },
+            {
+              "id": "slot5",
+              "kind": "virtio-mouse",
+              "mmio_base": "268460032",
+              "mmio_length": 4096,
+              "irq": 6,
+              "state_version": 1
+            },
+            {
+              "id": "slot6",
+              "kind": "virtio-snd",
+              "mmio_base": "268464128",
+              "mmio_length": 4096,
+              "irq": 7,
+              "state_version": 1
+            },
+            {
+              "id": "slot7",
+              "kind": "virtio-gpu2d",
+              "mmio_base": "268468224",
+              "mmio_length": 4096,
+              "irq": 8,
+              "state_version": 1
+            },
+            {
+              "id": "slot8",
+              "kind": "virtio-console",
+              "mmio_base": "268472320",
+              "mmio_length": 4096,
+              "irq": 9,
+              "state_version": 1
+            }
+          ],
+          "gpu": null
+        },
+        "policy": {
+          "mode": "capture-prefix",
+          "profile": "rv64-linux-software-v1",
+          "event_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "checkpoint_version": {
+            "major": 1,
+            "minor": 0
+          },
+          "boundary_version": 1,
+          "clock": {
+            "mode": "icount",
+            "divider": 10,
+            "timebase_hz": "10000000",
+            "interactive": null
+          },
+          "required_inputs": [
+            "uart",
+            "keyboard",
+            "pointer",
+            "display",
+            "agent",
+            "clipboard",
+            "file-transfer",
+            "lifecycle"
+          ]
+        },
+        "assets": [
+          {
+            "role": "vm",
+            "content": {
+              "sha256": "91abe88a213894ff0aeaebad69a4fa2c682a46ef78750c4aa792c71553343c21",
+              "length": "2247"
+            }
+          },
+          {
+            "role": "wasm",
+            "content": {
+              "sha256": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+              "length": "1919430"
+            }
+          },
+          {
+            "role": "kernel",
+            "content": {
+              "sha256": "149083884cf1893dad0db7e95b341f9bf92084a58e02bb7e0c33af4e518c5e66",
+              "length": "3984"
+            }
+          },
+          {
+            "role": "base",
+            "content": {
+              "sha256": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+              "length": "210"
+            }
+          }
+        ],
+        "begin": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "end": {
+          "transition": "10000",
+          "phase": "before",
+          "ordinal": 2,
+          "sequence": "24",
+          "retired": "10000"
+        },
+        "events": [
+          {
+            "first": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 1,
+              "sequence": "1",
+              "retired": "0"
+            },
+            "last": {
+              "transition": "10000",
+              "phase": "before",
+              "ordinal": 2,
+              "sequence": "24",
+              "retired": "10000"
+            },
+            "count": 24,
+            "content": {
+              "sha256": "4f1652c4c4e517fa8b17bfe72cd748db10d5422a378d458c3f13ea23e478e0cd",
+              "length": "10559"
+            }
+          }
+        ],
+        "checkpoints": [
+          {
+            "id": "input-witness",
+            "position": {
+              "transition": "0",
+              "phase": "before",
+              "ordinal": 0,
+              "sequence": "0",
+              "retired": "0"
+            },
+            "next_sequence": "1",
+            "machine": {
+              "sha256": "47fad7f22d1ad034fcaa8894806cef43423becce25754cb4a5a0ba04ef0096a1",
+              "length": "12827"
+            },
+            "disk_root": "bddc5bfc06ae454b4a45346adb2d88f60da83752751fe19fa7fec1bdb246b6fe",
+            "gpu": null
+          }
+        ],
+        "extensions": []
+      },
+      "replay": {
+        "error": null,
+        "diagnostic": {
+          "reason": "pointer-mode-error",
+          "mode": "relative",
+          "error": "live input is forbidden during replay"
+        },
+        "cursor": {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "0",
+          "ordinal": 0,
+          "replay": true,
+          "paused": true,
+          "stopped": false
+        }
+      },
+      "atomicStageRejected": true
+    }
+  ],
+  "errors": [],
+  "sources": {
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+    "web/dist/src/input/pointer.js": "5bc2716d074fe160947445b4462f7fc52815d196e606b7fc3f240512746fae2e",
+    "web/dist/input-recording-probe.js": "9f20dee7f86d241e0e95c4656cea42f98eaaa309861feff21aae2165671893fa",
+    "web/dist/session-inputs.js": "85e78de24ce05715c4bbf02005fdf7ddabb4835ddb328e9aed6bc3e03bad0f96",
+    "target/evidence/e9-t10-verifier/pointer-critic.mjs": "1fc25996937f01f09c58b10b72752816fae990379469f489edfaffcaba2ac150"
+  }
+}

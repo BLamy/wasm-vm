@@ -1,0 +1,174 @@
+{
+  "stagingMethod": "The entire releases/ directory is copied by APFS clonefile as explicit external artifacts; no build/dependency caches.",
+  "manifests": [
+    "web/artifacts.json",
+    "web/artifacts-alpine.json",
+    "web/artifacts-node-alpine.json",
+    "web/artifacts-omarchy.json",
+    "web/artifacts-omarchy-virgl.json"
+  ],
+  "files": [
+    {
+      "path": "releases/boot-snapshot/alpine-overlay-delta.bin.gz",
+      "bytes": 104,
+      "manifestReferenced": true,
+      "sha256": "b7c2d27ec91c6404fdbadd4d98fed63b255d48ecd87629df7d6ed65369f80204"
+    },
+    {
+      "path": "releases/boot-snapshot/alpine-ready.snap.gz",
+      "bytes": 16260246,
+      "manifestReferenced": true,
+      "sha256": "6d97bafb03ac907acfc863c491912bf318113057360c6ba9d401141bb9042095"
+    },
+    {
+      "path": "releases/boot-snapshot/busybox-ready.snap.gz",
+      "bytes": 11530215,
+      "manifestReferenced": true,
+      "sha256": "4263563b0d04342dc052c019cd6e3ab265e9e3234f8f7e7086755533e85a3098"
+    },
+    {
+      "path": "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz",
+      "bytes": 83,
+      "manifestReferenced": true,
+      "sha256": "5cde58396fb1e3fb2edf0c26137fad336fe202fb3d71685c80d7f63f3f87f072"
+    },
+    {
+      "path": "releases/boot-snapshot/node-alpine-ready.snap.gz",
+      "bytes": 55211220,
+      "manifestReferenced": true,
+      "sha256": "f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0"
+    },
+    {
+      "path": "releases/boot-snapshot/omarchy-apps-overlay-delta-bc36948ac61a.bin.gz",
+      "bytes": 1337997,
+      "manifestReferenced": true,
+      "sha256": "bc36948ac61a562e775f2561592d358bfe7a4796998a9643fd2a5139fac998c5"
+    },
+    {
+      "path": "releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz",
+      "bytes": 210695930,
+      "manifestReferenced": true,
+      "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22"
+    },
+    {
+      "path": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "bytes": 204057731,
+      "manifestReferenced": true,
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd"
+    },
+    {
+      "path": "releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "bytes": 2037489,
+      "manifestReferenced": false,
+      "sha256": "b54280f45f5ca91aa01a4dcdc12e14b837b8d7918345067359707c955093c565"
+    },
+    {
+      "path": "releases/chunked-omarchy/manifest.json",
+      "bytes": 3539054,
+      "manifestReferenced": false,
+      "sha256": "0a1325c9d547271e195e7a08d63d734155b3536ba3dd70b299ddf183c1e17a41"
+    },
+    {
+      "path": "releases/initramfs/SHA256SUMS",
+      "bytes": 158,
+      "manifestReferenced": false,
+      "sha256": "6f569d56af8e51bee6dbab5165d4dcb526dccdcd6ca455d77deb49a27c7668e6"
+    },
+    {
+      "path": "releases/initramfs/busybox",
+      "bytes": 1741320,
+      "manifestReferenced": false,
+      "sha256": "9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30"
+    },
+    {
+      "path": "releases/initramfs/initramfs.cpio.gz",
+      "bytes": 1151596,
+      "manifestReferenced": true,
+      "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563"
+    },
+    {
+      "path": "releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "manifestReferenced": true,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "path": "releases/kernel/6.6.63/SHA256SUMS",
+      "bytes": 222,
+      "manifestReferenced": false,
+      "sha256": "1df08e608e6a45fd7289d2d0f6713f7f42220e5eb7c383dad47283b635b3523f"
+    },
+    {
+      "path": "releases/kernel/6.6.63/System.map",
+      "bytes": 2416519,
+      "manifestReferenced": false,
+      "sha256": "902e3241fbf86bad7f1b45b62cdfbaf2777dd1c53097296f5bdbd0124ec03290"
+    },
+    {
+      "path": "releases/kernel/6.6.63/config",
+      "bytes": 113911,
+      "manifestReferenced": false,
+      "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d"
+    },
+    {
+      "path": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "bytes": 24208896,
+      "manifestReferenced": true,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    {
+      "path": "releases/rootfs/FILE-MANIFEST.txt",
+      "bytes": 997,
+      "manifestReferenced": false,
+      "sha256": "39c25610a5c8ae1978afb340e951282a7539b5fa9d596732050826b99d58f46b"
+    },
+    {
+      "path": "releases/rootfs/MANIFEST.txt",
+      "bytes": 1708,
+      "manifestReferenced": false,
+      "sha256": "3997342a7adbf096c6ab4cbbe03b529fbc70da75d3b8d2877dee4d720cd568e2"
+    },
+    {
+      "path": "releases/rootfs/SHA256SUMS",
+      "bytes": 163,
+      "manifestReferenced": false,
+      "sha256": "2d754cd5f3f8e53151bf667245c41b9de3c1772a79f2a83b4d395c81ae5b70fb"
+    },
+    {
+      "path": "releases/rootfs/alpine-rootfs.ext4",
+      "bytes": 536870912,
+      "manifestReferenced": true,
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8"
+    }
+  ],
+  "additionalFilesNotNamedByManifest": [
+    "releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+    "releases/chunked-omarchy/manifest.json",
+    "releases/initramfs/SHA256SUMS",
+    "releases/initramfs/busybox",
+    "releases/kernel/6.6.63/SHA256SUMS",
+    "releases/kernel/6.6.63/System.map",
+    "releases/kernel/6.6.63/config",
+    "releases/rootfs/FILE-MANIFEST.txt",
+    "releases/rootfs/MANIFEST.txt",
+    "releases/rootfs/SHA256SUMS"
+  ],
+  "totalBytes": 1095385367,
+  "buildRecipeReleaseInputs": [
+    "releases/kernel/6.6.63/Image",
+    "releases/initramfs/initramfs.cpio.gz",
+    "releases/boot-snapshot/busybox-ready.snap.gz"
+  ],
+  "inputIdentificationBasis": {
+    "recipe": "Makefile web-build and tools/gen-web-manifest.sh read/copy these3manifest-referenced boot files; other5flavor manifest entries are authenticated by validate-deploy-artifacts.py.",
+    "browser": "Observed successful release GET paths will be extracted from the completed fresh acceptance log.",
+    "extraDirectoryFiles": "All22files are recorded with SHA-256; the10not named by the5manifests are retained auxiliary/legacy release data, rather than hidden build or dependency caches. No extra recipe release input was identified."
+  },
+  "observedBrowserReleaseRequests": [
+    "releases/boot-snapshot/busybox-ready.snap.gz",
+    "releases/initramfs/initramfs.cpio.gz",
+    "releases/kernel/6.6.63/Image"
+  ],
+  "observedBrowserReleaseInputsNotNamedByManifest": [],
+  "extraRecipeReleaseInputs": []
+}

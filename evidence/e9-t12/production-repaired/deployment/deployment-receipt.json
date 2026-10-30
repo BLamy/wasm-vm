@@ -1,0 +1,12 @@
+{
+  "head": "98260ff67d814311b3c2cf175a57476f3d3c64ab",
+  "status": "passed",
+  "started": 1792338000.205791,
+  "command": [
+    "bash",
+    "tools/deploy-cloudflare.sh"
+  ],
+  "rootfs_read": "Complete validated public HTTP206 reassembly; exact content-addressed rootfs SHA reauthenticated on each copy; stock remaining R2 reads/manifest staging validation unchanged.",
+  "finished": 1792338147.216671,
+  "log_sha256": "fb7392ce4dc24359572575a0a1544c62d44647badec45f08738ecfd131169743"
+}

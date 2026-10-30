@@ -271,9 +271,9 @@ impl WasmVirglSubmitProof {
             machine
                 .attach_qualified_virgl(
                     Box::new(JsControlSink(callback.clone())),
-                    Box::new(crate::virgl_host::scanout::JsScanoutSink(JsSubmitSink(
-                        callback,
-                    ))),
+                    Box::new(crate::virgl_host::scanout::JsScanoutSink(
+                        JsSubmitSink::legacy(callback),
+                    )),
                     fixture.mailbox.clone(),
                     caps,
                 )
@@ -681,35 +681,35 @@ impl WasmVirglSubmitProof {
             machine.enable_virtio_gpu_standard_stream_output_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(JsSubmitSink(callback)),
+                Box::new(JsSubmitSink::legacy(callback)),
                 mailbox.clone(),
             )
         } else if dimensional_depth {
             machine.enable_virtio_gpu_standard_dimensional_depth_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(JsSubmitSink(callback)),
+                Box::new(JsSubmitSink::legacy(callback)),
                 mailbox.clone(),
             )
         } else if dimensional {
             machine.enable_virtio_gpu_standard_dimensional_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(JsSubmitSink(callback)),
+                Box::new(JsSubmitSink::legacy(callback)),
                 mailbox.clone(),
             )
         } else if desktop {
             machine.enable_virtio_gpu_standard_desktop_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(JsSubmitSink(callback)),
+                Box::new(JsSubmitSink::legacy(callback)),
                 mailbox.clone(),
             )
         } else if proof_enabled {
             machine.enable_virtio_gpu_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(JsSubmitSink(callback)),
+                Box::new(JsSubmitSink::legacy(callback)),
                 mailbox.clone(),
             )
         } else {

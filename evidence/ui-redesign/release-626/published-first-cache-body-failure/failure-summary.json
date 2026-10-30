@@ -1,0 +1,6 @@
+{
+  "sourceHead": "d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4",
+  "failure": "Recorder body retrieval for repeated cached fonts; first bodies authenticated, later Chromium memory-cache responses carry no CDP body. All13 product flow checks passed; final strict recorder-error assertion failed.",
+  "classification": "Evidence harness only, no product code change",
+  "repair": "Disable Chromium HTTP cache before watched-page requests; retain the same flow/zeroerrors/all completed requested body digest assertions."
+}

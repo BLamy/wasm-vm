@@ -21,7 +21,7 @@ while IFS= read -r f; do
   case "$f" in
     web/dist/*) ;;                                   # our own output — never a trigger
     web/node_modules/* | web/test-results/* | web/playwright-report/*) ;;
-    web/* | crates/wasm/* | crates/core/* | crates/slirp/* | Cargo.lock)
+    web/* | crates/wasm/* | crates/core/* | crates/slirp/* | crates/storage/* | crates/session-web/* | Cargo.lock)
       needs_build=1 ;;
   esac
 done <<EOF

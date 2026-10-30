@@ -1,0 +1,1074 @@
+{
+  "contract_version": {
+    "major": 1,
+    "minor": 0
+  },
+  "runtime_status": "planned",
+  "baseline_commit": "05fa92c82288a4de217eac7345ba2766737a8c16",
+  "coordinate": {
+    "fields": [
+      "transition",
+      "phase",
+      "ordinal",
+      "sequence",
+      "retired"
+    ],
+    "phases": [
+      "before",
+      "observe",
+      "after"
+    ],
+    "wide_integer_encoding": "canonical-unsigned-decimal",
+    "counter_overflow": "refuse-before-effect"
+  },
+  "event_fields": [
+    "kind",
+    "required",
+    "transition",
+    "phase",
+    "ordinal",
+    "sequence",
+    "retired",
+    "device",
+    "intent",
+    "status",
+    "payload"
+  ],
+  "unknown_required_policy": "refuse-before-mutation",
+  "replay_external_effects": "forbidden",
+  "initial_profile": "rv64-linux-software-v1",
+  "unsupported": [
+    "smp",
+    "userspace-abi",
+    "rp2350",
+    "host-shared-folder",
+    "unbound-extra-disk",
+    "live-microphone",
+    "guest-3d",
+    "wall-mtime",
+    "unrecorded-hot-attachment",
+    "paced-mtime",
+    "interactive-clock-switch"
+  ],
+  "limits": {
+    "inline_event_bytes": 1048576,
+    "chunk_bytes": 4194304,
+    "ram_page_bytes": 4096,
+    "session_bytes": 4294967296,
+    "events_per_chunk": 65536,
+    "keyframe_gap_transitions": 50000000
+  },
+  "reference": {
+    "cpu": "Apple M4 Max",
+    "cpu_cores": 16,
+    "ram_bytes": 137438953472,
+    "os": "macOS 26.6.2",
+    "os_build": "25G83",
+    "browser": "Chrome 155.0.8059.80",
+    "playwright": "1.49.1",
+    "node": "24.20.0",
+    "rustc": "1.96.0",
+    "conditions": [
+      "fresh-profile",
+      "single-vm",
+      "foreground",
+      "ac-power",
+      "profiling-off",
+      "no-background-emulator-or-compiler"
+    ]
+  },
+  "sources": [
+    {
+      "id": "uart",
+      "owners": [
+        "E9-T10",
+        "E9-T14"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn send_input("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "const INPUT_SLICE:"
+        },
+        {
+          "path": "crates/core/src/session_clock.rs",
+          "symbol": "pub fn deliver_session_host_boundary("
+        },
+        {
+          "path": "crates/wasm/src/session_input.rs",
+          "symbol": "pub(crate) const UART_OFFER:"
+        },
+        {
+          "path": "crates/core/src/dev/uart16550.rs",
+          "symbol": "pub fn push_input("
+        },
+        {
+          "path": "crates/core/src/session_ingress.rs",
+          "symbol": "pub(crate) struct SessionIngressGate"
+        }
+      ]
+    },
+    {
+      "id": "keyboard",
+      "owners": [
+        "E9-T05",
+        "E9-T10",
+        "E9-T14"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn send_keyboard_event("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn sync_keyboard("
+        },
+        {
+          "path": "web/src/input/reconciliation.js",
+          "symbol": "export"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/input/snapshot.rs",
+          "symbol": "fn encode_session("
+        },
+        {
+          "path": "crates/core/src/dev/virtio/input/mod.rs",
+          "symbol": "pub fn session_host_frame("
+        }
+      ]
+    },
+    {
+      "id": "pointer",
+      "owners": [
+        "E9-T10",
+        "E9-T14"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn send_tablet_event("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn send_mouse_event("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn sync_tablet("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn sync_mouse("
+        },
+        {
+          "path": "web/src/input/pointer.js",
+          "symbol": "setInputPointerMode"
+        }
+      ]
+    },
+    {
+      "id": "display",
+      "owners": [
+        "E9-T10"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn set_display("
+        },
+        {
+          "path": "web/display-resize.js",
+          "symbol": "sendTabletEvent"
+        },
+        {
+          "path": "crates/wasm/src/session_input.rs",
+          "symbol": "pub(crate) const DISPLAY:"
+        }
+      ]
+    },
+    {
+      "id": "lifecycle",
+      "owners": [
+        "E9-T09",
+        "E9-T10",
+        "E9-T11",
+        "E9-T14"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "web/loader.js",
+          "symbol": "guestClockLifecycle.resume()"
+        },
+        {
+          "path": "web/guest-clock.js",
+          "symbol": "createGuestClockLifecycle"
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn set_icount_divider("
+        },
+        {
+          "path": "web/guest-clock.js",
+          "symbol": "beforeKeyboardEvent("
+        },
+        {
+          "path": "crates/wasm/src/event_clock.rs",
+          "symbol": "run_event_until"
+        },
+        {
+          "path": "crates/wasm/src/event_clock.rs",
+          "symbol": "stage_event_write"
+        },
+        {
+          "path": "crates/core/src/session_profile.rs",
+          "symbol": "pub fn install_full_software_session("
+        },
+        {
+          "path": "web/loader.js",
+          "symbol": "const flushInputRecording="
+        },
+        {
+          "path": "web/loader.js",
+          "symbol": "startInputRecording:async"
+        },
+        {
+          "path": "crates/wasm/src/session_input/browser.rs",
+          "symbol": "pub fn apply_recorded_input("
+        },
+        {
+          "path": "web/session-inputs.js",
+          "symbol": "export class SessionInputJournal"
+        }
+      ]
+    },
+    {
+      "id": "mtime",
+      "owners": [
+        "E9-T11"
+      ],
+      "disposition": "gated",
+      "anchors": [
+        {
+          "path": "crates/core/src/lib.rs",
+          "symbol": "fn sample_wall_clock_now("
+        },
+        {
+          "path": "crates/core/src/time.rs",
+          "symbol": "pub fn sample_wall("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn rebase_guest_clock("
+        },
+        {
+          "path": "crates/core/src/time.rs",
+          "symbol": "pub fn limit_deadline("
+        }
+      ]
+    },
+    {
+      "id": "rtc",
+      "owners": [
+        "E9-T11"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "impl wasm_vm_core::dev::rtc::WallClock for JsWallClock"
+        },
+        {
+          "path": "crates/core/src/dev/rtc.rs",
+          "symbol": "pub fn poll("
+        },
+        {
+          "path": "crates/core/src/dev/rtc.rs",
+          "symbol": "TIME_LOW =>"
+        },
+        {
+          "path": "crates/core/src/session_clock/sources.rs",
+          "symbol": "impl crate::dev::rtc::WallClock for ObservedRtc"
+        }
+      ]
+    },
+    {
+      "id": "entropy",
+      "owners": [
+        "E9-T11",
+        "E9-T12"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/crypto_entropy.rs",
+          "symbol": "getrandom::getrandom(out)"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/rng.rs",
+          "symbol": "source.try_fill("
+        },
+        {
+          "path": "crates/core/src/session_clock/sources.rs",
+          "symbol": "impl crate::dev::virtio::rng::EntropySource for ObservedEntropy"
+        }
+      ]
+    },
+    {
+      "id": "timers",
+      "owners": [
+        "E9-T09",
+        "E9-T11"
+      ],
+      "disposition": "derived-and-capture",
+      "anchors": [
+        {
+          "path": "crates/core/src/lib.rs",
+          "symbol": "fn sync_sbi_timer("
+        },
+        {
+          "path": "crates/core/src/lib.rs",
+          "symbol": "fn wfi_fast_forward("
+        },
+        {
+          "path": "crates/core/src/lib.rs",
+          "symbol": "fn external_net_io_pending("
+        },
+        {
+          "path": "crates/core/src/session_clock.rs",
+          "symbol": "prepare_session_transition"
+        },
+        {
+          "path": "crates/core/src/session_clock.rs",
+          "symbol": "session_dispatch_budget"
+        }
+      ]
+    },
+    {
+      "id": "block-read",
+      "owners": [
+        "E9-T12"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/chunked.rs",
+          "symbol": "fn read("
+        },
+        {
+          "path": "crates/wasm/src/http_fetch.rs",
+          "symbol": "pub async fn fetch_pending("
+        },
+        {
+          "path": "crates/core/src/session_devices/block.rs",
+          "symbol": "fn read("
+        },
+        {
+          "path": "crates/core/src/session_devices.rs",
+          "symbol": "pub fn complete_session_device("
+        }
+      ]
+    },
+    {
+      "id": "block-write",
+      "owners": [
+        "E9-T12"
+      ],
+      "disposition": "capture-and-gate",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/chunked.rs",
+          "symbol": "fn flush("
+        },
+        {
+          "path": "crates/wasm/src/idb_store.rs",
+          "symbol": "pub async fn persist_overlay_batch("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn set_disk_read_only("
+        },
+        {
+          "path": "crates/core/src/session_devices/block.rs",
+          "symbol": "fn write("
+        }
+      ]
+    },
+    {
+      "id": "dma",
+      "owners": [
+        "E9-T09",
+        "E9-T12"
+      ],
+      "disposition": "derived-and-capture",
+      "anchors": [
+        {
+          "path": "crates/core/src/lib.rs",
+          "symbol": "self.drain_code_writes();"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/blk.rs",
+          "symbol": "pub fn service("
+        },
+        {
+          "path": "crates/core/src/dev/virtio/net.rs",
+          "symbol": "st.backend.poll();"
+        },
+        {
+          "path": "crates/core/src/session_clock.rs",
+          "symbol": "deliver_session_boundary"
+        },
+        {
+          "path": "crates/core/src/session_devices.rs",
+          "symbol": "fn apply_device_completion("
+        },
+        {
+          "path": "crates/core/src/session_devices/codec.rs",
+          "symbol": "check_session_devices_snapshot"
+        },
+        {
+          "path": "crates/core/src/session_devices/codec.rs",
+          "symbol": "let mut captures = g"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/snd/mod.rs",
+          "symbol": "session_capture_due_shape"
+        }
+      ]
+    },
+    {
+      "id": "network",
+      "owners": [
+        "E9-T13"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/core/src/dev/virtio/net.rs",
+          "symbol": "pub trait NetBackend"
+        },
+        {
+          "path": "crates/wasm/src/ws_transport.rs",
+          "symbol": "onmessage"
+        },
+        {
+          "path": "crates/wasm/src/worker_transport.rs",
+          "symbol": "post_message"
+        },
+        {
+          "path": "crates/wasm/src/doh_fetch.rs",
+          "symbol": "fetch"
+        },
+        {
+          "path": "crates/core/src/session_network.rs",
+          "symbol": "open_session_network_provider"
+        },
+        {
+          "path": "crates/core/src/session_network.rs",
+          "symbol": "replay_session_network"
+        },
+        {
+          "path": "crates/core/src/session_network/codec.rs",
+          "symbol": "check_checkpoint"
+        },
+        {
+          "path": "crates/wasm/src/session_network.rs",
+          "symbol": "lease_network_request"
+        },
+        {
+          "path": "web/session-network.js",
+          "symbol": "class NetworkReplay"
+        }
+      ]
+    },
+    {
+      "id": "network-time",
+      "owners": [
+        "E9-T11",
+        "E9-T13"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "js_sys::Date::now() - start"
+        },
+        {
+          "path": "crates/slirp/src/lib.rs",
+          "symbol": "SlirpLocalBackend"
+        },
+        {
+          "path": "crates/core/src/session_network.rs",
+          "symbol": "external_io_pending"
+        },
+        {
+          "path": "crates/core/src/session_network.rs",
+          "symbol": "Pending(bool)"
+        },
+        {
+          "path": "crates/core/src/session_clock.rs",
+          "symbol": "!self.external_net_io_pending()"
+        }
+      ]
+    },
+    {
+      "id": "file-transfer",
+      "owners": [
+        "E9-T10",
+        "E9-T12",
+        "E9-T13"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/browser_file_transfer.rs",
+          "symbol": "impl BrowserFileTransfers"
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn begin_file_upload("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn finish_file_download("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn note_file_transfer_persist("
+        },
+        {
+          "path": "crates/wasm/src/session_input.rs",
+          "symbol": "pub(crate) fn upload_begin("
+        },
+        {
+          "path": "crates/core/src/session_devices.rs",
+          "symbol": "DeviceIntent::Agent"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "owners": [
+        "E9-T05",
+        "E9-T10",
+        "E9-T12"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn send_agent_input("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn confirm_agent_hello("
+        },
+        {
+          "path": "web/linux-worker-protocol.js",
+          "symbol": "sendAgentInput"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/console/session_snapshot.rs",
+          "symbol": "pub(crate) fn snapshot_session_or_resume("
+        },
+        {
+          "path": "crates/wasm/src/session_input.rs",
+          "symbol": "pub(crate) const AGENT:"
+        },
+        {
+          "path": "crates/core/src/session_devices.rs",
+          "symbol": "pub(crate) fn sync_session_devices("
+        }
+      ]
+    },
+    {
+      "id": "clipboard",
+      "owners": [
+        "E9-T10"
+      ],
+      "disposition": "capture",
+      "anchors": [
+        {
+          "path": "web/clipboard-service.js",
+          "symbol": "ClipboardService"
+        },
+        {
+          "path": "web/desktop-agent-bridge.js",
+          "symbol": "createDesktopAgentBridge"
+        },
+        {
+          "path": "crates/wasm/src/session_input.rs",
+          "symbol": "pub(crate) const UART_FEED:"
+        }
+      ]
+    },
+    {
+      "id": "audio-playback",
+      "owners": [
+        "E9-T05",
+        "E9-T12"
+      ],
+      "disposition": "capture-and-gate",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "struct SharedAudioClock"
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "struct SharedAudioSink"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/snd/mod.rs",
+          "symbol": "pub trait AudioClock"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/snd/snapshot.rs",
+          "symbol": "fn session_admit("
+        },
+        {
+          "path": "crates/core/src/session_devices.rs",
+          "symbol": "state.stream.state()"
+        }
+      ]
+    },
+    {
+      "id": "audio-capture",
+      "owners": [
+        "E9-T12"
+      ],
+      "disposition": "capture-and-gate",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "struct SharedAudioCapture"
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn notify_capture_event("
+        },
+        {
+          "path": "web/src/audio/microphone.js",
+          "symbol": "getUserMedia"
+        },
+        {
+          "path": "crates/core/src/session_devices.rs",
+          "symbol": "struct CompletionCapture"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/snd/session_capture_snapshot.rs",
+          "symbol": "pub(crate) fn restore("
+        },
+        {
+          "path": "crates/wasm/src/session_devices.rs",
+          "symbol": "pub fn complete_device_request("
+        }
+      ]
+    },
+    {
+      "id": "software-gpu",
+      "owners": [
+        "E9-T05",
+        "E9-T10",
+        "E9-T12"
+      ],
+      "disposition": "derived-and-capture",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "gpu::NullSink"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+          "symbol": "snapshot"
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn attach_display("
+        }
+      ]
+    },
+    {
+      "id": "gpu-results",
+      "owners": [
+        "E9-T17",
+        "E9-T18"
+      ],
+      "disposition": "gated",
+      "anchors": [
+        {
+          "path": "crates/wasm/src/virgl_linux.rs",
+          "symbol": "pub fn attach_virgl("
+        },
+        {
+          "path": "crates/wasm/src/virgl_linux.rs",
+          "symbol": "pub fn scatter_output("
+        },
+        {
+          "path": "crates/wasm/src/virgl_linux.rs",
+          "symbol": "pub fn complete("
+        },
+        {
+          "path": "crates/wasm/src/virgl_host.rs",
+          "symbol": "pub(crate) fn control_result("
+        },
+        {
+          "path": "web/renderer/virgl-command/control-bridge.mjs",
+          "symbol": "transport.complete("
+        },
+        {
+          "path": "web/renderer/virgl-command/queries.mjs",
+          "symbol": "gl.getQueryParameter("
+        }
+      ]
+    },
+    {
+      "id": "storage-control",
+      "owners": [
+        "E9-T04",
+        "E9-T10",
+        "E9-T12"
+      ],
+      "disposition": "capture-and-gate",
+      "anchors": [
+        {
+          "path": "web/loader.js",
+          "symbol": "resumeAfterQuota"
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn new_chunked_disk_with_extra("
+        },
+        {
+          "path": "crates/wasm/src/lib.rs",
+          "symbol": "pub fn advance_overlay_generation("
+        },
+        {
+          "path": "crates/storage/src/disk_root.rs",
+          "symbol": "pub fn admit("
+        },
+        {
+          "path": "crates/wasm/src/session_disk.rs",
+          "symbol": "pub async fn capture_disk_delta("
+        },
+        {
+          "path": "web/session-disk-roots.js",
+          "symbol": "async restore("
+        },
+        {
+          "path": "web/loader.js",
+          "symbol": "const captureDiskDelta = async"
+        },
+        {
+          "path": "crates/wasm/src/chunked.rs",
+          "symbol": "pub(crate) trait DiskSnapshot"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-control",
+      "owners": [
+        "E9-T05",
+        "E9-T10",
+        "E9-T12",
+        "E9-T14",
+        "E9-T17"
+      ],
+      "disposition": "derived-and-capture",
+      "anchors": [
+        {
+          "path": "web/loader.js",
+          "symbol": "const saveGpuCheckpoint = async"
+        },
+        {
+          "path": "web/gpu-checkpoint.js",
+          "symbol": "deriveGpuCheckpointWitness"
+        },
+        {
+          "path": "web/renderer/virgl-command/checkpoint.mjs",
+          "symbol": "createJournalledProductionBridge"
+        },
+        {
+          "path": "web/renderer/virgl-command/checkpoint.mjs",
+          "symbol": "restoreProductionRenderer"
+        },
+        {
+          "path": "crates/wasm/src/virgl_linux.rs",
+          "symbol": "pub fn drain_gpu_checkpoint_boundary("
+        },
+        {
+          "path": "crates/wasm/src/virgl_linux.rs",
+          "symbol": "pub fn load_accelerated_snapshot_blob("
+        },
+        {
+          "path": "crates/wasm/src/session_checkpoint.rs",
+          "symbol": "pub async fn capture_software_checkpoint("
+        },
+        {
+          "path": "crates/wasm/src/software_checkpoint.rs",
+          "symbol": "pub fn from_bytes("
+        },
+        {
+          "path": "crates/core/src/resume.rs",
+          "symbol": "pub enum SnapshotError"
+        },
+        {
+          "path": "crates/core/src/session_replay.rs",
+          "symbol": "pub fn start("
+        },
+        {
+          "path": "web/session-checkpoints.js",
+          "symbol": "export class SessionCheckpoints"
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "crates/core/src/dev/rtc.rs": "ca9e6e23af2d1eabb354a4dba9fe54fe770615d78f222c09343a1085e3a583d4",
+    "crates/core/src/dev/uart16550.rs": "275f5e83d24dbd7a69d68be8f73849bc3de947f1e50c0ea2eb0bd8a396f2a840",
+    "crates/core/src/dev/virtio/blk.rs": "615ae3f73ecaaad2adb36fedd25a36ca7b9b861dada50fc44a4db8d10a2a9713",
+    "crates/core/src/dev/virtio/console/session_snapshot.rs": "be47837ca866288de760812158064ccb055de04eff7d93d41d3faa7e53273608",
+    "crates/core/src/dev/virtio/gpu/snapshot.rs": "44213a7452dccb5fed4f9969df03aaff64d2fc2c5a39c54ace4e1a563544b390",
+    "crates/core/src/dev/virtio/input/mod.rs": "493186981cec2254e3894c8816719d57f4d9b2679f8255d20a5c6ebf768aacdc",
+    "crates/core/src/dev/virtio/input/snapshot.rs": "a5b4f2b92beb4b666b05146e6779fe670e322f3dbe71080e3e85c61cc6553c04",
+    "crates/core/src/dev/virtio/net.rs": "f86da51efcf3b381c8b967d2b327e781f3b4767ca04f529c02b6cd5423663ed1",
+    "crates/core/src/dev/virtio/rng.rs": "eaef4e926231cfe3bea373d7164fae13461a2c86f41fc92faf0803451732343a",
+    "crates/core/src/dev/virtio/snd/mod.rs": "4701aa9db527b4b50e340e2d16d8e563895da01d2504a38a6318bc43ae69bbf3",
+    "crates/core/src/dev/virtio/snd/session_capture_snapshot.rs": "e929c49d9c0e684a95a590b54d11ebdaf08aa3e2c5411a388c51b7625e4d3d27",
+    "crates/core/src/dev/virtio/snd/snapshot.rs": "e89880eb65014d09b25cd5696bb7152beba189a25bb2d814850fbd2dc7c9e24b",
+    "crates/core/src/lib.rs": "bb959133b3fb0582133327dcf3bbc463300e5bae1966f209ebce435b6420fdcf",
+    "crates/core/src/resume.rs": "b5a78b8d200f07d709f8f5dd5487ed96219d3894201a95379c464c8570a5b893",
+    "crates/core/src/session_clock.rs": "3846566a0188089b15fbbc913a4e77914bb6c27e72e48804adc86b4574e2dcdb",
+    "crates/core/src/session_clock/sources.rs": "ccdf1a63f4d3dbe04d70acd64c18fca04f26cd4fa517cbbb2783a9f55a03e2d4",
+    "crates/core/src/session_devices.rs": "1c807976405157ac27abd79309d0033778fef21666497d67c9789395a79d5c16",
+    "crates/core/src/session_devices/block.rs": "5645aad08b4670de4fe5ecde140cdbd55e11c4c7e57a5db85b238b71508edfec",
+    "crates/core/src/session_devices/codec.rs": "542721d2fcdbc384f782100cba18c4d8bb36c2e5f5ed897c6861f822d4aaf512",
+    "crates/core/src/session_ingress.rs": "a05a3ee5efc4c56fe3c091ef21666ba5070c193bf7415da64c48ff90a9dd5e30",
+    "crates/core/src/session_network.rs": "efd8afeeda7599f52d50e205b39a1b854b14079950ee25f787adf7ddd40f1fd0",
+    "crates/core/src/session_network/codec.rs": "92df6856702cba969aa64e1bf47639a0df2c2596a154169453ed8e01ef907810",
+    "crates/core/src/session_profile.rs": "3fc256f8b84fc4bb2e52a4e8c6700c326f6767c3f81d926ac14e2b1bc5e8e610",
+    "crates/core/src/session_replay.rs": "69caa7464994c19289c4b9adb7956ec4d79372f7f7a9aa33be96e8d03d094629",
+    "crates/core/src/time.rs": "f5c82f061100dc0f30c6281eae5d7103298622739b629312566348924257765f",
+    "crates/slirp/src/lib.rs": "7e08a064d78f516b775cfdf913351155bc9734445a9a063d761c0b7f385703c2",
+    "crates/storage/src/disk_root.rs": "dbe457d5d68b797d173f86bdbdd0d78c06a644e7de04c5440d060e62127e07c9",
+    "crates/wasm/src/browser_file_transfer.rs": "a54835d9855428ffd13f0b0e3539fa9fb180060198be8b13356c98249a4fa39d",
+    "crates/wasm/src/chunked.rs": "53efe9ea5c755b7f0fb6e2de2efcfa58f96bd84748efb1b3980036a02c197d22",
+    "crates/wasm/src/crypto_entropy.rs": "fa8b08a5531ea58172df723d483994074e9e8f7f81fa2f1580944cce33c85206",
+    "crates/wasm/src/doh_fetch.rs": "688c4efde913eef0a3147f96017dab7714067bc555f1ef0e5a2d5906936fee95",
+    "crates/wasm/src/event_clock.rs": "ceced7da7f29ee6fedd31e67fd255e66f419cb1c5664e51446fc527d1ae1dbe6",
+    "crates/wasm/src/http_fetch.rs": "db6719f76c0f33e3bc09ff1dac1856ee232b529a0aeb725a0b3116a5b4c414e7",
+    "crates/wasm/src/idb_store.rs": "643ce073069f674c9a4b25e42548d95d0e3d7815de3b1e44cf3429cf07f8fcc1",
+    "crates/wasm/src/lib.rs": "fb02a140e77a31a5c66f5bb7ccbda4dc2341e7ef513082bc87b19f0badd175df",
+    "crates/wasm/src/session_checkpoint.rs": "7d088b0a8bd63022ce40d2db66c3f188eaef597a4b737c5f3d68cd7b4aef7651",
+    "crates/wasm/src/session_devices.rs": "e2aac7de4caa71ef694366778c1fec2b98ce11a3131b77b668a909b15bd8c07a",
+    "crates/wasm/src/session_disk.rs": "b776982f672762b482df89b14ab27420e907a9342c326b2a59f8a96acf72cbae",
+    "crates/wasm/src/session_input.rs": "daefe6b35d5ee2128588341786b2bdde17de3aecf74f00d241c74476fd7a600b",
+    "crates/wasm/src/session_input/browser.rs": "b08af6c0f2b0c09c0156f1ff7231a1d29578f4927151d20860e8260b23c8c88a",
+    "crates/wasm/src/session_network.rs": "0e637fe8d3c6b83cd8817105d6f02e50b35fbf2a3058b90acf43a447ffab70e2",
+    "crates/wasm/src/software_checkpoint.rs": "08135058ff2cf19ead2b953fcd5de1b666fcbadc522d94b36cf686d5cb3f85f7",
+    "crates/wasm/src/virgl_host.rs": "32da1555bf5b1c751b94f8d52dd9cf0d46a1d7f6bfc62cdfded27dd0923b4d81",
+    "crates/wasm/src/virgl_linux.rs": "067dbbd59319a3bae79bcec2baf9b24dec71d765940c34eaf634c73b14189949",
+    "crates/wasm/src/worker_transport.rs": "709b19ae9d50cd6c7a139440b3465d37dac0046649ca66949f4e7e6eed753dbd",
+    "crates/wasm/src/ws_transport.rs": "7ed6747577246e9d464165e6fbd69fb58afcd8ca257b66ccbd50f17370e440bf",
+    "web/clipboard-service.js": "8e564d1f1696e7f0362878d056adabd44262040b253e96b0b1bbbb3126e815d6",
+    "web/desktop-agent-bridge.js": "95ead26788572195db822ffdfe7853ca6cbaf29f4397357d46ef24d63e6fa338",
+    "web/display-resize.js": "f22d8f465c6df49ccc2495e3724a756f4f554ee17bd4db83f19ed48965459f1e",
+    "web/gpu-checkpoint.js": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
+    "web/guest-clock.js": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
+    "web/linux-worker-protocol.js": "7efccb20075006550a1b039659dc1e73b21c68298a029a98b8f7ec6391112b79",
+    "web/loader.js": "6f667ed925ed696637ea244275b839d93e644f537cb1c2cec4ee55148486c78b",
+    "web/renderer/virgl-command/checkpoint.mjs": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af",
+    "web/renderer/virgl-command/control-bridge.mjs": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a",
+    "web/renderer/virgl-command/queries.mjs": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860",
+    "web/session-checkpoints.js": "55c92b5a6d96c020dfecf08e1be753fce7b1d9f1a6964d525648d6ea68a7ecf3",
+    "web/session-disk-roots.js": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
+    "web/session-inputs.js": "df28341bf49f57b66ef2bc916fe508587511f532e2831f2a6372cbc195b2fb43",
+    "web/session-network.js": "06a9e2c2cfeda8e958c75d2add81fd3f74f71a58c1906c81ebddd2568eba5107",
+    "web/src/audio/microphone.js": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+    "web/src/input/pointer.js": "5bc2716d074fe160947445b4462f7fc52815d196e606b7fc3f240512746fae2e",
+    "web/src/input/reconciliation.js": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d"
+  },
+  "fixtures": [
+    {
+      "id": "software-alpine-v1",
+      "manifest": "web/artifacts-alpine.json",
+      "manifest_sha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece",
+      "ram_mib": 256,
+      "harts": 1,
+      "clock": {
+        "mode": "icount",
+        "divider": 10
+      },
+      "artifacts": {
+        "kernel": {
+          "url": "releases/kernel/6.6.63/Image",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        },
+        "rootfs": {
+          "url": "releases/rootfs/alpine-rootfs.ext4",
+          "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+          "size": 536870912
+        },
+        "bootSnapshot": {
+          "url": "releases/boot-snapshot/alpine-ready.snap.gz",
+          "sha256": "6d97bafb03ac907acfc863c491912bf318113057360c6ba9d401141bb9042095",
+          "size": 16260246
+        },
+        "overlayDelta": {
+          "url": "releases/boot-snapshot/alpine-overlay-delta.bin.gz",
+          "sha256": "b7c2d27ec91c6404fdbadd4d98fed63b255d48ecd87629df7d6ed65369f80204",
+          "size": 104
+        }
+      },
+      "chunked_image": null,
+      "qualification": "pending",
+      "admit_after": [
+        "E9-T14",
+        "E9-T16"
+      ]
+    },
+    {
+      "id": "desktop-gpu-candidate-v1",
+      "manifest": "web/artifacts-omarchy-virgl.json",
+      "manifest_sha256": "d37bdc377b6488bee43a5547f3a3acb37aae890efc2b6a0c1067e93fc1de6ac6",
+      "ram_mib": 1024,
+      "harts": 1,
+      "clock": {
+        "mode": "icount",
+        "divider": 64,
+        "interactive": "paced-on-keyboard",
+        "restored_modes": [
+          "icount",
+          "paced-icount"
+        ]
+      },
+      "artifacts": {
+        "kernel": {
+          "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+          "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+          "size": 24208896
+        },
+        "gpuCheckpoint": {
+          "url": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+          "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd",
+          "size": 204057731
+        }
+      },
+      "chunked_image": {
+        "key": "chunked-omarchy/manifest-8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8.json",
+        "sha256": "8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8",
+        "size": 3539054
+      },
+      "qualification": "pending",
+      "admit_after": [
+        "E9-T11",
+        "E9-T17",
+        "E9-T18"
+      ],
+      "verified_predecessors": [
+        "E6-T11d74a",
+        "E6-T11d74b",
+        "E6-T11d74c",
+        "E6-T11d74d"
+      ],
+      "gpu_build_identity_source": "web/gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/gpu-checkpoint-build.js",
+      "gpu_build_identity_sha256": "11465609b9eee469237c6a31f6718c0a1bab06729e7f361a685b51ac0b48d3aa"
+    }
+  ],
+  "workload": {
+    "seed": 17,
+    "schedule": {
+      "input_frames": 100,
+      "input_transition_offsets": {
+        "first": 500000,
+        "stride": 500000
+      },
+      "rewrites": 10,
+      "rewrite_every_frame": 10,
+      "http_responses": 10,
+      "http_response_bytes": 1024,
+      "seek_count": 20,
+      "seek_selection": "LCG32: x0=17; x=(1664525*x+1013904223) mod 2^32; target=x mod 50000001",
+      "observation_window_ms": 600000,
+      "ab_pairs": 5,
+      "pair_order": [
+        "off-on",
+        "on-off",
+        "off-on",
+        "on-off",
+        "off-on"
+      ]
+    },
+    "guest_path": "/root/e9-session/state",
+    "before_hex": "65393a6265666f72650a",
+    "before_sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6",
+    "after_hex": "65393a61667465720a",
+    "after_sha256": "c93da81a8be3355a13ad4d69801280303b5a5fa53699e91863f76f5c073b7ae6",
+    "serial_advance": "advance\n",
+    "setup": "mkdir -p /root/e9-session; printf 'e9:before\\n' > /root/e9-session/state; sync; printf 'E9_BEFORE\\n'; IFS= read -r e9_advance; test \"$e9_advance\" = advance || exit 2; printf 'e9:after\\n' > /root/e9-session/state; sync; date -u +%s; dd if=/dev/urandom of=/root/e9-session/entropy bs=32 count=1; sha256sum /root/e9-session/state /root/e9-session/entropy; printf 'E9_AFTER\\n'",
+    "input_frame_template": "printf 'E9_INPUT_%03d\\n' FRAME_INDEX",
+    "rewrite_command": "printf 'e9:after\\n' > /root/e9-session/state; sync; busybox wget -qO /root/e9-session/http http://10.0.2.2:9191/e9/INDEX; sha256sum /root/e9-session/state /root/e9-session/http",
+    "http_body": "1024 repetitions of the one byte (17 + INDEX) mod 256, INDEX=1..10; server counts each request",
+    "witnesses": [
+      "pc",
+      "integer-and-floating-registers",
+      "privilege-and-csrs",
+      "reservation",
+      "ram-sha256",
+      "device-state-sha256",
+      "disk-root-sha256",
+      "clock-policy-and-state",
+      "pending-input-and-completions",
+      "event-cursor",
+      "literal-state-file-bytes",
+      "recorded-entropy-and-http-bytes",
+      "zero-replay-egress"
+    ],
+    "desktop": {
+      "viewport_sequence": [
+        [
+          640,
+          480
+        ],
+        [
+          803,
+          603
+        ]
+      ],
+      "probe": "docs/design/session-gpu-probe.c",
+      "probe_sha256": "822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155",
+      "expected_gl_error": 0,
+      "expected_rgba_hex": "ff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ff",
+      "requires": "qualified RV64 guest renderer/binary receipt; software rendering is a refusal"
+    }
+  },
+  "budgets": {
+    "software": {
+      "recording_ratio_median_max": 1.25,
+      "preview_p95_ms_max": 100,
+      "restore_p95_ms_max": 5000,
+      "seek_p95_ms_max": 5000,
+      "cancel_ack_ms_max": 250,
+      "history_growth_bytes_max": 268435456,
+      "recorder_working_bytes_max": 67108864
+    },
+    "desktop": {
+      "recording_ratio_median_max": 1.5,
+      "preview_p95_ms_max": 100,
+      "restore_p95_ms_max": 15000,
+      "seek_p95_ms_max": 15000,
+      "cancel_ack_ms_max": 250,
+      "history_growth_bytes_max": 1073741824,
+      "recorder_working_bytes_max": 134217728
+    }
+  }
+}

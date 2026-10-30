@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "sha256": "209813a600a24b1fface32affd609b2847ca15cff281cbdb0a3a63c159a6f18d",
+  "bytes": 1532,
+  "reportAddress": "2147569664",
+  "usedAddress": "2147557378",
+  "readbackAddress": "2152726528",
+  "length": 1179648,
+  "sector": 20000,
+  "scope": "RV64 guest posts split 1,179,648-byte virtio OUT and IN through the real session block adapter"
+}

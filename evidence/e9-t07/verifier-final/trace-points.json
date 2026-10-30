@@ -1,0 +1,155 @@
+{
+  "zip_sha256": "40555f504bffffd42b0cd530f894a5bf12f3b585e82c0a496442f24e913d0d70",
+  "events": [
+    {
+      "file": "trace.trace",
+      "line": 871,
+      "event": {
+        "type": "before",
+        "callId": "call@273",
+        "startTime": 104237.475,
+        "apiName": "locator.click",
+        "class": "Frame",
+        "method": "click",
+        "params": {
+          "selector": "[data-session=\"checkpoint\"]",
+          "strict": true
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@273"
+      }
+    },
+    {
+      "file": "trace.trace",
+      "line": 1176,
+      "event": {
+        "type": "before",
+        "callId": "call@371",
+        "startTime": 161156.372,
+        "apiName": "locator.click",
+        "class": "Frame",
+        "method": "click",
+        "params": {
+          "selector": "[data-session=\"open\"]",
+          "strict": true
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@371"
+      }
+    },
+    {
+      "file": "trace.trace",
+      "line": 1229,
+      "event": {
+        "type": "before",
+        "callId": "call@375",
+        "startTime": 172754.209,
+        "apiName": "page.evaluate",
+        "class": "Frame",
+        "method": "evaluateExpression",
+        "params": {
+          "expression": "async name=>{\n  const {checkpointHash}=await import('./session-checkpoints.js');\n  const frame=await __linuxCtl.captureSoftwareCheckpoint(),compressed=new Uint8Array(await new Response(new Blob([frame]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());\n  await fetch('./__e9-library-proof/'+name,{method:'POST',body:compressed});\n  return {hash:checkpointHash(frame),bytes:frame.length,paused:await __linuxCtl.isPaused(),scheduler:await __linuxCtl.schedulerStats(),\n    active:document.querySelector('[data-session=\"active\"]').dataset.id,point:document.querySelector('[data-session=\"active\"]').dataset.point};\n}",
+          "isFunction": true,
+          "arg": {
+            "value": {
+              "s": "sibling-restored.checkpoint.gz"
+            },
+            "handles": []
+          }
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@375"
+      }
+    },
+    {
+      "file": "trace.trace",
+      "line": 1329,
+      "event": {
+        "type": "before",
+        "callId": "call@399",
+        "startTime": 186035.972,
+        "apiName": "locator.click",
+        "class": "Frame",
+        "method": "click",
+        "params": {
+          "selector": "[data-session=\"checkpoint\"]",
+          "strict": true
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@399"
+      }
+    },
+    {
+      "file": "trace.trace",
+      "line": 1485,
+      "event": {
+        "type": "before",
+        "callId": "call@445",
+        "startTime": 201489.208,
+        "apiName": "locator.isDisabled",
+        "class": "Frame",
+        "method": "isDisabled",
+        "params": {
+          "selector": "[data-session=\"open\"]",
+          "strict": true
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@445"
+      }
+    },
+    {
+      "file": "trace.trace",
+      "line": 1644,
+      "event": {
+        "type": "before",
+        "callId": "call@491",
+        "startTime": 208700.982,
+        "apiName": "locator.click",
+        "class": "Frame",
+        "method": "click",
+        "params": {
+          "selector": "[data-session=\"open\"]",
+          "strict": true
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@491"
+      }
+    },
+    {
+      "file": "trace.trace",
+      "line": 1670,
+      "event": {
+        "type": "before",
+        "callId": "call@495",
+        "startTime": 217879.149,
+        "apiName": "page.evaluate",
+        "class": "Frame",
+        "method": "evaluateExpression",
+        "params": {
+          "expression": "async name=>{\n  const {checkpointHash}=await import('./session-checkpoints.js');\n  const frame=await __linuxCtl.captureSoftwareCheckpoint(),compressed=new Uint8Array(await new Response(new Blob([frame]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());\n  await fetch('./__e9-library-proof/'+name,{method:'POST',body:compressed});\n  return {hash:checkpointHash(frame),bytes:frame.length,paused:await __linuxCtl.isPaused(),scheduler:await __linuxCtl.schedulerStats(),\n    active:document.querySelector('[data-session=\"active\"]').dataset.id,point:document.querySelector('[data-session=\"active\"]').dataset.point};\n}",
+          "isFunction": true,
+          "arg": {
+            "value": {
+              "s": "sibling-reopened.checkpoint.gz"
+            },
+            "handles": []
+          }
+        },
+        "pageId": "page@2113911ba3cfa0d5ab7d2c8983d4d960",
+        "beforeSnapshot": "before@call@495"
+      }
+    }
+  ],
+  "counts": {
+    "context-options": 1,
+    "before": 252,
+    "after": 252,
+    "frame-snapshot": 486,
+    "log": 393,
+    "screencast-frame": 447,
+    "console": 36,
+    "input": 36,
+    "event": 13
+  },
+  "lines": 1917
+}

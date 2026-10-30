@@ -1,0 +1,25 @@
+{
+  "scope": "Actual Daybreak readiness only, not final acceptance. Non-final UI state gap is repaired by the subsequent witness proof.",
+  "files": [
+    {
+      "path": "diagnostic.md",
+      "bytes": 7120,
+      "sha256": "9618c23b92d291b2ee0a7c30b1ee0d6ad40671d5fc622ba5e7916f945c158503"
+    },
+    {
+      "path": "routing.json",
+      "bytes": 11383,
+      "sha256": "de0b94ce987d1ba8353c8ef7f5e32a3a69c4ff0143d8c6a77f4cd69c6edc421c"
+    },
+    {
+      "path": "report.md",
+      "bytes": 3309,
+      "sha256": "5d5954fd32aac8e3a209d2df5d2fe7fb7560f43db79e7242e6602f4892338f08"
+    },
+    {
+      "path": "verdict.md",
+      "bytes": 353,
+      "sha256": "249448acec73019b4a98ba07875bf8063773919067c59946decb480b6dc5de25"
+    }
+  ]
+}

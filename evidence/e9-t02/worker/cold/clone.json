@@ -1,0 +1,24 @@
+{
+  "head": "eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06",
+  "path": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e9-t02-cold-7et2gzno/wasm-vm",
+  "alternates": false,
+  "scrubbed": [
+    "RUSTFLAGS",
+    "RUSTDOCFLAGS",
+    "RUST_LOG",
+    "CARGO_*"
+  ],
+  "command": [
+    "git",
+    "clone",
+    "--no-local",
+    "--no-hardlinks",
+    "--single-branch",
+    "--depth",
+    "1",
+    "--branch",
+    "codex/e9-session-manifest",
+    "file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e9-t02-cold-7et2gzno/wasm-vm"
+  ]
+}

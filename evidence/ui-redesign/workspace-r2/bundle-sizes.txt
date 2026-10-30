@@ -1,0 +1,3 @@
+file             raw     gzip-9
+web/dist/ui.js   737307  232143
+web/dist/ui.css  266778  44472

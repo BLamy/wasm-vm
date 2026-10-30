@@ -1,11 +1,16 @@
 # wasm-vm Task System
 
 All work on wasm-vm is decomposed into task files in this directory, organized into epic
-folders (`epic-0-ignition/` … `epic-8-chrome-in-chrome/`, plus fractional inserted epics
+folders (`epic-0-ignition/` … `epic-9-session-time-travel/`, plus fractional inserted epics
 such as `epic-3.5-oci-workloads/` and `epic-3.75-pico-lab/`). They ladder toward named,
 runnable milestones: xv6, busybox+QuickJS+Node, Pico SDK firmware on an emulated Pico 2,
 fast Node, GUI apps, and x86_64-via-box64 + a desktop. See `../ROADMAP.md` for the
 capability stack (Layers A–G), the targets→epic map, and what each level gets you.
+
+Epic 9's [Session Time Travel plan](epic-9-session-time-travel/README.md) is the current
+user-selected delivery focus (2026-10-17). Its 524.901–524.924 priority band starts with
+saved checkpoints, then exact software replay and timeline controls. Accelerated history
+remains dependency-gated. Epic 8 stays cancelled.
 
 ## The priority queue
 

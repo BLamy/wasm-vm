@@ -222,7 +222,7 @@ pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnaps
         return Err(GpuSnapshotError::Proof3dInstalled);
     }
     let prepared = prepare(bytes)?;
-    apply(state, prepared);
+    apply(state, prepared, None);
     Ok(())
 }
 
@@ -319,7 +319,11 @@ pub(super) fn prepare(bytes: &[u8]) -> Result<PreparedGpu, GpuSnapshotError> {
     })
 }
 
-pub(super) fn apply(state: &mut GpuState, prepared: PreparedGpu) {
+pub(super) fn apply(
+    state: &mut GpuState,
+    prepared: PreparedGpu,
+    notification_latches: Option<(bool, bool)>,
+) {
     let PreparedGpu {
         parsed,
         resources,
@@ -337,13 +341,11 @@ pub(super) fn apply(state: &mut GpuState, prepared: PreparedGpu) {
     state.scanout_resource = scanout_resource;
     state.cursor_states = cursor_states;
     state.commands_served = parsed.commands_served;
-    // QueueNotify is only a host-side wake-up hint, not part of the GPU payload. A snapshot can
-    // contain a published descriptor whose notification preceded the capture but whose service
-    // boundary did not. Re-arm both queues against their restored cursors/RAM; an empty ring is
-    // harmless, whereas losing this wake-up can strand a guest waiting on a GPU fence forever.
+    // Ordinary reconnects re-arm both queues: a notification may have preceded capture,
+    // and losing its wake-up can strand a guest waiting on a GPU fence. Exact result
+    // checkpoints instead restore the recorded latches with no transient re-arm.
     // Do not carry an unrelated reset request from the destination machine across this restore.
-    state.kicked = true;
-    state.cursor_kicked = true;
+    (state.kicked, state.cursor_kicked) = notification_latches.unwrap_or((true, true));
     state.reset_pending = false;
 
     if let Some(resource_id) = scanout_resource {

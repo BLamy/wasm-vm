@@ -1,0 +1,20 @@
+import { chromium } from "/Users/blamy/.codex/worktrees/ui-redesign/wasm-vm/web/node_modules/@playwright/test/index.mjs";
+const D = "evidence/ui-redesign/foundation/";
+const b = await chromium.launch();
+async function page(vp, mobile) { return b.newPage({ viewport: vp, deviceScaleFactor: mobile ? 2 : 1, isMobile: mobile, hasTouch: mobile }); }
+let p = await page({ width: 1280, height: 900 });
+await p.goto("http://127.0.0.1:8231/ui-kit.html"); await p.waitForTimeout(1200);
+await p.screenshot({ path: D + "kit-desktop.png", fullPage: true });
+await p.goto("http://127.0.0.1:8231/index.html?nosw#ide"); await p.waitForTimeout(1500);
+await p.screenshot({ path: D + "app-desktop.png" });
+await p.getByRole("button", { name: "Diagnostics" }).click(); await p.waitForTimeout(1200);
+await p.screenshot({ path: D + "app-desktop-diagnostics-dialog.png" });
+await p.close();
+p = await page({ width: 390, height: 844 }, true);
+await p.goto("http://127.0.0.1:8231/ui-kit.html"); await p.waitForTimeout(1200);
+await p.screenshot({ path: D + "kit-phone.png" });
+await p.getByRole("button", { name: "Open menu" }).tap(); await p.waitForTimeout(1000);
+await p.screenshot({ path: D + "kit-phone-menu-sheet.png" });
+await p.goto("http://127.0.0.1:8231/index.html?nosw#ide"); await p.waitForTimeout(1500);
+await p.screenshot({ path: D + "app-phone.png" });
+await b.close();

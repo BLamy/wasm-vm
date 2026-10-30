@@ -1,0 +1,43 @@
+   Compiling e9-t02-verifier-attacks v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/attacks)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.06s
+     Running tests/attacks.rs (target/evidence/e9-t02-verifier/coverage-target/debug/deps/attacks-3d3e8a7c34ad378a)
+
+running 8 tests
+duplicate/foreign payload rejected: "storage":"inline","storage":"inline"
+duplicate/foreign payload rejected: "storage":"blob","storage":"inline"
+exact decimal sequence 9007199254740991
+duplicate/foreign payload rejected: "storage":"inline","foreign_required":true
+exact decimal sequence 9007199254740992
+duplicate/foreign payload rejected: "storage":"inline","bytes":[99]
+test duplicate_payload_discriminants_and_foreign_fields_are_refused ... ok
+exact decimal sequence 9007199254740993
+exact decimal sequence 18446744073709551415
+internal asset binding refused: vm
+missing and blob-deserializer wide integer/hash paths refused
+test missing_wide_fields_and_invalid_blob_numbers_are_malformed ... ok
+device identity refused: id
+internal asset binding refused: wasm
+internal asset binding refused: kernel
+device identity refused: kind
+internal asset binding refused: base
+GPU identity refused: renderer_build
+matching hash with foreign byte length is unavailable
+test adjacent_wide_positions_and_length_identity ... ok
+device identity refused: mmio_base
+GPU identity refused: profile
+GPU checkpoint payload length refused
+test valid_gpu_renderer_and_profile_refuse_independently ... ok
+device identity refused: mmio_length
+device identity refused: irq
+device identity refused: state_version
+test every_device_field_is_an_immutable_identity ... ok
+entrypoint validation, invalid labels/assets and both event-range overflow paths refused
+test public_entrypoints_propagate_validation_and_shape_refusals ... ok
+authenticated order/duplicate/count attacks refused; same-coordinate paused sequences preserved
+test authenticated_duplicate_phase_and_count_attacks ... ok
+bounded manifest encoder refused valid oversized index encoding
+bounded event/chunk encoders refused serialized byte overflow
+test serialization_caps_and_invalid_token_paths ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+

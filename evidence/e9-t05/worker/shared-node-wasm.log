@@ -1,0 +1,46 @@
+[INFO]: 🎯  Checking for the Wasm target...
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running unittests src/lib.rs (target/wasm32-unknown-unknown/debug/deps/session_codec_wasm_proof-67d2e26838a9c183.wasm)
+no tests to run!
+     Running tests/checkpoint_context.rs (target/wasm32-unknown-unknown/debug/deps/checkpoint_context-f03af927458c73c1.wasm)
+running 2 tests
+test refuse_shapes_versions_and_unrecorded_modes ... ok
+test exact_cursor_and_keys ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/disk_root.rs (target/wasm32-unknown-unknown/debug/deps/disk_root-ed057526f5a16131.wasm)
+running 8 tests
+test snapshot_backends_require_durability_and_ownership ... ok
+test seeded_interleavings_keep_owned_roots_stable ... ok
+test schema_order_and_bounds ... ok
+test private_forks_restore_in_reverse ... ok
+test payload_failure_cannot_publish_a_partial_disk ... ok
+test identities_refuse_before_loading ... ok
+test golden_exact_generation ... ok
+test deleting_child_pins_preserves_shared_ancestors ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.99s
+
+     Running tests/session_manifest.rs (target/wasm32-unknown-unknown/debug/deps/session_manifest-6dbf8f5e458b45f4.wasm)
+running 9 tests
+test unavailable_history_is_preserved ... ok
+test topology_requires_capture ... ok
+test topology_and_index_attacks ... ok
+test schema_duplicates_and_bounds ... ok
+test noncanonical_numbers_and_hashes ... ok
+test identities_and_capture_admission ... ok
+test gpu_checkpoint_binding ... ok
+test golden_wide_positions ... ok
+test event_and_chunk_integrity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.29s
+
+   Doc-tests session_codec_wasm_proof
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

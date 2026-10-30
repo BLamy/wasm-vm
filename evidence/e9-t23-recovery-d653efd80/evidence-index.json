@@ -1,0 +1,62 @@
+{
+  "head": "d653efd8001fb0c9d9c61b860f2185e9488157c1",
+  "scope": "Bounded storage/codec/branch/GPU recovery; no long original cold boot or performance claim",
+  "recordedRoot": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1",
+  "files": [
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/report.json",
+      "bytes": 9232,
+      "sha256": "99b50fb454f89f6bceebbef386b42ef981615f5ce12b2a09eecbb395f446a9ff"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/codecs/report.json",
+      "bytes": 3246,
+      "sha256": "bca1423d64488eaaf044803a4cdaf0adb51f98dc92129ed8e2fd21da2a12750f"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/durable-recovery/report.json",
+      "bytes": 1146741,
+      "sha256": "499541c6f493e58e28c2edf5c4074d704446f9fe7032dd91cfd5421505e7451a"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/linux-branches/report.json",
+      "bytes": 128829,
+      "sha256": "c14a1602260d16ad6c5b4e331f14b42d83a434a4ee610d66d60e6bb5a4e7dc87"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/linux-byte-oracle.log",
+      "bytes": 76,
+      "sha256": "71299c344a6a8099ad698c5f6c88ec6f9fb3953a1107f69becb876417f8d423c"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-recovery/report.json",
+      "bytes": 22890192,
+      "sha256": "ea844049ae15b9a70ca5c6b751a50a2f8e2f26f49d8d577203a1ab36b2eb68ef"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-byte-oracle.log",
+      "bytes": 89,
+      "sha256": "c3715520d6a2268bbeb98394569a13fb43f679a8704f0f37a3ef90fc79b9ef12"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-branches/report.json",
+      "bytes": 625154,
+      "sha256": "b8832caeebb866e92f3cf5d99ff3a258c57bca9e0ae1cca7ce31ee742e4cfbf5"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-branch-byte-oracle.log",
+      "bytes": 71,
+      "sha256": "7c68fc4c911d0f2a53302c681f3b3a9f1e5e27f47cf534a711036e630642a33f"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/native-byte-oracle-gpu-results.log",
+      "bytes": 2960,
+      "sha256": "e839f04e1fcfc193eeb41c44e00237b799dba6052bb9b763e5514ca813529231"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/native-byte-oracle-pending-gpu.log",
+      "bytes": 1509,
+      "sha256": "b7aed3be7f4c93b9a928c37f4f3034530a2a74c33f2087c31e5cdd0dc323d7a2"
+    }
+  ]
+}

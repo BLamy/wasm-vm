@@ -1,0 +1,149 @@
+{
+  "task": "E9-T23",
+  "status": "passed",
+  "started": "2026-10-28T20:17:52.764Z",
+  "head": "610f3133452e021d9cf7b65e3030f934457d86db",
+  "seeds": [
+    101,
+    509,
+    2027
+  ],
+  "cases": 12000,
+  "mutations": 10500,
+  "controls": 1500,
+  "accepted": 2229,
+  "rejected": 9771,
+  "rows": [
+    {
+      "seed": 101,
+      "kind": "manifest",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 101,
+      "kind": "events",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 101,
+      "kind": "keyframe",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 101,
+      "kind": "ram-delta",
+      "cases": 1000,
+      "accepted": 370,
+      "rejected": 630,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 509,
+      "kind": "manifest",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 509,
+      "kind": "events",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 509,
+      "kind": "keyframe",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 509,
+      "kind": "ram-delta",
+      "cases": 1000,
+      "accepted": 366,
+      "rejected": 634,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 2027,
+      "kind": "manifest",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 2027,
+      "kind": "events",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 2027,
+      "kind": "keyframe",
+      "cases": 1000,
+      "accepted": 125,
+      "rejected": 875,
+      "forcedRejects": 125
+    },
+    {
+      "seed": 2027,
+      "kind": "ram-delta",
+      "cases": 1000,
+      "accepted": 368,
+      "rejected": 632,
+      "forcedRejects": 125
+    }
+  ],
+  "errors": [],
+  "scope": "bounded codec robustness, not VM execution or full-workload qualification",
+  "sources": {
+    "wasm": "e3b3808e48698cc1f07d34081f736a86a3c599a8855d4222fbdff276823e010a",
+    "session-keyframes.js": "f318fbf24cedf49daef7afe4c319d672e8e449d0da070737f7736303efe16159",
+    "session-pkg/wasm_vm_session.js": "fe0f3f339dff35594e622165e9066632fec0b8759d15a6528c7164103156208f"
+  },
+  "inputs": [
+    {
+      "kind": "manifest",
+      "bytes": 2612,
+      "sha256": "71e97341111e6704982bd3bb5d39a4de95a1c1dc2cd5fe95ada1f75d75ee2def"
+    },
+    {
+      "kind": "events",
+      "bytes": 317,
+      "sha256": "8c6d43611138c1c0c18448cc55a721062ea4bb4b14ca35cc19fd909f75839fd0"
+    },
+    {
+      "kind": "keyframe",
+      "bytes": 451,
+      "sha256": "a77d6ce9bb89a62959d4b059eb182fdce65b8f75147edd0517828e0928865dbe"
+    },
+    {
+      "kind": "ram-delta",
+      "bytes": 4126,
+      "sha256": "2d68d4b0b4f7a1c72e90d1e2c3745fb70538ac77f62586e68d8228c1c423d135"
+    }
+  ],
+  "memory": {
+    "baseBytes": 1114112,
+    "peakBytes": 6553600,
+    "maxAdditionalBytes": 67108864
+  },
+  "finished": "2026-10-28T20:17:52.940Z"
+}

@@ -1,0 +1,40 @@
+✔ published factory worker selects its retained protocol client before starting (3.903916ms)
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.376833ms)
+✔ checkpoint idle wait joins the active lazy fetch without permanently closing scheduling (0.104125ms)
+✔ retained GPU receipt can complete boot while guest RPCs remain behind boot (1.071583ms)
+✔ retained GPU receipt drains an awaited checkpoint without bypassing queued guest calls (0.422083ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (2.520542ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (2.33125ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (3.644959ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.23075ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.674958ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.649917ms)
+✔ display clear controls cross the worker boundary without a pixel payload (0.253375ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (2.960417ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.126292ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.094625ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.126042ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (2.194208ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.674541ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.147166ms)
+✔ byte RPC encoding errors reject asynchronously (0.12475ms)
+✔ silent termination is detected before and after READY and rejects pending work (55.513375ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (85.036458ms)
+✔ visibility suspension pauses the pre-READY boot deadline (62.706792ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (61.66475ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (551.692917ms)
+✔ natural completion emits a scoped terminal digest before DONE (1.686542ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (1.592292ms)
+✔ fatal input during natural cleanup wins over clean DONE (0.294459ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (34.039792ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (27.417083ms)
+✔ Tailscale UI exceptions are non-fatal (1.554584ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.178833ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 946.136792

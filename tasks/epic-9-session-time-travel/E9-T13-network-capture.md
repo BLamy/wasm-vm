@@ -1,0 +1,922 @@
+---
+id: E9-T13
+epic: 9
+title: Capture network sessions and replay them with zero live egress
+priority: 524.913
+status: verified
+depends_on: [E9-T09, E9-T03]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Goal
+
+Reproduce recorded network observations offline without repeating external actions.
+
+## Boundary
+
+The VM transport boundary for incoming bytes, connection outcomes, delivery order and replay egress suppression. Record relevant outgoing intent for validation; retain payloads locally by hash.
+
+## Acceptance criteria
+
+- [ ] A pinned real guest network exchange records byte payloads, close/error outcomes and exact delivery positions, then replays with the original server unavailable.
+- [ ] During replay, the provider cannot open sockets or send packets/HTTP actions; observe zero egress with an independent transport witness.
+- [ ] A changed guest send intent, missing payload or exhausted network trace stops as divergence; do not retry against a live server.
+
+## Deterministic acceptance
+
+`make verify-E9-T13` records the assertions above and the risk-tier evidence required by AGENTS.md.
+
+## Adversarial verification
+
+Record a state-changing request against a local counter server, replay repeatedly and prove the counter never increments again. Replay with changed DNS/server content and failed connectivity.
+
+## Verification log
+
+### 2026-10-18 — worker — begin
+
+E9-T13 is the next eligible slice after independently verified E9-T12
+(critic commit 564438556f77e038bac5d6bbae34adfbf3f9b184). Risk remains high:
+network payloads, external actions and persisted replay state cross the guest/host
+boundary. The qualified adapter will own bounded Ethernet send intents and incoming
+payload/close/error deliveries, bind them to the common guest event clock, and keep
+the live transport absent from replay construction. Outgoing bytes must match the
+recording before a completion can be consumed; a missing payload or exhausted tape
+must fail explicitly.
+
+A pinned guest program will drive actual virtio-net queues against a local
+state-changing counter server through the recording transport driver. Independent
+connection/send/server witnesses must prove replay creates no live network action,
+including with the server gone or changed. Native and built-browser runs will retain
+complete frames/traces and payload objects under different execution budgets.
+Pending queues, request/cursor/reset state and callback incarnations must survive
+checkpoints without allowing an old reply into the restored VM. The browser demo
+will expose the owned network replay check with a safe same-origin request; the
+acceptance server supplies the state-changing attack. Full software Linux session
+assembly follows in T14. No implementation or verification claim is made here.
+
+### 2026-10-18 — worker — implemented; recorded exact-head local submission
+
+Frozen runtime and deploy bundle:
+43031d92822be59b8ddd15a599428194dc1470aa.
+Parent boundary: 76cc2c8dc1df4b17572bf09c73618e10ad848d63.
+make verify-E9-T13 passed all **24 recorded commands** from a separate clean
+checkout with an initially empty compiler target, no inherited Node installation,
+scrubbed compiler/wrapper flags and authenticated local build dependencies.
+The exact commands, exits, source hashes and original file inventory are retained:
+
+- Original final report:
+  /Volumes/e9-final-proof-ram/cold-proof-e9-t13-43031d92822b/report.json,
+  SHA-256 67cf9b564a4bf01ae254dba5d0642abeed45d4179645644b960c98c3d20436ae.
+- Durable lossless primary packet:
+  evidence/e9-t13/worker-final/provenance.json,
+  SHA-256 800d1348c378f950d2457cde1e8cca1b69bd89280461b5d69b2539bf39b20576;
+  216 files, 24,356,547 compressed bytes. Complete guest traces/frames,
+  actual HTTP bytes, all durable CAS objects, Playwright traces/screenshots/
+  coverage, build/test logs, source diff and original receipts are included.
+- Full authenticated archive, retaining derived GPU browser cache files:
+  /Volumes/e9-final-proof-ram/e9-t13-full-archive/provenance.json,
+  SHA-256 9c47b24009b2bc81d442ff0fb9b17f6d01732152299ddc68a15a264e6b089638.
+- Cold checkout receipt and producer are retained as
+  origin/cold-wrapper-receipt.json.gz and origin/cold-producer.py.gz.
+  The disclosed read-only shared Git object store is the sole clone
+  accommodation for the full persistent disk; source, refs/index,
+  compiler target and Node install were independent.
+- Original browser/desktop.png, browser/mobile.png,
+  browser/browser-trace.zip and browser/report.json are retained
+  losslessly under acceptance/ in the primary packet.
+
+The pinned RV64 guest negotiates virtio-net and posts real TX/RX descriptors.
+Its HTTP-bridge request reaches a local state-changing counter server exactly
+once. Native recording retains the actual HTTP request/response and transport
+EOF. The independent browser counter sees one request, closes its original
+listener, and offers changed content on subsequent live requests. Six offline
+replays from initial and pending checkpoints match the complete final
+CPU/RAM/device/disk/cursor frame at budgets 1, 7 and 4096. Both recording and
+replay execute 9,216 guest instructions; an independent Python struct/hashlib
+oracle checks every retired PC/opcode against the pinned program, used rings,
+guest-observed IRQ/DMA response bytes and the entire persisted object graph.
+The browser bridge maps only the pinned experimental Ethernet request to one
+safe fixed same-origin GET. This qualifies the transport boundary, not a guest
+TCP stack or complete Linux replay.
+
+Seven native adversarial tests cover a real refused connection, 32 callback
+schedules, changed actual guest TX bytes, duplicate/malformed/missing deliveries,
+exhausted tape, wrong positions, foreign/stale/reset callbacks, queued RX
+checkpoints, invalid checkpoint fields and bounded descriptors. Native and
+built-browser JIT proofs execute translated code at 5000/5001/5002 with budgets
+31/1/8/4096 and identical complete checkpoints. The built page reaches
+**127 passed, 0 failed, zero console errors**, persists five network deliveries,
+reopens them after reload, performs six matching replays, rejects 17 replay/
+lifecycle attacks and 28 ABI attacks, and refuses a deleted required payload.
+A separate fetch/WebSocket witness observes zero attempts inside replay,
+alongside zero replay provider factory invocations and exactly one witnessed
+original HTTP action. Shared device/time/input journal regressions pass.
+The retained GPU factory passes with 2,999,712 actual guest retirements and
+a fresh draw of resource 13 in epoch 4. The current Mac/guest evidence policy
+applies; no retired-host rr proof is claimed.
+
+Worker self-review withdrew the earlier abb77eb06a7e submission before handoff:
+network-only exact saves could poll a queued receive. The repair preserves
+owned RX without quiescing it, and a regression asserts that the guest used
+index is still zero immediately after capture. The interrupted receipt,
+stop reason and producer are preserved in origin/. All selected gates were
+rerun on the repaired frozen runtime above.
+
+Publication is **pending**, and is not counted as passing evidence.
+Cloudflare's expired OAuth credential needs the already requested browser
+login authorization. The full system disk also prevents computer-control
+startup. The standard credential file has not been copied or printed;
+official Wrangler login and a narrow existing-file write adaptation were
+prepared outside the repository. Fresh independent verification must assess
+the local claim and retain any publication proof gap until the new bundle is
+deployed and directly checked. Complete software VM replay remains T14.
+
+### 2026-10-18 — verifier — VERDICT: refuted
+
+- P6 joint checkpoint observation conservation — FAILED and rechecked. Predicted
+  that acknowledged sends plus queued receive frames cannot exceed the network
+  cursor: each required a distinct accepted observation. At runtime43031,
+  crates/core/src/session_network/codec.rs:181–207 checks sent<=cursor and
+  sent+pending<=next_id separately but accepts sent1/queuedRX1/cursor1. The critic
+  runs the pinned guest to1024, acknowledges its real TX once, saves, then adds
+  only queued RXe19a73 to section21. Original clock/RAM/virtqueues and all other
+  sections remain unchanged. Mutant SHA256
+  e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82
+  is accepted into replay; receive-conservation-trace-recheck/to-9216.trace:1516
+  loads injected0xe1 from DMA into x6 at transition2539, and line1517 stores it
+  into the guest report at2540. Trace SHA256
+  9c87c28578c0a6a80985105335f6589a7b65ad5a9eb56c22f3cb5898c9c12895.
+  At9216, usedRX1/report[1,1,1] and DMAe19a73 are visible while sequence/cursor
+  remain1; finish_session_network_replay(1) returns Ok. Observed frame SHA256
+  5117fa6d87a50e8301d8dda48ccb4e25041cbd4ab8b2e0c96426e41520218914.
+  Two untraced and two independently recorded traced runs agree. Demand: enforce
+  the joint relation with checked arithmetic before restore mutation/incarnation
+  replacement, add a transactional live-lease regression, and re-record the
+  selected high-risk runtime gates on a new frozen head.
+- P1/P2/P3/P9/P10 — HELD for the authenticated local happy paths. Independently
+  checked all216 primary/393 full-archive original+gzip entries,379 acceptance
+  inventory files,35 source hashes and58 contract hashes against Git43031, the
+  clean cold source and its disclosed independent/empty compiler origin. All24
+  commands passed. A separate Python struct/hashlib decoder validates actual
+  positions, HTTP bytes, descriptors, guest DMA/used/IRQ witnesses, durable CAS
+  objects, six exact trace suffixes and whole browser frames. All24 native/browser
+  compiled-edge CPU witnesses agree with independently computed loop arithmetic
+  at5000/5001/5002 and q31/1/8/4096. These observations remain scoped to the
+  documented experimental Ethernet proof bridge; full Linux/TCP replay is T14.
+- P13 publication — NEEDS EVIDENCE, separate from the semantic refutation. No T13
+  deployment/public-browser recording exists yet. T12 live assets are not proof
+  for this changed runtime. Preserve this gap until the repaired bundle is
+  published and directly checked.
+- COVERAGE/SUITE — Remaining independent capacity/schedule/forwarding attacks,
+  changed-hunk coverage and scratch sabotage are still under review. No complete
+  coverage or permanent-suite promotion is claimed before correctness holds.
+  Held evidence, predictions, original failures and exact source/dependency
+  boundaries will be carried forward according to the incremental policy.
+
+Evidence: evidence/e9-t13/verifier-refutation/provenance.json, SHA256
+3af3e6c6b86ae94683ef9a213276ae1565ab6af118b5a8c165611e65ed079a1b.
+The42 lossless entries include original/mutant/observed frames, both repeated
+guest traces, exact executable/source/linked-core hashes, prediction, producers,
+receipts, logs, independent decoder and the held ledger. Originals remain at
+/Volumes/e9-final-proof-ram/t13-critic-main. No implementation code changed.
+Commands: python3 run_receive_conservation.py; python3 record_refutation_trace.py;
+python3 authenticate.py; python3 guest_oracle.py (all from that critic directory).
+The first two intentionally retain the failing assertion. Policy is checked before
+queue regeneration and this refutation commit. Task returns to in-progress for
+worker repair; no dependent may start.
+
+### 2026-10-18 — worker — repaired conservation; recorded exact-head submission
+
+Frozen repaired runtime and deploy bundle:
+e91c7af9bd8ec64c200c7d5a6687d9e4e124db12.
+This addresses the independent refutation at a7b2b475aad61aa9b7fe0e62a0827261ccf9a95f.
+The decoder checks, with overflow refusal, that acknowledged sends + queued
+receive frames + one represented nonzero link result + represented external
+pending work cannot exceed the accepted network cursor. Validation precedes
+restore mutation and callback-incarnation replacement.
+
+The eighth native regression rejects the independently reported extra RX,
+a zero-cursor link, zero-cursor pending work and two represented results at
+cursor one. Both Record and Replay retain identical complete checkpoints on
+refusal; a previously issued valid recording lease still completes afterward.
+A genuine four-result state at cursor four restores and later delivers its
+queued RX. The built-browser probe also refuses the reported extra RX without
+changing its checkpoint. The exact new regression linked against the
+authenticated old43031 core fails with exit101 at case zero; its immutable
+source, binary/build log, red result and linked-core digest are in origin/.
+
+make verify-E9-T13 passes all24 recorded commands on this repaired head.
+The independent clean checkout initially had an empty compiler target and no
+Node installation. That first attempt passed12 gates but npm registry reading
+timed out during browser-build. Its original receipt/report/build log remain
+unaltered. All24 gates were then repeated in the same unchanged clean source,
+using only the compiler cache that attempt itself built and an offline package
+download cache. npm ci installs afresh and enforces the committed lockfile
+integrities; no installed Node tree or foreign compiler cache was copied.
+Both producers, receipts, compiler-origin disclosure and failure logs are retained.
+
+- Final report:
+  /Volumes/e9-final-proof-ram/cold-proof-e9-t13-e91c7af9bd8e-retry/report.json,
+  SHA256 270360a734ea719e09cc6722a91fffd3f56c5f8f9a22fc4d4531a8492271aa31.
+- Durable lossless packet:
+  evidence/e9-t13/worker-conservation-final/provenance.json,
+  SHA256 3afe4dcde2a9e931e41891f1086e0b900d9a79a106a164d9059232e5ba39b96e;
+  239 original files, 54,772,500 compressed bytes.
+- Full archive:
+  /Volumes/e9-final-proof-ram/e9-t13-conservation-full-archive/provenance.json,
+  SHA256 6b2015d244d0c54ce1b945c4c18948a0f8c6387f5831e5f1083738e578e4a71a.
+- Native traces/frames, all malformed and valid conservation checkpoints,
+  browser traces/screenshots/coverage, exact HTTP witnesses, complete CAS
+  exports, native/browser translated-execution frames, source diff and all
+  selected command logs are preserved. Prior refuted worker and critic packets
+  remain intact. Only the task-owned abandoned abb77 compiler cache on RAM was
+  released; its inventory is included, and its source/Git/raw recordings remain.
+
+The repaired run passes400 core tests, eight native network tests, affected
+session/device/storage/wasm gates and actual native/browser translated paths.
+The built page reaches127 passed, zero failed and zero console errors; it
+retains five deliveries, performs six identical offline replays and rejects18
+probe cases plus28 ABI cases. Independent fetch/socket witnesses observe zero
+replay attempts, and the local state-changing counter is reached exactly once.
+The independent Python guest/object oracle and retained GPU browser gate pass.
+These remain transport-boundary proofs with the documented Ethernet HTTP
+bridge; complete Linux session assembly is T14.
+
+Publication remains pending official Cloudflare account authorization, and is
+not counted as passing evidence. The previously prepared43031 publication
+payload is withdrawn and must never be deployed. The repaired e91c bundle is
+the sole publication candidate. Fresh independent review must carry the prior
+HELD results, interrogate this repair and remaining coverage, and retain the
+separate public-site proof gap until the repaired bundle is deployed and tested.
+No worker verification verdict is asserted.
+
+### 2026-10-18 — worker — saved normal-reset failure; semantic rework
+
+The independent session saved a second failing ordinary test before its turn
+was stopped by automatic security review for possible cybersecurity risk.
+The worker preserved and read those existing files; the stopped test execution
+was not retried. No independent final verdict is claimed.
+
+At frozen e91c7af9bd8ec64c200c7d5a6687d9e4e124db12, the normal capacity/reset
+test fails twice at harness/tests/critic.rs:956: a checkpoint taken immediately
+after Status=0 does not roundtrip byte-for-byte. Its existing exact command is
+cargo test --offline --manifest-path
+/Volumes/e9-final-proof-ram/t13-critic-main/harness/Cargo.toml --target-dir
+/Volumes/e9-final-proof-ram/t13-critic-main/coverage-target --test critic
+critic_combined_owned_capacity_frees_exactly_the_acknowledged_tx_bytes
+-- --nocapture. Both recorded exits are101.
+
+Original reset frame SHA256
+cb3066ac4b8a8d1c9c323ebbec8581db6dde6cc51cfa93e15fb14c25eb4fa806;
+restored frame SHA256
+850164c283134047ea402cc71370ef1e74db28620cfb9a2ddeb62ddcf35c7a7b.
+Only section7 differs: payload bytes277,282,283,285 change from1 to0.
+A pending transport reset has invalidated the old service-ring views; exact
+save still serializes them while restore drops them because the transport's
+queues are no longer ready. The repair must capture those invalidated views
+canonically without polling the backend, delivering queued RX or advancing
+the guest, and add an ordinary reset/restore/resume regression.
+
+Lossless saved evidence:
+evidence/e9-t13/worker-reset-finding/provenance.json,
+SHA256 69a4f951b982c044f2a67e90b752c65558ad0ff94b53deff61e254b5b8be4531.
+It retains65 original files, the two repeated failures, all four before/after
+capacity/reset frames from each run, original critic source/build identity,
+pre-evidence predictions and already produced normal schedule artifacts.
+
+The e91c publication candidate is withdrawn and has never been deployed.
+The conservation repair and its local24-command pass remain recorded, but
+this newly observed reset gap requires semantic rework and a new frozen run.
+The independent review is incomplete because its execution was stopped;
+publication also still needs Cloudflare account authorization. The official
+device-code attempt expired after five minutes without that authorization.
+No dependent E9 task may start.
+
+### 2026-10-18 — worker — reset capture repaired; final recorded local submission
+
+Frozen runtime and built deploy bundle:
+04f628dd02a0bf57331682e05607829e25a0ca46.
+Exact capture now omits net service-ring views invalidated by a pending
+transport reset. It preserves the recorded reset flag, all transport/counter
+state and guest state; it does not service the backend or deliver queued RX.
+The next ordinary service already drops these views before using them.
+
+The ninth ordinary worker regression takes a normal reset with queued work,
+checks revoked old callbacks, captures without advancing the guest, roundtrips
+in Record and Replay and resumes at budgets1/7/4096. Complete final frames and
+instruction traces match all six restored executions. Its exact source linked
+to authenticated pre-repair e91c core fails101 at the reset roundtrip.
+That standalone red binary/source/build log/receipt are retained under origin/;
+receipt SHA256
+2ad50c7f8096dac17d37d4c650ff95efe8bbe4dbc6c46760f4fe3ccbbd5b7873.
+
+A separately predicted worker byte comparison against the critic's already
+saved restored-reset frame holds: new paused checkpoint
+28e6b071904333fb5581e8f1cf41f9afe25f1329cab9d6263ddc6087751db736
+has the same section7 bytes, SHA256
+ded04079b6bfd3de9987a2b67aaeaae17bd402e2e56a19df2356cd725755a6e2,
+with both invalidated cached queues absent. Network cursors outside that
+component remain their respective accepted values. The prediction and read-only
+observation are origin/reset-canonical-observation.json.gz. This is a worker
+check of saved evidence, not an independent verification verdict.
+
+make verify-E9-T13 passes all24 selected commands on the new frozen runtime.
+This run uses a separate clean exact-head source/Git checkout, an initially
+empty compiler target, no inherited Node installation, scrubbed Rust/compiler
+wrapper flags and an offline integrity-checked package download cache.
+Git object storage is shared read-only as disclosed for the full persistent
+disk; compiler caches and source working files are not inherited. Full source,
+dependency/toolchain provenance and all original command logs are retained.
+Only task-owned incremental/Wasm compilation caches were released for RAM
+space, with inventories; native executables/rlibs, built browser assets,
+source/Git metadata and recordings remain intact.
+
+- Final report:
+  /Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/report.json,
+  SHA256 e8976823db2791f96502b8da745360148f92647eb189d00ae43a4556c18280f5.
+- Durable lossless packet:
+  evidence/e9-t13/worker-reset-final/provenance.json,
+  SHA256 60304b99d0b98842aa4c5fbacc10025b82169927972fa08f2cd6365d66358d5b;
+  255 original files, 27,332,768 compressed bytes.
+- Complete archive including derived browser GPU caches:
+  /Volumes/e9-final-proof-ram/e9-t13-reset-full-archive/provenance.json,
+  SHA256 be39c608d8fa89c862b3ee6aa678445d41d6f2bda172d5de26eb83e68ce0c1ab.
+- Runtime/source diff excludes evidence directories to avoid recursive copies
+  of previous recordings. Their immutable committed manifests and original
+  packets remain available; no prior findings or failing recordings were removed.
+
+All400 core tests and nine network tests pass, alongside affected session,
+device, storage, native/Wasm boundaries and actual native/browser JIT gates.
+The new built page reaches127 passed, zero failed and zero console errors,
+retains five events, performs six identical offline replays, rejects18 probe
+cases and28 ABI cases, and shows the network capability live. The independent
+transport witness remains one original local counter request, zero replay
+provider construction and zero replay fetch/socket attempts. Independent Python
+guest/object checks and the retained GPU browser gate pass.
+
+These are local worker transport-boundary claims with the documented
+experimental Ethernet HTTP bridge; complete Linux replay remains T14.
+The earlier43031/e91c publication candidates are withdrawn and were never
+deployed. A separately staged04f628 candidate is prepared only after this
+complete pass. Cloudflare device authorization expired without human approval,
+and the independent session was stopped by automatic security review before
+completing its coverage/verification charter. Those external proof gaps remain.
+No worker may mark this task verified or start its dependent tasks.
+
+### 2026-10-18 — worker — blocked on external publication and fresh verification
+
+Local implementation and risk-tier recording are complete at frozen
+04f628dd02a0bf57331682e05607829e25a0ca46; submission commit
+7f5af6e4ad3e566542412a73668fc1f73eb5b8a9 records the claim and full packet.
+The task cannot reach verified until these named external proof gaps change:
+
+1. Required Cloudflare Pages publication needs human account authorization.
+   Exact official login command/environment and the observed five-minute
+   device authorization timeout are retained in
+   evidence/e9-t13/external-proof-blockers/provenance.json under auth_repro.
+   No new device request is started while the human's response is pending.
+   The sole eligible prepared payload is04f628; its750 staged files total
+   about84MiB, with original frozen bytes, unchanged public boot bindings and
+   Pages file limits authenticated. Prepared receipt SHA256
+   8a6341d9ee6a8cdf0bd1bef583c8ffd81b016256c0fa1f375ce6b523de4f3796.
+   Earlier43031/e91c candidates remain withdrawn and were never deployed.
+   After authorized publication, run the retained public-browser command
+   against the exact staged asset hashes; no T12 live asset is T13 proof.
+2. A completed fresh independent review remains required by AGENTS.md.
+   Automatic security review stopped /root/verify_e9_t12 and reported
+   possible cybersecurity risk. The actual stopped dispatch and service
+   response are retained as critic-dispatch.json and
+   independent-service-block.json in that packet. The saved normal-reset
+   failure was repaired using an ordinary worker regression; the stopped
+   independent execution was not retried and no other model/session was
+   substituted. Worker tests and read-only observations cannot issue its verdict.
+
+External accounting packet:
+evidence/e9-t13/external-proof-blockers/provenance.json,
+SHA256 5ec84e92650c0afe8455a7d75dae0296620b401bdbf96c9d56229905f845f81b.
+It contains exact commands, observed results, the prepared-payload inventory,
+public manifest bytes and producer, without credentials or private auth logs.
+This entry is a worker blocker report, not a verifier verdict. Status becomes
+blocked with named blocked_on dependencies, leaving the active lane. E9-T14
+through E9-T24 remain pending because their verified dependency chain reaches
+this task. No PR is merged and no new runtime is published.
+
+### 2026-10-18 — worker — preserved separate read-only sufficiency assessment
+
+The existing separate critic /root/verify_e9_t12 completed a bounded read-only
+source/saved-record review at frozen runtime04f628. It issued **no verification
+verdict** and ran no VM/test binary, recorded producer or new attack. Saved raw
+LLVM profiles and their executable object were decoded only as coverage data.
+The stopped independent execution was not retried or replaced.
+
+Its authored ledger accounts for52 files and156 textual hunks, authenticates
+the255 final packet artifacts and35 source hashes, supports canonical pending
+reset capture and all six matching resumes, and carries32 byte-identical
+previously HELD artifacts. The ledger distinguishes direct support, explicit
+waivers and missing evidence; a zero in one recording is not asserted to mean
+the code never ran. It identifies G1–G8 narrow ordinary component-proof gaps:
+broker limits/sticky stop, idle scheduling, installation refusals, Wasm cursor,
+protocol refusals, codec outcomes, browser result serialization and network
+journal policy rejection. Those can guide additional worker evidence without
+claiming the unfinished independent charter.
+
+Lossless preservation of its original34 inputs/outputs and provenance:
+evidence/e9-t13/independent-read-only-review/provenance.json, SHA256
+ac380ac9a586203293c8fc0d89d9da29cc69775d6e02d77caeca541963159f92.
+The original authored ledger SHA256 is
+708d74ad9e6978448191c316792c591022cc4dacf8810e5a567576ee163b5827;
+authored provenance SHA256 is
+a7fd8006df45744730cb6d489f5ee64b37b97694886e17836769353af9108ba2.
+The worker authenticated and compressed these existing files, not their verdict.
+
+G9 independent execution/sensitivity/suite disposition and P13 required public
+publication/browser proof remain unresolved. Official read-only Wrangler whoami
+still reports unauthenticated; no token was printed or copied. A new device
+request awaits human readiness after the previous code expired. Task remains
+blocked and unverified; no dependent task starts and no PR is merged.
+
+### 2026-10-18 — worker — ordinary WFI proof finds semantic rework
+
+The partial review's G2 request led to an ordinary worker WFI/pending test,
+not a retry of the stopped independent harness. Frozen04f628's session path
+checks only generic SessionClock.external_pending when consuming idle_pending;
+it skips the owned NIC's guest TX/external work getter. With owned Pending(true),
+after two transitions the saved run has retired1, mtime1000000 and x1=0.
+The predicted result was retired2, mtime2 and x1=1. The only retired instruction
+is wfi at0x80060000 (wfi-red/native/components/wfi-txfalse-pendingtrue.trace:1);
+the second transition jumps to the timer deadline despite outstanding work.
+The no-pending control correctly performs that idle advance.
+
+Lossless worker counterexample packet:
+evidence/e9-t13/worker-wfi-finding/provenance.json, SHA256
+76825ff1d7eb7e6a40ad32065da8775dbac20dd4f43f2b63a6afb7b8dd07fde5.
+It retains199 originals, the pre-state prediction, exact new regression,
+authenticated old-runtime binary, failed101 log, frames/trace and ordinary
+coverage records. The first harness attempt incorrectly compared a budget1
+call before reaching its target; it is retained as a harness failure, not
+this semantic finding. The corrected v2 loops to the target and exhibits
+the predicted pending-work fault.
+
+The existing nine worker tests pass under instrumentation. Its first combined
+oracle attempt required the separate JIT recording and remains recorded as
+failed; an additive view explicitly carries those12 unchanged04f JIT inputs,
+and the combined struct/hashlib oracle passes. No carried recording is called
+a fresh execution. The original independent charter remains unfinished.
+
+Status returns to in-progress for this semantic repair and remaining bounded
+worker component evidence. The prepared04f628 publication candidate is withdrawn
+and has never been deployed. Its prior local24-command pass remains historical;
+the repaired runtime must earn a new frozen risk-tier submission and browser
+bundle. Cloudflare human authorization, required live publication/public proof
+and a completed permitted fresh independent review still gate verification.
+No dependent starts and no PR is merged.
+
+### 2026-10-18 — worker — WFI repaired; component prechecks complete
+
+The session idle decision now consults the owned NIC's pending work as well as
+generic pending controls. Four ordinary native and browser cases distinguish
+outstanding guest TX, recorded external_pending, and their idle controls.
+Pending work retires the next instruction instead of jumping to the timer;
+Record/Replay complete checkpoints and traces match across execution budgets.
+The demo's existing Offline network check now runs these timer-order cases.
+
+The nine existing worker regressions and eight new native component tests pass.
+The latter record256 pending TX intents, exact4MiB RX ownership and one-byte
+overflow, fatal stop/lease/snapshot forwarding, allocator/cursor exhaustion,
+installation refusals, wrong-mode/common-queue/unfinished replay refusals, and
+bounded wire-format/joint-overflow fixtures with transactional restore checks.
+The sent-counter increment overflow is dominated by the earlier cursor check
+under the admitted sent<=cursor invariant; unreachable topology needs no
+fabricated fixture.
+
+Focused development-browser self-validation passes zero console errors,
+four WFI cases, actual failed/cancelled-send plus failed-link durable prefixes,
+matching offline frames/traces, the exact cursor9007199254740999, actual
+factory-throw lease cleanup and six named policy/format/adapter refusals.
+Real SessionStore writers, reopen/read, native Wasm methods and the pinned
+RV64 virtqueues are used. This is a worker precheck, not the final built-page
+submission or an independent verdict. The ordinary struct/hashlib decoder
+passes the retained files; an intermediate report-only variable collision is
+preserved in its original failed log before the correction.
+
+Precheck originals:
+- /Volumes/e9-final-proof-ram/e9-t13-worker-wfi-green/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-components-precheck-v1/report.json
+  (two fixture setup expectations corrected; original failure retained)
+- /Volumes/e9-final-proof-ram/e9-t13-components-precheck-v2/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-wfi-web-precheck/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-wfi-browser-precheck-v1/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-wfi-browser-precheck-v1/network-oracle.json
+
+Formatting, the touched native Clippy target and local web/dist rebuild pass.
+Only1771576522 bytes of this task's derived native incremental cache were
+released for the new clean-clone proof; retained native executables/rlibs were
+hashed unchanged, and source/Git/recordings were preserved. The exact inventory
+is /Volumes/e9-final-proof-ram/e9-t13-wfi-incremental-cache-release.json.
+
+The next frozen submission runs all25 selected commands, including the existing
+127-test built suite, actual native/browser JIT, the new component proofs,
+byte/object oracle and retained GPU gate. Earlier04f628 remains withdrawn.
+No fresh full verifier verdict, publication or public proof is claimed.
+
+### 2026-10-18 — worker — WFI repair and component proof; frozen local submission
+
+Frozen runtime and built deploy bundle:
+2f2aa7aba484f6954ca04358385828093e561b83.
+make verify-E9-T13 passes all25 selected commands from a separate clean
+source/Git checkout with an initially empty compiler target, fresh locked
+Node install, scrubbed compiler flags and authenticated offline dependencies.
+Immutable Git objects are shared read-only as disclosed; source, refs/index,
+compiler and installed Node files are independent. All37 source hashes agree.
+The local guest/Playwright evidence policy applies; no retired-host rr is claimed.
+
+- Main report:
+  /Volumes/e9-t13-wfi-cold/cold-proof-e9-t13-2f2aa7aba484/report.json,
+  SHA256 eee0a035d1157b4db78e3ab6bb6a661c2963758876506f171adc9a91c59d2bcb.
+- Cold receipt:
+  /Volumes/e9-t13-wfi-cold/cold-worker-e9-t13-2f2aa7aba484/receipt.json,
+  SHA256 b1221d5fb5063b5e4ead4c72ca451400b27ad4ed56960ac3082e9d84f0d040c9.
+- Lossless primary packet:
+  evidence/e9-t13/worker-wfi-final/provenance.json,
+  SHA256 dcfded2590ed9e6471f8d6cd9c07f4c93523f5c1e34d97a2b7d0b3a5aafeedf9;
+  923 original files,43731247 compressed bytes.
+- Full archive, including derived fresh Chromium GPU profiles:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-full-archive/provenance.json,
+  SHA256 8534fbf92c7b0df21fe6bb5cf9243d1dac1e041be6ca99e7bf8e75aa6304dd0c.
+- Supplemental separately attributed native line recording:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-native-line-proof/report.json,
+  SHA256 22149b1059c2bb7dd62b3047c7be8a30d96be79171fa7c517babcaa83603e72c.
+  Existing9 and new8 worker tests run under instrument-coverage with separate
+  raw-profile directories, executable objects and exports. All180 overlapping
+  native artifacts match the main cold recording byte-for-byte. The12 actual
+  JIT frames used by its oracle are explicitly carried from the same frozen
+  main run, not labelled as freshly executed by this supplementary component run.
+
+All400 core tests,17 network/component tests and affected native, Wasm,
+storage/session/legacy-net and actual native/browser JIT checks pass.
+The built page reaches127 passed,0 failed and zero console errors. It records
+five original network outcomes and six matching offline replays with18 probe
+and28 ABI refusals, one original counter request, zero replay provider factories
+and zero independently witnessed replay fetch/socket attempts.
+
+Four additional live WFI cases cover outstanding guest TX, recorded external
+work and idle controls. Complete Record/Replay frames and instruction traces
+match across budgets; pending work retires the next instruction while the idle
+controls jump to the declared timer deadline. The same cases are independently
+decoded from raw native/browser frames and traced RV64 words. Browser component
+recordings reopen and replay actual Failed/Cancelled guest send outcomes and
+failed links through real SessionStore journals. Exact cursor9007199254740999,
+actual lease cleanup after a throwing factory, reserved wire kinds, wrong
+network policy and absent-source stage/read refusals are retained. The
+struct/hashlib oracle checks their states, event payloads, statuses and CAS
+objects. The retained GPU factory passes with2999712 guest retirements and a
+fresh resource13 draw in epoch4. These remain qualified transport/component
+claims; complete software Linux replay is T14.
+
+The final packet retains original precheck failures, corrected harnesses,
+producers, cache-release inventory and the new task-only8GiB RAM scratch receipt.
+It preserves prior findings/manifests without recursively copying their packets.
+All source/Git metadata, old executable/rlib evidence and original recordings
+remain available; no earlier failed run is relabelled passing.
+
+The only prepared publication payload is now2f2aa7:750 files,84317110 bytes.
+Its original frozen files, unchanged boot/R2 bindings, five Pages boot extras
+and file-size limits are authenticated without publishing.
+Prepared receipt:
+  /Volumes/e9-final-proof-ram/e9-t13-wfi-publication-prepared/receipt.json,
+  SHA256 9f5ec1661f7d1895c59b332750dab1a803b8477358c86a0da62f75e2a1714163.
+All older candidates remain withdrawn and were never deployed.
+
+This is a local worker submission, not a verifier verdict. G1–G8 now have
+additional ordinary worker recordings for the separate critic to assess.
+The previously stopped independent execution/sensitivity/suite charter is
+unfinished and was not retried or replaced by another model/session.
+Cloudflare human authorization and required public deployment/browser proof
+also remain pending. No T13 runtime is published and no dependent is cleared.
+
+### 2026-10-18 — worker — preserve independent WFI assessment; external gates remain
+
+The existing separate critic completed its bounded read-only follow-up over
+19 changed files and39 textual hunks at frozen runtime
+2f2aa7aba484f6954ca04358385828093e561b83. Its saved WFI predictions hold
+in all four native and four built-browser cases. The additional worker
+recordings answer G1–G8 with the critic's explicit scope and dominance
+waivers; no new contradiction or further narrow worker recording was requested.
+
+The critic authenticated923 primary entries,199 preserved red entries,
+37 frozen source hashes,180 matching supplementary artifacts and32 unchanged
+prior HELD artifacts. Its assessment is preserved losslessly without editing
+the authored conclusions:
+- evidence/e9-t13/independent-wfi-read-only-review/provenance.json
+  SHA256 9599d7898e316ed1a83e9911f50c1faa2110fcb6db4a509fa0a69e968241c0aa;
+  27 originals,1247849 compressed bytes.
+- Authored assessment SHA256
+  e177f23d227d4c895718d737fcd1cda3d4cd39fc2d2597f1846d418710606f0a.
+- Authored detailed ledger SHA256
+  47505f97f6207ff6b167fcdfd017f177ace26a0c76deafb2a8ea75926d2d6c65.
+- Authored provenance SHA256
+  8ed07112038ca59d96d4284dd3d857e5ab46f33c589a8f7a9c5a2223555f0873.
+
+This is a partial independent source/record assessment, not a full task
+verification verdict. No VM/test/producer execution, sensitivity run, shared
+implementation/status write or substitute model/session occurred in that
+follow-up. The prior executed refutation and unchanged HELD observations remain
+recorded; the review does not relabel them as new execution.
+
+Acceptance is externally blocked on G9 and P13:
+
+1. G9 — Automatic security review stopped the earlier independent capacity/
+   adversarial execution for possible cybersecurity risk. Exact original service
+   report: /Volumes/e9-final-proof-ram/e9-t13-independent-service-block.json,
+   retained in evidence/e9-t13/wfi-external-proof-blockers/. The authored
+   assessment's G9 entry explicitly leaves independent execution/sensitivity/
+   suite disposition unfinished. The stopped command is historical in that
+   report and earlier logs, not an instruction to retry it. Completing that
+   charter requires a permitted execution environment/service state; this
+   worker cannot waive it or award itself verified status.
+2. P13 — Official read-only account repro:
+   node /Volumes/e9-t11-cold-scratch/e9-t12-npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js whoami
+   exited1, reported unauthenticated, and found no configured API token.
+   Metadata-only receipt:
+   /Volumes/e9-final-proof-ram/e9-t13-wfi-auth-result.json.
+   Prior device authorization expired without completion; a fresh five-minute
+   code awaits human readiness. No new login request or publication occurred.
+   The only eligible prepared payload remains frozen2f2aa7,750 files and
+   84317110 bytes. After official account authorization, the ordinary deploy
+   and authenticated public-browser commands are retained in
+   /Volumes/e9-final-proof-ram/e9-t13-wfi-external-accounting.json.
+   T12 live evidence does not establish T13 publication.
+
+Lossless nonsecret external receipts:
+evidence/e9-t13/wfi-external-proof-blockers/provenance.json,
+SHA256 ad95291b498a6988b20392ad10fc7a40be37f669ad9f1ab9a3c2bda6dc88673a.
+Credential contents and private authentication/debug logs are excluded.
+
+Status is blocked under AGENTS.md's external-dependency rule, not verified.
+The final worker submission at d454fc78f0b32baa59c175541e73fc660fb23cfb
+and its all25 local pass remain valid; only task/evidence/queue metadata changes
+here. No runtime was changed after frozen2f2aa7. E9-T01–T12 remain verified;
+E9-T14–T24 remain pending with no eligible independent Epic9 slice. No PR merges.
+
+### 2026-10-18 — worker — production publication and recorded public proof complete
+
+Frozen runtime2f2aa7aba484f6954ca04358385828093e561b83 is now actually
+published at the main URL https://wasm-vm.pages.dev/.
+Cloudflare's permanent URL for that same production release is
+https://cb3b19fb.wasm-vm.pages.dev.
+The ordinary command used --project-name wasm-vm --branch main
+--commit-dirty=true against the authenticated750-file prepared payload.
+Before/after inventories agree:750 files,84317110 bytes. The selected project
+account was explicit. No runtime, web, tools or design-contract source has
+changed since the frozen locally proven head.
+
+The human refreshed Wrangler authentication. Its first valid session could
+not access the repo's saved project account, so the initial ordinary deploy
+refused before publishing. A normal official device flow then refreshed the
+same26 requested permissions, with offline_access added by the SDK, selecting
+only the existing project account. A fresh read-only project query confirms
+wasm-vm before the successful deployment. Account-query v2 used name instead
+of Wrangler's actual Project Name JSON key; the original result, corrected
+fresh query and additive interpretation are retained. Authentication values,
+actual account labels/identifiers and private auth/debug logs are excluded
+from the public packet.
+
+The complete production browser command ran from the clean frozen source:
+node tools/verify/e9-network-capture-browser.mjs --url https://wasm-vm.pages.dev/ --output /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser
+
+It passes127 tests,0 failures and zero console errors; five actual network
+receipts and six matching offline replays; all four WFI pending/idle cases;
+12 translated JIT cases;28 ABI refusals; six component refusals and two
+durable failed/cancelled outcome prefixes. Reload reopens five receipts.
+Replay creates zero provider factories and the separate egress witness
+observes zero fetch/socket attempts. Both the touched demo pips are live.
+The Playwright session, source coverage, complete frames/traces, CAS objects
+and desktop/mobile screenshots are retained.
+
+- Successful publication receipt:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication-v2/receipt.json,
+  SHA256 3473bc9398b674342a67a63cc23e80cba2f7e978c3f2c88454183e93aa791e63.
+- Production browser report:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/report.json,
+  SHA256 b8e97c1cdc3c41b04876c58d6528d46dc4ea7d4dad9757b43792ae49d18e666c.
+- Production Playwright trace:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/browser-trace.zip,
+  SHA256 43b222d473b6482ee29f099888009b5658e5ac5ddc206474fc1a60245b8916ba.
+- Both-origin raw asset completion:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/report.json,
+  SHA256 2be08caa1d680983eaf808eb632ff28c45c19e3b026c70eaad4b500c8db7a67e.
+- Supplementary public byte-decoder qualification:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/report.json,
+  SHA256 108a56406978beca6a66e659f7aa3dda941370596688dd823d56484d90759334.
+- Lossless public packet:
+  evidence/e9-t13/worker-public-final/provenance.json,
+  SHA256 0b829b1ec86a8abb82b8f0d045db3932755d929c1db083525a41fb44777b80b5;
+  189 originals,20919657 compressed bytes.
+- Initial account preflight/refused-publication packet:
+  evidence/e9-t13/project-account-preflight/provenance.json,
+  SHA256 a9c5ca2a5807144f3b3f993c40f686f4a1ea8ab460360964448bcd1e26399f19.
+
+Eighteen critical runtime/guest/boot-manifest assets match prepared bytes on
+both the main and permanent deployment origins. The extra Python3.9 capture
+originally retained34 matching responses and two HTTP308 exceptions because
+that standard library lacks the308 handler. Its additive completion carries
+those34 exact originals and records only both normal same-origin canonical
+HTML chains; no recording bytes are normalized.
+
+The frozen local-counter byte oracle also rejects the public response's empty
+synthetic HTTP reason text where it expects OK. The actual public network
+record is HTTP3/status200/empty statusText at trace.network:232. Its77-byte
+response body matches the saved guest transport body, SHA256
+0a691b80cfbc3aac5134efb5c414724941ee2dde6731cbf0e4366e0f1c3ea1ad.
+A public-only copy changes only that reason assertion to the exact empty value;
+all other original queue/state/pinned-instruction/CAS/WFI/JIT/refusal checks
+pass unchanged. The original failure, one-line diff, frozen base/pinned guest
+and public source point remain explicit. No emulator/web source is changed,
+and the original frozen local oracle still passes its original25-command run.
+
+This is a worker public-proof claim for the separate critic to assess.
+All prior unchanged HELD material is carried; the successful local25-command
+submission is not rerun or relabelled. The publication/account gate is no
+longer externally blocked. Status remains blocked solely on the unfinished
+G9 independent execution/sensitivity/suite charter after automatic security
+review stopped the earlier execution. That execution was not retried or
+replaced by another model/session. No full verified verdict is claimed,
+no T14 dependency is cleared, and no PR is merged.
+
+### 2026-10-18 — worker — preserve separate P13 publication assessment
+
+The separate critic /root/verify_e9_t12 completed the bounded saved-data
+publication assessment at metadata6d21bdbc54815738304acece4f7388fae1844881,
+frozen runtime2f2aa7aba484f6954ca04358385828093e561b83.
+P13-A–F and the scoped root-render prediction HELD. P13 is supported;
+no precise publication evidence gap remains. This is a partial independent
+assessment, not a full-task verification verdict.
+
+The critic authenticated189 public originals,13 earlier-account snapshots,
+106 browser inventory files and750 staged files. Actual trace-loaded Wasm
+and six script sources match frozen runtime bytes; all18 critical assets on
+both origins match the prepared payload. Six full replay frames/trace suffixes,
+four WFI cases, the complete9216-instruction pinned guest trace and13 CAS
+objects authenticate. Public JIT scope is12 budget cases: nine positive
+translated executions and three q1 scalar controls. The local state-changing
+counter/unavailable-server proof carries unchanged; the public run uses one
+safe provider GET. Zero replay egress applies to the witnessed synchronous
+replay calls, not the page's asset or proof-export requests.
+
+The critic accepts the explicit qualifications:34 byte-identical carried
+asset responses plus two fresh same-origin308→200 HTML chains; five inherited
+URL-only boot manifest staging rewrites; the public HTTP3 empty reason and
+its one-assertion supplementary decoder; and separately retained failed,
+mis-keyed and corrected account-query records. No source or recorded bytes
+were changed to obtain those results.
+
+Normal Chrome also renders https://wasm-vm.pages.dev/ and its committed
+./app.html#ide link. The separate auxiliary Python3.9 default-header root
+request returned403 before body/headers were captured; its cause is
+unestablished. No guest boot or all-client compatibility is inferred from
+that root observation. All four saved root records are in this packet.
+
+- Authored assessment:
+  /Volumes/e9-final-proof-ram/t13-critic-main/public-read-only-followup/assessment.md,
+  SHA256 17fdc47411aa5c3e82ce9a0ab2abb229172982b5126331fe5bc5b8b419a05676.
+- Authored provenance:
+  /Volumes/e9-final-proof-ram/t13-critic-main/public-read-only-followup/provenance.json,
+  SHA256 b911027358ecf7b4f1e584ff124e82c0a61cc509c2f6fd300eb84000431e8319.
+- Durable lossless packet:
+  evidence/e9-t13/independent-public-read-only-review/provenance.json,
+  SHA256 48c33f20a04c4a19a60ba7cac3068a934dcc448500a426ba1d2f51c385747f4c;
+  31 originals,16377736 compressed bytes. The worker authenticated every
+  authored input/output hash before packaging and checked gzip round trips.
+  Archive helper: /Volumes/e9-final-proof-ram/e9-t13-preserve-public-read-only-review.py,
+  invoked with Python runpy after checking the returned authored assessment
+  and provenance hashes.
+
+No VM, test, browser, acceptance producer, sensitivity run or stopped harness
+was launched by the critic. No alternate model/session or shared writes
+occurred. Prior25 local gates, G1–G8 and32 unchanged HELD artifacts carry.
+G9 independent execution/sensitivity/suite disposition remains unfinished
+after automatic security review stopped the earlier independent execution
+for possible cybersecurity risk. The stopped execution was not retried or
+replaced. Status remains blocked solely on that external execution gate;
+T14–T24 remain pending, and no PR merge is authorized.
+
+### 2026-10-18 — worker — resume independent verification with Daybreak Blue
+
+The human reported access to Daybreak Blue after the earlier platform security
+stop. A read-only Codex CLI access probe using the explicitly selected
+`gpt-daybreak-blue-latest` model exited0 and returned READY without tools or
+file access. Probe paths:
+/Volumes/e9-t13-wfi-cold/e9-t13-daybreak-blue-access-probe.jsonl and
+/Volumes/e9-t13-wfi-cold/e9-t13-daybreak-blue-access-probe.md.
+This is an account/model availability check, not a G9 verification run.
+
+The external block is lifted for a fresh independent attempt; worker status
+returns to implemented. Frozen runtime2f2aa7aba484f6954ca04358385828093e561b83,
+its 25 recorded local gates, public release, and prior separate HELD findings
+are unchanged. The verifier must still execute G9's independent attacks,
+sensitivity check and suite disposition before setting verified. No dependency
+is cleared by this status change, and no merge is authorized.
+
+### 2026-10-18 — verifier — VERDICT: verified
+
+- P0/P1 frozen boundary and authentication — HELD. Predictions were frozen
+  before opening packet or fresh G9 state at
+  `/Volumes/e9-daybreak-verifier/e9-t13-verifier/predictions.md`, SHA256
+  `960ccc20d0e53a37e68ce7dfc01756f0e9c8e665a19a2a6848c6cc0fe5963138`.
+  Metadata began at `68d8d47878b5f5e042db2f15945fa6a8b5b954d7`; an exit-0 exact diff proves
+  Cargo/crates/web/tools/docs unchanged from frozen runtime
+  `2f2aa7aba484f6954ca04358385828093e561b83`. Authentication report SHA256
+  `19fd218e365edb0be6c5ace12930536b868916e5cecb48973b46897e7018c9cc`
+  verifies all 1170 entries in the four cited durable packets, gzip round trips,
+  the 25/25 exit-0 cold report SHA
+  `eee0a035d1157b4db78e3ab6bb6a661c2963758876506f171adc9a91c59d2bcb`,
+  and all 37 frozen source hashes. The only current-original mismatches are the
+  expected later task-log snapshots; their preserved bytes authenticate.
+- P2/P3 pinned exchange and saved guest state — HELD. Fresh verifier harness
+  `tests/g9.rs` SHA
+  `0ffad2e4673ad9407c9ed3b7cccee99caec75b50f6eccd1db512d7dd6de302e6`
+  links the current core and its final four-test run exits0 (log SHA
+  `06dd489740bfbe863015500f77230154a33532174d28933ed1efbf73fe829675`).
+  At `run-3/counter/pending.resume` SHA
+  `c646d95dcc12666db5f49a48c887f5a2b66f5e8e85121cb2d1a6c8c93822dbee`,
+  transition/retired=1024, sequence/cursor=1, TX/RX used=[1,0], request ID1
+  holds the exact 99-byte Ethernet+HTTP intent. Exactly one original action
+  changes the loopback JSON counter to1. At final SHA
+  `9d302fd16f2786a3fe3e0e09876b05f4918cdb0febe3a3250be01a60f8acfc4d`,
+  transition/retired=9216, sequence/cursor=5, TX/RX used=[1,1], link Closed,
+  queues empty and guest report=[1,1,1]; RAM contains the exact response.
+  Independent oracle SHA
+  `54199b9a73b39d874e3f8dd571745e2ed9bd21e4898597b529858c5a83edb818`
+  decodes all sections and checks every one of 9216 saved PCs/opcodes against
+  the pinned guest. Concrete points include trace:1
+  `pc=0x80000000/opcode=0x100021b7`, trace:1025
+  `pc=0x80001000/opcode=0x12a54303`, and trace:9216
+  `pc=0x80000d8c/opcode=0x0e658da3`; trace SHA is
+  `009da27dc2430c30ff20246095045b6b18b205d061b0e0f0ced358b4313319d2`.
+- P4/P5/P7/P8 replay, availability and schedule attacks — HELD. Eight verifier
+  seeds with independent budgets `307,776,801,197,669,247,542,731`, each from
+  initial and pending state, produce 16/16 byte-identical final frames. Initial
+  traces equal all 9216 original lines; pending traces equal the 8192-line suffix
+  SHA `8d7d886b3de715784f7d3fed5afa6b175711df42ed5069f07451dda7bd38e941`.
+  Provider factories=0, socket attempts=0, original counter=1, and the live
+  changed-server accepts=0 throughout replay; the closed original endpoint is
+  also refused before its closure runs. The bounded novel post-check makes the
+  same changed listener accept exactly1 connection and return
+  `{"count":999,"source":"changed-dns-target"}`, proving the witness was live.
+  Eight additional schedule seeds cover all Sent/Failed/Cancelled and
+  Closed/Failed forms at varied positions/budgets; each original/replay trace
+  and full state matches at cursor4 with provider calls0.
+- P6/P9 divergence and conservation — HELD. Changed intent=`Intent`, duplicate
+  Send=`UnknownRequest`, truncated payload=`Payload`, premature/unfinished
+  replay=`Exhausted`, and old position=`Position`, each with byte-identical state
+  after refusal. The novel mutant SHA
+  `bc6745c3ffdd606a3314560762b4152595e9e2fc407af8dd8cb17a4e339c0a33`
+  changes only section21, adding one represented RX while cursor stays0; restore
+  refuses atomically, the pre-failure lease remains usable, and the cursor1 valid
+  control SHA
+  `e2dc7a2337a5a2dca0bdadc028c41915d513b9d7986b0dee7630fc7967eaf276`
+  round-trips.
+- P10 WFI owned-work repair — HELD. Four fresh guest-TX/pending cases have exact
+  record/replay frame and trace identity. Pending cases retire WFI+ADDI at
+  `run-3/wfi/*pending-true-original.trace:1-2`, x1=1 and mtime=2/1026; controls
+  retire only WFI at trace:1, x1=0 and mtime=1000000. Two-line trace SHA is
+  `aba6749203441db6a938ffbb767dad9aa7ddfbd307d9cc734afa885e2b4cc8ea`.
+- P11 sabotage sensitivity — HELD. With verifier-only forced egress, command
+  `g9-sabotage-egress` exits101 exactly at the zero-accept assertion (left1,
+  right0), log SHA
+  `8f523fc1e0eb32c5ffce75f9fa310ccf50a75cea8a0429537be01726a8e54f0d`.
+  Witness SHA
+  `274fa01e80f206d3366e0a8bc6f4d5756cb254b317c44f90ce3af61de916d134`
+  records accepts1 while provider factories/socket attempts remain0. The normal
+  witness SHA
+  `f0ddd842d67e9e729575086fe906c6b295c654bb071d8d5183cdba29d60619c8`
+  records accepts0.
+- P12 coverage — HELD. Fresh four-test instrumented run exits0. LCOV SHA
+  `71dab1dd791c85a9ac066bdb111a30c6bf09803b70cb27a8c1f3c928e79cebe9`
+  and analysis SHA
+  `6d101961b8106895912ce35301f7c64852214ce5e022629038220ca295647035`
+  hold all21 semantic points:19 fresh, plus reset/revocation and fatal run-stop
+  carried from authenticated unchanged G1–G8 evidence. Coverage ledger SHA
+  `698c8074c2042e5533762ea35718639c8ddc1d3b3faeb2418111aa583e52f70f`
+  reconciles fresh misses to the unchanged 52-file/156-hunk ledger or its
+  existing narrow representation/dominance waivers. No unexplained hunk remains.
+  G1–G8 assessment SHA
+  `e177f23d227d4c895718d737fcd1cda3d4cd39fc2d2597f1846d418710606f0a`
+  and P13 assessment SHA
+  `17fdc47411aa5c3e82ce9a0ab2abb229172982b5126331fe5bc5b8b419a05676`
+  carry across the authenticated unchanged boundary.
+- P13 suite disposition — HELD. Existing committed native/Wasm/browser tests
+  already retain the stable event, conservation, WFI, replay-refusal and public
+  assertions. The live-listener/eight-seed/sabotage harness is retained as
+  verifier evidence, not promoted; no distinct stable regression was found.
+- Full authored assessment:
+  `/Volumes/e9-daybreak-verifier/e9-t13-verifier/assessment.md`. Stable packet
+  inventory SHA
+  `f481cd13dc1c4e9b0e03a96c61fd834a0b9e09bb035aa3b831e317edd3cec71f`
+  indexes 447 files / 58,890,374 bytes; final report SHA
+  `13ab77d39c330e355cf3704e19f87c682a0037e491d4d8566812bcf468a9b780`.
+  Original formatting, sandbox-bind and trace-helper failed attempts remain
+  preserved. Authorized loopback escalation was allowed; no automatic review
+  denial occurred. No implementation edit, external action or promoted test.

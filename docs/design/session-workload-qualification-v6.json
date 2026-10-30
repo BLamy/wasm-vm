@@ -1,0 +1,19 @@
+{
+  "version": 6,
+  "task": "E9-T22c",
+  "scope": "Untimed original Omarchy qualification with recorded PID-1 bootstrap; all v5 asset, workload, browser, retention and budget pins are inherited unchanged",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v5.json",
+    "sha256": "d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de"
+  },
+  "desktopBootstrap": {
+    "reason": "The sanitized pinned image intentionally removes sudo policy, locks root and autologins omarchy on ttyS0. The frozen T01 workload writes /root and stages a tool under /usr/local/bin. A recorded COW-only qualification policy supplies the required root shell without modifying any pinned base chunk or production image.",
+    "bootargs": "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i",
+    "rescuePrompt": "PID-1 Bash root prompt before systemd",
+    "policy": "omarchy ALL=(root) NOPASSWD: /bin/bash",
+    "policyPath": "/etc/sudoers",
+    "policyMode": "0440",
+    "handoff": "Validate the COW-only policy with visudo, sync it, then exec /sbin/init as PID 1; continue through the image's unmodified serial autologin and require sudo -n -H /bin/bash to report uid 0 and HOME=/root.",
+    "evidence": "The initial witness precedes the bootstrap. Classify every bootstrap UART offer and disk completion in the saved journal, preserve the immutable image/manifest hashes, and compare the complete end state during replay. This is a local qualification session, not a production image change."
+  }
+}

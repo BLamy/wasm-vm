@@ -1,0 +1,5256 @@
+{
+  "head": "087c69c54713db7598b296b45d0da3a8f91ba1d2",
+  "started": "2026-10-29T00:49:08.518Z",
+  "passed": true,
+  "errors": [],
+  "httpErrors": [],
+  "events": [
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "fetching"
+      },
+      "time": 1793234949667
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 0,
+        "total": 24208896
+      },
+      "time": 1793234949668
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 0,
+        "total": 24208896
+      },
+      "time": 1793234949669
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 851552,
+        "total": 24208896
+      },
+      "time": 1793234949669
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 1572864,
+        "total": 24208896
+      },
+      "time": 1793234949670
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 2097152,
+        "total": 24208896
+      },
+      "time": 1793234949670
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 3866624,
+        "total": 24208896
+      },
+      "time": 1793234949670
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 4194304,
+        "total": 24208896
+      },
+      "time": 1793234949670
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 5898240,
+        "total": 24208896
+      },
+      "time": 1793234949671
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 6291456,
+        "total": 24208896
+      },
+      "time": 1793234949671
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 8257536,
+        "total": 24208896
+      },
+      "time": 1793234949671
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 8388608,
+        "total": 24208896
+      },
+      "time": 1793234949671
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 10485760,
+        "total": 24208896
+      },
+      "time": 1793234949672
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 12058624,
+        "total": 24208896
+      },
+      "time": 1793234949672
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 12582912,
+        "total": 24208896
+      },
+      "time": 1793234949672
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 14483456,
+        "total": 24208896
+      },
+      "time": 1793234949673
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 14680064,
+        "total": 24208896
+      },
+      "time": 1793234949673
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 16580608,
+        "total": 24208896
+      },
+      "time": 1793234949673
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 16777216,
+        "total": 24208896
+      },
+      "time": 1793234949673
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 18874368,
+        "total": 24208896
+      },
+      "time": 1793234949674
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 20971520,
+        "total": 24208896
+      },
+      "time": 1793234949675
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 23068672,
+        "total": 24208896
+      },
+      "time": 1793234949675
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "kernel: downloading",
+        "loaded": 24208896,
+        "total": 24208896
+      },
+      "time": 1793234949675
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 0,
+        "total": 3539054
+      },
+      "time": 1793234949713
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 0,
+        "total": 3539054
+      },
+      "time": 1793234949908
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 39635,
+        "total": 3539054
+      },
+      "time": 1793234949908
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 53325,
+        "total": 3539054
+      },
+      "time": 1793234949909
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 71610,
+        "total": 3539054
+      },
+      "time": 1793234949911
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 101213,
+        "total": 3539054
+      },
+      "time": 1793234949929
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 122358,
+        "total": 3539054
+      },
+      "time": 1793234949932
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 160675,
+        "total": 3539054
+      },
+      "time": 1793234949945
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 194507,
+        "total": 3539054
+      },
+      "time": 1793234949946
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 198736,
+        "total": 3539054
+      },
+      "time": 1793234949947
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 236265,
+        "total": 3539054
+      },
+      "time": 1793234949961
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 278528,
+        "total": 3539054
+      },
+      "time": 1793234949961
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 311296,
+        "total": 3539054
+      },
+      "time": 1793234949962
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 327680,
+        "total": 3539054
+      },
+      "time": 1793234949972
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 376832,
+        "total": 3539054
+      },
+      "time": 1793234949977
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 393216,
+        "total": 3539054
+      },
+      "time": 1793234949978
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 442368,
+        "total": 3539054
+      },
+      "time": 1793234949980
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 458752,
+        "total": 3539054
+      },
+      "time": 1793234949981
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 491520,
+        "total": 3539054
+      },
+      "time": 1793234949994
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 540672,
+        "total": 3539054
+      },
+      "time": 1793234949994
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 557056,
+        "total": 3539054
+      },
+      "time": 1793234949995
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 589824,
+        "total": 3539054
+      },
+      "time": 1793234949997
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 622592,
+        "total": 3539054
+      },
+      "time": 1793234950018
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 671744,
+        "total": 3539054
+      },
+      "time": 1793234950042
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 704512,
+        "total": 3539054
+      },
+      "time": 1793234950042
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 770048,
+        "total": 3539054
+      },
+      "time": 1793234950043
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 819200,
+        "total": 3539054
+      },
+      "time": 1793234950043
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 884736,
+        "total": 3539054
+      },
+      "time": 1793234950044
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 901120,
+        "total": 3539054
+      },
+      "time": 1793234950044
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 966656,
+        "total": 3539054
+      },
+      "time": 1793234950044
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 999424,
+        "total": 3539054
+      },
+      "time": 1793234950044
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1032192,
+        "total": 3539054
+      },
+      "time": 1793234950050
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1064960,
+        "total": 3539054
+      },
+      "time": 1793234950099
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1114112,
+        "total": 3539054
+      },
+      "time": 1793234950099
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1179648,
+        "total": 3539054
+      },
+      "time": 1793234950101
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1245184,
+        "total": 3539054
+      },
+      "time": 1793234950101
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1294336,
+        "total": 3539054
+      },
+      "time": 1793234950101
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1343488,
+        "total": 3539054
+      },
+      "time": 1793234950101
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1376256,
+        "total": 3539054
+      },
+      "time": 1793234950102
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1425408,
+        "total": 3539054
+      },
+      "time": 1793234950102
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1474560,
+        "total": 3539054
+      },
+      "time": 1793234950102
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1507328,
+        "total": 3539054
+      },
+      "time": 1793234950102
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1572864,
+        "total": 3539054
+      },
+      "time": 1793234950103
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1593015,
+        "total": 3539054
+      },
+      "time": 1793234950103
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1642167,
+        "total": 3539054
+      },
+      "time": 1793234950117
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1674935,
+        "total": 3539054
+      },
+      "time": 1793234950117
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1740471,
+        "total": 3539054
+      },
+      "time": 1793234950118
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1789623,
+        "total": 3539054
+      },
+      "time": 1793234950118
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1822391,
+        "total": 3539054
+      },
+      "time": 1793234950119
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1838775,
+        "total": 3539054
+      },
+      "time": 1793234950122
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1904311,
+        "total": 3539054
+      },
+      "time": 1793234950176
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1920704,
+        "total": 3539054
+      },
+      "time": 1793234950176
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 1953472,
+        "total": 3539054
+      },
+      "time": 1793234950177
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2019008,
+        "total": 3539054
+      },
+      "time": 1793234950177
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2035392,
+        "total": 3539054
+      },
+      "time": 1793234950177
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2084544,
+        "total": 3539054
+      },
+      "time": 1793234950178
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2097152,
+        "total": 3539054
+      },
+      "time": 1793234950178
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2117312,
+        "total": 3539054
+      },
+      "time": 1793234950178
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2166464,
+        "total": 3539054
+      },
+      "time": 1793234950178
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2199232,
+        "total": 3539054
+      },
+      "time": 1793234950179
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2248384,
+        "total": 3539054
+      },
+      "time": 1793234950179
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2281152,
+        "total": 3539054
+      },
+      "time": 1793234950179
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2297536,
+        "total": 3539054
+      },
+      "time": 1793234950180
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2313920,
+        "total": 3539054
+      },
+      "time": 1793234950181
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2346688,
+        "total": 3539054
+      },
+      "time": 1793234950184
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2395840,
+        "total": 3539054
+      },
+      "time": 1793234950184
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2412224,
+        "total": 3539054
+      },
+      "time": 1793234950184
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2461376,
+        "total": 3539054
+      },
+      "time": 1793234950185
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2526912,
+        "total": 3539054
+      },
+      "time": 1793234950186
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2576064,
+        "total": 3539054
+      },
+      "time": 1793234950186
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2625216,
+        "total": 3539054
+      },
+      "time": 1793234950187
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2690752,
+        "total": 3539054
+      },
+      "time": 1793234950244
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2723520,
+        "total": 3539054
+      },
+      "time": 1793234950244
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2772672,
+        "total": 3539054
+      },
+      "time": 1793234950244
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2821824,
+        "total": 3539054
+      },
+      "time": 1793234950245
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2854592,
+        "total": 3539054
+      },
+      "time": 1793234950245
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2903744,
+        "total": 3539054
+      },
+      "time": 1793234950246
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 2969280,
+        "total": 3539054
+      },
+      "time": 1793234950246
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3002048,
+        "total": 3539054
+      },
+      "time": 1793234950247
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3034816,
+        "total": 3539054
+      },
+      "time": 1793234950248
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3083968,
+        "total": 3539054
+      },
+      "time": 1793234950255
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3133120,
+        "total": 3539054
+      },
+      "time": 1793234950256
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3182272,
+        "total": 3539054
+      },
+      "time": 1793234950256
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3231424,
+        "total": 3539054
+      },
+      "time": 1793234950257
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3296960,
+        "total": 3539054
+      },
+      "time": 1793234950257
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3313344,
+        "total": 3539054
+      },
+      "time": 1793234950257
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3362496,
+        "total": 3539054
+      },
+      "time": 1793234950258
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3411648,
+        "total": 3539054
+      },
+      "time": 1793234950259
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3428032,
+        "total": 3539054
+      },
+      "time": 1793234950265
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3477184,
+        "total": 3539054
+      },
+      "time": 1793234950283
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3509952,
+        "total": 3539054
+      },
+      "time": 1793234950285
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "chunkManifest: downloading",
+        "loaded": 3539054,
+        "total": 3539054
+      },
+      "time": 1793234950288
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "instantiating"
+      },
+      "time": 1793234950307
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restoring"
+      },
+      "time": 1793234950312
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 0,
+        "total": 1337997
+      },
+      "time": 1793234950312
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 0,
+        "total": 1337997
+      },
+      "time": 1793234950313
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 253484,
+        "total": 1337997
+      },
+      "time": 1793234950313
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 359772,
+        "total": 1337997
+      },
+      "time": 1793234950313
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 392436,
+        "total": 1337997
+      },
+      "time": 1793234950313
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 1046964,
+        "total": 1337997
+      },
+      "time": 1793234950313
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: downloading",
+        "loaded": 1337997,
+        "total": 1337997
+      },
+      "time": 1793234950314
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "overlayDelta: unpacking",
+        "loaded": null,
+        "total": null
+      },
+      "time": 1793234950317
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restoring"
+      },
+      "time": 1793234950538
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 0,
+        "total": 210695930
+      },
+      "time": 1793234950538
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 0,
+        "total": 210695930
+      },
+      "time": 1793234950539
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 2097152,
+        "total": 210695930
+      },
+      "time": 1793234950540
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 3587108,
+        "total": 210695930
+      },
+      "time": 1793234950541
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 4194304,
+        "total": 210695930
+      },
+      "time": 1793234950541
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 4865788,
+        "total": 210695930
+      },
+      "time": 1793234950541
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 5832704,
+        "total": 210695930
+      },
+      "time": 1793234950542
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 6291456,
+        "total": 210695930
+      },
+      "time": 1793234950542
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 6815744,
+        "total": 210695930
+      },
+      "time": 1793234950542
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 7274288,
+        "total": 210695930
+      },
+      "time": 1793234950542
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 7716708,
+        "total": 210695930
+      },
+      "time": 1793234950542
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 8388608,
+        "total": 210695930
+      },
+      "time": 1793234950542
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 9846732,
+        "total": 210695930
+      },
+      "time": 1793234950543
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 10485760,
+        "total": 210695930
+      },
+      "time": 1793234950543
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 12206028,
+        "total": 210695930
+      },
+      "time": 1793234950543
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 12582912,
+        "total": 210695930
+      },
+      "time": 1793234950543
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 13828096,
+        "total": 210695930
+      },
+      "time": 1793234950544
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 14434252,
+        "total": 210695930
+      },
+      "time": 1793234950544
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 14680064,
+        "total": 210695930
+      },
+      "time": 1793234950544
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 15335424,
+        "total": 210695930
+      },
+      "time": 1793234950544
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 16318464,
+        "total": 210695930
+      },
+      "time": 1793234950544
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 16777216,
+        "total": 210695930
+      },
+      "time": 1793234950544
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 18235340,
+        "total": 210695930
+      },
+      "time": 1793234950545
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 18874368,
+        "total": 210695930
+      },
+      "time": 1793234950545
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 20774912,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 20971520,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 22085632,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 23068672,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 23920640,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 24313648,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 24576000,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 24641536,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 24772608,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 24903680,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 24969216,
+        "total": 210695930
+      },
+      "time": 1793234950546
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25165824,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25296688,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25493504,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25608036,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25690112,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25821184,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 25952256,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26214192,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26410800,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26411008,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26492876,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26672944,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26853220,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 26935296,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 27082700,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 27262976,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 27394048,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 27721728,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 28049408,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 28180480,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 28311552,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 28508160,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 28835840,
+        "total": 210695930
+      },
+      "time": 1793234950547
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 29294592,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 29360128,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 29884416,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 30408496,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 30949324,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 31129600,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 31457280,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 31981568,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 32440320,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 33095680,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 33554432,
+        "total": 210695930
+      },
+      "time": 1793234950548
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 34406400,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 34930480,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35192832,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35323696,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35454976,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35520512,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35586048,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35651584,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35782656,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35913520,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 35979264,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36044800,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36110336,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36241408,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36339608,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36503344,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36634624,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 36962304,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 37355520,
+        "total": 210695930
+      },
+      "time": 1793234950549
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 37748736,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 38469632,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 39845888,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 40828928,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 41877504,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 41943040,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 42598400,
+        "total": 210695930
+      },
+      "time": 1793234950550
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 43253760,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 43712512,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 44040192,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 44236800,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 44433408,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 44695552,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 44826624,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 45088768,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 45350912,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 45613056,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 45678592,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 45809664,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 46006272,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 46137344,
+        "total": 210695930
+      },
+      "time": 1793234950551
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 46465024,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 46727168,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 46989312,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 47185920,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 47513600,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 47923148,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 48234496,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 48594840,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 49086464,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 49610752,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 50085836,
+        "total": 210695930
+      },
+      "time": 1793234950552
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 50331648,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 51052544,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 51576832,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 52101120,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 52428800,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 53084160,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 53641112,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 54198272,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 54525952,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 55181312,
+        "total": 210695930
+      },
+      "time": 1793234950553
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 55836672,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 56426496,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 56623104,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 57392996,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 57999360,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 58720048,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 58720256,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 59506480,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 60162048,
+        "total": 210695930
+      },
+      "time": 1793234950554
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 60489728,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 60817408,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 61145088,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 61407232,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 61669376,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 61931520,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 62193664,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 62455808,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 62717952,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 62914560,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 63242240,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 63504384,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 63700992,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 63832064,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 64159744,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 64618496,
+        "total": 210695930
+      },
+      "time": 1793234950555
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 65011712,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 65667072,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 66256896,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 66912256,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 67108864,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 67764224,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 68222976,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 68747264,
+        "total": 210695930
+      },
+      "time": 1793234950556
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 69206016,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 69861376,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 70467532,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 71139224,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 71303168,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 72024064,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 72613888,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 73252708,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 73400320,
+        "total": 210695930
+      },
+      "time": 1793234950557
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 74252288,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 75038720,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 75497472,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 76349440,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 77070336,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 77594624,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 78200780,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 78692196,
+        "total": 210695930
+      },
+      "time": 1793234950558
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 79101952,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 79560496,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 79691776,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 80150528,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 80478208,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 80887756,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 81264640,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 81788928,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 82313216,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 82903040,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 83230720,
+        "total": 210695930
+      },
+      "time": 1793234950559
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 83492864,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 83820544,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 83886080,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 84279296,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 84738048,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 84934656,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 85278668,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 85721088,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 85983232,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 86572848,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 87211876,
+        "total": 210695930
+      },
+      "time": 1793234950560
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 87752704,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 88080384,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 88670208,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 89194496,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 89653248,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 90046464,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 90177536,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 90881892,
+        "total": 210695930
+      },
+      "time": 1793234950561
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 91684864,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 92274688,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 93257728,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 94044160,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 94371840,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 95092736,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 95617024,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 96141312,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 96468992,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 96911204,
+        "total": 210695930
+      },
+      "time": 1793234950562
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 97255424,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 97648640,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 98041856,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 98385868,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 98566144,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 98926488,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 99090432,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 99483648,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 99942400,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 100270080,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 100466688,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 100663296,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 100794368,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 100925440,
+        "total": 210695930
+      },
+      "time": 1793234950563
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 100990976,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 101056512,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 101253120,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 101515264,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 101777408,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 102039552,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 102367232,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 102760448,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 103088128,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 103415808,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 103726948,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 104005424,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 104267568,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 104513380,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 104857600,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 105119744,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 105316352,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 105529292,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 105774896,
+        "total": 210695930
+      },
+      "time": 1793234950564
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 105840640,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 105971712,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 106184652,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 106430464,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 106627072,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 106823680,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 106954752,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 107282432,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 107610112,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 108003328,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 108331008,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 108658688,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 108920832,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 109051904,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 109313840,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 109641728,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 109838336,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 110034944,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 110166016,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 110297088,
+        "total": 210695930
+      },
+      "time": 1793234950565
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 110493696,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 110821376,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 111083520,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 111149056,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 111411200,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 111804416,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 112066560,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 112328704,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 112525104,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 112525312,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 112721920,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 113115136,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 113246208,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 113573888,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 113770496,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 113901568,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 114229248,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 114491392,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 114720664,
+        "total": 210695930
+      },
+      "time": 1793234950566
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 115015680,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 115343360,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 115818444,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 116260864,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 116785152,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 117374976,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 117440512,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 117899264,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 118423552,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 118816768,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 119226316,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 119537664,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 119930880,
+        "total": 210695930
+      },
+      "time": 1793234950567
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 120258560,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 120586240,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 120913920,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 121176064,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 121372672,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 121569280,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 121634816,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 121765888,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 121962496,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 122159104,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 122355712,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 122486784,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 122699724,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 122945536,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 123240344,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 123469824,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 123731968,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 124059648,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 124321792,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 124583936,
+        "total": 210695930
+      },
+      "time": 1793234950568
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 124780544,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 124977152,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 125173760,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 125484900,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 125763584,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 125829120,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 126156800,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 126418944,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 126631884,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 126861156,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 127008768,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 127205376,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 127467520,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 127664128,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 127926272,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 128302948,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 128581632,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 128909312,
+        "total": 210695930
+      },
+      "time": 1793234950569
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 129122252,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 129302528,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 129499136,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 129728408,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 129974220,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 130023424,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 130416640,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 130809856,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 131137536,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 131399680,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 132120576,
+        "total": 210695930
+      },
+      "time": 1793234950570
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 133103616,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 134021120,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 134217728,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 134807552,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 135561112,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 135921664,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 136118272,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 136314880,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 136577024,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 136708096,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 136904704,
+        "total": 210695930
+      },
+      "time": 1793234950571
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 137363248,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 137691136,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 138117016,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 138412032,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 138936320,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 139526144,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 140050432,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 140509184,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 141164544,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 141885440,
+        "total": 210695930
+      },
+      "time": 1793234950572
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 142606336,
+        "total": 210695930
+      },
+      "time": 1793234950573
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 143261696,
+        "total": 210695930
+      },
+      "time": 1793234950573
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 144179200,
+        "total": 210695930
+      },
+      "time": 1793234950573
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 144703488,
+        "total": 210695930
+      },
+      "time": 1793234950575
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 146800640,
+        "total": 210695930
+      },
+      "time": 1793234950576
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 148570112,
+        "total": 210695930
+      },
+      "time": 1793234950576
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 148897792,
+        "total": 210695930
+      },
+      "time": 1793234950577
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 150994944,
+        "total": 210695930
+      },
+      "time": 1793234950577
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 153092096,
+        "total": 210695930
+      },
+      "time": 1793234950577
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 155123712,
+        "total": 210695930
+      },
+      "time": 1793234950578
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 155189248,
+        "total": 210695930
+      },
+      "time": 1793234950578
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 157286400,
+        "total": 210695930
+      },
+      "time": 1793234950578
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 158793728,
+        "total": 210695930
+      },
+      "time": 1793234950578
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 159383552,
+        "total": 210695930
+      },
+      "time": 1793234950578
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 161284096,
+        "total": 210695930
+      },
+      "time": 1793234950579
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 161480704,
+        "total": 210695930
+      },
+      "time": 1793234950579
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 163577856,
+        "total": 210695930
+      },
+      "time": 1793234950579
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 165609472,
+        "total": 210695930
+      },
+      "time": 1793234950579
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 165675008,
+        "total": 210695930
+      },
+      "time": 1793234950580
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 167772160,
+        "total": 210695930
+      },
+      "time": 1793234950580
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 169803776,
+        "total": 210695930
+      },
+      "time": 1793234950580
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 169869312,
+        "total": 210695930
+      },
+      "time": 1793234950580
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 171900928,
+        "total": 210695930
+      },
+      "time": 1793234950581
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 171966464,
+        "total": 210695930
+      },
+      "time": 1793234950581
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 173998080,
+        "total": 210695930
+      },
+      "time": 1793234950581
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 174063616,
+        "total": 210695930
+      },
+      "time": 1793234950581
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 176160768,
+        "total": 210695930
+      },
+      "time": 1793234950581
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 177930240,
+        "total": 210695930
+      },
+      "time": 1793234950582
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 178257920,
+        "total": 210695930
+      },
+      "time": 1793234950582
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 180289536,
+        "total": 210695930
+      },
+      "time": 1793234950582
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 180355072,
+        "total": 210695930
+      },
+      "time": 1793234950582
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 182386688,
+        "total": 210695930
+      },
+      "time": 1793234950582
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 182452224,
+        "total": 210695930
+      },
+      "time": 1793234950583
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 184549376,
+        "total": 210695930
+      },
+      "time": 1793234950583
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 186646528,
+        "total": 210695930
+      },
+      "time": 1793234950583
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 188743680,
+        "total": 210695930
+      },
+      "time": 1793234950584
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 190840832,
+        "total": 210695930
+      },
+      "time": 1793234950584
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 192937984,
+        "total": 210695930
+      },
+      "time": 1793234950584
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 194772992,
+        "total": 210695930
+      },
+      "time": 1793234950585
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 195035136,
+        "total": 210695930
+      },
+      "time": 1793234950585
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 197132288,
+        "total": 210695930
+      },
+      "time": 1793234950585
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 199229440,
+        "total": 210695930
+      },
+      "time": 1793234950585
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 201326592,
+        "total": 210695930
+      },
+      "time": 1793234950586
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 203030528,
+        "total": 210695930
+      },
+      "time": 1793234950586
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 203423744,
+        "total": 210695930
+      },
+      "time": 1793234950586
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 205520896,
+        "total": 210695930
+      },
+      "time": 1793234950586
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 207618048,
+        "total": 210695930
+      },
+      "time": 1793234950587
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 209715200,
+        "total": 210695930
+      },
+      "time": 1793234950587
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: downloading",
+        "loaded": 210695930,
+        "total": 210695930
+      },
+      "time": 1793234950587
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: unpacking",
+        "loaded": null,
+        "total": null
+      },
+      "time": 1793234951000
+    },
+    {
+      "type": "wvm:guest-progress",
+      "detail": {
+        "phase": "bootSnapshot: staged",
+        "loaded": 634769246,
+        "total": 634769246
+      },
+      "time": 1793234953257
+    },
+    {
+      "type": "wvm:guest-state",
+      "detail": {
+        "state": "restored"
+      },
+      "time": 1793234953421
+    },
+    {
+      "type": "wvm:guest-ready",
+      "time": 1793234953422
+    }
+  ],
+  "logs": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "type": "info",
+      "text": "wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=512, residency=repack-off, jalr=true, region=true)"
+    }
+  ],
+  "browser": "156.0.8078.49",
+  "url": "http://127.0.0.1:52473/app.html?guest=omarchy&desktop=1&gpu=0&testHooks=1&startPaused=1#ide",
+  "restored": {
+    "restored": true,
+    "paused": true,
+    "status": "linux: restored"
+  },
+  "screenshotSha256": "3ca29c058589a008fee3384d77a96aca3901b672141c515b0c1a505d747fe92a",
+  "typed": "echo stream-restore-ok | tee /tmp/stream-restore-proof",
+  "trustedKeys": [
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "c",
+      "trusted": true
+    },
+    {
+      "key": "h",
+      "trusted": true
+    },
+    {
+      "key": "o",
+      "trusted": true
+    },
+    {
+      "key": " ",
+      "trusted": true
+    },
+    {
+      "key": "s",
+      "trusted": true
+    },
+    {
+      "key": "t",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "a",
+      "trusted": true
+    },
+    {
+      "key": "m",
+      "trusted": true
+    },
+    {
+      "key": "-",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "s",
+      "trusted": true
+    },
+    {
+      "key": "t",
+      "trusted": true
+    },
+    {
+      "key": "o",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "-",
+      "trusted": true
+    },
+    {
+      "key": "o",
+      "trusted": true
+    },
+    {
+      "key": "k",
+      "trusted": true
+    },
+    {
+      "key": " ",
+      "trusted": true
+    },
+    {
+      "key": "Shift",
+      "trusted": true
+    },
+    {
+      "key": "|",
+      "trusted": true
+    },
+    {
+      "key": " ",
+      "trusted": true
+    },
+    {
+      "key": "t",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": " ",
+      "trusted": true
+    },
+    {
+      "key": "/",
+      "trusted": true
+    },
+    {
+      "key": "t",
+      "trusted": true
+    },
+    {
+      "key": "m",
+      "trusted": true
+    },
+    {
+      "key": "p",
+      "trusted": true
+    },
+    {
+      "key": "/",
+      "trusted": true
+    },
+    {
+      "key": "s",
+      "trusted": true
+    },
+    {
+      "key": "t",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "a",
+      "trusted": true
+    },
+    {
+      "key": "m",
+      "trusted": true
+    },
+    {
+      "key": "-",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "s",
+      "trusted": true
+    },
+    {
+      "key": "t",
+      "trusted": true
+    },
+    {
+      "key": "o",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "e",
+      "trusted": true
+    },
+    {
+      "key": "-",
+      "trusted": true
+    },
+    {
+      "key": "p",
+      "trusted": true
+    },
+    {
+      "key": "r",
+      "trusted": true
+    },
+    {
+      "key": "o",
+      "trusted": true
+    },
+    {
+      "key": "o",
+      "trusted": true
+    },
+    {
+      "key": "f",
+      "trusted": true
+    },
+    {
+      "key": "Enter",
+      "trusted": true
+    }
+  ],
+  "readbacks": [
+    {
+      "stdout": "stream-restore-ok\n\n",
+      "exit": 0
+    }
+  ],
+  "echo": {
+    "stdout": "stream-restore-ok\n\n",
+    "exit": 0
+  },
+  "echoScreenshotSha256": "0fce1b5650436e13d1c322c08a98a36f5a2d7c5ac4ebb9b49f8cce026b87d701",
+  "canvases": [
+    {
+      "id": "ide-display-canvas",
+      "width": 1280,
+      "height": 800,
+      "rect": {
+        "width": 1440,
+        "height": 900
+      }
+    }
+  ],
+  "finished": "2026-10-29T00:49:24.594Z"
+}

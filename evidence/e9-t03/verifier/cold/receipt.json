@@ -1,0 +1,73 @@
+{
+  "head": "c51133cacd48408e9ef054370b0503a32f645f32",
+  "started": 1792275813.641236,
+  "clone": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo",
+  "output": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final",
+  "status": "passed",
+  "commands": [
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+      "command": [
+        "git",
+        "clone",
+        "--local",
+        "--no-checkout",
+        "--single-branch",
+        "--branch",
+        "codex/e9-session-store",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "init",
+        "--cone"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "set",
+        "crates",
+        "docs",
+        "guest",
+        "tasks",
+        "tests",
+        "tools",
+        "web"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo",
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "c51133cacd48408e9ef054370b0503a32f645f32"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t03-cold-onttgojk/repo",
+      "command": [
+        "make",
+        "verify-E9-T03"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "environment": "RUSTFLAGS, RUSTDOCFLAGS, RUST_LOG and all CARGO_* unset; trusted toolchain dirs prepended",
+  "checkout": "Pristine sparse checkout of every source, workspace member, test, task and web artifact used by acceptance; large unrelated release binaries excluded. The real GPU loader obtains absent factory release bytes from their authenticated public content-addressed URLs.",
+  "objects": "Normal local clone with hardlinked immutable Git objects; no alternates and no inherited target/npm caches",
+  "finished": 1792276177.877321,
+  "wrapper_sha256": "042ba50eb5a3e9f7c582ce5075f1f9835a7b53a399613c42562634537abeff9d"
+}

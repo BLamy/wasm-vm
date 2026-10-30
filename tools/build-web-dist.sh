@@ -46,18 +46,24 @@ done
 # deployable bundle; omitting it leaves the generated main.js with a production-only 404.
 [ -d web/src ] && cp -R web/src "$DIST/src"
 [ -d web/renderer ] && cp -R web/renderer "$DIST/renderer"
+[ -d web/gpu-runtime ] && cp -R web/gpu-runtime "$DIST/gpu-runtime"
 # Docstream's compiled reader, lazy feature chunks, portable corpus, and complete
 # migration ledger form the site’s single documentation library.
 [ -d web/docs-bundle ] && cp -R web/docs-bundle "$DIST/docs-bundle"
 [ -d web/docs-content ] && cp -R web/docs-content "$DIST/docs-content"
+# Shared interface bundle (tools/build-ui.mjs): ui.js and ui.css are top-level and copied by the
+# loop above; its self-hosted fonts live beside them.
+[ -d web/ui-assets ] && cp -R web/ui-assets "$DIST/ui-assets"
 
 # The built wasm ES module (from make web-build).
 cp -R web/pkg "$DIST/pkg"
+cp -R web/session-pkg "$DIST/session-pkg"
 # wasm-pack places `*` in pkg/.gitignore because its publish directory is normally generated. The
 # deploy bundle itself is committed, however, and inline-js bindings import files below pkg/snippets.
 # Remove the nested ignore rule so the pre-commit `git add web/dist` cannot silently omit a runtime
 # dependency and leave an exact-clone deployment with a 404.
 rm -f "$DIST/pkg/.gitignore"
+rm -f "$DIST/session-pkg/.gitignore"
 
 # Small runtime assets (guest ELFs, riscv-tests) — NOT web/releases (large; deploy-time copy).
 if [ -d web/assets ]; then
@@ -107,9 +113,20 @@ if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
   # Other pages that link to the app or marketing landing by their dev names must point at the
   # deploy-time locations too. Keep the source tree's simple relative links for local serving.
-  for f in docs.html docs-embedding.html docs-guest.html docs-containers.html docs-verification.html docs-explainers.html products.html work-market.html security.html roadmap.html; do
+  for f in docs.html docs-embedding.html docs-guest.html docs-containers.html docs-verification.html docs-explainers.html products.html work-market.html security.html roadmap.html case-studies.html case-study-riscv-os.html case-study-ai-sandboxing.html case-study-deterministic-simulation.html 404.html; do
     [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
   done
+  # The shared interface carries one route table (web/ui/src/routes.js) in source names. Apply the
+  # same swap to the bundle, then restamp every page's ?rev= so it names the bytes actually shipped.
+  if [ -e "$DIST/ui.js" ]; then
+    grep -q '\./index\.html' "$DIST/ui.js" && grep -q '\./landing\.html' "$DIST/ui.js" \
+      || { echo "[web-dist] ui.js lost its route table; refusing to ship" >&2; exit 1; }
+    sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' "$DIST/ui.js" > "$DIST/ui.js.tmp" && mv "$DIST/ui.js.tmp" "$DIST/ui.js"
+    ui_rev=$( { shasum -a 256 2>/dev/null || sha256sum; } < "$DIST/ui.js" | cut -c1-12 )
+    for page in "$DIST"/*.html; do
+      sed -e "s#\./ui\.js?rev=[a-f0-9]*#./ui.js?rev=${ui_rev}#g" "$page" > "$page.tmp" && mv "$page.tmp" "$page"
+    done
+  fi
   echo "[web-dist] deploy root: / = landing, /app.html = app"
 fi
 
@@ -148,8 +165,13 @@ python3 tools/finalize-docs-dist.py "$DIST"
 # shell-owned resources too.
 if [ -e "$DIST/sw.js" ]; then
   ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js "$DIST"/*.html "$DIST"/*.json "$DIST"/*.css 2>/dev/null;
+    rg --files "$DIST/session-pkg" | LC_ALL=C sort | while IFS= read -r session_asset; do cat "$session_asset"; done
+    rg --files "$DIST/gpu-runtime" | LC_ALL=C sort | while IFS= read -r retained_asset; do cat "$retained_asset"; done
     if [ -d "$DIST/renderer" ]; then
       rg --files "$DIST/renderer" | LC_ALL=C sort | while IFS= read -r gpu_asset; do cat "$gpu_asset"; done
+    fi
+    if [ -d "$DIST/ui-assets" ]; then
+      rg --files "$DIST/ui-assets" | LC_ALL=C sort | while IFS= read -r ui_asset; do cat "$ui_asset"; done
     fi
     if [ -d "$DIST/docs-bundle" ] && [ -d "$DIST/docs-content" ]; then
       rg --files "$DIST/docs-bundle" "$DIST/docs-content" | LC_ALL=C sort | while IFS= read -r docs_asset; do cat "$docs_asset"; done

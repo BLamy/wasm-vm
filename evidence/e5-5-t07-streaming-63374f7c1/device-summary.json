@@ -1,0 +1,7 @@
+{
+  "model": "iPhone 16 Pro Max",
+  "os": "26.7.2",
+  "developerMode": "disabled at inventory",
+  "crashLogAccess": "DDI access refused with Developer Mode disabled; no setting changed",
+  "physicalRuntimeResult": "reported browser crash; no matching physical crash log or qualified physical success"
+}

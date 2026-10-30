@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "task": "E9-T24",
+  "browser": "Chrome 156.0.8078.49",
+  "platform": "darwin",
+  "arch": "arm64",
+  "scope": "Bounded software Linux and physical GPU functional integration only; no full Omarchy, original-cold or performance qualification",
+  "software": {
+    "contract": "docs/design/session-replay-contract.json",
+    "sha256": "646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1",
+    "ramMib": 256,
+    "clock": "ICount/10"
+  },
+  "gpu": {
+    "fixture": "guest/prebuilt/production-gpu-session.bin",
+    "sha256": "a393783a4d9ae15fdcd7cfd52e9cc95ea31acef1f43a7555c3dcbf4c3a83a4d9",
+    "ramMib": 1024,
+    "clock": "ICount/64"
+  },
+  "waiver": "evidence/e9-t22u-user-waiver-20261028/receipt.json"
+}

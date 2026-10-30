@@ -1,0 +1,43 @@
+{
+  "version": 9,
+  "task": "E9-T22c",
+  "scope": "Untimed original Omarchy qualification with recorded COW-only root getty, NetworkManager readiness and Plymouth ordering overrides; all v5 asset, workload, browser, retention and budget pins are inherited unchanged",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v8.json",
+    "sha256": "8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2"
+  },
+  "desktopPlymouthOrdering": {
+    "reason": "The unchanged Omarchy image reached NetworkManager, network.target, permitted user sessions and systemd-logind, but did not reach the Plymouth quit, serial getty or SDDM markers through 8.05 billion recorded guest transitions. The pinned serial getty and tty1 getty each order after the unbounded Plymouth quit wait; SDDM orders after both tty1 getty and Plymouth quit. Copy exactly the three authenticated vendor units into the qualification COW and remove only those three After= ordering tokens. Keep their real executables, remaining dependencies and the original base image.",
+    "units": [
+      {
+        "sourcePath": "/usr/lib/systemd/system/serial-getty@.service",
+        "sourceSha256": "ee46ca7068724107df49ee3bdda25a9cf01ceced1e08cca36ab3085bcf6f167d",
+        "copyPath": "/etc/systemd/system/serial-getty@ttyS0.service",
+        "removeAfterToken": " plymouth-quit-wait.service",
+        "copySha256": "151ae951a44e98cacbfa47470b48978608b18d9fa252d0cbd34afc11d03cc5db",
+        "copyBytes": 1475,
+        "mode": "0644"
+      },
+      {
+        "sourcePath": "/usr/lib/systemd/system/getty@.service",
+        "sourceSha256": "1ad6c472588f703549caa35f3fd51076e30c49492497aecb8f8a8b19026965d1",
+        "copyPath": "/etc/systemd/system/getty@tty1.service",
+        "removeAfterToken": " plymouth-quit-wait.service",
+        "copySha256": "d55625aece69be919b841126af75cd315a926f3a668f7aa62cfdfe7da614a8f4",
+        "copyBytes": 1934,
+        "mode": "0644"
+      },
+      {
+        "sourcePath": "/usr/lib/systemd/system/sddm.service",
+        "sourceSha256": "23e5a90063dcba8791c78afd8ddfd1b4d3cc7526185d619e97d497d46a91d385",
+        "copyPath": "/etc/systemd/system/sddm.service",
+        "removeAfterToken": " plymouth-quit.service",
+        "copySha256": "a32de2991d6c1344dd5269cf6602685659441d3d5e085b3d0355bc360f4cdfde",
+        "copyBytes": 359,
+        "mode": "0644"
+      }
+    ],
+    "handoff": "At the recorded root PID-1 prompt, hash the original vendor units, copy them into the native COW, delete only the declared After= token once per file, hash and mode-check all three copies, sync, then exec the unchanged /sbin/init. Prove systemd loads the copied units and retains real getty, SDDM, logind and NetworkManager service health before exercising the frozen workload.",
+    "limitation": "This local qualification profile does not prove orderly Plymouth splash shutdown; the real getty, SDDM, compositor, GPU and networking must still prove the complete workload. Preserve the stopped v8 failure and original image."
+  }
+}

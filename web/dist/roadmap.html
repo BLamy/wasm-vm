@@ -5,52 +5,40 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>wasm-vm — Repository roadmap</title>
   <meta name="description" content="Explore the published wasm-vm task ledger in Gantt and Kanban views, including acceptance criteria, dependencies and recorded verification evidence.">
-  <meta name="theme-color" content="#080d10">
+  <meta name="theme-color" content="#151410">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./marketing.css">
+  <link rel="stylesheet" href="./ui.css?rev=74f187f16a37">
+  <link rel="stylesheet" href="./site.css">
   <link rel="stylesheet" href="./roadmap.css">
-  <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js"}}</script>
 </head>
-<body class="roadmap-page">
-  <canvas id="hero-canvas" aria-hidden="true"></canvas>
-  <a class="skip-link" href="#main">Skip to roadmap</a>
-  <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="./" aria-label="wasm-vm home">wasm<span>—</span>vm<i>/</i></a>
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="./#machine">The machine</a>
-        <a href="./#benchmarks">Measurements</a>
-        <a href="./roadmap.html" aria-current="page">Roadmap</a>
-        <a href="./docs.html">Docs</a>
-        <a href="https://github.com/BLamy/wasm-vm">Source ↗</a>
-        <a class="nav-cta" href="./app.html#ide">Open demo ↗</a>
-      </nav>
-    </div>
-  </header>
+<body class="wv-site roadmap-page">
+  <a class="wv-skip" href="#main">Skip to roadmap</a>
+  <header class="wv-site-header"><div class="wv-site-wrap" data-wv-ui="site-nav" data-current="roadmap"><nav class="wv-site-fallback-nav" aria-label="Primary navigation"><a href="./">wasm-vm</a><a href="./docs.html">Docs</a><a href="./roadmap.html" aria-current="page">Roadmap</a><a href="./app.html#ide">Open the machine</a></nav></div></header>
   <main id="main">
-    <section class="roadmap-intro wrap" aria-labelledby="roadmap-title">
+    <section class="roadmap-intro wv-site-wrap" aria-labelledby="roadmap-title">
       <div>
-        <p class="eyebrow">Repository / published task ledger</p>
         <h1 id="roadmap-title">Roadmap</h1>
-        <p class="lede">Follow the work behind the machine. Open a task to inspect its acceptance criteria, dependencies, and verification evidence.</p>
+        <p class="wv-lede">Every task behind the machine, from the published repository ledger. Open one to read its acceptance criteria, dependencies and verification record.</p>
         <p class="roadmap-scope">Dates record activity in Git and verifier logs. They are not delivery estimates. Status comes from the published repository ledger; a task marked verified has its own accepted evidence.</p>
       </div>
       <div class="roadmap-source-links">
         <a href="./docs.html?page=verification">How verification works →</a>
         <a href="./tasks.json" download="wasm-vm-tasks.json">Download the task ledger ↓</a>
-        <button id="rm-motion" type="button" aria-pressed="false">Pause background motion</button>
       </div>
     </section>
-    <section class="rm wrap" aria-label="Repository tasks">
+    <section class="rm wv-site-wrap" aria-label="Repository tasks">
       <div class="rm-top">
         <div class="rm-head">
           <h2>Recorded progress</h2>
           <p id="rm-headline" class="rm-headline" role="status">Loading the repository task ledger…</p>
-          <p class="rm-progress-note">Cancelled tasks and superseded planning parents do not count toward progress.</p>
+          <p class="rm-progress-note">The headline counts every task in the ledger. The bar and the task count below leave out cancelled tasks, including superseded planning parents.</p>
         </div>
         <div id="rm-overall" class="rm-overall"></div>
       </div>
       <div class="rm-toolbar">
+        <!-- Library controls (web/ui roadmap-controls.jsx) over the native inputs below, which
+             roadmap.js reads; the natives are hidden in site.css. -->
+        <div class="wv-rm-host" data-wv-ui="roadmap-controls"></div>
         <div class="rm-viewtoggle" role="tablist" aria-label="Roadmap view">
           <button id="rm-view-timeline" class="rm-vt active" type="button" role="tab" aria-selected="true" aria-controls="rm-lanes">Gantt</button>
           <button id="rm-view-board" class="rm-vt" type="button" role="tab" aria-selected="false" aria-controls="rm-lanes" tabindex="-1">Kanban</button>
@@ -64,18 +52,15 @@
       <div id="rm-lanes" class="rm-lanes" role="tabpanel" aria-labelledby="rm-view-timeline" aria-busy="true"></div>
       <noscript><p class="rm-empty">JavaScript is needed for the task views. <a href="./tasks.json">Read the complete task ledger</a> or <a href="./docs.html?page=verification">read the verification guide</a>.</p></noscript>
     </section>
-    <aside class="roadmap-proposal wrap" aria-labelledby="proposal-title">
+    <aside class="roadmap-proposal wv-site-wrap" aria-labelledby="proposal-title">
       <span class="proposal-label">Product proposal</span>
       <div><h2 id="proposal-title">ProofMesh direction</h2><p>Encrypted volumes, peer delivery, and the work market are proposed product work. Their delivery contracts live in the same documentation library.</p><a href="./docs.html?page=reference-docs-product-proofmesh-roadmap">Read the proposed product roadmap →</a></div>
     </aside>
   </main>
   <div id="roadmap-scrim" class="roadmap-scrim" hidden></div>
   <aside id="rm-detail" class="rm-detail" role="dialog" aria-modal="true" aria-label="Task details and evidence" tabindex="-1" hidden></aside>
-  <footer class="wrap footer-inner">
-    <div><a class="brand" href="./">wasm<span>—</span>vm<i>/</i></a><p>A RISC-V computer in a browser.</p></div>
-    <nav aria-label="Footer"><a href="./app.html#ide">Demo</a><a href="./roadmap.html" aria-current="page">Roadmap</a><a href="./docs.html">Docs</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a></nav>
-  </footer>
-  <script type="module" src="./landing-page.js?rev=c705c4904caa"></script>
+  <footer class="wv-site-footer"><div class="wv-site-wrap"><p>wasm-vm · a RISC-V computer in a browser</p><nav aria-label="Footer"><a href="./app.html#ide">App</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html" aria-current="page">Roadmap</a><a href="./products.html">Product direction</a><a href="https://github.com/BLamy/wasm-vm">Source on GitHub</a></nav></div></footer>
+  <script type="module" src="./ui.js?rev=c4e7bb0de506"></script>
   <script type="module" src="./roadmap-page.js"></script>
 </body>
 </html>

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "receipt_sha256": "6d4081e5b57291103c902ae54a10e809b155349d825b1b518a873f81f34ca4df",
+  "payload_files_authenticated": 739,
+  "payload_bytes_authenticated": 83981403,
+  "frozen_tracked_files_authenticated": 734,
+  "original_manifests_authenticated": 5,
+  "deployment_log_sha256": "bced1f92cea28eb5c9568f663658fbefb6c7857a581495395ce62f7f2560162b",
+  "wasm_sha256": "4066cc6336c24f3354f9ece07aa8c30ad1ff596b66185d9afcd72d17bb92632a"
+}

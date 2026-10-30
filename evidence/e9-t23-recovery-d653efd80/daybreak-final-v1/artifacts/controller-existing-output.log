@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tools/verify/e9-recovery.py", line 21, in <module>
+    output.mkdir(parents=True, exist_ok=False)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1313, in mkdir
+    self._accessor.mkdir(self, mode)
+FileExistsError: [Errno 17] File exists: '/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-final-verifier/novel-codecs'

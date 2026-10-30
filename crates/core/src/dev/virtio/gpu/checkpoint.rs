@@ -8,6 +8,8 @@ use super::{
     snapshot, submit3d::*,
 };
 
+mod pending;
+
 const MAGIC: &[u8; 8] = b"WVGPU3D1";
 const MAX_BYTES: usize = 256 * 1024 * 1024;
 const MAX_CONTROL_BYTES: usize = 32 * 1024 * 1024;
@@ -346,11 +348,139 @@ pub(crate) struct PreparedGpuCheckpoint {
     submit: Submit3dSnapshot,
     scanout: Scanout3dSnapshot,
     scanout_resource: Option<u32>,
+    pending: Option<pending::PendingCheckpoint>,
+    /// Exact histories retain QueueNotify latches; ordinary reconnects rearm them.
+    notification_latches: Option<(bool, bool)>,
     pub(crate) saved_epoch: u64,
     pub(crate) restored_epoch: u64,
 }
+/// Validate immutable saved DMA authority without invoking a physical sink.
+pub(crate) fn validate_pending_exchange(
+    p: &PendingSubmit3d,
+    e: &Submit3dExchange,
+    layers: Option<(u32, u32)>,
+) -> Result<(), Error> {
+    let PendingRequest::Render(request) = &p.request else {
+        return Err(Error::Invalid);
+    };
+    let c = p
+        .accepted
+        .contexts
+        .iter()
+        .find(|c| c.identity == request.context)
+        .ok_or(Error::Invalid)?;
+    need(
+        c.resources.contains(&e.backing.resource)
+            || matches!(request.kind, Submit3dKind::Transfer(_)),
+    )?;
+    let resource = p
+        .accepted
+        .resources
+        .iter()
+        .find(|r| {
+            r.identity == e.backing.resource && r.backing_generation == Some(e.backing.generation)
+        })
+        .ok_or(Error::Invalid)?;
+    let entries = resource.backing.as_ref().ok_or(Error::Invalid)?;
+    match layers {
+        Some((stride, count)) => {
+            super::submit3d::layered_row_spans_limited(e.rows, stride, count, entries, 32 << 20)
+        }
+        None => super::submit3d::row_spans_limited(e.rows, entries, 32 << 20),
+    }
+    .map_err(|_| Error::Invalid)?;
+    Ok(())
+}
+impl PreparedGpuCheckpoint {
+    pub(crate) fn pending_owner(&self) -> Option<(&PendingSubmit3d, u64, Submit3dCompletion)> {
+        self.pending
+            .as_ref()
+            .map(|p| (&p.pending, p.last_exchange, p.completion))
+    }
+    pub(crate) fn rebase_pending(&mut self, queue: u64) {
+        if let Some(p) = &mut self.pending {
+            p.rebase(self.restored_epoch, queue)
+        }
+    }
+}
 impl GpuState {
+    /// Logical guest witness, never a restore image or a renderer checkpoint.
+    /// The result tap owns guest completion; physical mailbox readiness is excluded.
+    pub(crate) fn logical_session_bytes(
+        &self,
+        epoch: u64,
+        queue: u64,
+        cursor: u64,
+    ) -> Result<Vec<u8>, Error> {
+        need(
+            self.production_selected
+                && self
+                    .control3d
+                    .as_ref()
+                    .is_some_and(|c| c.result_tap_active()),
+        )?;
+        let mut out = b"WVGPULG2".to_vec();
+        out.push(u8::from(self.reset_pending));
+        out.push(u8::from(self.kicked));
+        out.push(u8::from(self.cursor_kicked));
+        out.extend_from_slice(
+            &self
+                .scanout_resource
+                .unwrap_or(NONE_RESOURCE_ID)
+                .to_le_bytes(),
+        );
+        out.extend_from_slice(&queue.to_le_bytes());
+        out.extend_from_slice(&cursor.to_le_bytes());
+        let mut control = self
+            .control3d
+            .as_ref()
+            .ok_or(Error::Unsupported)?
+            .snapshot();
+        control.epoch = epoch;
+        let submit_owner = self.submit3d.as_ref().ok_or(Error::Unsupported)?;
+        let mut submit = submit_owner.snapshot();
+        if let Some(pending) = &mut submit.pending {
+            pending.key.epoch = epoch;
+        }
+        for bytes in [
+            self.capabilities
+                .as_ref()
+                .ok_or(Error::Unsupported)?
+                .to_bytes(),
+            snapshot::encode_2d(
+                self,
+                self.scanout_resource
+                    .filter(|id| self.resources.get(*id).is_some()),
+            )
+            .map_err(|_| Error::Invalid)?,
+            control.canonical_bytes(),
+            submit.canonical_bytes(),
+            self.scanout3d
+                .as_ref()
+                .ok_or(Error::Unsupported)?
+                .snapshot()
+                .canonical_bytes(),
+        ] {
+            put_blob(&mut out, &bytes)?;
+        }
+        if let Some(pending) = &submit_owner.pending {
+            out.extend_from_slice(&crate::session_gpu::admission::request_digest(
+                pending, epoch, queue,
+            ));
+        }
+        Ok(out)
+    }
+
     pub(crate) fn checkpoint_ready(&self) -> Result<(), Error> {
+        // The legacy v1 API cannot carry the result frontier. Only the explicit
+        // GPU-session v2 API may capture an active result adapter.
+        if self
+            .control3d
+            .as_ref()
+            .is_some_and(|control| control.result_tap_active())
+        {
+            return Err(Error::Unsupported);
+        }
         if !self.production_selected
             || self.capabilities.is_none()
             || self.control3d.is_none()
@@ -375,8 +505,42 @@ impl GpuState {
         }
         Ok(())
     }
+    pub(crate) fn result_checkpoint_ready(&self) -> Result<(), Error> {
+        need(
+            self.production_selected
+                && self.capabilities.is_some()
+                && self.scanout3d.is_some()
+                && self
+                    .control3d
+                    .as_ref()
+                    .is_some_and(|c| c.result_tap_active() && !c.snapshot().poisoned)
+                && !self.reset_pending,
+        )?;
+        let s = self.submit3d.as_ref().ok_or(Error::Unsupported)?;
+        if s.pending.is_some()
+            && (s.guest_ready() || s.physical_completion().is_none_or(|c| !c.gpu_complete))
+        {
+            return Err(Error::Busy);
+        }
+        if s.pending.is_none()
+            && (s.mailbox.inspect().active.is_some() || s.mailbox.inspect().ready)
+        {
+            return Err(Error::Invalid);
+        }
+        Ok(())
+    }
     pub(crate) fn to_gpu_checkpoint(&self, witness: &[u8; 32]) -> Result<Vec<u8>, Error> {
-        self.checkpoint_ready()?;
+        self.encode_checkpoint(witness, false)
+    }
+    pub(crate) fn to_gpu_result_checkpoint(&self, witness: &[u8; 32]) -> Result<Vec<u8>, Error> {
+        self.encode_checkpoint(witness, true)
+    }
+    fn encode_checkpoint(&self, witness: &[u8; 32], results: bool) -> Result<Vec<u8>, Error> {
+        if results {
+            self.result_checkpoint_ready()?
+        } else {
+            self.checkpoint_ready()?
+        }
         need(witness.iter().any(|v| *v != 0))?;
         let control = self
             .control3d
@@ -385,7 +549,7 @@ impl GpuState {
             .snapshot();
         let mut out = Vec::new();
         out.extend_from_slice(MAGIC);
-        out.extend_from_slice(&1u32.to_le_bytes());
+        out.extend_from_slice(&(if results { 3u32 } else { 1u32 }).to_le_bytes());
         out.extend_from_slice(
             &self
                 .scanout_resource
@@ -393,6 +557,10 @@ impl GpuState {
                 .to_le_bytes(),
         );
         out.extend_from_slice(witness);
+        if results {
+            out.push(u8::from(self.kicked));
+            out.push(u8::from(self.cursor_kicked));
+        }
         let cap = self
             .capabilities
             .as_ref()
@@ -408,11 +576,11 @@ impl GpuState {
         for bytes in [
             two_d,
             control.canonical_bytes(),
-            self.submit3d
-                .as_ref()
-                .ok_or(Error::Unsupported)?
-                .snapshot()
-                .canonical_bytes(),
+            {
+                let mut value = self.submit3d.as_ref().ok_or(Error::Unsupported)?.snapshot();
+                value.pending = None;
+                value.canonical_bytes()
+            },
             self.scanout3d
                 .as_ref()
                 .ok_or(Error::Unsupported)?
@@ -420,6 +588,12 @@ impl GpuState {
                 .canonical_bytes(),
         ] {
             put_blob(&mut out, &bytes)?;
+        }
+        if results {
+            put_blob(
+                &mut out,
+                &pending::encode(self.submit3d.as_ref().ok_or(Error::Unsupported)?)?,
+            )?;
         }
         need(out.len() <= MAX_BYTES - 32)?;
         let digest = Sha256::digest(&out);
@@ -433,7 +607,30 @@ impl GpuState {
         ram_base: u64,
         ram_len: u64,
     ) -> Result<PreparedGpuCheckpoint, Error> {
-        self.checkpoint_ready()?;
+        self.prepare_checkpoint(bytes, witness, ram_base, ram_len, false)
+    }
+    pub(crate) fn prepare_gpu_result_checkpoint(
+        &self,
+        bytes: &[u8],
+        witness: &[u8; 32],
+        ram_base: u64,
+        ram_len: u64,
+    ) -> Result<PreparedGpuCheckpoint, Error> {
+        self.prepare_checkpoint(bytes, witness, ram_base, ram_len, true)
+    }
+    fn prepare_checkpoint(
+        &self,
+        bytes: &[u8],
+        witness: &[u8; 32],
+        ram_base: u64,
+        ram_len: u64,
+        results: bool,
+    ) -> Result<PreparedGpuCheckpoint, Error> {
+        if results {
+            self.result_checkpoint_ready()?
+        } else {
+            self.checkpoint_ready()?
+        }
         if bytes.len() < 32 || bytes.len() > MAX_BYTES {
             return Err(Error::Corrupt);
         }
@@ -442,11 +639,24 @@ impl GpuState {
             return Err(Error::Corrupt);
         }
         let mut r = Reader::new(body);
-        need(r.take(8)? == MAGIC && r.u32()? == 1)?;
+        need(r.take(8)? == MAGIC)?;
+        let version = r.u32()?;
+        if results && version == 2 {
+            return Err(Error::Unsupported);
+        }
+        need(version == if results { 3 } else { 1 })?;
         let original_scanout = r.u32()?;
         if r.take(32)? != witness || witness.iter().all(|v| *v == 0) {
             return Err(Error::WitnessMismatch);
         }
+        let notification_latches = if results {
+            let control = r.u8()?;
+            let cursor = r.u8()?;
+            need(control <= 1 && cursor <= 1)?;
+            Some((control != 0, cursor != 0))
+        } else {
+            None
+        };
         let profile = r.blob(CAPSET_BYTES)?;
         if profile
             != self
@@ -466,7 +676,31 @@ impl GpuState {
         )?;
         let submit = submit(r.blob(128)?)?;
         let scanout = scanout(r.blob(256)?)?;
+        let pending = if results {
+            pending::decode(
+                r.blob(MAX_CONTROL_BYTES + MAX_SUBMISSION_BYTES + 8192)?,
+                self,
+                &control,
+                &scanout,
+                &submit,
+                ram_base,
+                ram_len,
+            )?
+        } else {
+            None
+        };
         r.finish()?;
+        if results {
+            need(
+                submit
+                    .counters
+                    .completed
+                    .checked_add(submit.counters.cancelled)
+                    .and_then(|v| v.checked_add(u64::from(pending.is_some())))
+                    == Some(submit.counters.admitted)
+                    && submit.counters.admitted.checked_add(1) == Some(submit.next_sequence),
+            )?;
+        }
         let two_d = snapshot::prepare(two_d_bytes).map_err(|_| Error::Invalid)?;
         need(two_d.valid_backing_range(ram_base, ram_len))?;
         let scanout_resource = if original_scanout == NONE_RESOURCE_ID {
@@ -551,6 +785,8 @@ impl GpuState {
             scanout_resource,
             saved_epoch,
             restored_epoch,
+            pending,
+            notification_latches,
         })
     }
     pub(crate) fn commit_gpu_checkpoint(&mut self, prepared: PreparedGpuCheckpoint) {
@@ -561,6 +797,8 @@ impl GpuState {
             scanout,
             scanout_resource,
             restored_epoch,
+            pending,
+            notification_latches,
             ..
         } = prepared;
         self.control3d
@@ -575,7 +813,13 @@ impl GpuState {
             .as_mut()
             .expect("prepared production owner")
             .commit_checkpoint(scanout);
-        snapshot::apply(self, two_d);
+        if let Some(value) = pending {
+            self.submit3d
+                .as_mut()
+                .expect("prepared submit")
+                .commit_pending_checkpoint(value.pending, value.last_exchange, value.completion);
+        }
+        snapshot::apply(self, two_d, notification_latches);
         self.scanout_resource = scanout_resource;
     }
 }

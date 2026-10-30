@@ -90,7 +90,7 @@ function normalizeJob(input, resourceLimit, byteLimit = 4194304, production = fa
   if (type === 'cancelJob') {
     const event = record(input, ['type', 'epoch', 'sequence']); hex(event.epoch); hex(event.sequence); return event;
   }
-  const event = record(input, ['type', 'epoch', 'sequence', 'context', 'header', 'resources', 'kind', 'commands', 'transfer'],
+  const event = record(input, ['type', 'epoch', 'sequence', 'context', 'header', 'resources', 'kind', 'commands', 'transfer', ...(production ? ['ownedTransport'] : [])],
     ['type', 'epoch', 'sequence', 'context', 'header', 'resources', 'kind']);
   hex(event.epoch); hex(event.sequence); event.context = identity(event.context);
   event.header = record(event.header, ['type', 'flags', 'fenceId', 'contextId', 'ringIndex']);
@@ -184,6 +184,26 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       for (const key of ['rebind','enqueueOwned','inspect','readPixels','dispose']) need(typeof methods[key] === 'function', 'invalid-parameter', 'Invalid presenter capability.'); }
     const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete', ...(dimensional ? ['gatherLayeredInput', 'scatterLayeredOutput'] : [])]) : null;
     if (asynchronous) for (const key of Object.keys(transport)) need(typeof transport[key] === 'function', 'invalid-parameter', 'Missing transport method.');
+    const captureTransport = (event) => {
+      if (!Object.hasOwn(event, 'ownedTransport')) return { transport, ownedTransport: false };
+      need(production, 'invalid-parameter', 'Owned transport requires the qualified production bridge.');
+      const capability = event.ownedTransport, captured = {};
+      need(capability !== null && typeof capability === 'object', 'invalid-parameter', 'Missing request transport.');
+      // Wasm classes expose methods on their prototype. Read data descriptors only;
+      // retain this original instance rather than looking up the current VM later.
+      for (const key of Object.keys(transport)) {
+        let current = capability, descriptor;
+        while (current && current !== Object.prototype) {
+          descriptor = Object.getOwnPropertyDescriptor(current, key);
+          if (descriptor) break;
+          current = Object.getPrototypeOf(current);
+        }
+        need(descriptor && Object.hasOwn(descriptor, 'value') && typeof descriptor.value === 'function',
+          'invalid-parameter', 'Invalid request transport method.');
+        captured[key] = Function.prototype.call.bind(descriptor.value, capability);
+      }
+      return { transport: Object.freeze(captured), ownedTransport: true };
+    };
     const fresh = () => {
       const { backend } = unwrap((production ? createProductionTransferBackend : dimensionalDepthViews ? createStandardDimensionalDepthViewTransferBackend : dimensionalDepth ? createStandardDimensionalDepthTransferBackend : dimensionalViews ? createStandardDimensionalViewTransferBackend : dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
@@ -242,7 +262,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       const commands = event.kind === 'commands' ? event.commands : transferCommands(event.transfer);
       const started = owners.renderer.beginSubmission(event.context.id, commands, { contextId: event.context.id });
       if (!started.ok) { if (temporary) unwrap(owners.store.detachContext(temporary.context,temporary.resource)); return fail(mappedCode(started.error.code), started.error.message); }
-      pending = { epoch: event.epoch, sequence: event.sequence, context: event.context, job: started.job, accepted,
+      pending = { ...captureTransport(event), epoch: event.epoch, sequence: event.sequence, context: event.context, job: started.job, accepted,
         temporary, exchangeSequence: '0000000000000000', cancelled: false, status: 'ready', appliedCommands: 0, draws: 0 };
       lastSequence = event.sequence; counters.begun++; return ok();
     };
@@ -276,7 +296,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         resource.backing.transportGeneration, BigInt(rows.offset).toString(16).padStart(16, '0'), rows.rowBytes, rows.rowStride, rows.rowCount];
     };
     const post = (job, code, gpuComplete, appliedCommands, draws) => {
-      const result = transport.complete(job.epoch, job.sequence, job.exchangeSequence, code, gpuComplete, appliedCommands, draws);
+      const result = job.transport.complete(job.epoch, job.sequence, job.exchangeSequence, code, gpuComplete, appliedCommands, draws);
       need(result === undefined, 'bridge-poisoned', 'Completion method must return synchronously.');
     };
     const pump = () => {
@@ -303,7 +323,10 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           pending = null; return Object.freeze({ ok: true, status: job.cancelled ? 'cancelled' : 'completed', result: state.result });
         }
         if (state.status === 'needs-input') {
-          const args = dmaArgs(job, state.request), input = bytes(args.length === 12 ? transport.gatherLayeredInput(...args) : transport.gatherInput(...args));
+          const args = dmaArgs(job, state.request);
+          const gathered = args.length === 12 ? job.transport.gatherLayeredInput(...args) : job.transport.gatherInput(...args);
+          if (job.ownedTransport && gathered === null) return Object.freeze({ ok: true, status: 'physical-pending' });
+          const input = bytes(gathered);
           need(input.byteLength === state.request.layout.tightBytes, 'bridge-poisoned', 'Rust gather returned the wrong byte count.');
           job.exchangeSequence = args[2];
           unwrap(owners.renderer.provideInput(job.job, state.request.token, input));
@@ -313,7 +336,8 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           // Validate the current exchange immediately before the irreversible bus scatter.
           const current = unwrap(owners.renderer.step(job.job));
           need(current.status === 'needs-output' && current.request === request, 'bridge-poisoned', 'Output request changed before scatter.');
-          const result = args.length === 12 ? transport.scatterLayeredOutput(...args, new Uint8Array(bytes(request.bytes))) : transport.scatterOutput(...args, new Uint8Array(bytes(request.bytes)));
+          const result = args.length === 12 ? job.transport.scatterLayeredOutput(...args, new Uint8Array(bytes(request.bytes))) : job.transport.scatterOutput(...args, new Uint8Array(bytes(request.bytes)));
+          if (job.ownedTransport && result === null) return Object.freeze({ ok: true, status: 'physical-pending' });
           need(result === undefined, 'bridge-poisoned', 'Scatter must return synchronously.');
           job.exchangeSequence = args[2];
           unwrap(owners.renderer.acknowledgeOutput(job.job, request.token));
@@ -372,7 +396,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
             case 'beginScanout': {
               need(lastSequence === null || event.sequence > lastSequence, 'invalid-parameter', 'Stale request sequence.');
               const started = scanoutResult(scanout.begin(event));
-              pending = { epoch: event.epoch, sequence: event.sequence, scanout: true, job: started.job, exchangeSequence: '0000000000000000', cancelled: false, status: 'ready', appliedCommands: 0, draws: 0 };
+              pending = { ...captureTransport(event), epoch: event.epoch, sequence: event.sequence, scanout: true, job: started.job, exchangeSequence: '0000000000000000', cancelled: false, status: 'ready', appliedCommands: 0, draws: 0 };
               lastSequence = event.sequence; counters.begun++; return ok();
             }
             case 'beginJob': return beginJob(event);

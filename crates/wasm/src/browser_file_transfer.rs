@@ -1,3 +1,4 @@
+#![cfg_attr(not(target_arch = "wasm32"), allow(dead_code))]
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, VecDeque};
@@ -251,6 +252,12 @@ impl BrowserFileTransfers {
             },
             backend,
         )
+    }
+
+    pub(crate) fn input_prefix_ready(&self) -> bool {
+        self.next_stream == 0
+            && self.uploads.is_empty()
+            && self.downloads.borrow().records.is_empty()
     }
 
     pub(crate) fn ready(&self, slot: usize) -> bool {
@@ -531,7 +538,7 @@ fn file_transfer_diagnostic_json(diagnostic: &FileTransferSlotDiagnostic) -> Str
 }
 
 pub(crate) fn parse_sha256(hex: &str) -> Result<[u8; 32], FileTransferError> {
-    if hex.len() != 64 {
+    if hex.len() != 64 || !hex.is_ascii() {
         return Err(FileTransferError::HashMismatch);
     }
     let mut out = [0u8; 32];

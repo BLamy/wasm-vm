@@ -1,0 +1,1255 @@
+{
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "pip": "cap-pip in-progress",
+  "alpha": {
+    "id": "session-0a5df67d-e7b5-4800-a4b9-ca5d2b313e93",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-0a5df67d-e7b5-4800-a4b9-ca5d2b313e93",
+      "machine": {
+        "vm_build": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+            "length": "284776"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-05c69372-90f0-40c4-9b7f-50f745db4552",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "7b8d3d522a7041d796265d4793a23f73e3fa6edcbd21f678cee80eec4514aea1",
+            "length": "23863250"
+          },
+          "disk_root": "79c6d4548f1ad7da1625e296081b86492c2346c72a66ff4bb46b0b1216e5213d",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-05c69372-90f0-40c4-9b7f-50f745db4552",
+    "frameHash": "7b8d3d522a7041d796265d4793a23f73e3fa6edcbd21f678cee80eec4514aea1",
+    "bytes": 23863250,
+    "evidence": "alpha-original.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        30
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-alpha\n"
+  },
+  "beta": {
+    "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "machine": {
+        "vm_build": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+            "length": "284776"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+            "length": "23862970"
+          },
+          "disk_root": "8889914c7811016ce53386e2821b10e67f17ef97b189638a247f1a360e2a7cb0",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+    "frameHash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+    "bytes": 23862970,
+    "evidence": "beta-original.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-beta\n"
+  },
+  "quota": {
+    "state": "storage-error",
+    "message": "RetentionLimit: restore point budget. Recording paused; the guest is paused and its current state may be unsaved. The committed prefix is preserved. Free space or raise limits, then Retry recording; Stop recording ends at the committed prefix.",
+    "paused": true,
+    "retry": true
+  },
+  "betaPrefix": {
+    "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "machine": {
+        "vm_build": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+            "length": "284776"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+            "length": "23862970"
+          },
+          "disk_root": "8889914c7811016ce53386e2821b10e67f17ef97b189638a247f1a360e2a7cb0",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+    "frameHash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+    "bytes": 23862970,
+    "evidence": "beta-after-quota.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-beta\n"
+  },
+  "betaUnsaved": {
+    "hash": "db6cc8e3082b0857811072255f2d1ef4dfd4c0a48737ea54cf99ff02440409ff",
+    "bytes": 23890521,
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "",
+    "paused": true,
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 688,
+      "totalSliceMs": 10437.600000023842,
+      "averageSliceMs": 15.170930232592793,
+      "maxSliceMs": 530.0850000008941,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 301
+        },
+        {
+          "leMs": 8,
+          "count": 58
+        },
+        {
+          "leMs": 16,
+          "count": 43
+        },
+        {
+          "leMs": 32,
+          "count": 264
+        },
+        {
+          "leMs": 64,
+          "count": 7
+        },
+        {
+          "leMs": 128,
+          "count": 9
+        },
+        {
+          "leMs": 256,
+          "count": 3
+        },
+        {
+          "leMs": 512,
+          "count": 1
+        },
+        {
+          "leMs": 1000,
+          "count": 2
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 13753.890000000596,
+      "requestedInstructions": 344000000,
+      "retiredInstructions": 343983634,
+      "fetchWaits": 20,
+      "fetchRequestedChunks": 23,
+      "fetchWaitTotalMs": 2308.7700000032783,
+      "fetchWaitMaxMs": 581.4400000050664,
+      "outputCalls": 87,
+      "outputBytes": 13384,
+      "inputCalls": 6,
+      "inputBytes": 626,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 690,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "active": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+    "point": ""
+  },
+  "freshBoots": [
+    "fresh-alpha\n",
+    "fresh-beta\n"
+  ],
+  "betaRestored": {
+    "state": {
+      "hash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+      "bytes": 23862970,
+      "held": {
+        "keyboard": [
+          48
+        ],
+        "tablet": [],
+        "mouse": []
+      },
+      "input": "e9_queue=queued-beta\n",
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "active": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2"
+    },
+    "file": "beta-file\n",
+    "memory": "beta-memory/queued-beta"
+  },
+  "alphaRestored": {
+    "state": {
+      "hash": "7b8d3d522a7041d796265d4793a23f73e3fa6edcbd21f678cee80eec4514aea1",
+      "bytes": 23863250,
+      "held": {
+        "keyboard": [
+          30
+        ],
+        "tablet": [],
+        "mouse": []
+      },
+      "input": "e9_queue=queued-alpha\n",
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "active": "session-0a5df67d-e7b5-4800-a4b9-ca5d2b313e93",
+      "point": "point-05c69372-90f0-40c4-9b7f-50f745db4552"
+    },
+    "file": "alpha-file\n",
+    "memory": "alpha-memory/queued-alpha"
+  },
+  "betaAfterDelete": {
+    "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "machine": {
+        "vm_build": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "0eda6cb94ff61b02af075b93156b66201ccb39d1841e43903d1678cc67dc1b41",
+            "length": "284776"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+            "length": "23862970"
+          },
+          "disk_root": "8889914c7811016ce53386e2821b10e67f17ef97b189638a247f1a360e2a7cb0",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+    "frameHash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+    "bytes": 23862970,
+    "evidence": "beta-after-delete.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-beta\n"
+  },
+  "betaReopened": {
+    "state": {
+      "hash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+      "bytes": 23862970,
+      "held": {
+        "keyboard": [
+          48
+        ],
+        "tablet": [],
+        "mouse": []
+      },
+      "input": "e9_queue=queued-beta\n",
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "active": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2"
+    },
+    "file": "beta-file\n",
+    "memory": "beta-memory/queued-beta"
+  },
+  "keyboardFocus": "rename",
+  "mobile": {
+    "width": 388,
+    "scroll": 388
+  },
+  "documentation": {
+    "url": "http://127.0.0.1:61475/docs.html?page=storage",
+    "checkpointOnly": true,
+    "retention": true
+  }
+}

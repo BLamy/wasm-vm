@@ -1,0 +1,162 @@
+{
+  "source-390": {
+    "errors": [],
+    "copy": {
+      "box": {
+        "w": 44,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "touchClipboard": true,
+      "clearedBeforeKeyboard": true,
+      "keyboardFocused": true,
+      "keyboardClipboard": true
+    },
+    "playground": {
+      "box": {
+        "w": 145.59,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "requested": "https://pele.run/playground",
+      "hrefCarriesSource": true,
+      "target": "_blank",
+      "newTab": true
+    },
+    "quickstart": {
+      "hostStatusLine": true,
+      "oldClaim": false
+    },
+    "overflow": 0
+  },
+  "source-360": {
+    "errors": [],
+    "copy": {
+      "box": {
+        "w": 44,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "touchClipboard": true,
+      "clearedBeforeKeyboard": true,
+      "keyboardFocused": true,
+      "keyboardClipboard": true
+    },
+    "playground": {
+      "box": {
+        "w": 145.59,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "requested": "https://pele.run/playground",
+      "hrefCarriesSource": true,
+      "target": "_blank",
+      "newTab": true
+    },
+    "quickstart": {
+      "hostStatusLine": true,
+      "oldClaim": false
+    },
+    "overflow": 0
+  },
+  "dist-390": {
+    "errors": [],
+    "copy": {
+      "box": {
+        "w": 44,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "touchClipboard": true,
+      "clearedBeforeKeyboard": true,
+      "keyboardFocused": true,
+      "keyboardClipboard": true
+    },
+    "playground": {
+      "box": {
+        "w": 145.59,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "requested": "https://pele.run/playground",
+      "hrefCarriesSource": true,
+      "target": "_blank",
+      "newTab": true
+    },
+    "quickstart": {
+      "hostStatusLine": true,
+      "oldClaim": false
+    },
+    "overflow": 0
+  },
+  "dist-360": {
+    "errors": [],
+    "copy": {
+      "box": {
+        "w": 44,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "touchClipboard": true,
+      "clearedBeforeKeyboard": true,
+      "keyboardFocused": true,
+      "keyboardClipboard": true
+    },
+    "playground": {
+      "box": {
+        "w": 145.59,
+        "h": 44
+      },
+      "band": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "requested": "https://pele.run/playground",
+      "hrefCarriesSource": true,
+      "target": "_blank",
+      "newTab": true
+    },
+    "quickstart": {
+      "hostStatusLine": true,
+      "oldClaim": false
+    },
+    "overflow": 0
+  }
+}

@@ -95,6 +95,7 @@ fn outcome_text(outcome: RunOutcome) -> String {
         RunOutcome::Trapped(trap) => format!("trapped={}", trap_text(trap)),
         RunOutcome::MaxInstrs => "max-instrs".to_owned(),
         RunOutcome::Reset(reason) => format!("reset={reason:?}"),
+        RunOutcome::SessionStopped(error) => format!("session-stopped={error:?}"),
     }
 }
 

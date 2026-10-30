@@ -1,0 +1,20 @@
+{
+  "P0": "HELD",
+  "receipt_sha256": "f503e646a19c05ed7a1c33ecd64cae767eaedc33cf06f8acfd01021a2d1aed37",
+  "head": "4ce36a932feaf171c09cd8b25e90d3fc9ff376ac",
+  "original_files": 542,
+  "compact_files": 51,
+  "sources": 42,
+  "test_only_changes": {
+    "tools/verify/e9-software-checkpoints-critic.mjs": {
+      "recorded": "878cc8a82f5e35ca1196f14b8d7d7a8df5d733658157583967fba920cc5311e3",
+      "current": "214ad8f8b76317ae4dcbdbbbc137b26012b5fb2093373835f107e1e7e8577509",
+      "reason": "bounded direct-loader admission/descriptor/profile tests; fresh supplementary evidence"
+    }
+  },
+  "P1_tuple": "HELD",
+  "P2_browser": "HELD",
+  "P3_recorded_failures": "HELD",
+  "P4": "HELD",
+  "browser_report_sha256": "6daf02ded3c90ca09ac3017e89a6909eedb7f02c57ee8f04fe8113db57f0b846"
+}

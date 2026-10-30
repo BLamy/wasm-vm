@@ -49,6 +49,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
     (interactivePolicy ? 'icount' : clockPolicy.guest));
   await record('initial-clock', {clockPolicy, interactivePolicy, initialClock});
   const canvas = page.locator('#ide-display-canvas');
+  await canvas.scrollIntoViewIfNeeded();
   let box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
   await canvas.focus();
@@ -110,6 +111,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const monitor = monitors.find(value => value.id === foot.monitor) || monitors[0];
   assert.ok(monitor?.width > 0 && monitor?.height > 0);
   assert.equal(monitor.scale, 1, 'default package display scale');
+  await canvas.scrollIntoViewIfNeeded();
   box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
   const initialCursorText = await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos');
@@ -125,8 +127,11 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const before = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
   const framesBefore = await page.evaluate(() => window.__keyboardCapture.frames());
   await record('geometry', {uid, layers, clients, monitors, foot, target, initialCursor, initialWorkerCursor, box, inputBefore: before, inputFramesBefore: framesBefore});
-  await page.mouse.click(box.x + target.x * box.width / monitor.width,
-    box.y + target.y * box.height / monitor.height);
+  const pageTarget={x:box.x + target.x * box.width / monitor.width,
+    y:box.y + target.y * box.height / monitor.height};
+  assert.equal(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,pageTarget),
+    'ide-display-canvas','trusted pointer reaches the visible guest display');
+  await page.mouse.click(pageTarget.x,pageTarget.y);
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'ide-display-canvas');
   if (await page.evaluate(() => document.documentElement.dataset.keyboardCapture) !== 'on') {
     await page.locator('#ide-keyboard-toggle').click();
@@ -165,6 +170,8 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   }
   // Use fresh compositor geometry after the trusted wake. Do not count a
   // fullscreen screensaver or a stale layer mapping as a populated bar.
+  const requireBarContent=options.barContentRequired!==false;
+  assert.ok(requireBarContent||options.barActions===false,'bar interactions require their content proof');
   const contentDeadline = Date.now() + 360000;
   const barProbes = [];
   let barContent;
@@ -186,11 +193,11 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
       started: barContent.started, finished: barContent.finished,
       capture: barContent.capture, content: barContent.content});
     await record('bar-content-probe', {barContent, barProbes});
-    if (barContent.status === 'passed') break;
+    if (barContent.status === 'passed'||!requireBarContent) break;
     await new Promise(resolve => setTimeout(resolve, 1500));
   } while (Date.now() < contentDeadline);
-  assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
-  await record('bar-content', {barContent, barProbes});
+  if(requireBarContent)assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
+  await record(requireBarContent?'bar-content':'bar-content-observed-only', {barContent, barProbes,barContentRequired:requireBarContent});
   if (options.barActions !== false) {
     const barActions = await verifyDesktopActions(page, command, output, {name, monitor: barContent.monitor, layer: barContent.layer, foot,accelerated:options.accelerated??true});
     await record('bar-actions', {barActions});

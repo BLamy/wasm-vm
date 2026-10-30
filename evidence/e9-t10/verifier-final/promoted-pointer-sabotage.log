@@ -1,0 +1,194 @@
+✖ capture records releases before mode changes (direct, 2654435769) (2.560667ms)
+✖ capture records releases before mode changes (direct, 2752095587) (0.84075ms)
+✖ capture records releases before mode changes (serialized, 2654435769) (0.31025ms)
+✖ capture records releases before mode changes (serialized, 2752095587) (0.259541ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48.928875
+
+✖ failing tests:
+
+test at target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:338:5
+✖ capture records releases before mode changes (direct, 2654435769) (2.560667ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      [
+        'sendTabletEvent',
+        3,
+        0,
+  ...
+      [
+  +     'setInputPointerMode',
+  +     true
+  +   ],
+  +   [
+        'sendTabletEvent',
+        1,
+        272,
+        0
+      ],
+  ...
+      [
+  -     'setInputPointerMode',
+  -     true
+  -   ],
+  -   [
+        'sendMouseEvent',
+        2,
+        0,
+        -12
+      ],
+  
+      at TestContext.<anonymous> (file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:371:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'sendMouseEvent', 2, 0, -12 ], [ 'sendMouseEvent', 2, 1, 2 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    expected: [ [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendMouseEvent', 2, 0, -12 ], [ 'sendMouseEvent', 2, 1, 2 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:338:5
+✖ capture records releases before mode changes (direct, 2752095587) (0.84075ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      [
+        'sendTabletEvent',
+        3,
+        0,
+  ...
+      [
+  +     'setInputPointerMode',
+  +     true
+  +   ],
+  +   [
+        'sendTabletEvent',
+        1,
+        272,
+        0
+      ],
+  ...
+      [
+  -     'setInputPointerMode',
+  -     true
+  -   ],
+  -   [
+        'sendMouseEvent',
+        2,
+        0,
+        -8
+      ],
+  
+      at TestContext.<anonymous> (file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:371:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'sendMouseEvent', 2, 0, -8 ], [ 'sendMouseEvent', 2, 1, 8 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    expected: [ [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendMouseEvent', 2, 0, -8 ], [ 'sendMouseEvent', 2, 1, 8 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:338:5
+✖ capture records releases before mode changes (serialized, 2654435769) (0.31025ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      [
+        'sendTabletEvent',
+        3,
+        0,
+  ...
+      [
+  +     'setInputPointerMode',
+  +     true
+  +   ],
+  +   [
+        'sendTabletEvent',
+        1,
+        272,
+        0
+      ],
+  ...
+      [
+  -     'setInputPointerMode',
+  -     true
+  -   ],
+  -   [
+        'sendMouseEvent',
+        2,
+        0,
+        -12
+      ],
+  
+      at TestContext.<anonymous> (file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:371:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'sendMouseEvent', 2, 0, -12 ], [ 'sendMouseEvent', 2, 1, 2 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    expected: [ [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 6881 ], [ 'sendTabletEvent', 3, 1, 24575 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendMouseEvent', 2, 0, -12 ], [ 'sendMouseEvent', 2, 1, 2 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:338:5
+✖ capture records releases before mode changes (serialized, 2752095587) (0.259541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      [
+        'sendTabletEvent',
+        3,
+        0,
+  ...
+      [
+  +     'setInputPointerMode',
+  +     true
+  +   ],
+  +   [
+        'sendTabletEvent',
+        1,
+        272,
+        0
+      ],
+  ...
+      [
+  -     'setInputPointerMode',
+  -     true
+  -   ],
+  -   [
+        'sendMouseEvent',
+        2,
+        0,
+        -8
+      ],
+  
+      at TestContext.<anonymous> (file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs:371:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'sendMouseEvent', 2, 0, -8 ], [ 'sendMouseEvent', 2, 1, 8 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    expected: [ [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 3, 0, 14745 ], [ 'sendTabletEvent', 3, 1, 19005 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 1 ], [ 'syncTablet' ], [ 'sendTabletEvent', 1, 272, 0 ], [ 'syncTablet' ], [ 'setInputPointerMode', true ], [ 'sendMouseEvent', 2, 0, -8 ], [ 'sendMouseEvent', 2, 1, 8 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 1 ], [ 'syncMouse' ], [ 'sendMouseEvent', 1, 272, 0 ], [ 'syncMouse' ], [ 'setInputPointerMode', false ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

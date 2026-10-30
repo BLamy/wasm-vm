@@ -1,0 +1,26 @@
+{
+  "reason": "public R2 read stalled; fallback refuses 512 MiB object; no Pages deployment occurred",
+  "head": "6b5a5f27041a64016a9fde270865ed37b5cb55cd",
+  "manifests": {
+    "artifacts.json": {
+      "staged_sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+      "original_sha256": "9448cba61163eab896c1a80ec166274f552f5bbc847b83f7d69025f00a95b8cf"
+    },
+    "artifacts-alpine.json": {
+      "staged_sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+      "original_sha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece"
+    },
+    "artifacts-node-alpine.json": {
+      "staged_sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+      "original_sha256": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857"
+    },
+    "artifacts-omarchy.json": {
+      "staged_sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf",
+      "original_sha256": "8882c19e523318a0ee7d13131889308680967ef530070e1756c59ad48a6f9f25"
+    },
+    "artifacts-omarchy-virgl.json": {
+      "staged_sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff",
+      "original_sha256": "d37bdc377b6488bee43a5547f3a3acb37aae890efc2b6a0c1067e93fc1de6ac6"
+    }
+  }
+}

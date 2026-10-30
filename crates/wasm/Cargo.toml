@@ -27,6 +27,8 @@ log = { workspace = true }
 console_log = { workspace = true }
 console_error_panic_hook = { workspace = true }
 sha2 = { version = "0.10", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 # The `fetch` surface for the E3-T02 lazy chunk loader (browser only; gated behind wasm32 in code).
 [dependencies.web-sys]
@@ -65,6 +67,7 @@ features = [
 ]
 
 [features]
+cold-block-diagnostic = ["wasm-vm-core/cold-block-diagnostic"]
 # Isolated control-plane proof surface; ordinary constructors still advertise no VIRGL.
 virgl-control-proof = ["wasm-vm-core/virgl-control-proof", "wasm-vm-core/gpu-trace"]
 virgl-renderer = ["wasm-vm-core/virgl-renderer", "wasm-vm-core/gpu-trace"]

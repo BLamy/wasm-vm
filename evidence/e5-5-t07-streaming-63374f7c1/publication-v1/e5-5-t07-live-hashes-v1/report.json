@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "url": "https://wasm-vm.pages.dev/",
+  "started": 1793235868.3876522,
+  "files": [],
+  "failure": "<HTTPError 403: 'Forbidden'>",
+  "finished": 1793235868.515102
+}

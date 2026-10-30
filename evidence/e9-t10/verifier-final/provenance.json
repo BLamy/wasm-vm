@@ -1,0 +1,310 @@
+{
+  "task": "E9-T10",
+  "role": "fresh adversarial verifier",
+  "runtime_head": "dc5fab60d1b0e4c6c92bc78169232c9d3622825e",
+  "proof_head": "fafa1d63b5fa584df445e0c967ea52af966de5f8",
+  "public_head": "6528fcce222cb2f276e751dda7ef4ddbf10cd50b",
+  "public_report_sha256": "245f7588ae4346845cca2c182f8e391eadef2fbbe0b9d9039feceaebf5c28b1c",
+  "entries": [
+    {
+      "path": "README.md",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/README.md",
+      "bytes": 3430,
+      "sha256": "940dae6432ed18a10cf375ec43006d028dbc4f5588aceb936fbdc75caaa4f565"
+    },
+    {
+      "path": "predictions.md",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/predictions.md",
+      "bytes": 6772,
+      "sha256": "321dbddfbc8c401801dd6eac45bab00912c3a45ff03544ede464d76c97e45f65"
+    },
+    {
+      "path": "coverage.md",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/coverage.md",
+      "bytes": 7474,
+      "sha256": "dc28504eca2372b5261959a405acbec5aede1713fd549fc59ee15b0c63b71e72"
+    },
+    {
+      "path": "cold-source-audit.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/cold-source-audit.json",
+      "bytes": 6133,
+      "sha256": "a1c70958d954ff315d59680d0551c69587681cbb9f23dbc8e2e99912631625d7"
+    },
+    {
+      "path": "authentication.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/authentication.json",
+      "bytes": 9021,
+      "sha256": "cb35387374bee4403334f6c325176deab181445439d532b417dcd51b2b880d43"
+    },
+    {
+      "path": "state-audit.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/state-audit.json",
+      "bytes": 37085,
+      "sha256": "b8ab4e1be03c3c580c0b4425d1ca5463cb018a484bff431080899b52129436b9"
+    },
+    {
+      "path": "state-audit.log",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/state-audit.log",
+      "bytes": 1766,
+      "sha256": "2a2de826ed912dde55ac83b3999115aa787227003434ab4df2b9945a5828142f"
+    },
+    {
+      "path": "audit_state.py",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/audit_state.py",
+      "bytes": 9224,
+      "sha256": "be476d66aaccf07c743bdcfd6803610cec795b740d501bd09a819af2f12e76dc"
+    },
+    {
+      "path": "public-authentication.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/public-authentication.json",
+      "bytes": 4856,
+      "sha256": "81e6eb0d4d47f5b2c61b6be40617dbb2ff6ee093e996a421f41747ef92351e73"
+    },
+    {
+      "path": "authenticate_public.py",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/authenticate_public.py",
+      "bytes": 3845,
+      "sha256": "50c07e8b74fd0387efe23c96fd70a4d3cc400ff28b47f61732e721a7bab278ae"
+    },
+    {
+      "path": "fresh-public-assets.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/fresh-public-assets.json",
+      "bytes": 2984,
+      "sha256": "96716e933cbde415c2277faa7910fa407d3b55c702a3e9c50095a6d1308b7964"
+    },
+    {
+      "path": "proof-attacks.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/proof-attacks.json",
+      "bytes": 1719,
+      "sha256": "bdd6fbc9393ba15f3cfdbf90add42187c6a22ef6df5340e4639eb881ca158c78"
+    },
+    {
+      "path": "proof_attacks.py",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/proof_attacks.py",
+      "bytes": 3239,
+      "sha256": "3ebab0c996da36b17df43f030dd4916915eceb465fe7695207d4e3bcdf141375"
+    },
+    {
+      "path": "proof-reuse-safety-independent.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/proof-reuse-safety-independent.json",
+      "bytes": 819,
+      "sha256": "6037d37d455ab5c56ad22d4005ff04f787280c33973468d9c57ff42b13cf6040"
+    },
+    {
+      "path": "promoted-pointer-tests.log",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/promoted-pointer-tests.log",
+      "bytes": 1733,
+      "sha256": "c872b0776d8c06a9313dd29d1413c0fcddae585d889a97e163831d943a2a1528"
+    },
+    {
+      "path": "promoted-protocol-tests.log",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/promoted-protocol-tests.log",
+      "bytes": 7608,
+      "sha256": "33a3bf7ae5ddffcab30724b00f1b9128b893070e9e0c99186b4bd73a6a6b7d9f"
+    },
+    {
+      "path": "promoted-pointer-sabotage.log",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/promoted-pointer-sabotage.log",
+      "bytes": 9350,
+      "sha256": "68b4e4f5db1254233968514dd7e13aafd34d1c1be8b0254a8ab75cb28f8ac8ab"
+    },
+    {
+      "path": "promoted-sabotage.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/promoted-sabotage.json",
+      "bytes": 628,
+      "sha256": "d9b8d2346ec174f7c72d38076e20324d6bd8186ace3211dfc7c110e2ce644442"
+    },
+    {
+      "path": "promoted_sabotage.py",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/promoted_sabotage.py",
+      "bytes": 1869,
+      "sha256": "12e41e060efc7d4df5741f57752364936cf41171862dd75a7cf25a88897e108f"
+    },
+    {
+      "path": "javascript-coverage-audit.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/javascript-coverage-audit.json",
+      "bytes": 78074,
+      "sha256": "882f7ec6347ef999ebc790475c282539df2ff734f5d7ad662c323167d5167896"
+    },
+    {
+      "path": "audit_coverage.py",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/audit_coverage.py",
+      "bytes": 2381,
+      "sha256": "031f25bd0badfbf8522fc676fd5f73258dc96467adeeb6a35f250ab24136442a"
+    },
+    {
+      "path": "pointer-critic.mjs",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-critic.mjs",
+      "bytes": 10156,
+      "sha256": "1fc25996937f01f09c58b10b72752816fae990379469f489edfaffcaba2ac150"
+    },
+    {
+      "path": "loader-critic.mjs",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/loader-critic.mjs",
+      "bytes": 7136,
+      "sha256": "1e2470d43086dc61fdbcd53133665ef53fb911db8d71fbb858c9378469925fd4"
+    },
+    {
+      "path": "pointer-browser/browser-trace.zip",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/browser-trace.zip",
+      "bytes": 1506178,
+      "sha256": "cff014cbe6cc1ecf6865d92524db1bd7149a1d8e1ae53e321f6588a5dcd7fa93"
+    },
+    {
+      "path": "pointer-browser/driver.source.mjs",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/driver.source.mjs",
+      "bytes": 10156,
+      "sha256": "1fc25996937f01f09c58b10b72752816fae990379469f489edfaffcaba2ac150"
+    },
+    {
+      "path": "pointer-browser/guest-2654435769-false.bin",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/guest-2654435769-false.bin",
+      "bytes": 141,
+      "sha256": "2e00537f44ea275e39d5b5e055aa3b3bda2d3edeb3526b1c0a27cd2f2746266a"
+    },
+    {
+      "path": "pointer-browser/guest-2654435769-true.bin",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/guest-2654435769-true.bin",
+      "bytes": 141,
+      "sha256": "2e00537f44ea275e39d5b5e055aa3b3bda2d3edeb3526b1c0a27cd2f2746266a"
+    },
+    {
+      "path": "pointer-browser/guest-2752095587-false.bin",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/guest-2752095587-false.bin",
+      "bytes": 141,
+      "sha256": "50c27cf1ec8a1c30a0b4769d444d61ddf883236bd87d27414997d180b51903db"
+    },
+    {
+      "path": "pointer-browser/guest-2752095587-true.bin",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/guest-2752095587-true.bin",
+      "bytes": 141,
+      "sha256": "50c27cf1ec8a1c30a0b4769d444d61ddf883236bd87d27414997d180b51903db"
+    },
+    {
+      "path": "pointer-browser/javascript-coverage.json.gz",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "bytes": 437277,
+      "sha256": "7723a1534e9d4ad4f20b149ddee6f44337f3eb4a0a1283df9533962c02806682"
+    },
+    {
+      "path": "pointer-browser/pointer-browser.png",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/pointer-browser.png",
+      "bytes": 135815,
+      "sha256": "c3732384bbe3efe2c027713133a874c3adba7638aaea970743b94735f7c8e5fb"
+    },
+    {
+      "path": "pointer-browser/report.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser/report.json",
+      "bytes": 87880,
+      "sha256": "f23ba344eb52877a2df4229d846092dfe8e2cbee0e06614ca1d52761432a3a73"
+    },
+    {
+      "path": "loader-browser/browser-trace.zip",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/loader-browser/browser-trace.zip",
+      "bytes": 1505421,
+      "sha256": "007c76031e335c1fccef40226daca1c90ea40e0b33329be2a6d804ab2c21fc4d"
+    },
+    {
+      "path": "loader-browser/javascript-coverage.json.gz",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "bytes": 441364,
+      "sha256": "93b845dd487cf24ed179d8fdc89ee446ebb3cc5d411c55cb53bb87b727d9ecac"
+    },
+    {
+      "path": "loader-browser/loader-browser.png",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/loader-browser/loader-browser.png",
+      "bytes": 135815,
+      "sha256": "c3732384bbe3efe2c027713133a874c3adba7638aaea970743b94735f7c8e5fb"
+    },
+    {
+      "path": "loader-browser/report.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/loader-browser/report.json",
+      "bytes": 12277,
+      "sha256": "73e148253a0d26b1a1ee9729f881b2aa02bbf44c73be4c0ea6cb83e5f8c71158"
+    },
+    {
+      "path": "auxiliary-authentication.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/auxiliary-authentication.json",
+      "bytes": 1990,
+      "sha256": "ca4596f14f69c0c44f25f690753338d4791e7f412f7afa09bf25a0258c7b5691"
+    },
+    {
+      "path": "witness-fault-critic.mjs",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/witness-fault-critic.mjs",
+      "bytes": 8752,
+      "sha256": "252006f50e090e0b4cb6a2107d2236526b116560293e1ecfcb6ae08cc14f8b76"
+    },
+    {
+      "path": "witness-fault-browser/report.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/witness-fault-browser/report.json",
+      "bytes": 12639,
+      "sha256": "311364524d7c38333803381965e216f62aa6d4ed3c98cd992d6f66728b0548d2"
+    },
+    {
+      "path": "witness-fault-browser/browser-trace.zip",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/witness-fault-browser/browser-trace.zip",
+      "bytes": 1506411,
+      "sha256": "533986d3b9234a838029d1b797644c2c19f47d3a3e201790861556cde03697ee"
+    },
+    {
+      "path": "witness-fault-browser/javascript-coverage.json.gz",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "bytes": 440462,
+      "sha256": "b1e13a414a41339c03cba3ba439a7d203534d9073869f806274684098f53a5df"
+    },
+    {
+      "path": "witness-fault-browser/witness-fault-browser.png",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/witness-fault-browser/witness-fault-browser.png",
+      "bytes": 135815,
+      "sha256": "c3732384bbe3efe2c027713133a874c3adba7638aaea970743b94735f7c8e5fb"
+    }
+  ],
+  "diagnostic_incidents_retained": [
+    {
+      "report": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser-fixture-incident/report.json",
+      "sha256": "eaa439085423aee5e2e2b72ae109e31c75ef481fc302fac773fdab8ac50699e4",
+      "status": "FAILED",
+      "failure": {
+        "message": "page.evaluate: ReferenceError: slotMemory is not defined\n    at inputGuestKernel (eval at <anonymous> (eval at evaluate (:234:30)), <anonymous>:13:18)\n    at eval (eval at evaluate (:234:30), <anonymous>:6:206)\n    at async <anonymous>:260:30",
+        "stack": "page.evaluate: ReferenceError: slotMemory is not defined\n    at inputGuestKernel (eval at <anonymous> (eval at evaluate (:234:30)), <anonymous>:13:18)\n    at eval (eval at evaluate (:234:30), <anonymous>:6:206)\n    at async <anonymous>:260:30\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-critic.mjs:19:26"
+      }
+    },
+    {
+      "report": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser-mime-incident/report.json",
+      "sha256": "694ae317116d7836ed318168ea89ee407a01379bcc1f6637c3682501b07539a6",
+      "status": "FAILED",
+      "failure": {
+        "message": "page.waitForFunction: Timeout 30000ms exceeded.",
+        "stack": "page.waitForFunction: Timeout 30000ms exceeded.\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-critic.mjs:17:137"
+      }
+    },
+    {
+      "report": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser-namespace-incident/report.json",
+      "sha256": "9c81e8401f13d06eff0706c20db94a3f29014d1a30ff7b5505ede2cad78c7bfb",
+      "status": "FAILED",
+      "failure": {
+        "message": "page.evaluate: SessionStoreError: Namespace\n    at fail (http://127.0.0.1:58225/session-store.js:22:40)\n    at need (http://127.0.0.1:58225/session-store.js:23:61)\n    at SessionStore.open (http://127.0.0.1:58225/session-store.js:111:5)\n    at eval (eval at evaluate (:234:30), <anonymous>:9:117)\n    at async <anonymous>:260:30",
+        "stack": "page.evaluate: SessionStoreError: Namespace\n    at fail (http://127.0.0.1:58225/session-store.js:22:40)\n    at need (http://127.0.0.1:58225/session-store.js:23:61)\n    at SessionStore.open (http://127.0.0.1:58225/session-store.js:111:5)\n    at eval (eval at evaluate (:234:30), <anonymous>:9:117)\n    at async <anonymous>:260:30\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-critic.mjs:19:26"
+      }
+    },
+    {
+      "report": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser-property-order-incident/report.json",
+      "sha256": "6ca1b1dbe72b627e3e0149a7a1c77205f4552a21f166c6833bb5d923c5ddbc85",
+      "status": "FAILED",
+      "failure": {
+        "message": "page.evaluate: Error: journal exact reload after caller mutation\n    at need (eval at evaluate (:234:30), <anonymous>:2:35)\n    at eval (eval at evaluate (:234:30), <anonymous>:22:330)\n    at async <anonymous>:260:30",
+        "stack": "page.evaluate: Error: journal exact reload after caller mutation\n    at need (eval at evaluate (:234:30), <anonymous>:2:35)\n    at eval (eval at evaluate (:234:30), <anonymous>:22:330)\n    at async <anonymous>:260:30\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-critic.mjs:19:26"
+      }
+    },
+    {
+      "report": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-browser-serialization-incident/report.json",
+      "sha256": "a7c9affae1a50dbc3609caf1dbeffb4334130dbdb842b4e9f113ff24dd2f9a17",
+      "status": "FAILED",
+      "failure": {
+        "message": "page.evaluate: Passed function is not well-serializable!",
+        "stack": "page.evaluate: Passed function is not well-serializable!\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-critic.mjs:19:26"
+      }
+    }
+  ],
+  "promoted_test_sha256": "33590aeb53dba87cf87ccdcaeee583b2600c1646e36596ec79dad95854bdadac"
+}

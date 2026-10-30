@@ -1,0 +1,37 @@
+{
+  "task": "E9-T10",
+  "status": "passed",
+  "development": false,
+  "head": "dc5fab60d1b0e4c6c92bc78169232c9d3622825e",
+  "started": "2026-10-18T10:52:57.512Z",
+  "checks": {
+    "before": {
+      "transition": "0",
+      "retired": "0",
+      "phase": "before",
+      "sequence": "0",
+      "ordinal": 0,
+      "replay": false,
+      "paused": true,
+      "stopped": false
+    },
+    "after": {
+      "transition": "0",
+      "retired": "0",
+      "phase": "before",
+      "sequence": "0",
+      "ordinal": 0,
+      "replay": false,
+      "paused": true,
+      "stopped": false
+    },
+    "digest": "d02925fa3b9545b2986fb958414c917ee41c3a9ea928a0b501729d384d58b35d",
+    "afterDigest": "d02925fa3b9545b2986fb958414c917ee41c3a9ea928a0b501729d384d58b35d",
+    "error": "Error: file upload SHA-256: HashMismatch"
+  },
+  "commands": [],
+  "errors": [],
+  "url": "http://127.0.0.1:56202/app.html?noAutoBoot&testHooks=1&workerHeartbeatTimeoutMs=10000",
+  "driver_sha256": "261bdc341f84ecba4137bffc7265ac94f52044a10068f9e9ccdd9f314a716c34",
+  "scope": "Unicode SHA-256 rejection reaches the byte-slicing guard without panic or guest/cursor mutation at the frozen source head."
+}

@@ -19,6 +19,12 @@ mod virgl_control_proof;
 
 #[cfg(all(
     target_arch = "wasm32",
+    feature = "virgl-renderer",
+    not(feature = "zicsr-stub")
+))]
+mod session_gpu;
+#[cfg(all(
+    target_arch = "wasm32",
     any(feature = "virgl-renderer", feature = "virgl-control-proof"),
     not(feature = "zicsr-stub")
 ))]
@@ -29,6 +35,16 @@ mod virgl_host;
     not(feature = "zicsr-stub")
 ))]
 mod virgl_linux;
+#[cfg(all(
+    target_arch = "wasm32",
+    any(feature = "virgl-renderer", feature = "virgl-control-proof"),
+    not(feature = "zicsr-stub")
+))]
+mod virgl_session_transport;
+
+#[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
+mod snapshot_staging;
+pub mod software_checkpoint;
 
 use core::cell::RefCell;
 use core::fmt::Write as _;
@@ -36,8 +52,21 @@ use core::sync::atomic::{AtomicBool, Ordering};
 
 use wasm_bindgen::prelude::*;
 // E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
+mod event_clock;
 mod jit_browser;
+mod session_devices;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_http;
+#[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
+mod session_input;
+mod session_network;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_replay;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_sources;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+pub use session_sources::SessionSourceProbe;
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::jit::CompiledBlockExecutor;
@@ -249,6 +278,10 @@ use slirp_net::{
 mod chunked;
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod critic_flush_reset;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_checkpoint;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_disk;
 // E3-T10 storage-error classification — pure string logic, native-tested.
 #[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
 mod storage_err;
@@ -273,7 +306,7 @@ mod ws_transport_state;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod crypto_entropy;
 // E3-T21c: browser producer/consumer queues over the VM-private WVFT agent sockets.
-#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
 mod browser_file_transfer;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod tailscale_dns;
@@ -1177,6 +1210,9 @@ impl WasmMachine {
     #[wasm_bindgen(js_name = loadElf)]
     pub fn load_elf(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.session_position().is_some() {
+            return Err(JsError::new("cannot replace an active session's ELF"));
+        }
         inner
             .machine
             .load_elf(bytes)
@@ -1272,6 +1308,9 @@ impl WasmMachine {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         Self::guard_runnable(&inner)?;
         let (outcome, retired) = Self::drive(&mut inner, n as u64);
+        if let RunOutcome::SessionStopped(error) = outcome {
+            return Err(JsError::new(&format!("session_clock: {error:?}")));
+        }
         if let RunOutcome::Exited(_) = outcome {
             inner.exited = true;
         }
@@ -1384,6 +1423,9 @@ impl WasmMachine {
         };
         set("retired", &JsValue::from_f64(retired as f64));
         match outcome {
+            RunOutcome::SessionStopped(error) => {
+                return Err(JsError::new(&format!("session_clock: {error:?}")));
+            }
             RunOutcome::Exited(code) => {
                 inner.exited = true;
                 set("kind", &JsValue::from_str("exited"));
@@ -2184,13 +2226,51 @@ impl wasm_vm_core::dev::virtio::snd::AudioClock for SharedAudioClock {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 pub struct WasmLinux {
-    inner: RefCell<LinuxInner>,
+    inner: std::rc::Rc<RefCell<LinuxInner>>,
     #[cfg(feature = "virgl-renderer")]
     gpu_mailbox: RefCell<Option<wasm_vm_core::dev::virtio::gpu::submit3d::Submit3dMailbox>>,
+    #[cfg(feature = "virgl-renderer")]
+    gpu_session_stopped: std::rc::Rc<core::cell::Cell<bool>>,
 }
 
 #[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod display_tests;
+
+/// A single owned Wasm allocation filled by bounded decompressor chunks. It exposes no raw
+/// pointer or full-size JS export; ownership is consumed exactly once at restore.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+pub struct SnapshotBuffer {
+    staging: snapshot_staging::SnapshotStaging,
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl SnapshotBuffer {
+    #[wasm_bindgen(constructor)]
+    pub fn new(expected: u32) -> Result<SnapshotBuffer, JsError> {
+        Ok(Self {
+            staging: snapshot_staging::SnapshotStaging::new(expected as usize)
+                .map_err(JsError::new)?,
+        })
+    }
+    /// Uint8Array is a JS handle, not Vec<u8>: copy directly into the one staging allocation.
+    pub fn append(&mut self, chunk: js_sys::Uint8Array) -> Result<(), JsError> {
+        self.staging
+            .append_with(chunk.length() as usize, |out| chunk.copy_to(out))
+            .map_err(JsError::new)
+    }
+    #[wasm_bindgen(js_name = byteLength)]
+    pub fn byte_length(&self) -> u32 {
+        self.staging.bytes().len() as u32
+    }
+    pub fn sha256(&self) -> String {
+        let mut out = String::with_capacity(64);
+        for byte in Sha256::digest(self.staging.bytes()) {
+            let _ = write!(out, "{byte:02x}");
+        }
+        out
+    }
+}
 
 /// E3-T12d build-stable snapshot identity: the crate version zero-padded into 32 bytes. Changes across
 /// releases so a snapshot taken by a different build fails the coherence guard (a `CoreHashMismatch`
@@ -2208,6 +2288,9 @@ fn build_core_hash() -> [u8; 32] {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct LinuxInner {
     machine: Machine,
+    session_kernel: [u8; 32],
+    session_has_initrd: bool,
+    session_has_mic: bool,
     audio_attached: bool,
     capture_attached: bool,
     display_attached: bool,
@@ -2215,6 +2298,13 @@ struct LinuxInner {
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
     pending: std::collections::VecDeque<u8>,
+    input_capture: Option<session_input::InputCapture>,
+    unrecorded_input: Option<session_input::UnrecordedInputProgress>,
+    exact_session: Option<bool>,
+    exact_image_len: Option<u64>,
+    exact_gpu: bool,
+    exact_driver: Option<wasm_vm_core::session_replay::ReplayDriver>,
+    owned_http: Option<wasm_vm_slirp::session_http::OwnedSessionHttp>,
     finished: Option<String>,
     /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
@@ -2231,8 +2321,8 @@ struct LinuxInner {
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
     disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>>,
-    /// The actual ephemeral COW backend shared with the machine, for paired GPU checkpoints.
-    checkpoint_disk: Option<chunked::CheckpointDisk>,
+    /// The actual COW backend shared with the machine, for immutable disk captures.
+    checkpoint_disk: Option<Box<dyn chunked::DiskSnapshot>>,
     /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
     /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
     file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
@@ -2295,6 +2385,13 @@ async fn wait_for_snapshot_writes(count: std::rc::Rc<std::cell::Cell<u32>>) {
 enum DiskChoice {
     None,
     Mem(Vec<u8>),
+    /// Exact software-session ownership: the core block broker holds the immutable manifest and
+    /// its local COW state; no ordinary chunk cache, persistence queue or live network is opened.
+    ExactSession {
+        manifest: wasm_vm_storage::ImageManifest,
+        mode: wasm_vm_core::session_profile::ExecutionMode,
+        gpu: bool,
+    },
     Chunked {
         manifest: wasm_vm_storage::ImageManifest,
         base_url: String,
@@ -2644,6 +2741,95 @@ impl WasmLinux {
         )
     }
 
+    /// Pinned 256 MiB RV64 Linux software-session images. It installs owned block, network,
+    /// agent, RTC and entropy boundaries before boot, and never creates a live transport while
+    /// replaying. The caller supplies the immutable base chunks to the recording broker.
+    #[wasm_bindgen(js_name = newExactSession)]
+    pub fn new_exact_session(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: js_sys::Function,
+        replay: bool,
+    ) -> Result<WasmLinux, JsError> {
+        Self::new_software_session_mode(
+            kernel,
+            manifest_json,
+            bootargs,
+            output,
+            if replay {
+                wasm_vm_core::session_profile::ExecutionMode::Replay
+            } else {
+                wasm_vm_core::session_profile::ExecutionMode::Record
+            },
+        )
+    }
+
+    /// Same pinned software profile and owned providers, with all capture disabled.
+    /// This live control cannot create, restore, export or masquerade as recorded history.
+    #[wasm_bindgen(js_name = newUnrecordedSession)]
+    pub fn new_unrecorded_session(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        Self::new_software_session_mode(
+            kernel,
+            manifest_json,
+            bootargs,
+            output,
+            wasm_vm_core::session_profile::ExecutionMode::LiveUnrecorded,
+        )
+    }
+
+    fn new_software_session_mode(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: js_sys::Function,
+        mode: wasm_vm_core::session_profile::ExecutionMode,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("exact session manifest: {e:?}")))?;
+        let pinned_base = browser_file_transfer::parse_sha256(
+            "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        )
+        .map_err(|_| JsError::new("exact session base pin"))?;
+        let pinned_kernel = browser_file_transfer::parse_sha256(
+            "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        )
+        .map_err(|_| JsError::new("exact session kernel pin"))?;
+        let file_example_base = browser_file_transfer::parse_sha256(
+            "4540d8318e1033418d544d020c7011cd5871ccb3ac7e968dc9adae3859873f22",
+        )
+        .map_err(|_| JsError::new("exact session file example pin"))?;
+        let alpine = manifest.base_hash() == pinned_base
+            && manifest.image_len == 512 << 20
+            && manifest.chunk_size == 128 << 10
+            && bootargs == "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i";
+        let file_example = manifest.base_hash() == file_example_base
+            && manifest.image_len == 8 << 20
+            && manifest.chunk_size == 256 << 10
+            && bootargs == "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/init";
+        if Sha256::digest(kernel).as_slice() != pinned_kernel || !(alpine || file_example) {
+            return Err(JsError::new("exact session software profile mismatch"));
+        }
+        Self::assemble(
+            256,
+            kernel,
+            None,
+            DiskChoice::ExactSession {
+                manifest,
+                mode,
+                gpu: false,
+            },
+            &bootargs,
+            output,
+            false,
+        )
+    }
+
     /// Boot from a chunked base image plus a validated, in-memory `WVOD1` copy-on-write seed.
     /// The delta is bound to the manifest's base hash and image length, and its generation is
     /// stamped into the whole-machine resume coherence header. This constructor never opens or
@@ -2876,17 +3062,89 @@ impl WasmLinux {
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
         let mut machine = Machine::try_new(bytes)
             .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
-        // Devices in dependency order (PLIC before its consumers).
-        machine.enable_clint(10);
-        machine.enable_plic();
-        machine.enable_rtc(Box::new(JsWallClock));
-        machine.enable_syscon();
-        let uart = machine.enable_uart16550();
+        let owned_mode = match &disk {
+            DiskChoice::ExactSession { mode, .. } => Some(*mode),
+            _ => None,
+        };
+        let exact_replay = owned_mode
+            .filter(|mode| mode.captures())
+            .map(|mode| mode.replay());
+        let exact_image_len = match &disk {
+            DiskChoice::ExactSession { manifest, .. } => Some(manifest.image_len),
+            _ => None,
+        };
+        let exact_gpu = matches!(&disk, DiskChoice::ExactSession { gpu: true, .. });
+        let uart = if let DiskChoice::ExactSession {
+            manifest,
+            mode,
+            gpu,
+        } = &disk
+        {
+            use wasm_vm_core::session_devices::{BaseDisk, PayloadRef};
+            let chunks = manifest
+                .chunks
+                .iter()
+                .enumerate()
+                .map(|(index, hash)| {
+                    let sha256 = browser_file_transfer::parse_sha256(hash)
+                        .map_err(|e| JsError::new(&format!("session base chunk: {e:?}")))?;
+                    let length = (manifest.image_len
+                        - index as u64 * u64::from(manifest.chunk_size))
+                    .min(u64::from(manifest.chunk_size)) as u32;
+                    Ok(PayloadRef { sha256, length })
+                })
+                .collect::<Result<Vec<_>, JsError>>()?;
+            let base = BaseDisk {
+                identity: manifest.base_hash(),
+                sectors: manifest.image_len / 512,
+                chunk_bytes: manifest.chunk_size,
+                chunks,
+            };
+            #[cfg(feature = "virgl-renderer")]
+            let installed = if *gpu {
+                machine.install_full_gpu_mode(
+                    base,
+                    Box::new(JsWallClock),
+                    Box::new(crypto_entropy::CryptoEntropy),
+                    build_core_hash(),
+                    *mode,
+                )
+            } else {
+                machine.install_full_software_mode(
+                    base,
+                    Box::new(JsWallClock),
+                    Box::new(crypto_entropy::CryptoEntropy),
+                    build_core_hash(),
+                    *mode,
+                )
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let installed = {
+                if *gpu {
+                    return Err(JsError::new("GPU session support is unavailable"));
+                }
+                machine.install_full_software_mode(
+                    base,
+                    Box::new(JsWallClock),
+                    Box::new(crypto_entropy::CryptoEntropy),
+                    build_core_hash(),
+                    *mode,
+                )
+            };
+            installed.map_err(|e| JsError::new(&format!("exact session profile: {e:?}")))?
+        } else {
+            // Ordinary live assemblies retain their established host transports and slot map.
+            machine.enable_clint(10);
+            machine.enable_plic();
+            machine.enable_rtc(Box::new(JsWallClock));
+            machine.enable_syscon();
+            machine.enable_uart16550()
+        };
         let mut fetch = None;
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         let mut file_transfers = None;
-        let mut checkpoint_disk = None;
+        let mut checkpoint_disk: Option<Box<dyn chunked::DiskSnapshot>> = None;
         // E3-T12d: the base binding for the durable resume-snapshot store. Raw in-memory resume
         // wrappers use the separate `resume_base`; this remains None until a persistent namespace
         // (or an explicitly stamped boot-snapshot identity) is selected.
@@ -2894,6 +3152,7 @@ impl WasmLinux {
         let mut resume_base: Option<[u8; 32]> = None;
         let mut snapshot_read_only = false;
         match disk {
+            DiskChoice::ExactSession { .. } => {}
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
                 machine.enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(image)));
@@ -2905,13 +3164,16 @@ impl WasmLinux {
                 budget,
                 profile,
             } => {
+                let base_binding = manifest.base_hash();
+                machine.set_snapshot_identity_with_generation(build_core_hash(), base_binding, 0);
+                resume_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::CheckpointDisk::new(chunked::ChunkedBackend::new(
                     &manifest,
                     store.clone(),
                 ));
-                checkpoint_disk = Some(backend.clone());
+                checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -2938,7 +3200,7 @@ impl WasmLinux {
                     chunked::ChunkedBackend::with_overlay(overlay, &manifest, store.clone())
                         .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
                 let backend = chunked::CheckpointDisk::new(backend);
-                checkpoint_disk = Some(backend.clone());
+                checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -3018,6 +3280,8 @@ impl WasmLinux {
                 } else {
                     Some(backend.read_only_flag())
                 };
+                let backend = chunked::CheckpointDisk::new(backend);
+                checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -3035,7 +3299,10 @@ impl WasmLinux {
         // Default: E3-T13 loopback (frames echo back). With `setSlirpNet(true)`, E3-net swaps in the
         // synchronous slirp LOCAL stack so the guest can DHCP a real IP (10.0.2.15) and reach the
         // gateway (10.0.2.2) — no tokio, no outbound yet (that's the WebSocket-relay slice).
-        if slirp_net_enabled() {
+        if owned_mode.is_some() {
+            // The qualified core adapter was installed before boot. A replay cannot construct a
+            // live provider; the page owns only immutable recording bytes.
+        } else if slirp_net_enabled() {
             let start = js_sys::Date::now();
             let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
             let (backend, dns): (_, Box<dyn wasm_vm_slirp::DnsService>) =
@@ -3089,58 +3356,80 @@ impl WasmLinux {
         // it, so `getrandom(2)`/`/dev/urandom` are ready early — without it the interpreted guest
         // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
         // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
-        let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
-        // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
-        // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
-        let _ = machine.enable_virtio_keyboard();
-        // A browser key transition is two bounded input events (EV_KEY + SYN_REPORT). Give the
-        // interactive path the same finite burst headroom as the native display workload so a
-        // terminal command cannot overflow the default generic-device budget and strand a key.
-        if let Some(keyboard) = machine.keyboard_input() {
-            keyboard.borrow_mut().set_pending_event_budget(
-                wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+        if owned_mode.is_none() {
+            let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
+            // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
+            // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
+            let _ = machine.enable_virtio_keyboard();
+            // A browser key transition is two bounded input events (EV_KEY + SYN_REPORT). Give the
+            // interactive path the same finite burst headroom as the native display workload so a
+            // terminal command cannot overflow the default generic-device budget and strand a key.
+            if let Some(keyboard) = machine.keyboard_input() {
+                keyboard.borrow_mut().set_pending_event_budget(
+                    wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+                );
+            }
+            // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
+            // which state receives DOM frames; the tablet and relative mouse remain stable peers.
+            let _ = machine.enable_virtio_pointer();
+            // E5-T19d: expose the four-queue virtio-snd device after the established input slots. The
+            // browser sink is intentionally NullSink until E5-T20's AudioWorklet bridge, but the
+            // guest-facing controlq and real-time pacing already run through the production assembly.
+            let audio_clock = JsHostTimer::new()
+                .map(|clock| {
+                    std::rc::Rc::new(clock)
+                        as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+                })
+                .unwrap_or_else(|| {
+                    std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
+                        as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+                });
+            let _ = machine.enable_virtio_snd_with_audio_and_capture(
+                audio_clock,
+                Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+                enable_mic,
             );
+            // E5-T06d: preserve the established sound slot, then use the remaining optional
+            // virtio-mmio slot for the browser display. A fully occupied legacy layout simply keeps
+            // the GPU absent; attachDisplay reports that fact to the loader without replacing a
+            // working device.
+            let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
+            // E5-T26f: the browser keeps all established devices and uses the ninth extension window
+            // for the T23 named agent channel. Native callers retain the fixed slot-7 console helper.
+            let _ = machine
+                .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1);
+            machine.enable_builtin_sbi();
         }
-        // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
-        // which state receives DOM frames; the tablet and relative mouse remain stable peers.
-        let _ = machine.enable_virtio_pointer();
-        // E5-T19d: expose the four-queue virtio-snd device after the established input slots. The
-        // browser sink is intentionally NullSink until E5-T20's AudioWorklet bridge, but the
-        // guest-facing controlq and real-time pacing already run through the production assembly.
-        let audio_clock = JsHostTimer::new()
-            .map(|clock| {
-                std::rc::Rc::new(clock)
-                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
-            })
-            .unwrap_or_else(|| {
-                std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
-                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
-            });
-        let _ = machine.enable_virtio_snd_with_audio_and_capture(
-            audio_clock,
-            Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
-            enable_mic,
-        );
-        // E5-T06d: preserve the established sound slot, then use the remaining optional
-        // virtio-mmio slot for the browser display. A fully occupied legacy layout simply keeps
-        // the GPU absent; attachDisplay reports that fact to the loader without replacing a
-        // working device.
-        let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
-        // E5-T26f: the browser keeps all established devices and uses the ninth extension window
-        // for the T23 named agent channel. Native callers retain the fixed slot-7 console helper.
-        let _ = machine
-            .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1);
-        machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
         machine
             .place_and_boot(kernel, initrd, bootargs)
             .map_err(|e| JsError::new(&format!("boot layout failed: {e:?}")))?;
+        if exact_replay == Some(false) {
+            machine
+                .start_session_sources(machine.source_policy(), None)
+                .map_err(|e| JsError::new(&format!("exact session sources: {e:?}")))?;
+        }
+        if exact_replay.is_some() {
+            // T14's initial native checkpoint already includes every boot-loaded RAM byte.
+            // Start T15's incremental epoch at that full base, not at the zeroed allocation:
+            // otherwise the first one-instruction delta repeats the entire 24 MiB kernel.
+            let ram = machine.bus_mut().ram_mut();
+            ram.begin_dirty_epoch()
+                .map_err(|_| JsError::new("exact session RAM epoch"))?;
+            ram.finish_dirty_epoch(true)
+                .map_err(|_| JsError::new("exact session RAM epoch"))?;
+        }
         Ok(WasmLinux {
             #[cfg(feature = "virgl-renderer")]
             gpu_mailbox: RefCell::new(None),
-            inner: RefCell::new(LinuxInner {
+            #[cfg(feature = "virgl-renderer")]
+            gpu_session_stopped: std::rc::Rc::new(core::cell::Cell::new(false)),
+            inner: std::rc::Rc::new(RefCell::new(LinuxInner {
                 machine,
+                session_kernel: Sha256::digest(kernel).into(),
+                session_has_initrd: initrd.is_some(),
+                session_has_mic: enable_mic,
                 audio_attached: false,
                 capture_attached: false,
                 display_attached: false,
@@ -3148,6 +3437,19 @@ impl WasmLinux {
                 out,
                 output,
                 pending: std::collections::VecDeque::new(),
+                input_capture: exact_replay.map(|replay| session_input::InputCapture {
+                    replay,
+                    paused: false,
+                    stopped: false,
+                }),
+                unrecorded_input: owned_mode
+                    .filter(|mode| !mode.captures())
+                    .map(|_| Default::default()),
+                exact_session: exact_replay,
+                exact_image_len,
+                exact_gpu,
+                exact_driver: None,
+                owned_http: None,
                 finished: None,
                 fetch,
                 persist,
@@ -3158,7 +3460,7 @@ impl WasmLinux {
                 resume_base,
                 snapshot_read_only,
                 snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
-            }),
+            })),
         })
     }
 
@@ -3177,6 +3479,8 @@ impl WasmLinux {
         let sink = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
         let clock = SharedAudioClock::new(clock_buffer, sample_rate_hz)?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         if inner.machine.replace_virtio_snd_audio(
             std::rc::Rc::new(clock),
             Box::new(sink),
@@ -3235,7 +3539,15 @@ impl WasmLinux {
             Ok(number as u32)
         };
         let (width, height) = (dimension(width)?, dimension(height)?);
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome = inner.capture_input(
+                session_input::DISPLAY,
+                &[width.to_le_bytes(), height.to_le_bytes()].concat(),
+                false,
+            )?;
+            return Ok(outcome[0] == 0);
+        }
         let Some((_, state)) = inner.machine.virtio_gpu() else {
             return Ok(false);
         };
@@ -3251,7 +3563,11 @@ impl WasmLinux {
     /// restore bridge before it asks the core to publish a desktop snapshot.
     #[wasm_bindgen(js_name = confirmAgentHello)]
     pub fn confirm_agent_hello(&self) -> Result<bool, JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome = inner.capture_input(session_input::HELLO, &[], false)?;
+            return Ok(outcome[0] == 0);
+        }
         Ok(inner.machine.confirm_virtio_console_agent_hello().is_some())
     }
 
@@ -3260,6 +3576,8 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = saveDesktopSnapshot)]
     pub fn save_desktop_snapshot(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         let blob = inner
             .machine
             .save_desktop_snapshot()
@@ -3279,6 +3597,8 @@ impl WasmLinux {
         host_height: u32,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         let report = inner
             .machine
             .restore_desktop_snapshot(
@@ -3290,6 +3610,7 @@ impl WasmLinux {
         let set = |key: &str, value: JsValue| {
             let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
         };
+        inner.owned_http = None;
         let size = |value: wasm_vm_core::desktop_restore::DisplaySize| {
             let pair = js_sys::Object::new();
             let _ = js_sys::Reflect::set(
@@ -3336,7 +3657,11 @@ impl WasmLinux {
     /// backpressure instead of silently reporting that a frame was delivered.
     #[wasm_bindgen(js_name = sendAgentInput)]
     pub fn send_agent_input(&self, bytes: &[u8]) -> Result<u32, JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome = inner.capture_input(session_input::AGENT, bytes, false)?;
+            return Ok(outcome[1] as u32);
+        }
         let state = inner
             .machine
             .virtio_console()
@@ -3425,6 +3750,8 @@ impl WasmLinux {
     ) -> Result<(), JsError> {
         let source = SharedAudioCapture::new(shared_buffer, capacity_frames, sample_rate_hz)?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         if inner.machine.replace_virtio_snd_capture(Box::new(source)) {
             inner.capture_attached = true;
             Ok(())
@@ -3552,6 +3879,8 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setGuestClock)]
     pub fn set_guest_clock(&self, mode: &str) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         select_guest_clock(&mut inner.machine, mode, || {
             JsHostTimer::new()
                 .map(|clock| Box::new(clock) as Box<dyn wasm_vm_core::time::MonotonicClock>)
@@ -3567,6 +3896,8 @@ impl WasmLinux {
             .filter(|v| v.is_finite() && v.fract() == 0.0 && (1.0..=1024.0).contains(v))
             .ok_or_else(|| JsError::new("ICount divider must be an integer from 1 to 1024"))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         inner
             .machine
             .set_icount_divider(divider as u64)
@@ -3577,6 +3908,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = rebaseGuestClock)]
     pub fn rebase_guest_clock(&self) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.machine.rebase_guest_clock();
         Ok(())
     }
@@ -3684,6 +4016,39 @@ impl WasmLinux {
         Ok(jit_stats_object(&inner.machine))
     }
 
+    /// Actual work and capture-state diagnostics for the explicit OFF control only.
+    #[wasm_bindgen(js_name = unrecordedControlState)]
+    pub fn unrecorded_control_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let machine = &inner.machine;
+        let work = machine
+            .live_unrecorded_work()
+            .ok_or_else(|| JsError::new("unrecorded control required"))?;
+        let input = inner
+            .unrecorded_input
+            .ok_or_else(|| JsError::new("unrecorded input accounting missing"))?;
+        #[cfg(feature = "virgl-renderer")]
+        let gpu_result_capture = machine.session_gpu_cursor().is_ok();
+        #[cfg(not(feature = "virgl-renderer"))]
+        let gpu_result_capture = false;
+        js_sys::JSON::parse(&serde_json::json!({
+            "version":1,"mode":"live-unrecorded","ramBytes":machine.ram_len().to_string(),
+            "divider":machine.guest_clock_div().to_string(),"gpu":inner.exact_gpu,
+            "transition":work.transitions.to_string(),"retired":work.retired.to_string(),"idleTransitions":work.idle_transitions.to_string(),
+            "sessionClock":machine.session_position().is_some(),"sourceCapture":machine.session_sources_active(),
+            "pendingEvents":machine.session_pending_events(),"inputCapture":inner.input_capture.is_some(),
+            "durableRecording":inner.persist.is_some() || inner.snapshot_base.is_some(),
+            "legacyResumeIdentity":inner.resume_base.is_some(),"legacySnapshotNamespace":inner.snapshot_base.is_some(),
+            "audioOutputAttached":inner.audio_attached,"audioCaptureAttached":inner.capture_attached,
+            "recorderDirtyTracking":machine.recorder_dirty_tracking(),
+            "pendingRamEpoch":machine.ram_epoch_pending(),"gpuResultCapture":gpu_result_capture,
+            "uart":{"scope":"host offers and actual FIFO feeds; no payload history","offeredFrames":input.offered_frames.to_string(),
+                "offeredBytes":input.offered_bytes.to_string(),"appliedBytes":input.applied_bytes.to_string(),
+                "lastOfferTransition":input.last_offer_transition.to_string(),"lastFeedTransition":input.last_feed_transition.to_string(),
+                "pendingBytes":inner.pending.len()}
+        }).to_string()).map_err(|_| JsError::new("unrecorded diagnostics"))
+    }
+
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
     /// 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
@@ -3697,6 +4062,21 @@ impl WasmLinux {
         persist_max_dirty_bytes: Option<u32>,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.ram_epoch_pending() {
+            return Err(JsError::new("session keyframe publication pending"));
+        }
+        if let Some(capture) = &inner.input_capture {
+            if capture.replay {
+                return Err(JsError::new(
+                    "full replay runner is not admitted by input-only prefixes",
+                ));
+            }
+            if capture.paused || capture.stopped {
+                return Err(JsError::new("input prefix is paused or stopped"));
+            }
+        }
+        let mut session_error = None;
+        let mut recorded_console = Vec::new();
         let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
@@ -3722,8 +4102,27 @@ impl WasmLinux {
                     let free = inner.uart.borrow().rx_free();
                     let n = free.min(inner.pending.len());
                     if n > 0 {
-                        let batch: Vec<u8> = inner.pending.drain(..n).collect();
-                        inner.uart.borrow_mut().push_input(&batch);
+                        if inner.input_capture.is_some() {
+                            let batch: Vec<u8> = inner.pending.iter().take(n).copied().collect();
+                            let outcome =
+                                inner.capture_input(session_input::UART_FEED, &batch, false)?;
+                            if outcome[0] != 0 {
+                                return Err(JsError::new("UART delivery refused before execution"));
+                            }
+                        } else {
+                            let at = inner
+                                .machine
+                                .live_unrecorded_work()
+                                .map_or(0, |work| work.transitions);
+                            let input = inner
+                                .unrecorded_input
+                                .map(|progress| progress.fed(n as u64, at))
+                                .transpose()
+                                .map_err(JsError::new)?;
+                            let batch: Vec<u8> = inner.pending.drain(..n).collect();
+                            inner.uart.borrow_mut().push_input(&batch);
+                            inner.unrecorded_input = input;
+                        }
                     }
                 }
                 let persistence_bounded =
@@ -3749,14 +4148,60 @@ impl WasmLinux {
                                         >= limit as usize
                                 })
                         }));
-                if remaining == 0 || persistence_due || !matches!(oc, RunOutcome::MaxInstrs) {
+                if remaining == 0
+                    || persistence_due
+                    || inner.machine.session_sources_need_flush()
+                    || !matches!(oc, RunOutcome::MaxInstrs)
+                {
                     break oc;
                 }
             };
             inner.machine.end_cooperative_run(outcome);
-            // Drain the 16550 TX into the console buffer.
-            let uart_out = inner.uart.borrow_mut().take_output();
-            inner.out.borrow_mut().extend_from_slice(&uart_out);
+            if inner.exact_session == Some(false) && matches!(outcome, RunOutcome::MaxInstrs) {
+                // The TX queue is part of the native UART snapshot. A browser scheduling change
+                // must not decide when it is cleared: record the exact output bytes and apply the
+                // drain through the same owned before-boundary as every other host effect.
+                let mut expected = (*inner.out.borrow()).clone();
+                expected.extend_from_slice(inner.uart.borrow().pending_output());
+                if !expected.is_empty() {
+                    if expected.len() > wasm_vm_core::session_clock::MAX_PAYLOAD {
+                        return Err(JsError::new("exact console output exceeds event limit"));
+                    }
+                    let transition = inner.machine.session_position().unwrap().transition;
+                    inner
+                        .machine
+                        .stage_session_effect(
+                            transition,
+                            wasm_vm_core::session_clock::SessionEffect::HostInput {
+                                channel: wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL,
+                                bytes: expected,
+                            },
+                        )
+                        .map_err(|e| JsError::new(&format!("exact console reserve: {e:?}")))?;
+                    let uart = inner.uart.clone();
+                    let out = inner.out.clone();
+                    let mut matched = false;
+                    inner
+                        .machine
+                        .deliver_session_host_boundary(|_, channel, bytes| {
+                            if channel != wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL {
+                                return [1, 0, 0, 0];
+                            }
+                            recorded_console = std::mem::take(&mut *out.borrow_mut());
+                            recorded_console.extend_from_slice(&uart.borrow_mut().take_output());
+                            matched = recorded_console == bytes;
+                            [u64::from(!matched), recorded_console.len() as u64, 0, 0]
+                        })
+                        .map_err(|e| JsError::new(&format!("exact console drain: {e:?}")))?;
+                    if !matched {
+                        return Err(JsError::new("exact console drain mismatch"));
+                    }
+                }
+            } else {
+                // The legacy live path has no event clock; preserve its existing console flow.
+                let uart_out = inner.uart.borrow_mut().take_output();
+                inner.out.borrow_mut().extend_from_slice(&uart_out);
+            }
             inner.finished = match outcome {
                 RunOutcome::Reset(wasm_vm_core::ExitReason::PowerOff) => Some("poweroff".into()),
                 RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) => Some("reboot".into()),
@@ -3764,15 +4209,30 @@ impl WasmLinux {
                 RunOutcome::Exited(code) => Some(format!("exited:{code}")),
                 RunOutcome::Trapped(t) => Some(format!("trap:{:?}", t.cause)),
                 RunOutcome::MaxInstrs => None, // keep going
+                RunOutcome::SessionStopped(error) => {
+                    session_error = Some(error);
+                    Some(format!("session_clock:{error:?}"))
+                }
             };
         }
         // Flush accumulated console output to JS as one chunk.
-        let bytes = std::mem::take(&mut *inner.out.borrow_mut());
+        let bytes = if inner.exact_session == Some(false) {
+            recorded_console
+        } else {
+            std::mem::take(&mut *inner.out.borrow_mut())
+        };
         if !bytes.is_empty() {
             let arr = js_sys::Uint8Array::from(&bytes[..]);
             let _ = inner.output.call1(&JsValue::NULL, &arr);
         }
         let obj = js_sys::Object::new();
+        if let Some(error) = session_error {
+            let _ = js_sys::Reflect::set(
+                &obj,
+                &"divergence".into(),
+                &crate::session_sources::diagnostic(error),
+            );
+        }
         let _ = js_sys::Reflect::set(
             &obj,
             &"done".into(),
@@ -3908,7 +4368,31 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = sendInput)]
     pub fn send_input(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::UART_OFFER, bytes, false)?;
+            return Ok(());
+        }
+        let progress = if let Some(input) = inner.unrecorded_input {
+            if bytes.len() > session_input::MAX_UART_PENDING
+                || inner.pending.len() > session_input::MAX_UART_PENDING - bytes.len()
+            {
+                return Err(JsError::new("unrecorded pending UART input exceeds 1 MiB"));
+            }
+            let at = inner
+                .machine
+                .live_unrecorded_work()
+                .ok_or_else(|| JsError::new("unrecorded input owner missing"))?
+                .transitions;
+            Some(
+                input
+                    .offered(bytes.len() as u64, at)
+                    .map_err(JsError::new)?,
+            )
+        } else {
+            None
+        };
         inner.pending.extend(bytes.iter().copied());
+        inner.unrecorded_input = progress;
         Ok(())
     }
 
@@ -3922,7 +4406,15 @@ impl WasmLinux {
         code: u16,
         value: i32,
     ) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(
+                session_input::KEY,
+                &session_input::event_bytes(event_type, code, value),
+                false,
+            )?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .keyboard_input()
@@ -3996,7 +4488,11 @@ impl WasmLinux {
     /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncKeyboard)]
     pub fn sync_keyboard(&self) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::KEY_SYNC, &[], false)?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .keyboard_input()
@@ -4009,7 +4505,15 @@ impl WasmLinux {
     /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
     #[wasm_bindgen(js_name = sendTabletEvent)]
     pub fn send_tablet_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(
+                session_input::TABLET,
+                &session_input::event_bytes(event_type, code, value),
+                false,
+            )?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .tablet_input()
@@ -4021,7 +4525,11 @@ impl WasmLinux {
     /// Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncTablet)]
     pub fn sync_tablet(&self) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::TABLET_SYNC, &[], false)?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .tablet_input()
@@ -4034,7 +4542,15 @@ impl WasmLinux {
     /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
     #[wasm_bindgen(js_name = sendMouseEvent)]
     pub fn send_mouse_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(
+                session_input::MOUSE,
+                &session_input::event_bytes(event_type, code, value),
+                false,
+            )?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .mouse_input()
@@ -4046,7 +4562,11 @@ impl WasmLinux {
     /// Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncMouse)]
     pub fn sync_mouse(&self) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::MOUSE_SYNC, &[], false)?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .mouse_input()
@@ -4067,6 +4587,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setFileDownloadReady)]
     pub fn set_file_download_ready(&self, ready: bool) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .file_transfers
             .as_mut()
@@ -4086,6 +4607,16 @@ impl WasmLinux {
         let sha256 = browser_file_transfer::parse_sha256(&sha256_hex)
             .map_err(|error| JsError::new(&format!("file upload SHA-256: {error:?}")))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let payload = session_input::upload_begin(slot, &name, total, &sha256_hex)
+                .map_err(|e| JsError::new(&e))?;
+            let outcome = inner.capture_input(session_input::UPLOAD_BEGIN, &payload, false)?;
+            return if outcome[0] == 0 {
+                Ok(outcome[1] as u32)
+            } else {
+                Err(JsError::new("recorded begin upload refusal"))
+            };
+        }
         inner
             .file_transfers
             .as_mut()
@@ -4102,6 +4633,23 @@ impl WasmLinux {
         finished: bool,
     ) -> Result<u32, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            if bytes.len() > wasm_vm_core::session_clock::MAX_PAYLOAD - 5 {
+                return Err(JsError::new("file input chunk exceeds bound"));
+            }
+            let payload = [
+                stream.to_le_bytes().as_slice(),
+                &[u8::from(finished)],
+                bytes,
+            ]
+            .concat();
+            let outcome = inner.capture_input(session_input::UPLOAD_PUSH, &payload, false)?;
+            return if outcome[0] == 0 {
+                Ok(outcome[2] as u32)
+            } else {
+                Err(JsError::new("recorded upload chunk refusal"))
+            };
+        }
         let buffered = inner
             .file_transfers
             .as_mut()
@@ -4114,6 +4662,15 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = cancelFileUpload)]
     pub fn cancel_file_upload(&self, stream: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome =
+                inner.capture_input(session_input::UPLOAD_CANCEL, &stream.to_le_bytes(), false)?;
+            return if outcome[0] == 0 {
+                Ok(())
+            } else {
+                Err(JsError::new("recorded upload cancellation refusal"))
+            };
+        }
         inner
             .file_transfers
             .as_mut()
@@ -4125,6 +4682,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = dismissFileUpload)]
     pub fn dismiss_file_upload(&self, stream: u32) -> Result<bool, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         Ok(inner
             .file_transfers
             .as_mut()
@@ -4134,6 +4692,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = cancelFileDownload)]
     pub fn cancel_file_download(&self, id: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .file_transfers
             .as_mut()
@@ -4145,6 +4704,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = finishFileDownload)]
     pub fn finish_file_download(&self, id: u32, success: bool) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .file_transfers
             .as_mut()
@@ -4178,6 +4738,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = takeFileDownloadChunk)]
     pub fn take_file_download_chunk(&self, id: u32) -> Result<js_sys::Uint8Array, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         let bytes = inner
             .file_transfers
             .as_mut()
@@ -4189,6 +4750,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = dismissFileDownload)]
     pub fn dismiss_file_download(&self, id: u32) -> Result<bool, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         Ok(inner
             .file_transfers
             .as_mut()
@@ -4296,6 +4858,8 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = saveSnapshot)]
     pub fn save_snapshot(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         let blob = inner.machine.save_resume().map_err(|e| match e {
             resume::SnapshotError::NotQuiesced { reason, in_flight } => {
                 JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
@@ -4314,6 +4878,7 @@ impl WasmLinux {
     pub async fn persist_snapshot(&self) -> Result<(), JsError> {
         let (blob, base, write_count) = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             let Some(base) = inner.snapshot_base else {
                 return Err(JsError::new("not_persistent"));
             };
@@ -4355,6 +4920,7 @@ impl WasmLinux {
     pub async fn relinquish_snapshot_writer(&self) -> Result<(), JsError> {
         let write_count = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             inner.snapshot_read_only = true;
             inner.snapshot_write_count.clone()
         };
@@ -4370,6 +4936,7 @@ impl WasmLinux {
     pub async fn read_stored_snapshot(&self) -> Result<JsValue, JsError> {
         let base = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             match inner.snapshot_base {
                 Some(base) => base,
                 None => return Ok(JsValue::NULL),
@@ -4397,6 +4964,8 @@ impl WasmLinux {
     pub async fn restore_stored_snapshot(&self) -> Result<String, JsError> {
         let base = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
+            inner.refuse_capture_mutation()?;
             match inner.snapshot_base {
                 Some(base) => base,
                 None => return Ok("missing".to_string()),
@@ -4432,6 +5001,7 @@ impl WasmLinux {
             inner.machine.load_resume(&blob).map_err(|e| {
                 JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code())
             })?;
+            inner.owned_http = None;
         }
         Ok(decision.code().to_string())
     }
@@ -4447,6 +5017,7 @@ impl WasmLinux {
     pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let (base, current_generation, write_count) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             if inner.snapshot_read_only {
                 return Err(JsError::new("read_only"));
             }
@@ -4518,6 +5089,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = advanceOverlayGeneration)]
     pub fn advance_overlay_generation(&self) -> Result<f64, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         Ok(inner.machine.advance_overlay_generation() as f64)
     }
 
@@ -4552,10 +5124,42 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = loadSnapshotBlob)]
     pub fn load_snapshot_blob(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
         inner
             .machine
             .load_resume(&blob)
-            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))
+            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))?;
+        inner.owned_http = None;
+        Ok(())
+    }
+
+    /// Consume one streamed container without another JS-to-Wasm snapshot copy. The same complete
+    /// framing, identity and transactional component checks run before any guest mutation.
+    #[wasm_bindgen(js_name = restoreSnapshotBuffer)]
+    pub fn restore_snapshot_buffer(&self, buffer: SnapshotBuffer) -> Result<String, JsError> {
+        let blob = buffer.staging.finish().map_err(JsError::new)?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
+        let Some(base) = inner.resume_base else {
+            return Ok("missing".to_string());
+        };
+        let decision = resume::RestoreDecision::decide(
+            Some(&blob),
+            &build_core_hash(),
+            &base,
+            inner.machine.overlay_generation(),
+        );
+        if !decision.is_resume() {
+            return Ok(decision.code().to_string());
+        }
+        inner
+            .machine
+            .load_resume(&blob)
+            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))?;
+        inner.owned_http = None;
+        Ok("resume".to_string())
     }
 
     /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
@@ -4578,6 +5182,7 @@ impl WasmLinux {
         let mut base = [0u8; 32];
         base.copy_from_slice(base_id);
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.machine.set_snapshot_identity(build_core_hash(), base);
         inner.resume_base = Some(base);
         inner.snapshot_base = Some(base);

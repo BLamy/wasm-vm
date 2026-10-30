@@ -1,0 +1,48 @@
+[
+  {
+    "name": "native",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "wasm-vm-core",
+      "--features",
+      "virgl-renderer,trace",
+      "--test",
+      "e9_session_checkpoint_verifier",
+      "--",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "seconds": 18.76667094230652
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "wasm-vm-core",
+      "--features",
+      "virgl-renderer,trace",
+      "--test",
+      "e9_session_checkpoint_verifier",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "seconds": 0.2055511474609375
+  },
+  {
+    "name": "format",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 1.0715250968933105
+  }
+]

@@ -1,0 +1,180 @@
+{
+  "head": "dc5fab60d1b0e4c6c92bc78169232c9d3622825e",
+  "clone": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-wocq36ip/repo",
+  "output": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final",
+  "started": 1792320094.7177558,
+  "status": "failed",
+  "commands": [
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+      "command": [
+        "git",
+        "clone",
+        "--local",
+        "--no-checkout",
+        "--single-branch",
+        "--branch",
+        "codex/e9-user-input-recording",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-wocq36ip/repo"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-wocq36ip/repo",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "init",
+        "--cone"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-wocq36ip/repo",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "set",
+        ".cargo",
+        ".github",
+        "bench",
+        "compliance",
+        "configs",
+        "crates",
+        "deploy",
+        "design",
+        "docs",
+        "fuzz",
+        "guest",
+        "releases",
+        "renderer",
+        "tasks",
+        "tests",
+        "third_party",
+        "tools",
+        "web",
+        "evidence/e5-t26p",
+        "evidence/e5-t11c",
+        "evidence/e9-t05",
+        "evidence/e9-t06",
+        "evidence/e9-t07",
+        "evidence/e9-t08",
+        "evidence/e9-t09"
+      ],
+      "exit_code": 0
+    },
+    {
+      "cwd": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-wocq36ip/repo",
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "dc5fab60d1b0e4c6c92bc78169232c9d3622825e"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "environment": "RUSTFLAGS, RUSTDOCFLAGS, RUST_LOG, all CARGO_* and GIT_* unset; trusted Rust/system toolchain paths prepended.",
+  "checkout": "Clean cone checkout of every source/configuration directory and release plus required historical compile-time fixtures and this task evidence. Unrelated historical evidence binaries excluded; Docstream reads pinned historical prose from immutable Git blobs.",
+  "objects": "Local immutable hardlinked Git objects, no alternates, no inherited target or node_modules state. Ordinary locked package-download caches and installed toolchains remain available.",
+  "compiler_storage": {
+    "mount": "/Volumes/e9-build-scratch",
+    "target": "/Volumes/e9-build-scratch/cold-target-dc5fab60d1b0",
+    "initial_entries": [],
+    "purpose": "Fresh, empty compiler outputs on a task-owned RAM disk; no inherited target cache or CARGO_TARGET_DIR. All proof recordings remain on persistent storage outside this checkout."
+  },
+  "failure": "",
+  "source_sha256": {
+    "Cargo.lock": "60530c515966d9ac596ae6d50dc288bf8f432a5e93000c23af7b3552fdfb1ef8",
+    "crates/core/src/session_clock.rs": "1f14711e53739da7ac31778932b427d3208146038fb8712140c3c0c0705f5e35",
+    "crates/core/src/dev/virtio/input/mod.rs": "6971596a4fad6f21c90692288f74e88f322023b281b0936c8efdb172f627f8ee",
+    "crates/core/tests/e9_input_boundary.rs": "e56ec32365a1af39535bed55dfe120f0bc80d42946f67f288473640ce4af5df3",
+    "crates/wasm/src/lib.rs": "42df31b2214f6c679a611988b2f500fe113cfdaaa80eb3a3e21229dc09a8f0c7",
+    "crates/wasm/src/event_clock.rs": "911b86fc0eef59cbd06e430637ba9e2c04cc0edf10f1e830825d0a48ddfe2bd1",
+    "crates/wasm/src/session_checkpoint.rs": "19209d93fdb82d980fb8914cdec0f01c060c2b25937e4e86eb5c9542cbd6de4e",
+    "crates/wasm/src/session_input.rs": "78ecd7cded906338f7a3fc254d2140bffbfb1832db949446c89747f83981dd63",
+    "crates/wasm/src/session_input/browser.rs": "410de2e5f5affbc9540be7c619e0beede7d3f67e82de2a3ab98af47a498bdc62",
+    "crates/wasm/src/session_input/tests.rs": "2ddf83034f37af903cc50fee3303f8617d420462b7cff2d134736598f2deb61e",
+    "crates/wasm/src/browser_file_transfer.rs": "a54835d9855428ffd13f0b0e3539fa9fb180060198be8b13356c98249a4fa39d",
+    "crates/storage/src/session.rs": "6bcf74f48dc79f426d7df48621f96436d48299b40307296e80f807288d5fe7aa",
+    "crates/storage/tests/session_manifest.rs": "5c85227a9cb54e23d40b662eb1dfa2559ac302a5795562fb889c1027dded563f",
+    "crates/session-web/Cargo.toml": "0dd7af1d3c0a2ab204779eedf0dbd6faa3b9617bf297cafb217981da018a003c",
+    "crates/session-web/src/lib.rs": "503502b0e8b493c5baebcedfc3c597cc85b6bc6dead60f2b43d305b25b3ba1cc",
+    "web/index.html": "346450bdfa6917180a1ab328bc636cf4982fc16a66ba34a5f6bd37c0c747b83a",
+    "web/main.js": "a753c0eff5abac0165a06c8f4312fb8bca71b402347865031b50b6ba2cf993a0",
+    "web/loader.js": "ab2c24ff1d97b5e28a6e6e4ea580876fb3497fe70356217dd9fb7c1aa7de400a",
+    "web/linux-worker-protocol.js": "7efccb20075006550a1b039659dc1e73b21c68298a029a98b8f7ec6391112b79",
+    "web/session-inputs.js": "85e78de24ce05715c4bbf02005fdf7ddabb4835ddb328e9aed6bc3e03bad0f96",
+    "web/input-recording-probe.js": "9f20dee7f86d241e0e95c4656cea42f98eaaa309861feff21aae2165671893fa",
+    "web/session-checkpoints.js": "2c6feb7e2fa37493374968efad295e6d2087e17f219f7a7ff02aa273878a68cc",
+    "web/session-library.js": "c99e960803e7dd5a64f4b7e128e79f810aa5769d5b5ef291b3e190e17c492a78",
+    "web/src/input/pointer.js": "5bc2716d074fe160947445b4462f7fc52815d196e606b7fc3f240512746fae2e",
+    "web/src/input/pointer.ts": "5bc2716d074fe160947445b4462f7fc52815d196e606b7fc3f240512746fae2e",
+    "web/tests/e4-t32-worker-protocol.test.mjs": "c359aead819f5e490ee84dfc6708aaf21ad1a81333ce2c735c77ce1a7a365fd4",
+    "web/roadmap.js": "a6e71f261c4230130ef61534474303ad74f1d286bc1be1bc3fdd9cb2e1f7ed61",
+    "web/gpu-checkpoint-build.js": "a1ca4b6d38b65ae2d0d40471ba5b4c750e06df85f9a8e106ed1a1abd596fd928",
+    "web/docs-source/guides/storage.md": "3a1d798f81ea1f11e86c241ed1f57059b4ce42694982c19f3e6f8fdd2b3d3964",
+    "docs/design/session-replay.md": "079cac9f2e1ae1bc7df343a7dc741c7dcef96b1e102be821ddb8da4c990068bc",
+    "docs/design/session-replay-contract.json": "7358ebda7d5b05d7902e5633f1b828f6d027b90dda8adc9cd7d0fbf38a5885b5",
+    "tools/verify/e9-input-recording.py": "ff7590af4aee1ddde1a6b86ddf0b5d0b17af92d9e7acdd25af53e685ea49646c",
+    "tools/verify/e9-input-recording-browser.mjs": "ea9c3c74687a5d3b711c658cdaa922381224fa27b39e76d4aaa26dafdf57bddb",
+    "tools/verify/e9-input-recording-files.py": "8f6ab1f6d75079d396a9346a1d31171a8e4a87f751111f19761768bf6aaa696e",
+    "tools/verify/e9-input-recording-browser-files.py": "97c07186053437975e4f4dc2f1c5c9ec7845fd402c74f25c9e15f65ec16c0318",
+    "Makefile": "be23d23a75448bc785c7d9c658f3f9d2c7272775973827f2ccc90aee49ae6911"
+  },
+  "files": [
+    {
+      "path": "acceptance/core-native.log",
+      "bytes": 57482,
+      "sha256": "a37ba1359a618de77481c5501f9bc529c7a76f1a258ba4fc846a6ae900d0448b"
+    },
+    {
+      "path": "acceptance/execution-and-device-native.log",
+      "bytes": 17903,
+      "sha256": "fa2f6ab82725a1a72f9a5c88a86cac2ebdbb89b7f24ed75b23e9e0805988b261"
+    },
+    {
+      "path": "acceptance/format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "acceptance/jit-native.log",
+      "bytes": 11570,
+      "sha256": "9686551fb8647ea716254b0f0b00cd9ad4c2eb2838f233106f196917eca31882"
+    },
+    {
+      "path": "acceptance/native/host-mailbox-pending.resume",
+      "bytes": 1466,
+      "sha256": "d3bd6c3b03e512504ade4e32f40d5ca10b4e1719f917dc782630c51ff5ada7d1"
+    },
+    {
+      "path": "acceptance/native-clippy.log",
+      "bytes": 9764,
+      "sha256": "5e46a165662a052ca284916a1c0a6b88cfdb2c62f747fd95d797f4013eebe4d8"
+    },
+    {
+      "path": "acceptance/policy.log",
+      "bytes": 32,
+      "sha256": "30a1abcc8074d641e5a5ff1bae9d3395cef505fc7dfcd4567235303aab4e2a4c"
+    },
+    {
+      "path": "acceptance/report.json",
+      "bytes": 7434,
+      "sha256": "f67ea25110ccbd309dce6e1fbd9ca85fdec84ae8602cba702441ca1b292e56a5"
+    },
+    {
+      "path": "commands.log",
+      "bytes": 2233,
+      "sha256": "15a99b168b317e8df0af9ffa9730a3d248e17e5d9321613a6eb1577b5f5fd0b0"
+    },
+    {
+      "path": "interruption.json",
+      "bytes": 262,
+      "sha256": "e7ea0f46fe0a85ced8d167db64d7b341fa4e2aef4a9d9603c405943416e2be98"
+    }
+  ],
+  "finished": 1792320239.5433211,
+  "wrapper_sha256": "d55cefb797e33f4b8f50288f5362a565745e1c61348f13e426ed62ca7a4a3156"
+}

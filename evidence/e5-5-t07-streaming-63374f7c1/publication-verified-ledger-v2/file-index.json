@@ -1,0 +1,54 @@
+{
+  "e5-5-t07-deploy-v2/deploy.log": {
+    "bytes": 5230,
+    "sha256": "458081960dcaeb1bb5225f69016d0494eb70ef606d04f9a9ca34a05bfeccf1b3"
+  },
+  "e5-5-t07-deploy-v2/report.json": {
+    "bytes": 1788,
+    "sha256": "20e768f46e425f148d13ddadc65be9f2c788ffdd5c9e0677ff048e62770ff054"
+  },
+  "e5-5-t07-deploy-v2/staged-manifests/artifacts-alpine.json": {
+    "bytes": 1110,
+    "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+  },
+  "e5-5-t07-deploy-v2/staged-manifests/artifacts-node-alpine.json": {
+    "bytes": 1255,
+    "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+  },
+  "e5-5-t07-deploy-v2/staged-manifests/artifacts-omarchy-virgl.json": {
+    "bytes": 1062,
+    "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff"
+  },
+  "e5-5-t07-deploy-v2/staged-manifests/artifacts-omarchy.json": {
+    "bytes": 1362,
+    "sha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750"
+  },
+  "e5-5-t07-deploy-v2/staged-manifests/artifacts.json": {
+    "bytes": 905,
+    "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+  },
+  "e5-5-t07-metadata-hashes-v1/report.json": {
+    "bytes": 7637,
+    "sha256": "a4e182d33950b17b1e927484f4396e1e648c6c64b86d307f16a46874026f8cff"
+  },
+  "e5-5-t07-metadata-hashes-v1.mjs": {
+    "bytes": 2305,
+    "sha256": "efa62ef7880c9fc11d58ce9414b3e327d1eb4f7dd80ce74284ba9d2d20325447"
+  },
+  "e5-5-t07-publish.py": {
+    "bytes": 2907,
+    "sha256": "a1cc6a17a14490944ce9f10a7b55fbcf2751bd71379577c77eb28168feec69f4"
+  },
+  "e5-5-t07-verified-ledger-live-v1/demo-suite.json": {
+    "bytes": 22054,
+    "sha256": "6d78c3e2a75ad8089bacc56dfe5f3c1d9995f364414feab331c4c8ee5202a90f"
+  },
+  "e5-5-t07-verified-ledger-live-v1/demo-suite.png": {
+    "bytes": 611652,
+    "sha256": "4ae640452170273845706496ed79302c6b7cfb303cee6f5c2a5399931d3aa7bc"
+  },
+  "observations.json": {
+    "bytes": 1291,
+    "sha256": "6457398367921a88177a22fb329909d7763cf5b13f2fb3dbde7b19208d1ee5ee"
+  }
+}

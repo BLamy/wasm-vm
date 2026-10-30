@@ -2334,6 +2334,7 @@ dependencies = [
  "rustc_apfloat",
  "sha2",
  "syn 2.0.118",
+ "wasm-vm-storage",
 ]
 
 [[package]]
@@ -2374,8 +2375,10 @@ name = "wasm-vm-jit-runtime"
 version = "0.0.1"
 dependencies = [
  "anyhow",
+ "sha2",
  "wasm-vm-core",
  "wasm-vm-jit-translate",
+ "wasm-vm-storage",
  "wasm-vm-wasm-emit",
  "wasmparser 0.235.0",
  "wasmprinter",
@@ -2391,6 +2394,16 @@ dependencies = [
  "wasm-vm-wasm-emit",
  "wasmparser 0.240.0",
  "wasmtime",
+]
+
+[[package]]
+name = "wasm-vm-session-web"
+version = "0.0.1"
+dependencies = [
+ "serde_json",
+ "sha2",
+ "wasm-bindgen",
+ "wasm-vm-storage",
 ]
 
 [[package]]
@@ -2426,6 +2439,8 @@ dependencies = [
  "getrandom 0.2.17",
  "js-sys",
  "log",
+ "serde",
+ "serde_json",
  "sha2",
  "wasm-bindgen",
  "wasm-bindgen-futures",

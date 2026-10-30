@@ -1,0 +1,232 @@
+{
+  "source": {
+    "app-1440": {
+      "headerBg": "rgba(21, 20, 16, 0.94)",
+      "badgeDisplay": "none",
+      "badgeState": "locked",
+      "navLinks": [
+        [
+          "wasm-vm/",
+          "./landing.html",
+          null
+        ],
+        [
+          "Home",
+          "./landing.html",
+          null
+        ],
+        [
+          "Docs",
+          "./docs.html",
+          "_blank"
+        ],
+        [
+          "Case studies",
+          "./case-studies.html",
+          "_blank"
+        ],
+        [
+          "Roadmap",
+          "./roadmap.html",
+          "_blank"
+        ],
+        [
+          "Machine",
+          "#ide",
+          null
+        ]
+      ],
+      "overflow": 0,
+      "errors": []
+    },
+    "app-1280": {
+      "headerBg": "rgba(21, 20, 16, 0.94)",
+      "badgeDisplay": "none",
+      "badgeState": "locked",
+      "navLinks": [
+        [
+          "wasm-vm/",
+          "./landing.html",
+          null
+        ],
+        [
+          "Home",
+          "./landing.html",
+          null
+        ],
+        [
+          "Docs",
+          "./docs.html",
+          "_blank"
+        ],
+        [
+          "Case studies",
+          "./case-studies.html",
+          "_blank"
+        ],
+        [
+          "Roadmap",
+          "./roadmap.html",
+          "_blank"
+        ],
+        [
+          "Machine",
+          "#ide",
+          null
+        ]
+      ],
+      "overflow": 0,
+      "errors": []
+    },
+    "app-390": {
+      "headerBg": "rgba(21, 20, 16, 0.94)",
+      "badgeDisplay": "none",
+      "badgeState": "locked",
+      "navLinks": [
+        [
+          "wasm-vm/",
+          "./landing.html",
+          null
+        ]
+      ],
+      "overflow": 0,
+      "errors": []
+    },
+    "app-390-menu": [
+      [
+        "Home",
+        "./landing.html",
+        null
+      ],
+      [
+        "DocsOpens in a new tab",
+        "./docs.html",
+        "_blank"
+      ],
+      [
+        "Case studiesOpens in a new tab",
+        "./case-studies.html",
+        "_blank"
+      ],
+      [
+        "RoadmapOpens in a new tab",
+        "./roadmap.html",
+        "_blank"
+      ],
+      [
+        "Open the machine",
+        "#ide",
+        null
+      ],
+      [
+        "Source on GitHub",
+        "https://github.com/BLamy/wasm-vm",
+        null
+      ]
+    ],
+    "app-390-current-machine": {
+      "url": "http://127.0.0.1:8198/index.html?nosw#ide",
+      "sheetOpen": 0
+    },
+    "caseStudies": {
+      "url": "http://127.0.0.1:8198/case-studies.html",
+      "h1": "Build the system.Show the run."
+    }
+  },
+  "dist": {
+    "app-1280": {
+      "links": [
+        [
+          "wasm-vm/",
+          "./",
+          null
+        ],
+        [
+          "Home",
+          "./",
+          null
+        ],
+        [
+          "Docs",
+          "./docs.html",
+          "_blank"
+        ],
+        [
+          "Case studies",
+          "./case-studies.html",
+          "_blank"
+        ],
+        [
+          "Roadmap",
+          "./roadmap.html",
+          "_blank"
+        ],
+        [
+          "Machine",
+          "#ide",
+          null
+        ]
+      ],
+      "answers": {
+        "/": 200,
+        "/docs.html": 200,
+        "/roadmap.html": 200,
+        "/case-studies.html": 200,
+        "/case-study-ai-sandboxing.html": 200,
+        "/case-study-deterministic-simulation.html": 200,
+        "/case-study-riscv-os.html": 200,
+        "/ui-kit.html": 200
+      },
+      "headerBg": "rgba(21, 20, 16, 0.94)",
+      "badgeDisplay": "none",
+      "errors": []
+    },
+    "app-390": {
+      "links": [
+        [
+          "Home",
+          "./",
+          null
+        ],
+        [
+          "DocsOpens in a new tab",
+          "./docs.html",
+          "_blank"
+        ],
+        [
+          "Case studiesOpens in a new tab",
+          "./case-studies.html",
+          "_blank"
+        ],
+        [
+          "RoadmapOpens in a new tab",
+          "./roadmap.html",
+          "_blank"
+        ],
+        [
+          "Open the machine",
+          "#ide",
+          null
+        ],
+        [
+          "Source on GitHub",
+          "https://github.com/BLamy/wasm-vm",
+          null
+        ]
+      ],
+      "answers": {
+        "/": 200,
+        "/docs.html": 200,
+        "/roadmap.html": 200,
+        "/case-studies.html": 200,
+        "/case-study-ai-sandboxing.html": 200,
+        "/case-study-deterministic-simulation.html": 200,
+        "/case-study-riscv-os.html": 200,
+        "/ui-kit.html": 200
+      },
+      "headerBg": "rgba(21, 20, 16, 0.94)",
+      "badgeDisplay": "none",
+      "errors": []
+    }
+  }
+}

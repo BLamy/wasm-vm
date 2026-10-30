@@ -1772,6 +1772,13 @@ impl BrowserExecutor {
                 throw_jit_sentinel();
             };
             hart.note_jit_ram_store(addr, width);
+            if bus
+                .ram_mut()
+                .mark_jit_dirty_physical_range(physical, width)
+                .is_err()
+            {
+                throw_jit_sentinel();
+            }
             let Some(last) = physical.checked_add(width.saturating_sub(1)) else {
                 throw_jit_sentinel();
             };

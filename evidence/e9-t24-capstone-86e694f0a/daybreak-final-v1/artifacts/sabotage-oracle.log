@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tools/verify/e9-capstone-paged-files.py", line 148, in <module>
+    assert r['recording']['pixel'] == r['replay']['pixel'] == [0, 255, 0, 255]
+AssertionError

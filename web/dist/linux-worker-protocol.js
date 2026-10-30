@@ -4,7 +4,7 @@
 // controller surface is deliberately an allow-list. Adding a loader controller method therefore
 // requires an intentional protocol change instead of silently exposing arbitrary worker objects.
 
-export const LINUX_WORKER_PROTOCOL_VERSION = 2;
+export const LINUX_WORKER_PROTOCOL_VERSION = 4;
 export const MAX_OUTPUT_BATCH_BYTES = 64 * 1024;
 const DEFAULT_STOP_TIMEOUT_MS = 5_000;
 const DEFAULT_CLEANUP_TIMEOUT_MS = 4_000;
@@ -18,6 +18,9 @@ const DEFAULT_BOOT_TIMEOUT_MS = 180_000;
 const LONG_RPC_GRACE_MS = Object.freeze({
   stateDigest: 60_000,
   saveGpuCheckpoint: 240_000,
+  captureDiskDelta: 120_000,
+  captureSoftwareCheckpoint: 240_000,
+  startInputRecording: 240_000,
   snapshotSave: 120_000,
   snapshotRead: 120_000,
   snapshotDecision: 60_000,
@@ -48,6 +51,19 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "isPaused",
   "stateDigest",
   "saveGpuCheckpoint",
+  "gpuSessionConfiguration",
+  "gpuSessionPosition",
+  "captureDiskDelta",
+  "captureSoftwareCheckpoint",
+  "softwareCheckpointConfiguration",
+  "startInputCapture",
+  "stopInputCapture",
+  "inputPosition",
+  "takeInputDeliveries",
+  "applyRecordedInput",
+  "setInputPointerMode",
+  "startInputRecording",
+  "flushInputRecording",
   "saveDesktopSnapshot",
   "confirmAgentHello",
   "sendAgentInput",
@@ -103,12 +119,15 @@ const BYTE_ARG = Object.freeze({
   snapshotImport: 0,
   restoreDesktopSnapshot: 0,
   sendAgentInput: 0,
+  applyRecordedInput: 5,
 });
 const BYTE_RESULT = new Set([
   "takeFileDownloadChunk",
   "snapshotRead",
   "snapshotExport",
   "saveGpuCheckpoint",
+  "captureDiskDelta",
+  "captureSoftwareCheckpoint",
   "saveDesktopSnapshot",
   "takeAgentOutput",
 ]);

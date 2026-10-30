@@ -1,0 +1,65 @@
+{
+  "verdict": "verified",
+  "reviewed_parent": "fd6ea95575166e9dd976702d04a8ab005e122d1a",
+  "runtime_head": "4ce36a932feaf171c09cd8b25e90d3fc9ff376ac",
+  "frozen_test_head": "7ac83e660cc316440a9e42cf961224f0c24a314a",
+  "public_head": "3508ad16ca0de135f06e6f7cc8d2fb4b3a879332",
+  "predictions": {
+    "F0": "HELD",
+    "F1": "HELD",
+    "F2": "HELD",
+    "F3": "HELD",
+    "F4": "HELD",
+    "F5": "HELD",
+    "F6": "HELD",
+    "F7": "HELD"
+  },
+  "cold_receipt_sha256": "6d4f5d414489eff824e17da6a74b1a0dd03b9ac66525d542be4fb50592d7316d",
+  "cold_acceptance_sha256": "0241e2c0d9704ec478594e61e324dfa2f3df845b20ff8c267b721e9173d106f2",
+  "public_report_sha256": "6b31a2af91a67ab9f6eac8bec336bc96d9e543fb18ffbddbb18b2be83cf03217",
+  "public_provenance_sha256": "013d218a591da579c65e78611069d7072ec736a445c6fecf7b6deb58014e669a",
+  "program_tests_executed": false,
+  "source_or_tests_modified": false,
+  "carried_prior_audit_sha256": "7077ac57cb73657e127f1430cd2046c1081996b4e62a8b05c96aed60d6dfcb29",
+  "cold_clone_cleanup_allowed": true,
+  "keep_original_evidence": true,
+  "files": {
+    "audit-cold.py": "1b2cfd551d4bd95600040d2a74b12dee865a64577da1f1c24fd560262ef638ca",
+    "audit-public-results.py": "5dcb19f982a97453c657e0a3f8712b04fac101a1737081b4ee8458fbee21e6e9",
+    "audit-public.py": "d5a3b07d47a6998050561d9dc6596a7ee3c459019511c57ce8f7ef2b02d257fb",
+    "audit-results.py": "b54299ca43ec9dae2b47edcba37ba383d445f752860210e28bb72006208a84e9",
+    "audit.md": "80973022730cf536f38e7066498460fb0d24499045083592cd752aea8baa5635",
+    "cold-authentication.json": "651f41701cf1f82c83ef7bb5e18a8c53fb632a9ad03746370cce32ee37f5c57c",
+    "cold-results.json": "c459c6bfb0043102e66255dede642c77bf85e27caf3056439e43bf3b00faff70",
+    "public-authentication.json": "0fd1b26a84c5ffbe9323a67c4a6858eb9dfb49f26e7bf3561614c8df8d29c616",
+    "public-predictions.md": "f4f5ef60ebbba9f69c7a0b6009e7d723c7b587f78f3fc3a3c92d6865b759c7d4",
+    "public-results.json": "d5b14e04bb1d7ecd37b98b05e3e1f39d377c1c30ae05396a3e60a4bb9844a882",
+    "receipt-predictions.md": "909bcbf14fbe09a3afc846ed02edcb0630db29b5ca5e23f27834774e637e04bc"
+  },
+  "metadata_commands": [
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exit_code": 0,
+      "result": "task-policy: OK (active=none)"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exit_code": 0,
+      "result": "729 tasks, 517 verified"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

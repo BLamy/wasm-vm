@@ -1,0 +1,34 @@
+{
+  "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-public-published",
+  "status": "failed",
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "crashes": 4,
+  "races": 20,
+  "console_errors": [
+    {
+      "file": "trace.trace",
+      "line": 17,
+      "event": {
+        "type": "console",
+        "messageType": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 ()",
+        "args": [],
+        "location": {
+          "url": "https://wasm-vm.pages.dev/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        "time": 4165.068,
+        "pageId": "page@1c759d49cf73663eabbfb165912c2586"
+      }
+    }
+  ],
+  "files": {
+    "report.json": "80e40504955dfc6c7f39fada204716cd6c20f3163aa3a44d3d7946f0aec7832d",
+    "browser-trace.zip": "0116b5a364a46146f55bc18f50987a1d3387fd37d0d88ae834814b15d6f49866",
+    "javascript-coverage.json": "d3bb29a829c859851dd6070273da0d4f392864334b20f4355ef3a02b61a0228a"
+  }
+}

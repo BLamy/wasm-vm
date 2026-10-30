@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "head": "dc5fab60d1b0e4c6c92bc78169232c9d3622825e",
+  "original_path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-oq2h378p/repo",
+  "ram_checkout": "/Volumes/e9-build-scratch/cold-source-e9-t10",
+  "persistent_git_metadata": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-oq2h378p/repo.git-metadata",
+  "inventory_before_and_after": {
+    "sha256": "03c23750fd36509c580904d3e7831eec131d9ad3ba165de95e0f5b19891c2d24",
+    "bytes": 1204649933,
+    "files": 36633
+  },
+  "old_config_sha256": "1fa0cd60b94814c6b58a52b63b453f571101d16cec1ad7c41d4cbec6aa2b5a45",
+  "new_config_sha256": "785c7e632dc03b02c340c265e2ead9a036c0b6aa87b287414ac8e522c081fae1",
+  "time": 1792321814.188679,
+  "reason": "Lossless relocation of an idle disposable cold checkout to its task-owned RAM volume. All tracked and required ignored files were hashed before/after; its own immutable Git objects remain on persistent storage with no alternates. The original path remains a symlink. Original proof outputs remain on persistent storage outside this checkout. No worker build output or dependency was imported."
+}

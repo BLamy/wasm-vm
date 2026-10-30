@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "head": "7e5d5d1fcd83fe2f2dbce1656108f57db30f9581",
+  "receipt_sha256": "2d441f7fa17fcebeef82d4db2273a120fbe497a1d56b9c9a59378d434cb232a8",
+  "originals": 808,
+  "copies": 12,
+  "aliases": 5,
+  "public_assets": 19,
+  "coverage_entries": 312,
+  "coverage_segments": [
+    {
+      "name": "javascript-coverage-segment-1.json",
+      "entries": 70
+    },
+    {
+      "name": "javascript-coverage-segment-2.json",
+      "entries": 82
+    },
+    {
+      "name": "javascript-coverage-segment-3.json",
+      "entries": 82
+    },
+    {
+      "name": "javascript-coverage-segment-4.json",
+      "entries": 78
+    }
+  ],
+  "provenance_sha256": "6431d3a89800ff9226a0ac4fea4c588fab4ae8cd8ce34c4c94c2302d9851c408",
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "errors": [],
+  "gpu": {
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "retired": 2499808,
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  }
+}

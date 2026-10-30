@@ -1,0 +1,127 @@
+{
+  "task": "E9-T24",
+  "scope": "Final status publication after actual Daybreak acceptance; runtime identity unchanged; no original cold/performance qualification claimed",
+  "deployedMetadataHead": "6789cbdeeeed070bbe2703530b3a4e099f3b7fa6",
+  "runtimeCodeHead": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e",
+  "url": "https://wasm-vm.pages.dev/",
+  "sourceUnchangedRuntime": {
+    "wasm": "00159a8cb8f880b0dc88412c5a7009e8a74dfa546c47c36dd0d6859125873a87",
+    "stamp": "ac678419d5d27f56488c71940286d32901a55aa750bdf6c4508c9075c5eb3e1e"
+  },
+  "finalAcceptance": {
+    "root": "01a18490-e730-7530-9cf4-b92b59bef28f",
+    "turn": "01a18490-e9f1-70e3-beac-6504e166cb56",
+    "reportSha256": "28cc4f7dd68e68ceb48ffca3a95ffe60433d8ebed000bd9d148ccc81f0e24b53"
+  },
+  "metadataAttestation": {
+    "root": "01a184a8-0ec9-7691-a8ac-f6e433343cf8",
+    "turn": "01a184a8-11a4-7051-b1a2-a247daa2674a",
+    "model": "gpt-daybreak-blue-latest",
+    "status": "completed"
+  },
+  "rawRoot": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-production-metadata-v1",
+  "rawFiles": [
+    {
+      "path": "deploy.log",
+      "bytes": 5230,
+      "sha256": "cbce023a8053a32cd77105031351c8ac0bc8497e3670afcad505498a045792db"
+    },
+    {
+      "path": "report.json",
+      "bytes": 1785,
+      "sha256": "8dfb923f38d7023015b97ba34368055b7face1383c6c9135da481b34205af6a1"
+    },
+    {
+      "path": "staged-manifests/artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "staged-manifests/artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "staged-manifests/artifacts-omarchy-virgl.json",
+      "bytes": 1062,
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff"
+    },
+    {
+      "path": "staged-manifests/artifacts-omarchy.json",
+      "bytes": 1229,
+      "sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf"
+    },
+    {
+      "path": "staged-manifests/artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "path": "visible-status/browser-trace.zip",
+      "bytes": 4314519,
+      "sha256": "c78af3300f0bd28e086c8db0d216bae721e7d522a664deac79ae6fc508cb9c1f"
+    },
+    {
+      "path": "visible-status/report.json",
+      "bytes": 12274,
+      "sha256": "7a50ff16813c3c9607782d8539c59ef23c766a5b32c6f7cce48cbe42d788746a"
+    },
+    {
+      "path": "visible-status/verified-app.png",
+      "bytes": 457871,
+      "sha256": "af2679cd8abaff6cc741217189f6008379a1148c10a8b3f3eabbd8b4217b5940"
+    }
+  ],
+  "stored": [
+    {
+      "path": "audit.md",
+      "bytes": 5544,
+      "sha256": "a1598533dec82a65deac13550e0a26aba2f545fe5124b3557434e76afaf724ce"
+    },
+    {
+      "path": "daybreak-collector.mjs",
+      "bytes": 8209,
+      "sha256": "2c9f836e194f879a755ebc3e08f78af10d9dabdac6d95995176f5f1f7c0d6054"
+    },
+    {
+      "path": "deploy.log",
+      "bytes": 5230,
+      "sha256": "cbce023a8053a32cd77105031351c8ac0bc8497e3670afcad505498a045792db"
+    },
+    {
+      "path": "deployment.json",
+      "bytes": 1785,
+      "sha256": "8dfb923f38d7023015b97ba34368055b7face1383c6c9135da481b34205af6a1"
+    },
+    {
+      "path": "publisher.py",
+      "bytes": 2905,
+      "sha256": "aefb0f5f77e3414ad9e36d894a71ca30b57aef576deb7874622702504d535426"
+    },
+    {
+      "path": "report.md",
+      "bytes": 2264,
+      "sha256": "01e6952fc23d7e395606d42f6c57c3cf242821f69cd67f45a7e2ca7d5b32feb4"
+    },
+    {
+      "path": "routing.json",
+      "bytes": 14728,
+      "sha256": "695362c26b44533a8d9f219af37f0892a53270852e09cddad48d8ac360dfa345"
+    },
+    {
+      "path": "verdict.md",
+      "bytes": 303,
+      "sha256": "cc055aab0c7b55739243bfcebb03568e5cc3eaa9d4d77de227383a64d513d749"
+    },
+    {
+      "path": "visible-status-check.mjs",
+      "bytes": 4570,
+      "sha256": "780a2c9c99d4443367ee37fda732d043589d92666b3eda239e2910599ccabd63"
+    },
+    {
+      "path": "visible-status.json",
+      "bytes": 12274,
+      "sha256": "7a50ff16813c3c9607782d8539c59ef23c766a5b32c6f7cce48cbe42d788746a"
+    }
+  ]
+}

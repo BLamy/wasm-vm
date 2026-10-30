@@ -1,0 +1,849 @@
+---
+id: E0-T29
+epic: 0
+title: Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure
+priority: 0.2
+status: verified
+depends_on: [E0-T28]
+estimate: S
+risk: medium
+capstone: false
+---
+
+## Boundary
+
+Second slice of the site redesign (parent E0-T31). **Source (re-opened 2026-10-30):** the PR 626
+stack (`c396efe1e`) plus the verified E0-T28 foundation (`bfa710ee8`), on branch
+`codex/ui-redesign-workspace`. The old-main delta is re-applied here and must be re-proven; the
+old-main text below still describes the launcher/workspace intent, and the 626 additions follow.
+
+### PR 626 integration (what this source adds to the boundary)
+
+626 ships E9 time-travel and session controls in `web/index.html`, owned by
+`web/session-timeline.js`, `session-timeline-runtime.js`, `session-library.js`, `session-bundles.js`
+and related modules: `#session-timeline` (`[data-timeline=…]`: saved recording select, open,
+refresh, record sample/file example, stop, bundle export/import/file/cancel/delete, scrub range,
+exact transition text (20-digit decimal string), seek/back/forward/play/pause, branch
+create/run/pause/save/discard/live/input/send, keyframe and event selects, replay console, digest,
+status), `#session-library` (`[data-session=…]`: input recording, checkpoint guest, GPU desktop,
+checkpoint/stop/retry/resume/gpu-capture, session/point selects, open/refresh, rename form, storage
+limits, persist/cleanup/delete, status), and thirteen self-check panels (`#event-clock-panel`,
+`#network-capture-panel`, `#witness-pages-panel`, `#gpu-history-reader-panel`,
+`#gpu-journal-stream-panel`, `#owned-http-panel`, `#unrecorded-control-panel`,
+`#session-replay-panel`, `#streamed-replay-panel`, `#session-keyframe-panel`,
+`#session-seek-panel`, `#device-completions-panel`, `#time-entropy-panel`,
+`#input-recording-panel`). This slice:
+
+- moves recordings/time travel and saved sessions into an optional library **Recordings** pane,
+  progressively organized, and the self-checks into an optional **Checks** pane (or the
+  Diagnostics area), both closed at first load — no recording/configuration wall at startup;
+- builds those panes from library controls that operate the native controls (value + real
+  events, presses), so the native controllers keep owning state, actions, disabled/error states,
+  privacy/offline/qualified-GPU restrictions and confirmations; option values, file-input and
+  form-submit semantics and the transition's decimal string are passed through unchanged;
+- hides a native widget only where its working library equivalent exists; runs no expensive
+  check just to restyle it;
+- removes the launcher's leftover blue gradient/system font and the header version wrap, keeps
+  the foundation's warm header with the autoplay notice hidden, and restores the Settings → Sound
+  readout of `#audio-autoplay-badge`;
+- keeps the foundation's Case studies entry and new-tab help from the app;
+- satisfies the carried phone terminal-focus criterion below with an ordinary tap.
+
+No Rust, artifact, schema, recording-format or controller-semantics change.
+
+What the main-based app ships today, and what this slice changes:
+
+- **Launcher** (`#os-launcher` in `web/index.html`, driven by `web/main.js`): four native guest
+  buttons (`[data-os]` Omarchy, Alpine + Node.js, Alpine, BusyBox) with equal weight, a native
+  "Desktop graphics" select above them, and a status line. Replace the visible launcher with a
+  library island: one primary **Start Linux** action that starts BusyBox with no configuration,
+  a one-line explanation, and Alpine + Node.js, Alpine and the Omarchy desktop as secondary
+  choices with honest capability/download notes. Omarchy's graphics choice moves into its own
+  settings. Show real start status, errors and a retry path. Nothing large downloads until a
+  guest is chosen; the existing `?guest=` query contract keeps working for later homepage CTAs.
+- **Workspace** (`#ide-root`, built by `web/ide.js`): an emoji activity bar, a file/container
+  sidebar, an always-visible editor area and display pane above a 280 px terminal, a terminal
+  bar of keyboard/pointer/microphone debug chips, and a blue status bar whose Network item opens
+  a popover of native provider fields. Make the terminal (or the display, when chosen) the main
+  content; open Files, Containers and the editor on demand; move keyboard/pointer capture and
+  counters into an Input sheet and network provider settings into a Settings sheet built from
+  library controls; keep display/terminal choice discoverable with an honest note when no guest
+  frame exists. At 360/390 px secondary panes are closed by default and open as full-size panes
+  with a way back; the terminal keeps full width; ordinary tap targets are at least 44 px,
+  including the shared header Menu and nav.
+
+Engine contract: every runtime id, `data-*` hook, event and test hook that `main.js`, `ide.js`
+and the specs use keeps working. Native controls stay in the DOM as the engine's inputs; library
+controls operate them (value + real `change`/`click`), so persistence keys and credential
+handling are unchanged (one-time secrets are never persisted or put in a URL). xterm, the guest
+canvas and the legacy file/container/editor DOM stay outside the `.wv-ui` isolation guard. Under
+`?testHooks` (`html.e2e-showall`) the legacy activity bar, terminal-bar controls and status bar
+stay visible for the core suite. No change to keyboard/pointer capture, storage, networking,
+CPU/JIT or guest restore semantics. No Rust changes.
+
+## Deterministic acceptance
+
+`bash tools/verify-ui-workspace.sh`. It reruns `tools/verify-ui-foundation.sh`, then drives the
+real UI in Playwright (`web/tests/ui-workspace.spec.js`, `PW_DISABLE_TS_ESM=1`):
+
+- desktop and 360/390 px: the first view has one primary action and no horizontal overflow;
+  pressing **Start Linux** boots the real BusyBox guest and a typed
+  `printf 'ui-%s-%s\n' ready 42` prints `ui-ready-42` in the terminal;
+- secondary guests show honest availability; Omarchy's graphics choice reaches
+  `#desktop-graphics`; nothing heavier than the launcher loads before a choice;
+- Settings sheet: provider-conditional fields appear per provider, values persist through the
+  existing key, secrets are not persisted, focus returns to the trigger; after closing it and
+  after a Terminal → Display → Terminal round trip, keyboard input still reaches the guest;
+- Files/Containers/Editor open and close (side panes on desktop, full panes on phones) and the
+  terminal regains full width; tap targets ≥ 44 px at phone widths;
+- zero browser errors.
+
+Also run once at the frozen head: the in-browser RISC-V suite to its current total with zero
+failures (screenshot of the pips), the affected existing specs, `make web-build` and
+`tools/build-web-dist.sh`. Evidence in `evidence/ui-redesign/workspace/`.
+
+PR 626 additions to the acceptance (same command): `tools/verify-ui-workspace.sh` also runs the
+E0-T28 verifier's promoted `ui-foundation-guest-navigation.spec.js` and
+`ui-workspace-recordings.spec.js` (recordings/time travel, checkpoints, self-checks, Sound/header,
+phone panes, phone Switch tap band and the carried terminal-tap criterion against the real engine).
+
+Carry-forward from the E0-T28 latest-source review: at 390 px, boot a real BusyBox guest,
+write a unique guest-file marker, keyboard-activate **Case studies** in the phone menu, close
+the new page and dismiss the menu. An ordinary tap on the terminal must focus the actual
+xterm textarea, and trusted keyboard input must read the preserved marker. Do not call
+`wvmDemo.focusTerminal()`, `locator.focus()` or another programmatic focus helper to make that
+return path pass. Preserve the same guest/controller/session; this phone-focus criterion is
+required before the combined mobile grade.
+
+## Adversarial verification
+
+Medium risk. Attack: (1) find a runtime id/hook referenced by JS or a spec that the new markup
+lost or detached from its handler; (2) boot, open and close each sheet, switch views, and confirm
+keyboard input still reaches the guest and library overlays never forward keys to it;
+(3) confirm a library control really operates the engine (provider persistence, Tailscale
+login/logout status, graphics choice) rather than local state; (4) at 360 px, operate every
+moved control and measure tap targets; (5) confirm the isolation guard does not touch xterm,
+the canvas or legacy pane DOM. One bounded novel attack of the verifier's choosing.
+
+## Verification log
+
+### 2026-10-30 — fresh foundation verifier — terminal return carried into this slice
+
+On foundation product `9347dd4bc`, real phone Case studies keyboard navigation preserves the
+BusyBox controller, session generation 1, document, IDE and guest file. However, after popup
+close → return → Escape → ordinary `#term` tap, focus stays on Menu and typing emits no serial
+echo. `web/terminal.js` is byte-identical to PR626 (SHA-256
+`fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae`).
+The foundation's focus-only API makes subsequent trusted `cat` return the preserved marker,
+which proves machine survival but does not satisfy ordinary phone interaction.
+
+Receipts: `target/ui-verifier/foundation-626/first-phone-real-guest-nav.{json,zip}` records
+the initial failure; `phone-real-guest-nav.json` records Menu focus after the tap, actual xterm
+focus after the explicit helper, and successful `foundation-survival-626` readback. The
+promoted `web/tests/ui-foundation-guest-navigation.spec.js` isolates navigation survival with
+explicit focus; this slice must add or strengthen the normal tap proof above on the latest
+source. No terminal implementation was changed by the verifier; this is not a final waiver.
+
+> **Historical, old-main source.** The worker/verifier entries below this note, through
+> "r3 — VERDICT: verified", were recorded on `05fa92c82` + the old foundation (`78124cf53` →
+> `f221fb166`), before the PR 626 stack. They and `evidence/ui-redesign/workspace{,-r2,-r3}/` are
+> kept as history (by digest) and do not verify the latest-source integration.
+
+### 2026-10-30 — worker — implemented, submitted for verification
+
+Frozen implementation head: `2b9f97c11` (one commit on the verified foundation `78124cf53`; the
+task-start commit is `a32bb18a5`). Evidence: `evidence/ui-redesign/workspace/` (`HEAD` names the
+head; `SHA256SUMS` covers every file). Changed source (19 files, digests at that head):
+`changed-source-sha256.txt`; full name/status list: `changed-since-foundation.txt`; shipped dist
+digests: `dist-sha256.txt` (`sw.js` version `380123f9787d`).
+
+What changed:
+
+- **Launcher** (`launcher.jsx`): one primary **Start Linux** (BusyBox, no configuration), a
+  one-line explanation, Alpine + Node.js / Alpine / Omarchy as secondary rows with download and
+  GPU notes, Omarchy graphics behind a library **Desktop settings** disclosure (default
+  untouched), real start errors (first line of main.js's message) with **Try again**. It presses
+  main.js's own `[data-os]` buttons and writes `#desktop-graphics`; those natives stay in a hidden
+  `.os-launcher-engine`. `main.js` gains one line: `data-launcher-ready="true"` after it binds the
+  buttons, so a press made during manifest probing is delivered rather than lost.
+- **Workspace** (`workspace.jsx`): guest name/state and boot progress, Terminal/Display
+  Segmented, Files/Containers/Editor toggles (phone: a Tools sheet and full-size panes with
+  **Back**), a Settings sheet with keyboard/pointer/terminal controls and network providers
+  (`network-settings.jsx`, provider-conditional fields bridged to main.js's inputs with real
+  `change` events; secrets are never persisted), and a first-use hint until the first Enter.
+  Layout is data attributes on `#ide-root` read by grid CSS in `index.html`; no engine node moves.
+- **Tool panes** (`projection.jsx`, `tool-panes.jsx`): ide.js's file tree, transfers, container
+  pane, editor tabs/toolbar and container exec controls are re-rendered as library List rows,
+  Buttons, Switches and TextFields that click/write the native nodes; the natives are hidden in
+  the ordinary app and unchanged under `?testHooks`. On BusyBox, Containers shows a short panel
+  (no runtime; restart into Alpine via the `?guest=` contract) and no longer starts ide.js's
+  serial probe. ide.js gains a native **Refresh** for the file tree (calls its `loadTree()`).
+- **Terminal focus**: the guest pointer bridge (`src/input/pointer.js:608`) cancels the
+  pointerdown whose mousedown xterm uses to take focus, so once anything else had focus the
+  terminal could not regain it by click (reproduced on the untouched `?testHooks` layout).
+  `ide.js` now focuses the terminal on pointerdown in its pane; pointer forwarding and the capture
+  policy are unchanged. Also: xterm FitAddon padding fix, legacy palette/theme retone, ≥44 px
+  phone targets including the shared Menu/nav.
+
+Commands at the frozen head:
+
+- `bash tools/build-web-dist.sh` (runs `make web-build`) — exit 0, reproduced the committed
+  `web/dist` exactly (`build-web-dist.log`).
+- `bash tools/verify-ui-workspace.sh` — PASS, exit 0 (`verify-ui-workspace.log`): the full E0-T28
+  foundation acceptance (static checks, deterministic digest `13b23c8c…`, 28 library modules,
+  12/12 Playwright) plus 8/8 workspace cases:
+  first view at 1280/390/360 px (one primary action, nothing heavy fetched, no overflow,
+  phone targets ≥44 px); Start Linux → real BusyBox → `printf 'ui-%s-%s\n' ready 42` prints
+  `ui-ready-42`; hint shown then gone; no visible native button/input/select outside the library
+  in the app panel; Settings provider fields (WebSocket/Tailscale/Headscale/wvrelay/offline)
+  write the native inputs and the existing persistence key, auth key never stored, real
+  Tailscale **Log in** status and **Log out** clearing, focus back to Settings, sheet text never
+  reaching the guest, then `expr 6 \* 7` → `42`; Display ↔ Terminal round trip then
+  `view-42`; Files: create a file in the shell, **Refresh**, open it, edit, library **Save**,
+  guest `cat` shows the edit; BusyBox Containers panel with restart links and zero console
+  bytes written; side pane narrows and restores the terminal width; phone 390/360 Tools →
+  Files pane → **Back** (focused) → command output; Desktop settings disclosure by pointer and
+  keyboard reaching `#desktop-graphics`; a forced start failure shows the error and **Try
+  again** boots for real.
+- Same spec with `--trace on`: 8/8, traces in `traces/*/trace.zip` (`ui-workspace-traced.log`).
+- `node evidence/ui-redesign/workspace/riscv-suite.mjs http://localhost:8233 …` — the in-browser
+  riscv-tests suite through its real **Run tests** button: **127 passed, 0 failed**, zero
+  browser errors (`riscv-suite.json`, `riscv-suite-pips.png`, `riscv-suite-trace.zip`).
+- `npm run test:keyboard && npm run test:pointer && npm run test:keymap` — exit 0
+  (`node-input-tests.log`).
+- Stills at the frozen head: `launcher-desktop.png`, `launcher-phone-390.png`,
+  `busybox-files.png`, `busybox-containers.png`, `phone-390-{shell,tools,files}.png`.
+
+Known limits and failures (not green):
+
+- **`e3-t05f1-docker-bootstrap.spec.js` fails at line 19**: it clicks `#ide-act-docker` with
+  `noAutoBoot` before any guest is selected; `#ide-root` is `display:none` by the launcher rule
+  `#panel-ide:not([data-os-selected="true"]) #ide-root`, present unchanged on base
+  (`05fa92c82:web/index.html:748`) and here (`web/index.html:692`). Case 1 ran to its 360 s
+  timeout, case 2 was interrupted at the same locator, case 3 did not run
+  (`e3-t05f1-docker-bootstrap.log`). A bounded probe of the same URL on base and frozen source
+  gives identical results: button attached, `wvmDemo` present, button not visible, hidden by
+  `div#ide-root` (`compat-probe.json`, `compat-probe-*.png`). No harness or product change was
+  made for it.
+- The retargeted `e4-t32` "default JIT keeps whole-machine BusyBox" case was **not run** at the
+  frozen head. Its first step calls `window.wvmDemo.runBusybox()` right after `load`, while
+  main.js is a dynamic import that defines `wvmDemo` after `load` (measured ~73 ms vs ~43 ms on
+  a base extract); in this session that step failed identically on the base extract (log not
+  retained). Only its Settings-sheet UI path was changed.
+- Pre-existing, unchanged: `e3-t17-runtime-smoke` "offline and relay UI" selects a select
+  inside a closed popover and fails on base; `web-ux.spec.js` targets the removed
+  `#boot-alpine`; ide.js's container-runtime probe echoes `__WVBEGIN…` commands into Alpine
+  terminals; input typed the instant `isGuestReady()` flips is lost on the legacy layout, while
+  here the command runs and only its first characters' echo is overwritten by an early redraw.
+- Alpine containers were exercised only on the local image, which has no `wvrun` (runtime-absent
+  state): runtime/resume/pull/images projected and pressable, but running containers, container
+  logs/exec projections and file drag-and-drop forwarding were not exercised end to end. The
+  Omarchy desktop was not booted. Firefox/Safari and a cold clone were not run.
+- Engine-owned copy shown verbatim inside panes (e.g. "Boot Alpine to enable WVFT") is unchanged.
+
+### 2026-10-30 — fresh verifier — VERDICT: refuted
+
+Reviewed `78124cf53..756ffd773` against frozen product `2b9f97c11`. Predictions were prepared
+from the task/diff before opening the worker evidence. Verifier artifacts are local at
+`target/ui-verifier/workspace-r1/`; no implementation files were edited. Medium risk: the
+acceptance plus one bounded novel attack; no cold clone, native gauntlet or extra guest-runtime
+investigation. Final whole-site design scoring belongs to E0-T30.
+
+- **P1 first view / P2 real start — HELD.** Predicted one primary action, no heavy pre-choice
+  fetch, no overflow at 1280/390/360 px, then a real BusyBox command result. Independently ran
+  `PLAYWRIGHT_PORT=8172 bash tools/verify-ui-workspace.sh`: foundation **12/12**, workspace
+  **8/8**, exit 0 (`acceptance.log:481-483,1126-1128`). The normal start, forced failure/retry,
+  real terminal input and first-use hint are exercised; retain these outcomes on unchanged code.
+- **P4 library controls / P5 isolation / P6 settings / P7 focus / P8 file save / P9 basic phone
+  panes / P10 graphics choice — HELD for the exercised paths.** The same run proves native
+  provider values/events/persistence, secret omission, actual login/logout status, overlay key
+  isolation and focus return, Terminal/Display round trip, real guest file edit/Save/readback,
+  library file-tree/editor actions, BusyBox no-probe Containers, full-width phone Back flow,
+  measured ordinary targets >=44 px, no horizontal overflow, and the advanced graphics
+  disclosure writing `#desktop-graphics`. See `acceptance.log:792,872,952,1026,1122` and the
+  corresponding eight worker traces. Native xterm/canvas/editor hosts remain outside `.wv-ui`;
+  only projection hosts are inserted. Foundation HELD boundaries carry forward; its affected
+  nav behavior was also rerun. This does not prove every unexecuted projection handler below.
+- **P9-N same file after Back — FAILED, reproduced twice at the intended state.** Prediction:
+  on a phone, edit/Save a real guest file, Back to terminal without closing its tab, reopen
+  Files and tap that same file; its editor becomes visible with the saved text in the same
+  guest. Observed at `same-file-phone.json:40-50`: `wsPane="files"`, `wsEditor=null`, one tab,
+  textarea hidden, saved value `saved-from-phone-42\n`, BusyBox generation 1 unchanged. The
+  screenshot `same-file-phone.png` shows Files still occupying the phone. The promoted test
+  independently reaches the same final assertion and fails within 5 seconds:
+  `web/tests/ui-workspace.spec.js:261-307`; `promoted.log`; trace
+  `promoted/ui-workspace-phone-reopeni-9bd6e-ts-editor-in-the-same-guest-chromium/trace.zip`,
+  `0-trace.trace` call `call@97` tap (line 435), `call@99` visibility failure (lines 453/483).
+  Cause is the changed `workspace.jsx:209-217` responding only to an *increase* in tab count,
+  while unchanged `ide.js:1761` activates an existing tab without increasing it. **Demand:**
+  opening an existing file must reveal its editor as opening a new file does; keep the saved
+  contents/session and the promoted test. Earlier setup-only failures and trailing serial
+  framing whitespace are not findings; the final recording reaches the predicted state.
+- **P3 honest guest capability copy — NEEDS EVIDENCE.** New `launcher.jsx:16,21` promises an
+  Alpine container runtime and `tool-panes.jsx:89-112` promises Alpine includes `wvrun` and
+  offers a restart for containers. Yet this submission expressly reports the local Alpine
+  artifact has no `wvrun` (worker log above, lines 169-172); its committed captures/acceptance
+  demonstrate BusyBox, not a usable Alpine container path. **Demand:** make the reachable copy
+  honest for the artifact actually served, or record that exact artifact satisfying the
+  promise. This requests UI/copy accuracy, not an unrelated image/runtime repair.
+- **P4/P5 projection and moved-control sufficiency — NEEDS EVIDENCE.** Files Refresh/open,
+  tab rendering/close and Save are exercised. The worker explicitly leaves file drop and
+  running-container/log/exec projections unexercised. Behavioral hunks still needing a bounded
+  contract recording are `projection.jsx:113-143` (native input + Enter/form), `161-177`
+  (original DataTransfer forwarding), `239-255` (checkbox/drop adapters), and
+  `tool-panes.jsx:163-197` (container portal lifecycle). The acceptance also displays but does
+  not operate the moved Input actions (`workspace.jsx:124-152`), and does not exercise the new
+  GPU recovery mirror (`launcher.jsx:121-145`). **Demand:** one focused browser adapter proof
+  asserting the native values/events, disabled parity and portal cleanup for these branches,
+  plus the moved Input actions/recovery links; distinguish adapter proof from guest capability
+  proof. A full Omarchy boot or a working container image is not required for this UI boundary.
+- **P11 evidence identity/build/core — HELD, with metadata reconciliation.** All **42** evidence
+  digest entries and all **19** frozen product-source entries match (`manifest-check.json`).
+  Seven of eight recorded dist digests match submission bytes; the exception is `sw.js`,
+  because the submission hook also regenerated `tasks.json`. Independently reconstructed its
+  shell hash with the unstamped placeholder: expected = actual **`b607fba8d425`**
+  (`sw-audit.json`), rather than the earlier recorded `380123f9787d`. The UI source/dist build
+  checks pass. Frozen core evidence is **127 passed / 0 failed / zero errors**
+  (`evidence/ui-redesign/workspace/riscv-suite.json:2-7`, screenshot/trace); keyboard 47,
+  pointer 13 and keymap 5 pass in `node-input-tests.log`.
+- **Touched compatibility harness — NEEDS EVIDENCE, bounded to the changed sequence.**
+  `web/tests/e4-t32-whole-worker.spec.js:174-209` retargets Settings/login/rejection/logout but
+  was not run at the frozen head. Normal login/logout is acceptance-proven; its injected
+  rejection and persisted-state clearing sequence is not. Record that changed sequence after
+  bounded ordinary readiness, without rerunning unrelated performance/guest gauntlets.
+  The old Docker bootstrap result is accurately disclosed: first timeout, second interrupted,
+  third not run. The base/current DOM probe records the same hidden `#ide-root` ancestor;
+  that pre-existing helper failure and already-hidden legacy tests/run/bench controls are
+  **waived as B regressions**, not counted green or raised as new product requirements.
+
+**Changed-hunk coverage:** `bridge.js`, `network-settings.jsx`, workspace/layout/mounting,
+launcher start/retry/disclosure, native Refresh/focus additions, and normal file/editor
+projections are exercised as described above; same-tab activation is refuted; the named
+unexecuted event adapters/recovery/Input actions and retargeted harness need the focused proof.
+`styles.css`, index/ide palette and `terminal.js` color hunks are declarative visual changes,
+checked by direct captures/layout/target assertions (no new engine-semantic claim).
+`README.md`, task/catalog metadata, HTML rev stamps and generated bundle hunks are **waived
+as independent runtime paths**: documentation or generated output covered by the source,
+build/digest and service-worker checks. Package/dependency/build/router boundaries are unchanged
+from verified E0-T28; retain their HELD outcomes. No hunk was classified dead.
+
+**SUITE:** promoted the real-tap same-file phone regression above into the permanent workspace
+acceptance, with explicit boot/command deadlines and a 5 s final UI deadline. It fails at the
+claimed pane boundary; no assertion was weakened. All original acceptance cases remain green.
+Product correctness and coverage must hold before marking this task verified.
+
+### 2026-10-30 — worker — r2: same-file reopen fixed, copy and adapter proof gaps closed
+
+Frozen implementation head: `9da6e392f` (one commit on the verifier's `027dc638b`). Evidence:
+`evidence/ui-redesign/workspace-r2/` (`HEAD`, `SHA256SUMS`). Changes since r1:
+`changed-since-r1.txt`; product-source digests since the verified foundation (22 files):
+`changed-source-sha256.txt`; shipped dist digests at the implementation head:
+`dist-sha256-at-impl-head.txt` (`sw.js` version there `6f10969070d4`; the submission commit's
+hook regenerates `tasks.json` and so re-stamps `sw.js` once more, as in r1 — read the final
+version from the submission head).
+
+Fixes:
+
+- **P9-N same file after Back.** `projection.jsx` now dispatches an explicit open intent when a
+  person presses a file row or a container row; `workspace.jsx` responds by showing the editor
+  (phone: the editor pane) whether ide.js creates a tab or re-activates the existing one. The
+  tab-count rule remains only for tabs opened by other paths. The verifier's promoted test
+  (`ui-workspace.spec.js:264`, real taps, unchanged) passes, with one tab, the saved contents and
+  the same guest session.
+- **P3 honest copy.** The launcher no longer promises a container runtime for either Alpine
+  guest. The BusyBox Containers panel says BusyBox cannot run containers, that containers need an
+  Alpine image including `wvrun`, that not every host publishes one, and that the pane checks the
+  running image after a restart. File-transfer status now reads "Start an Alpine guest to copy
+  files between this computer and the guest." (`file-transfer.js`, `index.html`); the ready text
+  keeps "WVFT controller attached" in parentheses for the existing `e4-t32-file-transfer-async`
+  assertion. Names and requirements wrap (no truncation), checked in `busybox-containers.png`.
+- **Clear did nothing (pre-existing).** ide.js's Clear called `window.__term.clear()`, which
+  main.js's terminal wrapper never had; it now calls the wrapper's xterm `term.clear()`. Found
+  by the new Settings adapter proof below.
+
+Adapter proof, `web/tests/ui-workspace-contracts.spec.js` (6 cases, in the real app with a real
+BusyBox guest; fixtures are copies of the engine's own markup/state with RECORDING handlers and
+are labeled as such — they prove forwarding, not a container runtime or GPU recovery):
+
+1. Container panel adapters (fixture: ide.js `openContainer` markup, `ide.js:2759-2785`): host
+   insertion into the native panel with natives hidden and logs left native; pointer and keyboard
+   Button presses reach native handlers; Exit Exec disabled parity both ways; Follow Switch
+   toggles the native checkbox and fires its `change`; TextField writes the native input with
+   `input` events, Enter submits the native form carrying the native value; an engine-side clear
+   of the input shows in the library field; removing the panel removes both hosts.
+2. File drop (no fixture): a DataTransfer dropped on the library zone reaches the real
+   `#file-transfer-drop` with the same file (`drop-note.txt:18`), `dragging` class set/cleared by
+   file-transfer.js, and file-transfer.js queues the file in its own list, which the projection
+   shows.
+3. Settings Input actions (no fixture): capture Switch flips `data-keyboard-capture` off/on via
+   `#ide-keyboard-toggle`; Release increments main.js's `releaseCount` with reason
+   `panic-button`; Pointer mode disabled parity with the native toggle; Clear empties the xterm
+   scrollback; typing afterwards still runs a command.
+4. GPU recovery mirror (fixture: the `#gpu-status`/`#gpu-retry`/`#gpu-cold-retry` state main.js
+   writes): status and both links appear with the native hrefs, and disappear when cleared.
+5. Keyboard reopen: Enter on a file row opens it; after hiding the editor, Enter on the same
+   (still open) row shows it again with one tab.
+6. The retargeted `e4-t32` Settings sequence (`e4-t32-whole-worker.spec.js:174-209`) after a
+   bounded ordinary start: Tailscale **Log in** rejection text, injected worker rejection shown
+   in the sheet, guest still up, **Log out and revoke** clears persisted state and the one-time
+   key, ≥3 worker RPCs. Run here instead of that spec's racing first step and perf gauntlet.
+
+Commands at `9da6e392f`:
+
+- `bash tools/build-web-dist.sh` (runs `make web-build`) — exit 0, reproduced the committed
+  `web/dist` exactly (`build-web-dist.log`).
+- `bash tools/verify-ui-workspace.sh` — PASS, exit 0 (`verify-ui-workspace.log`): foundation
+  12/12 (digest `ba028b29…`), then 15/15: the 9 workspace cases (including the promoted reopen
+  case and new copy assertions) and the 6 contract cases.
+- Same two specs with `--trace on`: 15/15, one trace per case in `traces/` (`traced-run.log`).
+- Stills: `launcher-desktop.png`, `launcher-phone-390.png`, `busybox-files.png`,
+  `busybox-containers.png` (zero browser errors, `busybox-panes.log`).
+
+Carried HELD from r1 without rerun (boundaries unchanged since `2b9f97c11`: `main.js`,
+`src/input/*`, `terminal.js`, wasm/pkg and the riscv-tests path are untouched; ide.js changes
+are the Clear handler only; the rest is UI bundle, copy and CSS): in-browser riscv-tests
+127 passed / 0 failed / zero errors; keyboard 47, pointer 13, keymap unit tests; the verifier's
+HELD P1, P2, P4–P8, P10 and P11 outcomes for unchanged paths.
+
+Still not green / not claimed: `e3-t05f1-docker-bootstrap.spec.js` fails at line 19 before any
+guest is selected (pre-existing hidden `#ide-root`, bounded base/current probe in
+`../workspace/compat-probe.json`; waived as a B regression by the verifier); its long cases were
+not rerun. The full `e4-t32-whole-worker.spec.js` was not rerun (only its changed sequence, case
+6 above). Running containers, container logs/exec against a real runtime, and Omarchy remain
+unexercised end to end; cold clone and Firefox/Safari not run.
+
+### 2026-10-30 — fresh verifier — r2 — VERDICT: refuted
+
+Incremental review of frozen product `9da6e392f`, submission `9550c3928`, against `2b9f97c11`
+and the r1 verdict. Predictions were prepared from the repair diff before opening r2 evidence.
+Local verifier recordings/logs: `target/ui-verifier/workspace-r2/`. The prior bounded novel
+attack is retained; no additional attack, full old suite, runtime/image repair or cold clone.
+
+- **P9-N same-file reopening — HELD.** Predicted the saved editor becomes visible after phone
+  Back → Files → tapping the existing file, with one tab and the same guest. The unchanged
+  promoted regression now passes independently (`incremental.log:560,564`). Desktop Enter
+  reopening also passes (`incremental.log:400`). Carry these results forward unchanged.
+- **P3 capability/copy repair — HELD.** `launcher.jsx:16,21` removes the unconditional container
+  runtime promise; `tool-panes.jsx:89-112` explains the runtime requirement and host-dependent
+  availability before a deliberate restart. Inspected r2 `launcher-phone-390.png` and
+  `busybox-containers.png`: names and notes wrap visibly. This does not claim a working local
+  Alpine container runtime. File-transfer idle copy is plain, and the real drop-path contract
+  checks that it appears.
+- **P4/P5 adapter proof / moved actions / changed Settings sequence — HELD except the specific
+  disabled-state failure below.** Independently ran the six submitted contract cases plus the
+  phone regression with Playwright and `--trace on`: **7/7**, exit 0 (`incremental.log:86-564`).
+  This closes the r1 proof gaps for native button presses/disabled parity, checkbox change,
+  input value/input event/Enter submission/engine-side clear, original file drop into the real
+  transfer handler/list, portal removal, capture off/on, Release, pointer disabled parity,
+  actual xterm Clear followed by a usable guest, GPU recovery DOM/link reflection, and the
+  retargeted injected rejection/logout/persisted-state clearing. Container/GPU fixtures are
+  clearly labeled recording handlers and prove the UI adapter, not guest runtime success.
+- **P4/P5 native checkbox disabled parity — FAILED, rechecked once.** Prepared prediction:
+  when ide.js disables Follow during log-stream start/stop (`web/ide.js:1931`), its projected
+  Switch must also become disabled. Extended the existing recording-handler fixture to set
+  native `Follow.disabled=true`, assert that native state, and assert the library state with
+  a **5 s** deadline. The native assertion passes; the library assertion receives **enabled**
+  twice (`follow-disabled.log`, `follow-disabled-recheck.log`; promoted
+  `web/tests/ui-workspace-contracts.spec.js:117-123`). The recheck trace is
+  `follow-disabled-recheck/ui-workspace-contracts-con-8c774-re-ide-js-2759-2785-markup--chromium/trace.zip`;
+  `0-trace.trace` native `call@65` passes at lines 278/283; library `call@67` fails at lines
+  285/325 (also extracted in `follow-disabled-trace-points.json`).
+  `projection.jsx` reads `child.disabled` for the checkbox but the Switch at line 249 omits
+  `isDisabled`, leaving an enabled-looking control whose native click is suppressed.
+  **Demand:** propagate native checkbox disabled state to the library Switch; retain this
+  regression and prove disable/re-enable parity. No container runtime change is requested.
+- **P11 evidence identity / carried boundary — HELD with declared metadata differences.** All
+  **32** r2 evidence digests match. **21** source entries match; the sole source exception is
+  generated `web/tasks.json`. Of ten implementation-head dist digests, eight match; only
+  `tasks.json` and its dependent `sw.js` stamp changed in submission. Independently reconstructed
+  the final SW shell hash: expected = actual **`a3fe56bbfa22`** (`manifest-check.json`). All
+  **42** r1 evidence digests still match (`carried-digests.json`), and the core/input/pkg/main/
+  terminal/riscv-test boundary diff is empty. Carry unchanged foundation, P1/P2/P4-P8/P10/P11,
+  **127/0** core and keyboard 47/pointer 13/keymap 5 HELD evidence. Old Docker and full e4
+  limitations remain accurately disclosed and are not recounted as successes or new defects.
+
+**Changed-hunk coverage:** file-open intent/workspace response and native Clear fallback are
+exercised by the independent cases; the container-open intent uses the same tested dispatch/
+listener path (the unused `kind` detail is declarative metadata). Copy hunks are directly
+inspected; the file-transfer idle text is exercised by its drop proof, while ready wording is
+declarative text preserving the existing controller marker. New adapter test fixtures are
+explicit boundary fixtures, not runtime mocks reported as guest success. Acceptance wiring is
+exercised by the worker's recorded 15/15 run. Rev stamps, generated bundles/catalog and the SW
+are waived as independent behavior paths after source/digest/build reconciliation. The only
+remaining refutation is native-checkbox disabled parity; no unrelated HELD result is reopened.
+
+**SUITE:** promoted the eight-line disabled/re-enabled Follow check inside the permanent
+container-adapter contract. It fails precisely after the native-disabled assertion passes.
+Policy check must precede queue generation; task returns to `in-progress` for this narrow fix.
+
+### 2026-10-30 — worker — r3: native checkbox disabled parity
+
+Frozen implementation head: `06c7aff0f` (one commit on the verifier's `f04ef9c71`). Evidence:
+`evidence/ui-redesign/workspace-r3/` (`HEAD`, `SHA256SUMS`; only the changed adapter path is
+recorded). Changes since the r2 verdict: `changed-since-r2-verdict.txt`; changed source digests:
+`changed-source-sha256.txt`; dist digests at the implementation head:
+`dist-sha256-at-impl-head.txt` (`sw.js` `35cb1b0cc74c` there; the submission hook re-stamps it
+once more after regenerating `tasks.json`).
+
+Fix. The demand was to propagate the native checkbox's disabled state to the library Switch.
+`isDisabled` alone cannot do it: `@brett_lamy/ui`'s `Switch` reads only
+`checked`/`onChange`/`className`/`style` and its aria labels, forwarding neither `isDisabled` nor
+a ref to react-aria (`node_modules/@brett_lamy/ui/dist/components/switch.js`). The projection's
+new `NativeLinkedSwitch` (`projection.jsx`) keeps the library Switch and, after every render,
+sets `disabled` on that Switch's own `<input role="switch">` from the native checkbox, so the
+browser blocks activation and assistive tech reads it as disabled; changes are ignored while the
+native checkbox is disabled, and a `data-disabled` style dims it. Checked state and change
+forwarding are unchanged (native `click()` → ide.js's own `change` handling).
+
+Proof at `06c7aff0f`:
+
+- The verifier's promoted assertions (`ui-workspace-contracts.spec.js:117-123`, unchanged): the
+  projected Follow Switch becomes disabled with the native checkbox and enabled again after it.
+- New case (`ui-workspace-contracts.spec.js:145`, labeled fixture of ide.js's Follow checkbox
+  with a recording `change` handler): a real mouse press on the disabled switch leaves it and the
+  native checkbox unchecked with no `change` recorded; after re-enabling, a press checks both and
+  records exactly `[true]`.
+- Sabotage (`sabotage.txt`): without the mirroring line, the promoted case fails at line 121;
+  restoring it rebuilds the identical bundle.
+- `bash tools/build-web-dist.sh` (runs `make web-build`) — exit 0, reproduced the committed
+  `web/dist` (0 changes; `build-web-dist.log`).
+- `bash tools/verify-ui-workspace.sh` — PASS, exit 0 (`verify-ui-workspace.log`): foundation
+  12/12 (digest `26409e94…`), then 16/16 (9 workspace + 7 contract cases).
+- Traced run of the two Switch cases only: 2/2, traces in `traces/`
+  (`traced-switch-cases.log`). The other cases' traces are not duplicated; they are unchanged
+  in r2 evidence.
+
+Carried HELD without rerun (the engine boundary `main.js`, `ide.js`, `src/`, `terminal.js`,
+`file-transfer.js`, pkg and crates is unchanged since `9da6e392f`): the verifier's r2 HELD
+results (same-file phone reopen, copy, the other six contract cases, evidence identity), the r1
+HELD results for unchanged paths, in-browser riscv-tests 127 passed / 0 failed / zero errors,
+keyboard 47 / pointer 13 / keymap 5 unit tests, and foundation determinism.
+
+Compatibility limits carried, not green: `e3-t05f1-docker-bootstrap.spec.js` still fails at line
+19 before any guest is selected (pre-existing hidden `#ide-root`; bounded base/current probe in
+`../workspace/compat-probe.json`; waived by the verifier as a B regression); the full
+`e4-t32-whole-worker.spec.js` was not rerun (only its retargeted Settings sequence, contract
+case 7); running containers/logs/exec against a real runtime, Omarchy, cold clone and
+Firefox/Safari remain unexercised.
+
+### 2026-10-30 — fresh verifier — r3 — VERDICT: verified
+
+Frozen product `06c7aff0f`, submission `9a97ec3e2`. This is the incremental review of the
+remaining disabled-Switch boundary; all unchanged r1/r2 HELD results remain carried. Predictions
+were prepared from the adapter/CSS diff and the installed library source before testing. Local
+recordings and identity audit: `target/ui-verifier/workspace-r3/`.
+
+- **P4/P5 disabled/re-enabled parity — HELD.** Confirmed `@brett_lamy/ui` 5.10.1 Switch forwards
+  neither `isDisabled` nor a ref (`dist/components/switch.js:7-16`, its declaration lists no
+  disabled prop). Judged the adapter's observable behavior. Independently ran the promoted
+  container contract and the new physical-press case with scoped `PW_DISABLE_TS_ESM=1`, port
+  8176, and `--trace on`: **2/2**, exit 0 (`contract.log`, traces in `contract/`). Native and
+  rendered checkbox disabled state now agree; re-enabling restores a working actual native
+  change event. The previously failing assertion is unchanged.
+- **Touched accessibility/appearance/activation — HELD.** The independent `switch-state.mjs`
+  probe records `switch-state.json:24-42`: both disabled flags true, accessibility role
+  `switch`, name `Follow`, `disabled:true`, opacity **0.45**, cursor **not-allowed**. The disabled
+  input cannot take focus; a physical mouse press forwards no change and preserves selection.
+  Dimensions remain 51 × 31 px in this desktop probe. Re-enabling restores opacity 1 and the
+  pointer cursor (`:44-61`); Space then toggles the real native checkbox and the recorded change
+  log becomes `[true,false]` (`:63-82`). Zero browser errors. Screenshot
+  `switch-disabled.png` was inspected; the trace is `switch-state.zip`. These are adapter
+  fixtures, not a claim of a working guest container runtime.
+- **Evidence identity/build packaging — HELD.** All **13** r3 evidence digests and all **5**
+  changed-source digests match. Four implementation-head dist digests match; the only two
+  exceptions are declared generated `tasks.json` and its dependent SW stamp. Submission changes
+  under `web/` are exactly source/dist catalogs and `sw.js`. Independently reconstructed the
+  final SW shell hash: expected = actual **`b54d18f5f83d`**, superseding implementation stamp
+  `35cb1b0cc74c` (`identity-audit.json`). The independently tested JS/CSS and adapter source
+  bytes are unchanged at submission; source UI bytes after route swap equal shipped UI bytes.
+- **Incremental carry — HELD.** All **42** r1 and **32** r2 evidence digests still match, and
+  the engine boundary diff since r2 is empty. Retain same-file phone/keyboard reopen, truthful
+  conditional copy, native Settings/input/drop/portal contracts, core **127/0**, keyboard
+  47/pointer 13/keymap 5, and foundation determinism. The worker's final gate records foundation
+  **12/12** and workspace/contracts **16/16** (`evidence/ui-redesign/workspace-r3/verify-ui-workspace.log:461,1741`).
+  The known old Docker harness limit and absent real container/Omarchy E2E proof remain
+  accurately disclosed; no broader suite or new attack was required.
+
+**COVERAGE:** the new `NativeLinkedSwitch` render/layout effect, enabled forwarding, native
+disabled blocking, re-enable path and two CSS declarations are exercised by the focused cases
+and state probe. The disabled `onChange` guard is redundant defense behind the proven native
+input blocking and is waived as an independent user path.
+Imports, generated bundle/rev/catalog changes are waived as separate runtime paths after
+source/digest/packaging reconciliation. No changed behavioral hunk remains unproven or dead.
+**SUITE:** retain the permanent promoted disable/re-enable assertion and physical-press case;
+the worker also records the expected failure when the mirroring line is removed. No further
+test promotion is needed for this repair. Status advances to `verified`; the overall site
+design grade remains for the public-page slice.
+
+### 2026-10-30 — worker — PR 626 integration, implemented (submitted for a fresh verifier)
+
+**Frozen product head: `505d29064818d5726136cc64f7fe4f178c8c1647`** (recorded there). Trees:
+`web/ui/src` `d8a6d3fe…`, `web/dist` `02594e92…`. Base: verified foundation `bfa710ee8` above
+PR 626 `c396efe1e`. An earlier complete submission at `fe98069ad` (product `7a8b51a1a`) is kept
+as round r1 in `evidence/ui-redesign/workspace-626/`; a read-only critic then measured an inert
+phone Switch band there (`target/ui-verifier/workspace-626-orient/switch-hit-area.json`, sha256
+`246a865e…`), repaired in `505d29064` (round r2, below).
+
+**Commits.** `50d88aeba` activation (task + queue only). `d60166e96` product: the coordinator's
+3-way apply of the old-main workspace delta with its 3 conflicts resolved (`web/index.html`: 626's
+`session-library.css`, E9 panels and foundation comment kept, workspace host added; `ui-kit.html`
+stamp; this task file), plus the 626 work below. `7a8b51a1a` product: `?testHooks` shows the native
+launcher engine again (the promoted test taps it). `fe98069ad` harness only. `505d29064` product
++ test: the phone Switch tap band and its regression (r2).
+
+**What changed for 626** (no Rust, artifact, schema, recording-format, controller or worker change;
+`session-timeline.js`, `session-library.js`, `session-bundles.js`, `session-timeline-runtime.js`
+untouched):
+- `web/ui/src/components/recordings.jsx` (new): `RecordingsPanel` (Replay | Checkpoints) and
+  `ChecksPanel`. Library Button/Picker/TextField/Slider/Switch bound to the native
+  `[data-timeline]`/`[data-session]` controls and the 14 probe panels: buttons `.click()` the native
+  node (disabled mirrored, label read live), Pickers set the native `value` and dispatch
+  input+change (empty value mapped, `isDisabled` mirrored), fields write the native string and
+  dispatch input, Enter re-dispatches `keydown` to the native field (timeline target/branch input)
+  or `form.requestSubmit()` (rename, so `required` applies), the Slider dispatches input while
+  moving and change on release, `time-entropy` uses the verified `NativeLinkedSwitch`. The
+  timeline's `[data-timeline-gpu-frame]` node is moved into the open pane and restored after.
+- `workspace.jsx`/`tool-panes.jsx`: Recordings toolbar button and side pane; Self-checks from
+  Settings → More tools (desktop) and the phone Tools list; Sound row (saved patch) restored.
+- `launcher.jsx`: lazily mounted "Recordings and time travel" and "Self-checks" sections (closed);
+  Omarchy copy matched to 626's prepared-checkpoint restore.
+- `web/index.html`: native E9 panels hidden only when `html[data-wv-ui~="workspace"]` and not
+  `?testHooks`; 440 px side pane for Recordings/Self-checks on desktop; header one row (version
+  hidden below 1100 px); stale badge phone rule removed; `?testHooks` shows the native launcher.
+- `primitives.jsx` (`Picker isDisabled`), `projection.jsx` (export `NativeLinkedSwitch`),
+  `styles.css` (`.wv-rec*`; r2: in the phone/coarse-pointer block,
+  `.wv-ui label[data-slot="switch"]::after { content: ""; position: absolute; inset: -7px 0; }` —
+  the library Switch's own label gains an invisible 7 px band above and below, so its tap target is
+  45 px tall while the 51 x 31 track is unchanged).
+
+**r2 commands at `505d29064`** (dev server `tools/serve-dev.sh 8198`; Playwright on 8128):
+- `UI_WORKSPACE_PW_ARGS="--trace on --output ../target/e0t29-626/pw-r2" bash tools/verify-ui-workspace.sh`
+  → **PASS**: foundation acceptance (pins, deterministic digest `c0cc1ab8…`, tree-shaking, assets,
+  no glows, source/dist revs, swapped dist, stamped SW, **15/15**), workspace hosts in source and
+  dist, then **28/28** browser tests with traces: promoted real-guest navigation 1, workspace 16
+  (unchanged specs), recordings 11 (r1's 9 + the two phone Switch cases). Log
+  `evidence/ui-redesign/workspace-626-r2/verify-ui-workspace.log`; 28 `trace.zip` under
+  `target/e0t29-626/pw-r2` (r1's `target/e0t29-626/pw` untouched), hashed in r2 `target-SHA256SUMS`.
+- `node evidence/ui-redesign/workspace-626-r2/switch-band.mjs` → `switch-band.json` and phone
+  390/360 Settings screenshots: `::after` absolute, top/bottom −7px; real taps at 6 px above,
+  centre and 6 px below each toggle the native capture once (at 390 the critic's points y 422.5 and
+  465.5 now toggle); 12 px above is not the label and does nothing.
+- `node evidence/ui-redesign/workspace-626-r2/capture.mjs` → the r1 screenshot set re-taken at
+  this head (desktop 1440/1280, phone 390/360, Case studies return), no errors, overflow 0,
+  carried read-back `shot-626`, focus on `xterm-helper-textarea`.
+- Sabotage before freezing: with the `::after` rule removed, "phone 390: Settings switches …"
+  fails at the band hit assertion (`target/e0t29-626/switch-band-sabotage.log`); restored, the
+  rebuilt `ui.css` rev is the same `e4c1be8f48e6`.
+
+**Carried from r1 (`fe98069ad`, unchanged code boundary — r2 changes only one CSS rule inside the
+phone/coarse-pointer block and one spec file):** in-browser RISC-V suite **127 passed, 0 failed**
+(`workspace-626/riscv-suite.json`); `tests/e4-t32-whole-worker.spec.js` 8 passed / 1 failed,
+identical to the untouched PR 626 tree (`workspace-626/e4-t32-baseline-c396efe1e.log`; "default
+JIT keeps … responsive" reads `wvmDemo` right after `goto`, a baseline race; its changed Tailscale
+hunk is after that line and the same Settings path passes in `ui-workspace-contracts.spec.js`);
+`quiet-window-probe` result (below).
+
+**Phone Switch regression (r2, `ui-workspace-recordings.spec.js`, 390 and 360).** Start Linux by
+tap, Tools → Settings → "Send keys to the guest": the label measures 51 x 31; `elementFromPoint`
+6 px above and below lands in the label; a real `touchscreen.tap` there changes
+`html[data-keyboard-capture]` and it is still changed 300 ms later (exactly one toggle); 12 px
+above is not the label and a tap there changes nothing; Tab reaches the switch input and Space
+toggles once, with the input's checked state matching. Then Recordings → Checkpoints: the
+engine-disabled "Include time and random inputs" native checkbox and its library input are both
+`disabled`; taps above, at the centre of and below its label leave the native checkbox unchanged.
+The spec's locator actions default to 10 s (a selector that cannot match now fails fast; the
+coordinator's interrupted self-check had waited on a nested `has` selector, replaced by the
+input's `ancestor::label[1]`).
+
+**Carried phone criterion (E0-T28 review).** `ui-workspace-recordings.spec.js` "phone 390": Start
+Linux by tap, ordinary `#term` tap, trusted keys write `/tmp/ui-tap-626.txt`, Menu → Tab to Case
+studies → Enter opens a `noopener` popup, close, Escape (focus on Menu), **ordinary `#term` tap
+focuses `textarea.xterm-helper-textarea`** and trusted `cat` reads `tap-kept-626`; same URL,
+session generation, controller and `#ide-root`; no focus helper, no injected input. The fix is the
+old delta's `ide.js` `pointerdown` → xterm focus on `#ide-term-pane`. Sabotage: renaming that
+listener's event made the test fail exactly at the focus assertion after return (run before
+freezing; restored, `git diff` empty).
+
+**Promoted-test failures at `7a8b51a1a` and the harness repair.** (1) The test tapped the native
+BusyBox button before main.js bound it (`data-launcher-ready` absent; no boot requests) — it now
+waits for that attribute, as the library launcher already does. (2) Once, the first typed line
+never appeared (receipts copied to `target/e0t29-626/failed-7a8b51a1a-receipts/`). 626's `ide.js`
+starts a quiet fenced `ls -la /root` RPC on the first guest-ready (`main.js` stops writing guest
+output to xterm while it runs). `quiet-window-probe.mjs` typed into that window three times (×2
+speeds): the hidden command ran and its file read back, and its output still appeared; it did
+**not** reproduce lost output, so that RPC is not claimed as the cause. The harness now types only
+after the startup listing has rendered (its spinner placeholder is gone), and 4 sequential repeats
+passed before the recorded run. No product or runtime change for this.
+
+**Coverage of changed hunks.** r2 hunks: the `::after` rule (executed at 390/360 in the recorded
+run and in `switch-band.mjs`; on desktop fine pointers it does not apply) and the spec changes
+(executed). Executed in the recorded run: launcher first view and lazy
+Recordings section (`Refresh history` click reaches the native node once; fresh-profile import);
+Recordings Replay: record sample, Picker select, Open, transition field + Enter (`transition 123`),
+the 20-digit `18446744073709551616` string reaching the native field unchanged and refused, Step
+forward, keyframe Picker + Go, Slider keyboard (input/change), console text, GPU-frame node
+adopted and restored (empty frame — no GPU history here), Continue from here → Run/Serial input
+visible → Discard, Export (local download, "No data was uploaded"), Import through the native file
+input in a fresh profile ("Imported manifest"); Checkpoints: disabled parity, `time-entropy` Switch
+mirroring, storage limit string + Save, New checkpoint guest → Start → Checkpoint → rename by Enter
+(`requestSubmit`); Self-checks: all 14 panels with their own button, `event-clock` run to a result
+badge; phone 360 Tools → Recordings → Back (no element past the viewport); Sound row and header at
+900/1024 px. Same component, not separately asserted: Play/Pause, Step back, event Picker/Go,
+bundle cancel/delete, branch run/pause/save/live/send (NButton/NField paths executed above); the
+launcher's Self-checks section (ChecksPanel executed in the workspace); limit-bytes, persist,
+cleanup. Waived: GPU replay canvas content (needs an admitted GPU history; adoption itself
+executed); the other 13 self-checks are not run (several take minutes or use storage; their
+buttons are the same NButton bound to each native button).
+
+**Evidence digests.** r2: `evidence/ui-redesign/workspace-626-r2/SHA256SUMS` (`451415a0…`)
+over every committed r2 file; `target-SHA256SUMS` (`9c419f5f…`) over the 28 r2 traces and the
+sabotage log. r1: `evidence/ui-redesign/workspace-626/SHA256SUMS` (`75a972a8…`) and
+`target-SHA256SUMS` (`e1514028…`: r1's 26 traces, RISC-V and probe traces, the 7a8b51a1a failure
+receipts, superseded logs). Historical old-main evidence: committed except 20 files over 1 MiB,
+listed by sha256/blob in `workspace-626/historical-large-files.txt` (blobs at `f221fb166`, backup
+branch `codex/ui-preliminary-workspace-20261030`), left untracked.
+
+**Limits.** No GPU/Omarchy campaign, no full E9 probe suite (`tools/verify/e9-*.mjs` unchanged and
+not rerun; they use `?testHooks`, where the native panels stay visible). Desktop graphics (GPU)
+start not exercised beyond the existing contracts test. 626's quiet startup RPC overlaps the first
+seconds after ready (finding above, unchanged). The old-main entries above are history only.
+No cold clone, push or deploy.
+
+### 2026-10-30 — worker — r3: honest Software graphics copy (submitted for a fresh verifier)
+
+**Frozen product head: `507d9e94f11b8bd9b84c187cb833126f4fbc68d8`** (`web/ui/src` `ac67a0ff…`,
+`web/dist` `a75b1db4…`). Reopened at `36c388f76` for one copy correction requested after the
+critic's bounded checks at `505d29064` (recording-pane unmount/remount attack and the expanded
+Switch cases held).
+
+**Delta from `505d29064`** (`git diff 505d29064 507d9e94f`):
+- `web/ui/src/components/launcher.jsx:109`, the Software help in Desktop settings:
+  `"Draws on the CPU from a saved snapshot. Slower, works everywhere."` →
+  `"Draws on the CPU from a saved snapshot. No GPU qualification required."` (PR 626 / E5.5-T07
+  leaves physical-iPhone compatibility unverified, so "works everywhere" was not true). Option ids,
+  labels and the native `#desktop-graphics` write are unchanged.
+- Generated: `ui.js` rev stamp in `web/index.html` and `web/ui-kit.html` (`9971f5dbe874`); in
+  `web/dist`, `ui.js` (the string), `app.html`/`ui-kit.html` stamps (`701101e3a2aa`, root-swapped
+  bytes), `sw.js` version and `tasks.json`. `ui.css` is unchanged (`e4c1be8f48e6`).
+- `web/tests/ui-workspace.spec.js`: the existing graphics-choice test asserts the exact new copy and
+  that the launcher no longer says "works everywhere".
+
+**Commands at `507d9e94f`:**
+- `bash tools/verify-ui-foundation.sh` → PASS (pins, deterministic digest `694b5ed0…`, tree-shaking,
+  assets, no glows, source and dist rev stamps, root-swapped dist, stamped SW, 15/15 browser).
+  `evidence/ui-redesign/workspace-626-r3/verify-ui-foundation.log`. The string occurs once in
+  `web/ui.js` and `web/dist/ui.js`; "works everywhere" occurs in neither.
+- `PW_DISABLE_TS_ESM=1 node node_modules/playwright/cli.js test tests/ui-workspace.spec.js -g
+  "graphics choice" --trace on --output ../target/e0t29-626/pw-r3` → 1 passed (pointer and keyboard
+  choice reach `#desktop-graphics`, exact copy, no heavy fetch, no errors).
+- `node evidence/ui-redesign/workspace-626-r3/software-copy.mjs` → source tree and built `web/dist`
+  (served with `_headers`): Desktop settings → Software shows the exact copy, native value
+  `software`, options `gpu`/`software` with their 626 labels, no errors; screenshots
+  `source-`/`dist-desktop-settings-software.png`, traces `target/e0t29-626/r3-*-software-copy.zip`.
+- Digests: r3 `SHA256SUMS` (`fc7d3d00…`), `target-SHA256SUMS` (`a564c493…`).
+
+**Carried unchanged** (the delta is one string and its generated stamps): the r2 recorded gate at
+`505d29064` (foundation 15/15, workspace 28/28, 28 traces in `target/e0t29-626/pw-r2`;
+`workspace-626-r2/SHA256SUMS` `451415a0…`, `target-SHA256SUMS` `9c419f5f…`), the r2 Switch band
+evidence and sabotage, the critic's remount attack and Switch cases at `505d29064`, and r1's
+RISC-V suite 127 passed / 0 failed, `e4-t32` 8/1 baseline and quiet-window probe
+(`workspace-626/`, `SHA256SUMS` `75a972a8…`). Not rerun for this text change.
+
+### 2026-10-30 — fresh verifier — PR626 r3 — VERDICT: verified
+
+Reviewed claim `99a99f94bfcd484053792bda5ad1c6ac524c55fe`, product
+`507d9e94f11b8bd9b84c187cb833126f4fbc68d8`, against verified foundation `bfa710ee8`.
+Predictions preceded final evidence; unchanged foundation HELD results carry. Verifier receipts
+are under `target/ui-verifier/workspace-626-final/`. No implementation was edited.
+
+- **P1 launcher/workspace/library — HELD.** The recorded r2 gate passes foundation
+  **15/15** and workspace/contracts/recordings **28/28**. Desktop/390/360 first views have
+  one primary start, no automatic large guest fetch and no E9 wall. Real BusyBox input/retry,
+  Files refresh/open/edit/save/readback, existing-file activation, xterm Clear, Settings/view
+  returns and ordinary library tool controls execute. Container fixtures prove forwarding,
+  not a working container backend. Citations: `workspace-626-r2/verify-ui-workspace.log:1533,5924`,
+  its trace manifest, `ui-workspace.spec.js:100,264`, and contracts at `:36,180,212,280`.
+- **P2 E9/native contracts — HELD.** All **39** literal timeline and **28** session
+  mappings resolve to real native nodes. Actual Record/Open, transition Enter, unchanged
+  20-digit refusal, keyframe/slider, continuation/discard, local export/fresh-profile import,
+  checkpoint/Enter rename and storage-limit Save execute through existing controllers.
+  Native disabled states mirror correctly; 14 self-checks retain their buttons and event-clock
+  executes to a projected result. Citations: `ui-workspace-recordings.spec.js`, its recorded
+  traces and verifier `coverage-audit.json`.
+- **P3 phone focus/targets — HELD.** The ordinary 390 px case writes a guest file, uses
+  Tab/Enter for Case studies, closes/dismisses, then an ordinary terminal tap focuses its
+  textarea and trusted `cat` reads the marker with the same URL/session/controller/IDE.
+  That case uses no focus helper or injected guest input. The separate carried A test retains
+  its assertions after waiting for actual native bindings and the initial explorer listing.
+  Initial failed receipts remain; the quiet-RPC probe does not establish lost-output causation.
+  The measured 31 px Switch gap is repaired: independent **2/2** cases at 390/360 prove
+  **45 px** effective bands, one native toggle per tap, outside-band inertia, keyboard Space
+  and disabled parity. Citations: recordings phone-return case at `:53`, r2 trace manifest,
+  worker `switch-band.json`, verifier `switch.log`/`switch-pw/*/trace.zip`. The recorded band
+  sabotage fails as expected. This satisfies the A carry-forward focus acceptance.
+- **P4 Settings/Sound/isolation — HELD.** Provider fields/persistence, secret exclusion,
+  native login/logout/error state, held-key recovery and sheet focus return execute. Sound
+  reads the autoplay state while the warm one-row header keeps its notice hidden. The ordinary
+  terminal/canvas/editor hosts retain their native boundary. Citations: workspace Settings,
+  input/network contracts, recordings Sound case and r2 screenshots.
+- **P5 one bounded novel attack — HELD.** Real phone sample → Back unmounts the pane
+  while capture remains active → Tools/Recordings remounts → Stop saves one prefix. Exactly
+  one ID (`linux-sample-231ba6a0-…`), one native record click and the same root/button objects
+  remain. Open restores that ID at `transition 0 · retired 0 · before:0 · event 0`; visible
+  console and digest `27e546c0cffc344b5b0da1bf07894e1868ebc8dc9aaac78c4caa0f3f567de8b2`
+  match native readouts, errors `[]`. Citation: `pane-unmount.json` SHA-256
+  `405176b87fa5ef6eabebe2a648ca3ed947fd2ad4cf51454e6aca9e938f962619`, trace and screenshot.
+  Promoted this lifecycle regression; its targeted r3 run passes **1/1** in 9.8 s.
+- **P6 honest Software copy — HELD.** Source and shipped Desktop settings show “Draws
+  on the CPU from a saved snapshot. No GPU qualification required.” Native `software` and
+  option IDs/labels are unchanged; neither bundle contains “works everywhere”. Worker direct
+  source/dist captures/traces and the independent graphics-choice case pass, zero errors.
+  Citations: `workspace-626-r3/software-copy.json`, screenshots, three traces and verifier
+  `final-targeted.log` (graphics case passes).
+
+**Coverage disposition.** Every forwarding mechanism executes: NButton/NPicker, NField
+input/Enter/form, NSlider input/change, NativeLinkedSwitch disabled/re-enabled, projection/portal
+cleanup and native-frame adoption/return. Unpressed per-ID replay/branch/transfer actions,
+event selection, limit-bytes/persist/cleanup reuse those exact bindings; their IDs exist and
+unchanged native listeners own semantics. These are explicit common-forwarding waivers, not
+claims of individual execution. The launcher's closed Self-checks reuses the proven disclosure
+and ChecksPanel. Thirteen other expensive probes, actual GPU canvas content/Omarchy start and
+real container execution remain unchanged runtime scope; empty-frame and fixture proofs do
+not qualify them. Routes/imports/revs, media/color declarations, absent-node/logging guards and
+the compatibility Clear fallback are static/defensive waivers. `coverage-audit.json` classifies
+all **173** changed paths. No claimed UI behavior remains uncovered.
+
+**Identity/metadata — HELD.** All r1 **29+36**, r2 **25+29**, and r3 **8+3** manifest entries
+match. The current 28 r2 traces and r3 graphics trace are valid; r2 contains 1,361 actions and
+43 nested polling retries, all with successfully settled parents, no terminal trace errors.
+**798** retained crate/session/factory/manifest/docs/case-study blobs match the foundation.
+Source JS SHA-256 `9971f5dbe8745607e1c35d53dff9a67d63991549144206baad32665fb5f76b83` becomes
+shipped `701101e3a2aa10574c22e58660243f928b8e233f82cd97c5d9cb4825883f1aff` by the exact route
+swap; CSS/fonts/revs match. Final SW independently reconstructs **`20e7d156bb4c`**. Source/dist
+catalogs agree and match all **759** source tasks' statuses, boundaries, contracts and logs;
+Git activity is generated snapshot metadata. Claim changes after product are metadata/evidence
+only. Citation: `final-identity-audit.json`.
+
+The 20 omitted historical large files are actually parked under ignored
+`target/ui-historical-preserved/`, with `receipt.json`; all lengths/SHA-256/Git blobs match.
+The worker's “left untracked” describes Git omission, not their current filesystem location.
+They remain historical. Core **127/0** and affected e4-t32 **8 passed / 1 identical baseline
+failure** carry by digest from the unchanged runtime. The changed Settings path passes its
+focused contract; no old runtime, GPU, full-E9, compatibility or performance campaign was rerun.
+
+**SUITE.** Retain Switch-band, ordinary-return and forwarding regressions; promote the consumed
+phone pane lifecycle test in `web/tests/ui-workspace-recordings.spec.js`. Its first promotion
+attempt failed on the verifier's invalid `option[value!=""]` CSS selector; only that selector
+was corrected to `option:not([value=""])`. The targeted test then passes; original failed
+log/trace remain in `final-targeted.log`/`final-pw`, with no product edit. Focused commands:
+
+```
+PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8191 node node_modules/playwright/cli.js test tests/ui-workspace-recordings.spec.js --grep '45 px band' --trace on --output ../target/ui-verifier/workspace-626-final/switch-pw
+PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8191 node node_modules/playwright/cli.js test tests/ui-workspace.spec.js tests/ui-workspace-recordings.spec.js --grep 'graphics choice|unmounting the phone Recordings' --trace on --output ../target/ui-verifier/workspace-626-final/final-pw
+PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8191 node node_modules/playwright/cli.js test tests/ui-workspace-recordings.spec.js --grep 'unmounting the phone Recordings' --trace on --output ../target/ui-verifier/workspace-626-final/promoted-pw
+```
+
+Verifier receipts are indexed in `target/ui-verifier/workspace-626-final/SHA256SUMS`.
+No implementation, push, deployment, merge, worktree, agent or cold clone was performed.
+Public/case pages, Docstream/current guides and the combined seven-dimension grade remain
+pending in their ordered slices.

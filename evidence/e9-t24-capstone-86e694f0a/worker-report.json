@@ -1,0 +1,101 @@
+{
+  "task": "E9-T24",
+  "status": "implemented-claim-not-verified",
+  "codeHead": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e",
+  "base": "1d3976142b6f8d488907bcbc037a21e8cf9535be",
+  "scope": "Accepted software Linux and bounded physical GPU integration. Full original Omarchy cold boot/profile/replay/performance campaign waived, unproven and never verified.",
+  "commands": [
+    "make verify-E9-T24 E9_OUT=target/evidence/e9-t24-exact-capstone-v4 E9_RECORDED_INPUTS=evidence/e9-t24-inputs-0e47542da/recorded-inputs.json",
+    "node tools/verify/e9-capstone-session-ui.mjs --software target/evidence/e9-t24-exact-capstone-v2/software-network --gpu target/evidence/e9-t24-exact-capstone-v2/paged-gpu --output target/evidence/e9-t24-ui-witness-v5",
+    "node tools/verify/e9-capstone-session-ui.mjs --kind gpu --software target/evidence/e9-t24-exact-capstone-v2/software-network --gpu target/evidence/e9-t24-exact-capstone-v2/paged-gpu --output target/evidence/e9-t24-gpu-ui-witness-v6",
+    "python3 /private/tmp/e9-t24-publish.py --output target/evidence/e9-t24-production-v1",
+    "node tools/verify/e9-gpu-results-browser.mjs --url https://wasm-vm.pages.dev/ --output target/evidence/e9-t24-production-v1/demo --branch-status verified --bundle-status verified",
+    "node tools/verify/e9-capstone-session-ui.mjs --software target/evidence/e9-t24-exact-capstone-v2/software-network --gpu target/evidence/e9-t24-exact-capstone-v2/paged-gpu --url https://wasm-vm.pages.dev/ --output target/evidence/e9-t24-production-v1/session-ui"
+  ],
+  "reports": {
+    "fullGateV4": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-exact-capstone-v4/report.json",
+      "sha256": "22dafc2e322e67aaaa0fd0c4d3ab2fb7b31783adde9d76d2d0c15a5e3c9039df",
+      "status": "passed",
+      "head": "9496b8e645eccf5c1a0104bc5dd19a505c429478"
+    },
+    "softwareNetwork": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-exact-capstone-v2/software-network/report.json",
+      "sha256": "f49d25dd91bb2dd1563674bae90930d17272d187f56c000d0d2cd0c20d70d5c8",
+      "status": "software-full-workload-replay-passed",
+      "head": "0e47542da82440cffa347f0aff3513ea77e712e5"
+    },
+    "pagedGpu": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-exact-capstone-v2/paged-gpu/report.json",
+      "sha256": "7ed436d2e4f86dda09cf9f53c14fdf00bff9f1fcb34d536fabf86265f377334a",
+      "status": "passed",
+      "head": "0e47542da82440cffa347f0aff3513ea77e712e5"
+    },
+    "softwareWitnessV5": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-ui-witness-v5/report.json",
+      "sha256": "8a389d3afcf481caf11768b67c0dbf838022d3c80a45737fd56ef48d7fe660f3",
+      "status": "failed",
+      "head": "ba5e94b2157174dc3d0aa4e60c7a527522de95d6"
+    },
+    "gpuWitnessV6": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-gpu-ui-witness-v6/report.json",
+      "sha256": "0f047809a544e54ff05b2582d71e16205899ece36fe802ec955a097296377625",
+      "status": "passed",
+      "head": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e"
+    },
+    "deployment": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-production-v1/report.json",
+      "sha256": "6fb67f8aa31d7fef9fc6dab7fffd05a017f6cdeb0f93f39eb43d2c6d7091f508",
+      "status": "published",
+      "head": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e"
+    },
+    "publicAssets": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-production-v1/public-assets.json",
+      "sha256": "88b8dc7da6884e77c5682a34fcec015ba39f9ca14433a2447d8d50f4f94afd29",
+      "status": "passed",
+      "head": null
+    },
+    "liveDemo": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-production-v1/demo/report.json",
+      "sha256": "59b44e20b8a029f2336bdb33a86db30956542ed7ae5bdebdce3d0588bee918c7",
+      "status": "passed",
+      "head": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e"
+    },
+    "liveSessionUi": {
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t24-production-v1/session-ui/report.json",
+      "sha256": "b8ae94bd0ed03bee63820684b45bab34c2e0edc7741589dcbce608af98842ec9",
+      "status": "passed",
+      "head": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e"
+    }
+  },
+  "incremental": {
+    "reason": "Tooling-only proof gaps; no runtime changes. Carry passed immutable components and unchanged HELD findings, rerun only missing UI proof.",
+    "fullGateHead": "9496b8e645eccf5c1a0104bc5dd19a505c429478",
+    "softwareUiHead": "ba5e94b2157174dc3d0aa4e60c7a527522de95d6",
+    "gpuAndLiveHead": "86e694f0a25c0026dc02f8ec10e1cc6383192f6e",
+    "priorFailures": [
+      "e9-t24-exact-capstone-v1: existing extracted-loader vm.Script import.meta test; fixed test-only module URL",
+      "e9-t24-exact-capstone-v2: 30s export waiter; component recordings retained immutable",
+      "e9-t24-exact-capstone-v3: Nodeabort-6 numeric-array protocol expansion/4GBheap; fixed bounded base64 handoff",
+      "e9-t24-ui-witness-v5: software full case HELD; GPU inspector called frontier-only guard at valid interior point. Actual Daybreak classified harness-api; only GPU step capture switched to existing guarded continuation API."
+    ],
+    "finalCoverage": "Current complete live two-profile proof exercises the final harness at exact codeHead, including all middle/source/import/step/final comparisons. No cancelled acceptance promoted."
+  },
+  "runtime": {
+    "wasmSha256": "00159a8cb8f880b0dc88412c5a7009e8a74dfa546c47c36dd0d6859125873a87",
+    "stampSha256": "ac678419d5d27f56488c71940286d32901a55aa750bdf6c4508c9075c5eb3e1e",
+    "unchangedFromT23": true
+  },
+  "recovery": {
+    "task": "E9-T23",
+    "reportSha256": "99b50fb454f89f6bceebbef386b42ef981615f5ce12b2a09eecbb395f446a9ff",
+    "verdict": "evidence/e9-t23-recovery-d653efd80/daybreak-final-v1/report.md",
+    "held": "31storage+58GPU/branch native traces/oracles;12000codec cases;15publication crashes;6GCcuts;48schedules;actual Linux/ext2 and physicalGPU branch/recovery faults; unchanged runtime/package boundary."
+  },
+  "cloneProof": {
+    "scope": "Carry unchanged independent clone build checks per T24 acceptance; no new full original-cold proof.",
+    "initial": "Frozen f6ef independent no-alternates clone compiled own initially absent target; full gate capacity failure remains FAILED, only actually passed prechecks/builds carried.",
+    "t23": "Fresh Daybreak clone built own initially absent target/non-browser gates. Loopback browser was EPERM under network_access:false; explicitly partial clone proof, never passing full clone browser gate."
+  },
+  "finalCritic": "Pending separate fresh actual Daybreak Blue. Readiness reports are not final acceptance."
+}

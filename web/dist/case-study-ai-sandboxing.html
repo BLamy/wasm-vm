@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI Sandboxing — wasm-vm</title>
+  <meta name="description" content="A proposed AI isolation stack: an agent inside wasm-vm, a sandboxed Chrome browser, and a surrounding Firecracker microVM. Why layers and browser exploit costs matter.">
+  <meta name="theme-color" content="#151410"><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./ui.css?rev=74f187f16a37"><link rel="stylesheet" href="./site.css">
+</head>
+<body class="wv-site wv-case">
+<a class="wv-skip" href="#main">Skip to content</a><header class="wv-site-header"><div class="wv-site-wrap" data-wv-ui="site-nav" data-current="case-studies"><nav class="wv-site-fallback-nav" aria-label="Primary navigation"><a href="./">wasm-vm</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./app.html#ide">Open the machine</a></nav></div></header>
+<main id="main">
+  <section class="inner-hero wv-site-wrap">
+    <span class="proposal-label">AI Sandboxing / architecture study / hosted deployment proposed</span>
+    <h1>Give AI a computer.<br>Keep boundaries around it.</h1>
+    <p class="lede">Run an agent and its tools inside wasm-vm. In a hosted deployment, run the browser inside a Firecracker microVM. If one boundary fails, another should still separate the agent from the host.</p>
+    <a class="wv-text-link" href="#layers">See the isolation stack →</a>
+  </section>
+
+  <section class="editorial-section wv-site-wrap" aria-labelledby="problem-title">
+    <h2 id="problem-title">Assume the code is hostile</h2>
+    <div class="editorial-body">
+      <p>A coding agent needs to execute programs, install packages, read files and try things that fail. Its inputs can include malicious repositories, dependencies and instructions. Treat everything it runs as untrusted, even when the agent is trying to help.</p>
+      <p>The proposed workspace puts the agent process, shell and generated code in the emulated Linux guest. The security goal is to contain a compromised workload through several independently enforced boundaries.</p>
+      <p class="editorial-callout">The aim: an escape from the agent's machine should land inside another sandbox, with another boundary still protecting the host.</p>
+    </div>
+  </section>
+
+  <section class="editorial-section wv-site-wrap" id="layers" aria-labelledby="layers-title">
+    <h2 id="layers-title">Three layers, nested</h2>
+    <div class="editorial-body">
+      <figure class="sandbox-stack" aria-labelledby="stack-caption">
+        <div class="sandbox-boundary">
+          <span class="case-status">03 / Firecracker microVM</span>
+          <h3>A dedicated hosted machine</h3>
+          <p>The browser runs inside this microVM. The service host sits outside it.</p>
+          <div class="sandbox-boundary">
+            <span class="case-status">02 / Browser sandbox</span>
+            <h3>Chrome with its sandbox enabled</h3>
+            <p>WebAssembly execution and the renderer process restrictions form further boundaries.</p>
+            <div class="sandbox-boundary sandbox-workload">
+              <span class="case-status">01 / wasm-vm</span>
+              <h3>The agent's Linux guest</h3>
+              <p>Agent, shell, tools, generated code and a disposable workspace.</p>
+            </div>
+          </div>
+        </div>
+        <figcaption id="stack-caption">Proposed hosted layout. The entire browser must run inside Firecracker for the outer layer to exist.</figcaption>
+      </figure>
+      <ol class="case-steps">
+        <li><strong>Start inside wasm-vm.</strong> Guest root privileges still belong to the emulated RISC-V machine. The emulator executes as WebAssembly, whose memory and host access are constrained by its embedding. <a href="https://webassembly.org/docs/security/">WebAssembly security model ↗</a></li>
+        <li><strong>Keep the browser boundary.</strong> A compromise of the hosting page or renderer should still face Chrome's process sandbox. On Linux, Chromium combines mechanisms such as namespaces and syscall filtering, depending on the available kernel features. <a href="https://chromium.googlesource.com/chromium/src/+/HEAD/sandbox/linux/README.md">Chromium's Linux sandbox ↗</a></li>
+        <li><strong>Contain the whole browser.</strong> In this deployment, a full browser compromise would still be inside a Firecracker guest. Reaching the service host would require defeating that VM boundary or another exposed host interface. <a href="https://github.com/firecracker-microvm/firecracker/blob/main/docs/design.md">Firecracker design ↗</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="editorial-section wv-site-wrap" aria-labelledby="browser-title">
+    <h2 id="browser-title">Make escapes expensive</h2>
+    <div class="editorial-body">
+      <p>Chrome brings an isolation system built for running untrusted web content. Using that boundary puts an attacker up against the browser's security engineering as well as wasm-vm's own implementation.</p>
+      <p>A reliable browser escape may require a chain of vulnerabilities, potentially including a valuable <strong>zero-day</strong>: a flaw without an available fix when it is used. That is the sense in which an attacker might have to “burn a zero-day” to get further.</p>
+      <p><strong>It is a cost argument, not a guarantee.</strong> An unpatched browser can expose known bugs; an overly powerful API can grant access without an exploit. Escaping a JavaScript or WebAssembly engine also does not automatically mean escaping the renderer's OS sandbox. <a href="https://v8.dev/blog/sandbox">V8's discussion of its in-process sandbox ↗</a></p>
+    </div>
+  </section>
+
+  <section class="editorial-section wv-site-wrap" aria-labelledby="policy-title">
+    <h2 id="policy-title">Protect the interfaces</h2>
+    <div class="editorial-body">
+      <p>The layers need narrow connections between them. A privileged bridge around the stack can undo the intended containment.</p>
+      <div class="editorial-rows">
+        <article><h3>Files and secrets</h3><p>Give each job its own workspace. Keep host files, orchestration sockets and long-lived credentials outside the agent's reach. Review the files explicitly exported from the job.</p></article>
+        <article><h3>Network access</h3><p>Enforce an explicit egress policy outside the workload. Allowed network access can carry stolen data without any sandbox escape. Firecracker itself does not filter network traffic. <a href="https://github.com/firecracker-microvm/firecracker/blob/main/docs/prod-host-setup.md">Production host guidance ↗</a></p></article>
+        <article><h3>The hosted boundary</h3><p>Keep the browser sandbox enabled, patch the browser and virtualization stack, and use Firecracker's recommended jailer and seccomp restrictions. Bound CPU, memory, disk and log usage. <a href="https://github.com/firecracker-microvm/firecracker/blob/main/docs/prod-host-setup.md">Firecracker deployment requirements ↗</a></p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="editorial-section wv-site-wrap" aria-labelledby="proof-title">
+    <h2 id="proof-title">Prove each boundary</h2>
+    <div class="editorial-body">
+      <p>wasm-vm's recorded execution can make the agent's guest activity inspectable. Containment needs its own tests: forbidden host reads, denied network destinations, cross-job access, resource exhaustion and malicious bridge requests.</p>
+      <p>A deployment should demonstrate that the browser sandbox remains enabled inside the microVM, that jobs have separate state, and that a failed or compromised job can be terminated without affecting its neighbours. A guest recording alone cannot prove those host-side properties.</p>
+    </div>
+  </section>
+
+  <section class="editorial-section wv-site-wrap" id="status" aria-labelledby="status-title">
+    <h2 id="status-title">Current status</h2>
+    <div class="editorial-body">
+      <div class="editorial-rows">
+        <article><h3>Available today</h3><p>wasm-vm runs a RISC-V Linux guest in a browser. The public demo runs in the visitor's browser.</p></article>
+        <article><h3>Proposed deployment</h3><p>A dedicated Firecracker microVM containing the sandboxed browser and its wasm-vm workload, with restricted host interfaces and per-job policy.</p></article>
+        <article><h3>Evidence still needed</h3><p>A reproducible hosted setup and independent adversarial containment tests. This architecture study makes no claim that a Firecracker-backed service or an escape-resistant stack has already been verified.</p></article>
+      </div>
+      <p><a href="./security.html">Read the security model →</a> · <a href="./case-studies.html">More case studies →</a> · <a href="./app.html#ide">Try the browser VM →</a></p>
+    </div>
+  </section>
+</main>
+<footer class="wv-site-footer"><div class="wv-site-wrap"><p>wasm-vm · a RISC-V computer in a browser</p><nav aria-label="Footer"><a href="./app.html#ide">App</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./products.html">Product direction</a><a href="./security.html">Security</a><a href="https://github.com/BLamy/wasm-vm">Source on GitHub</a></nav></div></footer>
+<script type="module" src="./ui.js?rev=c4e7bb0de506"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{
+  "P0": {
+    "status": "HELD",
+    "citation": "worker-authentication.json; packet-authentication.json; frozen-source-authentication.json",
+    "observed": "16 source hashes,553 payloads,554 originals,19 packet copies,5 aliases authenticated against frozen b97f; coverage tracked separately"
+  },
+  "P1": {
+    "status": "HELD",
+    "citation": "worker trace NDJSON lines496,500,607,714,744,1404",
+    "observed": "Two actual distinct persisted sessions; Beta name survives reload; Alpha renamed without changing point frame identity"
+  },
+  "P2": {
+    "status": "HELD",
+    "citation": "worker trace lines869,874,944,1166,1191,1195,1271,1298,1302; raw-frame-authentication.json",
+    "observed": "Alpha599fd981... and Beta08af608a... stored/restored byte hashes match; paused true and retired0; Alpha input22bytes e9_queue=alpha-queued\\n; file and shell-memory witnesses distinct"
+  },
+  "P3": {
+    "status": "HELD",
+    "citation": "worker trace lines500,543,607,714,1043; raw-frame-authentication.json",
+    "observed": "Checkpoints-only mode;0events; explicit Alpha point counts1,2,3; Beta2; visible no-prehistory text"
+  },
+  "P4": {
+    "status": "HELD",
+    "citation": "worker trace lines940,944",
+    "observed": "Selected/preview Beta; active Alpha; raw Alpha frame unchanged after delayed preview race"
+  },
+  "P5": {
+    "status": "HELD",
+    "citation": "worker trace line304 after@call@33,463 after@call@47,989 after@call@171,1059 after@call@191,1118 after@call@207; worker-library-resolved-snapshots.json",
+    "observed": "Resolved299complete library DOM snapshots with no missing references. Capturing/restoring set aria-busy=true and disable all11mutating controls. Unavailable/error states preserve exact Alpha active identity and label."
+  },
+  "P6": {
+    "status": "HELD",
+    "citation": "worker trace lines995,1001,1037,1043,1069,1075",
+    "observed": "Foreign runtime incompatible and Open disabled; missing object incomplete and Open disabled; unavailable duration remains unavailable; prior active raw tuple retained"
+  },
+  "P7": {
+    "status": "HELD",
+    "citation": "worker trace lines1128,1162,1166,1362,1365,1404",
+    "observed": "Quota storage-error keeps Alpha name and exact active frame; malformed labels show storage-error while4real rows remain; names recover"
+  },
+  "P8": {
+    "status": "FAILED",
+    "citation": "n1-v5/report.json:1124; n1-v5/after-error.png; n1-v5-seal.json",
+    "observed": "Happy desktop/mobile layouts HELD; real missing-object Open error overflows at390px: scroll586/client388. Native controls reachable byTab with visiblefocus; Enter Open succeeds. Root accepted responsive finding and will changeCSS only."
+  },
+  "P9": {
+    "status": "HELD",
+    "citation": "worker trace lines268,274,280,1433; retained-gpu.log",
+    "observed": "127passed0failed; verified pip; errors[]; qualified GPUepoch4 drawn after2999712retired;47-file retained factory manifest aabeebb6... unchanged"
+  },
+  "P10": {
+    "status": "HELD",
+    "citation": "evidence/e9-t06/public/provenance.json; public-authentication.json",
+    "observed": "808originals,12copies,5aliases independently authenticated;19public assets equal source7e5d5d1f;127passed0failed/errors[];4segments70/82/82/78 aggregate312entries; GPUepoch4drawn after2499808retired. Responsive missing-point error remains separately refuted."
+  },
+  "COVERAGE": {
+    "status": "NEEDS EVIDENCE",
+    "citation": "final-initial-coverage-audit.json; session-library.js162-164,180",
+    "observed": "Four public document segments close navigation export gap. All changed main.js lines and every library method execute. Owner-loss writer cleanup162-164 and initial-capture failure cleanup180 remain unexecuted and require the isolated promoted-driver tail. Inline defensive branches outside enabled UI claims are explicitly waived in coverage.md."
+  },
+  "N1": {
+    "status": "HELD SAFETY / FAILED RESPONSIVE",
+    "citation": "n1-v5/report.json:826,829,836,1124; n1-v5/trace.ndjson:372; n1-v5-seal.json",
+    "observed": "Actual descriptor with23parts removed, absence confirmed. Open incomplete before replacement; sameownertrue, Alpha paused0retired, complete rawtuplehashunchanged. Errorhashclipped on390px layout."
+  }
+}

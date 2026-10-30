@@ -1,0 +1,16 @@
+import { chromium } from "/Users/blamy/.codex/worktrees/ui-redesign/wasm-vm/web/node_modules/@playwright/test/index.mjs";
+const [, , query = "", prefix = "target/ui-scratch/pn"] = process.argv;
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
+const errs = []; p.on("console", (m) => m.type() === "error" && errs.push(m.text())); p.on("pageerror", (e) => errs.push("pageerror " + e.message));
+await p.goto("http://localhost:8233/index.html?nosw" + query);
+if (!query.includes("guest=")) await p.getByRole("button", { name: "Start Linux" }).click();
+await p.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: 180000 });
+await p.waitForTimeout(1500);
+await p.getByRole("button", { name: "Files" }).click(); await p.waitForTimeout(2500);
+await p.screenshot({ path: prefix + "-files.png" });
+await p.getByRole("button", { name: "Containers" }).click(); await p.waitForTimeout(2500);
+await p.screenshot({ path: prefix + "-containers.png" });
+console.log("errors", JSON.stringify(errs.slice(0, 5)));
+console.log("terminal tail", JSON.stringify(await p.evaluate(() => [...document.querySelector("#term .xterm-rows").children].map((r) => r.textContent.trimEnd()).filter(Boolean).slice(-3))));
+await b.close();
