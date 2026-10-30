@@ -263,6 +263,62 @@ test("Recordings: continue from here, then export and import the recording in a 
   }
 });
 
+// Promoted by the fresh PR626 E0-T29 verifier: the phone pane is a disposable projection;
+// closing it while capture runs must not retire or duplicate the native recording owner.
+test("unmounting the phone Recordings pane preserves one real recording and its replay", async ({ browser }) => {
+  const context = await newContext(browser, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  try {
+    const page = await context.newPage();
+    const errors = watch(page);
+    await page.goto("/index.html?nosw#ide");
+    await startLinux(page, { tap: true });
+    const openPane = async () => {
+      await page.getByRole("button", { name: "Tools and settings", exact: true }).tap();
+      await page.getByRole("dialog", { name: "Machine settings" }).getByRole("button", { name: /^Recordings/ }).tap();
+    };
+    await openPane();
+    const pane = page.locator('[data-wv="recordings"]');
+    await expect(timeline(page, "record")).toBeEnabled();
+    await page.evaluate(() => {
+      window.__recordingPaneBefore = {
+        root: document.getElementById("session-timeline"),
+        button: document.querySelector('#session-timeline [data-timeline="record"]'),
+        clicks: 0,
+      };
+      window.__recordingPaneBefore.button.addEventListener("click", () => { window.__recordingPaneBefore.clicks += 1; });
+    });
+    await pane.getByRole("button", { name: "Record Linux sample", exact: true }).tap();
+    await expect(timeline(page, "stop")).toBeEnabled();
+    await page.getByRole("button", { name: "Back to terminal", exact: true }).tap();
+    await expect(pane).toHaveCount(0);
+    await openPane();
+    await expect(pane).toBeVisible();
+    // Completion while the pane was closed is legitimate; otherwise finish its saved prefix.
+    if (await timeline(page, "stop").isEnabled()) await pane.getByRole("button", { name: "Stop recording", exact: true }).tap();
+    await expect(timeline(page, "record")).toBeEnabled({ timeout: 60_000 });
+    const id = await timeline(page, "sessions").inputValue();
+    expect(id).toMatch(/^linux-sample-/);
+    await expect(timeline(page, "sessions").locator('option:not([value=""])')).toHaveCount(1);
+    await expect(pane.getByRole("button", { name: "Open replay", exact: true })).toBeEnabled({ timeout: 30_000 });
+    await pane.getByRole("button", { name: "Open replay", exact: true }).tap();
+    await expect(timeline(page, "active")).toHaveText(`Active replay: ${id}`, { timeout: 30_000 });
+    await expect(timeline(page, "digest")).toHaveText(/^[a-f0-9]{64}$/, { timeout: 30_000 });
+    await expect(timeline(page, "position")).toHaveText(/^transition \d+ · retired \d+ · (before|after):\d+ · event \d+$/, { timeout: 30_000 });
+    await expect(pane.locator('[data-wv="replay-position"]')).toContainText(await timeline(page, "position").textContent());
+    await expect(pane.locator('[data-wv="replay-console"]')).toHaveText(await timeline(page, "console").textContent());
+    await pane.getByRole("button", { name: "Active state digest", exact: true }).tap();
+    await expect(pane.locator(".wv-rec-digest")).toHaveText(await timeline(page, "digest").textContent());
+    expect(await page.evaluate(() => ({
+      sameRoot: window.__recordingPaneBefore.root === document.getElementById("session-timeline"),
+      sameButton: window.__recordingPaneBefore.button === document.querySelector('#session-timeline [data-timeline="record"]'),
+      clicks: window.__recordingPaneBefore.clicks,
+    }))).toEqual({ sameRoot: true, sameButton: true, clicks: 1 });
+    expect(errors).toEqual([]);
+  } finally {
+    await context.close();
+  }
+});
+
 test("Checkpoints: a real checkpoint session is saved and renamed through the library form", async ({ page }) => {
   test.setTimeout(240_000);
   const errors = watch(page);

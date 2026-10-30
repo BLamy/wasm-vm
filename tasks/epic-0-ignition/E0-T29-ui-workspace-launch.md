@@ -3,7 +3,7 @@ id: E0-T29
 epic: 0
 title: Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure
 priority: 0.2
-status: implemented
+status: verified
 depends_on: [E0-T28]
 estimate: S
 risk: medium
@@ -749,3 +749,101 @@ evidence and sabotage, the critic's remount attack and Switch cases at `505d2906
 RISC-V suite 127 passed / 0 failed, `e4-t32` 8/1 baseline and quiet-window probe
 (`workspace-626/`, `SHA256SUMS` `75a972a8…`). Not rerun for this text change.
 
+### 2026-10-30 — fresh verifier — PR626 r3 — VERDICT: verified
+
+Reviewed claim `99a99f94bfcd484053792bda5ad1c6ac524c55fe`, product
+`507d9e94f11b8bd9b84c187cb833126f4fbc68d8`, against verified foundation `bfa710ee8`.
+Predictions preceded final evidence; unchanged foundation HELD results carry. Verifier receipts
+are under `target/ui-verifier/workspace-626-final/`. No implementation was edited.
+
+- **P1 launcher/workspace/library — HELD.** The recorded r2 gate passes foundation
+  **15/15** and workspace/contracts/recordings **28/28**. Desktop/390/360 first views have
+  one primary start, no automatic large guest fetch and no E9 wall. Real BusyBox input/retry,
+  Files refresh/open/edit/save/readback, existing-file activation, xterm Clear, Settings/view
+  returns and ordinary library tool controls execute. Container fixtures prove forwarding,
+  not a working container backend. Citations: `workspace-626-r2/verify-ui-workspace.log:1533,5924`,
+  its trace manifest, `ui-workspace.spec.js:100,264`, and contracts at `:36,180,212,280`.
+- **P2 E9/native contracts — HELD.** All **39** literal timeline and **28** session
+  mappings resolve to real native nodes. Actual Record/Open, transition Enter, unchanged
+  20-digit refusal, keyframe/slider, continuation/discard, local export/fresh-profile import,
+  checkpoint/Enter rename and storage-limit Save execute through existing controllers.
+  Native disabled states mirror correctly; 14 self-checks retain their buttons and event-clock
+  executes to a projected result. Citations: `ui-workspace-recordings.spec.js`, its recorded
+  traces and verifier `coverage-audit.json`.
+- **P3 phone focus/targets — HELD.** The ordinary 390 px case writes a guest file, uses
+  Tab/Enter for Case studies, closes/dismisses, then an ordinary terminal tap focuses its
+  textarea and trusted `cat` reads the marker with the same URL/session/controller/IDE.
+  That case uses no focus helper or injected guest input. The separate carried A test retains
+  its assertions after waiting for actual native bindings and the initial explorer listing.
+  Initial failed receipts remain; the quiet-RPC probe does not establish lost-output causation.
+  The measured 31 px Switch gap is repaired: independent **2/2** cases at 390/360 prove
+  **45 px** effective bands, one native toggle per tap, outside-band inertia, keyboard Space
+  and disabled parity. Citations: recordings phone-return case at `:53`, r2 trace manifest,
+  worker `switch-band.json`, verifier `switch.log`/`switch-pw/*/trace.zip`. The recorded band
+  sabotage fails as expected. This satisfies the A carry-forward focus acceptance.
+- **P4 Settings/Sound/isolation — HELD.** Provider fields/persistence, secret exclusion,
+  native login/logout/error state, held-key recovery and sheet focus return execute. Sound
+  reads the autoplay state while the warm one-row header keeps its notice hidden. The ordinary
+  terminal/canvas/editor hosts retain their native boundary. Citations: workspace Settings,
+  input/network contracts, recordings Sound case and r2 screenshots.
+- **P5 one bounded novel attack — HELD.** Real phone sample → Back unmounts the pane
+  while capture remains active → Tools/Recordings remounts → Stop saves one prefix. Exactly
+  one ID (`linux-sample-231ba6a0-…`), one native record click and the same root/button objects
+  remain. Open restores that ID at `transition 0 · retired 0 · before:0 · event 0`; visible
+  console and digest `27e546c0cffc344b5b0da1bf07894e1868ebc8dc9aaac78c4caa0f3f567de8b2`
+  match native readouts, errors `[]`. Citation: `pane-unmount.json` SHA-256
+  `405176b87fa5ef6eabebe2a648ca3ed947fd2ad4cf51454e6aca9e938f962619`, trace and screenshot.
+  Promoted this lifecycle regression; its targeted r3 run passes **1/1** in 9.8 s.
+- **P6 honest Software copy — HELD.** Source and shipped Desktop settings show “Draws
+  on the CPU from a saved snapshot. No GPU qualification required.” Native `software` and
+  option IDs/labels are unchanged; neither bundle contains “works everywhere”. Worker direct
+  source/dist captures/traces and the independent graphics-choice case pass, zero errors.
+  Citations: `workspace-626-r3/software-copy.json`, screenshots, three traces and verifier
+  `final-targeted.log` (graphics case passes).
+
+**Coverage disposition.** Every forwarding mechanism executes: NButton/NPicker, NField
+input/Enter/form, NSlider input/change, NativeLinkedSwitch disabled/re-enabled, projection/portal
+cleanup and native-frame adoption/return. Unpressed per-ID replay/branch/transfer actions,
+event selection, limit-bytes/persist/cleanup reuse those exact bindings; their IDs exist and
+unchanged native listeners own semantics. These are explicit common-forwarding waivers, not
+claims of individual execution. The launcher's closed Self-checks reuses the proven disclosure
+and ChecksPanel. Thirteen other expensive probes, actual GPU canvas content/Omarchy start and
+real container execution remain unchanged runtime scope; empty-frame and fixture proofs do
+not qualify them. Routes/imports/revs, media/color declarations, absent-node/logging guards and
+the compatibility Clear fallback are static/defensive waivers. `coverage-audit.json` classifies
+all **173** changed paths. No claimed UI behavior remains uncovered.
+
+**Identity/metadata — HELD.** All r1 **29+36**, r2 **25+29**, and r3 **8+3** manifest entries
+match. The current 28 r2 traces and r3 graphics trace are valid; r2 contains 1,361 actions and
+43 nested polling retries, all with successfully settled parents, no terminal trace errors.
+**798** retained crate/session/factory/manifest/docs/case-study blobs match the foundation.
+Source JS SHA-256 `9971f5dbe8745607e1c35d53dff9a67d63991549144206baad32665fb5f76b83` becomes
+shipped `701101e3a2aa10574c22e58660243f928b8e233f82cd97c5d9cb4825883f1aff` by the exact route
+swap; CSS/fonts/revs match. Final SW independently reconstructs **`20e7d156bb4c`**. Source/dist
+catalogs agree and match all **759** source tasks' statuses, boundaries, contracts and logs;
+Git activity is generated snapshot metadata. Claim changes after product are metadata/evidence
+only. Citation: `final-identity-audit.json`.
+
+The 20 omitted historical large files are actually parked under ignored
+`target/ui-historical-preserved/`, with `receipt.json`; all lengths/SHA-256/Git blobs match.
+The worker's “left untracked” describes Git omission, not their current filesystem location.
+They remain historical. Core **127/0** and affected e4-t32 **8 passed / 1 identical baseline
+failure** carry by digest from the unchanged runtime. The changed Settings path passes its
+focused contract; no old runtime, GPU, full-E9, compatibility or performance campaign was rerun.
+
+**SUITE.** Retain Switch-band, ordinary-return and forwarding regressions; promote the consumed
+phone pane lifecycle test in `web/tests/ui-workspace-recordings.spec.js`. Its first promotion
+attempt failed on the verifier's invalid `option[value!=""]` CSS selector; only that selector
+was corrected to `option:not([value=""])`. The targeted test then passes; original failed
+log/trace remain in `final-targeted.log`/`final-pw`, with no product edit. Focused commands:
+
+```
+PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8191 node node_modules/playwright/cli.js test tests/ui-workspace-recordings.spec.js --grep '45 px band' --trace on --output ../target/ui-verifier/workspace-626-final/switch-pw
+PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8191 node node_modules/playwright/cli.js test tests/ui-workspace.spec.js tests/ui-workspace-recordings.spec.js --grep 'graphics choice|unmounting the phone Recordings' --trace on --output ../target/ui-verifier/workspace-626-final/final-pw
+PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8191 node node_modules/playwright/cli.js test tests/ui-workspace-recordings.spec.js --grep 'unmounting the phone Recordings' --trace on --output ../target/ui-verifier/workspace-626-final/promoted-pw
+```
+
+Verifier receipts are indexed in `target/ui-verifier/workspace-626-final/SHA256SUMS`.
+No implementation, push, deployment, merge, worktree, agent or cold clone was performed.
+Public/case pages, Docstream/current guides and the combined seven-dimension grade remain
+pending in their ordered slices.
