@@ -1,0 +1,78 @@
+{
+  "pristineHead": "2d7b3414d0b16a744a246236f275870e51ba88a4",
+  "finalHead": "d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4",
+  "bad": [],
+  "cloneShallow": "false",
+  "trackedPaths": 31970,
+  "indexPaths": 31970,
+  "missingPaths": [],
+  "helperSha256": "bc1db5ffb7a8b850cb442674543e9986109a2ea95dfebd720af021a835d2c243",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "port": 52666,
+  "acceptanceCounts": [
+    15,
+    29,
+    19,
+    10
+  ],
+  "freshBuildEvidence": {
+    "wasmCompiling": true,
+    "sessionCompiling": true,
+    "npmInstalled": true
+  },
+  "distCount": 780,
+  "coldDigestMismatch": [],
+  "finalDigestMismatch": [],
+  "finalDistDiff": [
+    "sw.js",
+    "tasks.json"
+  ],
+  "identicalDistFiles": 778,
+  "sourceDiff": [
+    "evidence/ui-redesign/public-626-deploy-repair/SHA256SUMS",
+    "evidence/ui-redesign/public-626-deploy-repair/direct-proof.json",
+    "evidence/ui-redesign/public-626-deploy-repair/direct-proof.py",
+    "evidence/ui-redesign/public-626-deploy-repair/first-deploy.log",
+    "evidence/ui-redesign/public-626-deploy-repair/first-failure.json",
+    "evidence/ui-redesign/public-626-deploy-repair/worker-result.json",
+    "tasks/epic-0-ignition/E0-T30-ui-homepage-public.md",
+    "tools/deploy-cloudflare.sh",
+    "web/dist/sw.js",
+    "web/dist/tasks.json",
+    "web/tasks.json"
+  ],
+  "shellSha256": "d9a522a3fb06b7ab620fa27c4e1fc779a6969911189ceccdd9e49d1f1e641491",
+  "finalSW": "98ca70d276cd",
+  "taskCount": 760,
+  "taskMismatches": [],
+  "releaseCount": 22,
+  "auxiliaryReleaseCount": 10,
+  "releaseMismatch": [],
+  "observedReleaseGETs": [
+    "releases/boot-snapshot/busybox-ready.snap.gz",
+    "releases/initramfs/initramfs.cpio.gz",
+    "releases/kernel/6.6.63/Image"
+  ],
+  "inputLimit": "Entire22file directory staged;10auxiliary entries inventoried. Recipes and observed GETs identify three declared inputs; no OS-level read tracing claim.",
+  "failureReceipt": {
+    "status": "environment-failed-before-build",
+    "head": "2d7b3414d0b16a744a246236f275870e51ba88a4",
+    "stage": "git checkout",
+    "reason": "Full tracked tree is 15.75 GB (15.40 GB historical evidence); only9.6 GiB available. Checkout exhausted disk before any build or acceptance.",
+    "cleanup": "Stopped process exit1; removed only owned partial /tmp/wasm-vm-ui-pristine-13h2u_2y; space recovered.",
+    "retry": "Fresh Git clone; source code checked out from Git; all tracked historical evidence materialized with APFS clonefile and verified against Git; no ignored build/dependency products copied."
+  },
+  "receiptDigests": {
+    "pristine/cold-clone-run.py": "bc1db5ffb7a8b850cb442674543e9986109a2ea95dfebd720af021a835d2c243",
+    "pristine/cold-clone.json": "a2e0b3394944c44f768e32d8e39e9b1c505cedf9b5744fb72ff8df2c3e923607",
+    "pristine/cold-clone.log": "954cf62b7d9e8723a478d3fca96c45f1617d8df3c38d3c07125ea82bcb8832f3",
+    "pristine/cold-clone-dist-sha256.json": "5e3e9b94637fd1e10689d8eaf69db9af4a3448877c47d3e8a63ddea9721f6f6c",
+    "reproducibility.json": "49c28bfaecad6fa977d24fd88c7a8fdddeb456adff86db1a7a2c4e9d4164ab0e",
+    "release-inputs.json": "480706283520026193acc74af9442e74a7a8ef4a22007f44e83d52e4d92ff0c3",
+    "final-reconciliation.json": "9b31e2ddf6eb39c659257264e4f2ddb414c12c7af2b29510e3d2bc71006af17b",
+    "final-dist-sha256.json": "290bc89ce5b7392e963f2362e2574f407ccd0b67438ed1c2bb5968b38458d06c",
+    "post-repair-metadata-refresh.json": "b9e4989038078a418fc0bffc3177e60a4047b81744b7222ae6de14926219c3bf"
+  }
+}

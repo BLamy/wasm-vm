@@ -495,3 +495,81 @@ frozen at the published head rather than chasing its own hash. This is a coordin
 not a new verifier verdict. Fresh evidence-only audit remains required before final native
 draft submission. SHA256SUMS digest:
 `0f916f08892997d2988d242013620213b05e08c6a6bb3ea2b2669f6c3e9ec87d`.
+
+### 2026-10-30 — fresh verifier — final release evidence — VERDICT: verified
+
+Audited claim `27e1f3acb369a4f9dd1ce5373b2727fb1530fbaa`, published source
+`d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4`, immutable preview
+**https://9f071e86.wasm-vm.pages.dev**. Predictions were recorded before the published evidence:
+successful isolated deployment, URL-only manifest staging, actual user/guest interactions,
+strict completed-response bindings, cache-only recorder repair and evidence-only claim delta.
+All hold. This closes the previously pending portability/publication proof; E0-T32 stays
+`verified`. No implementation, build snapshot, status or queue was changed by this log entry.
+
+- **Pristine/rebased identity — HELD.** Carried the completed static audit, with archived
+  receipts now independently matching it exactly. The real nonshallow Git clone at
+  `2d7b3414d0b16a744a246236f275870e51ba88a4` has all **31,970** tracked paths/index entries;
+  recorded fresh-index full diff authenticates the APFS-materialized historical evidence.
+  No ignored target/node_modules/pkg was copied; the script guards this before building.
+  The log records fresh Rust/Wasm/session compilation and npm installation, then **73/73**
+  checks (15+29+19+10; `pristine/cold-clone.log:1754/:6304/:7443/:7735`). Independently hashed
+  all **780** rebuilt files against both the actual clone and frozen Git blobs. Final source
+  retains all 780 paths, **778** byte-identical; only task catalog and corresponding SW differ.
+  Frozen final SW **98ca70d276cd** reconstructs exactly; all 760 source/catalog contracts and
+  statuses agree at that release. The only other implementation delta is the already verified
+  braced shell log. All earlier A/B/C/D results, coverage waivers and consumed attacks carry.
+- **External-input limits — HELD.** Independently authenticated all **22** staged release
+  files against the actual clone and inventory; **10** are explicitly auxiliary/legacy files,
+  so this is not described as an allowlist-only copy. Makefile/manifest recipes and successful
+  browser GETs identify the three declared boot inputs; no OS-level complete read trace is
+  claimed. The separate disk-full attempt failed during checkout before build/tests and is
+  retained as an environment failure, never counted as a pass.
+- **Actual publication/manifests — HELD.** `deploy-command.json` records exact source,
+  `PAGES_BRANCH=ui-redesign-20261030`, exit 0 and the immutable preview returned by Wrangler.
+  `deploy.log:52–54` contains the successful preview receipt; log SHA-256 is
+  `36dd33cb484758b0a82c2898e5dd449d9373c985c3a16cc9179cfa9e21b9d144`.
+  The guarded tool authenticated content-addressed R2 objects, including reupload/verification
+  after a slow download, then published Pages. All five archived staged manifests preserve
+  every role, size, digest and non-URL field; changed URLs have the exact R2 SHA/path binding.
+  Production was not the command's target. After staging restoration, product→claim changes
+  only declared evidence and this task log, with no product drift.
+- **Recorded published behavior — HELD.** The passing smoke has **14** checks. Actual trace
+  `published-smoke.zip` shows the homepage **Start Linux** click `call@545`, trusted keyboard
+  `call@887` typing the `printf` command with `$((40+2))`, and a separate rendered terminal row
+  **preview-42** in snapshot **before@call@895**, followed by the shell prompt. This is actual
+  guest output, not a transcript fixture or programmatic serial helper. Ranked search lands
+  at focused `continue-from-the-past` (`call@200`); actual Mermaid SVG/source pass at
+  `call@242/:244`, the relative recording image/full view loads, and immutable current-reference
+  provenance/Markdown passes at `call@284/:296/:298`. The phone trace records menu/library
+  taps `call@409/:413/:441/:453`, overlay dismissal/heading focus and configured 390 px fit;
+  all four case routes load with their shared nav. Nested Pages 404 recovery returns to home.
+  Published screenshots agree with the carried interface and grades.
+- **Byte bindings/recorder qualification — HELD.** All **25 fixed** hashes and **187 distinct
+  requested-file** hashes match frozen final/staged bytes. Independently recomputed all 25
+  fixed API response bodies and **29 distinct requested non-script bodies** from trace
+  resources. Playwright 1.49.1 deliberately omits script bodies from trace HAR
+  (`tracing.js:130`, `harTracer.js:273`); the remaining **158 script hashes** are strict live
+  `response.body()` SHA results, matching frozen Git, with corresponding successful body-read
+  events. The desktop/phone traces show **240/50** successful Buffer reads, no body-read or
+  unresolved action errors, no aborts and no unexpected HTTP/page/console errors. The one console
+  404 is the intentional nested missing route. This does **not** claim raw script-body archival.
+  The first font/CDP failure remains preserved, correctly failed despite its completed flows;
+  the only recorder diff disables HTTP cache before each watched page, without response
+  fixtures/service-worker override. No product change or repeated attack was needed.
+- **Evidence authentication — HELD.** All **46** committed evidence files and **4** passing/
+  preserved-failure traces match their manifests. Worker manifest SHA-256:
+  `0f916f08892997d2988d242013620213b05e08c6a6bb3ea2b2669f6c3e9ec87d`; target manifest:
+  `aaf3af98a393646333422a4996941e30ca1320ef680563f14cc00e6314247b14`.
+  Independent full audit receipts are committed under `evidence/ui-redesign/release-626-verifier/`
+  (manifest `332e6026bcc888302bc3d34c85dacfc92e2c7a23860669a0808c03388423db7c`);
+  offline inspection scripts/logs remain under `target/ui-verifier/release-626/`.
+
+**Final seven grades carry:** typography **8.7**, restraint/product character **8.6**, mobile
+**8.3**, homepage clarity/engagement **8.8**, starting/configuration ease **8.6**, concise honest
+copy **8.5**, actual UI-library consistency **8.6**. Every dimension independently exceeds 8.
+No regrading was needed for log/manifest metadata. Limits remain desktop Chromium and 360/390 px
+touch emulation, with no physical-device, GPU/RSS, measured bounce-rate or third-party Playground
+availability claim. **SUITE:** existing promoted regressions/acceptance remain the permanent
+proof; no new test, attack, clone, browser run, deploy, push, merge or stack operation was performed
+by this verifier. The shipped snapshot remains at the frozen published source; this is an
+evidence/log-only commit. Native draft PR submission remains the coordinator's next step.
