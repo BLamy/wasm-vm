@@ -426,3 +426,72 @@ digest/source/dist/trace audit above; task policy **before** queue regeneration.
 E0-T32's local boundary. The coordinator's once-only exact-source pristine clone and isolated
 Pages publication/real-guest smoke proof remain pending, so the overall requested closure is
 not yet complete. No push, deploy, merge or stack edit.
+
+### 2026-10-30 — coordinator — final reproducibility and published-release claim
+
+**Frozen published source:** `d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4`. **Pristine source:**
+`2d7b3414d0b16a744a246236f275870e51ba88a4`. These are deliberately distinct heads: after
+the successful pristine proof, the first deployment authenticated all R2 objects but stopped
+before Pages on the known UTF-8 Bash log interpolation. Actual Opus repaired that single
+output line on its owning public layer (`92792d2be`), freshly verified by `4eea41a1a`;
+the docs layer was rebased and its verified task metadata refreshed.
+`evidence/ui-redesign/release-626/final-reconciliation.json` authenticates the entire source
+diff: one braced shell output interpolation, C task/evidence, and task catalog/cache metadata.
+All **780** dist paths remain; **778** files are byte-identical to the pristine build, with
+only `tasks.json` and `sw.js` differing as declared metadata. Interface, runtime, packages,
+guides, catalog and assets are unchanged. Carry all local HELD results, the consumed bounded
+attack, final seven grades **8.3–8.8**, and the pristine **73/73** UI checks.
+
+**Pristine proof.** The fresh Git clone at the exact declared pristine head rebuilt Rust/Wasm
+and npm dependencies from scrubbed environment, then passed **15 foundation +29 workspace
++19 public +10 docs** acceptance checks. All **780 generated files** matched the root release
+byte for byte, with no tracked changes. No ignored target/node_modules/pkg caches were
+copied. To fit the repo's 15.4 GB tracked evidence on this disk, program source was checked
+out from Git, tracked historical evidence was APFS-cloned from that same frozen head, and
+a full fresh-index Git diff authenticated all 31,970 tracked paths. One earlier checkout-only
+attempt exhausted disk before any build/tests; it is preserved separately and is not a pass.
+The entire 22-file external `releases/` directory was staged and inventoried, including 10
+legacy/auxiliary extras. The build recipes and browser GETs identify only the three declared
+manifest boot inputs; no OS-level full-file-read tracing is claimed. Exact script, step
+commands, logs, input and file digests are under `release-626/pristine/`,
+`release-inputs.json`, `reproducibility.json` and the separate checkout failure directory.
+
+**Publication.** `python3 /tmp/wasm-vm-ui-publish-final.py` ran
+`PAGES_BRANCH=ui-redesign-20261030 bash tools/deploy-cloudflare.sh` at the final frozen
+head. It authenticated exact R2 bytes, enforced the 25 MiB Pages limit and published the
+isolated preview **https://9f071e86.wasm-vm.pages.dev**. `deploy-command.json` and `deploy.log` retain
+the exact source/command/receipt; production was not published. The five expected deployed
+manifest URL rewrites were archived in `published/deployed-manifests/`, then only those
+five tracked files were restored to HEAD after the proof; no other source edits occurred.
+
+**Published browser proof.** `python3 /tmp/wasm-vm-ui-run-published-proof.py` runs the
+archived `published-smoke.mjs` against the immutable preview origin. It passed
+**14 checks**, **25 fixed file SHA256 bindings** and
+**187 distinct completed same-origin requested-file bindings**,
+with **0 unexpected HTTP/console/page/binding errors**. The actual main Start Linux
+action restored the real BusyBox guest; trusted terminal keyboard input evaluated shell
+arithmetic and printed `preview-42`. The recording also shows current Docstream 1.33.0
+ranked search to a focused exact section, actual Mermaid SVG/source and source-relative
+recording thumbnail, the four immutable current session references, shared public
+navigation, all four case-study routes,390 px touch menu/library/heading focus and configured
+width fit, plus nested Pages 404 recovery. Completed responses bind to the staged deployed
+bytes; aborted navigation requests are separately labelled, never treated as successful
+byte bindings. Screenshots and JSON are committed; the passing and first-recorder-failure browser traces remain under
+`target/ui-release-626/published/`, authenticated by `target-SHA256SUMS`.
+
+**Recorder qualification.** The first published run passed all13 product-flow checks but
+failed strict byte capture for repeated cached font responses: the initial200 bodies
+authenticated, while subsequent Chromium memory-cache responses had no CDP body. That
+failed receipt/script/log and trace digests are retained separately. Only the recording
+harness was repaired: HTTP cache is explicitly disabled before each watched page, with
+no response fixtures or service-worker override, so every completed response body can be
+captured. The identical-flow rerun passes the unchanged strict binding/error criteria.
+No interface, deployment or runtime code changed for this evidence repair.
+
+**Limits and closure.** Desktop Chromium and360/390 px touch emulation only: no physical phone,
+GPU/RSS, measured bounce-rate or third-party Playground availability claim. Subsequent
+claim/verifier commits change evidence and logs only; the shipped task snapshot remains
+frozen at the published head rather than chasing its own hash. This is a coordinator claim,
+not a new verifier verdict. Fresh evidence-only audit remains required before final native
+draft submission. SHA256SUMS digest:
+`0f916f08892997d2988d242013620213b05e08c6a6bb3ea2b2669f6c3e9ec87d`.

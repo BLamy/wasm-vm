@@ -1,0 +1,19 @@
+{
+  "head": "d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4",
+  "command": [
+    "bash",
+    "tools/deploy-cloudflare.sh"
+  ],
+  "explicitEnvironment": {
+    "PAGES_BRANCH": "ui-redesign-20261030"
+  },
+  "exit": 0,
+  "seconds": 268.81,
+  "previewUrls": [
+    "https://9f071e86.wasm-vm.pages.dev",
+    "https://ui-redesign-20261030.wasm-vm.pages.dev"
+  ],
+  "immutablePreview": "https://9f071e86.wasm-vm.pages.dev",
+  "logSha256": "36dd33cb484758b0a82c2898e5dd449d9373c985c3a16cc9179cfa9e21b9d144",
+  "published": true
+}

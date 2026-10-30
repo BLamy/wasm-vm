@@ -1,0 +1,76 @@
+{
+  "head": "2d7b3414d0b16a744a246236f275870e51ba88a4",
+  "branch": "codex/ui-redesign-docs",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-ui-pristine-jrobbe53/repo",
+  "scrubbed_names": [
+    "RUST_LOG"
+  ],
+  "playwright_port": 52666,
+  "steps": [
+    {
+      "name": "fresh full Git clone (immutable objects may be hardlinked; history is an explicit corpus and roadmap input)",
+      "exit": 0,
+      "seconds": 0.12
+    },
+    {
+      "name": "detach at the exact frozen head (no working tree materialization yet)",
+      "exit": 0,
+      "seconds": 0.01
+    },
+    {
+      "name": "populate a fresh index from the frozen Git tree",
+      "exit": 0,
+      "seconds": 0.16
+    },
+    {
+      "name": "checkout every non-evidence source path directly from Git",
+      "exit": 0,
+      "seconds": 1.93
+    },
+    {
+      "name": "APFS clonefile materialization of tracked immutable evidence",
+      "exit": 0,
+      "seconds": 14.07
+    },
+    {
+      "name": "authenticate the complete fresh working tree against the frozen Git commit",
+      "exit": 0,
+      "seconds": 97.07
+    },
+    {
+      "name": "stage declared release artifacts",
+      "exit": 0,
+      "seconds": 0.03
+    },
+    {
+      "name": "validate all declared external inputs",
+      "exit": 0,
+      "seconds": 0.82
+    },
+    {
+      "name": "build from pristine source and scrubbed environment",
+      "exit": 0,
+      "seconds": 71.57
+    },
+    {
+      "name": "combined UI and current Docstream acceptance in the pristine clone",
+      "exit": 0,
+      "seconds": 223.26
+    }
+  ],
+  "clone_mode": "local Git clone; program source checked out from Git; tracked evidence uses APFS clonefile verified against Git; no ignored build/dependency cache copied",
+  "tracked_evidence_materialization": {
+    "files": 23492,
+    "bytes": 15403454865,
+    "method": "APFS clonefile from matching frozen tracked files; authenticated by fresh Git index and full diff",
+    "source_head": "2d7b3414d0b16a744a246236f275870e51ba88a4"
+  },
+  "tracked_clean_before_build": true,
+  "no_ignored_build_caches_before_build": true,
+  "tracked_changes": [],
+  "dist_diff": [],
+  "generated_source_metadata_changes": [],
+  "unexpected_source_changes": [],
+  "dist_file_count": 780,
+  "seconds": 409.33
+}

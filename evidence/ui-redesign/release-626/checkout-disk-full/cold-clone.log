@@ -1,0 +1,37 @@
+
+fresh full Git clone (immutable objects may be hardlinked; history is an explicit corpus and roadmap input)
+$ git clone --quiet --local --no-checkout --single-branch --branch codex/ui-redesign-docs /Users/blamy/Documents/Codex/wasm-vm/.git /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-ui-pristine-13h2u_2y/repo
+
+checkout the exact frozen product head (later evidence-only commits cannot race this checkout)
+$ git checkout --quiet --detach 2d7b3414d0b16a744a246236f275870e51ba88a4
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0002
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0003
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0004
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0005
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0006
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0007
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0008
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0009
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0010
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0011
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0012
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0013
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0014
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0015
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0016
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0017
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0018
+error: unable to write file evidence/virgl-packed-depth-images/worker/recording.tar.gz.part-0019
+error: unable to write file evidence/virgl-packed-depth-images/worker/records.json
+error: unable to write file evidence/virgl-packed-normalized-consumer/verifier/recording.tar.gz
+error: unable to write file evidence/virgl-packed-normalized-consumer/verifier/records.json
+error: unable to write file evidence/virgl-packed-normalized-consumer/worker/recording.tar.gz
+error: unable to write file evidence/virgl-packed-normalized-consumer/worker/records.json
+error: unable to write file evidence/virgl-packed-unsigned-consumer/verifier/recording.tar.gz
+error: unable to write file evidence/virgl-packed-unsigned-consumer/verifier/records.json
+error: unable to write file evidence/virgl-packed-unsigned-consumer/worker/recording.tar.gz
+error: unable to write file evidence/virgl-packed-unsigned-consumer/worker/records.json
+error: unable to write file evidence/virgl-pairs/cold-clone/acceptance/components/hardware/report.json
+error: unable to write file evidence/virgl-pairs/cold-clone/acceptance/components/regression/contract/browser/browser.png
+error: unable to write file evidence/virgl-pairs/cold-clone/acceptance/components/regression/contract/browser/report.json
+fatal: cannot create directory at 'evidence/virgl-pairs/cold-clone/acceptance/components/regression/literal': No space left on device

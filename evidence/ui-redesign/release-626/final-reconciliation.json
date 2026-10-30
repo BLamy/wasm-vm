@@ -1,0 +1,35 @@
+{
+  "priorPristineHead": "2d7b3414d0b16a744a246236f275870e51ba88a4",
+  "finalFrozenHead": "d6a3d9999f05e3e5ad7662b22f14ed95999ba2b4",
+  "implementationDiff": "One braced deployment log interpolation; all other non-evidence changes are task/queue/task-catalog/SW metadata.",
+  "changedPaths": [
+    "evidence/ui-redesign/public-626-deploy-repair/SHA256SUMS",
+    "evidence/ui-redesign/public-626-deploy-repair/direct-proof.json",
+    "evidence/ui-redesign/public-626-deploy-repair/direct-proof.py",
+    "evidence/ui-redesign/public-626-deploy-repair/first-deploy.log",
+    "evidence/ui-redesign/public-626-deploy-repair/first-failure.json",
+    "evidence/ui-redesign/public-626-deploy-repair/worker-result.json",
+    "tasks/epic-0-ignition/E0-T30-ui-homepage-public.md",
+    "tools/deploy-cloudflare.sh",
+    "web/dist/sw.js",
+    "web/dist/tasks.json",
+    "web/tasks.json"
+  ],
+  "unexpectedProductChanges": [],
+  "distFiles": 780,
+  "distIdenticalFiles": 778,
+  "distMetadataChanges": [
+    {
+      "path": "sw.js",
+      "pristineSha256": "abf7d181d39548a8091091576bb64b8367b62264407327a1de1c38cdb37fd82c",
+      "publishedPrestageSha256": "4b1657bbf41e6e21c1c22b3f5aa4440b172ff8faac5ff4e0c8fc8e781acf6308"
+    },
+    {
+      "path": "tasks.json",
+      "pristineSha256": "50e2e4864eaf494ab16b1b12e1d3d6aaa58e651e7a78040c58269cf6953a340e",
+      "publishedPrestageSha256": "094966d01ac3e9d588380ba75cd29b1d7201f6c7e0d960c83ebf80d6f066be25"
+    }
+  ],
+  "deploymentScriptSha256": "d9a522a3fb06b7ab620fa27c4e1fc779a6969911189ceccdd9e49d1f1e641491",
+  "coldCloneCarry": "All73 UI acceptance checks and780-original-dist-byte proof carry across the unchanged UI/runtime/package/docs source boundary. Only task catalog and corresponding cache stamp differ in final prestage dist."
+}
