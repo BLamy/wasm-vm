@@ -267,14 +267,14 @@ export const ROADMAP = [
 
 const STATUS = {
   verified: { label: "verified", color: "var(--green)", cls: "st-verified" },
-  implemented: { label: "implemented", color: "#4a9eff", cls: "st-implemented" },
-  "evidence-needed": { label: "evidence-needed", color: "#4a9eff", cls: "st-implemented" },
+  implemented: { label: "implemented", color: "#7fa2c9", cls: "st-implemented" },
+  "evidence-needed": { label: "evidence-needed", color: "#7fa2c9", cls: "st-implemented" },
   "in-progress": { label: "in progress", color: "var(--amber)", cls: "st-progress" },
-  pending: { label: "pending", color: "#6b7684", cls: "st-pending" },
+  pending: { label: "pending", color: "#77726a", cls: "st-pending" },
   blocked: { label: "blocked", color: "var(--red)", cls: "st-blocked" },
-  "verification-debt": { label: "verification debt", color: "#b17ce0", cls: "st-debt" },
-  cancelled: { label: "cancelled", color: "#5a6470", cls: "st-cancelled" },
-  decomposed: { label: "decomposed", color: "#7c8aa0", cls: "st-decomposed" },
+  "verification-debt": { label: "verification debt", color: "#a98aa0", cls: "st-debt" },
+  cancelled: { label: "cancelled", color: "#5f5a52", cls: "st-cancelled" },
+  decomposed: { label: "decomposed", color: "#8c867c", cls: "st-decomposed" },
 };
 
 function statusMeta(s) {
@@ -659,7 +659,7 @@ function render() {
     // Cancelled tickets are excluded from the overall count (they don't gate completion).
     const totalCounted = state.data.tasks.filter((t) => t.status !== "cancelled").length;
     const visibleCounted = visible.filter((t) => t.status !== "cancelled").length;
-    countEl.textContent = `${visibleCounted} of ${totalCounted} issues`;
+    countEl.textContent = `${visibleCounted} of ${totalCounted} tasks`;
   }
 
   if (state.view === "timeline") {
@@ -668,7 +668,7 @@ function render() {
   }
 
   if (!groups.length) {
-    lanes.append(h("div", "rm-empty", "No issues match the current filters."));
+    lanes.append(h("div", "rm-empty", "No tasks match the current filters."));
     return;
   }
 

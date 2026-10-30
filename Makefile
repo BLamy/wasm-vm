@@ -2671,7 +2671,6 @@ verify-E0-T27:
 	node --check web/tabs.js
 	node --check web/roadmap-page.js
 	node --check web/landing-page.js
-	node --check web/landing.js
 	node --check web/landing-benchmarks.js
 	bash -n tools/build-web-dist.sh
 	node tools/check-docs.mjs

@@ -4,23 +4,20 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AI Sandboxing — wasm-vm</title>
   <meta name="description" content="A proposed AI isolation stack: an agent inside wasm-vm, a sandboxed Chrome browser, and a surrounding Firecracker microVM. Why layers and browser exploit costs matter.">
-  <meta name="theme-color" content="#080d10"><link rel="icon" href="data:,"><link rel="stylesheet" href="./marketing.css">
+  <meta name="theme-color" content="#151410"><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./ui.css?rev=74f187f16a37"><link rel="stylesheet" href="./site.css">
 </head>
-<body>
-<a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header"><div class="wrap nav">
-  <a class="brand" href="./landing.html" aria-label="wasm-vm home">wasm<span>—</span>vm<i>/</i></a>
-  <nav class="nav-links" aria-label="Primary navigation"><a href="./landing.html#machine">The machine</a><a href="./case-studies.html" aria-current="page">Case studies</a><a class="nav-roadmap" href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a><a class="nav-cta" href="./index.html#ide">Open demo ↗</a></nav>
-</div></header>
+<body class="wv-site wv-case">
+<a class="wv-skip" href="#main">Skip to content</a><header class="wv-site-header"><div class="wv-site-wrap" data-wv-ui="site-nav" data-current="case-studies"><nav class="wv-site-fallback-nav" aria-label="Primary navigation"><a href="./landing.html">wasm-vm</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./index.html#ide">Open the machine</a></nav></div></header>
 <main id="main">
-  <section class="inner-hero wrap">
+  <section class="inner-hero wv-site-wrap">
     <span class="proposal-label">AI Sandboxing / architecture study / hosted deployment proposed</span>
     <h1>Give AI a computer.<br>Keep boundaries around it.</h1>
     <p class="lede">Run an agent and its tools inside wasm-vm. In a hosted deployment, run the browser inside a Firecracker microVM. If one boundary fails, another should still separate the agent from the host.</p>
-    <a class="text-link" href="#layers">See the isolation stack →</a>
+    <a class="wv-text-link" href="#layers">See the isolation stack →</a>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="problem-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="problem-title">
     <h2 id="problem-title">Assume the code is hostile</h2>
     <div class="editorial-body">
       <p>A coding agent needs to execute programs, install packages, read files and try things that fail. Its inputs can include malicious repositories, dependencies and instructions. Treat everything it runs as untrusted, even when the agent is trying to help.</p>
@@ -29,7 +26,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" id="layers" aria-labelledby="layers-title">
+  <section class="editorial-section wv-site-wrap" id="layers" aria-labelledby="layers-title">
     <h2 id="layers-title">Three layers, nested</h2>
     <div class="editorial-body">
       <figure class="sandbox-stack" aria-labelledby="stack-caption">
@@ -58,7 +55,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="browser-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="browser-title">
     <h2 id="browser-title">Make escapes expensive</h2>
     <div class="editorial-body">
       <p>Chrome brings an isolation system built for running untrusted web content. Using that boundary puts an attacker up against the browser's security engineering as well as wasm-vm's own implementation.</p>
@@ -67,7 +64,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="policy-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="policy-title">
     <h2 id="policy-title">Protect the interfaces</h2>
     <div class="editorial-body">
       <p>The layers need narrow connections between them. A privileged bridge around the stack can undo the intended containment.</p>
@@ -79,7 +76,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="proof-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="proof-title">
     <h2 id="proof-title">Prove each boundary</h2>
     <div class="editorial-body">
       <p>wasm-vm's recorded execution can make the agent's guest activity inspectable. Containment needs its own tests: forbidden host reads, denied network destinations, cross-job access, resource exhaustion and malicious bridge requests.</p>
@@ -87,7 +84,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" id="status" aria-labelledby="status-title">
+  <section class="editorial-section wv-site-wrap" id="status" aria-labelledby="status-title">
     <h2 id="status-title">Current status</h2>
     <div class="editorial-body">
       <div class="editorial-rows">
@@ -99,6 +96,7 @@
     </div>
   </section>
 </main>
-<footer class="wrap footer-inner"><div><a class="brand" href="./landing.html">wasm<span>—</span>vm<i>/</i></a><p>A RISC-V computer in a browser.</p></div><nav aria-label="Footer"><a href="./landing.html">Home</a><a href="./case-studies.html">Case studies</a><a href="./docs.html">Docs</a><a href="./index.html#ide">Demo</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a></nav></footer>
+<footer class="wv-site-footer"><div class="wv-site-wrap"><p>wasm-vm · a RISC-V computer in a browser</p><nav aria-label="Footer"><a href="./index.html#ide">App</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./products.html">Product direction</a><a href="./security.html">Security</a><a href="https://github.com/BLamy/wasm-vm">Source on GitHub</a></nav></div></footer>
+<script type="module" src="./ui.js?rev=76d15e673a14"></script>
 </body>
 </html>

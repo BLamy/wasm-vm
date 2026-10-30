@@ -31,7 +31,10 @@ if content.is_dir():
 bundle = dist / "docs-bundle"
 if bundle.is_dir():
     for asset in bundle.glob("*.js"):
-        text = asset.read_text().replace('href:"./index.html#ide"', 'href:"./app.html#ide"').replace('href:"./landing.html"', 'href:"./"')
+        # The reader bundle carries the shared nav's route table (web/ui/src/routes.js) as quoted
+        # strings; apply the same root swap as the HTML pages and ui.js.
+        text = re.sub(r'(["\'])\./index\.html', r'\1./app.html', asset.read_text())
+        text = re.sub(r'(["\'])\./landing\.html(["\'#])', r'\1./\2', text)
         asset.write_text(text)
     revision = hashlib.sha256((bundle / "reader.js").read_bytes()).hexdigest()[:12]
     for name in ["docs.html", "docs-embedding.html", "docs-guest.html", "docs-containers.html", "docs-verification.html", "docs-explainers.html"]:

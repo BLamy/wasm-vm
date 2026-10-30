@@ -33,7 +33,7 @@ try{
   }
   report.base=base;
   for(const name of ['app.html','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','main.js','roadmap.js','tasks.json',
-    'session-gpu-checkpoints.js','session-replay-probe.js','case-studies.html','case-study-riscv-os.html','marketing.css']){
+    'session-gpu-checkpoints.js','session-replay-probe.js','case-studies.html','case-study-riscv-os.html','site.css']){
     const response=await fetch(new URL(name+'?release='+report.head,base),{signal:AbortSignal.timeout(60000),headers:{'Cache-Control':'no-cache'}});
     assert.equal(response.status,200,name);const bytes=Buffer.from(await response.arrayBuffer());
     assert.equal(sha(bytes),sha(await fs.readFile(path.join(dist,name))),'served bytes: '+name);

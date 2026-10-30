@@ -1,3 +1,6 @@
+// E0-T30: the homepage's visual is the interactive architecture model (hero-scene.js). The
+// decorative full-screen background shader (formerly landing.js) was removed; this spec used to
+// assert that background and now asserts its absence alongside the model's real behavior.
 import { expect, test } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
@@ -5,21 +8,17 @@ import { fileURLToPath } from "node:url";
 
 const WEB_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("landing keeps the background shader and omits the scroll-reactive foreground", async ({ page }) => {
+test("landing renders the architecture model and no decorative background", async ({ page }) => {
   await page.goto("/landing.html");
-
-  const canvas = page.locator("#hero-canvas");
-  await expect(canvas).toBeVisible();
-  await expect(canvas).toHaveAttribute("data-hero-background", "shader-active");
-  await expect(canvas).toHaveAttribute("data-hero-foreground", "none");
-  await expect(canvas).toHaveCSS("background-image", /radial-gradient/);
-
+  await expect(page.locator("#hero-canvas")).toHaveCount(0);
+  const model = page.locator("#machine-canvas");
+  await expect(model).toHaveAttribute("data-model-ready", "true");
+  expect(Number(await model.getAttribute("data-model-triangles"))).toBeGreaterThan(0);
   await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
-  await expect(canvas).toHaveAttribute("data-hero-background", "shader-active");
-  await expect(canvas).toHaveAttribute("data-hero-foreground", "none");
+  await expect(model).toHaveAttribute("data-hero-foreground", "three-mesh-cutaway");
 
-  const source = fs.readFileSync(path.join(WEB_ROOT, "landing.js"), "utf8");
-  expect(source).toContain("renderer.render(bgScene, bgCam)");
-  expect(source).not.toContain("THREE.Points");
-  expect(source).not.toContain("renderer.render(scene, camera)");
+  expect(fs.existsSync(path.join(WEB_ROOT, "landing.js"))).toBe(false);
+  const page_ = fs.readFileSync(path.join(WEB_ROOT, "landing-page.js"), "utf8");
+  expect(page_).not.toContain("initHero");
+  expect(page_).toContain("initMachineModel");
 });

@@ -84,7 +84,7 @@ function MobileMenu({ current, showDiagnostics }) {
 }
 
 // Shared header navigation for every surface. `current` is one of the PRIMARY_ROUTES ids.
-export function SiteNav({ current, showDiagnostics = false }) {
+export function SiteNav({ current, showDiagnostics = false, ctaVariant = "default" }) {
   const links = PRIMARY_ROUTES.filter((route) => !route.primary || route.id === current);
   const cta = PRIMARY_ROUTES.find((route) => route.primary);
   return (
@@ -100,7 +100,7 @@ export function SiteNav({ current, showDiagnostics = false }) {
       <div className="wv-nav-end">
         {showDiagnostics ? <RouteIndexDialog className="wv-nav-desktop" /> : null}
         {current !== cta.id ? (
-          <a className={`${buttonVariants({ size: "sm" })} wv-nav-desktop`} href={cta.href}>
+          <a className={`${buttonVariants({ size: "sm", variant: ctaVariant })} wv-nav-desktop`} href={cta.href}>
             {cta.label}
           </a>
         ) : null}

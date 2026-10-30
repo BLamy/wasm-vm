@@ -11,6 +11,10 @@ export const PRIMARY_ROUTES = [
   { id: "app", label: "Open the machine", href: "./index.html#ide", primary: true },
 ];
 
+// The recommended first start (E0-T29): the app boots BusyBox from its ?guest= query contract.
+export const START_ROUTE = "./index.html?guest=busybox#ide";
+export const CHOOSER_ROUTE = "./index.html#ide";
+
 export const SOURCE_URL = "https://github.com/BLamy/wasm-vm";
 
 // Focused host surfaces kept for verification and debugging. Grouped so a person can find one

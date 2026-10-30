@@ -1,8 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { DocsRenderer, DocPageActions, parseMarkdown, documentOutline } from "@brett_lamy/docstream";
+// The shared interface first: its stylesheet declares the cascade-layer order used below.
+import "../ui/src/styles.css";
 import "@brett_lamy/docstream/styles.css";
 import "../docs.css";
+import { Button, Input, Label, TextField } from "@brett_lamy/ui";
+import { UIRoot } from "../ui/src/components/ui-root.jsx";
+import { SiteNav } from "../ui/src/components/site-nav.jsx";
+import { ButtonLink, Picker } from "../ui/src/components/primitives.jsx";
 import architectureSource from "./architecture-demo.jsx?raw";
 
 const aliases={"docs-embedding.html":"embedding","docs-guest.html":"storage","docs-containers.html":"containers","docs-verification.html":"verification","docs-explainers.html":"explainers"};
@@ -52,27 +58,42 @@ function Reader(){
   const filtered=useMemo(()=>catalog?.pages.filter(p=>(subject==="All subjects"||p.category===subject||p.kind==="guide")&&(!query||`${p.title} ${p.source} ${p.search}`.toLocaleLowerCase().includes(query)))||[],[catalog,query,subject]);
   const groups=[...new Set(filtered.map(p=>p.group))];
   const subjects=[...new Set(catalog?.pages.filter(p=>p.kind==="reference").map(p=>p.category)||[])].sort();
+  function closeMenu(){setMenu(false);requestAnimationFrame(()=>document.querySelector('[data-wv="docs-menu"]')?.focus());}
   function go(id,event){if(event&&(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey))return;if(event)event.preventDefault();const target=catalog?.pages.find(p=>p.id===id);if(!target)return;history.pushState({},"",`./docs.html?page=${id}`);setPageId(id);setMenu(false);setSearch("");setArchiveOpen(false);window.scrollTo({top:0,behavior:"instant"});}
   async function openArchive(){setArchiveOpen(v=>!v);if(!archive){try{const r=await fetch(`./docs-content/migration-ledger.json?rev=${__DOCS_CORPUS_REV__}`);if(!r.ok)throw new Error("Archive ledger could not load.");setArchive((await r.json()).documents);}catch(e){setError(e.message);}}}
   const archiveMatches=archive?.filter(p=>!query||`${p.path} ${p.reason}`.toLocaleLowerCase().includes(query));
   return <>
     <a className="docs-skip" href="#doc-main">Skip to document</a>
-    <header className="reader-header"><a className="reader-brand" href="./landing.html">wasm—vm <span>/ docs</span></a><div className="reader-header-links"><a href="./roadmap.html">Roadmap</a><a href="./index.html#ide">Open demo ↗</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a><button type="button" className="reader-menu" aria-expanded={menu} aria-controls="docs-sidebar" onClick={()=>setMenu(!menu)}>{menu?"Close menu":"Browse docs"}</button></div></header>
+    {/* Shared site nav and library controls. Only these controls sit inside .wv-ui roots; the page
+        list, outline and the Docstream article stay outside, so the isolation guard never
+        touches them. */}
+    <header className="reader-header"><UIRoot className="reader-nav-root"><SiteNav current="docs"/></UIRoot></header>
     <div className="reader-layout"><aside id="docs-sidebar" className={`reader-sidebar ${menu?"is-open":""}`} aria-label="Documentation library">
-      <div className="reader-search"><label htmlFor="docs-search">Search documentation</label><input id="docs-search" ref={searchRef} value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search pages, code, or paths" type="search"/><span className="search-shortcut">⌘ / Ctrl K</span></div>
-      <label className="subject-label" htmlFor="docs-subject">Reference subject</label><select id="docs-subject" value={subject} onChange={e=>setSubject(e.target.value)}><option>All subjects</option>{subjects.map(s=><option key={s}>{s}</option>)}</select>
+      {/* Phones: the open library covers the page, including the button that opened it. */}
+      {menu&&<UIRoot className="reader-sidebar-close"><Button variant="secondary" size="sm" onPress={closeMenu} data-wv="docs-menu-close" autoFocus>Close menu</Button></UIRoot>}
+      <UIRoot className="reader-controls">
+        <TextField aria-label="Search documentation" value={search} onChange={setSearch} className="reader-search-field">
+          <Label>Search documentation <span className="search-shortcut">⌘/Ctrl K</span></Label>
+          <Input ref={searchRef} type="search" placeholder="Pages, code or paths" data-wv="docs-search"/>
+        </TextField>
+        <Picker label="Reference subject" options={["All subjects",...subjects].map(s=>({id:s,label:s}))} value={subject} onChange={setSubject}/>
+      </UIRoot>
       {query&&<p className="search-count" role="status">{archiveOpen?(archiveMatches?.length||0):filtered.length} matching pages</p>}
       <nav aria-label="Documentation pages">{!archiveOpen&&groups.map(group=><section key={group}><h2>{group}</h2>{filtered.filter(p=>p.group===group).map(p=><a key={p.id} href={`./docs.html?page=${p.id}`} onClick={e=>go(p.id,e)} aria-current={pageId===p.id?"page":undefined} title={p.source}>{p.title}{p.kind==="reference"&&<small>{p.category}</small>}</a>)}</section>)}</nav>
-      <button className="archive-button" type="button" aria-expanded={archiveOpen} onClick={openArchive}>{archiveOpen?"Back to reader pages":"Archive ledger"}<span>{catalog?.counts.totalDocuments.toLocaleString()}</span></button>
+      <UIRoot className="reader-controls">
+        <Button variant="secondary" size="sm" aria-expanded={archiveOpen} onPress={openArchive} data-wv="docs-archive">{archiveOpen?"Back to reader pages":`Archive ledger · ${catalog?.counts.totalDocuments.toLocaleString()??""} records`}</Button>
+      </UIRoot>
       {archiveOpen&&<div className="archive-list"><p>Preserved records and the replacement for every original doc.</p>{archiveMatches?.map((p,i)=><a key={`${p.path}-${i}`} href={p.replacement||p.sourceUrl} onClick={p.page?e=>go(p.page,e):undefined}><span>{p.path}</span><small>{p.status} · {p.reason}</small></a>)}</div>}
       <div className="reader-sidebar-foot"><span>Docstream {catalog?.docstreamVersion}</span><a href="./docs.html?page=coverage" onClick={e=>go("coverage",e)}>Corpus and provenance →</a></div>
     </aside>
     <main id="doc-main" className="reader-main" tabIndex={-1}>
-      <div className="reader-breadcrumb"><a href="./docs.html" onClick={e=>go("overview",e)}>Field guide</a><span>/</span><span>{page?.category||"Documentation"}</span></div>
+      <div className="reader-breadcrumb"><a href="./docs.html" onClick={e=>go("overview",e)}>Field guide</a><span>/</span><span>{page?.category||"Documentation"}</span>
+        <UIRoot className="reader-menu-root"><Button variant="secondary" size="sm" aria-expanded={menu} aria-controls="docs-sidebar" onPress={()=>setMenu(!menu)} data-wv="docs-menu">{menu?"Close menu":"Browse docs"}</Button></UIRoot>
+      </div>
       {page&&<div className="reader-provenance"><span>{page.kind==="guide"?"Guide":page.disposition==="preserved"?"Preserved source record":"Technical reference"}</span><a href={page.sourceUrl}>Source: {page.source} ↗</a></div>}
       {loading&&<p role="status" className="doc-state">Loading document…</p>}
       {error&&<div role="alert" className="doc-state"><p>{error}</p><a href="./docs.html?page=overview" onClick={e=>go("overview",e)}>Return to the field guide →</a>{page&&<a href={page.sourceUrl}>Read the original source ↗</a>}</div>}
-      {!loading&&!error&&<><div className="reader-page-actions"><DocPageActions markdown={markdown} actions={["copy","view"]} resolver={demoResolver}/><a className="reader-markdown" href={page.url} download={`${page.id}.md`}>Download Markdown ↓</a></div><article key={pageId} ref={articleRef} className="reader-document"><DocsRenderer doc={doc} markdown={markdown} demoResolver={demoResolver} documentProperties={{defaultOpen:false}}/></article><div className="reader-bottom"><a href="./docs.html?page=coverage" onClick={e=>go("coverage",e)}>Documentation coverage →</a><a href={page.sourceUrl}>Inspect the source ↗</a></div></>}
+      {!loading&&!error&&<><div className="reader-page-actions"><DocPageActions markdown={markdown} actions={["copy","view"]} resolver={demoResolver}/><UIRoot className="reader-markdown-root"><ButtonLink variant="ghost" size="sm" href={page.url} download={`${page.id}.md`}>Download Markdown</ButtonLink></UIRoot></div><article key={pageId} ref={articleRef} className="reader-document"><DocsRenderer doc={doc} markdown={markdown} demoResolver={demoResolver} documentProperties={{defaultOpen:false}}/></article><div className="reader-bottom"><a href="./docs.html?page=coverage" onClick={e=>go("coverage",e)}>Documentation coverage →</a><a href={page.sourceUrl}>Inspect the source ↗</a></div></>}
     </main>
     <aside className="reader-outline" aria-label="On this page"><p>On this page</p><nav>{outline.map((h,i)=><a key={`${h.id}-${i}`} href={`#${h.id}`} data-level={h.level}>{h.text}</a>)}</nav><div className="outline-source"><span>Source boundary</span><p>Reports retain their original revision, workload, and evidence. A reader page does not refresh a verification claim.</p></div></aside>
     </div>

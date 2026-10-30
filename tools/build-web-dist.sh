@@ -113,7 +113,7 @@ if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
   # Other pages that link to the app or marketing landing by their dev names must point at the
   # deploy-time locations too. Keep the source tree's simple relative links for local serving.
-  for f in docs.html docs-embedding.html docs-guest.html docs-containers.html docs-verification.html docs-explainers.html products.html work-market.html security.html roadmap.html case-studies.html case-study-riscv-os.html case-study-ai-sandboxing.html case-study-deterministic-simulation.html; do
+  for f in docs.html docs-embedding.html docs-guest.html docs-containers.html docs-verification.html docs-explainers.html products.html work-market.html security.html roadmap.html case-studies.html case-study-riscv-os.html case-study-ai-sandboxing.html case-study-deterministic-simulation.html 404.html; do
     [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
   done
   # The shared interface carries one route table (web/ui/src/routes.js) in source names. Apply the

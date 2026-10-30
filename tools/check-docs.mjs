@@ -65,14 +65,12 @@ for(const page of catalog.pages){
     links.push({page:page.id,target});
   }
 }
-// Evidence-backed acceptance: the exact existing shader algorithm must survive.
-const oldShader=execFileSync("git",["show",`${ledger.sourceRevision}:web/landing.js`],{cwd:root,encoding:"utf8"});
-const currentShader=await read("web/landing.js");
-const fragment=s=>s.match(/fragmentShader:\s*\/\* glsl \*\/\s*`([\s\S]*?)`/)[1];
-require(fragment(oldShader)===fragment(currentShader),"Background fragment shader was replaced or changed");
-for(const asset of ["web/landing.html","web/landing-page.js","web/hero-scene.js","web/landing.js","web/landing-benchmarks.js","web/docs-bundle/reader.js","web/docs-bundle/reader.css"])require((await stat(path.join(root,asset))).size>0,`Missing browser asset ${asset}`);
-const receipt={schema:1,docstreamVersion:version,sourceRevision:ledger.sourceRevision,baselineProse:baseline.length,auxiliaryRecords:auxiliary.length,ledgerDocuments:ledger.documents.length,renderedPages:catalog.pages.length,dispositions:ledger.counts,localLinks:links.length,docstreamContentRefs:contentRefs,namedCodeFences:namedFences,referenceCodeBlocks:commands.reduce((s,p)=>s+p.codeBlocks,0),shaderFragmentSha256:sha(fragment(currentShader)),nativeProperties:properties,nativeTaskStates:verificationStates,roundtripExceptions:roundtrip,commands};
+// E0-T30 removed the decorative full-screen background shader (web/landing.js) from the public
+// pages; the interactive architecture model (hero-scene.js) is the homepage's real visual. The
+// E0-T27 requirement that the shader survive unchanged is superseded by that decision.
+for(const asset of ["web/landing.html","web/landing-page.js","web/hero-scene.js","web/landing-benchmarks.js","web/docs-bundle/reader.js","web/docs-bundle/reader.css"])require((await stat(path.join(root,asset))).size>0,`Missing browser asset ${asset}`);
+const receipt={schema:1,docstreamVersion:version,sourceRevision:ledger.sourceRevision,baselineProse:baseline.length,auxiliaryRecords:auxiliary.length,ledgerDocuments:ledger.documents.length,renderedPages:catalog.pages.length,dispositions:ledger.counts,localLinks:links.length,docstreamContentRefs:contentRefs,namedCodeFences:namedFences,referenceCodeBlocks:commands.reduce((s,p)=>s+p.codeBlocks,0),nativeProperties:properties,nativeTaskStates:verificationStates,roundtripExceptions:roundtrip,commands};
 await mkdir(path.join(root,"target/docs-build"),{recursive:true});
 await writeFile(path.join(root,"target/docs-build/docs-validation.json"),JSON.stringify(receipt,null,2)+"\n");
 require(roundtrip.length===0,`Docstream round-trip changed ${roundtrip.length} pages; see target/docs-build/docs-validation.json`);
-console.log(`Docs checks passed: ${baseline.length} source documents accounted for; ${catalog.pages.length} pages parsed/round-tripped; ${links.length} local links; ${receipt.referenceCodeBlocks} unchanged code blocks; original shader SHA-256 ${receipt.shaderFragmentSha256}.`);
+console.log(`Docs checks passed: ${baseline.length} source documents accounted for; ${catalog.pages.length} pages parsed/round-tripped; ${links.length} local links; ${receipt.referenceCodeBlocks} unchanged code blocks.`);

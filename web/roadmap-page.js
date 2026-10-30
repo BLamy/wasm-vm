@@ -1,5 +1,6 @@
 // The canonical task renderer owns data, filtering, views and evidence. This
-// standalone marketing host supplies navigation and accessibility around it.
+// standalone public host supplies navigation and accessibility around it. Its visible toolbar
+// and the detail Close are library controls (ui.js roadmap-controls) over these native inputs.
 import "./roadmap.js";
 
 const lanes = document.getElementById("rm-lanes");
@@ -58,21 +59,12 @@ document.addEventListener("keydown", event => {
   if (detail.hidden) return;
   if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); detail.querySelector(".rm-detail-close")?.click(); return; }
   if (event.key !== "Tab") return;
-  const controls = [...detail.querySelectorAll('button:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')];
+  // Only visible controls: the native close stays in the panel (hidden) for roadmap.js, while the
+  // library Close (ui.js) is the one people use.
+  const controls = [...detail.querySelectorAll('button:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')].filter(el => el.getClientRects().length);
   const first = controls[0], last = controls.at(-1);
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 }, true);
 
-const motion = document.getElementById("rm-motion");
-const preference = matchMedia("(prefers-reduced-motion: reduce)");
-let paused = preference.matches;
-function setMotion() {
-  motion.textContent = paused ? "Resume background motion" : "Pause background motion";
-  motion.setAttribute("aria-pressed", String(paused));
-  dispatchEvent(new CustomEvent("marketing-motion-change", { detail: { paused } }));
-}
-motion.addEventListener("click", () => { paused = !paused; setMotion(); });
-preference.addEventListener("change", () => { paused = preference.matches; setMotion(); });
-setMotion();
 enhanceView();

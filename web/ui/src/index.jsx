@@ -12,12 +12,24 @@ import { SiteNav } from "./components/site-nav.jsx";
 import { Kit } from "./components/kit.jsx";
 import { Launcher } from "./components/launcher.jsx";
 import { Workspace } from "./components/workspace.jsx";
+import { BenchToggle, GuideLinks, HomeStart, LiveSession, ModelControls } from "./components/home.jsx";
+import { RoadmapControls } from "./components/roadmap-controls.jsx";
+import { NotFoundActions } from "./components/not-found.jsx";
 
 const ISLANDS = {
-  "site-nav": (el) => <SiteNav current={el.dataset.current} showDiagnostics={el.hasAttribute("data-diagnostics")} />,
+  "site-nav": (el) => (
+    <SiteNav current={el.dataset.current} showDiagnostics={el.hasAttribute("data-diagnostics")} ctaVariant={el.dataset.cta || "default"} />
+  ),
   kit: () => <Kit />,
   launcher: () => <Launcher />,
   workspace: () => <Workspace />,
+  "home-start": () => <HomeStart />,
+  "model-controls": (el) => <ModelControls host={el} />,
+  "live-session": (el) => <LiveSession host={el} />,
+  "guide-links": () => <GuideLinks />,
+  "bench-toggle": (el) => <BenchToggle host={el} />,
+  "roadmap-controls": () => <RoadmapControls />,
+  "not-found": () => <NotFoundActions />,
 };
 
 export function mountIslands(root = document) {

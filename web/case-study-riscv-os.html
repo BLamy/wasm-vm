@@ -4,23 +4,20 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>RV-Phone: planning a RISC-V phone OS in the browser — wasm-vm</title>
   <meta name="description" content="An in-progress plan to build an Alpine riscv64 phone OS in wasm-vm, then verify its boot and input before moving to hardware.">
-  <meta name="theme-color" content="#080d10"><link rel="icon" href="data:,"><link rel="stylesheet" href="./marketing.css">
+  <meta name="theme-color" content="#151410"><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./ui.css?rev=74f187f16a37"><link rel="stylesheet" href="./site.css">
 </head>
-<body>
-<a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header"><div class="wrap nav">
-  <a class="brand" href="./landing.html" aria-label="wasm-vm home">wasm<span>—</span>vm<i>/</i></a>
-  <nav class="nav-links" aria-label="Primary navigation"><a href="./landing.html#machine">The machine</a><a href="./case-studies.html" aria-current="page">Case studies</a><a class="nav-roadmap" href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a><a class="nav-cta" href="./index.html#ide">Open demo ↗</a></nav>
-</div></header>
+<body class="wv-site wv-case">
+<a class="wv-skip" href="#main">Skip to content</a><header class="wv-site-header"><div class="wv-site-wrap" data-wv-ui="site-nav" data-current="case-studies"><nav class="wv-site-fallback-nav" aria-label="Primary navigation"><a href="./landing.html">wasm-vm</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./index.html#ide">Open the machine</a></nav></div></header>
 <main id="main">
-  <section class="inner-hero wrap">
+  <section class="inner-hero wv-site-wrap">
     <span class="proposal-label">RV-Phone / Phase 0 in progress / phone image not yet booted</span>
-    <h1>Prompt a phone OS.<br>Boot it in a tab.</h1>
+    <h1>Prompting a RISC-V phone OS</h1>
     <p class="lede">RV-Phone plans a Linux phone around the StarFive JH7110. Before the hardware exists, the project can build a riscv64 userland and test its first boots in wasm-vm. This is the workflow and its current boundary, not a claim that the phone OS already runs.</p>
-    <a class="text-link" href="#status">See the current status →</a>
+    <a class="wv-text-link" href="#status">See the current status →</a>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="prompt-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="prompt-title">
     <h2 id="prompt-title">The prompt</h2>
     <div class="editorial-body">
       <p>Start with a specification in plain language, then ask an agent to build the image, boot it, inspect the result, and change one thing at a time.</p>
@@ -36,7 +33,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" id="loop" aria-labelledby="loop-title">
+  <section class="editorial-section wv-site-wrap" id="loop" aria-labelledby="loop-title">
     <h2 id="loop-title">The loop</h2>
     <div class="editorial-body">
       <p>The bolt.new-style loop for an OS is prompt → build → boot → look → repeat. Each turn should end in a real guest run, rather than a picture of a proposed UI.</p>
@@ -49,7 +46,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="real-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="real-title">
     <h2 id="real-title">Why it can be real</h2>
     <div class="editorial-body">
       <p>wasm-vm emulates a RISC-V machine rather than substituting host Linux APIs. That makes it a plausible place to start the phone's riscv64 userland. Moving to the JH7110 will still require hardware-specific kernel and device work, and the transfer has not been proven yet.</p>
@@ -71,7 +68,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" aria-labelledby="proof-title">
+  <section class="editorial-section wv-site-wrap" aria-labelledby="proof-title">
     <h2 id="proof-title">Verification</h2>
     <div class="editorial-body">
       <p>wasm-vm's rule is that an implementer's satisfaction is a claim; a deterministic recording is evidence. RV-Phone can use the same rule: the phone UI and fake modem count as working only after a recorded guest boot shows their output and input.</p>
@@ -79,7 +76,7 @@
     </div>
   </section>
 
-  <section class="editorial-section wrap" id="status" aria-labelledby="status-title">
+  <section class="editorial-section wv-site-wrap" id="status" aria-labelledby="status-title">
     <h2 id="status-title">Current status</h2>
     <div class="editorial-body">
       <div class="editorial-rows">
@@ -91,6 +88,7 @@
     </div>
   </section>
 </main>
-<footer class="wrap footer-inner"><div><a class="brand" href="./landing.html">wasm<span>—</span>vm<i>/</i></a><p>A RISC-V computer in a browser.</p></div><nav aria-label="Footer"><a href="./landing.html">Home</a><a href="./case-studies.html">Case studies</a><a href="./docs.html">Docs</a><a href="./index.html#ide">Demo</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a></nav></footer>
+<footer class="wv-site-footer"><div class="wv-site-wrap"><p>wasm-vm · a RISC-V computer in a browser</p><nav aria-label="Footer"><a href="./index.html#ide">App</a><a href="./docs.html">Docs</a><a href="./case-studies.html">Case studies</a><a href="./roadmap.html">Roadmap</a><a href="./products.html">Product direction</a><a href="./security.html">Security</a><a href="https://github.com/BLamy/wasm-vm">Source on GitHub</a></nav></div></footer>
+<script type="module" src="./ui.js?rev=76d15e673a14"></script>
 </body>
 </html>

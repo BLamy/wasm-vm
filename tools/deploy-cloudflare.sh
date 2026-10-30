@@ -3,6 +3,15 @@
 #
 #   bash tools/deploy-cloudflare.sh            # build (if needed) + deploy to production (wasm-vm.pages.dev)
 #   REBUILD=1 bash tools/deploy-cloudflare.sh  # force a fresh web/dist build first
+#   PAGES_BRANCH=ui-preview bash tools/deploy-cloudflare.sh
+#                                              # publish to a Pages PREVIEW branch instead of production
+#   PAGES_BRANCH=ui-preview DEPLOY_PRINT_ONLY=1 bash tools/deploy-cloudflare.sh
+#                                              # print the resolved target and wrangler command; no build,
+#                                              # no R2 upload, no deploy
+#
+# PAGES_BRANCH defaults to `main`, the project's production branch, so the default behavior is
+# unchanged. Any other value deploys a preview at https://<alias>.wasm-vm.pages.dev and leaves
+# production untouched.
 #
 # Auth: `npx wrangler login` once (OAuth), or export CLOUDFLARE_API_TOKEN. The project is 'wasm-vm'
 # (https://wasm-vm.pages.dev). Every file must be < 25 MiB (Cloudflare Pages limit) — the kernel Image
@@ -12,6 +21,31 @@ cd "$(dirname "$0")/.."
 
 PROJECT=wasm-vm
 DIST=web/dist
+PRODUCTION_BRANCH=main
+PAGES_BRANCH="${PAGES_BRANCH:-$PRODUCTION_BRANCH}"
+
+# Validate before any build or upload: a branch name reaches wrangler as one argument.
+if ! [[ "$PAGES_BRANCH" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,62}$ ]]; then
+  echo "[deploy] ERROR: PAGES_BRANCH='$PAGES_BRANCH' is not a valid branch name" >&2
+  exit 2
+fi
+if [ "$PAGES_BRANCH" = "$PRODUCTION_BRANCH" ]; then
+  DEPLOY_TARGET="production (branch '$PAGES_BRANCH')"
+  DEPLOY_URL="https://$PROJECT.pages.dev/"
+else
+  # Cloudflare's branch alias: lowercased, non-alphanumerics as '-', at most 28 characters.
+  PAGES_ALIAS=$(printf '%s' "$PAGES_BRANCH" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^a-z0-9]/-/g' | cut -c1-28 | sed -e 's/-*$//')
+  DEPLOY_TARGET="preview branch '$PAGES_BRANCH' (production untouched)"
+  DEPLOY_URL="https://$PAGES_ALIAS.$PROJECT.pages.dev/"
+fi
+DEPLOY_COMMAND=(npx --yes wrangler pages deploy "$DIST" --project-name "$PROJECT" --branch "$PAGES_BRANCH" --commit-dirty=true)
+if [ "${DEPLOY_PRINT_ONLY:-0}" = "1" ]; then
+  echo "[deploy] target: $DEPLOY_TARGET"
+  echo "[deploy] url: $DEPLOY_URL"
+  printf '[deploy] command:'; printf ' %q' "${DEPLOY_COMMAND[@]}"; printf '\n'
+  exit 0
+fi
+echo "[deploy] target: $DEPLOY_TARGET"
 
 if [ "${REBUILD:-0}" = "1" ] || [ ! -f "$DIST/index.html" ]; then
   echo "[deploy] building web/dist (make web-dist)…"
@@ -201,6 +235,6 @@ if [ -n "$big" ]; then
   exit 1
 fi
 
-echo "[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT' (production)…"
-npx --yes wrangler pages deploy "$DIST" --project-name "$PROJECT" --branch main --commit-dirty=true
-echo "[deploy] live at https://$PROJECT.pages.dev/"
+echo "[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT', $DEPLOY_TARGET…"
+"${DEPLOY_COMMAND[@]}"
+echo "[deploy] published to $DEPLOY_TARGET: $DEPLOY_URL"

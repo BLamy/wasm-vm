@@ -49,21 +49,21 @@ export function initMachineModel(canvas) {
   const camera = new THREE.PerspectiveCamera(34, 1, .1, 40);
   camera.position.set(5.8, 4.8, 6.6);
   camera.lookAt(0, .15, 0);
-  scene.add(new THREE.HemisphereLight(0xc6e7e4, 0x1a3038, 2.6));
-  const key = new THREE.DirectionalLight(0xd9ffef, 4);
+  scene.add(new THREE.HemisphereLight(0xf1e6d3, 0x2a2219, 2.6));
+  const key = new THREE.DirectionalLight(0xfff1dc, 4);
   key.position.set(-4, 7, 5); scene.add(key);
-  const rim = new THREE.DirectionalLight(0x47acb9, 3.5);
+  const rim = new THREE.DirectionalLight(0xe4a853, 2.6);
   rim.position.set(6, 2, -3); scene.add(rim);
   const model = new THREE.Group(); scene.add(model);
   const box = new THREE.BoxGeometry(1, 1, 1);
   const mats = {
-    board: new THREE.MeshStandardMaterial({color:0x19383a, roughness:.64, metalness:.25}),
-    graphite: new THREE.MeshStandardMaterial({color:0x354247, roughness:.4, metalness:.7}),
-    chip: new THREE.MeshStandardMaterial({color:0x86bab9, roughness:.26, metalness:.85}),
-    silicon: new THREE.MeshStandardMaterial({color:0x13272d, roughness:.3, metalness:.5}),
-    contact: new THREE.MeshStandardMaterial({color:0xa2936b, roughness:.32, metalness:.8}),
-    line: new THREE.MeshStandardMaterial({color:0x5a9294, roughness:.4, metalness:.6}),
-    glass: new THREE.MeshPhysicalMaterial({color:0x8ed6d3, roughness:.2, metalness:.3, transparent:true, opacity:.19, depthWrite:false}),
+    board: new THREE.MeshStandardMaterial({color:0x2b2721, roughness:.64, metalness:.25}),
+    graphite: new THREE.MeshStandardMaterial({color:0x3d3933, roughness:.4, metalness:.7}),
+    chip: new THREE.MeshStandardMaterial({color:0xc8b38c, roughness:.26, metalness:.85}),
+    silicon: new THREE.MeshStandardMaterial({color:0x1d1a16, roughness:.3, metalness:.5}),
+    contact: new THREE.MeshStandardMaterial({color:0xb88f4f, roughness:.32, metalness:.8}),
+    line: new THREE.MeshStandardMaterial({color:0x8a7656, roughness:.4, metalness:.6}),
+    glass: new THREE.MeshPhysicalMaterial({color:0xe9d6b2, roughness:.2, metalness:.3, transparent:true, opacity:.16, depthWrite:false}),
   };
   const layers = {};
   const slab = (group, material, size, position) => {
@@ -100,7 +100,7 @@ export function initMachineModel(canvas) {
   slab(layers.linux,mats.glass,[3.8,.045,2.6],[0,0,0]);
   // These textures label the solid model, rather than simulate a terminal screen.
   const labelTextures=[];
-  function label(group,text,width,depth,x=0,z=0,color="#a7d9d5") {
+  function label(group,text,width,depth,x=0,z=0,color="#e9dcc4") {
     const bitmap=document.createElement("canvas"); bitmap.width=1024; bitmap.height=180;
     const context=bitmap.getContext("2d");
     context.fillStyle=color; context.font="500 65px monospace"; context.textAlign="center";
@@ -109,14 +109,14 @@ export function initMachineModel(canvas) {
     const mesh=new THREE.Mesh(new THREE.PlaneGeometry(width,depth),new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false}));
     mesh.rotation.x=-Math.PI/2; mesh.position.set(x,.212,z); group.add(mesh);
   }
-  label(layers.cpu,"RV64GC",1.3,.28,0,0,"#173d42");
+  label(layers.cpu,"RV64GC",1.3,.28,0,0,"#2a2016");
   label(layers.linux,"LINUX / riscv64",3.05,.55,0,0);
   label(layers.memory,"RAM",.65,.14,0,0);
   label(layers.devices,"VIRTIO / INTERRUPTS / UART",2.3,.15,0,1.18);
   const homes=Object.fromEntries(Object.entries(layers).map(([k,v])=>[k,v.position.y]));
   // A physical annotation rail follows the selected layer in the 3D cutaway.
   // Selection uses both position and a bright edge so labels and color are not the only cues.
-  const highlightMaterial = new THREE.LineBasicMaterial({color:0xa8eee7,transparent:true,opacity:.9});
+  const highlightMaterial = new THREE.LineBasicMaterial({color:0xe4a853,transparent:true,opacity:.9});
   const highlightGeometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(4.08,.15,2.84));
   const highlight = new THREE.LineSegments(highlightGeometry,highlightMaterial); model.add(highlight);
   let selected="cpu", stopped=reduced.matches, visible=true, alive=true, yaw=0, desiredYaw=0, dragging=false, previousX=0, raf=0, last=0;
