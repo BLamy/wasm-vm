@@ -3,7 +3,7 @@ id: E0-T29
 epic: 0
 title: Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure
 priority: 0.2
-status: implemented
+status: in-progress
 depends_on: [E0-T28]
 estimate: S
 risk: medium
