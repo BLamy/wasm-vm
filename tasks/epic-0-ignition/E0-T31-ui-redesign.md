@@ -24,7 +24,9 @@ Replaced by, in order:
 2. [E0-T29](./E0-T29-ui-workspace-launch.md) — launcher and workspace: one obvious start,
    advanced configuration behind disclosure, every runtime hook intact.
 3. [E0-T30](./E0-T30-ui-homepage-public.md) — homepage and public pages: honest copy, the
-   architecture model kept.
+   architecture model kept, the four case studies on the shared interface.
+4. [E0-T32](./E0-T32-docstream-refresh.md) — docs reader and current field guide: Docstream
+   1.9.1 → 1.33.0, section-aware search, current guides and session references.
 
 Constraints carried by every slice: no Rust changes; existing runtime behavior, evidence, tests,
 storage, networking, keyboard, CPU/JIT, desktop boot, guest restore and compatibility semantics
