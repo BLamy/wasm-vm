@@ -190,6 +190,53 @@ test("guides: real diagram, per-document image, architecture demo and quickstart
   expect(errors).toEqual([]);
 });
 
+// Deterministic coverage for the repeated-heading/title-stripping boundary, which the current
+// published corpus does not exercise. This is a labelled in-memory fixture, not published prose.
+test("heading fixture: title and repeated sections share canonical search/outline IDs", async () => {
+  const { parseMarkdown, documentOutline, slugify } = await import("@brett_lamy/docstream");
+  const { buildDocsTree, createDocsSearchIndex } = await import("@brett_lamy/docstream/site");
+  const { alignSectionAnchors, outlineAfterTitle, uniqueIds } = await import("../docs-src/anchors.js");
+  const fixture = "# Limits\n\n## Limits\nFirst scope.\n\n## Limits\nSecond scope.\n";
+  const entries = documentOutline(parseMarkdown(fixture));
+  expect(uniqueIds(entries.map((e) => e.id))).toEqual(["limits", "limits-1", "limits-2"]);
+  const afterTitle = outlineAfterTitle(entries);
+  expect(afterTitle.map((e) => e.id)).toEqual(["limits-1", "limits-2"]);
+  const index = createDocsSearchIndex(buildDocsTree([{ path: "fixture.md", content: fixture }]));
+  alignSectionAnchors(index.sections, () => afterTitle, (page) => slugify(page.title));
+  expect(index.sections.filter((s) => s.anchor).map((s) => s.anchor)).toEqual(["limits-1", "limits-2"]);
+  const page = index.sections[0].page;
+  const fallback = [{ page, anchor: "limits" }, { page, anchor: "limits" }];
+  alignSectionAnchors(fallback, () => undefined, () => "limits");
+  expect(fallback.map((s) => s.anchor)).toEqual(["limits-1", "limits-2"]);
+});
+
+for (const width of [390, 360]) {
+  test(`Docstream diagram actions own 44 px phone targets at ${width}px`, async ({ browser }) => {
+    test.setTimeout(40_000);
+    const context = await browser.newContext({ viewport: { width, height: 844 }, isMobile: true, hasTouch: true });
+    const page = await context.newPage();
+    try {
+      await page.goto("/docs.html?page=time-travel");
+      const diagram = page.locator(".docs-mermaid-preview");
+      await expect(diagram.locator(".docs-mermaid svg")).toBeVisible({ timeout: 15_000 });
+      for (const action of [diagram.getByRole("button", { name: "Copy Mermaid source" }), diagram.getByRole("link", { name: "Open in Playground" })]) {
+        await action.scrollIntoViewIfNeeded();
+        const name = await action.getAttribute("aria-label") || await action.getAttribute("title") || (await action.textContent()).trim();
+        // The control owns these points even without a browser's nearby-touch adjustment.
+        // This also accepts a real pseudo-element expansion instead of prescribing CSS sizing.
+        const band = await action.evaluate((el) => {
+          const r = el.getBoundingClientRect(), x = r.x + r.width / 2, y = r.y + r.height / 2;
+          const hit = (dx, dy) => { const target = document.elementFromPoint(x + dx, y + dy); return Boolean(target && (target === el || el.contains(target))); };
+          return { top: hit(0, -21.5), bottom: hit(0, 21.5), left: hit(-21.5, 0), right: hit(21.5, 0) };
+        });
+        expect.soft(band, `${name}: owned 44 px hit band`).toEqual({ top: true, bottom: true, left: true, right: true });
+      }
+    } finally {
+      await context.close();
+    }
+  });
+}
+
 for (const viewport of [{ width: 390, height: 844 }, { width: 360, height: 740 }]) {
   test(`phone ${viewport.width}: search from the library overlay, focus stays inside it, tables scroll`, async ({ browser }) => {
     const context = await browser.newContext({ viewport, isMobile: true, hasTouch: true });

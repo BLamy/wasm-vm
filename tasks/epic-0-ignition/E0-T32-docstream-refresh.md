@@ -3,7 +3,7 @@ id: E0-T32
 epic: 0
 title: Docs reader on Docstream 1.33 and a current field guide
 priority: 0.35
-status: implemented
+status: in-progress
 depends_on: [E0-T30]
 estimate: S
 risk: medium
@@ -172,3 +172,118 @@ loaded from it). Evidence thumbnails are E0-T29 captures of the workspace at `50
 (unchanged UI since). No physical iPhone, GPU, RSS or visitor-behaviour claims. Final combined
 design grades belong to the fresh verifier. No cold clone, push or deploy.
 
+### 2026-10-30 — fresh verifier — VERDICT: refuted
+
+Reviewed frozen product `be6df4c1e73fdce0983b063ab0a7405274600ce2`, claim
+`73ae7d08f1b637c10db9c56eccdcfcc090e8b88d`, against verified C `d620694b7`. Predictions were
+recorded before evidence, then updated from the final source-only Mermaid-search delta. The one
+reserved reader attack is now consumed and **HELD**. Status returns to `in-progress` for the two
+bounded repairs below; no implementation was edited.
+
+- **P4/P5 phone Docstream actions — FAILED.** Predicted ordinary rendered actions outside
+  `.wv-ui` own a 44×44 px target. On both 390 and 360 px phones, **Copy Mermaid source**
+  (`.docs-mermaid-preview .docs-split-copy`) owns **28×44 px**: both ±21.5 px horizontal points
+  miss. **Open in Playground** (`.docs-mermaid-preview a.docs-split-action`) owns
+  **145.59375×29.4375 px**: both vertical band points miss. Source receipt
+  `target/ui-verifier/docs-626/diagram-targets.json` records exact boxes/band points, with
+  screenshots at each width. Rechecked with recorded tests: `web/tests/ui-docs.spec.js:214`
+  fails at `:232` for **both controls at both widths** (`geometry.log`, traces under
+  `pw-geometry/`). The existing phone CSS at `docs.css:14` gives article buttons height but not
+  width and does not size this anchor; wrapper-only/result-only checks miss these controls.
+  **Demand:** provide owned 44 px targets for these ordinary Docstream action controls and keep
+  the rendered-control coverage outside `.wv-ui`; inline prose links need no retint or padding.
+- **Recheck qualification.** Copy succeeds from its centre and puts the actual Mermaid source
+  in the clipboard; the Playground link is the expected `https://pele.run/playground#source=…`
+  with `_blank`. This is a target-size failure, not broken action behavior or a claim about
+  third-party availability. Receipt/recording: `diagram-recheck.json` / `diagram-recheck.zip`.
+- **P6 honest terminal guide — FAILED.** New quickstart line 14 (published line 20) says
+  “everything after them comes from the guest,” referring to initial host status lines. The
+  unchanged runtime writes later host-origin storage, worker-stop and halt notices at
+  `web/main.js:1105`, `:1586` and `:1598`. These are host lifecycle/status messages, not guest
+  console output. The incorrect sentence is also visible in the final worker
+  `search-1440.png` capture. **Demand:** replace the universal origin claim with wording that
+  input reaches the guest shell and the host can also print status/error messages. No engine
+  change or failure campaign is required; this is a source/guide factual contradiction.
+
+**Predictions that HELD (retain these on repair):**
+
+- **P1 package and real features — HELD.** Exact top-level Docstream 1.33.0 registry integrity,
+  UI 5.10.1 and one shipped React/ReactDOM root; `/site` search/tree and scoped asset resolver
+  are present, Pele is real and lazy, and no CDN/widget block is used. The UI package's retained
+  nested 1.32 dependency and upstream inactive wrappers do not imply a second live renderer.
+- **P2 search/navigation — HELD.** Ranked prose excerpts, exact focused section destinations,
+  the real `div_by_zero.S` slug discrepancy, direct hashes, all six aliases, subject/archive,
+  source/Markdown/history, same-page and same-reader article links, and architecture demo/source
+  work. Independent original docs acceptance passes **7/7** in 17.5 s (`docs.log`, `pw-docs/`).
+  Mermaid search-input filtering is exercised by “seek transition” → `move-through-history`
+  without diagram arrows in the excerpt; other code remains indexed.
+- **ONE delayed-response + Back/hash attack — HELD.** Starting at
+  `quickstart#your-first-session`, a normal architecture link fetched real 200 Markdown bytes
+  (2533 bytes, SHA-256 `0979635bbce725a6907ed74e26a91f865df1081dacf0bb58940f14b0c38820a5`).
+  The response was held while actual Back restored quickstart and its hash, then fulfilled.
+  URL, H1, title, source href, outline and focused heading stayed identical; no page errors.
+  `back-delayed-response.{mjs,json,zip,log,png}` records the whole probe, with actual bytes and
+  no production fixture edit. Do not add or repeat a new attack in the repair review.
+- **P3 current references/history — HELD.** All four current-reference source digests match
+  exact `c396efe1e` Git blobs and their separate revision; source inventory and published
+  historical ledger remain byte-identical to C. The source-generated ledger equals the tracked
+  inventory. Catalog is 159 pages, history is still 1533 sources; 182 current total code blocks
+  and 888 sections pass the checker. Guide images match exact B captures by SHA-256.
+- **P4/P5 rendering/phone layout — HELD except action geometry.** Real Mermaid SVG plus source,
+  scoped relative images and full-size cards, warm tokens, configured-viewport overflow checks,
+  phone library focus trap/Close return and horizontally scrollable tables pass. The old hidden
+  thumbnail overflow is caught by the recorded sabotage and fixed in frozen bytes. No full
+  physical-device or accessibility-compliance claim follows.
+- **P6 current guide paths/limits — HELD except the one origin sentence.** Start Linux,
+  Tools/Settings, Recordings/Replay/Checkpoints/storage, transfer and continuation labels match
+  the current workspace. Software restore/iPhone/RSS and all four case-study proposal limits
+  remain qualified. Docstream rrweb replay is explicitly distinguished from `.wvsession`.
+- **P7 preservation/packaging — HELD.** All A/B/C results carry by unchanged boundary/digest;
+  the final worker gate reruns **15+29+19+7 = 70** checks successfully. Core runtime, session,
+  artifact and shared UI sources/bundles are unchanged. The prior phone return/input, C's
+  owned standalone actions and the consumed nested404 proof are not re-litigated.
+
+**Identity / sufficiency.** All **22 evidence and 55 target receipts** match manifests
+`3eef2ef6fa543613f57be061ec31c0870348aff909c8f28682185536ae875d5b` and
+`908fd079b31127679dee23ebab68f4b37694d851a78e5d340e42a35df0b5052d`. The 55 current traces have
+no unresolved error; 72 intermediate poll assertions recover. Earlier `2cb02b008` recordings
+are correctly superseded, not used for the final excerpt claim. Product→claim contains only
+declared evidence/task/queue/catalog/SW metadata. UI source/dist hashes stay `76d15e673a14…` /
+`c4e7bb0de506…`; CSS stays `74f187f16a37…`. Source/dist task catalogs agree and all 760 task
+records' status/boundary/contracts/logs match source. SW **`c73acd282903`** reconstructs from
+551 shell inputs. Full receipt: `target/ui-verifier/docs-626/identity-audit.json`.
+
+All **253 changed paths** are classified in `coverage-audit.json`: recorded current reader
+behavior and corpus/build/finalize checks; static prose/type/theme/HTML stamps/config/error
+guards waived with source inspection; upstream generated/lazy unused renderer wrappers waived
+because no page activates those features, without demanding package removal. For the explicitly
+unexecuted repeated-heading path, a promoted **labelled in-memory fixture** (no published prose
+mutation) exercises the official parser/site index, leading-title counting, duplicate numbering,
+search/outline agreement and fallback numbering: **1/1 passes** (`ui-docs.spec.js:195`,
+`promoted.log`). This closes that deterministic helper gap; current real-heading DOM alignment
+is separately recorded. No unrelated native/GPU/compatibility suite or cold clone was run.
+
+**Seven combined grades at this product (each must independently reach 8):**
+
+| Dimension | Score | Evidence and remaining change |
+|---|---:|---|
+| Typography | 8.7 | Consistent Plex hierarchy, legible body/code and restrained Mono labels across retained C and new docs captures. |
+| Restraint / product character | 8.6 | Actual machine model, warm palette, editorial case pages and real evidence thumbnails; no generic visual filler. |
+| Mobile usability | **7.6** | Terminal-first app, fixed C actions, fitted thumbs/search/tables hold; fix the two undersized diagram action targets. |
+| Homepage clarity / engagement | 8.8 | Unchanged clear statement, one actual guest start, useful interactive model and discoverable cases; C proof carries. |
+| Starting / configuration ease | 8.6 | Quickstart now follows Start Linux → terminal → optional tools; section search and current recording/storage guides reduce hunting. |
+| Concise honest copy | **7.7** | Most limits/provenance are clear, but remove the false universal claim about later terminal output. |
+| Actual UI-library consistency | 8.6 | Actual UI 5.10.1 controls, real Docstream 1.33 features and unchanged native engine surfaces; hit size is counted under mobile. |
+
+These are current combined grades, not an average and not completion of the user's goal. Two
+categories remain below 8. Other five grades/visuals may carry into the bounded repair unless
+their boundary changes. Coordinator's once-only pristine clone and isolated Pages publication
+proof remain pending after correctness and all seven grades hold; no production deploy or merge.
+
+**SUITE:** promote the two rendered-action geometry checks and the passing heading fixture.
+The existing permanent superseded-load/direct-hash/Back tests already cover the navigation
+mechanisms; retain the exact combined attack as a receipt rather than another recurring probe.
+No copy-literal test is added for this small prose correction. Commands: original 7 docs cases
+with `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8195 --trace on`; focused `--grep 'heading fixture|Docstream
+diagram actions'` / `--grep 'Docstream diagram actions'`; the recorded probe script above;
+task policy before queue regeneration. No push, deploy, merge or implementation edits.
