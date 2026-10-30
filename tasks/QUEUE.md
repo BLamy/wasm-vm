@@ -17,7 +17,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `0.1` [E0-T28](epic-0-ignition/E0-T28-ui-foundation.md) — Shared interface foundation on @brett_lamy/ui (build, tokens, shared nav) *(deps: E0-T27)*
 - [x] `0.2` [E0-T29](epic-0-ignition/E0-T29-ui-workspace-launch.md) — Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure *(deps: E0-T28)*
-- [~] `0.3` [E0-T30](epic-0-ignition/E0-T30-ui-homepage-public.md) — Homepage and public pages on the shared interface — honest copy, architecture model kept *(deps: E0-T29)*
+- [?] `0.3` [E0-T30](epic-0-ignition/E0-T30-ui-homepage-public.md) — Homepage and public pages on the shared interface — honest copy, architecture model kept *(deps: E0-T29)*
 - [ ] `0.35` [E0-T32](epic-0-ignition/E0-T32-docstream-refresh.md) — Docs reader on Docstream 1.33 and a current field guide *(deps: E0-T30)*
 - [-] `0.4` [E0-T31](epic-0-ignition/E0-T31-ui-redesign.md) — Redesign the entire site on @brett_lamy/ui (planning parent) *(deps: E0-T27)*
 - [x] `  1` [E0-T01](epic-0-ignition/E0-T01-cargo-workspace-scaffold.md) — Scaffold the cargo workspace with no_std-friendly core, wasm wrapper, and native CLI crates *(deps: —)*
