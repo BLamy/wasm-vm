@@ -20,8 +20,15 @@ test("phone keyboard Case studies navigation preserves the real guest and its fi
     });
     await page.goto("/index.html?nosw&testHooks&noAutoBoot#ide");
     await expect(page.locator('[data-wv-ui="site-nav"][data-wv-mounted="true"]')).toBeAttached();
+    // E0-T29 harness repair: main.js binds the native [data-os] buttons only after probing the image
+    // manifests and then marks data-launcher-ready; a tap before that reaches no handler.
+    await expect(page.locator("html")).toHaveAttribute("data-launcher-ready", "true", { timeout: 30_000 });
     await page.locator('.os-option[data-os="busybox"]').tap();
     await page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: 75_000 });
+    // On the first guest-ready ide.js lists /root through a quiet fenced RPC on the same serial
+    // path; type after that startup listing has rendered (or reported its error).
+    await page.waitForFunction(() => !document.querySelector("#ide-explorer .ide-spin")
+      && Boolean(document.querySelector("#ide-explorer .ide-node, #ide-explorer .ide-explorer-ph")), null, { timeout: 30_000 });
     const rows = () => page.locator("#term .xterm-rows").evaluate((el) => [...el.children].map((row) => row.textContent.trimEnd()));
     await page.locator("#term").tap();
     await page.keyboard.type("printf 'nav-%s-%s\\n' setup 626\n", { delay: 12 });

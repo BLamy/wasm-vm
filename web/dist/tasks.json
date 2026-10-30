@@ -1789,18 +1789,18 @@
       "activity": [
         {
           "date": "2026-10-30",
-          "commits": 4,
+          "commits": 5,
           "labels": [
             "tasks(E0-T29): re-open the workspace slice on the PR 626 stack",
             "verify(ui): accept foundation on PR626 and preserve real-guest navigation",
             "feat(ui): shared interface foundation on the PR 626 stack (E0-T28, in progress)",
-            "feat(ui): launcher and workspace on the PR 626 stack, with recordings and self-checks (E0-T29)"
+            "fix(ui): keep the native launcher operable under ?testHooks (E0-T29)"
           ]
         }
       ],
       "firstActivity": "2026-10-30",
       "lastActivity": "2026-10-30",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E0-T30",

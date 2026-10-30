@@ -29,6 +29,9 @@ async function startLinux(page, { tap = false } = {}) {
   const start = page.locator('[data-wv="start-linux"]');
   if (tap) await start.tap(); else await start.click();
   await page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: BOOT_MS });
+  // ide.js's startup /root listing (a quiet fenced RPC on the same serial path) has finished.
+  await page.waitForFunction(() => !document.querySelector("#ide-explorer .ide-spin")
+    && Boolean(document.querySelector("#ide-explorer .ide-node, #ide-explorer .ide-explorer-ph")), null, { timeout: 30_000 });
 }
 
 // Choose an option in a library Picker by its label.
