@@ -240,6 +240,7 @@ web-build:
 	wasm-pack build crates/session-web --target web --profile wasm-release --out-name wasm_vm_session
 	cd web && npm ci --no-audit --no-fund
 	cd web && npm run build:docs
+	cd web && npm run build:ui
 	mkdir -p web/pkg web/session-pkg web/assets/riscv-tests
 	cp -R crates/wasm-web/pkg/. web/pkg/
 	cp -R crates/session-web/pkg/. web/session-pkg/

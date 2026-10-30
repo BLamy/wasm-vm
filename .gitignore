@@ -65,6 +65,10 @@ web/playwright-report/
 # Their deployable copies are tracked under web/dist after coherent integration.
 web/docs-content/
 web/docs-bundle/
+# Shared interface bundle (tools/build-ui.mjs, from web/ui/src). Deployable copies live in web/dist.
+web/ui.js
+web/ui.css
+web/ui-assets/
 .design-tmp/
 
 # Boot artifacts copied under web/ for Pages deploy (source of truth is releases/)

@@ -96,6 +96,23 @@ renderer/editor package APIs and hosted examples are maintained on the focused e
 {% embed url="https://loop-qa.replay.io/projects/project-id/journeys/journey-id" /%}
 ```
 
+## Shared interface (`web/ui/`)
+
+Site chrome and controls come from [`@brett_lamy/ui`](https://blamy.github.io/ui/#/installation)
+(pinned, npm install path), built with the same esbuild and React as the docs reader:
+
+```sh
+cd web && npm run build:ui   # also part of make web-build
+```
+
+`web/ui/src/` holds the tokens (`styles.css`), the route table (`routes.js`) and the shared
+components; the build writes `ui.js`, `ui.css` and the self-hosted fonts in `ui-assets/`
+(gitignored here, committed in `web/dist`). A page opts in with a mount point such as
+`<div data-wv-ui="site-nav" data-current="app">…fallback…</div>` plus `./ui.css` and `./ui.js`.
+Islands are scoped: tokens live on `.wv-ui`, not `:root`, and an `all: revert-layer` guard keeps a
+page's own unlayered element CSS from restyling library controls. [`ui-kit.html`](./ui-kit.html)
+shows every shared control. Acceptance: `bash tools/verify-ui-foundation.sh`.
+
 ## Files
 
 - `index.html` — page + xterm.js UMD include + `main.js` module.

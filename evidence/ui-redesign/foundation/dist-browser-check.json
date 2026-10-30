@@ -1,0 +1,38 @@
+{
+ "app-desktop": {
+  "wvUi": "site-nav",
+  "overflowX": 0,
+  "links": [
+   "wasm-vm/=./",
+   "Home=./",
+   "Docs=./docs.html",
+   "Roadmap=./roadmap.html",
+   "Machine=#ide"
+  ],
+  "errors": []
+ },
+ "app-phone": {
+  "wvUi": "site-nav",
+  "overflowX": 0,
+  "links": [
+   "wasm-vm/=./",
+   "Home=./",
+   "Docs=./docs.html",
+   "Roadmap=./roadmap.html",
+   "Machine=#ide"
+  ],
+  "errors": []
+ },
+ "kit-phone": {
+  "wvUi": "kit",
+  "overflowX": 0,
+  "links": [
+   "wasm-vm/=./",
+   "Home=./",
+   "Docs=./docs.html",
+   "Roadmap=./roadmap.html",
+   "Open the machine=./app.html#ide"
+  ],
+  "errors": []
+ }
+}

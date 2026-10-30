@@ -1,0 +1,210 @@
+/* wasm-vm shared interface. Built by tools/build-ui.mjs into web/ui.css.
+ *
+ * Layer order: the library's precompiled sheet declares properties → theme → base → components →
+ * docstream → utilities. Everything this file adds lives in `wv`, after the library, so a class we
+ * pass into a library component can still refine it. */
+@layer properties, theme, base, wv-base, components, docstream, utilities, wv;
+
+@import "@brett_lamy/ui/styles.css";
+
+/* Type: IBM Plex, served from this origin (no font CDN). Latin subsets only. */
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 700;
+  src: url("../../node_modules/@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+}
+
+/* Isolation guard (unlayered on purpose). Older pages style bare elements (`button`, `header`,
+ * `h1`, `a`) without layers, and unlayered rules beat every layered rule. Inside a mounted island,
+ * roll those declarations back to the layered cascade: the library's classes and our `wv` layer.
+ * The doubled :not(#…) lifts specificity above the legacy selectors that carry an id. Custom
+ * properties are untouched by `all`. */
+:where(.wv-ui, .wv-ui *):not(#wv-guard):not(#wv-guard) {
+  all: revert-layer;
+}
+
+/* Element defaults for islands. This layer sits below the library's components and utilities, so
+ * a variant's own classes (buttonVariants' text-primary-foreground, for one) always win; it only
+ * replaces the user-agent link look that the isolation guard falls back to. Links in running text
+ * opt back in with .wv-prose. */
+@layer wv-base {
+  .wv-ui a { color: inherit; text-decoration: none; }
+}
+
+@layer wv {
+  /* Tokens. Scoped to island roots, not :root: legacy pages define their own --muted/--line with
+   * different meanings, and the library's portal container is the BLProvider root itself. */
+  .wv-ui {
+    --wv-ink-0: #0e0d0b;
+    --wv-ink-1: #151410;
+    --wv-ink-2: #1c1a16;
+    --wv-ink-3: #26241f;
+    --wv-paper: #ece8e1;
+    --wv-paper-2: #b9b2a7;
+    --wv-paper-3: #8c867c;
+    --wv-accent: #e4a853;
+
+    --background: var(--wv-ink-1);
+    --foreground: var(--wv-paper);
+    --card: var(--wv-ink-2);
+    --card-foreground: var(--wv-paper);
+    --popover: var(--wv-ink-2);
+    --popover-foreground: var(--wv-paper);
+    --primary-foreground: #1a1306;
+    --secondary: rgb(236 232 225 / 0.08);
+    --secondary-foreground: var(--wv-paper);
+    --secondary-strong: rgb(236 232 225 / 0.16);
+    --muted: var(--wv-ink-0);
+    --muted-foreground: var(--wv-paper-2);
+    --tertiary-foreground: var(--wv-paper-3);
+    --accent: rgb(236 232 225 / 0.1);
+    --accent-foreground: var(--wv-paper);
+    --destructive: #e0644f;
+    --success: #8fbf86;
+    --warning: var(--wv-accent);
+    --border: rgb(236 232 225 / 0.13);
+    --input: rgb(236 232 225 / 0.07);
+    --segment: var(--wv-ink-3);
+    --overlay: rgb(5 5 4 / 0.66);
+    --bar: rgb(21 20 16 / 0.88);
+    --sticky: rgb(21 20 16 / 0.95);
+    --handle: rgb(236 232 225 / 0.24);
+    --link: var(--wv-accent);
+    --code: var(--wv-ink-0);
+    --code-foreground: #d8d2c8;
+    --radius: 0.5rem;
+    --sidebar: var(--wv-ink-0);
+    --sidebar-foreground: var(--wv-paper);
+    --sidebar-border: rgb(236 232 225 / 0.1);
+    --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --bl-font: var(--font-sans);
+
+    /* Spacing and type scale for our own layout (library components carry their own). */
+    --wv-space-1: 4px;
+    --wv-space-2: 8px;
+    --wv-space-3: 12px;
+    --wv-space-4: 16px;
+    --wv-space-5: 24px;
+    --wv-space-6: 32px;
+    --wv-space-7: 48px;
+    --wv-text-xs: 12px;
+    --wv-text-sm: 14px;
+    --wv-text-md: 16px;
+    --wv-text-lg: 20px;
+    --wv-text-xl: 28px;
+    --wv-text-2xl: clamp(34px, 5vw, 52px);
+
+    font-family: var(--font-sans);
+    font-size: var(--wv-text-md);
+    line-height: 1.5;
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wv-ui *, .wv-ui *::before, .wv-ui *::after { box-sizing: border-box; }
+  .wv-prose a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+  .wv-ui :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  .wv-ui [hidden] { display: none; }
+
+  /* Viewport layer that dialogs and sheets portal into (see ui-root.jsx). */
+  .wv-layer { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background: transparent; }
+  .wv-layer > * { pointer-events: auto; }
+
+  /* ── Shared site navigation ─────────────────────────────────────────────── */
+  .wv-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--wv-space-5);
+    min-height: 56px;
+    min-width: 0;
+  }
+  .wv-brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    color: var(--foreground);
+    text-decoration: none;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .wv-brand-mark { color: var(--wv-accent); font-family: var(--font-mono); font-weight: 500; }
+  .wv-brand:hover { color: var(--foreground); }
+  .wv-nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--wv-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .wv-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 var(--wv-space-3);
+    border-radius: calc(var(--radius) - 2px);
+    color: var(--muted-foreground);
+    text-decoration: none;
+    font-size: var(--wv-text-sm);
+    font-weight: 500;
+  }
+  .wv-nav-link:hover { color: var(--foreground); background: var(--secondary); }
+  .wv-nav-link[aria-current="page"] { color: var(--foreground); box-shadow: inset 0 -2px 0 var(--wv-accent); border-radius: 0; }
+  .wv-nav-end { display: flex; align-items: center; gap: var(--wv-space-2); margin-left: auto; }
+  .wv-nav-menu { display: none; }
+
+  @media (max-width: 760px) {
+    .wv-nav { gap: var(--wv-space-3); min-height: 52px; }
+    .wv-nav-links, .wv-nav-end .wv-nav-desktop { display: none; }
+    .wv-nav-menu { display: inline-flex; }
+  }
+
+  /* Rows whose title is a link: the whole row is the hit target, the anchor stays a real link. */
+  /* LinkRow: the anchor is the row's live content; ::after stretches its hit area over the row
+     body (the library's positioned list-row-body). */
+  .wv-row-link { display: block; min-width: 0; color: var(--foreground); text-decoration: none; }
+  .wv-row-link::after { content: ""; position: absolute; inset: 0; }
+  .wv-row-link > span { display: block; }
+  .wv-row-title { font-weight: 500; }
+  .wv-row-link[aria-current="page"] .wv-row-title { color: var(--wv-accent); }
+  .wv-row-link:focus-visible { outline: none; }
+  .wv-row-link:focus-visible::after { box-shadow: inset 0 0 0 2px var(--ring); border-radius: calc(var(--radius) - 2px); }
+
+  .wv-mono { font-family: var(--font-mono); font-size: 0.92em; }
+  .wv-muted { color: var(--muted-foreground); }
+
+  /* ── Interface kit page ─────────────────────────────────────────────────── */
+  .wv-page { min-height: 100dvh; background: var(--background); }
+  .wv-page-header { position: sticky; top: 0; z-index: 20; background: var(--bar); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .wv-wrap { width: min(1080px, calc(100% - 40px)); margin-inline: auto; }
+  .wv-kit { padding-block: var(--wv-space-7); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--wv-space-7); }
+  .wv-kit h1 { margin: 0; font-size: var(--wv-text-2xl); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+  .wv-kit h2 { margin: 0 0 var(--wv-space-3); font-size: var(--wv-text-lg); font-weight: 600; letter-spacing: -0.01em; }
+  .wv-kit p { margin: 0; max-width: 62ch; color: var(--muted-foreground); }
+  .wv-kit-row { display: flex; flex-wrap: wrap; gap: var(--wv-space-3); align-items: center; }
+  .wv-kit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: var(--wv-space-5); }
+  .wv-kit-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--wv-space-3); }
+  .wv-swatch { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; font-size: var(--wv-text-xs); }
+  .wv-swatch-chip { height: 56px; }
+  .wv-swatch-label { padding: var(--wv-space-2) var(--wv-space-3); display: grid; gap: 2px; }
+  .wv-type-specimen { display: grid; gap: var(--wv-space-3); }
+}

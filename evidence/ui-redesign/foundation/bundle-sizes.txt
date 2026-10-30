@@ -1,0 +1,6 @@
+file                                                               raw     gzip-9
+web/dist/ui.js                                                     685766  217485
+web/dist/ui.css                                                    260921  43430
+web/dist/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2   14708   14777
+web/dist/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2   14888   14957
+web/dist/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2  45712   45638

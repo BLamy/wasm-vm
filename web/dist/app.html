@@ -6,20 +6,24 @@
     <title>wasm-vm — RV64 in the browser</title>
     <link rel="stylesheet" href="./vendor/xterm/xterm.css" />
     <link rel="stylesheet" href="./session-library.css" />
+    <link rel="stylesheet" href="./ui.css?rev=c46fc0216d7d" />
     <style>
       :root {
         color-scheme: dark;
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        --bg: #090b0f;
-        --panel: #10141b;
-        --panel-2: #151a22;
-        --line: #242b36;
-        --text: #eef2f7;
-        --muted: #9aa6b2;
-        --green: #2ea043;
-        --red: #f85149;
-        --amber: #f2c94c;
-        --cyan: #53d4ff;
+        /* Legacy page palette, retoned to the shared interface's warm ink (web/ui/src/styles.css)
+           so the header, ide.js's panes, the console and the diagnostics read as one surface.
+           --cyan is the historical name of the accent variable. */
+        --bg: #0e0d0b;
+        --panel: #151410;
+        --panel-2: #1c1a16;
+        --line: #2a2823;
+        --text: #ece8e1;
+        --muted: #b9b2a7;
+        --green: #8fbf86;
+        --red: #e0644f;
+        --amber: #e4a853;
+        --cyan: #e4a853;
       }
       * { box-sizing: border-box; }
       html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -40,7 +44,7 @@
         align-items: center;
         padding: 14px 18px;
         border-bottom: 1px solid var(--line);
-        background: linear-gradient(to bottom, rgba(13, 16, 21, 0.92), rgba(13, 16, 21, 0.82));
+        background: rgb(21 20 16 / 0.94); /* the shared warm bar (ui.css --bar, docs header) */
       }
       h1, h2 { letter-spacing: 0; }
       h1 {
@@ -57,28 +61,9 @@
         font: 12px ui-monospace, monospace;
         white-space: nowrap;
       }
-      .audio-autoplay-badge {
-        max-width: min(390px, 34vw);
-        padding: 4px 8px;
-        border: 1px solid rgba(242, 201, 76, 0.45);
-        border-radius: 6px;
-        color: var(--amber);
-        background: rgba(242, 201, 76, 0.08);
-        font: 11px ui-monospace, monospace;
-        line-height: 1.35;
-        text-align: right;
-      }
-      .audio-autoplay-badge[data-audio-state="unlocking"] {
-        border-color: rgba(83, 212, 255, 0.45);
-        color: var(--cyan);
-        background: rgba(83, 212, 255, 0.08);
-      }
-      .audio-autoplay-badge[data-audio-state="unavailable"] {
-        border-color: rgba(248, 81, 73, 0.45);
-        color: var(--red);
-        background: rgba(248, 81, 73, 0.08);
-      }
-      .audio-autoplay-badge[hidden] { display: none; }
+      /* main.js and src/audio/autoplay.js keep writing the autoplay state to this node (it stays
+         in the DOM, with its ids); it never shows in the header, whatever its hidden attribute. */
+      .audio-autoplay-badge { display: none !important; }
       main {
         display: grid;
         grid-template-columns: minmax(420px, 1fr) minmax(360px, 44vw);
@@ -495,6 +480,11 @@
       .cap-ev.regressed { color: var(--red); }
 
       /* ── Site navigation ─────────────────────────────────────────────────────── */
+      /* Mount point for the shared nav (web/ui). Takes the header's free width; the version and
+         audio badges stay as plain siblings owned by main.js. A grid, because the island root
+         is reverted to library styles by the ui.css guard and so cannot take flex sizing from
+         this page; grid items stretch to their 1fr column without any rule on the child. */
+      .app-site-nav { flex: 1 1 auto; align-self: stretch; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-flow: column; align-items: center; gap: 16px; }
       nav.tabs {
         display: flex;
         gap: 4px;
@@ -860,13 +850,17 @@
   </head>
   <body>
     <header>
-      <h1><a class="app-brand" href="./" title="Home">wasm<span>—</span>vm<i>/</i></a><span class="app-section">Demo</span></h1>
-      <nav class="tabs" aria-label="Primary navigation">
-        <a class="tab" href="./">Home</a>
-        <a class="tab" href="./roadmap.html">Roadmap</a>
-        <a class="tab" href="./docs.html">Docs</a>
-        <a class="tab active" data-tab="ide" href="#ide" aria-current="page">Demo</a>
-      </nav>
+      <!-- Shared site navigation (web/ui, @brett_lamy/ui). The static markup below is the no-JS
+           fallback; ui.js replaces it with the library-built nav once it loads. -->
+      <div class="app-site-nav" data-wv-ui="site-nav" data-current="app" data-diagnostics>
+        <h1><a class="app-brand" href="./" title="Home">wasm<span>—</span>vm<i>/</i></a><span class="app-section">Demo</span></h1>
+        <nav class="tabs" aria-label="Primary navigation">
+          <a class="tab" href="./">Home</a>
+          <a class="tab" href="./roadmap.html">Roadmap</a>
+          <a class="tab" href="./docs.html">Docs</a>
+          <a class="tab active" data-tab="ide" href="#ide" aria-current="page">Demo</a>
+        </nav>
+      </div>
       <span id="audio-autoplay-badge" class="audio-autoplay-badge" role="status" aria-live="polite">
         Audio muted until interaction — click or press a key to enable sound.
       </span>
@@ -1290,6 +1284,7 @@
     <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./vendor/xterm/xterm.js"></script>
     <script src="./vendor/xterm/addon-fit.js"></script>
+    <script type="module" src="./ui.js?rev=317d7d4f1288"></script>
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./ide.js"></script>
     <!-- E4-T22b: establish isolation/fallback before main.js evaluates any backend or wasm imports.

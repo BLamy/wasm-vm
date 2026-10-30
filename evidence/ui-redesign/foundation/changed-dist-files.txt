@@ -1,0 +1,9 @@
+M	web/dist/app.html
+M	web/dist/sw.js
+M	web/dist/tasks.json
+A	web/dist/ui-assets/ibm-plex-mono-latin-400-normal-A2WATXFY.woff2
+A	web/dist/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2
+A	web/dist/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2
+A	web/dist/ui-kit.html
+A	web/dist/ui.css
+A	web/dist/ui.js
