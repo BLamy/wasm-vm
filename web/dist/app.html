@@ -678,6 +678,9 @@
       .os-launcher { padding: clamp(28px, 6vw, 72px) clamp(18px, 5vw, 64px) 48px; background: var(--bg); }
       .os-launcher[hidden] { display: none; }
       .os-launcher-engine[hidden] { display: none !important; }
+      /* ?testHooks keeps the engine's own controls operable, as it does for the legacy workbench
+         and the E9 panels: the native launcher is shown beside the library one. */
+      :root.e2e-showall .os-launcher-engine[hidden] { display: block !important; }
       .os-launcher-island { max-width: 880px; }
       #panel-ide:not([data-os-selected="true"]) #ide-root,
       #panel-ide:not([data-os-selected="true"]) .console,
