@@ -3,7 +3,7 @@ id: E0-T30
 epic: 0
 title: Homepage and public pages on the shared interface — honest copy, architecture model kept
 priority: 0.3
-status: implemented
+status: verified
 depends_on: [E0-T29]
 estimate: S
 risk: medium
@@ -354,3 +354,50 @@ under `target/ui-historical-preserved/` (outside Git).
 action owning a 44 px target and the sweep now measuring them, I would put mobile at about 8 —
 for the verifier to judge. Final combined scores wait for E0-T32.
 
+### 2026-10-30 — fresh verifier — r2 — VERDICT: verified
+
+Incrementally reviewed frozen product `77ab6346592d56beea21944ccdc4a073f9b4d301` and stopped-worker
+claim `88215d251dff45e96037010d0e04574a77530691`. Predictions were recorded before opening r2
+evidence. Only the prior standalone-target failure, directly touched harness and metadata were
+rechecked; all other P1–P7 results, 776 protected blobs, A/B evidence and the consumed nested404
+attack remain **HELD** with their unchanged boundaries/digests. No new attack or runtime campaign.
+
+- **R2 owned phone targets — HELD.** The new rule at `web/site.css:54` gives standalone hero /
+  section actions real 44 px boxes. All three named links own the four ±21.5 px band points at
+  390 and 360 px in both source and dist; trusted bottom-band taps reach `#status`, the case
+  index and the machine (`app.html` after root swap). `public-626-r2/standalone-targets.json`
+  records all 12 states, with four traces and matching screenshots. Independent promoted-test
+  rerun passes **2/2** in 2.1 s (`target/ui-verifier/public-626-r2/owned-targets.log`,
+  `pw-owned-targets/`). The prior nearby-touch success remains accurately qualified; the repair
+  fixes owned geometry without claiming navigation had failed.
+- **R2 shared pattern and harness — HELD.** The expanded target sweep includes standalone
+  actions outside `.wv-ui`; the worker's **19/19** public acceptance, corpus and dist checks
+  pass (`focused-public.log:1023–1027`). Removing the new rule made that sweep fail on the three
+  homepage section actions (`harness-sabotage.log`); restoration is present in frozen bytes.
+  Inline prose links, markup, copy, destinations, `ui.js` / `ui.css` and runtime are unchanged.
+  Screenshots of repaired RV-Phone, home case list and case index retain the established type,
+  spacing and wrapping. No additional visual repair is required in C.
+- **R2 identity / coverage — HELD.** All earlier 35+77 and new 12+23 evidence/target receipts
+  match their manifests. New manifest hashes are `841627e4f00393b98f6d6da5b0997b7219c9665320293d00b0ce958cd4898d83`
+  and `39d72776a696f3efaba25a52a5ce23a29d83a956bc3d1bade1641829d5abfbbf`.
+  All 23 current traces have no unresolved error (two intermediate poll assertions recover).
+  Source and dist `site.css` match SHA-256 `ffe850099ac6b346b651944ff00d7f9c5f034dcb0a8b2a2f44a6dc819d96b6d9`.
+  Product→claim adds only declared evidence/task/queue/catalog/SW metadata; the source/dist UI
+  hashes stay `76d15e673a14…` / `c4e7bb0de506…`. Service worker `7b51be60d2b9` reconstructs;
+  source/dist catalogs agree and all 760 task status/boundary/contract/log records match source.
+  Full receipt: `target/ui-verifier/public-626-r2/identity-audit.json`. The CSS rule and expanded
+  selector execute in current captures/tests; comments are a static waiver. Prior coverage
+  classifications, including the GPU asset-list-only waiver, stand unchanged.
+
+**Provisional scores:** typography **8.7**, restraint/product character **8.6**, mobile **8.2**
+(raised from 7.5 after the owned-target repair), homepage clarity/engagement **8.8**, starting /
+configuration ease **8.4**, concise honest copy **8.3**, actual UI-library consistency **8.6**.
+These apply to the current A+B+C interface. E0-T32's current Docstream/content requirement and
+the final combined reassessment, once-only portability proof and coordinator preview remain
+pending; this is not final closure of the user's whole redesign request.
+
+**SUITE:** retain the two promoted owned-band tests and the expanded ordinary-target sweep.
+No further test or implementation edit was necessary. Command: `PW_DISABLE_TS_ESM=1
+PLAYWRIGHT_PORT=8194 node node_modules/playwright/cli.js test tests/ui-public.spec.js --grep
+'standalone public actions' --trace on --output ../target/ui-verifier/public-626-r2/pw-owned-targets
+--reporter=list` from `web/`; task policy before queue regeneration. No push, deploy or merge.
