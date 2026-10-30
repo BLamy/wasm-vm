@@ -3,7 +3,7 @@ id: E0-T32
 epic: 0
 title: Docs reader on Docstream 1.33 and a current field guide
 priority: 0.35
-status: pending
+status: in-progress
 depends_on: [E0-T30]
 estimate: S
 risk: medium
