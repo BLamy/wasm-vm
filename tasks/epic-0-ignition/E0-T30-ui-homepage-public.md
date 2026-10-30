@@ -3,7 +3,7 @@ id: E0-T30
 epic: 0
 title: Homepage and public pages on the shared interface — honest copy, architecture model kept
 priority: 0.3
-status: in-progress
+status: implemented
 depends_on: [E0-T29]
 estimate: S
 risk: medium
@@ -303,3 +303,54 @@ Commands: scoped `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8193` public 17-test accep
 `--trace on --output ../target/ui-verifier/public-626/pw-public`; focused `--grep 'standalone
 public actions'` to `pw-owned-targets`; `node tools/check-ui-public-dist.mjs web/dist`;
 `node target/ui-verifier/public-626/nested404.mjs`; task policy before queue regeneration.
+
+### 2026-10-30 — worker — r2: owned 44 px targets for standalone public actions (submitted for recheck)
+
+**Frozen product head: `77ab6346592d56beea21944ccdc4a073f9b4d301`** (`web/dist`
+`afb55368…`). Starts from the verifier's refuted entry above (`33e847b76`, status
+`in-progress`) and its promoted test (`ui-public.spec.js` "standalone public actions …").
+
+**Delta from `20bfdcb8c`** (`git diff 20bfdcb8c 77ab63465`, excluding ledger/SW metadata): one
+rule in `web/site.css` after `.wv-section-head p` —
+`:is(.inner-hero, .wv-section-head) > a { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; }`
+— copied unchanged into `web/dist/site.css` (`cmp` identical); the promoted test (verifier's,
+unchanged); `smallTargets` in `ui-public.spec.js` now also measures
+`:is(.inner-hero, .wv-section-head) > a[href]` (standalone actions outside library islands);
+and the earlier navigation-test heading. No markup, copy, anchor, destination, `ui.js`/`ui.css`
+or runtime change; prose links are untouched. The rule covers the three named actions plus the
+same pattern elsewhere ("Open the full app →", "Open the docs →", "See the isolation stack →",
+"From a failing seed to a regression →", the proposal pages' specification links).
+
+**Commands at `77ab63465`:**
+- `node tools/check-docs.mjs` (155 pages, 1533 sources, 236 links, 181 code blocks);
+  `python3 tools/check-docs-dist.py web/dist`; `ui-public.spec.js` + `landing-hero` +
+  `benchmarks-home` with `--trace on --output ../target/e0t30-626/r2/pw-public` → **19/19**
+  (the 17 recorded tests plus the promoted test at 390 and 360); `node tools/check-ui-public-dist.mjs
+  web/dist` → PASS (38 stamps / 31 pages, nested 404, 12 pages, 185 links/assets).
+  Log `evidence/ui-redesign/public-626-r2/focused-public.log`.
+- `node evidence/ui-redesign/public-626-r2/standalone-targets.mjs` → source tree and built dist at
+  390 and 360: each named action is 44 px tall (widths 176.27 / 129.8 / 177.66), owns all four
+  ±21.5 px band points, and a real touchscreen tap at the band's bottom edge reaches
+  `#status`, `/case-studies.html` and `/index.html#ide` (dist: `/app.html#ide`). Screenshots
+  `source-`/`dist-*-390.png`; traces `target/e0t30-626/r2/standalone-*.zip`.
+- Harness sabotage (before freezing): with the rule removed, the 390 px route sweep fails on
+  "Open the full app →", "All case studies →" and "Open the docs →" (`harness-sabotage.log`);
+  restored.
+
+**Physical-touch note (kept as the verifier recorded it):** before this repair a real touch 5 px
+below the RV-Phone link already activated it in this Chromium phone context; the failure was the
+declared owned-target geometry, not navigation.
+
+**Carried unchanged:** the verifier's HELD P1–P5, P6 (nested 404, dist) and P7 (deploy dry runs);
+r1's workspace 29/29 and foundation 15/15 at `788ce0014` (no workspace, foundation, library
+bundle or runtime byte changed since); E0-T29's RISC-V 127/0 and runtime evidence. Not rerun.
+
+**Digests.** `evidence/ui-redesign/public-626-r2/SHA256SUMS` (`841627e4…`), `target-SHA256SUMS`
+(`39d72776…`) over the 19 public traces and four standalone-target traces. r1 evidence and the
+verifier's receipts are unchanged. The 20 historical large files stay parked by the coordinator
+under `target/ui-historical-preserved/` (outside Git).
+
+**Mobile score (provisional):** the verifier's 7.5 named only this pattern; with every standalone
+action owning a 44 px target and the sweep now measuring them, I would put mobile at about 8 —
+for the verifier to judge. Final combined scores wait for E0-T32.
+

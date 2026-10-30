@@ -1,0 +1,170 @@
+{
+  "source-390-case-rv-phone": {
+    "box": {
+      "w": 176.27,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-study-riscv-os.html#status"
+  },
+  "source-390-home": {
+    "box": {
+      "w": 129.8,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-studies.html"
+  },
+  "source-390-cases": {
+    "box": {
+      "w": 177.66,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/index.html#ide"
+  },
+  "source-360-case-rv-phone": {
+    "box": {
+      "w": 176.27,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-study-riscv-os.html#status"
+  },
+  "source-360-home": {
+    "box": {
+      "w": 129.8,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-studies.html"
+  },
+  "source-360-cases": {
+    "box": {
+      "w": 177.66,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/index.html#ide"
+  },
+  "dist-390-case-rv-phone": {
+    "box": {
+      "w": 176.27,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-study-riscv-os.html#status"
+  },
+  "dist-390-home": {
+    "box": {
+      "w": 129.8,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-studies.html"
+  },
+  "dist-390-cases": {
+    "box": {
+      "w": 177.66,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/app.html#ide"
+  },
+  "dist-360-case-rv-phone": {
+    "box": {
+      "w": 176.27,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-study-riscv-os.html#status"
+  },
+  "dist-360-home": {
+    "box": {
+      "w": 129.8,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/case-studies.html"
+  },
+  "dist-360-cases": {
+    "box": {
+      "w": 177.66,
+      "h": 44
+    },
+    "band": {
+      "top": true,
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "display": "flex"
+    },
+    "after": "/app.html#ide"
+  }
+}
