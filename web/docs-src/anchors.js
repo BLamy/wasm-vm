@@ -65,3 +65,10 @@ export function outlineAfterTitle(entries) {
 export function withoutProperties(markdown) {
   return markdown.replace(/^---\n[\s\S]*?\n---\n+/, "");
 }
+
+// Search input for one page: the document without its properties block and without Mermaid
+// diagram sources (their node syntax makes unreadable excerpts; the diagram's words are in the
+// surrounding prose). Other code stays searchable. Headings are untouched, so anchors still align.
+export function searchInput(markdown) {
+  return withoutProperties(markdown).replace(/^(`{3,})mermaid[^\n]*\n[\s\S]*?^\1[ \t]*$\n?/gm, "");
+}

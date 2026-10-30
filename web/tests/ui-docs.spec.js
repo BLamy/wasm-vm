@@ -67,6 +67,13 @@ test("search: ranked section results; keyboard opens the exact heading; Back and
   await expect(page).toHaveURL(/docs\.html\?page=time-travel#continue-from-the-past$/);
   await expect(page.locator(".reader-document h1")).toHaveText("Record, rewind, and branch");
   await landedOn(page, "continue-from-the-past");
+  // Diagram sources are not searched as text: excerpts stay readable prose.
+  await search.focus();
+  await search.fill("seek transition");
+  const seek = results.first();
+  await expect(seek).toHaveAttribute("href", "./docs.html?page=time-travel#move-through-history");
+  await expect(seek.locator(".reader-result-snippet")).not.toContainText("-->");
+  await search.fill("");
   await page.goBack();
   await expect(page).toHaveURL(/page=overview$/);
   await expect(page.locator(".reader-document h1")).toHaveText("A field guide to wasm-vm");

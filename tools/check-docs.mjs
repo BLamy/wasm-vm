@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { parseMarkdown, serializeMarkdown, documentOutline, readDocumentProperties, getTaskState, slugify } from "../web/node_modules/@brett_lamy/docstream/dist/index.js";
 import { buildDocsTree, createDocsSearchIndex } from "../web/node_modules/@brett_lamy/docstream/dist/site/index.js";
-import { alignSectionAnchors, outlineAfterTitle, uniqueIds, withoutProperties } from "../web/docs-src/anchors.js";
+import { alignSectionAnchors, outlineAfterTitle, searchInput, uniqueIds } from "../web/docs-src/anchors.js";
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 const read=rel=>readFile(path.join(root,rel),"utf8");
@@ -80,7 +80,7 @@ const corpus=JSON.parse(await read("web/docs-content/search-corpus.json"));
 require(JSON.stringify(corpus.pages.map(p=>p.id))===JSON.stringify(catalog.pages.map(p=>p.id)),"Search corpus page list drift");
 for(const entry of corpus.pages)require(entry.path===`${entry.id}.md`&&entry.content===await read(`web/docs-content/${entry.id}.md`),`Search corpus content drift: ${entry.id}`);
 const outlines=new Map(corpus.pages.map(p=>[p.path,documentOutline(parseMarkdown(p.content))]));
-const searchIndex=createDocsSearchIndex(buildDocsTree(corpus.pages.map(p=>({path:p.path,content:withoutProperties(p.content)}))));
+const searchIndex=createDocsSearchIndex(buildDocsTree(corpus.pages.map(p=>({path:p.path,content:searchInput(p.content)}))));
 alignSectionAnchors(searchIndex.sections,page=>outlineAfterTitle(outlines.get(page.path)),page=>slugify(page.title));
 const unaligned=searchIndex.sections.filter(sec=>sec.anchor&&!uniqueIds(outlines.get(sec.page.path).map(e=>e.id)).includes(sec.anchor)).map(sec=>`${sec.page.path}#${sec.anchor}`);
 require(unaligned.length===0,`Search sections without a rendered heading: ${unaligned.slice(0,5).join(", ")}`);

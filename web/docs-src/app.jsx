@@ -11,7 +11,7 @@ import { UIRoot } from "../ui/src/components/ui-root.jsx";
 import { SiteNav } from "../ui/src/components/site-nav.jsx";
 import { ButtonLink, Picker } from "../ui/src/components/primitives.jsx";
 import architectureSource from "./architecture-demo.jsx?raw";
-import { alignSectionAnchors, outlineAfterTitle, uniqueIds, withoutProperties } from "./anchors.js";
+import { alignSectionAnchors, outlineAfterTitle, searchInput, uniqueIds } from "./anchors.js";
 
 const aliases={"docs-embedding.html":"embedding","docs-guest.html":"storage","docs-containers.html":"containers","docs-verification.html":"verification","docs-explainers.html":"explainers"};
 const initialPage=()=>{const entry=location.pathname.split("/").pop();return new URLSearchParams(location.search).get("page")||aliases[entry.endsWith(".html")?entry:`${entry}.html`]||"overview";};
@@ -30,7 +30,7 @@ let searchLoad=null;
 function loadSearch(){
   searchLoad??=fetch(`./docs-content/search-corpus.json?rev=${__DOCS_CORPUS_REV__}`).then(r=>{if(!r.ok)throw new Error("The search index could not load.");return r.json();}).then(corpus=>{
     const byPath=new Map(corpus.pages.map(p=>[p.path,p]));
-    const tree=buildDocsTree(corpus.pages.map(p=>({path:p.path,content:withoutProperties(p.content)})));
+    const tree=buildDocsTree(corpus.pages.map(p=>({path:p.path,content:searchInput(p.content)})));
     const index=createDocsSearchIndex(tree);
     alignSectionAnchors(index.sections,page=>outlineAfterTitle(documentOutline(parseMarkdown(byPath.get(page.path).content))),page=>slugify(page.title));
     return {index,idOf:page=>byPath.get(page.path)?.id};
