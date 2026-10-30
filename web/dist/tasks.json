@@ -1827,16 +1827,17 @@
       "activity": [
         {
           "date": "2026-10-30",
-          "commits": 2,
+          "commits": 3,
           "labels": [
             "tasks(E0-T30): re-open the public slice on the PR 626 stack; plan E0-T32 docs",
-            "feat(ui): shared interface foundation on the PR 626 stack (E0-T28, in progress)"
+            "feat(ui): shared interface foundation on the PR 626 stack (E0-T28, in progress)",
+            "feat(ui): homepage, case studies and public pages on the PR 626 stack (E0-T30)"
           ]
         }
       ],
       "firstActivity": "2026-10-30",
       "lastActivity": "2026-10-30",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E0-T31",

@@ -48,7 +48,8 @@ test("phone keyboard Case studies navigation preserves the real guest and its fi
     const [popup] = await Promise.all([context.waitForEvent("page", { timeout: 6_000 }), page.keyboard.press("Enter")]);
     await popup.waitForLoadState("domcontentloaded", { timeout: 10_000 });
     await expect(popup).toHaveURL(/\/case-studies\.html$/);
-    await expect(popup.getByRole("heading", { level: 1 })).toContainText("Build the system.");
+    // E0-T30 moved the index onto the shared site with a plain heading.
+    await expect(popup.getByRole("heading", { level: 1 })).toHaveText("Case studies");
     expect(await popup.evaluate(() => window.opener)).toBeNull();
     await popup.close();
     await page.bringToFront();
