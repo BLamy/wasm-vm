@@ -3,7 +3,7 @@ id: E0-T29
 epic: 0
 title: Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure
 priority: 0.2
-status: in-progress
+status: implemented
 depends_on: [E0-T28]
 estimate: S
 risk: medium
@@ -708,3 +708,44 @@ not rerun; they use `?testHooks`, where the native panels stay visible). Desktop
 start not exercised beyond the existing contracts test. 626's quiet startup RPC overlaps the first
 seconds after ready (finding above, unchanged). The old-main entries above are history only.
 No cold clone, push or deploy.
+
+### 2026-10-30 — worker — r3: honest Software graphics copy (submitted for a fresh verifier)
+
+**Frozen product head: `507d9e94f11b8bd9b84c187cb833126f4fbc68d8`** (`web/ui/src` `ac67a0ff…`,
+`web/dist` `a75b1db4…`). Reopened at `36c388f76` for one copy correction requested after the
+critic's bounded checks at `505d29064` (recording-pane unmount/remount attack and the expanded
+Switch cases held).
+
+**Delta from `505d29064`** (`git diff 505d29064 507d9e94f`):
+- `web/ui/src/components/launcher.jsx:109`, the Software help in Desktop settings:
+  `"Draws on the CPU from a saved snapshot. Slower, works everywhere."` →
+  `"Draws on the CPU from a saved snapshot. No GPU qualification required."` (PR 626 / E5.5-T07
+  leaves physical-iPhone compatibility unverified, so "works everywhere" was not true). Option ids,
+  labels and the native `#desktop-graphics` write are unchanged.
+- Generated: `ui.js` rev stamp in `web/index.html` and `web/ui-kit.html` (`9971f5dbe874`); in
+  `web/dist`, `ui.js` (the string), `app.html`/`ui-kit.html` stamps (`701101e3a2aa`, root-swapped
+  bytes), `sw.js` version and `tasks.json`. `ui.css` is unchanged (`e4c1be8f48e6`).
+- `web/tests/ui-workspace.spec.js`: the existing graphics-choice test asserts the exact new copy and
+  that the launcher no longer says "works everywhere".
+
+**Commands at `507d9e94f`:**
+- `bash tools/verify-ui-foundation.sh` → PASS (pins, deterministic digest `694b5ed0…`, tree-shaking,
+  assets, no glows, source and dist rev stamps, root-swapped dist, stamped SW, 15/15 browser).
+  `evidence/ui-redesign/workspace-626-r3/verify-ui-foundation.log`. The string occurs once in
+  `web/ui.js` and `web/dist/ui.js`; "works everywhere" occurs in neither.
+- `PW_DISABLE_TS_ESM=1 node node_modules/playwright/cli.js test tests/ui-workspace.spec.js -g
+  "graphics choice" --trace on --output ../target/e0t29-626/pw-r3` → 1 passed (pointer and keyboard
+  choice reach `#desktop-graphics`, exact copy, no heavy fetch, no errors).
+- `node evidence/ui-redesign/workspace-626-r3/software-copy.mjs` → source tree and built `web/dist`
+  (served with `_headers`): Desktop settings → Software shows the exact copy, native value
+  `software`, options `gpu`/`software` with their 626 labels, no errors; screenshots
+  `source-`/`dist-desktop-settings-software.png`, traces `target/e0t29-626/r3-*-software-copy.zip`.
+- Digests: r3 `SHA256SUMS` (`fc7d3d00…`), `target-SHA256SUMS` (`a564c493…`).
+
+**Carried unchanged** (the delta is one string and its generated stamps): the r2 recorded gate at
+`505d29064` (foundation 15/15, workspace 28/28, 28 traces in `target/e0t29-626/pw-r2`;
+`workspace-626-r2/SHA256SUMS` `451415a0…`, `target-SHA256SUMS` `9c419f5f…`), the r2 Switch band
+evidence and sabotage, the critic's remount attack and Switch cases at `505d29064`, and r1's
+RISC-V suite 127 passed / 0 failed, `e4-t32` 8/1 baseline and quiet-window probe
+(`workspace-626/`, `SHA256SUMS` `75a972a8…`). Not rerun for this text change.
+

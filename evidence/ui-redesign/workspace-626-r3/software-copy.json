@@ -1,0 +1,38 @@
+{
+  "source": {
+    "help": "Draws on the CPU from a saved snapshot. No GPU qualification required.",
+    "native": {
+      "value": "software",
+      "options": [
+        [
+          "gpu",
+          "GPU rendering · warm boot"
+        ],
+        [
+          "software",
+          "Software rendering · warm snapshot"
+        ]
+      ]
+    },
+    "worksEverywhere": false,
+    "errors": []
+  },
+  "dist": {
+    "help": "Draws on the CPU from a saved snapshot. No GPU qualification required.",
+    "native": {
+      "value": "software",
+      "options": [
+        [
+          "gpu",
+          "GPU rendering · warm boot"
+        ],
+        [
+          "software",
+          "Software rendering · warm snapshot"
+        ]
+      ]
+    },
+    "worksEverywhere": false,
+    "errors": []
+  }
+}
