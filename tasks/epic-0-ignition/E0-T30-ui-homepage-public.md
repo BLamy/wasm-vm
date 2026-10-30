@@ -3,7 +3,7 @@ id: E0-T30
 epic: 0
 title: Homepage and public pages on the shared interface — honest copy, architecture model kept
 priority: 0.3
-status: implemented
+status: verified
 depends_on: [E0-T29]
 estimate: S
 risk: medium
@@ -438,3 +438,41 @@ Carry all prior UI proofs/grades, the previously consumed novel attack, and the 
 2d7b3414d0 correct-source pristine build with73checks and780identical dist files by unchanged
 product boundary. This literal shell output fix has no new UI behavior to exercise. Fresh
 verifier decides carry and direct sufficiency.
+
+### 2026-10-30 — fresh verifier — deployment log repair — VERDICT: verified
+
+Narrow incremental review of product `92792d2bea496723b2344f93ea43be383450f715`, claim
+`4c28f7c57129e1e359ad883051b4e47063c8b5fe`, above verified C `d620694b7`. Predictions were
+recorded before evidence: only the braced interpolation changes implementation, the actual line
+prints under inherited UTF-8 Bash with `set -eu`, and syntax/print-only preview resolution hold.
+
+- **Actual log line — HELD.** `tools/deploy-cloudflare.sh:238` differs only by braces around
+  `DEPLOY_TARGET`; the entire script otherwise matches verified C byte-for-byte. Independently
+  executed that actual source line in `/bin/bash`, inherited `LANG/LC_ALL/LC_CTYPE=C.UTF-8`,
+  with `set -eu`: exit 0, no stderr, complete target followed by the literal ellipsis. Script
+  SHA-256 is `d9a522a3fb06b7ab620fa27c4e1fc779a6969911189ceccdd9e49d1f1e641491`.
+- **Preview target/coverage — HELD.** Independent `bash -n` and actual
+  `PAGES_BRANCH=ui-redesign-20261030 DEPLOY_PRINT_ONLY=1 bash tools/deploy-cloudflare.sh` both
+  exit 0. The resolved URL is `https://ui-redesign-20261030.wasm-vm.pages.dev/`; parsed command
+  arguments retain one `--branch ui-redesign-20261030` and `--commit-dirty=true`. This mode
+  exits at line 46 before build/R2/Pages. It proves syntax/target resolution and the repaired
+  output line, **not a real deployment**. The pending successful real command supplies that
+  final publication proof after the docs layer is rebased.
+- **Identity/failure receipt — HELD.** All five files match
+  `evidence/ui-redesign/public-626-deploy-repair/SHA256SUMS` (manifest SHA-256
+  `f6523bf9dd6df10dc64706c81f3293a824a5be1b691aa7fb47df26e03347b4c1`). Direct proof names the
+  exact product and script digest. The original `2d7b3414d` pre-Pages failure remains preserved:
+  `first-deploy.log` SHA-256 `3d036cb5da38601d185f85c9c8e8fb3fdbbd10aa6497a688a5c5e890da6043b7`,
+  ending at the unbound variable. Its outer exit 0 is explicitly not treated as a successful
+  upload. Product→claim adds only declared task/queue/evidence. Independent receipt:
+  `target/ui-verifier/public-626-deploy-repair/direct-audit.json`.
+- **Carry/SUITE — HELD.** No UI, package, guard, invocation or runtime byte changed from C;
+  all earlier C predictions, A/B proofs and consumed attacks carry. D's final seven grades
+  (8.7 typography, 8.6 character, 8.3 mobile, 8.8 homepage, 8.6 ease, 8.5 honest copy,
+  8.6 actual library) are unaffected by this output-only fix, subject to the final combined
+  rebased-source identity audit. The once-only `2d7b3414d` pristine 73-check/780-file proof is
+  eligible to carry across this line; its complete receipts and rebased dist equivalence will
+  be audited in final closure, rather than claiming an uninspected publication result here.
+  No new attack, broad suite, clone or deployment was run, and no mirrored implementation test
+  is added for one literal output interpolation. Existing direct proof is sufficient for this
+  repair. Policy ran before queue regeneration; implementation was never edited by the verifier.
