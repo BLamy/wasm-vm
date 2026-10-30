@@ -1,0 +1,46 @@
+{
+  "sourceHead": "92792d2bea496723b2344f93ea43be383450f715",
+  "scriptSha256": "d9a522a3fb06b7ab620fa27c4e1fc779a6969911189ceccdd9e49d1f1e641491",
+  "changedLogLine": 238,
+  "actualSourceLine": "echo \"[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT', ${DEPLOY_TARGET}\u2026\"",
+  "locale": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "LC_CTYPE": "C.UTF-8"
+  },
+  "checks": [
+    {
+      "name": "shell syntax",
+      "argv": [
+        "bash",
+        "-n",
+        "tools/deploy-cloudflare.sh"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "actual source echo line under inherited default macOS Bash locale",
+      "argv": [
+        "bash",
+        "-c",
+        "set -eu\nDIST=web/dist\nPROJECT=wasm-vm\nDEPLOY_TARGET=\"preview branch ui-redesign-20261030\"\necho \"[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT', ${DEPLOY_TARGET}\u2026\"\n"
+      ],
+      "exit": 0,
+      "stdout": "[deploy] deploying web/dist to Cloudflare Pages project 'wasm-vm', preview branch ui-redesign-20261030\u2026\n",
+      "stderr": ""
+    },
+    {
+      "name": "actual unchanged validated preview target and noninteractive command",
+      "argv": [
+        "bash",
+        "tools/deploy-cloudflare.sh"
+      ],
+      "exit": 0,
+      "stdout": "[deploy] target: preview branch 'ui-redesign-20261030' (production untouched)\n[deploy] url: https://ui-redesign-20261030.wasm-vm.pages.dev/\n[deploy] command: npx --yes wrangler pages deploy web/dist --project-name wasm-vm --branch ui-redesign-20261030 --commit-dirty=true\n",
+      "stderr": ""
+    }
+  ],
+  "fragment": "set -eu\nDIST=web/dist\nPROJECT=wasm-vm\nDEPLOY_TARGET=\"preview branch ui-redesign-20261030\"\necho \"[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT', ${DEPLOY_TARGET}\u2026\"\n"
+}

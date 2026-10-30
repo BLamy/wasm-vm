@@ -3,7 +3,7 @@ id: E0-T30
 epic: 0
 title: Homepage and public pages on the shared interface — honest copy, architecture model kept
 priority: 0.3
-status: in-progress
+status: implemented
 depends_on: [E0-T29]
 estimate: S
 risk: medium
@@ -420,3 +420,21 @@ final grades carry by unchanged source/evidence. Narrow submission: shell syntax
 actual repaired log under default macOS UTF-8 Bash, preview command resolution, then the
 real isolated deployment. A fresh verifier decides coverage/carry; no broad repeated suite
 or second full pristine clone is required for this one output line.
+
+### 2026-10-30 — worker/coordinator — logging repair implemented
+
+Actual Claude Code Opus5.5 repair product `92792d2bea496723b2344f93ea43be383450f715`
+changes exactly one output interpolation at line238 to `${DEPLOY_TARGET}…`. No UI, package,
+guard, command, target or runtime bytes changed. `evidence/ui-redesign/public-626-deploy-repair/`
+holds the failed pre-Pages log/receipt, actual worker result/model usage, `direct-proof.py`,
+`direct-proof.json` and SHA256SUMS. Direct commands at that product: `bash -n
+tools/deploy-cloudflare.sh`, the exact actual source echo line in default inherited macOS
+Bash (`C.UTF-8`, `set -eu`), and `PAGES_BRANCH=ui-redesign-20261030 DEPLOY_PRINT_ONLY=1
+bash tools/deploy-cloudflare.sh`: all zero, expected preview URL and noninteractive single
+branch argument. These prove the logging path and unchanged preview resolution; a real
+upload remains pending after fresh verification and rebase of the docs layer.
+
+Carry all prior UI proofs/grades, the previously consumed novel attack, and the completed
+2d7b3414d0 correct-source pristine build with73checks and780identical dist files by unchanged
+product boundary. This literal shell output fix has no new UI behavior to exercise. Fresh
+verifier decides carry and direct sufficiency.
