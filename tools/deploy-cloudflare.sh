@@ -235,6 +235,6 @@ if [ -n "$big" ]; then
   exit 1
 fi
 
-echo "[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT', $DEPLOY_TARGET…"
+echo "[deploy] deploying $DIST to Cloudflare Pages project '$PROJECT', ${DEPLOY_TARGET}…"
 "${DEPLOY_COMMAND[@]}"
 echo "[deploy] published to $DEPLOY_TARGET: $DEPLOY_URL"
