@@ -3,7 +3,7 @@ id: E0-T32
 epic: 0
 title: Docs reader on Docstream 1.33 and a current field guide
 priority: 0.35
-status: implemented
+status: verified
 depends_on: [E0-T30]
 estimate: S
 risk: medium
@@ -354,3 +354,75 @@ and the docs and public-docs suites were rerun above. No new attack, cold clone,
 physical-device claim. Third-party pele.run was not loaded. Whether mobile usability and concise
 honest copy now reach 8 is for the fresh verifier to judge; the other five grades' boundaries are
 unchanged.
+
+### 2026-10-30 — fresh verifier — VERDICT: verified (repair r2)
+
+Reviewed frozen product `08253b1f866d3aa03de0bdce7ab25ea3e3aeb199` and implemented claim
+`428537953c1a30fd6c2278ca0d532eadff7ca9f8` against prior critic `056ee6c87`. Predictions were
+recorded before inspecting r2 evidence: owned 44 px actions with working edge activation,
+qualified terminal copy in source/dist, declared metadata-only submission and unchanged carried
+boundaries. Both earlier failures are resolved; no new attack or implementation edit occurred.
+
+- **P4/P5 phone Docstream actions — HELD.** `web/docs.css:53–55` now sizes the controls
+  themselves. `evidence/ui-redesign/docs-626-r2/diagram-actions.json:2–161` shows Copy **44×44**
+  and Playground **145.59×44**, all four ±21.5 px points owned on source and dist at 390/360;
+  overflow 0 and errors empty in all four contexts. Independently reran the two promoted
+  rendered-action cases (`web/tests/ui-docs.spec.js:214`): **2/2 pass** in 2.0 s on separate
+  port 8196; log/traces under `target/ui-verifier/docs-626-r2/{geometry.log,pw-geometry/}`.
+  Inspected the actual action recordings, not only the summary: source-390 trace
+  `diagram-actions-source-390.zip` touch `call@67` copies the real `flowchart LR` source
+  (`call@71`); clipboard clear `call@75`, keyboard Enter `call@89` and read `call@93` prove
+  keyboard activation independently. Bottom-edge touch `call@103` opens a new tab requesting
+  `https://pele.run/playground`; `call@111` contains the actual diagram source in its href.
+  All four trace outcomes authenticate in `identity-audit.json`. The third-party request was
+  deliberately aborted: this proves the link/action, not external service availability.
+- **P6 truthful terminal copy — HELD.** `web/docs-source/guides/quickstart.md:14` now explicitly
+  allows host status/error output after startup, consistent with unchanged `web/main.js:1105`,
+  `:1586`, `:1598`. The old universal-origin sentence is absent from generated Markdown/search
+  content. Source and dist text appears in all four recordings (source-390 `call@121`) and the
+  byte-identical `{source,dist}-quickstart-terminal-390.png`; the new diagram/card capture also
+  preserves the warm typography and readable layout. No engine or exceptional-state campaign
+  is necessary to prove this factual prose correction.
+- **Identity/metadata — HELD.** Evidence HEAD is exactly `08253b1f8`. New manifests authenticate
+  all **7+23** files: SHA256SUMS
+  `08f8dec7324dd84259b59172df73bc0cbfd607cb7c3c6361f9b563edad02d8a6`, target manifest
+  `e57e45f963665831d35f66148e2bbfb26c1b1fedbadfff486e63433c0ddd16e5`. Prior **22+55** files
+  still match their unchanged `3eef2ef6…` / `908fd079…` manifests. The 17 new acceptance traces
+  are intact; 23 nested polling assertions recover in successful parents, with no unresolved
+  errors (`trace-integrity.json`). The recorded log has docs **10/10**, affected public **7/7**,
+  corpus/dist PASS (`focused-docs.log:302`, `:671`, `:675`). Product→claim changes only the
+  declared log/queue/evidence/task catalogs/SW. Source and dist task catalogs are byte-identical;
+  all **760** records' status/contracts/logs agree with source before this verdict. The exact SW
+  reconstructs as **e9ff807d2c66** over 551 shell inputs. Generated reader JS differs only in its
+  corpus rev, source/dist docs CSS agrees, and reader logic, package lock, runtime/shared UI,
+  migration inventory and current-reference boundary remain unchanged. Audit and independent
+  receipts: `target/ui-verifier/docs-626-r2/{identity-audit.py,identity-audit.json,SHA256SUMS}`.
+- **COVERAGE/carry — HELD.** Both changed source hunks execute in source/dist phone captures;
+  the rebuilt corpus, cache and alias stamps are covered by direct checks. The >760 px
+  `(pointer:coarse)` selector arm is **waived as declarative**: it uses the identical 44 px
+  declarations, with no separate handler/state path or physical-tablet claim. Other theme
+  declarations and generated hash/catalog metadata are waived by source/digest inspection.
+  Carry r1 P1/P2/P3/P7, unaffected P4/P5/P6 outcomes, A/B/C proofs, the passing labelled heading
+  fixture and the consumed **actual delayed architecture response → Back/hash** attack by
+  unchanged code/dependency/evidence digests. No new/repeated attack, untouched suite, cold
+  clone or physical-device test was run. Prior per-group coverage waivers remain unchanged.
+
+**Final combined design grades at this product (each independently exceeds 8):**
+
+| Dimension | Score | Basis |
+|---|---:|---|
+| Typography | 8.7 | Carried Plex hierarchy, body/code legibility; repaired captures retain it. |
+| Restraint / product character | 8.6 | Carried warm machine interface, editorial cases and real evidence images. |
+| Mobile usability | **8.3** | The remaining Docstream action targets now own 44 px; phone library, image/table layout and terminal-return proofs carry. |
+| Homepage clarity / engagement | 8.8 | Unchanged clear next action, actual guest start, interactive model and case stories. |
+| Starting / configuration ease | 8.6 | Current Start Linux → terminal → optional tools guidance, ranked section search and session guides hold. |
+| Concise honest copy | **8.5** | The false universal output claim is replaced by short, accurate host/guest wording; current limits/provenance carry. |
+| Actual UI-library consistency | 8.6 | Actual UI 5.10.1 and meaningful Docstream 1.33 search/renderer/actions, with native engine hosts preserved. |
+
+**SUITE:** keep the two previously promoted owned-target regressions and the passing heading
+fixture; no additional test or literal-copy assertion is needed. Commands: focused Playwright
+with `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8196 --grep 'Docstream diagram actions' --trace on`;
+digest/source/dist/trace audit above; task policy **before** queue regeneration. This verifies
+E0-T32's local boundary. The coordinator's once-only exact-source pristine clone and isolated
+Pages publication/real-guest smoke proof remain pending, so the overall requested closure is
+not yet complete. No push, deploy, merge or stack edit.
