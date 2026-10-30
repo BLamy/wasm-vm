@@ -3,7 +3,7 @@ id: E0-T30
 epic: 0
 title: Homepage and public pages on the shared interface — honest copy, architecture model kept
 priority: 0.3
-status: implemented
+status: in-progress
 depends_on: [E0-T29]
 estimate: S
 risk: medium
@@ -174,3 +174,132 @@ receipts.
 iPhone, GPU speed, process RSS, bounce or conversion claims. The design grades for the combined
 site wait for E0-T32. No cold clone, push or deploy.
 
+### 2026-10-30 — fresh verifier — PR 626 public slice — VERDICT: refuted
+
+Reviewed product `20bfdcb8cd8df1cb2c03dcbfb624cec4ecdc1570`, recorded head
+`788ce00143309dbe4a94c89142da257ab7ab5ade`, and stopped-worker claim
+`7cd626e4cacf2bccd275510d62d38986da3d090f` above verified B `60232554f`.
+Predictions P1–P7 were sent to the coordinator before opening the final evidence. This is one
+bounded medium-risk review; the reserved phone nested-404 attack is consumed and HELD.
+No implementation was edited. Status returns to `in-progress` for the small repair below.
+
+- **P6 ordinary phone targets — FAILED.** Predicted standalone public actions own at least a
+  44 px hit area. At 390 px, RV-Phone's “See the current status →”
+  (`web/case-study-riscv-os.html:17`) is `358 × 25.59375` at `(16, 476.8125)`;
+  homepage “All case studies →” (`web/landing.html:48`) and index “Open the live machine →”
+  (`web/case-studies.html:16`) are also 25.59375 px high. Their `::after` is `none` and the
+  ±21.5 px vertical points around their centre belong to the parent, not the anchor.
+  `site.css:47,127,137` supplies color/grid layout but no owned 44 px target for these
+  standalone actions. The recorded route test's `smallTargets` (`ui-public.spec.js:40`) scans
+  only `.wv-ui`, so its green result misses this boundary. Receipt:
+  `target/ui-verifier/public-626/phone-standalone-targets.json`, screenshots
+  `phone-target-{1,2,3}.png`; promoted test at `web/tests/ui-public.spec.js:388` fails at the
+  owned-band assertion on both **390 and 360 px** (`owned-phone-targets-test.log`, two traces
+  under `pw-owned-targets/`). **Demand:** give the standalone public CTA links an owned target
+  of at least 44 px and retain a real activation check; preserve their destinations and inline
+  prose links. The promoted test accepts a real expanded pseudo-element as well as a taller
+  link box, so the repair need not change type or visual treatment.
+- **Physical recheck qualification.** At the RV-Phone link, a real touch 5 px below the DOM
+  rectangle **did activate** `#status` in this Chromium phone context. A pointer at that same
+  point did not, and a centre touch did. This is a declared owned-target-size failure, not a
+  claim of broken navigation or that every nearby touch fails. Exact receipt and recording:
+  `phone-target-recheck.json` / `phone-target-recheck.zip`. The first ad-hoc recheck incorrectly
+  expected the nearby touch to remain inert; it was corrected before this verdict. Both
+  geometry-only first test receipts (`pw-targets/`) and the final owned-band test receipts are
+  retained, without weakening the 44 px assertion.
+
+**Other predictions and flows (carry these HELD results into the repair review):**
+
+1. **P1 homepage → real guest — HELD.** One primary “Start Linux”, secondary chooser, real
+   architecture model, no decorative background canvas. The source route reaches BusyBox and
+   trusted `printf` produces `home-42`; the worker's additional start recording prints
+   `home-626`. `public-626/verify-ui-public.log:6026–6832`, `capture.json` start, and
+   `target/e0t30-626/home-start-guest.zip`. Independent public acceptance rerun: **17/17**
+   (`target/ui-verifier/public-626/public.log`, 24.1 s). This rerun preserved all substantive
+   `landing-hero` and benchmark assertions.
+2. **P2 architecture controls — HELD.** Actual library Segmented and motion Button press the
+   native scene controls; pointer/arrow selection updates scene/caption, reduced motion starts
+   paused, and the forced no-WebGL fallback follows selection. The one forced WebGL console
+   error is expected only in that sabotage capture; ordinary captures have none.
+3. **P3 docs chrome — HELD.** Real library controls drive search, subject filter, archive,
+   history, source/Markdown actions and phone Close/focus return; no inert Browse toggle at
+   800 px. Article stays outside `.wv-ui`. The current local reader metafile has one root
+   React/ReactDOM set, 23 live UI-package modules and no shipped UI-nested Docstream/editor
+   code. The 155-page, 1533-source corpus, 236 links and 181 code blocks pass unchanged.
+   Docstream 1.33, section search and the current task-based guide remain E0-T32.
+4. **P4 roadmap — HELD.** Search, native value synchronization, Gantt/Kanban, filters, task
+   detail, library Close/Escape and focus return work in the current recording. Direct bounded
+   keyboard check also exercises the newly filtered visible-control Tab wrap: Shift+Tab from
+   library Close stays in the detail, Tab returns to that Close, Escape closes
+   (`roadmap-keyboard.json`). Ledger data and controller logic stay intact; colors/copy are
+   declarative.
+5. **P5 case studies/proposals — HELD.** Homepage → index → articles and phone menu reach all
+   four routes; anchors, attribution/source links, status and security cross-link survive.
+   The three article `<main>` blocks exactly match B after the declared class renames and
+   RV-Phone H1 correction. RV-Phone explicitly has not booted; hosting and celld integration
+   remain proposed. Phone comparison rows stack. Copy no longer claims every console line is
+   guest-written; host startup status is acknowledged. Benchmarks remain traceable to their
+   committed JSON, including unavailable rows. No bounce/conversion claim is inferred.
+6. **P6 root swap and the ONE nested-404 attack — HELD except the target finding.** Independent
+   dist check passes 38 stamps / 31 pages / 112 scripts, 12 public pages and 185 links/assets.
+   A Pages-like fallback at `/retired/field/guide/topic?revision=old` on a 390 px phone loads
+   root assets/library navigation; keyboard skip stays on that URL and focuses `main`; real
+   menu→Docs and recovery→homepage actions reach the correct pages. All three recovery actions
+   own 44 px boxes, all four captured steps have zero horizontal overflow, zero errors and no
+   guest/heavy requests. Receipts: `nested404.{mjs,json,zip,log}` and numbered `01`–`04` images.
+7. **P7 deploy opt-in — HELD, no deployment claim.** Default `main`, explicit `main`, preview
+   branch and invalid-name dry runs pass. The command is an array with the requested branch as
+   one argument; R2/range/digest/size staging safeguards are unchanged. Actual upload/auth/Pages
+   preview and final clean-clone proof remain coordinator steps after D and final combined grades.
+
+**Identity and sufficiency.** All **35 committed evidence + 77 target receipts** match their
+manifests (`6abaf82f071c97a4deae11f1f4e8bb97f1f0d832e1096382537e09a3942f4bb6` and
+`d31173393335d21d43a1ee48b0612a2b3f6350466e7e7605d4936915742c2c4e`). The current 47 success
+traces contain 3536 after-events; 45 intermediate poll assertions recover in successful parent
+assertions, with no unresolved trace error. The first stale-H1 failure is retained, not presented
+as green. Product→recorded changed only that harness expectation plus catalog/SW metadata;
+recorded→claim is evidence/task/queue/catalog/SW metadata. UI source hash `76d15e673a14…` maps
+exactly to deployed `c4e7bb0de506…` by the declared route transform; CSS bytes agree. Service
+worker `d7a84391c839` reconstructs from 585 declared shell inputs; source/dist catalogs match
+and all 760 task records' status/boundary/contracts/logs match task source. Receipts:
+`identity-audit.json`, `metadata-audit.json`, `coverage-audit.json` in the verifier folder.
+
+Every one of the **215 changed paths** is classified in that coverage receipt. Public behavior
+uses the recorded flows above; generated docs chunks/fonts carry the unchanged renderer and
+the checked build graph; literal CSS/tokens/theme/content, revision hosts, task metadata, build
+guards and progressive fallback markup are static/configuration waivers rather than new guest
+claims. The sole `e9-gpu-results-browser.mjs` edit renames a hashed asset from retired
+`marketing.css` to `site.css`; its physical-GPU campaign is appropriately waived. Decorative
+shader/style deletion is intentional and absence-tested. No native/Rust/session gauntlet is
+restarted: **776 protected runtime/B/docs/artifact blobs are identical to verified B**, whose
+127/0 and guest/input/recording evidence stays HELD. The 20 historical large receipts remain
+parked under ignored `target/ui-historical-preserved/`, not untracked at their former paths.
+
+**Provisional seven scores (current A+B+C, not final D/whole-request acceptance):**
+
+| Dimension | Score | Visible basis / smallest outstanding change |
+|---|---:|---|
+| Typography | 8.7 | Plex Sans hierarchy and readable body; Mono is reserved for labels/data. Home/case/docs 1440/390 captures. |
+| Restraint and product character | 8.6 | Warm neutral/amber palette and the actual machine cutaway; plain editorial case lists replace cards/glow. |
+| Mobile usability | **7.5** | Terminal-first B, phone overlays and stacked tables hold; give the named standalone CTA pattern its owned 44 px band to reach 8. |
+| Homepage clarity/engagement | 8.8 | Clear Linux/tab statement, one real start, interactive layers, optional in-page session and discoverable studies. |
+| Starting/configuration ease | 8.4 | One recommended shell start; advanced desktop, Tools and Settings remain optional and real. Task-based guide update remains D. |
+| Concise honest copy | 8.3 | Snapshot/host status and proposal limits are explicit; measurements retain scope and raw sources. Current-guide refresh remains D. |
+| Actual UI-library consistency | 8.6 | Package controls in shared navigation, home/model, roadmap and docs; native xterm/canvas/engine hosts preserved. |
+
+Screen evidence includes current public `home-*`, `cases-*`, all three `case-*-390.png`,
+`docs-1440/390.png`, `roadmap-360.png`, `products-390.png`, verifier numbered fallback captures,
+and the unchanged latest-stack B first-view/terminal/Tools/Settings captures. This review does
+not assert physical-device accessibility compliance, measured conversion, a working container
+backend, GPU qualification or a final combined score. C has one bounded repair; D is still pending.
+
+**SUITE:** promoted the meaningful ordinary-target regression at `ui-public.spec.js:388` (two
+phone widths, owned band and real activation). It fails 2/2 at the required geometry assertion.
+Keep the existing permanent nested404 dist check; the independent phone fallback probe is a
+receipt, not another broad recurring guest suite. No further attack is requested on repair:
+recheck the CTA/harness boundary, carry these HELD results and reconcile fresh metadata only.
+
+Commands: scoped `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8193` public 17-test acceptance with
+`--trace on --output ../target/ui-verifier/public-626/pw-public`; focused `--grep 'standalone
+public actions'` to `pw-owned-targets`; `node tools/check-ui-public-dist.mjs web/dist`;
+`node target/ui-verifier/public-626/nested404.mjs`; task policy before queue regeneration.

@@ -381,3 +381,40 @@ test("case studies on a phone: the comparison table stacks, nothing overflows, n
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
   await context.close();
 });
+
+// Standalone text actions are ordinary phone targets too, even outside a library island.
+// Inline references inside prose are deliberately outside this acceptance check.
+for (const width of [390, 360]) {
+  test(`standalone public actions have 44 px phone targets at ${width}px`, async ({ browser }) => {
+    test.setTimeout(45_000);
+    const context = await browser.newContext({ viewport: { width, height: 844 }, isMobile: true, hasTouch: true });
+    const page = await context.newPage();
+    const actions = [
+      ["/case-study-riscv-os.html", "See the current status →", /case-study-riscv-os\.html#status$/],
+      ["/landing.html", "All case studies →", /\/case-studies\.html$/],
+      ["/case-studies.html", "Open the live machine →", /\/index\.html#ide$/],
+    ];
+    try {
+      for (const [route, name, target] of actions) {
+        await page.goto(route);
+        const action = page.getByRole("link", { name, exact: true });
+        await action.scrollIntoViewIfNeeded();
+        const box = await action.boundingBox();
+        expect(box, name).not.toBeNull();
+        // Check owned hit geometry, including a valid expanded pseudo-element. A mobile
+        // browser may redirect nearby touches, so touch adjustment alone cannot prove size.
+        const band = await action.evaluate((el) => {
+          const r = el.getBoundingClientRect(), x = r.x + r.width / 2, y = r.y + r.height / 2;
+          const hit = (dx, dy) => document.elementFromPoint(x + dx, y + dy)?.closest("a") === el;
+          return { top: hit(0, -21.5), bottom: hit(0, 21.5), left: hit(-21.5, 0), right: hit(21.5, 0) };
+        });
+        expect(band, `${name}: owned 44 px phone hit band`).toEqual({ top: true, bottom: true, left: true, right: true });
+        // A real tap at the bottom of that band must reach the named action.
+        await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2 + 21.5);
+        await expect(page).toHaveURL(target);
+      }
+    } finally {
+      await context.close();
+    }
+  });
+}
