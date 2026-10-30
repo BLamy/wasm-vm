@@ -36,8 +36,10 @@ function watch(page) {
   return errors;
 }
 const overflowX = (page) => page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-// Visible library controls under 44 px (react-aria's clipped screen-reader buttons excluded).
-const smallTargets = (page) => page.evaluate(() => [...document.querySelectorAll(".wv-ui :is(button, a[href], [role=radio])")]
+// Visible library controls, and standalone page actions (a link directly under a hero or section
+// heading, outside any library island), under 44 px. React-aria's clipped screen-reader buttons
+// are excluded; links inside prose are not standalone actions.
+const smallTargets = (page) => page.evaluate(() => [...document.querySelectorAll(".wv-ui :is(button, a[href], [role=radio]), :is(.inner-hero, .wv-section-head) > a[href]")]
   .filter((el) => {
     if (!el.getClientRects().length || el.closest("[hidden]")) return false;
     for (let n = el; n && n !== document.body; n = n.parentElement) if (getComputedStyle(n).clipPath === "inset(50%)") return false;

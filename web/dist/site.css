@@ -49,6 +49,9 @@ code { font-family: var(--mono); font-size: 0.9em; }
 .wv-section { padding-block: 72px; border-top: 1px solid var(--line); }
 .wv-section-head { display: grid; gap: 12px; margin-bottom: 32px; max-width: 64ch; }
 .wv-section-head p { color: var(--muted); }
+/* Standalone actions (a link on its own line under a heading or lede) are tap targets, not prose
+   links: each owns a 44 px tall box. Links inside paragraphs keep their inline size. */
+:is(.inner-hero, .wv-section-head) > a { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; }
 
 /* Footer */
 .wv-site-footer { border-top: 1px solid var(--line); padding-block: 40px 56px; color: var(--muted); font-size: 15px; }
