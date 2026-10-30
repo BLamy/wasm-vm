@@ -3,7 +3,7 @@ id: E0-T28
 epic: 0
 title: Shared interface foundation on @brett_lamy/ui (build, tokens, shared nav)
 priority: 0.1
-status: implemented
+status: verified
 depends_on: [E0-T27]
 estimate: S
 risk: medium
@@ -461,3 +461,93 @@ Limits.
 - No cold clone (coordinator, after the final combined grade); nothing pushed or deployed.
 - `@brett_lamy/ui` 5.10.1 is the coordinator-confirmed latest; not re-queried here.
 
+### 2026-10-30 — fresh verifier — PR626 integration — VERDICT: verified
+
+Reviewed submission `09a9d051d746b27d2407d051192ec6c423a4f735`, frozen product
+`9347dd4bc60c069e110b179b1218666b9e169a7b`, against immutable stack tip
+`c396efe1ecd061721865a5929235e6d0a6268561`. Predictions were prepared from the task/diff
+before inspecting `foundation-626` evidence. This verdict covers the shared foundation;
+old-main design scores do not grade this combined source. No implementation was edited.
+
+- **P1 latest functionality/content preservation — HELD.** Source review and the
+  766-entry blob audit prove the retained crate sources, current guides, E9 timeline/runtime,
+  retained GPU runtime/session package and case-study artifacts unchanged. The four source
+  case-study pages and their packaged counterparts remain at their existing URLs; desktop
+  and phone acceptance follows the index and checks each article answers 200. `Makefile`
+  retains the session-web build/copy, and `index.html` retains session-library.css and every
+  runtime-owned ID after mount. Citations: `target/ui-verifier/foundation-626/identity-audit.json`,
+  source diff `c396efe1e..9347dd4bc`, `web/tests/ui-foundation.spec.js:314`, and worker
+  `evidence/ui-redesign/foundation-626/capture.json`.
+- **P2 authentic library/build boundary — HELD.** Independent acceptance checks exact
+  5.10.1 integrity, single React/react-dom/react-aria contexts, the 25 real library modules,
+  prohibited heavy-module exclusion, same-origin fonts, deterministic repeated build,
+  source/dist root swap and shipped revs. Combined digest is
+  `016f85caf147c0073781e61bb2147f51902496e6e6308eab59ce1829febb4e4e`;
+  source JS SHA-256 `89193e0eaef5e991c89f51815e3a8cf710b2edae7fdc519609ee74f21971a226`,
+  CSS `c46fc0216d7d55f05ed72cc8fc4f65ab91e35ba9a7e3b42cb2ff49bda60fe00e`.
+  Citation: `target/ui-verifier/foundation-626/acceptance.log:1-9` and the current build report.
+  Different-path portability is reserved for the final combined artifact by the coordinator;
+  the old-main clone is not substituted for this source.
+- **P3 unchanged foundation behaviors — HELD on the latest base.** All 12 original
+  kit/isolation/viewport/normal-pointer/primary-foreground/prose/current-machine checks rerun
+  successfully alongside the three integration cases: **15/15** in 19.0 s. The worker's
+  15 recorded traces contain real actions and agree with its passed log. Three transient
+  expect.poll attempts settle successfully in their parent assertion; none is a hidden
+  terminal failure. Citations: `acceptance.log:1426`, `coverage-audit.json`,
+  `evidence/ui-redesign/foundation-626/traced-run.log`, and its `traces-SHA256SUMS`.
+- **P4 separate-context navigation and bounded novel attack — HELD.** On a real 390 px
+  BusyBox guest, trusted input creates a file before keyboard Enter activates Case studies
+  in the phone sheet. The new page is `/case-studies.html`, has the expected heading/article
+  links and `opener=null`. Returning retains the exact controller object, IDE object,
+  document token, URL and `{key:"busybox",generation:1}`. After explicit native terminal
+  focus, trusted `cat /tmp/ui-foundation-626.txt` returns `foundation-survival-626` with zero
+  errors. Citation: `target/ui-verifier/foundation-626/phone-real-guest-nav.json`, trace
+  `phone-real-guest-nav.zip`, screenshots `phone-keyboard-studies.png`,
+  `phone-studies-popup.png`, `phone-shell-after-return.png`. The separately promoted test
+  passes **1/1** in 8.1 s (`promoted.log`, `promoted-pw/*/trace.zip`).
+  This strengthens the worker's page-token-only evidence with a real guest and real file.
+- **P5 current-machine/dismissal — HELD.** Existing pointer and keyboard cases prove
+  `#ide` preserves the exact document/URL and dismisses the sheet; the focus-return case
+  confirms Menu receives focus. Ordinary diagnostic and whole-row pointer actions work.
+  Citations: `web/tests/ui-foundation.spec.js:194,204,253,287`, current acceptance and traces.
+- **P6 warm header/hidden notice — HELD.** Recorded desktop/phone captures show the
+  warm header `rgba(21,20,16,0.94)`, warm body and no horizontal overflow. The badge ID and
+  controller state writes survive; independent acceptance observes a valid state and proves
+  `display:none` after `hidden=false`/unavailable writes. The header contains no yellow notice.
+  Citations: `web/tests/ui-foundation.spec.js:379`, worker `app-1280.png`, `app-390-menu.png`,
+  `capture.json`; launcher styling below it remains the explicitly pending workspace slice.
+
+**Focus qualification, not a mobile completion claim.** The first bounded attack failed to
+read back after an ordinary terminal-wrapper tap: focus remained on Menu, with no typed echo.
+It did not replace or pause the guest. That native terminal source is unchanged from PR626.
+The preserved first receipt is `first-phone-real-guest-nav.{json,zip}`; the successful receipt
+explicitly records the tap's Menu focus, the focus-only helper's actual textarea focus and
+the later trusted guest readback. The coordinator assigned ordinary tap recovery to E0-T29;
+its acceptance/log now requires this exact popup-return path without any programmatic focus
+helper. It must pass before the final mobile grade. No runtime defect was silently repaired
+or waived for the final UI.
+
+**Identity/coverage — HELD.** All 14 current evidence files and 15 ignored trace archives match
+their recorded SHA-256 digests. The submission changes only evidence/task metadata,
+`web/tasks.json`, `web/dist/tasks.json` and `sw.js` after the frozen product. Independently
+hashing the 583 shell inputs with the original SW placeholder reconstructs the final
+`cb389062436c` stamp exactly (`metadata-audit.json`). This verifies final shipped metadata,
+not an earlier stamp. All 97 changed paths from PR626 are classified in `coverage-audit.json`:
+product behavior executes in the current kit/nav/phone/overlay runs; generated assets have
+byte/route/rev checks; dependency/config/route data and defensive logging guards have explicit
+static waivers; historical evidence remains historical. No unproven claimed behavior remains.
+No claim of rebuilt ordinary-Wasm identity was introduced.
+
+**SUITE and commands.** Retain the 15 foundation cases and promote
+`web/tests/ui-foundation-guest-navigation.spec.js` for actual guest/file preservation. Its
+explicit focus isolates this navigation contract and does not certify ordinary phone tapping.
+
+```
+PLAYWRIGHT_PORT=8189 bash tools/verify-ui-foundation.sh
+node target/ui-verifier/foundation-626/phone-real-guest-nav.mjs
+cd web && PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8190 node node_modules/playwright/cli.js test tests/ui-foundation-guest-navigation.spec.js --trace on --output ../target/ui-verifier/foundation-626/promoted-pw --reporter=list
+```
+
+All verifier receipts, including the initial failure, are hashed by
+`target/ui-verifier/foundation-626/SHA256SUMS`. No runtime/GPU/performance gauntlet, cold clone,
+deployment, push, merge or combined design grade was performed for this slice.

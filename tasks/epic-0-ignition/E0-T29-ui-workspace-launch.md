@@ -43,6 +43,14 @@ primary action and that each formerly visible advanced control is reachable with
 interactions; and run the ordinary in-browser suite to its current pass count with zero browser
 errors.
 
+Carry-forward from the E0-T28 latest-source review: at 390 px, boot a real BusyBox guest,
+write a unique guest-file marker, keyboard-activate **Case studies** in the phone menu, close
+the new page and dismiss the menu. An ordinary tap on the terminal must focus the actual
+xterm textarea, and trusted keyboard input must read the preserved marker. Do not call
+`wvmDemo.focusTerminal()`, `locator.focus()` or another programmatic focus helper to make that
+return path pass. Preserve the same guest/controller/session; this phone-focus criterion is
+required before the combined mobile grade.
+
 ## Adversarial verification
 
 Medium risk. Attack: (1) find any runtime id/hook referenced by JS or a spec that the new markup
@@ -52,3 +60,20 @@ still reaches the guest and Escape/shortcut handling is not eaten by library ove
 (4) at 390 px, operate every moved control. One bounded novel attack of the verifier's choosing.
 
 ## Verification log
+
+### 2026-10-30 — fresh foundation verifier — terminal return carried into this slice
+
+On foundation product `9347dd4bc`, real phone Case studies keyboard navigation preserves the
+BusyBox controller, session generation 1, document, IDE and guest file. However, after popup
+close → return → Escape → ordinary `#term` tap, focus stays on Menu and typing emits no serial
+echo. `web/terminal.js` is byte-identical to PR626 (SHA-256
+`fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae`).
+The foundation's focus-only API makes subsequent trusted `cat` return the preserved marker,
+which proves machine survival but does not satisfy ordinary phone interaction.
+
+Receipts: `target/ui-verifier/foundation-626/first-phone-real-guest-nav.{json,zip}` records
+the initial failure; `phone-real-guest-nav.json` records Menu focus after the tap, actual xterm
+focus after the explicit helper, and successful `foundation-survival-626` readback. The
+promoted `web/tests/ui-foundation-guest-navigation.spec.js` isolates navigation survival with
+explicit focus; this slice must add or strengthen the normal tap proof above on the latest
+source. No terminal implementation was changed by the verifier; this is not a final waiver.
