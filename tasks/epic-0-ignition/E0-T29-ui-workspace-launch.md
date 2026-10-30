@@ -3,7 +3,7 @@ id: E0-T29
 epic: 0
 title: Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure
 priority: 0.2
-status: in-progress
+status: implemented
 depends_on: [E0-T28]
 estimate: S
 risk: medium
@@ -101,6 +101,11 @@ real UI in Playwright (`web/tests/ui-workspace.spec.js`, `PW_DISABLE_TS_ESM=1`):
 Also run once at the frozen head: the in-browser RISC-V suite to its current total with zero
 failures (screenshot of the pips), the affected existing specs, `make web-build` and
 `tools/build-web-dist.sh`. Evidence in `evidence/ui-redesign/workspace/`.
+
+PR 626 additions to the acceptance (same command): `tools/verify-ui-workspace.sh` also runs the
+E0-T28 verifier's promoted `ui-foundation-guest-navigation.spec.js` and
+`ui-workspace-recordings.spec.js` (recordings/time travel, checkpoints, self-checks, Sound/header,
+phone panes, phone Switch tap band and the carried terminal-tap criterion against the real engine).
 
 Carry-forward from the E0-T28 latest-source review: at 390 px, boot a real BusyBox guest,
 write a unique guest-file marker, keyboard-activate **Case studies** in the phone menu, close
@@ -569,3 +574,137 @@ source/digest/packaging reconciliation. No changed behavioral hunk remains unpro
 the worker also records the expected failure when the mirroring line is removed. No further
 test promotion is needed for this repair. Status advances to `verified`; the overall site
 design grade remains for the public-page slice.
+
+### 2026-10-30 — worker — PR 626 integration, implemented (submitted for a fresh verifier)
+
+**Frozen product head: `505d29064818d5726136cc64f7fe4f178c8c1647`** (recorded there). Trees:
+`web/ui/src` `d8a6d3fe…`, `web/dist` `02594e92…`. Base: verified foundation `bfa710ee8` above
+PR 626 `c396efe1e`. An earlier complete submission at `fe98069ad` (product `7a8b51a1a`) is kept
+as round r1 in `evidence/ui-redesign/workspace-626/`; a read-only critic then measured an inert
+phone Switch band there (`target/ui-verifier/workspace-626-orient/switch-hit-area.json`, sha256
+`246a865e…`), repaired in `505d29064` (round r2, below).
+
+**Commits.** `50d88aeba` activation (task + queue only). `d60166e96` product: the coordinator's
+3-way apply of the old-main workspace delta with its 3 conflicts resolved (`web/index.html`: 626's
+`session-library.css`, E9 panels and foundation comment kept, workspace host added; `ui-kit.html`
+stamp; this task file), plus the 626 work below. `7a8b51a1a` product: `?testHooks` shows the native
+launcher engine again (the promoted test taps it). `fe98069ad` harness only. `505d29064` product
++ test: the phone Switch tap band and its regression (r2).
+
+**What changed for 626** (no Rust, artifact, schema, recording-format, controller or worker change;
+`session-timeline.js`, `session-library.js`, `session-bundles.js`, `session-timeline-runtime.js`
+untouched):
+- `web/ui/src/components/recordings.jsx` (new): `RecordingsPanel` (Replay | Checkpoints) and
+  `ChecksPanel`. Library Button/Picker/TextField/Slider/Switch bound to the native
+  `[data-timeline]`/`[data-session]` controls and the 14 probe panels: buttons `.click()` the native
+  node (disabled mirrored, label read live), Pickers set the native `value` and dispatch
+  input+change (empty value mapped, `isDisabled` mirrored), fields write the native string and
+  dispatch input, Enter re-dispatches `keydown` to the native field (timeline target/branch input)
+  or `form.requestSubmit()` (rename, so `required` applies), the Slider dispatches input while
+  moving and change on release, `time-entropy` uses the verified `NativeLinkedSwitch`. The
+  timeline's `[data-timeline-gpu-frame]` node is moved into the open pane and restored after.
+- `workspace.jsx`/`tool-panes.jsx`: Recordings toolbar button and side pane; Self-checks from
+  Settings → More tools (desktop) and the phone Tools list; Sound row (saved patch) restored.
+- `launcher.jsx`: lazily mounted "Recordings and time travel" and "Self-checks" sections (closed);
+  Omarchy copy matched to 626's prepared-checkpoint restore.
+- `web/index.html`: native E9 panels hidden only when `html[data-wv-ui~="workspace"]` and not
+  `?testHooks`; 440 px side pane for Recordings/Self-checks on desktop; header one row (version
+  hidden below 1100 px); stale badge phone rule removed; `?testHooks` shows the native launcher.
+- `primitives.jsx` (`Picker isDisabled`), `projection.jsx` (export `NativeLinkedSwitch`),
+  `styles.css` (`.wv-rec*`; r2: in the phone/coarse-pointer block,
+  `.wv-ui label[data-slot="switch"]::after { content: ""; position: absolute; inset: -7px 0; }` —
+  the library Switch's own label gains an invisible 7 px band above and below, so its tap target is
+  45 px tall while the 51 x 31 track is unchanged).
+
+**r2 commands at `505d29064`** (dev server `tools/serve-dev.sh 8198`; Playwright on 8128):
+- `UI_WORKSPACE_PW_ARGS="--trace on --output ../target/e0t29-626/pw-r2" bash tools/verify-ui-workspace.sh`
+  → **PASS**: foundation acceptance (pins, deterministic digest `c0cc1ab8…`, tree-shaking, assets,
+  no glows, source/dist revs, swapped dist, stamped SW, **15/15**), workspace hosts in source and
+  dist, then **28/28** browser tests with traces: promoted real-guest navigation 1, workspace 16
+  (unchanged specs), recordings 11 (r1's 9 + the two phone Switch cases). Log
+  `evidence/ui-redesign/workspace-626-r2/verify-ui-workspace.log`; 28 `trace.zip` under
+  `target/e0t29-626/pw-r2` (r1's `target/e0t29-626/pw` untouched), hashed in r2 `target-SHA256SUMS`.
+- `node evidence/ui-redesign/workspace-626-r2/switch-band.mjs` → `switch-band.json` and phone
+  390/360 Settings screenshots: `::after` absolute, top/bottom −7px; real taps at 6 px above,
+  centre and 6 px below each toggle the native capture once (at 390 the critic's points y 422.5 and
+  465.5 now toggle); 12 px above is not the label and does nothing.
+- `node evidence/ui-redesign/workspace-626-r2/capture.mjs` → the r1 screenshot set re-taken at
+  this head (desktop 1440/1280, phone 390/360, Case studies return), no errors, overflow 0,
+  carried read-back `shot-626`, focus on `xterm-helper-textarea`.
+- Sabotage before freezing: with the `::after` rule removed, "phone 390: Settings switches …"
+  fails at the band hit assertion (`target/e0t29-626/switch-band-sabotage.log`); restored, the
+  rebuilt `ui.css` rev is the same `e4c1be8f48e6`.
+
+**Carried from r1 (`fe98069ad`, unchanged code boundary — r2 changes only one CSS rule inside the
+phone/coarse-pointer block and one spec file):** in-browser RISC-V suite **127 passed, 0 failed**
+(`workspace-626/riscv-suite.json`); `tests/e4-t32-whole-worker.spec.js` 8 passed / 1 failed,
+identical to the untouched PR 626 tree (`workspace-626/e4-t32-baseline-c396efe1e.log`; "default
+JIT keeps … responsive" reads `wvmDemo` right after `goto`, a baseline race; its changed Tailscale
+hunk is after that line and the same Settings path passes in `ui-workspace-contracts.spec.js`);
+`quiet-window-probe` result (below).
+
+**Phone Switch regression (r2, `ui-workspace-recordings.spec.js`, 390 and 360).** Start Linux by
+tap, Tools → Settings → "Send keys to the guest": the label measures 51 x 31; `elementFromPoint`
+6 px above and below lands in the label; a real `touchscreen.tap` there changes
+`html[data-keyboard-capture]` and it is still changed 300 ms later (exactly one toggle); 12 px
+above is not the label and a tap there changes nothing; Tab reaches the switch input and Space
+toggles once, with the input's checked state matching. Then Recordings → Checkpoints: the
+engine-disabled "Include time and random inputs" native checkbox and its library input are both
+`disabled`; taps above, at the centre of and below its label leave the native checkbox unchanged.
+The spec's locator actions default to 10 s (a selector that cannot match now fails fast; the
+coordinator's interrupted self-check had waited on a nested `has` selector, replaced by the
+input's `ancestor::label[1]`).
+
+**Carried phone criterion (E0-T28 review).** `ui-workspace-recordings.spec.js` "phone 390": Start
+Linux by tap, ordinary `#term` tap, trusted keys write `/tmp/ui-tap-626.txt`, Menu → Tab to Case
+studies → Enter opens a `noopener` popup, close, Escape (focus on Menu), **ordinary `#term` tap
+focuses `textarea.xterm-helper-textarea`** and trusted `cat` reads `tap-kept-626`; same URL,
+session generation, controller and `#ide-root`; no focus helper, no injected input. The fix is the
+old delta's `ide.js` `pointerdown` → xterm focus on `#ide-term-pane`. Sabotage: renaming that
+listener's event made the test fail exactly at the focus assertion after return (run before
+freezing; restored, `git diff` empty).
+
+**Promoted-test failures at `7a8b51a1a` and the harness repair.** (1) The test tapped the native
+BusyBox button before main.js bound it (`data-launcher-ready` absent; no boot requests) — it now
+waits for that attribute, as the library launcher already does. (2) Once, the first typed line
+never appeared (receipts copied to `target/e0t29-626/failed-7a8b51a1a-receipts/`). 626's `ide.js`
+starts a quiet fenced `ls -la /root` RPC on the first guest-ready (`main.js` stops writing guest
+output to xterm while it runs). `quiet-window-probe.mjs` typed into that window three times (×2
+speeds): the hidden command ran and its file read back, and its output still appeared; it did
+**not** reproduce lost output, so that RPC is not claimed as the cause. The harness now types only
+after the startup listing has rendered (its spinner placeholder is gone), and 4 sequential repeats
+passed before the recorded run. No product or runtime change for this.
+
+**Coverage of changed hunks.** r2 hunks: the `::after` rule (executed at 390/360 in the recorded
+run and in `switch-band.mjs`; on desktop fine pointers it does not apply) and the spec changes
+(executed). Executed in the recorded run: launcher first view and lazy
+Recordings section (`Refresh history` click reaches the native node once; fresh-profile import);
+Recordings Replay: record sample, Picker select, Open, transition field + Enter (`transition 123`),
+the 20-digit `18446744073709551616` string reaching the native field unchanged and refused, Step
+forward, keyframe Picker + Go, Slider keyboard (input/change), console text, GPU-frame node
+adopted and restored (empty frame — no GPU history here), Continue from here → Run/Serial input
+visible → Discard, Export (local download, "No data was uploaded"), Import through the native file
+input in a fresh profile ("Imported manifest"); Checkpoints: disabled parity, `time-entropy` Switch
+mirroring, storage limit string + Save, New checkpoint guest → Start → Checkpoint → rename by Enter
+(`requestSubmit`); Self-checks: all 14 panels with their own button, `event-clock` run to a result
+badge; phone 360 Tools → Recordings → Back (no element past the viewport); Sound row and header at
+900/1024 px. Same component, not separately asserted: Play/Pause, Step back, event Picker/Go,
+bundle cancel/delete, branch run/pause/save/live/send (NButton/NField paths executed above); the
+launcher's Self-checks section (ChecksPanel executed in the workspace); limit-bytes, persist,
+cleanup. Waived: GPU replay canvas content (needs an admitted GPU history; adoption itself
+executed); the other 13 self-checks are not run (several take minutes or use storage; their
+buttons are the same NButton bound to each native button).
+
+**Evidence digests.** r2: `evidence/ui-redesign/workspace-626-r2/SHA256SUMS` (`451415a0…`)
+over every committed r2 file; `target-SHA256SUMS` (`9c419f5f…`) over the 28 r2 traces and the
+sabotage log. r1: `evidence/ui-redesign/workspace-626/SHA256SUMS` (`75a972a8…`) and
+`target-SHA256SUMS` (`e1514028…`: r1's 26 traces, RISC-V and probe traces, the 7a8b51a1a failure
+receipts, superseded logs). Historical old-main evidence: committed except 20 files over 1 MiB,
+listed by sha256/blob in `workspace-626/historical-large-files.txt` (blobs at `f221fb166`, backup
+branch `codex/ui-preliminary-workspace-20261030`), left untracked.
+
+**Limits.** No GPU/Omarchy campaign, no full E9 probe suite (`tools/verify/e9-*.mjs` unchanged and
+not rerun; they use `?testHooks`, where the native panels stay visible). Desktop graphics (GPU)
+start not exercised beyond the existing contracts test. 626's quiet startup RPC overlaps the first
+seconds after ready (finding above, unchanged). The old-main entries above are history only.
+No cold clone, push or deploy.

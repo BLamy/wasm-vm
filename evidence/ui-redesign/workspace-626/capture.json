@@ -1,0 +1,24 @@
+{
+  "desktop": {
+    "position": "transition 1 · retired 1 · before:0 · event 2",
+    "errors": []
+  },
+  "settings": {
+    "errors": []
+  },
+  "phone-390": {
+    "termVisibleAfterBack": true,
+    "overflow": 0,
+    "errors": []
+  },
+  "phone-360": {
+    "termVisibleAfterBack": true,
+    "overflow": 0,
+    "errors": []
+  },
+  "carried": {
+    "readBack": true,
+    "focus": "xterm-helper-textarea",
+    "errors": []
+  }
+}
