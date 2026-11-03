@@ -1,0 +1,19 @@
+Frozen product head: d7afe1dffdba5bb6ffcc6df6b2f54f3f66a12438
+
+$ git diff --check HEAD^ HEAD
+exit=0
+
+$ python3 -m py_compile tools/chromium/check-local-copy.py
+exit=0
+
+$ python3 tools/check_task_policy.py
+task-policy: OK (active=E0-T33)
+exit=0
+
+$ python3 tools/chromium/check-local-copy.py
+PASS: real local source copy at /Users/blamy/Documents/Codex/wasm-vm/local/chromium-riscv64
+PASS: 125 pinned Git repositories, 81 source/recipe files, 9 archived patches
+PASS: Chromium 108.0.5359.0 at f2472ba7bee0ed0d91736df49035af867cce6692
+PASS: source/disk workspace excluded from Git and Docker contexts
+CHECKPOINT: full Chrome unbuilt; sandbox backport unapplied; no record/replay claim
+exit=0

@@ -1,2 +1,6 @@
 # Preserve the byte-for-byte pinned Mesa source, including its upstream blank line.
 tools/virgl-floating-depth/primary/u_format_parse.py whitespace=-blank-at-eol
+
+# Verbatim source-patch and license archives; hashes include upstream whitespace/CRLF.
+tools/chromium/patches/*.patch -text -whitespace
+tools/chromium/licenses/*.txt -text -whitespace

@@ -2,6 +2,9 @@
 /target
 **/*.rs.bk
 
+# Local Replay Chromium source, dependency checkouts, build outputs, and GUI disks.
+/local/chromium-riscv64/
+
 # rr traces are evidence, not source — they move via artifact upload, not git
 rr-traces/
 

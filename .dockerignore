@@ -1,4 +1,5 @@
 .git
+local/chromium-riscv64
 target
 rr-traces
 evidence

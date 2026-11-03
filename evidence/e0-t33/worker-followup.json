@@ -1,0 +1,41 @@
+{
+  "product_head": "29359c3865eff11dbe5ea182b49a0af5d7fc129f",
+  "timestamp": "2026-11-03T17:56:23.730915+00:00",
+  "manifest_only_delta": {
+    "path": "tools/depot_tools",
+    "revision": "bed65db1bb5d1022dab89cf62e7609b12084747b"
+  },
+  "other_manifest_fields_unchanged": true,
+  "previous_product_hashes_unchanged": {
+    ".dockerignore": "d6c3a7045fa147ac64f9c701382b2db29c7448adcd94e8f64ed72eaeade7df58",
+    ".gitattributes": "ac4b1e8a9f9c10316b3891afa99df9209eecc3f46095c052e6a679a184e1fb45",
+    ".gitignore": "bbbc9ce30d0b9034c8514a6d25de93d07b9de5d718c06757176b639c1707cd21",
+    "docs/chromium-riscv64.md": "c8b6a31edd3e4cfa4e055099e5341f15a32f5f6289bc66bac5b65ed404666ec0",
+    "tools/chromium/check-local-copy.py": "bd02a975eea8bdad08eb40b4f9cd5c2a0582f4503b2d12b0121a247314adfba5",
+    "tools/chromium/licenses/angle.txt": "bf4da21bd20bcfb5b60b7ecc67fa864a79be049e21d6178076887f178dd6c71a",
+    "tools/chromium/licenses/chromium.txt": "368cca1106be99d39ecd32a38d8305585d802a475effb66380b91ffc9bcf709b",
+    "tools/chromium/licenses/crashpad.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "tools/chromium/licenses/ffmpeg-lgpl2.1.txt": "b634ab5640e258563c536e658cad87080553df6f34f62269a21d554844e58bfe",
+    "tools/chromium/licenses/ipcz.txt": "8938c6deca58d85570c8887b6abf2c415e444299b7ec8752fcdb4e40935d8794",
+    "tools/chromium/licenses/swiftshader.txt": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "tools/chromium/licenses/webrtc.txt": "ab00a482b6a3902e40211b43c5d0441962ea99b6cc7c25c0f243fa270b78d482",
+    "tools/chromium/patches/angle-riscv64.patch": "2fa5cebbd9a0d0d447670308ffaf8e57fb5b7a411c086757783030e46371ea62",
+    "tools/chromium/patches/blink-paint-layer-size.patch": "867505f9af18581aa3c6d08c1a0234637a8ddfd2b569a6b758e70f98eb404c29",
+    "tools/chromium/patches/chromium-riscv64.patch": "2e679c1614f55ae678b79654d62fe48096085659602aab6beea4426246563275",
+    "tools/chromium/patches/crashpad-riscv64-upstream.patch": "6ed06d00fb6e56730c6630a998b987e19c67afd7405aea0777800fc314d23b0b",
+    "tools/chromium/patches/ffmpeg-riscv64.patch": "6c1f802dbfd42b9977a5912bf62d1161a5e64a74e013c30af7ebd7baca794fa2",
+    "tools/chromium/patches/ipcz-clang18.patch": "cbc15ecbd64c4ecc73de48d0e5b3c74b75ae1c71ba61bee924710e5f727bbf37",
+    "tools/chromium/patches/mirror-layer-clang18.patch": "2792ad56eb2b5733d901086e846d904fe14aa19372032bb65b88112bff62dfaf",
+    "tools/chromium/patches/swiftshader-lld.patch": "518c1b2d08859a2e75a422c7052eb3fae43fa2165edb872d26fb1d040f45852d",
+    "tools/chromium/patches/webrtc-clang18.patch": "971d8196af9631aae8254842a94ccbabb559aec19d1ae317c3eb649727c88c4c"
+  },
+  "workspace_manifest_sha256": "fffcb71f2990ec8e03f97e4b491b94bf474bc8e12835c528e01dabe0524e801b",
+  "command": [
+    "python3",
+    "tools/chromium/check-local-copy.py"
+  ],
+  "exit_code": 0,
+  "stdout": "PASS: real local source copy at /Users/blamy/Documents/Codex/wasm-vm/local/chromium-riscv64\nPASS: 126 pinned Git repositories, 81 source/recipe files, 9 archived patches\nPASS: Chromium 108.0.5359.0 at f2472ba7bee0ed0d91736df49035af867cce6692\nPASS: source/disk workspace excluded from Git and Docker contexts\nCHECKPOINT: full Chrome unbuilt; sandbox backport unapplied; no record/replay claim\n",
+  "stderr": "",
+  "prior_held_results": "Carry forward E0-T33 verifier log at 9029967f4c211ddbd8fb6aba452edf50f6079fba; no retained source, checker, patch or license bytes changed."
+}
