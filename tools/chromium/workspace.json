@@ -509,6 +509,10 @@
     {
       "path": "src/v8",
       "revision": "a2e99099884e96a4f9b8fa52e0d6a3b3d8f4eefe"
+    },
+    {
+      "path": "tools/depot_tools",
+      "revision": "bed65db1bb5d1022dab89cf62e7609b12084747b"
     }
   ],
   "changes": [
