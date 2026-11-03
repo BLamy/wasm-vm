@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T30b** — Generate genuine RISC-V call bridges for the local Replay driver
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 1. **E5.5-T06** — Diagnose missing package-bar foreground on the cold GPU desktop
@@ -29,7 +28,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `0.381` [E5-T29a](epic-5-the-window/E5-T29a-replay-chromium-linux-image.md) — Assemble the local Ubuntu and Replay Chromium candidate image *(deps: E0-T34)*
 - [-] `0.38105` [E5-T30](epic-5-the-window/E5-T30-replay-driver-riscv.md) — Genuine Replay recording-driver RISC-V port (planning parent) *(deps: E5-T29a)*
 - [x] `0.3811` [E5-T30a](epic-5-the-window/E5-T30a-replay-driver-riscv.md) — Linux signal and stack context in the local RISC-V Replay driver *(deps: E5-T29a)*
-- [ ] `0.3812` [E5-T30b](epic-5-the-window/E5-T30b-replay-driver-riscv.md) — Generate genuine RISC-V call bridges for the local Replay driver *(deps: E5-T30a)*
+- [~] `0.3812` [E5-T30b](epic-5-the-window/E5-T30b-replay-driver-riscv.md) — Generate genuine RISC-V call bridges for the local Replay driver *(deps: E5-T30a)*
 - [ ] `0.3813` [E5-T30c](epic-5-the-window/E5-T30c-replay-driver-riscv.md) — Load and interpose real RISC-V ELF calls in the local Replay driver *(deps: E5-T30b)*
 - [ ] `0.3814` [E5-T30d](epic-5-the-window/E5-T30d-replay-driver-riscv.md) — Attach the real RISC-V Replay driver and validate genuine recordings *(deps: E5-T30c)*
 - [ ] `0.382` [E5-T29b](epic-5-the-window/E5-T29b-replay-chromium-native-boot.md) — Run recording-capable Replay Chromium on native wasm-vm and capture its image pair *(deps: E5-T29a, E5-T30d)*

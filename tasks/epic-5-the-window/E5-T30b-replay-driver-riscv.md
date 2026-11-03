@@ -3,7 +3,7 @@ id: E5-T30b
 epic: 5
 title: Generate genuine RISC-V call bridges for the local Replay driver
 priority: 0.3812
-status: pending
+status: in-progress
 depends_on: [E5-T30a]
 estimate: S
 risk: high
@@ -33,4 +33,9 @@ Private implementation and full proof remain ignored/local.
 
 ## Verification log
 
-(empty)
+### 2026-11-03 — worker — activation
+
+E5-T30a is independently verified at `96adfda287aa7a9ba8a6c29bc2161badec4a866b`.
+Its private runtime head remains unchanged. Start the actual RISC-V generated
+call boundary in the ignored driver checkout. No Replay pushes or publication
+of private source/binaries. Recording remains unproven until the later gates.
