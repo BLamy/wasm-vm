@@ -3,7 +3,7 @@ id: E0-T33
 epic: 0
 title: Preserve the local Replay Chromium RISC-V build workspace
 priority: 0.36
-status: implemented
+status: evidence-needed
 depends_on: [E0-T32]
 estimate: S
 risk: low
@@ -88,3 +88,86 @@ the new check. The claim is preservation and honest provenance, not validity of
 those external runtime changes. No Rust, wasm, demo, CI, or deploy behavior changes;
 guest execution evidence and those build/browser gates are inapplicable here.
 Only a fresh verifier may promote this task to verified.
+
+### 2026-11-03 — verifier — predictions before evidence inspection
+
+- P1: The worker transcript digest and every recorded product-file digest will
+  match the frozen product head `d7afe1dffdba5bb6ffcc6df6b2f54f3f66a12438`;
+  the recorded acceptance command will exit zero without a stale-head substitution.
+- P2: The retained project copy will contain real local Git metadata and exactly
+  the 125 pinned repository heads, the declared changed-source sets, all 81 file
+  digests, all 9 patch byte streams, and all 7 license byte streams. The immutable
+  GUI base will match its pinned digest. Patch headers will account for the declared
+  changed source; this predicts archival correspondence, not port correctness.
+- P3: Git will ignore the source and GUI image, Docker's root context will exclude
+  the retained directory, and none of that directory will be tracked. The direct
+  command will read source/Git state and will not fetch, push, build, or alter it.
+- P4: The retained checkpoint will have no full Chrome binary or sandbox backport;
+  the guide will identify partial compilation and the QEMU desktop as incomplete,
+  separate work rather than a working browser or wasm-vm integration.
+
+Scope: low-risk direct-result verification. No automatic cold clone, sabotage,
+runtime-port validation, guest execution, browser run, or external active-build
+comparison is required by this archival claim.
+
+### 2026-11-03 — verifier — VERDICT: needs-evidence
+
+VERDICT: needs-evidence
+
+- P1 evidence binding — HELD. All 22 recorded product byte streams match both
+  frozen head `d7afe1dffdba5bb6ffcc6df6b2f54f3f66a12438` and the current files;
+  post-freeze commits change only task/evidence metadata. The transcript digest is
+  `a9660cf492e4ecd9f795a749c2529a49d5d82364bf6753471e8684510c788976`.
+  Citations: `evidence/e0-t33/worker.json:2,48-72`, `worker.txt:1,13-19`.
+  Fresh direct acceptance exited zero with the same five result lines.
+- P2 preserved bytes and recorded pins — HELD. Independently checked all 125
+  declared Git heads, real repository roots and local Git directories, locally
+  available commit objects, and no external object alternates. All 81 file hashes,
+  9 retained/archive patch comparisons, and 7 source/archive license comparisons
+  match `tools/chromium/workspace.json:12-513,597-997`. The 8 GiB GUI base matches
+  SHA-256 `9a9b656f654ed0a3783385e6bd153775ea56dfe62de85cd8b155ed798c2f9558`.
+  All 56 declared changed-source paths are hashed and covered by the patch headers;
+  all nine patches pass read-only `git apply --reverse --check` against their
+  retained source roots. This holds archival correspondence only.
+- P2 setup/dependency completeness — NEEDS EVIDENCE. Predicted the installed
+  repository inventory was exhausted by the manifest. A filesystem scan found
+  126 Git repositories, including unlisted `local/chromium-riscv64/tools/depot_tools`
+  at clean HEAD `bed65db1bb5d1022dab89cf62e7609b12084747b`. Rechecked with
+  `git --no-optional-locks -C local/chromium-riscv64/tools/depot_tools rev-parse HEAD`
+  and `status --short`. This is an actual build dependency: retained
+  `configure-and-build.sh:14-17`, `prepare-host-tools.sh:4`, and
+  `sync-dependencies.sh:4` use `/work/tools/depot_tools`. The separate pin at
+  `workspace.json:138-139` is `src/third_party/depot_tools` at `2c0a8c7...`, not
+  this checkout; the checker only iterates declared repositories at
+  `check-local-copy.py:42-46`. Demand: pin the retained host-tool checkout in the
+  manifest and record direct acceptance at the corrected frozen product head.
+  The source/patch claim is not contradicted; this is a provenance coverage gap.
+- P3 exclusions and read-only behavior — HELD. `git check-ignore --no-index -v`
+  identifies `.gitignore:6` for both source and GUI image; `git ls-files --
+  local/chromium-riscv64` is empty. `.dockerignore:2` excludes the entire directory
+  with no later negation. `git check-attr text whitespace` confirms the verbatim
+  archives are not normalized. The check only reads files and invokes Git
+  inspection commands with `--no-optional-locks`; no fetch/push/build/source-write
+  operation exists in `check-local-copy.py:14-85`.
+- P4 honest checkpoint scope — HELD. Retained sandbox/features diffs are empty,
+  `src/out/RISCV64/chrome` is absent, and pinned `logs/build-state.json` says both
+  full build and sandbox backport are false. The copy omits the live GUI run
+  directory and writable overlay. `docs/chromium-riscv64.md:38-58,69-76,83-98`
+  explicitly limits the compilation, Replay driver, QEMU desktop, and integration
+  claims. The original active workspace/container was not used as checkpoint proof.
+- COVERAGE — The direct run plus line tracing executed checker lines
+  `2,4-7,10-11,14-16,20-25,28-29,33-36,40-85,88-89`. Waived lines 30 and 37-39:
+  failure-only diagnostics; low-risk direct-result policy does not require
+  sabotage. Every manifest/archive/license byte was read; ignore/attribute and
+  guide changes were inspected directly. Task/queue/evidence hunks are declarative
+  bookkeeping. No archived runtime hunk was executed or claimed correct.
+- SUITE — Keep the existing integrity checker as the repeatable archival gate;
+  no runtime test is appropriate for this housekeeping change. Carry all HELD
+  results forward when their product bytes/boundaries and evidence digest remain
+  unchanged; recheck only the missing host-tool pin and corrected evidence binding.
+
+Additional checks: `git diff --check origin/main..HEAD`; Python `compile()` on
+the checker; independent filesystem repository inventory, SHA-256/byte comparisons,
+patch-header/change-set comparison, read-only reverse patch checks, and a traced
+direct acceptance run. Worker JSON SHA-256:
+`07344746ea8c648d60d29cf6773950d38b2b9fdd65bebd1034174d4b571d876a`.
