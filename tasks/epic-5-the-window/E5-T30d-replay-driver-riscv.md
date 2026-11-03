@@ -3,7 +3,7 @@ id: E5-T30d
 epic: 5
 title: Attach the real RISC-V Replay driver and validate genuine recordings
 priority: 0.3814
-status: pending
+status: in-progress
 depends_on: [E5-T30c]
 estimate: S
 risk: high
@@ -36,4 +36,10 @@ no Replay pushes/PRs or public asset upload.
 
 ## Verification log
 
-(empty)
+### 2026-11-03 — worker — activation
+
+E5-T30c is independently verified at `7d81112d1471e2b78bedaf65feb9bf87413a1072`.
+The private driver platform, call bridges and ELF hooks have native wasm-vm
+component proof. Begin actual Chromium renderer attachment and recording with
+the genuine nonempty RISC-V driver, first in the labelled QEMU reference, followed
+by the authoritative wasm-vm integration. No Replay PRs/pushes or private uploads.
