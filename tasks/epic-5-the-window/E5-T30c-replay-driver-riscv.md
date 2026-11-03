@@ -3,7 +3,7 @@ id: E5-T30c
 epic: 5
 title: Load and interpose real RISC-V ELF calls in the local Replay driver
 priority: 0.3813
-status: implemented
+status: verified
 depends_on: [E5-T30b]
 estimate: S
 risk: high
@@ -77,3 +77,21 @@ fail at the genuine driver's expected source location; no-op relocations succeed
 This proves this recording-driver component. Complete Chromium recordings,
 browser attachment, replay execution, and the GUI recording workflow remain
 subsequent requirements and are not claimed here.
+
+### 2026-11-03 — verifier
+
+VERDICT: verified
+
+Private head: `f9578934f3e1281e35c1873f6495eed3eab26c09`.
+
+Private verdict:
+`local/chromium-riscv64/driver/critic-elf-f957893/verdict.md`.
+SHA-256: `b1c73cb7ca0ed20447691835b6b40a149eed19f8f0edf24e1623e74ee3a5fed0`.
+
+Private coverage:
+`local/chromium-riscv64/driver/critic-elf-f957893/coverage.md`.
+SHA-256: `aa6bbf70e50b959a54bcbc1dafde1fa507f941d8c312dbc9a5355e36f2c958ba`.
+
+Private proof manifest:
+`local/chromium-riscv64/driver/critic-elf-f957893/verifier-manifest.json`.
+SHA-256: `47e71b264c62c7b15d0ccff7acfcb9b73f4eed8a6f2ccabac122b621905d2de4`.
