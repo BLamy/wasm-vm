@@ -1,0 +1,28 @@
+{
+  "approval": "User explicitly approved local backport/adaptation/tests on 2026-11-03; no upstream Replay push or PR.",
+  "upstream_patch_sha256": "a62540edb30728a79b9b44c128b8ae23e8dcb677248102524be5c98f139e874f",
+  "adaptations": [
+    "Seccomp feature context and old CASES API preserved",
+    "No IsMmap, IsSockSendOneMsg, RestrictSockSendFlags, or syscall_parameters_restrictions_unittest.cc in Chromium108: inapplicable newer hunks omitted; existing IsAllowedAddressSpaceAccess already received the mmap architecture guard",
+    "Old network policy has no getdents syscall case, so that newer guard hunk is inapplicable",
+    "Legacy baseline fork case excluded on RISC-V, where no fork syscall exists",
+    "Credentials downward-growing stack architecture guard adapted to older code",
+    "Raw syscall instruction test uses memcpy to handle two-byte instruction alignment",
+    "Old IsAllowedGetOrModifySocket pipe case excluded on RISC-V; pipe2 remains supported",
+    "The ptrace-test include hunk belongs to plural syscall_parameters_restrictions_unittests.cc in Chromium108; imported asm/ptrace.h there for RISC-V user_regs_struct",
+    "Link sandbox_linux_unittests against actual V8 hooks required by Replay libbase; no hook stubs",
+    "Chromium108 baseline RestrictMmapFlags and RestrictSocketpair guards include RISC-V; all four previously failing baseline tests pass.",
+    "RISC-V seccomp ptrace test reads original arg0 with PTRACE_GET_SYSCALL_INFO. It tests rewriting argument1, syscall number, and return value without assuming NT_PRSTATUS exposes kernel orig_a0.",
+    "For Linux RISC-V with explicit RECORD_REPLAY_DONT_RECORD, retain Chromium sandboxing and use its sandboxed zygote. Other architectures and recording-mode launch behavior are unchanged.",
+    "Use Abseil monotonic clock fallback on RISC-V Linux where raw rdcycle can SIGILL. Motivation: upstream Abseil PR1644."
+  ],
+  "rejected_hunks_archived": [
+    "sandbox/features.gni.rej",
+    "sandbox/linux/integration_tests/bpf_dsl_seccomp_unittest.cc.rej",
+    "sandbox/linux/seccomp-bpf/syscall_unittest.cc.rej",
+    "sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc.rej",
+    "sandbox/linux/seccomp-bpf-helpers/syscall_sets.cc.rej",
+    "sandbox/linux/services/credentials.cc.rej",
+    "sandbox/policy/linux/bpf_network_policy_linux.cc.rej"
+  ]
+}

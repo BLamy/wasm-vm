@@ -1,0 +1,44 @@
+{
+  "prediction": "The actual browser button reruns JS/WASM/canvas and displays runs:2",
+  "actions": [
+    {
+      "execute": "qmp_capabilities",
+      "id": 1
+    },
+    {
+      "execute": "send-key",
+      "id": 2,
+      "arguments": {
+        "keys": [
+          {
+            "type": "qcode",
+            "data": "tab"
+          }
+        ],
+        "hold-time": 30
+      }
+    },
+    {
+      "execute": "send-key",
+      "id": 3,
+      "arguments": {
+        "keys": [
+          {
+            "type": "qcode",
+            "data": "ret"
+          }
+        ],
+        "hold-time": 30
+      }
+    },
+    {
+      "execute": "screendump",
+      "id": 4,
+      "arguments": {
+        "filename": "/Users/blamy/Documents/Codex/replay-chromium/gui/chromium-gui-build20-input.png",
+        "format": "png"
+      }
+    }
+  ],
+  "image": "/Users/blamy/Documents/Codex/replay-chromium/gui/chromium-gui-build20-input.png"
+}

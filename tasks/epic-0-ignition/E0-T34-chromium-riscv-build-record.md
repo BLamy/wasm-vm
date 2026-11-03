@@ -53,3 +53,20 @@ Requested by the user as part of the local Replay Chromium RISC-V build. E0-T33
 is verified at `93f6b72f93e7d211d521f88eb2263e15a6fa4313`. Its source snapshot
 and manifest remain unchanged. The user explicitly approved the local sandbox
 backport and tests; all upstream publication remains prohibited.
+
+### 2026-11-03 — worker — source and reference result frozen
+
+The compiled browser is retained at
+`local/chromium-riscv64/artifacts/2026-11-03/build20/chrome`, SHA-256
+`df9b431511f435c463e5d39f3dde30d2d204e06105685b601b8ce2372819b8ef`.
+Its runtime bundle is SHA-256
+`fae3717a934ea33d0a47d258a921c9d9643fe1a595d1eb9e3238a029e21ad42e`.
+The archived final Ninja check reports no remaining work. The source record
+matches all 92 changed/generated inputs against the actual native build tree.
+Reference evidence records the RISC-V Linux kernel, all 338 sandbox suite cases,
+two live renderer seccomp observations, and the GUI page before/after keyboard
+activation (run counter 1 then 2). This log is a preservation claim; it does not
+promote the external sandbox port to a production security guarantee or claim
+execution inside wasm-vm. Guest/browser runtime gates for a later integration
+remain separate. Low-risk submission binds these inert archives and the read-only
+checker at the frozen product head recorded below.

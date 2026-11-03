@@ -1,0 +1,8 @@
+ninja: Entering directory `/opt/replay-chromium/src/out/RISCV64'
+[1/7] CXX obj/sandbox/linux/sandbox_linux_unittests_sources/bpf_dsl_seccomp_unittest.o
+[2/7] STAMP obj/sandbox/linux/sandbox_linux_unittests_sources.stamp
+[3/7] CXX obj/content/browser/browser/renderer_sandboxed_process_launcher_delegate.o
+[4/7] LINK ./sandbox_linux_unittests
+[5/7] CXX obj/content/browser/browser/render_process_host_impl.o
+[6/7] STAMP obj/content/browser/browser.stamp
+[7/7] LINK ./chrome

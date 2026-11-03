@@ -1,0 +1,381 @@
+{
+  "sourceRevision": "f2472ba7bee0ed0d91736df49035af867cce6692",
+  "repositories": {
+    "src": "f2472ba7bee0ed0d91736df49035af867cce6692",
+    "src/third_party/angle": "96bbc80b87000005dbec2a8034e37deec91538a3",
+    "src/third_party/ffmpeg": "b9f01c3c54576330b2cf8918c54d5ee5be8faefe",
+    "src/third_party/swiftshader": "b22b1b1f2dddcf5eacc8d2a37e7d27f650e1c1e2",
+    "src/third_party/webrtc": "9c3f9db59a66e3ee1aeb6d74c43b483f099a837d"
+  },
+  "files": {
+    "src/build/config/posix/BUILD.gn": {
+      "sha256": "c8871f0729f21f235d9801d5d456debcd65eb7c13e734ad875ccc2bb68c5495d",
+      "bytes": 2522
+    },
+    "src/cc/layers/mirror_layer_impl.h": {
+      "sha256": "287f69c5ddd33f25cd2c5f17ebf57018b3046f6774ec1d047906c689ba4e8bee",
+      "bytes": 2676
+    },
+    "src/chrome/BUILD.gn": {
+      "sha256": "d099bb4a9a23f89d13590238ad1bb38254ace1b1fdd28770f51b40e524bc5c6d",
+      "bytes": 61166
+    },
+    "src/chrome/app/record_replay_main.cc": {
+      "sha256": "253be44a86e5bbe76bf7a7420fee3652b5deaec049ba1c22a08862626a114264",
+      "bytes": 11910
+    },
+    "src/content/browser/renderer_host/render_process_host_impl.cc": {
+      "sha256": "48580b4d1628071ccacdbf43ce8e02fd957b4b9b2999883d9d77282d8a4da412",
+      "bytes": 208222
+    },
+    "src/content/browser/renderer_host/renderer_sandboxed_process_launcher_delegate.cc": {
+      "sha256": "7225c0d1c139e6f55c2729d597c8e19c2635a829d8962832d556d0f12172f1ce",
+      "bytes": 6593
+    },
+    "src/sandbox/features.gni": {
+      "sha256": "b5f63be1df2646979a8b46d31bb62d18f60f3934a0b3096a26aacb9221cbb0e7",
+      "bytes": 870
+    },
+    "src/sandbox/linux/BUILD.gn": {
+      "sha256": "7e8c3f1b7b57af155cae72d962ccf8e46d166ed652b94c013526ee42ae212663",
+      "bytes": 12091
+    },
+    "src/sandbox/linux/bpf_dsl/linux_syscall_ranges.h": {
+      "sha256": "f1f00e00efd2a8c6f36167a18fec5c3b09b702cdf2a4835d5fe9f6fc4827064d",
+      "bytes": 2226
+    },
+    "src/sandbox/linux/bpf_dsl/seccomp_macros.h": {
+      "sha256": "c20d289c37ba57e01b674e52f4fc7a4ba91505374dbff1b5ce105211dcf213e7",
+      "bytes": 16841
+    },
+    "src/sandbox/linux/integration_tests/bpf_dsl_seccomp_unittest.cc": {
+      "sha256": "dc21f97ca7a7d0a061a57b0360de0b1be2635cc4f10257d48bcfbc783d050219",
+      "bytes": 88785
+    },
+    "src/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc": {
+      "sha256": "00065f9ca068f558b4a96c0917357fecf9f2b95f2f5b247d2949bc207311e28b",
+      "bytes": 13339
+    },
+    "src/sandbox/linux/seccomp-bpf-helpers/baseline_policy_unittest.cc": {
+      "sha256": "d46075e81e878294af8d91db5bf09e4d379185d359ef012b5d93cddad85a0162",
+      "bytes": 16173
+    },
+    "src/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc": {
+      "sha256": "bd088ac5fc9f5c46c8bfca7e8183b7bc0d824d1e5a1d5cc650309211845b139e",
+      "bytes": 15593
+    },
+    "src/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions_unittests.cc": {
+      "sha256": "5849e0b27a610fa8599e59730d544b28e8ef394734ba8252a842d3ada58865bd",
+      "bytes": 10923
+    },
+    "src/sandbox/linux/seccomp-bpf-helpers/syscall_sets.cc": {
+      "sha256": "fc1d64a31030ad4128da1eb2e5a393b21c663fdbfd991e1be38f633941334ea1",
+      "bytes": 31759
+    },
+    "src/sandbox/linux/seccomp-bpf-helpers/syscall_sets.h": {
+      "sha256": "fa09ad3fe9a9da5a994e95b7e53bd212c8b3602a18c247860aac834113f099e8",
+      "bytes": 4972
+    },
+    "src/sandbox/linux/seccomp-bpf/syscall.cc": {
+      "sha256": "4d3b00eb2c2a9c47b63372f9ab80b046fc469556d37b87befec8043f3fa967b6",
+      "bytes": 17663
+    },
+    "src/sandbox/linux/seccomp-bpf/syscall_unittest.cc": {
+      "sha256": "125477adb12fc842a133e0fe03cfe9ff5b5d5639f68b8650948c8648c849e435",
+      "bytes": 9842
+    },
+    "src/sandbox/linux/seccomp-bpf/trap.cc": {
+      "sha256": "da42b22335d08e72bd66e861630fade9b207ed6e0746813bcd0b6628a228753d",
+      "bytes": 15457
+    },
+    "src/sandbox/linux/services/credentials.cc": {
+      "sha256": "d9263e437966e014766c47b30092a36e2143ca302041a72e56338b07fbdfaca1",
+      "bytes": 11563
+    },
+    "src/sandbox/linux/services/syscall_wrappers.cc": {
+      "sha256": "8204c63e95ba1f4188c75dbeb43ad88445a17c4088b6fe42b8d640aa0a82d0de",
+      "bytes": 6272
+    },
+    "src/sandbox/linux/syscall_broker/broker_process.cc": {
+      "sha256": "c3961e9c4d570eea63ee4adbaa6556b37849cde6b30c3d0ad9dfd07084f983a2",
+      "bytes": 6452
+    },
+    "src/sandbox/linux/system_headers/linux_seccomp.h": {
+      "sha256": "5f96166166cbf098712dbc4b5a64f7b2478343ad6a5188da0bc5a80c98bd4bf9",
+      "bytes": 6242
+    },
+    "src/sandbox/linux/system_headers/linux_signal.h": {
+      "sha256": "14d903448aaf884d917367a051c80ef27128077707205773631082a891968dcd",
+      "bytes": 3837
+    },
+    "src/sandbox/linux/system_headers/linux_stat.h": {
+      "sha256": "f9c4cb6481602dc2a781cd9b6e4b51db9defa6ad789b27b1220cabeec3b87fcc",
+      "bytes": 5229
+    },
+    "src/sandbox/linux/system_headers/linux_syscalls.h": {
+      "sha256": "da3ed20ad6baa7caacd1926b727909ae6efb9a64035048071bad0b66b2efa28d",
+      "bytes": 1320
+    },
+    "src/sandbox/linux/system_headers/riscv64_linux_syscalls.h": {
+      "sha256": "16b305d45d9dd9a1c2b196851dd68e3c35abbb0e5556c071139fd2bb6b030759",
+      "bytes": 21046
+    },
+    "src/sandbox/policy/linux/bpf_cdm_policy_linux.cc": {
+      "sha256": "8a8adb002b64ab63a932697cacd9296d52071f44346c0e63cd2f73db6de9e54d",
+      "bytes": 1663
+    },
+    "src/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc": {
+      "sha256": "ccb3aff9734fe1d6b89cf2bc259c429d5f7e0d7318c655298a2fc196345e9125",
+      "bytes": 2042
+    },
+    "src/sandbox/policy/linux/bpf_gpu_policy_linux.cc": {
+      "sha256": "4fd1a57a6c7dcbd7b6d7eecff9fbd5115544333c2aed9ae7bdee21944403f70e",
+      "bytes": 3802
+    },
+    "src/sandbox/policy/linux/bpf_print_compositor_policy_linux.cc": {
+      "sha256": "4c3ec202f39e90e981107ab851b133ce4a0f165fb30a39176c53f0c4b59e1b8a",
+      "bytes": 1732
+    },
+    "src/sandbox/policy/linux/bpf_renderer_policy_linux.cc": {
+      "sha256": "dc1f5a9c58b11cca2ff25894a4b94a07861f985b4147e04adb6b1be20f4aceb0",
+      "bytes": 3883
+    },
+    "src/sandbox/policy/linux/bpf_service_policy_linux.cc": {
+      "sha256": "3a3ce7929c2a60691473fc69a04f83e042ad6077ecaa37ff9b059dd086c725ff",
+      "bytes": 1369
+    },
+    "src/sandbox/policy/linux/bpf_utility_policy_linux.cc": {
+      "sha256": "2ace6b7e2701227dfd3ffd965b6dacc0e4e30124ce847e68b352daf0da2a43a7",
+      "bytes": 1704
+    },
+    "src/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock_config.h": {
+      "sha256": "47ca0101ca35fe661bf459bd573197739cdd8c3aeb1937576cc5bbcc3bed2930",
+      "bytes": 2726
+    },
+    "src/third_party/blink/renderer/core/paint/paint_layer.cc": {
+      "sha256": "e882960a091739c358c46e8faa47c3ba2bd16631eaf90543c0e9670014140a0a",
+      "bytes": 110232
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_context.h": {
+      "sha256": "b0fd7245b1e9a8b6d80c53645fff65033f4bf7c38941a4e4f5d887f337f23e53",
+      "bytes": 23246
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_context_writer.cc": {
+      "sha256": "c8dc33a44a97f4b659199725c3b577d9c4a4fdb4a6ce12cef74136d550ae0462",
+      "bytes": 21172
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_context_writer.h": {
+      "sha256": "598b86787df8f6aeb2d0a56d2b8bc7ec9b57b9adce59beb3462c4f8f1a6bde55",
+      "bytes": 16151
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_context_writer_test.cc": {
+      "sha256": "8c0b84fe59b858200a6dcec5926cf10ed83a9f5344a2dbd08e73f61ca0d51b2c",
+      "bytes": 10880
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_extensions.h": {
+      "sha256": "a91553cc5ca076f49115ecfe45e5097241b4aed819cebef4982f78cdcd9f15a7",
+      "bytes": 18497
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_misc_info_writer.cc": {
+      "sha256": "3c4909ddad98a3664e9c21071cb1c46802df73296dbf48569ebaf7d5818dba13",
+      "bytes": 16621
+    },
+    "src/third_party/crashpad/crashpad/minidump/minidump_system_info_writer.cc": {
+      "sha256": "001ad2991fce20a15944fa2d34a769770470c61bf0b6d3addc149a447c864bea",
+      "bytes": 11153
+    },
+    "src/third_party/crashpad/crashpad/minidump/test/minidump_context_test_util.cc": {
+      "sha256": "2018f286101b15213401e3366b7e5a342025c5a6fa6c0183d7ec8899f8f00cbc",
+      "bytes": 22437
+    },
+    "src/third_party/crashpad/crashpad/minidump/test/minidump_context_test_util.h": {
+      "sha256": "4d3c21a628f509117d6bd5e6e37dc3394ef8a6e1727cb61310e7c1082a057467",
+      "bytes": 4787
+    },
+    "src/third_party/crashpad/crashpad/snapshot/capture_memory.cc": {
+      "sha256": "2bde604ac673e5834a2bfef7037c08d7cd1d51d12427d13683e3c8cea28dcf38",
+      "bytes": 5690
+    },
+    "src/third_party/crashpad/crashpad/snapshot/cpu_architecture.h": {
+      "sha256": "dd9bedae878341cd1f15c0a12234e059b74d452a8d8dbbb3232c5697257beb8a",
+      "bytes": 1608
+    },
+    "src/third_party/crashpad/crashpad/snapshot/cpu_context.cc": {
+      "sha256": "cb619538451ba2a5404922cdbcb5414698005a56d6b268f18f66bfad660f0ab7",
+      "bytes": 7517
+    },
+    "src/third_party/crashpad/crashpad/snapshot/cpu_context.h": {
+      "sha256": "6119f9e22c5fef2300ca1acb31b5bf0d1ce1ba54e84f427723ca0514f01bc535",
+      "bytes": 12944
+    },
+    "src/third_party/crashpad/crashpad/snapshot/elf/elf_image_reader.cc": {
+      "sha256": "b332860da39449c2a754554be1736a16275a5597ff0e520d48d70b6bffb8e1ce",
+      "bytes": 26889
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/cpu_context_linux.cc": {
+      "sha256": "66d078a40e9bf2e5858f15eed13e344ee037aaa30fe038eb43d23dc2374d07a4",
+      "bytes": 10193
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/cpu_context_linux.h": {
+      "sha256": "6705cfa4790ef309d255cf97ba72582ba3ea1bcefda54e3d41d9ff8327d46a72",
+      "bytes": 7838
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux.cc": {
+      "sha256": "c1894b249a704c11489c7bc473e9715d4037a4dd9c1e356e99cc69b5f7edff77",
+      "bytes": 16377
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux.h": {
+      "sha256": "baee0866adecafaaf6c69caa33018912471e27681b5c1c42074c42ef26795514",
+      "bytes": 3814
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux_test.cc": {
+      "sha256": "8de3364cf8d7d2ea12857ba9191dfa3100d4d3080f769b279cf1bd721022f76a",
+      "bytes": 17385
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/process_reader_linux.cc": {
+      "sha256": "779dba126afcc7f827627fd6f50dc168cb88bb7e9a77a5a57594372bc2bebc5f",
+      "bytes": 17334
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/signal_context.h": {
+      "sha256": "6bd6cc0d6f48fb04921e32401573e0e25aa142f520cc0f0b81377e5b746ac325",
+      "bytes": 11201
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/system_snapshot_linux.cc": {
+      "sha256": "9aea66da81711fb12b2f9b4e9f793f75043b472ee839b9e9569f33bc5e13c6e4",
+      "bytes": 12427
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/test_modules.cc": {
+      "sha256": "0d7b8dde4b1792744128f9943b2be638e12c192078c3dafcbddc1b34117f5bb5",
+      "bytes": 8797
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/thread_snapshot_linux.cc": {
+      "sha256": "012c6d7826fd1800bb98bf58072d911bc598f4423c5ab6bba71e199316c3bd98",
+      "bytes": 8659
+    },
+    "src/third_party/crashpad/crashpad/snapshot/linux/thread_snapshot_linux.h": {
+      "sha256": "f67d0360344158805099bbfa0f720d6a8b270056b445cbcb476985ef1dd0a22a",
+      "bytes": 3144
+    },
+    "src/third_party/crashpad/crashpad/snapshot/minidump/minidump_context_converter.cc": {
+      "sha256": "8877d66110679aff425420c59fa12d956b6c7eb55fccc8af2b0903a96f8a1aa8",
+      "bytes": 10823
+    },
+    "src/third_party/crashpad/crashpad/snapshot/minidump/system_snapshot_minidump.cc": {
+      "sha256": "a57350430389785bc5fa049f316f76fa4ce3bfe9b7bd85ff307ecd42b87989e3",
+      "bytes": 6860
+    },
+    "src/third_party/crashpad/crashpad/snapshot/test/test_cpu_context.cc": {
+      "sha256": "45c3201a7349c677da0bccc089134641b88b385d8e3d9c02ca789078a05a33d0",
+      "bytes": 9520
+    },
+    "src/third_party/crashpad/crashpad/snapshot/test/test_cpu_context.h": {
+      "sha256": "7a4f62d140b303057a11d99837e5f8b1c1e2d91f629ca29c9a82eae87bc1971b",
+      "bytes": 3224
+    },
+    "src/third_party/crashpad/crashpad/test/linux/get_tls.cc": {
+      "sha256": "7fb1fae2bb48033b528a31c9541b00c2973cb18a611c315a5c1691717840e3f5",
+      "bytes": 1801
+    },
+    "src/third_party/crashpad/crashpad/util/linux/auxiliary_vector_test.cc": {
+      "sha256": "0e11a062d6c57535a6093c776d8505af09e55064a1f7fdb5a1c02d4e35832b64",
+      "bytes": 6661
+    },
+    "src/third_party/crashpad/crashpad/util/linux/ptracer.cc": {
+      "sha256": "28fd43d4453a4b7408d9042035893a483f14709ac5c15fd40807d4b0ba669e8d",
+      "bytes": 19866
+    },
+    "src/third_party/crashpad/crashpad/util/linux/thread_info.h": {
+      "sha256": "f6a9a64384623b0f598b9fd353e464a8ef060a0020bd8c9ed53fef9d9b55f22d",
+      "bytes": 9112
+    },
+    "src/third_party/crashpad/crashpad/util/misc/capture_context.h": {
+      "sha256": "6ef8430b3538b0deaf501c4e712510b1fee4f497f17b6bf93ae31814b147d36f",
+      "bytes": 3334
+    },
+    "src/third_party/crashpad/crashpad/util/misc/capture_context_linux.S": {
+      "sha256": "adafdede5dde494cac3aa5a87769f5c53dc08be04a8c04bd2e26fd7554618d04",
+      "bytes": 19286
+    },
+    "src/third_party/crashpad/crashpad/util/misc/capture_context_test_util_linux.cc": {
+      "sha256": "56b73fe9dafa8b65225817cb3e75c433d8014974178d1f75b4155d3920baad43",
+      "bytes": 2702
+    },
+    "src/third_party/crashpad/crashpad/util/net/http_transport_libcurl.cc": {
+      "sha256": "0599b2e5323ebb817f932ca7126dc437edd22dd78c086ce94355f6111c739be8",
+      "bytes": 18462
+    },
+    "src/third_party/ipcz/src/ipcz/buffer_id.h": {
+      "sha256": "a0872d5b2951e209b854c1054c1ad9cda20d0b7228c3da11413f2b7049afc4df",
+      "bytes": 642
+    },
+    "src/third_party/angle/gni/angle.gni": {
+      "sha256": "a4f3122f39388dc057b7caf62755b2bd74675c48aa2f99c018b95db7f7f0cc68",
+      "bytes": 21775
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/config.h": {
+      "sha256": "0ed66d66ec2ab2b5c5d76b168144ac1dbf0239d888d017f80e60c3250e2fd714",
+      "bytes": 22312
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/config_components.h": {
+      "sha256": "9ac5fefb1bbef07bb58a6203369d00ab669618221422e321afc990bfdded42cb",
+      "bytes": 69195
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavcodec/bsf_list.c": {
+      "sha256": "bdd8790c519c97b62a52edba0b6d0b2241695e08d3c03bf026984c5e21a3e8a7",
+      "bytes": 75
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavcodec/codec_list.c": {
+      "sha256": "150bc5ff7c9ff8558224a32f0940ec531891bb9de812f46e7adaa361e70caa30",
+      "bytes": 455
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavcodec/parser_list.c": {
+      "sha256": "3736bb213f204f6831bb9a6df2e7524452a76edb55fdb621a11002df079b7b4c",
+      "bytes": 216
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavformat/demuxer_list.c": {
+      "sha256": "b2422dc8b56fbb4d6c103d2ce2cdacc0f82b8181a560a8849c2f6460b88c1149",
+      "bytes": 198
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavformat/muxer_list.c": {
+      "sha256": "4c5f3df77a6f18a739571693f4e3ea48ed9b0c41cd8ec56c25327dbe4af87f00",
+      "bytes": 65
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavformat/protocol_list.c": {
+      "sha256": "20390d2af0b45f7de454ca6f3b806275de063a3de97e80feea6857da98e60b67",
+      "bytes": 65
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavutil/avconfig.h": {
+      "sha256": "6d78a911a2128e926262114c9904209209674e3bc1a18c208c850ecbfc3393ec",
+      "bytes": 180
+    },
+    "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavutil/ffversion.h": {
+      "sha256": "8107bf6d11736286513dcb1c102a8917ce78e205b22295f1fe933a24873d773b",
+      "bytes": 201
+    },
+    "src/third_party/ffmpeg/chromium/scripts/build_ffmpeg.py": {
+      "sha256": "d2102c008a49ea35079d110d64aa983eb41fb315f1e3a7b7906337d5c9ff5c22",
+      "bytes": 40265
+    },
+    "src/third_party/ffmpeg/chromium/scripts/copy_config.sh": {
+      "sha256": "2f37a63020026c85f654f37829954b88b3a197c7a604aecd71fd72642c4aa7b1",
+      "bytes": 1214
+    },
+    "src/third_party/swiftshader/src/Vulkan/BUILD.gn": {
+      "sha256": "5d8b37b9cc18dd1cbc569e33441e6695160c1e30038cca916d2568a2766afa4a",
+      "bytes": 7048
+    },
+    "src/third_party/webrtc/pc/legacy_stats_collector.cc": {
+      "sha256": "ed4955a08c1b204f427aa7610971c8c3285155413b7b820bfc8902585703f80b",
+      "bytes": 54379
+    },
+    "src/base/record_replay_driver.cc": {
+      "sha256": "d304779b83f9a6a482752a72d8c69d4a5efb00e4b5af37e1ba4d11703d869966",
+      "bytes": 234
+    },
+    "src/base/record_replay_driver.h": {
+      "sha256": "ef782bec611cc6c13bb4ef298ee082918a1655861692e05dc08099d2383f69ac",
+      "bytes": 167
+    }
+  },
+  "driver": "Generated unbundled symbols; no RISC-V recording driver"
+}

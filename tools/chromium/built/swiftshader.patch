@@ -1,0 +1,24 @@
+diff --git a/src/Vulkan/BUILD.gn b/src/Vulkan/BUILD.gn
+index 5556abd..e01e13d 100644
+--- a/src/Vulkan/BUILD.gn
++++ b/src/Vulkan/BUILD.gn
+@@ -14,6 +14,7 @@
+ 
+ import("//build_overrides/build.gni")
+ import("//build_overrides/wayland.gni")
++import("//build/config/compiler/compiler.gni")
+ import("//build/config/ozone.gni")
+ import("../swiftshader.gni")
+ import("vulkan.gni")
+@@ -204,6 +205,11 @@ swiftshader_shared_library("swiftshader_libvulkan") {
+       "-Wl,-Bsymbolic",
+       "-Wl,--version-script=" +
+           rebase_path("vk_swiftshader.lds", root_build_dir) ]
++    if (use_lld) {
++      # The export map includes optional platform entry points that are not
++      # built for every Linux configuration. Allow those version-map entries.
++      ldflags += [ "-Wl,--undefined-version" ]
++    }
+   }
+ 
+   deps = [

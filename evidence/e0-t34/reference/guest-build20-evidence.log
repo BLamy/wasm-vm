@@ -1,0 +1,1527 @@
+printf '%s' 'c2V0IC1ldW8gcGlwZWZhaWwKY2QgIiRIT01FL2Nocm9taXVtLXNtb2tlL3JlcGxheS1jaHJvbWl1bSIKcHJpbnRmICdSRUZFUkVOQ0VfSURFTlRJVFlfQkVHSU5cbicKdW5hbWUgLWEKc2hhMjU2c3VtIGNocm9tZSBzYW5kYm94X2xpbnV4X3VuaXR0ZXN0cwpSRUNPUkRfUkVQTEFZX0RPTlRfUkVDT1JEPTEgLi9jaHJvbWUgLS12ZXJzaW9uCnBzIC1lbyBwaWQscHBpZCxhcmdzIHwgZ3JlcCAtRSAnW2NdaHJvbWV8W2NdaHJvbWl1bScKZm9yIGVudHJ5IGluIC9wcm9jL1swLTldKi9jbWRsaW5lOyBkbwogIGlmIHRyICdcMCcgJyAnIDwgIiRlbnRyeSIgMj4vZGV2L251bGwgfCBncmVwIC1xIC0tICctLXR5cGU9cmVuZGVyZXInOyB0aGVuCiAgICBwcm9jZXNzPSIke2VudHJ5JS9jbWRsaW5lfSIKICAgIHByaW50ZiAnUkVOREVSRVJfU1RBVFVTPSVzXG4nICIkcHJvY2VzcyIKICAgIGdyZXAgLUUgJ14oTmFtZXxQaWR8UFBpZHxVaWR8TlNwaWR8Tm9OZXdQcml2c3xTZWNjb21wfFNlY2NvbXBfZmlsdGVycyk6JyAiJHByb2Nlc3Mvc3RhdHVzIgogIGZpCmRvbmUKcHJpbnRmICdSRUZFUkVOQ0VfSURFTlRJVFlfRU5EXG5TQU5EQk9YX0ZVTExfTE9HX0JFR0lOXG4nCmNhdCAuLi9zYW5kYm94LXRlc3RzLWJ1aWxkMjAubG9nCnByaW50ZiAnXG5TQU5EQk9YX0ZVTExfTE9HX0VORFxuR1VJX0ZVTExfTE9HX0JFR0lOXG4nCmNhdCAuLi9ndWktYnJvd3Nlci5sb2cKcHJpbnRmICdcbkdVSV9GVUxMX0xPR19FTkRcbicK' | base64 -d > /tmp/replay-0ca0f32e71e44fd3833eda33620974db.sh; bash /tmp/replay-0ca0f32e71e44fd3833eda33620974db.sh; replay_result=$?; printf '\n__REPLAY_END_0ca0f32e71e44fd3833eda33620974db:%s\n' "$replay_result"
+[?2004lREFERENCE_IDENTITY_BEGIN
+Linux replay-riscv 6.6.63 #1 SMP Thu Nov 14 2024 riscv64 riscv64 riscv64 GNU/Linux
+df9b431511f435c463e5d39f3dde30d2d204e06105685b601b8ce2372819b8ef  chrome
+14e72a5ca6982fc6c04ba44e999cc77545a975fe7999db5f1efdc67dc8f82154  sandbox_linux_unittests
+Chromium 108.0.5359.0  (replay.io build linux-riscv64-chromium-f2472ba7bee0-unbundled-driver)
+  10784       1 ./chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-browser-check --disable-background-networking --disable-component-update --disable-sync --password-store=basic --lang=en-US --start-maximized --user-data-dir=/home/desktop/.config/replay-gui-smoke http://10.0.2.2:8530/smoke.html
+  10787       1 /home/desktop/chromium-smoke/replay-chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Ubuntu 24.04.5 LTS --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=89 --shared-client-connection
+  10789       1 /home/desktop/chromium-smoke/replay-chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Ubuntu 24.04.5 LTS --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=4 --shared-client-connection
+  10793   10784 /home/desktop/chromium-smoke/replay-chromium/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --change-stack-guard-on-fork=enable
+  10794   10784 /home/desktop/chromium-smoke/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --change-stack-guard-on-fork=enable
+  10797   10794 /home/desktop/chromium-smoke/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --change-stack-guard-on-fork=enable
+  10900   10793 /home/desktop/chromium-smoke/replay-chromium/chrome --type=gpu-process --ozone-platform=wayland --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --change-stack-guard-on-fork=enable --gpu-preferences=WAAAAAAAAAAgAAAYAAAAAAAAAAAAAAAAAABgAAEAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --use-gl=angle --use-angle=swiftshader-webgl --shared-files --field-trial-handle=0,i,14760895447496654537,12043525124008265124,131072
+  10908   10784 /home/desktop/chromium-smoke/replay-chromium/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,14760895447496654537,12043525124008265124,131072
+  10963   10797 /home/desktop/chromium-smoke/replay-chromium/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,14760895447496654537,12043525124008265124,131072
+  11056   10797 /home/desktop/chromium-smoke/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --event-path-policy=0 --change-stack-guard-on-fork=enable --first-renderer-process --ozone-platform=wayland --disable-gpu-compositing --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1793729353507951 --launch-time-ticks=2703633073 --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,14760895447496654537,12043525124008265124,131072
+  11057   10797 /home/desktop/chromium-smoke/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-gui-smoke --event-path-policy=0 --change-stack-guard-on-fork=enable --ozone-platform=wayland --disable-gpu-compositing --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1793729353507951 --launch-time-ticks=2703688965 --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,14760895447496654537,12043525124008265124,131072
+RENDERER_STATUS=/proc/11056
+Name:	chrome
+Pid:	11056
+PPid:	10797
+Uid:	1000	1000	1000	1000
+NSpid:	11056	9	1
+NoNewPrivs:	1
+Seccomp:	2
+Seccomp_filters:	1
+RENDERER_STATUS=/proc/11057
+Name:	chrome
+Pid:	11057
+PPid:	10797
+Uid:	1000	1000	1000	1000
+NSpid:	11057	10	1
+NoNewPrivs:	1
+Seccomp:	2
+Seccomp_filters:	1
+REFERENCE_IDENTITY_END
+SANDBOX_FULL_LOG_BEGIN
+[5893:5893:WARNING:check_is_test.cc(26)] Allowing special test code paths
+IMPORTANT DEBUGGING NOTE: batches of tests are run inside their
+own process. For debugging a test inside a debugger, use the
+--gtest_filter=<your_test_name> flag along with
+--single-process-tests.
+Using sharding settings from environment. This is shard 0/1
+Using 1 parallel jobs.
+[5896:5896:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = ProcUtil.CountOpenFds:ProcUtil.HasOpenDirectory:ProcUtil.HasOpenDirectoryWithFD:ResourceLimits.NoFork:ScopedProcess.ScopedProcessNormalExit:ScopedProcess.ScopedProcessAbort:ScopedProcess.ScopedProcessSignaled:ScopedProcess.DiesForReal:ScopedProcess.SynchronizationBasic:ScopedProcess.SynchronizationWorks
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from ProcUtil
+[ RUN      ] ProcUtil.CountOpenFds
+[       OK ] ProcUtil.CountOpenFds (4 ms)
+[ RUN      ] ProcUtil.HasOpenDirectory
+[       OK ] ProcUtil.HasOpenDirectory (3 ms)
+[ RUN      ] ProcUtil.HasOpenDirectoryWithFD
+[       OK ] ProcUtil.HasOpenDirectoryWithFD (91 ms)
+[----------] 3 tests from ProcUtil (131 ms total)
+
+[----------] 1 test from ResourceLimits
+[ RUN      ] ResourceLimits.NoFork
+[       OK ] ResourceLimits.NoFork (52 ms)
+[----------] 1 test from ResourceLimits (83 ms total)
+
+[----------] 6 tests from ScopedProcess
+[ RUN      ] ScopedProcess.ScopedProcessNormalExit
+[       OK ] ScopedProcess.ScopedProcessNormalExit (150 ms)
+[ RUN      ] ScopedProcess.ScopedProcessAbort
+[       OK ] ScopedProcess.ScopedProcessAbort (35 ms)
+[ RUN      ] ScopedProcess.ScopedProcessSignaled
+[       OK ] ScopedProcess.ScopedProcessSignaled (63 ms)
+[ RUN      ] ScopedProcess.DiesForReal
+[       OK ] ScopedProcess.DiesForReal (13 ms)
+[ RUN      ] ScopedProcess.SynchronizationBasic
+[       OK ] ScopedProcess.SynchronizationBasic (134 ms)
+[ RUN      ] ScopedProcess.SynchronizationWorks
+[       OK ] ScopedProcess.SynchronizationWorks (126 ms)
+[----------] 6 tests from ScopedProcess (568 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (789 ms total)
+[  PASSED  ] 10 tests.
+[1/338] ProcUtil.CountOpenFds (4 ms)
+[2/338] ProcUtil.HasOpenDirectory (3 ms)
+[3/338] ProcUtil.HasOpenDirectoryWithFD (91 ms)
+[4/338] ResourceLimits.NoFork (52 ms)
+[5/338] ScopedProcess.ScopedProcessNormalExit (150 ms)
+[6/338] ScopedProcess.ScopedProcessAbort (35 ms)
+[7/338] ScopedProcess.ScopedProcessSignaled (63 ms)
+[8/338] ScopedProcess.DiesForReal (13 ms)
+[9/338] ScopedProcess.SynchronizationBasic (134 ms)
+[10/338] ScopedProcess.SynchronizationWorks (126 ms)
+[5905:5905:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = SyscallWrappers.BasicSyscalls:SyscallWrappers.CloneBasic:SyscallWrappers.CloneParentSettid:SyscallWrappers.CloneChildSettid:SyscallWrappers.GetRESUid:SyscallWrappers.GetRESGid:SyscallWrappers.LinuxSigSet:SyscallWrappers.Stat:SyscallWrappers.LStat:ThreadHelpers.IsSingleThreadedBasic
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from SyscallWrappers
+[ RUN      ] SyscallWrappers.BasicSyscalls
+[       OK ] SyscallWrappers.BasicSyscalls (0 ms)
+[ RUN      ] SyscallWrappers.CloneBasic
+[       OK ] SyscallWrappers.CloneBasic (48 ms)
+[ RUN      ] SyscallWrappers.CloneParentSettid
+[       OK ] SyscallWrappers.CloneParentSettid (11 ms)
+[ RUN      ] SyscallWrappers.CloneChildSettid
+[       OK ] SyscallWrappers.CloneChildSettid (8 ms)
+[ RUN      ] SyscallWrappers.GetRESUid
+[       OK ] SyscallWrappers.GetRESUid (1 ms)
+[ RUN      ] SyscallWrappers.GetRESGid
+[       OK ] SyscallWrappers.GetRESGid (0 ms)
+[ RUN      ] SyscallWrappers.LinuxSigSet
+[       OK ] SyscallWrappers.LinuxSigSet (0 ms)
+[ RUN      ] SyscallWrappers.Stat
+[       OK ] SyscallWrappers.Stat (24 ms)
+[ RUN      ] SyscallWrappers.LStat
+[       OK ] SyscallWrappers.LStat (34 ms)
+[----------] 9 tests from SyscallWrappers (217 ms total)
+
+[----------] 1 test from ThreadHelpers
+[ RUN      ] ThreadHelpers.IsSingleThreadedBasic
+[       OK ] ThreadHelpers.IsSingleThreadedBasic (168 ms)
+[----------] 1 test from ThreadHelpers (170 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (413 ms total)
+[  PASSED  ] 10 tests.
+[11/338] SyscallWrappers.BasicSyscalls (0 ms)
+[12/338] SyscallWrappers.CloneBasic (48 ms)
+[13/338] SyscallWrappers.CloneParentSettid (11 ms)
+[14/338] SyscallWrappers.CloneChildSettid (8 ms)
+[15/338] SyscallWrappers.GetRESUid (1 ms)
+[16/338] SyscallWrappers.GetRESGid (0 ms)
+[17/338] SyscallWrappers.LinuxSigSet (0 ms)
+[18/338] SyscallWrappers.Stat (24 ms)
+[19/338] SyscallWrappers.LStat (34 ms)
+[20/338] ThreadHelpers.IsSingleThreadedBasic (168 ms)
+[5910:5910:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = ThreadHelpers.AssertSingleThreaded:ThreadHelpers.IsSingleThreadedIterated:ThreadHelpers.IsSingleThreadedStartAndStop:ThreadHelpers.AssertSingleThreadedAfterThreadStopped:Yama.GetStatus:Yama.RestrictPtraceSucceedsWhenYamaPresent:Yama.RestrictPtraceWorks:Yama.RestrictPtraceIsDefault:BrokerFilePermission.CreateGood:BrokerFilePermission.CreateGoodRecursive
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from ThreadHelpers
+[ RUN      ] ThreadHelpers.AssertSingleThreaded
+[       OK ] ThreadHelpers.AssertSingleThreaded (58 ms)
+[ RUN      ] ThreadHelpers.IsSingleThreadedIterated
+Still waiting for the following processes to finish:
+	./sandbox_linux_unittests --gtest_color=no --gtest_flagfile=/tmp/.org.chromium.Chromium.bexRMS/.org.chromium.Chromium.p56Pa0 --single-process-tests --test-launcher-jobs=1 --test-launcher-output=/tmp/.org.chromium.Chromium.bexRMS/kUf0tC/test_results.xml --test-launcher-retries-left=0 --test-launcher-retry-limit=0
+[       OK ] ThreadHelpers.IsSingleThreadedIterated (22610 ms)
+[ RUN      ] ThreadHelpers.IsSingleThreadedStartAndStop
+Still waiting for the following processes to finish:
+	./sandbox_linux_unittests --gtest_color=no --gtest_flagfile=/tmp/.org.chromium.Chromium.bexRMS/.org.chromium.Chromium.p56Pa0 --single-process-tests --test-launcher-jobs=1 --test-launcher-output=/tmp/.org.chromium.Chromium.bexRMS/kUf0tC/test_results.xml --test-launcher-retries-left=0 --test-launcher-retry-limit=0
+Still waiting for the following processes to finish:
+	./sandbox_linux_unittests --gtest_color=no --gtest_flagfile=/tmp/.org.chromium.Chromium.bexRMS/.org.chromium.Chromium.p56Pa0 --single-process-tests --test-launcher-jobs=1 --test-launcher-output=/tmp/.org.chromium.Chromium.bexRMS/kUf0tC/test_results.xml --test-launcher-retries-left=0 --test-launcher-retry-limit=0
+Entity: line 10: parser error : Extra content at the end of the document
+edStartAndStop" classname="ThreadHelpers" timestamp="2026-11-03T18:50:46.343Z" /
+                                                                               ^
+[       OK ] ThreadHelpers.IsSingleThreadedStartAndStop (22682 ms)
+[ RUN      ] ThreadHelpers.AssertSingleThreadedAfterThreadStopped
+Still waiting for the following processes to finish:
+	./sandbox_linux_unittests --gtest_color=no --gtest_flagfile=/tmp/.org.chromium.Chromium.bexRMS/.org.chromium.Chromium.p56Pa0 --single-process-tests --test-launcher-jobs=1 --test-launcher-output=/tmp/.org.chromium.Chromium.bexRMS/kUf0tC/test_results.xml --test-launcher-retries-left=0 --test-launcher-retry-limit=0
+Entity: line 13: parser error : Extra content at the end of the document
+rThreadStopped" classname="ThreadHelpers" timestamp="2026-11-03T18:51:09.027Z" /
+                                                                               ^
+[       OK ] ThreadHelpers.AssertSingleThreadedAfterThreadStopped (26143 ms)
+[----------] 4 tests from ThreadHelpers (71674 ms total)
+
+[----------] 4 tests from Yama
+[ RUN      ] Yama.GetStatus
+Yama present: N - enforcing: N
+[       OK ] Yama.GetStatus (5 ms)
+[ RUN      ] Yama.RestrictPtraceSucceedsWhenYamaPresent
+[       OK ] Yama.RestrictPtraceSucceedsWhenYamaPresent (133 ms)
+[ RUN      ] Yama.RestrictPtraceWorks
+[       OK ] Yama.RestrictPtraceWorks (150 ms)
+[ RUN      ] Yama.RestrictPtraceIsDefault
+[       OK ] Yama.RestrictPtraceIsDefault (22 ms)
+[----------] 4 tests from Yama (390 ms total)
+
+[----------] 2 tests from BrokerFilePermission
+[ RUN      ] BrokerFilePermission.CreateGood
+[       OK ] BrokerFilePermission.CreateGood (26 ms)
+[ RUN      ] BrokerFilePermission.CreateGoodRecursive
+[       OK ] BrokerFilePermission.CreateGoodRecursive (56 ms)
+[----------] 2 tests from BrokerFilePermission (94 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (72168 ms total)
+[  PASSED  ] 10 tests.
+[21/338] ThreadHelpers.AssertSingleThreaded (58 ms)
+[22/338] ThreadHelpers.IsSingleThreadedIterated (22610 ms)
+[23/338] ThreadHelpers.IsSingleThreadedStartAndStop (22682 ms)
+[24/338] ThreadHelpers.AssertSingleThreadedAfterThreadStopped (26143 ms)
+[25/338] Yama.GetStatus (5 ms)
+[26/338] Yama.RestrictPtraceSucceedsWhenYamaPresent (133 ms)
+[27/338] Yama.RestrictPtraceWorks (150 ms)
+[28/338] Yama.RestrictPtraceIsDefault (22 ms)
+[29/338] BrokerFilePermission.CreateGood (26 ms)
+[30/338] BrokerFilePermission.CreateGoodRecursive (56 ms)
+[9920:9920:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerFilePermission.CreateBad:BrokerFilePermission.CreateBadRecursive:BrokerFilePermission.CreateBadNotAbs:BrokerFilePermission.CreateBadEmpty:BrokerFilePermission.ReadOnly:BrokerFilePermission.ReadOnlyRecursive:BrokerFilePermission.ReadOnlyTruncate:BrokerFilePermission.WriteOnly:BrokerFilePermission.ReadWrite:BrokerFilePermission.ReadWriteCreate
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerFilePermission
+[ RUN      ] BrokerFilePermission.CreateBad
+[       OK ] BrokerFilePermission.CreateBad (1551 ms)
+[ RUN      ] BrokerFilePermission.CreateBadRecursive
+[       OK ] BrokerFilePermission.CreateBadRecursive (1239 ms)
+[ RUN      ] BrokerFilePermission.CreateBadNotAbs
+[       OK ] BrokerFilePermission.CreateBadNotAbs (869 ms)
+[ RUN      ] BrokerFilePermission.CreateBadEmpty
+[       OK ] BrokerFilePermission.CreateBadEmpty (1298 ms)
+[ RUN      ] BrokerFilePermission.ReadOnly
+[       OK ] BrokerFilePermission.ReadOnly (5 ms)
+[ RUN      ] BrokerFilePermission.ReadOnlyRecursive
+[       OK ] BrokerFilePermission.ReadOnlyRecursive (1 ms)
+[ RUN      ] BrokerFilePermission.ReadOnlyTruncate
+[       OK ] BrokerFilePermission.ReadOnlyTruncate (0 ms)
+[ RUN      ] BrokerFilePermission.WriteOnly
+[       OK ] BrokerFilePermission.WriteOnly (2 ms)
+[ RUN      ] BrokerFilePermission.ReadWrite
+[       OK ] BrokerFilePermission.ReadWrite (1 ms)
+[ RUN      ] BrokerFilePermission.ReadWriteCreate
+[       OK ] BrokerFilePermission.ReadWriteCreate (1 ms)
+[----------] 10 tests from BrokerFilePermission (5006 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (5010 ms total)
+[  PASSED  ] 10 tests.
+[31/338] BrokerFilePermission.CreateBad (1551 ms)
+[32/338] BrokerFilePermission.CreateBadRecursive (1239 ms)
+[33/338] BrokerFilePermission.CreateBadNotAbs (869 ms)
+[34/338] BrokerFilePermission.CreateBadEmpty (1298 ms)
+[35/338] BrokerFilePermission.ReadOnly (5 ms)
+[36/338] BrokerFilePermission.ReadOnlyRecursive (1 ms)
+[37/338] BrokerFilePermission.ReadOnlyTruncate (0 ms)
+[38/338] BrokerFilePermission.WriteOnly (2 ms)
+[39/338] BrokerFilePermission.ReadWrite (1 ms)
+[40/338] BrokerFilePermission.ReadWriteCreate (1 ms)
+[9926:9926:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerFilePermission.ReadWriteCreateTemporaryRecursive:BrokerFilePermission.StatOnlyWithIntermediateDirs:BrokerFilePermission.ValidatePath:BrokerProcess.CreateAndDestroy:BrokerProcess.TestOpenAccessNull:BrokerProcess.OpenFilePermsWithClientCheck:BrokerProcess.OpenOpenFilePermsNoClientCheck:BrokerProcess.OpenFilePermsWithClientCheckNoEnt:BrokerProcess.OpenOpenFilePermsNoClientCheckNoEnt:BrokerProcess.BadPathsClientCheck
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from BrokerFilePermission
+[ RUN      ] BrokerFilePermission.ReadWriteCreateTemporaryRecursive
+[       OK ] BrokerFilePermission.ReadWriteCreateTemporaryRecursive (0 ms)
+[ RUN      ] BrokerFilePermission.StatOnlyWithIntermediateDirs
+[       OK ] BrokerFilePermission.StatOnlyWithIntermediateDirs (1 ms)
+[ RUN      ] BrokerFilePermission.ValidatePath
+[       OK ] BrokerFilePermission.ValidatePath (0 ms)
+[----------] 3 tests from BrokerFilePermission (19 ms total)
+
+[----------] 7 tests from BrokerProcess
+[ RUN      ] BrokerProcess.CreateAndDestroy
+[       OK ] BrokerProcess.CreateAndDestroy (42 ms)
+[ RUN      ] BrokerProcess.TestOpenAccessNull
+[       OK ] BrokerProcess.TestOpenAccessNull (33 ms)
+[ RUN      ] BrokerProcess.OpenFilePermsWithClientCheck
+[       OK ] BrokerProcess.OpenFilePermsWithClientCheck (59 ms)
+[ RUN      ] BrokerProcess.OpenOpenFilePermsNoClientCheck
+[       OK ] BrokerProcess.OpenOpenFilePermsNoClientCheck (64 ms)
+[ RUN      ] BrokerProcess.OpenFilePermsWithClientCheckNoEnt
+[       OK ] BrokerProcess.OpenFilePermsWithClientCheckNoEnt (25 ms)
+[ RUN      ] BrokerProcess.OpenOpenFilePermsNoClientCheckNoEnt
+[       OK ] BrokerProcess.OpenOpenFilePermsNoClientCheckNoEnt (344 ms)
+[ RUN      ] BrokerProcess.BadPathsClientCheck
+[       OK ] BrokerProcess.BadPathsClientCheck (47 ms)
+[----------] 7 tests from BrokerProcess (664 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (687 ms total)
+[  PASSED  ] 10 tests.
+[41/338] BrokerFilePermission.ReadWriteCreateTemporaryRecursive (0 ms)
+[42/338] BrokerFilePermission.StatOnlyWithIntermediateDirs (1 ms)
+[43/338] BrokerFilePermission.ValidatePath (0 ms)
+[44/338] BrokerProcess.CreateAndDestroy (42 ms)
+[45/338] BrokerProcess.TestOpenAccessNull (33 ms)
+[46/338] BrokerProcess.OpenFilePermsWithClientCheck (59 ms)
+[47/338] BrokerProcess.OpenOpenFilePermsNoClientCheck (64 ms)
+[48/338] BrokerProcess.OpenFilePermsWithClientCheckNoEnt (25 ms)
+[49/338] BrokerProcess.OpenOpenFilePermsNoClientCheckNoEnt (344 ms)
+[50/338] BrokerProcess.BadPathsClientCheck (47 ms)
+[9934:9934:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcess.BadPathsNoClientCheck:BrokerProcess.OpenCpuinfoWithClientCheck:BrokerProcess.OpenCpuinfoNoClientCheck:BrokerProcess.OpenCpuinfoWithClientCheckRecursive:BrokerProcess.OpenCpuinfoNoClientCheckRecursive:BrokerProcess.OpenFileRW:BrokerProcess.BrokerDied:BrokerProcess.OpenComplexFlagsWithClientCheck:BrokerProcess.OpenComplexFlagsNoClientCheck:BrokerProcess.BrokerDiesOnClosedChannel
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcess
+[ RUN      ] BrokerProcess.BadPathsNoClientCheck
+[       OK ] BrokerProcess.BadPathsNoClientCheck (115 ms)
+[ RUN      ] BrokerProcess.OpenCpuinfoWithClientCheck
+[       OK ] BrokerProcess.OpenCpuinfoWithClientCheck (37 ms)
+[ RUN      ] BrokerProcess.OpenCpuinfoNoClientCheck
+[       OK ] BrokerProcess.OpenCpuinfoNoClientCheck (30 ms)
+[ RUN      ] BrokerProcess.OpenCpuinfoWithClientCheckRecursive
+[       OK ] BrokerProcess.OpenCpuinfoWithClientCheckRecursive (47 ms)
+[ RUN      ] BrokerProcess.OpenCpuinfoNoClientCheckRecursive
+[       OK ] BrokerProcess.OpenCpuinfoNoClientCheckRecursive (55 ms)
+[ RUN      ] BrokerProcess.OpenFileRW
+[       OK ] BrokerProcess.OpenFileRW (78 ms)
+[ RUN      ] BrokerProcess.BrokerDied
+[       OK ] BrokerProcess.BrokerDied (33 ms)
+[ RUN      ] BrokerProcess.OpenComplexFlagsWithClientCheck
+[       OK ] BrokerProcess.OpenComplexFlagsWithClientCheck (42 ms)
+[ RUN      ] BrokerProcess.OpenComplexFlagsNoClientCheck
+[       OK ] BrokerProcess.OpenComplexFlagsNoClientCheck (41 ms)
+[ RUN      ] BrokerProcess.BrokerDiesOnClosedChannel
+[       OK ] BrokerProcess.BrokerDiesOnClosedChannel (66 ms)
+[----------] 10 tests from BrokerProcess (619 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (620 ms total)
+[  PASSED  ] 10 tests.
+[51/338] BrokerProcess.BadPathsNoClientCheck (115 ms)
+[52/338] BrokerProcess.OpenCpuinfoWithClientCheck (37 ms)
+[53/338] BrokerProcess.OpenCpuinfoNoClientCheck (30 ms)
+[54/338] BrokerProcess.OpenCpuinfoWithClientCheckRecursive (47 ms)
+[55/338] BrokerProcess.OpenCpuinfoNoClientCheckRecursive (55 ms)
+[56/338] BrokerProcess.OpenFileRW (78 ms)
+[57/338] BrokerProcess.BrokerDied (33 ms)
+[58/338] BrokerProcess.OpenComplexFlagsWithClientCheck (42 ms)
+[59/338] BrokerProcess.OpenComplexFlagsNoClientCheck (41 ms)
+[60/338] BrokerProcess.BrokerDiesOnClosedChannel (66 ms)
+[9946:9946:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcess.CreateFile:BrokerProcess.StatFileClient:BrokerProcess.StatFileHost:BrokerProcess.RenameFileClient:BrokerProcess.RenameFileHost:BrokerProcess.ReadlinkFileClient:BrokerProcess.ReadlinkFileHost:BrokerProcess.MkdirClient:BrokerProcess.MkdirHost:BrokerProcess.RmdirClient
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcess
+[ RUN      ] BrokerProcess.CreateFile
+[       OK ] BrokerProcess.CreateFile (96 ms)
+[ RUN      ] BrokerProcess.StatFileClient
+[       OK ] BrokerProcess.StatFileClient (405 ms)
+[ RUN      ] BrokerProcess.StatFileHost
+[       OK ] BrokerProcess.StatFileHost (513 ms)
+[ RUN      ] BrokerProcess.RenameFileClient
+[       OK ] BrokerProcess.RenameFileClient (196 ms)
+[ RUN      ] BrokerProcess.RenameFileHost
+[       OK ] BrokerProcess.RenameFileHost (210 ms)
+[ RUN      ] BrokerProcess.ReadlinkFileClient
+[       OK ] BrokerProcess.ReadlinkFileClient (145 ms)
+[ RUN      ] BrokerProcess.ReadlinkFileHost
+[       OK ] BrokerProcess.ReadlinkFileHost (203 ms)
+[ RUN      ] BrokerProcess.MkdirClient
+[       OK ] BrokerProcess.MkdirClient (522 ms)
+[ RUN      ] BrokerProcess.MkdirHost
+[       OK ] BrokerProcess.MkdirHost (253 ms)
+[ RUN      ] BrokerProcess.RmdirClient
+[       OK ] BrokerProcess.RmdirClient (194 ms)
+[----------] 10 tests from BrokerProcess (2834 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (2840 ms total)
+[  PASSED  ] 10 tests.
+[61/338] BrokerProcess.CreateFile (96 ms)
+[62/338] BrokerProcess.StatFileClient (405 ms)
+[63/338] BrokerProcess.StatFileHost (513 ms)
+[64/338] BrokerProcess.RenameFileClient (196 ms)
+[65/338] BrokerProcess.RenameFileHost (210 ms)
+[66/338] BrokerProcess.ReadlinkFileClient (145 ms)
+[67/338] BrokerProcess.ReadlinkFileHost (203 ms)
+[68/338] BrokerProcess.MkdirClient (522 ms)
+[69/338] BrokerProcess.MkdirHost (253 ms)
+[70/338] BrokerProcess.RmdirClient (194 ms)
+[10023:10023:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcess.RmdirHost:BrokerProcess.UnlinkClient:BrokerProcess.UnlinkHost:BrokerProcess.IsSyscallAllowed:BrokerSimpleMessage.AddData:BrokerSimpleMessage.SendAndRecvMsg:BrokerSimpleMessage.SendRecvMsgSynchronous:BrokerSimpleMessageFdTest.PassOneFd:BrokerSimpleMessageFdTest.PassTwoFds:BrokerSimpleMessageFdTest.SynchronousPassTwoFds
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from BrokerProcess
+[ RUN      ] BrokerProcess.RmdirHost
+[       OK ] BrokerProcess.RmdirHost (224 ms)
+[ RUN      ] BrokerProcess.UnlinkClient
+[       OK ] BrokerProcess.UnlinkClient (230 ms)
+[ RUN      ] BrokerProcess.UnlinkHost
+[       OK ] BrokerProcess.UnlinkHost (294 ms)
+[ RUN      ] BrokerProcess.IsSyscallAllowed
+[       OK ] BrokerProcess.IsSyscallAllowed (11 ms)
+[----------] 4 tests from BrokerProcess (787 ms total)
+
+[----------] 3 tests from BrokerSimpleMessage
+[ RUN      ] BrokerSimpleMessage.AddData
+[       OK ] BrokerSimpleMessage.AddData (5 ms)
+[ RUN      ] BrokerSimpleMessage.SendAndRecvMsg
+[       OK ] BrokerSimpleMessage.SendAndRecvMsg (132 ms)
+[ RUN      ] BrokerSimpleMessage.SendRecvMsgSynchronous
+[       OK ] BrokerSimpleMessage.SendRecvMsgSynchronous (22 ms)
+[----------] 3 tests from BrokerSimpleMessage (168 ms total)
+
+[----------] 3 tests from BrokerSimpleMessageFdTest
+[ RUN      ] BrokerSimpleMessageFdTest.PassOneFd
+[       OK ] BrokerSimpleMessageFdTest.PassOneFd (69 ms)
+[ RUN      ] BrokerSimpleMessageFdTest.PassTwoFds
+[       OK ] BrokerSimpleMessageFdTest.PassTwoFds (41 ms)
+[ RUN      ] BrokerSimpleMessageFdTest.SynchronousPassTwoFds
+[       OK ] BrokerSimpleMessageFdTest.SynchronousPassTwoFds (16 ms)
+[----------] 3 tests from BrokerSimpleMessageFdTest (143 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (1150 ms total)
+[  PASSED  ] 10 tests.
+[71/338] BrokerProcess.RmdirHost (224 ms)
+[72/338] BrokerProcess.UnlinkClient (230 ms)
+[73/338] BrokerProcess.UnlinkHost (294 ms)
+[74/338] BrokerProcess.IsSyscallAllowed (11 ms)
+[75/338] BrokerSimpleMessage.AddData (5 ms)
+[76/338] BrokerSimpleMessage.SendAndRecvMsg (132 ms)
+[77/338] BrokerSimpleMessage.SendRecvMsgSynchronous (22 ms)
+[78/338] BrokerSimpleMessageFdTest.PassOneFd (69 ms)
+[79/338] BrokerSimpleMessageFdTest.PassTwoFds (41 ms)
+[80/338] BrokerSimpleMessageFdTest.SynchronousPassTwoFds (16 ms)
+[10064:10064:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerRemoteSyscallArgHandler.BasicRead:BrokerRemoteSyscallArgHandler.MultipageRead:BrokerRemoteSyscallArgHandler.ReadExceededPathMax:BrokerRemoteSyscallArgHandler.ReadBarelyExceededPathMax:BrokerRemoteSyscallArgHandler.ReadUnreadablePage:BrokerRemoteSyscallArgHandler.ReadChunkMinus1:BrokerRemoteSyscallArgHandler.ReadChunk:BrokerRemoteSyscallArgHandler.ReadChunkPlus1:BrokerRemoteSyscallArgHandler.ReadChunkEndingAtPage:BrokerRemoteSyscallArgHandler.ReadChunkEndingOnePastPage
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerRemoteSyscallArgHandler
+[ RUN      ] BrokerRemoteSyscallArgHandler.BasicRead
+[       OK ] BrokerRemoteSyscallArgHandler.BasicRead (39 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.MultipageRead
+[       OK ] BrokerRemoteSyscallArgHandler.MultipageRead (55 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadExceededPathMax
+[       OK ] BrokerRemoteSyscallArgHandler.ReadExceededPathMax (17 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadBarelyExceededPathMax
+[       OK ] BrokerRemoteSyscallArgHandler.ReadBarelyExceededPathMax (20 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadUnreadablePage
+[       OK ] BrokerRemoteSyscallArgHandler.ReadUnreadablePage (53 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChunkMinus1
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChunkMinus1 (19 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChunk
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChunk (31 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChunkPlus1
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChunkPlus1 (27 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChunkEndingAtPage
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChunkEndingAtPage (21 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChunkEndingOnePastPage
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChunkEndingOnePastPage (24 ms)
+[----------] 10 tests from BrokerRemoteSyscallArgHandler (348 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (350 ms total)
+[  PASSED  ] 10 tests.
+[81/338] BrokerRemoteSyscallArgHandler.BasicRead (39 ms)
+[82/338] BrokerRemoteSyscallArgHandler.MultipageRead (55 ms)
+[83/338] BrokerRemoteSyscallArgHandler.ReadExceededPathMax (17 ms)
+[84/338] BrokerRemoteSyscallArgHandler.ReadBarelyExceededPathMax (20 ms)
+[85/338] BrokerRemoteSyscallArgHandler.ReadUnreadablePage (53 ms)
+[86/338] BrokerRemoteSyscallArgHandler.ReadChunkMinus1 (19 ms)
+[87/338] BrokerRemoteSyscallArgHandler.ReadChunk (31 ms)
+[88/338] BrokerRemoteSyscallArgHandler.ReadChunkPlus1 (27 ms)
+[89/338] BrokerRemoteSyscallArgHandler.ReadChunkEndingAtPage (21 ms)
+[90/338] BrokerRemoteSyscallArgHandler.ReadChunkEndingOnePastPage (24 ms)
+[10083:10083:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerRemoteSyscallArgHandler.ReadChunkPlus1EndingOnePastPage:BrokerRemoteSyscallArgHandler.ReadChildExited:BrokerRemoteSyscallArgHandler.BasicWrite:BrokerRemoteSyscallArgHandler.WriteToInvalidAddress:BrokerRemoteSyscallArgHandler.WritePartiallyToInvalidAddress:BrokerRemoteSyscallArgHandler.WriteChildExited:ScopedTemporaryFile.Basics:TestUtils.HandlePostForkReturn:UnitTests.DeathExitCode:UnitTests.DeathBySignal
+[==========] Running 10 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from BrokerRemoteSyscallArgHandler
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChunkPlus1EndingOnePastPage
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChunkPlus1EndingOnePastPage (35 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.ReadChildExited
+[       OK ] BrokerRemoteSyscallArgHandler.ReadChildExited (22 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.BasicWrite
+[       OK ] BrokerRemoteSyscallArgHandler.BasicWrite (25 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.WriteToInvalidAddress
+[       OK ] BrokerRemoteSyscallArgHandler.WriteToInvalidAddress (21 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.WritePartiallyToInvalidAddress
+[       OK ] BrokerRemoteSyscallArgHandler.WritePartiallyToInvalidAddress (24 ms)
+[ RUN      ] BrokerRemoteSyscallArgHandler.WriteChildExited
+[       OK ] BrokerRemoteSyscallArgHandler.WriteChildExited (34 ms)
+[----------] 6 tests from BrokerRemoteSyscallArgHandler (183 ms total)
+
+[----------] 1 test from ScopedTemporaryFile
+[ RUN      ] ScopedTemporaryFile.Basics
+[       OK ] ScopedTemporaryFile.Basics (3 ms)
+[----------] 1 test from ScopedTemporaryFile (5 ms total)
+
+[----------] 1 test from TestUtils
+[ RUN      ] TestUtils.HandlePostForkReturn
+[       OK ] TestUtils.HandlePostForkReturn (7 ms)
+[----------] 1 test from TestUtils (9 ms total)
+
+[----------] 2 tests from UnitTests
+[ RUN      ] UnitTests.DeathExitCode
+[       OK ] UnitTests.DeathExitCode (79 ms)
+[ RUN      ] UnitTests.DeathBySignal
+[       OK ] UnitTests.DeathBySignal (40 ms)
+[----------] 2 tests from UnitTests (163 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 4 test suites ran. (369 ms total)
+[  PASSED  ] 10 tests.
+[91/338] BrokerRemoteSyscallArgHandler.ReadChunkPlus1EndingOnePastPage (35 ms)
+[92/338] BrokerRemoteSyscallArgHandler.ReadChildExited (22 ms)
+[93/338] BrokerRemoteSyscallArgHandler.BasicWrite (25 ms)
+[94/338] BrokerRemoteSyscallArgHandler.WriteToInvalidAddress (21 ms)
+[95/338] BrokerRemoteSyscallArgHandler.WritePartiallyToInvalidAddress (24 ms)
+[96/338] BrokerRemoteSyscallArgHandler.WriteChildExited (34 ms)
+[97/338] ScopedTemporaryFile.Basics (3 ms)
+[98/338] TestUtils.HandlePostForkReturn (7 ms)
+[99/338] UnitTests.DeathExitCode (79 ms)
+[100/338] UnitTests.DeathBySignal (40 ms)
+[10099:10099:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = UnitTests.DeathWithMessage:UnitTests.SEGVDeathWithMessage:UnitTests.NoisyTest:SetuidSandboxClient.SandboxedClientAPI:SetuidSandboxHost.SetupLaunchEnvironment:SetuidSandboxHost.GetSandboxBinaryPath:BPFDSL.Basic:BPFDSL.BooleanLogic:BPFDSL.MoreBooleanLogic:BPFDSL.ArgSizeTest
+[==========] Running 10 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from UnitTests
+[ RUN      ] UnitTests.DeathWithMessage
+[       OK ] UnitTests.DeathWithMessage (38 ms)
+[ RUN      ] UnitTests.SEGVDeathWithMessage
+[       OK ] UnitTests.SEGVDeathWithMessage (964 ms)
+[ RUN      ] UnitTests.NoisyTest
+[       OK ] UnitTests.NoisyTest (58 ms)
+[----------] 3 tests from UnitTests (1080 ms total)
+
+[----------] 1 test from SetuidSandboxClient
+[ RUN      ] SetuidSandboxClient.SandboxedClientAPI
+[       OK ] SetuidSandboxClient.SandboxedClientAPI (4 ms)
+[----------] 1 test from SetuidSandboxClient (7 ms total)
+
+[----------] 2 tests from SetuidSandboxHost
+[ RUN      ] SetuidSandboxHost.SetupLaunchEnvironment
+[       OK ] SetuidSandboxHost.SetupLaunchEnvironment (3 ms)
+[ RUN      ] SetuidSandboxHost.GetSandboxBinaryPath
+[       OK ] SetuidSandboxHost.GetSandboxBinaryPath (3 ms)
+[----------] 2 tests from SetuidSandboxHost (9 ms total)
+
+[----------] 4 tests from BPFDSL
+[ RUN      ] BPFDSL.Basic
+[10099:10099:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.Basic (17 ms)
+[ RUN      ] BPFDSL.BooleanLogic
+[10099:10099:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.BooleanLogic (10 ms)
+[ RUN      ] BPFDSL.MoreBooleanLogic
+[10099:10099:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.MoreBooleanLogic (7 ms)
+[ RUN      ] BPFDSL.ArgSizeTest
+[10099:10099:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.ArgSizeTest (24 ms)
+[----------] 4 tests from BPFDSL (71 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 4 test suites ran. (1174 ms total)
+[  PASSED  ] 10 tests.
+[101/338] UnitTests.DeathWithMessage (38 ms)
+[102/338] UnitTests.SEGVDeathWithMessage (964 ms)
+[103/338] UnitTests.NoisyTest (58 ms)
+[104/338] SetuidSandboxClient.SandboxedClientAPI (4 ms)
+[105/338] SetuidSandboxHost.SetupLaunchEnvironment (3 ms)
+[106/338] SetuidSandboxHost.GetSandboxBinaryPath (3 ms)
+[107/338] BPFDSL.Basic (17 ms)
+[108/338] BPFDSL.BooleanLogic (10 ms)
+[109/338] BPFDSL.MoreBooleanLogic (7 ms)
+[110/338] BPFDSL.ArgSizeTest (24 ms)
+[10103:10103:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BPFDSL.NegativeConstantsTest:BPFDSL.MaskTest:BPFDSL.ElseIfTest:BPFDSL.SwitchTest:BPFDSL.IsAllowDeny:BPFDSL.HasUnsafeTraps:CodeGen.HashSanity:ProgramTest.OneInstruction:ProgramTest.SimpleBranch:ProgramTest.AtypicalBranch
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from BPFDSL
+[ RUN      ] BPFDSL.NegativeConstantsTest
+[10103:10103:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.NegativeConstantsTest (4 ms)
+[ RUN      ] BPFDSL.MaskTest
+[10103:10103:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.MaskTest (16 ms)
+[ RUN      ] BPFDSL.ElseIfTest
+[10103:10103:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.ElseIfTest (16 ms)
+[ RUN      ] BPFDSL.SwitchTest
+[10103:10103:WARNING:bpf_dsl_unittest.cc(82)] Missing golden file data entry
+[       OK ] BPFDSL.SwitchTest (19 ms)
+[ RUN      ] BPFDSL.IsAllowDeny
+[       OK ] BPFDSL.IsAllowDeny (4 ms)
+[ RUN      ] BPFDSL.HasUnsafeTraps
+[       OK ] BPFDSL.HasUnsafeTraps (6 ms)
+[----------] 6 tests from BPFDSL (92 ms total)
+
+[----------] 1 test from CodeGen
+[ RUN      ] CodeGen.HashSanity
+[       OK ] CodeGen.HashSanity (142 ms)
+[----------] 1 test from CodeGen (145 ms total)
+
+[----------] 3 tests from ProgramTest
+[ RUN      ] ProgramTest.OneInstruction
+[       OK ] ProgramTest.OneInstruction (2 ms)
+[ RUN      ] ProgramTest.SimpleBranch
+[       OK ] ProgramTest.SimpleBranch (2 ms)
+[ RUN      ] ProgramTest.AtypicalBranch
+[       OK ] ProgramTest.AtypicalBranch (1 ms)
+[----------] 3 tests from ProgramTest (10 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (254 ms total)
+[  PASSED  ] 10 tests.
+[111/338] BPFDSL.NegativeConstantsTest (4 ms)
+[112/338] BPFDSL.MaskTest (16 ms)
+[113/338] BPFDSL.ElseIfTest (16 ms)
+[114/338] BPFDSL.SwitchTest (19 ms)
+[115/338] BPFDSL.IsAllowDeny (4 ms)
+[116/338] BPFDSL.HasUnsafeTraps (6 ms)
+[117/338] CodeGen.HashSanity (142 ms)
+[118/338] ProgramTest.OneInstruction (2 ms)
+[119/338] ProgramTest.SimpleBranch (2 ms)
+[120/338] ProgramTest.AtypicalBranch (1 ms)
+[10104:10104:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = ProgramTest.Complex:ProgramTest.ConfusingTails:ProgramTest.ConfusingTailsBasic:ProgramTest.ConfusingTailsMergeable:ProgramTest.InstructionFolding:ProgramTest.FarBranches:ProgramTest.JumpReuse:ConsListTest.Basic:SyscallSet.Monotonous:SyscallSet.ValidSyscallRanges
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from ProgramTest
+[ RUN      ] ProgramTest.Complex
+[       OK ] ProgramTest.Complex (4 ms)
+[ RUN      ] ProgramTest.ConfusingTails
+[       OK ] ProgramTest.ConfusingTails (1 ms)
+[ RUN      ] ProgramTest.ConfusingTailsBasic
+[       OK ] ProgramTest.ConfusingTailsBasic (14 ms)
+[ RUN      ] ProgramTest.ConfusingTailsMergeable
+[       OK ] ProgramTest.ConfusingTailsMergeable (0 ms)
+[ RUN      ] ProgramTest.InstructionFolding
+[       OK ] ProgramTest.InstructionFolding (1 ms)
+[ RUN      ] ProgramTest.FarBranches
+[       OK ] ProgramTest.FarBranches (148 ms)
+[ RUN      ] ProgramTest.JumpReuse
+[       OK ] ProgramTest.JumpReuse (14 ms)
+[----------] 7 tests from ProgramTest (203 ms total)
+
+[----------] 1 test from ConsListTest
+[ RUN      ] ConsListTest.Basic
+[       OK ] ConsListTest.Basic (2 ms)
+[----------] 1 test from ConsListTest (3 ms total)
+
+[----------] 2 tests from SyscallSet
+[ RUN      ] SyscallSet.Monotonous
+[       OK ] SyscallSet.Monotonous (37 ms)
+[ RUN      ] SyscallSet.ValidSyscallRanges
+[       OK ] SyscallSet.ValidSyscallRanges (24 ms)
+[----------] 2 tests from SyscallSet (73 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (287 ms total)
+[  PASSED  ] 10 tests.
+[121/338] ProgramTest.Complex (4 ms)
+[122/338] ProgramTest.ConfusingTails (1 ms)
+[123/338] ProgramTest.ConfusingTailsBasic (14 ms)
+[124/338] ProgramTest.ConfusingTailsMergeable (0 ms)
+[125/338] ProgramTest.InstructionFolding (1 ms)
+[126/338] ProgramTest.FarBranches (148 ms)
+[127/338] ProgramTest.JumpReuse (14 ms)
+[128/338] ConsListTest.Basic (2 ms)
+[129/338] SyscallSet.Monotonous (37 ms)
+[130/338] SyscallSet.ValidSyscallRanges (24 ms)
+[10107:10107:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = SyscallSet.InvalidSyscalls:SyscallSet.ValidOnlyIsOnlyValid:SyscallSet.InvalidOnlyIsOnlyInvalid:SyscallSet.AllIsValidOnlyPlusInvalidOnly:TestTrapRegistry.TrapIDs:SandboxBPF.VerboseAPITesting:SandboxBPF.ApplyBasicDenylistPolicy:SandboxBPF.UseVsyscall:SandboxBPF.ApplyBasicAllowlistPolicy:SandboxBPF.BasicDenylistWithSigsys
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from SyscallSet
+[ RUN      ] SyscallSet.InvalidSyscalls
+[       OK ] SyscallSet.InvalidSyscalls (41 ms)
+[ RUN      ] SyscallSet.ValidOnlyIsOnlyValid
+[       OK ] SyscallSet.ValidOnlyIsOnlyValid (21 ms)
+[ RUN      ] SyscallSet.InvalidOnlyIsOnlyInvalid
+[       OK ] SyscallSet.InvalidOnlyIsOnlyInvalid (53 ms)
+[ RUN      ] SyscallSet.AllIsValidOnlyPlusInvalidOnly
+[       OK ] SyscallSet.AllIsValidOnlyPlusInvalidOnly (36 ms)
+[----------] 4 tests from SyscallSet (166 ms total)
+
+[----------] 1 test from TestTrapRegistry
+[ RUN      ] TestTrapRegistry.TrapIDs
+[       OK ] TestTrapRegistry.TrapIDs (6 ms)
+[----------] 1 test from TestTrapRegistry (17 ms total)
+
+[----------] 5 tests from SandboxBPF
+[ RUN      ] SandboxBPF.VerboseAPITesting
+[       OK ] SandboxBPF.VerboseAPITesting (200 ms)
+[ RUN      ] SandboxBPF.ApplyBasicDenylistPolicy
+[       OK ] SandboxBPF.ApplyBasicDenylistPolicy (87 ms)
+[ RUN      ] SandboxBPF.UseVsyscall
+[       OK ] SandboxBPF.UseVsyscall (87 ms)
+[ RUN      ] SandboxBPF.ApplyBasicAllowlistPolicy
+[       OK ] SandboxBPF.ApplyBasicAllowlistPolicy (81 ms)
+[ RUN      ] SandboxBPF.BasicDenylistWithSigsys
+[       OK ] SandboxBPF.BasicDenylistWithSigsys (49 ms)
+[----------] 5 tests from SandboxBPF (555 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (746 ms total)
+[  PASSED  ] 10 tests.
+[131/338] SyscallSet.InvalidSyscalls (41 ms)
+[132/338] SyscallSet.ValidOnlyIsOnlyValid (21 ms)
+[133/338] SyscallSet.InvalidOnlyIsOnlyInvalid (53 ms)
+[134/338] SyscallSet.AllIsValidOnlyPlusInvalidOnly (36 ms)
+[135/338] TestTrapRegistry.TrapIDs (6 ms)
+[136/338] SandboxBPF.VerboseAPITesting (200 ms)
+[137/338] SandboxBPF.ApplyBasicDenylistPolicy (87 ms)
+[138/338] SandboxBPF.UseVsyscall (87 ms)
+[139/338] SandboxBPF.ApplyBasicAllowlistPolicy (81 ms)
+[140/338] SandboxBPF.BasicDenylistWithSigsys (49 ms)
+[10117:10117:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = SandboxBPF.ErrnoTest:SandboxBPF.StackingPolicy:SandboxBPF.SyntheticPolicy:SandboxBPF.GreyListedPolicy:SandboxBPF.EnableUnsafeTrapsInSigSysHandler:SandboxBPF.ForwardSyscall:SandboxBPF.SigBus:SandboxBPF.SigMask:SandboxBPF.UnsafeTrapWithErrno:SandboxBPF.SimpleCondTest
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from SandboxBPF
+[ RUN      ] SandboxBPF.ErrnoTest
+[       OK ] SandboxBPF.ErrnoTest (80 ms)
+[ RUN      ] SandboxBPF.StackingPolicy
+[       OK ] SandboxBPF.StackingPolicy (123 ms)
+[ RUN      ] SandboxBPF.SyntheticPolicy
+[       OK ] SandboxBPF.SyntheticPolicy (55 ms)
+[ RUN      ] SandboxBPF.GreyListedPolicy
+[       OK ] SandboxBPF.GreyListedPolicy (42 ms)
+[ RUN      ] SandboxBPF.EnableUnsafeTrapsInSigSysHandler
+[       OK ] SandboxBPF.EnableUnsafeTrapsInSigSysHandler (26 ms)
+[ RUN      ] SandboxBPF.ForwardSyscall
+[       OK ] SandboxBPF.ForwardSyscall (77 ms)
+[ RUN      ] SandboxBPF.SigBus
+[       OK ] SandboxBPF.SigBus (72 ms)
+[ RUN      ] SandboxBPF.SigMask
+[       OK ] SandboxBPF.SigMask (59 ms)
+[ RUN      ] SandboxBPF.UnsafeTrapWithErrno
+[       OK ] SandboxBPF.UnsafeTrapWithErrno (108 ms)
+[ RUN      ] SandboxBPF.SimpleCondTest
+[       OK ] SandboxBPF.SimpleCondTest (49 ms)
+[----------] 10 tests from SandboxBPF (793 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (796 ms total)
+[  PASSED  ] 10 tests.
+[141/338] SandboxBPF.ErrnoTest (80 ms)
+[142/338] SandboxBPF.StackingPolicy (123 ms)
+[143/338] SandboxBPF.SyntheticPolicy (55 ms)
+[144/338] SandboxBPF.GreyListedPolicy (42 ms)
+[145/338] SandboxBPF.EnableUnsafeTrapsInSigSysHandler (26 ms)
+[146/338] SandboxBPF.ForwardSyscall (77 ms)
+[147/338] SandboxBPF.SigBus (72 ms)
+[148/338] SandboxBPF.SigMask (59 ms)
+[149/338] SandboxBPF.UnsafeTrapWithErrno (108 ms)
+[150/338] SandboxBPF.SimpleCondTest (49 ms)
+[10128:10128:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = SandboxBPF.EqualityTests:SandboxBPF.EqualityArgumentWidth:SandboxBPF.EqualityArgumentUnallowed64bit:SandboxBPF.EqualityWithNegativeArguments:SandboxBPF.EqualityWithNegative64bitArguments:SandboxBPF.AllBitTests:SandboxBPF.AnyBitTests:SandboxBPF.MaskedEqualTests:SandboxBPF.PthreadEquality:SandboxBPF.PthreadBitMask
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from SandboxBPF
+[ RUN      ] SandboxBPF.EqualityTests
+[       OK ] SandboxBPF.EqualityTests (257 ms)
+[ RUN      ] SandboxBPF.EqualityArgumentWidth
+[       OK ] SandboxBPF.EqualityArgumentWidth (54 ms)
+[ RUN      ] SandboxBPF.EqualityArgumentUnallowed64bit
+[       OK ] SandboxBPF.EqualityArgumentUnallowed64bit (32 ms)
+[ RUN      ] SandboxBPF.EqualityWithNegativeArguments
+[       OK ] SandboxBPF.EqualityWithNegativeArguments (30 ms)
+[ RUN      ] SandboxBPF.EqualityWithNegative64bitArguments
+[       OK ] SandboxBPF.EqualityWithNegative64bitArguments (83 ms)
+[ RUN      ] SandboxBPF.AllBitTests
+[       OK ] SandboxBPF.AllBitTests (69 ms)
+[ RUN      ] SandboxBPF.AnyBitTests
+[       OK ] SandboxBPF.AnyBitTests (44 ms)
+[ RUN      ] SandboxBPF.MaskedEqualTests
+[       OK ] SandboxBPF.MaskedEqualTests (39 ms)
+[ RUN      ] SandboxBPF.PthreadEquality
+[       OK ] SandboxBPF.PthreadEquality (97 ms)
+[ RUN      ] SandboxBPF.PthreadBitMask
+[       OK ] SandboxBPF.PthreadBitMask (63 ms)
+[----------] 10 tests from SandboxBPF (844 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (846 ms total)
+[  PASSED  ] 10 tests.
+[151/338] SandboxBPF.EqualityTests (257 ms)
+[152/338] SandboxBPF.EqualityArgumentWidth (54 ms)
+[153/338] SandboxBPF.EqualityArgumentUnallowed64bit (32 ms)
+[154/338] SandboxBPF.EqualityWithNegativeArguments (30 ms)
+[155/338] SandboxBPF.EqualityWithNegative64bitArguments (83 ms)
+[156/338] SandboxBPF.AllBitTests (69 ms)
+[157/338] SandboxBPF.AnyBitTests (44 ms)
+[158/338] SandboxBPF.MaskedEqualTests (39 ms)
+[159/338] SandboxBPF.PthreadEquality (97 ms)
+[160/338] SandboxBPF.PthreadBitMask (63 ms)
+[10143:10143:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = SandboxBPF.SeccompRetTrace:SandboxBPF.Pread64:SandboxBPF.Tsync:SandboxBPF.StartMultiThreadedAsSingleThreaded:SandboxBPF.UnsafeTrapWithCond:SandboxBPF.UseOpenBroker:SandboxBPF.CreateDestroy:SandboxBPF.CallSupports:SandboxBPF.CallSupportsTwice:SandboxBPF.ProcTaskFdDescriptorGetsClosed
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from SandboxBPF
+[ RUN      ] SandboxBPF.SeccompRetTrace
+[       OK ] SandboxBPF.SeccompRetTrace (62 ms)
+[ RUN      ] SandboxBPF.Pread64
+[       OK ] SandboxBPF.Pread64 (52 ms)
+[ RUN      ] SandboxBPF.Tsync
+[       OK ] SandboxBPF.Tsync (172 ms)
+[ RUN      ] SandboxBPF.StartMultiThreadedAsSingleThreaded
+[       OK ] SandboxBPF.StartMultiThreadedAsSingleThreaded (2022 ms)
+[ RUN      ] SandboxBPF.UnsafeTrapWithCond
+[       OK ] SandboxBPF.UnsafeTrapWithCond (62 ms)
+[ RUN      ] SandboxBPF.UseOpenBroker
+[       OK ] SandboxBPF.UseOpenBroker (116 ms)
+[ RUN      ] SandboxBPF.CreateDestroy
+[       OK ] SandboxBPF.CreateDestroy (2 ms)
+[ RUN      ] SandboxBPF.CallSupports
+Seccomp BPF supported (single thread): true.
+Seccomp BPF supported (multi thread): true.
+Pointer size: 8
+[       OK ] SandboxBPF.CallSupports (2 ms)
+[ RUN      ] SandboxBPF.CallSupportsTwice
+[       OK ] SandboxBPF.CallSupportsTwice (57 ms)
+[ RUN      ] SandboxBPF.ProcTaskFdDescriptorGetsClosed
+[       OK ] SandboxBPF.ProcTaskFdDescriptorGetsClosed (6 ms)
+[----------] 10 tests from SandboxBPF (2623 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (2634 ms total)
+[  PASSED  ] 10 tests.
+[161/338] SandboxBPF.SeccompRetTrace (62 ms)
+[162/338] SandboxBPF.Pread64 (52 ms)
+[163/338] SandboxBPF.Tsync (172 ms)
+[164/338] SandboxBPF.StartMultiThreadedAsSingleThreaded (2021 ms)
+[165/338] SandboxBPF.UnsafeTrapWithCond (62 ms)
+[166/338] SandboxBPF.UseOpenBroker (116 ms)
+[167/338] SandboxBPF.CreateDestroy (2 ms)
+[168/338] SandboxBPF.CallSupports (2 ms)
+[169/338] SandboxBPF.CallSupportsTwice (57 ms)
+[170/338] SandboxBPF.ProcTaskFdDescriptorGetsClosed (6 ms)
+[10155:10155:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcessIntegrationTest.TestOpenAccessNull:BrokerProcessIntegrationTest.TestOpenFilePermsEPERM:BrokerProcessIntegrationTest.TestOpenFilePermsENOENT:BrokerProcessIntegrationTest.BadPaths:BrokerProcessIntegrationTest.OpenCpuinfoRecursive:BrokerProcessIntegrationTest.OpenCpuinfoNonRecursive:BrokerProcessIntegrationTest.OpenFileRW:BrokerProcessIntegrationTest.BrokerDied:BrokerProcessIntegrationTest.OpenComplexFlags:BrokerProcessIntegrationTest.CreateFile
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcessIntegrationTest
+[ RUN      ] BrokerProcessIntegrationTest.TestOpenAccessNull
+[       OK ] BrokerProcessIntegrationTest.TestOpenAccessNull (140 ms)
+[ RUN      ] BrokerProcessIntegrationTest.TestOpenFilePermsEPERM
+[       OK ] BrokerProcessIntegrationTest.TestOpenFilePermsEPERM (637 ms)
+[ RUN      ] BrokerProcessIntegrationTest.TestOpenFilePermsENOENT
+[       OK ] BrokerProcessIntegrationTest.TestOpenFilePermsENOENT (622 ms)
+[ RUN      ] BrokerProcessIntegrationTest.BadPaths
+[       OK ] BrokerProcessIntegrationTest.BadPaths (369 ms)
+[ RUN      ] BrokerProcessIntegrationTest.OpenCpuinfoRecursive
+[       OK ] BrokerProcessIntegrationTest.OpenCpuinfoRecursive (425 ms)
+[ RUN      ] BrokerProcessIntegrationTest.OpenCpuinfoNonRecursive
+[       OK ] BrokerProcessIntegrationTest.OpenCpuinfoNonRecursive (296 ms)
+[ RUN      ] BrokerProcessIntegrationTest.OpenFileRW
+[       OK ] BrokerProcessIntegrationTest.OpenFileRW (301 ms)
+[ RUN      ] BrokerProcessIntegrationTest.BrokerDied
+[       OK ] BrokerProcessIntegrationTest.BrokerDied (351 ms)
+[ RUN      ] BrokerProcessIntegrationTest.OpenComplexFlags
+[       OK ] BrokerProcessIntegrationTest.OpenComplexFlags (445 ms)
+[ RUN      ] BrokerProcessIntegrationTest.CreateFile
+[       OK ] BrokerProcessIntegrationTest.CreateFile (936 ms)
+[----------] 10 tests from BrokerProcessIntegrationTest (4615 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (4618 ms total)
+[  PASSED  ] 10 tests.
+[171/338] BrokerProcessIntegrationTest.TestOpenAccessNull (140 ms)
+[172/338] BrokerProcessIntegrationTest.TestOpenFilePermsEPERM (637 ms)
+[173/338] BrokerProcessIntegrationTest.TestOpenFilePermsENOENT (622 ms)
+[174/338] BrokerProcessIntegrationTest.BadPaths (369 ms)
+[175/338] BrokerProcessIntegrationTest.OpenCpuinfoRecursive (425 ms)
+[176/338] BrokerProcessIntegrationTest.OpenCpuinfoNonRecursive (296 ms)
+[177/338] BrokerProcessIntegrationTest.OpenFileRW (301 ms)
+[178/338] BrokerProcessIntegrationTest.BrokerDied (351 ms)
+[179/338] BrokerProcessIntegrationTest.OpenComplexFlags (445 ms)
+[180/338] BrokerProcessIntegrationTest.CreateFile (936 ms)
+[10232:10232:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcessIntegrationTest.StatFileNoCommandFollowLinks:BrokerProcessIntegrationTest.StatFileNoCommandNoFollowLinks:BrokerProcessIntegrationTest.StatFilesNoPermissionFollowLinks:BrokerProcessIntegrationTest.StatFilesNoPermissionNoFollowLinks:BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsFollowLinks:BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsNoFollowLinks:BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsFollowLinks:BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsNoFollowLinks:BrokerProcessIntegrationTest.StatFileWithPermissionsFollowLinks:BrokerProcessIntegrationTest.StatFileWithPermissionsNoFollowLinks
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcessIntegrationTest
+[ RUN      ] BrokerProcessIntegrationTest.StatFileNoCommandFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatFileNoCommandFollowLinks (367 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatFileNoCommandNoFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatFileNoCommandNoFollowLinks (183 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatFilesNoPermissionFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatFilesNoPermissionFollowLinks (327 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatFilesNoPermissionNoFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatFilesNoPermissionNoFollowLinks (317 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsFollowLinks (493 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsNoFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsNoFollowLinks (392 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsFollowLinks (260 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsNoFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsNoFollowLinks (319 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatFileWithPermissionsFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatFileWithPermissionsFollowLinks (245 ms)
+[ RUN      ] BrokerProcessIntegrationTest.StatFileWithPermissionsNoFollowLinks
+[       OK ] BrokerProcessIntegrationTest.StatFileWithPermissionsNoFollowLinks (251 ms)
+[----------] 10 tests from BrokerProcessIntegrationTest (3222 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (3229 ms total)
+[  PASSED  ] 10 tests.
+[181/338] BrokerProcessIntegrationTest.StatFileNoCommandFollowLinks (367 ms)
+[182/338] BrokerProcessIntegrationTest.StatFileNoCommandNoFollowLinks (183 ms)
+[183/338] BrokerProcessIntegrationTest.StatFilesNoPermissionFollowLinks (327 ms)
+[184/338] BrokerProcessIntegrationTest.StatFilesNoPermissionNoFollowLinks (317 ms)
+[185/338] BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsFollowLinks (493 ms)
+[186/338] BrokerProcessIntegrationTest.StatNonexistentFileWithPermissionsNoFollowLinks (392 ms)
+[187/338] BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsFollowLinks (260 ms)
+[188/338] BrokerProcessIntegrationTest.StatNonexistentFileWithCreatePermissionsNoFollowLinks (319 ms)
+[189/338] BrokerProcessIntegrationTest.StatFileWithPermissionsFollowLinks (245 ms)
+[190/338] BrokerProcessIntegrationTest.StatFileWithPermissionsNoFollowLinks (251 ms)
+[10313:10313:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcessIntegrationTest.RenameNoCommand:BrokerProcessIntegrationTest.RenameNoPermNew:BrokerProcessIntegrationTest.RenameNoPermOld:BrokerProcessIntegrationTest.RenameReadPermNew:BrokerProcessIntegrationTest.RenameReadPermOld:BrokerProcessIntegrationTest.RenameWritePermsBoth:BrokerProcessIntegrationTest.ReadlinkNoCommand:BrokerProcessIntegrationTest.ReadlinkNonexistentNoPermissions:BrokerProcessIntegrationTest.ReadlinkNoPermissions:BrokerProcessIntegrationTest.ReadlinkNonexistentWithPermissions
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcessIntegrationTest
+[ RUN      ] BrokerProcessIntegrationTest.RenameNoCommand
+[       OK ] BrokerProcessIntegrationTest.RenameNoCommand (149 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RenameNoPermNew
+[       OK ] BrokerProcessIntegrationTest.RenameNoPermNew (145 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RenameNoPermOld
+[       OK ] BrokerProcessIntegrationTest.RenameNoPermOld (138 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RenameReadPermNew
+[       OK ] BrokerProcessIntegrationTest.RenameReadPermNew (146 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RenameReadPermOld
+[       OK ] BrokerProcessIntegrationTest.RenameReadPermOld (158 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RenameWritePermsBoth
+[       OK ] BrokerProcessIntegrationTest.RenameWritePermsBoth (211 ms)
+[ RUN      ] BrokerProcessIntegrationTest.ReadlinkNoCommand
+[       OK ] BrokerProcessIntegrationTest.ReadlinkNoCommand (159 ms)
+[ RUN      ] BrokerProcessIntegrationTest.ReadlinkNonexistentNoPermissions
+[       OK ] BrokerProcessIntegrationTest.ReadlinkNonexistentNoPermissions (134 ms)
+[ RUN      ] BrokerProcessIntegrationTest.ReadlinkNoPermissions
+[       OK ] BrokerProcessIntegrationTest.ReadlinkNoPermissions (102 ms)
+[ RUN      ] BrokerProcessIntegrationTest.ReadlinkNonexistentWithPermissions
+[       OK ] BrokerProcessIntegrationTest.ReadlinkNonexistentWithPermissions (123 ms)
+[----------] 10 tests from BrokerProcessIntegrationTest (1510 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (1512 ms total)
+[  PASSED  ] 10 tests.
+[191/338] BrokerProcessIntegrationTest.RenameNoCommand (149 ms)
+[192/338] BrokerProcessIntegrationTest.RenameNoPermNew (145 ms)
+[193/338] BrokerProcessIntegrationTest.RenameNoPermOld (138 ms)
+[194/338] BrokerProcessIntegrationTest.RenameReadPermNew (146 ms)
+[195/338] BrokerProcessIntegrationTest.RenameReadPermOld (158 ms)
+[196/338] BrokerProcessIntegrationTest.RenameWritePermsBoth (211 ms)
+[197/338] BrokerProcessIntegrationTest.ReadlinkNoCommand (159 ms)
+[198/338] BrokerProcessIntegrationTest.ReadlinkNonexistentNoPermissions (134 ms)
+[199/338] BrokerProcessIntegrationTest.ReadlinkNoPermissions (102 ms)
+[200/338] BrokerProcessIntegrationTest.ReadlinkNonexistentWithPermissions (123 ms)
+[10394:10394:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcessIntegrationTest.ReadlinkFileWithPermissions:BrokerProcessIntegrationTest.ReadlinkFileWithPermissionsSmallBuffer:BrokerProcessIntegrationTest.MkdirNoCommand:BrokerProcessIntegrationTest.MkdirNonexistentNoPermissions:BrokerProcessIntegrationTest.MkdirFileNoPermissions:BrokerProcessIntegrationTest.MkdirNonexistentROPermissions:BrokerProcessIntegrationTest.MkdirFileROPermissions:BrokerProcessIntegrationTest.MkdirNonExistentRWPermissions:BrokerProcessIntegrationTest.MkdirFileRWPermissions:BrokerProcessIntegrationTest.MkdirNonExistentRWCPermissions
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcessIntegrationTest
+[ RUN      ] BrokerProcessIntegrationTest.ReadlinkFileWithPermissions
+[       OK ] BrokerProcessIntegrationTest.ReadlinkFileWithPermissions (129 ms)
+[ RUN      ] BrokerProcessIntegrationTest.ReadlinkFileWithPermissionsSmallBuffer
+[       OK ] BrokerProcessIntegrationTest.ReadlinkFileWithPermissionsSmallBuffer (124 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirNoCommand
+[       OK ] BrokerProcessIntegrationTest.MkdirNoCommand (128 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirNonexistentNoPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirNonexistentNoPermissions (182 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirFileNoPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirFileNoPermissions (272 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirNonexistentROPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirNonexistentROPermissions (221 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirFileROPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirFileROPermissions (224 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirNonExistentRWPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirNonExistentRWPermissions (232 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirFileRWPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirFileRWPermissions (256 ms)
+[ RUN      ] BrokerProcessIntegrationTest.MkdirNonExistentRWCPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirNonExistentRWCPermissions (321 ms)
+[----------] 10 tests from BrokerProcessIntegrationTest (2172 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (2176 ms total)
+[  PASSED  ] 10 tests.
+[201/338] BrokerProcessIntegrationTest.ReadlinkFileWithPermissions (129 ms)
+[202/338] BrokerProcessIntegrationTest.ReadlinkFileWithPermissionsSmallBuffer (124 ms)
+[203/338] BrokerProcessIntegrationTest.MkdirNoCommand (128 ms)
+[204/338] BrokerProcessIntegrationTest.MkdirNonexistentNoPermissions (182 ms)
+[205/338] BrokerProcessIntegrationTest.MkdirFileNoPermissions (272 ms)
+[206/338] BrokerProcessIntegrationTest.MkdirNonexistentROPermissions (221 ms)
+[207/338] BrokerProcessIntegrationTest.MkdirFileROPermissions (224 ms)
+[208/338] BrokerProcessIntegrationTest.MkdirNonExistentRWPermissions (232 ms)
+[209/338] BrokerProcessIntegrationTest.MkdirFileRWPermissions (256 ms)
+[210/338] BrokerProcessIntegrationTest.MkdirNonExistentRWCPermissions (321 ms)
+[10475:10475:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcessIntegrationTest.MkdirFileRWCPermissions:BrokerProcessIntegrationTest.RmdirNoCommand:BrokerProcessIntegrationTest.RmdirNonexistentNoPermissions:BrokerProcessIntegrationTest.RmdirFileNoPermissions:BrokerProcessIntegrationTest.RmdirNonexistentROPermissions:BrokerProcessIntegrationTest.RmdirFileROPermissions:BrokerProcessIntegrationTest.RmdirNonExistentRWPermissions:BrokerProcessIntegrationTest.RmdirFileRWPermissions:BrokerProcessIntegrationTest.RmdirNonExistentRWCPermissions:BrokerProcessIntegrationTest.RmdirFileRWCPermissions
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BrokerProcessIntegrationTest
+[ RUN      ] BrokerProcessIntegrationTest.MkdirFileRWCPermissions
+[       OK ] BrokerProcessIntegrationTest.MkdirFileRWCPermissions (264 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirNoCommand
+[       OK ] BrokerProcessIntegrationTest.RmdirNoCommand (246 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirNonexistentNoPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirNonexistentNoPermissions (202 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirFileNoPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirFileNoPermissions (141 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirNonexistentROPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirNonexistentROPermissions (125 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirFileROPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirFileROPermissions (202 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirNonExistentRWPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirNonExistentRWPermissions (172 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirFileRWPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirFileRWPermissions (326 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirNonExistentRWCPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirNonExistentRWCPermissions (213 ms)
+[ RUN      ] BrokerProcessIntegrationTest.RmdirFileRWCPermissions
+[       OK ] BrokerProcessIntegrationTest.RmdirFileRWCPermissions (221 ms)
+[----------] 10 tests from BrokerProcessIntegrationTest (2175 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (2178 ms total)
+[  PASSED  ] 10 tests.
+[211/338] BrokerProcessIntegrationTest.MkdirFileRWCPermissions (264 ms)
+[212/338] BrokerProcessIntegrationTest.RmdirNoCommand (246 ms)
+[213/338] BrokerProcessIntegrationTest.RmdirNonexistentNoPermissions (202 ms)
+[214/338] BrokerProcessIntegrationTest.RmdirFileNoPermissions (141 ms)
+[215/338] BrokerProcessIntegrationTest.RmdirNonexistentROPermissions (125 ms)
+[216/338] BrokerProcessIntegrationTest.RmdirFileROPermissions (202 ms)
+[217/338] BrokerProcessIntegrationTest.RmdirNonExistentRWPermissions (172 ms)
+[218/338] BrokerProcessIntegrationTest.RmdirFileRWPermissions (326 ms)
+[219/338] BrokerProcessIntegrationTest.RmdirNonExistentRWCPermissions (213 ms)
+[220/338] BrokerProcessIntegrationTest.RmdirFileRWCPermissions (221 ms)
+[10556:10556:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BrokerProcessIntegrationTest.UnlinkNoCommand:BrokerProcessIntegrationTest.UnlinkNonexistentNoPermissions:BrokerProcessIntegrationTest.UnlinkFileNoPermissions:BrokerProcessIntegrationTest.UnlinkNonexistentROPermissions:BrokerProcessIntegrationTest.UnlinkFileROPermissions:BrokerProcessIntegrationTest.UnlinkNonExistentRWPermissions:BrokerProcessIntegrationTest.UnlinkFileRWPermissions:BrokerProcessIntegrationTest.UnlinkNonExistentRWCPermissions:BrokerProcessIntegrationTest.UnlinkFileRWCPermissions:BaselinePolicy.BaselinePolicyBasicAllowed
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from BrokerProcessIntegrationTest
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkNoCommand
+[       OK ] BrokerProcessIntegrationTest.UnlinkNoCommand (351 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkNonexistentNoPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkNonexistentNoPermissions (359 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkFileNoPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkFileNoPermissions (434 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkNonexistentROPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkNonexistentROPermissions (458 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkFileROPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkFileROPermissions (419 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkNonExistentRWPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkNonExistentRWPermissions (270 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkFileRWPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkFileRWPermissions (311 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkNonExistentRWCPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkNonExistentRWCPermissions (258 ms)
+[ RUN      ] BrokerProcessIntegrationTest.UnlinkFileRWCPermissions
+[       OK ] BrokerProcessIntegrationTest.UnlinkFileRWCPermissions (254 ms)
+[----------] 9 tests from BrokerProcessIntegrationTest (3185 ms total)
+
+[----------] 1 test from BaselinePolicy
+[ RUN      ] BaselinePolicy.BaselinePolicyBasicAllowed
+[       OK ] BaselinePolicy.BaselinePolicyBasicAllowed (87 ms)
+[----------] 1 test from BaselinePolicy (91 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (3281 ms total)
+[  PASSED  ] 10 tests.
+[221/338] BrokerProcessIntegrationTest.UnlinkNoCommand (351 ms)
+[222/338] BrokerProcessIntegrationTest.UnlinkNonexistentNoPermissions (359 ms)
+[223/338] BrokerProcessIntegrationTest.UnlinkFileNoPermissions (434 ms)
+[224/338] BrokerProcessIntegrationTest.UnlinkNonexistentROPermissions (458 ms)
+[225/338] BrokerProcessIntegrationTest.UnlinkFileROPermissions (419 ms)
+[226/338] BrokerProcessIntegrationTest.UnlinkNonExistentRWPermissions (270 ms)
+[227/338] BrokerProcessIntegrationTest.UnlinkFileRWPermissions (311 ms)
+[228/338] BrokerProcessIntegrationTest.UnlinkNonExistentRWCPermissions (258 ms)
+[229/338] BrokerProcessIntegrationTest.UnlinkFileRWCPermissions (254 ms)
+[230/338] BaselinePolicy.BaselinePolicyBasicAllowed (87 ms)
+[10630:10630:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BaselinePolicy.FchmodErrno:BaselinePolicy.ForkErrno:BaselinePolicy.ForkX86Eperm:BaselinePolicy.ForkArmEperm:BaselinePolicy.SystemEperm:BaselinePolicy.CloneVforkEperm:BaselinePolicy.CreateThread:BaselinePolicy.RseqEnabled:BaselinePolicy.DisallowedCloneFlagCrashes:BaselinePolicy.DisallowedKillCrashes
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BaselinePolicy
+[ RUN      ] BaselinePolicy.FchmodErrno
+[       OK ] BaselinePolicy.FchmodErrno (102 ms)
+[ RUN      ] BaselinePolicy.ForkErrno
+[       OK ] BaselinePolicy.ForkErrno (71 ms)
+[ RUN      ] BaselinePolicy.ForkX86Eperm
+[       OK ] BaselinePolicy.ForkX86Eperm (71 ms)
+[ RUN      ] BaselinePolicy.ForkArmEperm
+[       OK ] BaselinePolicy.ForkArmEperm (78 ms)
+[ RUN      ] BaselinePolicy.SystemEperm
+[       OK ] BaselinePolicy.SystemEperm (92 ms)
+[ RUN      ] BaselinePolicy.CloneVforkEperm
+[       OK ] BaselinePolicy.CloneVforkEperm (90 ms)
+[ RUN      ] BaselinePolicy.CreateThread
+[       OK ] BaselinePolicy.CreateThread (90 ms)
+[ RUN      ] BaselinePolicy.RseqEnabled
+[       OK ] BaselinePolicy.RseqEnabled (77 ms)
+[ RUN      ] BaselinePolicy.DisallowedCloneFlagCrashes
+[       OK ] BaselinePolicy.DisallowedCloneFlagCrashes (1154 ms)
+[ RUN      ] BaselinePolicy.DisallowedKillCrashes
+[       OK ] BaselinePolicy.DisallowedKillCrashes (735 ms)
+[----------] 10 tests from BaselinePolicy (2661 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (2665 ms total)
+[  PASSED  ] 10 tests.
+[231/338] BaselinePolicy.FchmodErrno (102 ms)
+[232/338] BaselinePolicy.ForkErrno (71 ms)
+[233/338] BaselinePolicy.ForkX86Eperm (71 ms)
+[234/338] BaselinePolicy.ForkArmEperm (78 ms)
+[235/338] BaselinePolicy.SystemEperm (92 ms)
+[236/338] BaselinePolicy.CloneVforkEperm (90 ms)
+[237/338] BaselinePolicy.CreateThread (90 ms)
+[238/338] BaselinePolicy.RseqEnabled (77 ms)
+[239/338] BaselinePolicy.DisallowedCloneFlagCrashes (1154 ms)
+[240/338] BaselinePolicy.DisallowedKillCrashes (735 ms)
+[10642:10642:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BaselinePolicy.CanKillSelf:BaselinePolicy.Socketpair:BaselinePolicy.GetRandom:BaselinePolicy.SocketpairWrongDomain:BaselinePolicy.EPERM_open:BaselinePolicy.EPERM_access:BaselinePolicy.EPERM_getcwd:BaselinePolicy.SIGSYS_InvalidSyscall:BaselinePolicy.SIGSYS___NR_acct:BaselinePolicy.SIGSYS___NR_chroot
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BaselinePolicy
+[ RUN      ] BaselinePolicy.CanKillSelf
+[       OK ] BaselinePolicy.CanKillSelf (45 ms)
+[ RUN      ] BaselinePolicy.Socketpair
+[       OK ] BaselinePolicy.Socketpair (69 ms)
+[ RUN      ] BaselinePolicy.GetRandom
+[       OK ] BaselinePolicy.GetRandom (43 ms)
+[ RUN      ] BaselinePolicy.SocketpairWrongDomain
+[       OK ] BaselinePolicy.SocketpairWrongDomain (728 ms)
+[ RUN      ] BaselinePolicy.EPERM_open
+[       OK ] BaselinePolicy.EPERM_open (89 ms)
+[ RUN      ] BaselinePolicy.EPERM_access
+[       OK ] BaselinePolicy.EPERM_access (62 ms)
+[ RUN      ] BaselinePolicy.EPERM_getcwd
+[       OK ] BaselinePolicy.EPERM_getcwd (78 ms)
+[ RUN      ] BaselinePolicy.SIGSYS_InvalidSyscall
+[       OK ] BaselinePolicy.SIGSYS_InvalidSyscall (893 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_acct
+[       OK ] BaselinePolicy.SIGSYS___NR_acct (746 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_chroot
+[       OK ] BaselinePolicy.SIGSYS___NR_chroot (1058 ms)
+[----------] 10 tests from BaselinePolicy (3871 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (3873 ms total)
+[  PASSED  ] 10 tests.
+[241/338] BaselinePolicy.CanKillSelf (45 ms)
+[242/338] BaselinePolicy.Socketpair (69 ms)
+[243/338] BaselinePolicy.GetRandom (43 ms)
+[244/338] BaselinePolicy.SocketpairWrongDomain (728 ms)
+[245/338] BaselinePolicy.EPERM_open (89 ms)
+[246/338] BaselinePolicy.EPERM_access (62 ms)
+[247/338] BaselinePolicy.EPERM_getcwd (78 ms)
+[248/338] BaselinePolicy.SIGSYS_InvalidSyscall (893 ms)
+[249/338] BaselinePolicy.SIGSYS___NR_acct (746 ms)
+[250/338] BaselinePolicy.SIGSYS___NR_chroot (1058 ms)
+[10653:10653:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BaselinePolicy.SIGSYS___NR_fanotify_init:BaselinePolicy.SIGSYS___NR_fgetxattr:BaselinePolicy.SIGSYS___NR_getcpu:BaselinePolicy.SIGSYS___NR_getitimer:BaselinePolicy.SIGSYS___NR_init_module:BaselinePolicy.SIGSYS___NR_io_cancel:BaselinePolicy.SIGSYS___NR_keyctl:BaselinePolicy.SIGSYS___NR_mq_open:BaselinePolicy.SIGSYS___NR_ptrace:BaselinePolicy.SIGSYS___NR_sched_setaffinity
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BaselinePolicy
+[ RUN      ] BaselinePolicy.SIGSYS___NR_fanotify_init
+[       OK ] BaselinePolicy.SIGSYS___NR_fanotify_init (838 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_fgetxattr
+[       OK ] BaselinePolicy.SIGSYS___NR_fgetxattr (761 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_getcpu
+[       OK ] BaselinePolicy.SIGSYS___NR_getcpu (872 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_getitimer
+[       OK ] BaselinePolicy.SIGSYS___NR_getitimer (692 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_init_module
+[       OK ] BaselinePolicy.SIGSYS___NR_init_module (759 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_io_cancel
+[       OK ] BaselinePolicy.SIGSYS___NR_io_cancel (752 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_keyctl
+[       OK ] BaselinePolicy.SIGSYS___NR_keyctl (662 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_mq_open
+[       OK ] BaselinePolicy.SIGSYS___NR_mq_open (791 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_ptrace
+[       OK ] BaselinePolicy.SIGSYS___NR_ptrace (897 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_sched_setaffinity
+[       OK ] BaselinePolicy.SIGSYS___NR_sched_setaffinity (868 ms)
+[----------] 10 tests from BaselinePolicy (7969 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (7971 ms total)
+[  PASSED  ] 10 tests.
+[251/338] BaselinePolicy.SIGSYS___NR_fanotify_init (838 ms)
+[252/338] BaselinePolicy.SIGSYS___NR_fgetxattr (761 ms)
+[253/338] BaselinePolicy.SIGSYS___NR_getcpu (872 ms)
+[254/338] BaselinePolicy.SIGSYS___NR_getitimer (692 ms)
+[255/338] BaselinePolicy.SIGSYS___NR_init_module (759 ms)
+[256/338] BaselinePolicy.SIGSYS___NR_io_cancel (752 ms)
+[257/338] BaselinePolicy.SIGSYS___NR_keyctl (662 ms)
+[258/338] BaselinePolicy.SIGSYS___NR_mq_open (791 ms)
+[259/338] BaselinePolicy.SIGSYS___NR_ptrace (897 ms)
+[260/338] BaselinePolicy.SIGSYS___NR_sched_setaffinity (868 ms)
+[10664:10664:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BaselinePolicy.SIGSYS___NR_setpgid:BaselinePolicy.SIGSYS___NR_swapon:BaselinePolicy.SIGSYS___NR_sysinfo:BaselinePolicy.SIGSYS___NR_syslog:BaselinePolicy.SIGSYS___NR_timer_create:BaselinePolicy.FutexEINVAL:BaselinePolicy.PrctlDumpable:BaselinePolicy.PrctlSigsys:BaselinePolicy.GetOrSetPriority:BaselinePolicy.GetPrioritySigsys
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from BaselinePolicy
+[ RUN      ] BaselinePolicy.SIGSYS___NR_setpgid
+[       OK ] BaselinePolicy.SIGSYS___NR_setpgid (762 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_swapon
+[       OK ] BaselinePolicy.SIGSYS___NR_swapon (693 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_sysinfo
+[       OK ] BaselinePolicy.SIGSYS___NR_sysinfo (862 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_syslog
+[       OK ] BaselinePolicy.SIGSYS___NR_syslog (981 ms)
+[ RUN      ] BaselinePolicy.SIGSYS___NR_timer_create
+[       OK ] BaselinePolicy.SIGSYS___NR_timer_create (831 ms)
+[ RUN      ] BaselinePolicy.FutexEINVAL
+[       OK ] BaselinePolicy.FutexEINVAL (60 ms)
+[ RUN      ] BaselinePolicy.PrctlDumpable
+[       OK ] BaselinePolicy.PrctlDumpable (44 ms)
+[ RUN      ] BaselinePolicy.PrctlSigsys
+[       OK ] BaselinePolicy.PrctlSigsys (874 ms)
+[ RUN      ] BaselinePolicy.GetOrSetPriority
+[       OK ] BaselinePolicy.GetOrSetPriority (61 ms)
+[ RUN      ] BaselinePolicy.GetPrioritySigsys
+[       OK ] BaselinePolicy.GetPrioritySigsys (733 ms)
+[----------] 10 tests from BaselinePolicy (5945 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (5948 ms total)
+[  PASSED  ] 10 tests.
+[261/338] BaselinePolicy.SIGSYS___NR_setpgid (762 ms)
+[262/338] BaselinePolicy.SIGSYS___NR_swapon (693 ms)
+[263/338] BaselinePolicy.SIGSYS___NR_sysinfo (862 ms)
+[264/338] BaselinePolicy.SIGSYS___NR_syslog (981 ms)
+[265/338] BaselinePolicy.SIGSYS___NR_timer_create (831 ms)
+[266/338] BaselinePolicy.FutexEINVAL (60 ms)
+[267/338] BaselinePolicy.PrctlDumpable (44 ms)
+[268/338] BaselinePolicy.PrctlSigsys (874 ms)
+[269/338] BaselinePolicy.GetOrSetPriority (61 ms)
+[270/338] BaselinePolicy.GetPrioritySigsys (733 ms)
+[10675:10675:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = BaselinePolicy.ClockGettimeWithDisallowedClockCrashes:BaselinePolicy.ClockNanosleepWithDisallowedClockCrashes:BaselinePolicy.GetRandomOfDevRandomCrashes:BaselinePolicy.GetSockOptWrongLevelSigsys:BaselinePolicy.GetSockOptWrongOptionSigsys:BaselinePolicy.SetSockOptWrongLevelSigsys:BaselinePolicy.SetSockOptWrongOptionSigsys:ParameterRestrictions.clock_gettime_allowed:ParameterRestrictions.clock_nanosleep_allowed:ParameterRestrictions.clock_gettime_crash_clock_fd
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from BaselinePolicy
+[ RUN      ] BaselinePolicy.ClockGettimeWithDisallowedClockCrashes
+[       OK ] BaselinePolicy.ClockGettimeWithDisallowedClockCrashes (691 ms)
+[ RUN      ] BaselinePolicy.ClockNanosleepWithDisallowedClockCrashes
+[       OK ] BaselinePolicy.ClockNanosleepWithDisallowedClockCrashes (762 ms)
+[ RUN      ] BaselinePolicy.GetRandomOfDevRandomCrashes
+[       OK ] BaselinePolicy.GetRandomOfDevRandomCrashes (770 ms)
+[ RUN      ] BaselinePolicy.GetSockOptWrongLevelSigsys
+[       OK ] BaselinePolicy.GetSockOptWrongLevelSigsys (1091 ms)
+[ RUN      ] BaselinePolicy.GetSockOptWrongOptionSigsys
+[       OK ] BaselinePolicy.GetSockOptWrongOptionSigsys (1108 ms)
+[ RUN      ] BaselinePolicy.SetSockOptWrongLevelSigsys
+[       OK ] BaselinePolicy.SetSockOptWrongLevelSigsys (1345 ms)
+[ RUN      ] BaselinePolicy.SetSockOptWrongOptionSigsys
+[       OK ] BaselinePolicy.SetSockOptWrongOptionSigsys (1020 ms)
+[----------] 7 tests from BaselinePolicy (6820 ms total)
+
+[----------] 3 tests from ParameterRestrictions
+[ RUN      ] ParameterRestrictions.clock_gettime_allowed
+[       OK ] ParameterRestrictions.clock_gettime_allowed (109 ms)
+[ RUN      ] ParameterRestrictions.clock_nanosleep_allowed
+[       OK ] ParameterRestrictions.clock_nanosleep_allowed (55 ms)
+[ RUN      ] ParameterRestrictions.clock_gettime_crash_clock_fd
+[       OK ] ParameterRestrictions.clock_gettime_crash_clock_fd (922 ms)
+[----------] 3 tests from ParameterRestrictions (1106 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (7938 ms total)
+[  PASSED  ] 10 tests.
+[271/338] BaselinePolicy.ClockGettimeWithDisallowedClockCrashes (691 ms)
+[272/338] BaselinePolicy.ClockNanosleepWithDisallowedClockCrashes (762 ms)
+[273/338] BaselinePolicy.GetRandomOfDevRandomCrashes (770 ms)
+[274/338] BaselinePolicy.GetSockOptWrongLevelSigsys (1091 ms)
+[275/338] BaselinePolicy.GetSockOptWrongOptionSigsys (1108 ms)
+[276/338] BaselinePolicy.SetSockOptWrongLevelSigsys (1345 ms)
+[277/338] BaselinePolicy.SetSockOptWrongOptionSigsys (1020 ms)
+[278/338] ParameterRestrictions.clock_gettime_allowed (109 ms)
+[279/338] ParameterRestrictions.clock_nanosleep_allowed (55 ms)
+[280/338] ParameterRestrictions.clock_gettime_crash_clock_fd (922 ms)
+[10687:10687:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = ParameterRestrictions.clock_nanosleep_crash_clock_fd:ParameterRestrictions.clock_gettime_crash_cpu_clock:ParameterRestrictions.sched_getparam_allowed:ParameterRestrictions.sched_getparam_crash_non_zero:ParameterRestrictions.prlimit64_allowed:ParameterRestrictions.prlimit64_crash_not_self:ParameterRestrictions.getrusage_allowed:ParameterRestrictions.getrusage_crash_not_self:ParameterRestrictions.ptrace_getregs_allowed:ParameterRestrictions.ptrace_syscall_blocked
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from ParameterRestrictions
+[ RUN      ] ParameterRestrictions.clock_nanosleep_crash_clock_fd
+[       OK ] ParameterRestrictions.clock_nanosleep_crash_clock_fd (580 ms)
+[ RUN      ] ParameterRestrictions.clock_gettime_crash_cpu_clock
+[       OK ] ParameterRestrictions.clock_gettime_crash_cpu_clock (371 ms)
+[ RUN      ] ParameterRestrictions.sched_getparam_allowed
+[       OK ] ParameterRestrictions.sched_getparam_allowed (112 ms)
+[ RUN      ] ParameterRestrictions.sched_getparam_crash_non_zero
+[       OK ] ParameterRestrictions.sched_getparam_crash_non_zero (824 ms)
+[ RUN      ] ParameterRestrictions.prlimit64_allowed
+[       OK ] ParameterRestrictions.prlimit64_allowed (38 ms)
+[ RUN      ] ParameterRestrictions.prlimit64_crash_not_self
+[       OK ] ParameterRestrictions.prlimit64_crash_not_self (877 ms)
+[ RUN      ] ParameterRestrictions.getrusage_allowed
+[       OK ] ParameterRestrictions.getrusage_allowed (46 ms)
+[ RUN      ] ParameterRestrictions.getrusage_crash_not_self
+[       OK ] ParameterRestrictions.getrusage_crash_not_self (884 ms)
+[ RUN      ] ParameterRestrictions.ptrace_getregs_allowed
+[       OK ] ParameterRestrictions.ptrace_getregs_allowed (39 ms)
+[ RUN      ] ParameterRestrictions.ptrace_syscall_blocked
+[       OK ] ParameterRestrictions.ptrace_syscall_blocked (780 ms)
+[----------] 10 tests from ParameterRestrictions (4648 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (4655 ms total)
+[  PASSED  ] 10 tests.
+[281/338] ParameterRestrictions.clock_nanosleep_crash_clock_fd (580 ms)
+[282/338] ParameterRestrictions.clock_gettime_crash_cpu_clock (371 ms)
+[283/338] ParameterRestrictions.sched_getparam_allowed (112 ms)
+[284/338] ParameterRestrictions.sched_getparam_crash_non_zero (824 ms)
+[285/338] ParameterRestrictions.prlimit64_allowed (38 ms)
+[286/338] ParameterRestrictions.prlimit64_crash_not_self (877 ms)
+[287/338] ParameterRestrictions.getrusage_allowed (46 ms)
+[288/338] ParameterRestrictions.getrusage_crash_not_self (884 ms)
+[289/338] ParameterRestrictions.ptrace_getregs_allowed (39 ms)
+[290/338] ParameterRestrictions.ptrace_syscall_blocked (780 ms)
+[10699:10699:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = ParameterRestrictions.ptrace_setregs_blocked:BPFTest.BPFAUXPointsToClass:BPFTest.BPFTesterCompatibilityDelegateLeakTest:BPFTest.BPFTestWithDelegateClass:BPFTest.BPFTestWithInlineTest:BPFTest.BPFDeathTestWithInlineTest:Syscall.InvalidCallReturnsENOSYS:Syscall.WellKnownEntryPoint:Syscall.TrivialSyscallNoArgs:Syscall.TrivialSyscallOneArg
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ParameterRestrictions
+[ RUN      ] ParameterRestrictions.ptrace_setregs_blocked
+[       OK ] ParameterRestrictions.ptrace_setregs_blocked (731 ms)
+[----------] 1 test from ParameterRestrictions (737 ms total)
+
+[----------] 5 tests from BPFTest
+[ RUN      ] BPFTest.BPFAUXPointsToClass
+[       OK ] BPFTest.BPFAUXPointsToClass (46 ms)
+[ RUN      ] BPFTest.BPFTesterCompatibilityDelegateLeakTest
+[       OK ] BPFTest.BPFTesterCompatibilityDelegateLeakTest (0 ms)
+[ RUN      ] BPFTest.BPFTestWithDelegateClass
+[       OK ] BPFTest.BPFTestWithDelegateClass (25 ms)
+[ RUN      ] BPFTest.BPFTestWithInlineTest
+[       OK ] BPFTest.BPFTestWithInlineTest (20 ms)
+[ RUN      ] BPFTest.BPFDeathTestWithInlineTest
+[       OK ] BPFTest.BPFDeathTestWithInlineTest (50 ms)
+[----------] 5 tests from BPFTest (173 ms total)
+
+[----------] 4 tests from Syscall
+[ RUN      ] Syscall.InvalidCallReturnsENOSYS
+[       OK ] Syscall.InvalidCallReturnsENOSYS (1 ms)
+[ RUN      ] Syscall.WellKnownEntryPoint
+[       OK ] Syscall.WellKnownEntryPoint (0 ms)
+[ RUN      ] Syscall.TrivialSyscallNoArgs
+[       OK ] Syscall.TrivialSyscallNoArgs (0 ms)
+[ RUN      ] Syscall.TrivialSyscallOneArg
+[       OK ] Syscall.TrivialSyscallOneArg (0 ms)
+[----------] 4 tests from Syscall (10 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (925 ms total)
+[  PASSED  ] 10 tests.
+[291/338] ParameterRestrictions.ptrace_setregs_blocked (731 ms)
+[292/338] BPFTest.BPFAUXPointsToClass (46 ms)
+[293/338] BPFTest.BPFTesterCompatibilityDelegateLeakTest (0 ms)
+[294/338] BPFTest.BPFTestWithDelegateClass (25 ms)
+[295/338] BPFTest.BPFTestWithInlineTest (20 ms)
+[296/338] BPFTest.BPFDeathTestWithInlineTest (50 ms)
+[297/338] Syscall.InvalidCallReturnsENOSYS (1 ms)
+[298/338] Syscall.WellKnownEntryPoint (0 ms)
+[299/338] Syscall.TrivialSyscallNoArgs (0 ms)
+[300/338] Syscall.TrivialSyscallOneArg (0 ms)
+[10705:10705:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = Syscall.TrivialFailingSyscall:Syscall.SyntheticSixArgs:Syscall.ComplexSyscallSixArgs:Trap.SigSysAction:UnixDomainSocketTest.Fork:UnixDomainSocketTest.Namespace:UnixDomainSocketTest.DoubleNamespace:UnixDomainSocketTest.ImpossiblePid:Credentials.DropAllCaps:Credentials.MoveToNewUserNS
+[==========] Running 10 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from Syscall
+[ RUN      ] Syscall.TrivialFailingSyscall
+[       OK ] Syscall.TrivialFailingSyscall (1 ms)
+[ RUN      ] Syscall.SyntheticSixArgs
+[       OK ] Syscall.SyntheticSixArgs (47 ms)
+[ RUN      ] Syscall.ComplexSyscallSixArgs
+[       OK ] Syscall.ComplexSyscallSixArgs (11 ms)
+[----------] 3 tests from Syscall (70 ms total)
+
+[----------] 1 test from Trap
+[ RUN      ] Trap.SigSysAction
+[       OK ] Trap.SigSysAction (22 ms)
+[----------] 1 test from Trap (27 ms total)
+
+[----------] 4 tests from UnixDomainSocketTest
+[ RUN      ] UnixDomainSocketTest.Fork
+[       OK ] UnixDomainSocketTest.Fork (44 ms)
+[ RUN      ] UnixDomainSocketTest.Namespace
+[       OK ] UnixDomainSocketTest.Namespace (70 ms)
+[ RUN      ] UnixDomainSocketTest.DoubleNamespace
+[       OK ] UnixDomainSocketTest.DoubleNamespace (64 ms)
+[ RUN      ] UnixDomainSocketTest.ImpossiblePid
+[       OK ] UnixDomainSocketTest.ImpossiblePid (31 ms)
+[----------] 4 tests from UnixDomainSocketTest (234 ms total)
+
+[----------] 2 tests from Credentials
+[ RUN      ] Credentials.DropAllCaps
+[       OK ] Credentials.DropAllCaps (24 ms)
+[ RUN      ] Credentials.MoveToNewUserNS
+Unprivileged CLONE_NEWUSER supported: true.
+[       OK ] Credentials.MoveToNewUserNS (31 ms)
+[----------] 2 tests from Credentials (62 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 4 test suites ran. (398 ms total)
+[  PASSED  ] 10 tests.
+[301/338] Syscall.TrivialFailingSyscall (1 ms)
+[302/338] Syscall.SyntheticSixArgs (47 ms)
+[303/338] Syscall.ComplexSyscallSixArgs (11 ms)
+[304/338] Trap.SigSysAction (22 ms)
+[305/338] UnixDomainSocketTest.Fork (44 ms)
+[306/338] UnixDomainSocketTest.Namespace (70 ms)
+[307/338] UnixDomainSocketTest.DoubleNamespace (64 ms)
+[308/338] UnixDomainSocketTest.ImpossiblePid (31 ms)
+[309/338] Credentials.DropAllCaps (24 ms)
+[310/338] Credentials.MoveToNewUserNS (31 ms)
+[10719:10719:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = Credentials.CanCreateProcessInNewUserNS:Credentials.UidIsPreserved:Credentials.NestedUserNS:Credentials.CanDetectRoot:Credentials.DropFileSystemAccessIsSafe:Credentials.CannotRegainPrivileges:Credentials.SetCapabilities:Credentials.SetCapabilitiesAndChroot:Credentials.SetCapabilitiesMatchesLibCap2:Credentials.DropFileSystemAccessPreservesTLS
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from Credentials
+[ RUN      ] Credentials.CanCreateProcessInNewUserNS
+[       OK ] Credentials.CanCreateProcessInNewUserNS (74 ms)
+[ RUN      ] Credentials.UidIsPreserved
+[       OK ] Credentials.UidIsPreserved (33 ms)
+[ RUN      ] Credentials.NestedUserNS
+[       OK ] Credentials.NestedUserNS (41 ms)
+[ RUN      ] Credentials.CanDetectRoot
+[       OK ] Credentials.CanDetectRoot (21 ms)
+[ RUN      ] Credentials.DropFileSystemAccessIsSafe
+[       OK ] Credentials.DropFileSystemAccessIsSafe (662 ms)
+[ RUN      ] Credentials.CannotRegainPrivileges
+[       OK ] Credentials.CannotRegainPrivileges (52 ms)
+[ RUN      ] Credentials.SetCapabilities
+[       OK ] Credentials.SetCapabilities (34 ms)
+[ RUN      ] Credentials.SetCapabilitiesAndChroot
+[       OK ] Credentials.SetCapabilitiesAndChroot (33 ms)
+[ RUN      ] Credentials.SetCapabilitiesMatchesLibCap2
+[       OK ] Credentials.SetCapabilitiesMatchesLibCap2 (32 ms)
+[ RUN      ] Credentials.DropFileSystemAccessPreservesTLS
+[       OK ] Credentials.DropFileSystemAccessPreservesTLS (45 ms)
+[----------] 10 tests from Credentials (1068 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (1071 ms total)
+[  PASSED  ] 10 tests.
+[311/338] Credentials.CanCreateProcessInNewUserNS (74 ms)
+[312/338] Credentials.UidIsPreserved (33 ms)
+[313/338] Credentials.NestedUserNS (41 ms)
+[314/338] Credentials.CanDetectRoot (21 ms)
+[315/338] Credentials.DropFileSystemAccessIsSafe (662 ms)
+[316/338] Credentials.CannotRegainPrivileges (52 ms)
+[317/338] Credentials.SetCapabilities (34 ms)
+[318/338] Credentials.SetCapabilitiesAndChroot (33 ms)
+[319/338] Credentials.SetCapabilitiesMatchesLibCap2 (32 ms)
+[320/338] Credentials.DropFileSystemAccessPreservesTLS (45 ms)
+[10734:10734:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = NamespaceUtils.KernelSupportsUnprivilegedNamespace:NamespaceUtils.WriteToIdMapFile:NamespaceSandboxTest.BasicUsage:NamespaceSandboxTest.BasicUsageWithOptions:NamespaceSandboxTest.ChrootAndDropCapabilities:NamespaceSandboxTest.NestedNamespaceSandbox:ForkInNewPidNamespace.CheckDoesNotReturnZero:ForkInNewPidNamespace.BasicUsage:ForkInNewPidNamespace.ExitWithSignal:InstallTerminationSignalHandler.DoesNotOverrideExistingHandlers
+[==========] Running 10 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from NamespaceUtils
+[ RUN      ] NamespaceUtils.KernelSupportsUnprivilegedNamespace
+[       OK ] NamespaceUtils.KernelSupportsUnprivilegedNamespace (61 ms)
+[ RUN      ] NamespaceUtils.WriteToIdMapFile
+[       OK ] NamespaceUtils.WriteToIdMapFile (65 ms)
+[----------] 2 tests from NamespaceUtils (137 ms total)
+
+[----------] 4 tests from NamespaceSandboxTest
+[ RUN      ] NamespaceSandboxTest.BasicUsage
+[       OK ] NamespaceSandboxTest.BasicUsage (260 ms)
+[ RUN      ] NamespaceSandboxTest.BasicUsageWithOptions
+[       OK ] NamespaceSandboxTest.BasicUsageWithOptions (159 ms)
+[ RUN      ] NamespaceSandboxTest.ChrootAndDropCapabilities
+[       OK ] NamespaceSandboxTest.ChrootAndDropCapabilities (271 ms)
+[ RUN      ] NamespaceSandboxTest.NestedNamespaceSandbox
+[       OK ] NamespaceSandboxTest.NestedNamespaceSandbox (315 ms)
+[----------] 4 tests from NamespaceSandboxTest (1023 ms total)
+
+[----------] 3 tests from ForkInNewPidNamespace
+[ RUN      ] ForkInNewPidNamespace.CheckDoesNotReturnZero
+[       OK ] ForkInNewPidNamespace.CheckDoesNotReturnZero (770 ms)
+[ RUN      ] ForkInNewPidNamespace.BasicUsage
+[       OK ] ForkInNewPidNamespace.BasicUsage (67 ms)
+[ RUN      ] ForkInNewPidNamespace.ExitWithSignal
+[       OK ] ForkInNewPidNamespace.ExitWithSignal (61 ms)
+[----------] 3 tests from ForkInNewPidNamespace (909 ms total)
+
+[----------] 1 test from InstallTerminationSignalHandler
+[ RUN      ] InstallTerminationSignalHandler.DoesNotOverrideExistingHandlers
+[       OK ] InstallTerminationSignalHandler.DoesNotOverrideExistingHandlers (41 ms)
+[----------] 1 test from InstallTerminationSignalHandler (51 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 4 test suites ran. (2127 ms total)
+[  PASSED  ] 10 tests.
+[321/338] NamespaceUtils.KernelSupportsUnprivilegedNamespace (61 ms)
+[322/338] NamespaceUtils.WriteToIdMapFile (65 ms)
+[323/338] NamespaceSandboxTest.BasicUsage (260 ms)
+[324/338] NamespaceSandboxTest.BasicUsageWithOptions (159 ms)
+[325/338] NamespaceSandboxTest.ChrootAndDropCapabilities (271 ms)
+[326/338] NamespaceSandboxTest.NestedNamespaceSandbox (315 ms)
+[327/338] ForkInNewPidNamespace.CheckDoesNotReturnZero (770 ms)
+[328/338] ForkInNewPidNamespace.BasicUsage (67 ms)
+[329/338] ForkInNewPidNamespace.ExitWithSignal (61 ms)
+[330/338] InstallTerminationSignalHandler.DoesNotOverrideExistingHandlers (41 ms)
+[10763:10763:WARNING:check_is_test.cc(26)] Allowing special test code paths
+Note: Google Test filter = SandboxTypeTest.Empty:SandboxTypeTest.Renderer:SandboxTypeTest.Utility:SandboxTypeTest.UtilityDeath:SandboxTypeTest.GPU:SandboxTypeTest.PPAPIPlugin:SandboxTypeTest.Nonesuch:SandboxTypeTest.ElevatedPrivileges
+[==========] Running 8 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 8 tests from SandboxTypeTest
+[ RUN      ] SandboxTypeTest.Empty
+[       OK ] SandboxTypeTest.Empty (3 ms)
+[ RUN      ] SandboxTypeTest.Renderer
+[       OK ] SandboxTypeTest.Renderer (1 ms)
+[ RUN      ] SandboxTypeTest.Utility
+[       OK ] SandboxTypeTest.Utility (16 ms)
+[ RUN      ] SandboxTypeTest.UtilityDeath
+[       OK ] SandboxTypeTest.UtilityDeath (2777 ms)
+[ RUN      ] SandboxTypeTest.GPU
+[       OK ] SandboxTypeTest.GPU (1 ms)
+[ RUN      ] SandboxTypeTest.PPAPIPlugin
+[       OK ] SandboxTypeTest.PPAPIPlugin (1 ms)
+[ RUN      ] SandboxTypeTest.Nonesuch
+[       OK ] SandboxTypeTest.Nonesuch (0 ms)
+[ RUN      ] SandboxTypeTest.ElevatedPrivileges
+[       OK ] SandboxTypeTest.ElevatedPrivileges (1 ms)
+[----------] 8 tests from SandboxTypeTest (2816 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test suite ran. (2818 ms total)
+[  PASSED  ] 8 tests.
+[331/338] SandboxTypeTest.Empty (3 ms)
+[332/338] SandboxTypeTest.Renderer (1 ms)
+[333/338] SandboxTypeTest.Utility (16 ms)
+[334/338] SandboxTypeTest.UtilityDeath (2777 ms)
+[335/338] SandboxTypeTest.GPU (1 ms)
+[336/338] SandboxTypeTest.PPAPIPlugin (1 ms)
+[337/338] SandboxTypeTest.Nonesuch (0 ms)
+[338/338] SandboxTypeTest.ElevatedPrivileges (1 ms)
+SUCCESS: all tests passed.
+Tests took 166 seconds.
+
+SANDBOX_FULL_LOG_END
+GUI_FULL_LOG_BEGIN
+[10784:11075:1103/185420.931191:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[10784:11075:1103/185420.951270:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[10784:11075:1103/185420.973976:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+
+GUI_FULL_LOG_END
+
+__REPLAY_END_0ca0f32e71e44fd3833eda33620974db:0
