@@ -3,7 +3,7 @@ id: E5-T30c
 epic: 5
 title: Load and interpose real RISC-V ELF calls in the local Replay driver
 priority: 0.3813
-status: pending
+status: in-progress
 depends_on: [E5-T30b]
 estimate: S
 risk: high
@@ -31,4 +31,10 @@ of private implementation/proofs.
 
 ## Verification log
 
-(empty)
+### 2026-11-03 — worker — activation
+
+E5-T30b is independently verified at `90a24df8e8efc6c1acb4f7eeeddd2066480162e9`.
+The actual built Chromium uses RISC-V relative, absolute-64 and PLT relocations;
+its driver/libc dependencies also use dynamic and initial-exec TLS relocations.
+Start the real recording driver's ELF recognition/interposition boundary, retaining
+the prior platform/call proof. No upstream pushes or private asset publication.
