@@ -3,7 +3,7 @@ id: E5-T30a
 epic: 5
 title: Linux signal and stack context in the local RISC-V Replay driver
 priority: 0.3811
-status: implemented
+status: verified
 depends_on: [E5-T29a]
 estimate: S
 risk: high
@@ -80,3 +80,21 @@ sampling-profiler signal paths with labelled instructions and multi-frame stacks
 Every seed passed. This claim is limited to the platform component: call bridges,
 ELF interposition, browser attachment, and genuine complete recordings remain
 unproven and are required by the subsequent tasks.
+
+### 2026-11-03 — verifier
+
+VERDICT: verified
+
+Private head: `33cc50ae728f8d116210d1c18186c25deffcca2b`.
+
+Private verdict:
+`local/chromium-riscv64/driver/critic-platform-33cc50a/verdict.md`.
+SHA-256: `89feb7079d7a6274c0a6075d0ebdf01a300a8ea52f706455886df299b823e6b5`.
+
+Private coverage:
+`local/chromium-riscv64/driver/critic-platform-33cc50a/coverage.md`.
+SHA-256: `8e5b102769c6dc94257cfc88538405c5d7a196c99a705e5064609359b3a81ad0`.
+
+Private proof manifest:
+`local/chromium-riscv64/driver/critic-platform-33cc50a/verifier-manifest.json`.
+SHA-256: `9b4451fb8567230d37a6f434ffe92f8b850759052aba75ba470ad664f9401b26`.
