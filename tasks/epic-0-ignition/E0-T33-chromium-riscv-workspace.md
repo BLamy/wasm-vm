@@ -3,7 +3,7 @@ id: E0-T33
 epic: 0
 title: Preserve the local Replay Chromium RISC-V build workspace
 priority: 0.36
-status: implemented
+status: verified
 depends_on: [E0-T32]
 estimate: S
 risk: low
@@ -183,3 +183,53 @@ compares the manifest to the prior product head: exactly one repository entry wa
 added, and every other manifest field and product file is unchanged. All earlier
 HELD results carry forward; no source, checker, patch or license bytes changed.
 No runtime gates were restarted for this setup-provenance proof gap.
+
+### 2026-11-03 — verifier — follow-up predictions before evidence inspection
+
+- P5: The manifest will differ only by adding `tools/depot_tools` at
+  `bed65db1bb5d1022dab89cf62e7609b12084747b`; its real retained Git directory and
+  clean HEAD will match that pin. All other product bytes and the original
+  evidence digests will remain unchanged, so prior HELD results carry forward.
+- P6: The follow-up evidence digest will match the worker's cited digest, bind
+  the corrected manifest to frozen head `29359c386`, and record direct acceptance
+  exiting zero with 126 pinned repositories. The added entry will execute through
+  the existing read-only repository-check loop without introducing runtime code.
+
+### 2026-11-03 — verifier — VERDICT: verified
+
+VERDICT: verified
+
+- P5 missing setup pin — HELD. `workspace.json:513-516` adds exactly the retained
+  `tools/depot_tools` checkout at `bed65db1bb5d1022dab89cf62e7609b12084747b`.
+  Independently checked its real repository root, Git directory inside the retained
+  copy, matching clean HEAD, locally available commit object, and absence of external
+  object alternates. Removing this single entry makes the manifest equal to the
+  prior manifest. All 21 other product-file hashes and both original evidence
+  digests are unchanged. This closes the sole provenance coverage gap in the prior
+  126-repository inventory.
+- P6 corrected evidence binding — HELD. Follow-up record
+  `evidence/e0-t33/worker-followup.json:2,4-8,9-38` binds the manifest to frozen head
+  `29359c3865eff11dbe5ea182b49a0af5d7fc129f`. The manifest's SHA-256 is
+  `fffcb71f2990ec8e03f97e4b491b94bf474bc8e12835c528e01dabe0524e801b`.
+  The record's SHA-256 is
+  `e2edab16bbadc0c2e055c77eb6b58ccfb7798ec1d7e08e6194711ed9c610e96d`.
+  The recorded direct acceptance exits zero with empty stderr and precisely the
+  prior output amended to 126 pinned repositories. Current product bytes match
+  the frozen head, and the recorded unchanged-file hash table matches the original.
+- CARRY-FORWARD — P1's original evidence integrity, P2's source/patch/license/GUI
+  preservation, P3's exclusions/read-only behavior, P4's honest scope, and the
+  previous coverage waivers remain HELD. Their code, dependency boundaries, and
+  original evidence digests did not change. P6 supplies the new manifest binding;
+  no unrelated runtime or broad workspace gates were restarted.
+- COVERAGE/SUITE — The only new product hunk is declarative repository data,
+  consumed by the existing checker loop at `check-local-copy.py:42-46` during the
+  recorded 126-repository acceptance run and independently inspected above. The
+  existing integrity checker remains the repeatable archival acceptance artifact;
+  no runtime test is needed for this manifest-only correction. No claim about the
+  archived Chromium port's correctness, sandbox, or integration is added.
+
+Commands: read-only `git rev-parse`, `git status --short`, and `git cat-file -t`
+for the added repository; independent JSON/byte/SHA-256 comparisons against the
+two frozen product heads and original evidence; `git diff --check
+9029967f4..29359c386`; `git diff --check`. This verification changes only this log,
+task status, and the generated queue.
