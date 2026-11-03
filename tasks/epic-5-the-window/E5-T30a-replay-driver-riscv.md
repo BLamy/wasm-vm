@@ -3,7 +3,7 @@ id: E5-T30a
 epic: 5
 title: Linux signal and stack context in the local RISC-V Replay driver
 priority: 0.3811
-status: in-progress
+status: implemented
 depends_on: [E5-T29a]
 estimate: S
 risk: high
@@ -43,3 +43,40 @@ The private driver checkout is local, with upstream pushes disabled. The initial
 unmodified RISC-V build identified Linux context/stack and absent syscall-number
 assumptions; actual generated call ABI and ELF interposition remain separate
 subsequent gates. No private source or compile log is added to public Git.
+
+### 2026-11-03 — worker — platform component submission
+
+Public planning head: `5cc93c77e5001da9a60dc6d32004210519cff0e1`.
+Frozen private implementation: `33cc50ae728f8d116210d1c18186c25deffcca2b`,
+based on the pinned private upstream head. No upstream push. The final source
+was freshly cloned from the private origin and the local commit imported by
+Git bundle, with no shared object store and a clean working tree. A first local
+promisor-clone attempt encountered recursive Git fetches and was stopped before
+building; it is not evidence.
+
+Final acceptance command (from the pristine private checkout):
+`env -u RUSTFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_HOME python3 test/cpp/verify-riscv64-platform.py --vm-root /Users/blamy/Documents/Codex/wasm-vm --output /Users/blamy/Documents/Codex/wasm-vm/local/chromium-riscv64/driver/platform-final-33cc50a`.
+The ignored `driver/verify-platform.py` entry point runs this same frozen harness.
+The command builds the full real target library and fixture with fatal compiler
+warnings, executes three QEMU prechecks, then boots the identical library and
+fixture in native wasm-vm Linux. No replacement driver exports are used.
+
+Private evidence root: `local/chromium-riscv64/driver/platform-final-33cc50a/`.
+Report SHA-256: `146eb0a4fbf706f6528cbad05bedcc093f3486cb0a9712f3408c026995afdb47`.
+Serial SHA-256: `b9936584cd338d3e1806e470fbe9b8ebf5948705dd4292474acee7745012f268`.
+Guest-evidence SHA-256: `56b589e6456b1d2caeb35ec994df42975ab9ceb0552a2d66a26917f8334c3f75`.
+Final guest state: `ca69ab67ebab326bb9ad1a2b56bbaedf9310226434622df7b56e7d5fda241368`;
+1,072,146,458 retired instructions, `Exited(0)`. JIT evidence explicitly uses
+retired-counter-only mode, not a full instruction trace. The report binds the
+private source head, compiler logs, initramfs files, native CLI, kernel, and
+BusyBox by digest. Full private source and detailed run output stay ignored.
+
+The native run demonstrates 192 real 16/32-bit breakpoint recoveries at varied
+frame depths through the production crash handler, alternate-stack use and
+writable PC/SP/FP context; independent compiler frame/return-address checks;
+canonical synthetic chains with upper/lower, null, cycle, misalignment, corrupt
+link and inaccessible-page edges; actual production syscall metadata; and real
+sampling-profiler signal paths with labelled instructions and multi-frame stacks.
+Every seed passed. This claim is limited to the platform component: call bridges,
+ELF interposition, browser attachment, and genuine complete recordings remain
+unproven and are required by the subsequent tasks.
