@@ -30,7 +30,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `0.3811` [E5-T30a](epic-5-the-window/E5-T30a-replay-driver-riscv.md) — Linux signal and stack context in the local RISC-V Replay driver *(deps: E5-T29a)*
 - [x] `0.3812` [E5-T30b](epic-5-the-window/E5-T30b-replay-driver-riscv.md) — Generate genuine RISC-V call bridges for the local Replay driver *(deps: E5-T30a)*
 - [x] `0.3813` [E5-T30c](epic-5-the-window/E5-T30c-replay-driver-riscv.md) — Load and interpose real RISC-V ELF calls in the local Replay driver *(deps: E5-T30b)*
-- [~] `0.3814` [E5-T30d](epic-5-the-window/E5-T30d-replay-driver-riscv.md) — Attach the real RISC-V Replay driver and validate genuine recordings *(deps: E5-T30c)*
+- [?] `0.3814` [E5-T30d](epic-5-the-window/E5-T30d-replay-driver-riscv.md) — Attach the real RISC-V Replay driver and validate genuine recordings *(deps: E5-T30c)*
 - [ ] `0.382` [E5-T29b](epic-5-the-window/E5-T29b-replay-chromium-native-boot.md) — Run recording-capable Replay Chromium on native wasm-vm and capture its image pair *(deps: E5-T29a, E5-T30d)*
 - [ ] `0.383` [E5-T29c](epic-5-the-window/E5-T29c-replay-chromium-browser-profile.md) — Launch and use the Replay Chromium desktop in the wasm-vm demo *(deps: E5-T29b)*
 
