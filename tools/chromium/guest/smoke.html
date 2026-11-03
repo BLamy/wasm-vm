@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>RISC-V Chromium check</title>
+<style>
+body { background:#202936; color:#e5e7eb; font:18px sans-serif; margin:32px; }
+h1 { font-size:28px; } pre { white-space:pre-wrap; font-size:14px; line-height:1.35; }
+button { font:inherit; padding:14px 24px; cursor:pointer; }
+.ok { color:#8ee0a1; } canvas { border:1px solid #aab4c0; margin-left:20px; }
+</style></head><body>
+<h1>Replay Chromium on RISC-V Linux</h1>
+<p>Local browser validation · Weston / Wayland</p>
+<pre id="result">Running JavaScript, WebAssembly and canvas checks…</pre>
+<button id="again">Run again</button><canvas id="canvas" width="48" height="48"></canvas>
+<p>Unbundled recording driver: normal browsing only.</p>
+<script>
+let runs=0;
+async function check() {
+  const bytes = new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,127,3,2,1,0,7,10,1,6,97,110,115,119,101,114,0,0,10,6,1,4,0,65,42,11]);
+  const wasm = new WebAssembly.Instance(new WebAssembly.Module(bytes)).exports.answer();
+  const js = Math.imul(6,7);
+  const ctx = document.querySelector('canvas').getContext('2d');
+  ctx.fillStyle='rgb(42,128,64)'; ctx.fillRect(0,0,48,48);
+  const pixel = Array.from(ctx.getImageData(24,24,1,1).data);
+  const pass = js===42 && wasm===42 && pixel.join(',')==='42,128,64,255';
+  const result = {pass, runs:++runs, javascript:js, webassembly:wasm, pixel, browser:(navigator.userAgent.match(/Chrome\/[0-9.]+/)||[])[0]};
+  document.querySelector('#result').textContent=JSON.stringify(result,null,2);
+  document.querySelector('#result').className=pass?'ok':'';
+  document.body.dataset.result=pass?'pass':'fail';
+  document.title=pass?'Replay RISC-V PASS #'+runs:'Replay RISC-V FAIL';
+}
+document.querySelector('#again').onclick=check;
+check().catch(error=>{document.querySelector('#result').textContent=error.stack;document.body.dataset.result='fail';});
+</script></body></html>
