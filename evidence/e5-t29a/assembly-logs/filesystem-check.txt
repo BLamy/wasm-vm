@@ -1,0 +1,7 @@
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+replay-riscv-gui: 25925/524288 files (0.2% non-contiguous), 362072/2097152 blocks
+e2fsck 1.47.0 (5-Feb-2023)

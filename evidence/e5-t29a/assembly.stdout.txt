@@ -1,0 +1,10 @@
+{
+  "status": "prepared",
+  "image": {
+    "bytes": 8589934592,
+    "sha256": "41127a0f843033df732ff1e1790408a657d76b1d18cb06e05a0c6103d9115228"
+  },
+  "manifestSha256": "ee94a280c2fa49a8f0f14a9e47df1c6ec717e0bfeaa78a96da09417ad48c4ac3",
+  "uniqueChunks": 4798,
+  "browserBootVerified": false
+}
