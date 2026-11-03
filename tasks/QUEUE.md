@@ -24,9 +24,9 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 5 — `epic-5-the-window`
 
-- [-] `0.38` [E5-T29](epic-5-the-window/E5-T29-replay-chromium-desktop.md) — Local Replay Chromium Linux desktop (planning parent) *(deps: E0-T34)*
-- [~] `0.381` [E5-T29a](epic-5-the-window/E5-T29a-replay-chromium-linux-image.md) — Assemble the local Ubuntu and Replay Chromium candidate image *(deps: E0-T34)*
-- [ ] `0.382` [E5-T29b](epic-5-the-window/E5-T29b-replay-chromium-native-boot.md) — Cold-boot Replay Chromium on native wasm-vm and capture its image pair *(deps: E5-T29a)*
+- [-] `0.38` [E5-T29](epic-5-the-window/E5-T29-replay-chromium-desktop.md) — Recording-capable Replay Chromium Linux desktop (planning parent) *(deps: E0-T34)*
+- [?] `0.381` [E5-T29a](epic-5-the-window/E5-T29a-replay-chromium-linux-image.md) — Assemble the local Ubuntu and Replay Chromium candidate image *(deps: E0-T34)*
+- [ ] `0.382` [E5-T29b](epic-5-the-window/E5-T29b-replay-chromium-native-boot.md) — Run recording-capable Replay Chromium on native wasm-vm and capture its image pair *(deps: E5-T29a)*
 - [ ] `0.383` [E5-T29c](epic-5-the-window/E5-T29c-replay-chromium-browser-profile.md) — Launch and use the Replay Chromium desktop in the wasm-vm demo *(deps: E5-T29b)*
 
 ## Epic 0 — `epic-0-ignition`

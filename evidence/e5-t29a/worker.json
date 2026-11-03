@@ -1,0 +1,62 @@
+{
+  "head": "15bd32fd35382d08599bf54e36870ec1c704c134",
+  "scope": "Prepared offline candidate; browser startup payload is checked as file data, runtime behavior awaits driver-inclusive T29b",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "6346567e2359b0c01b7791183cb6ed7bac60304f",
+        "15bd32fd35382d08599bf54e36870ec1c704c134"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "tools/chromium/build-linux-image.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "tools/chromium/guest/start-browser.sh"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exit": 0,
+      "stdout": "task-policy: OK (active=E5-T29a)\n",
+      "stderr": ""
+    }
+  ],
+  "assemblyCommand": [
+    "python3",
+    "tools/chromium/build-linux-image.py",
+    "--output",
+    "target/replay-chromium-image"
+  ],
+  "assemblyExit": 0,
+  "assemblySha256": "2e281106ee4e4b1453fe31b90474580e8f2abdada515e5c9ea913ea032717c10",
+  "productFiles": {
+    "tools/chromium/build-linux-image.py": "4a4926c8b648ca75fddb8c3bdca3711b7e4fdd9906d7f946f4d915b1b46dc836",
+    "tools/chromium/guest/start-browser.sh": "371645dfa37e992cd1e49e7c923dff1f6b40625757e83af266dd45859b9e1ad4",
+    "tools/chromium/guest/smoke.html": "57120c461d57d019adef3a4f36f78fea014f9f140afe330f380a7a7a62082533",
+    "docs/chromium-riscv64-linux.md": "3dfc4afd1f8e8f52810b6128cfd2a40dfc0b20c43c960127b513912d6f1f2c3a"
+  }
+}

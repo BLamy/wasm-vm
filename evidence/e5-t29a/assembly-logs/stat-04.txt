@@ -1,0 +1,15 @@
+Inode: 25915   Type: regular    Mode:  0644   Flags: 0x80000
+Generation: 0    Version: 0x00000000:00000000
+User:     0   Group:     0   Project:     0   Size: 8279417
+File ACL: 0
+Links: 1   Blockcount: 16168
+Fragment:  Address: 0    Number: 0    Size: 0
+ ctime: 0x6ae68100:00000000 -- Sun Nov  1 00:00:00 2026
+ atime: 0x6ae68100:00000000 -- Sun Nov  1 00:00:00 2026
+ mtime: 0x6ae68100:00000000 -- Sun Nov  1 00:00:00 2026
+crtime: 0x6ae68100:00000000 -- Sun Nov  1 00:00:00 2026
+Size of extra inode fields: 32
+Inode checksum: 0x03776aa3
+EXTENTS:
+(0-966):304183-305149, (968-2021):305150-306203
+debugfs 1.47.0 (5-Feb-2023)

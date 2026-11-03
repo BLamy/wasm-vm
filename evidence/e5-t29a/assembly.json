@@ -1,0 +1,955 @@
+{
+  "status": "prepared",
+  "baseSha256": "9a9b656f654ed0a3783385e6bd153775ea56dfe62de85cd8b155ed798c2f9558",
+  "runtimeSha256": "fae3717a934ea33d0a47d258a921c9d9643fe1a595d1eb9e3238a029e21ad42e",
+  "toolImage": "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+  "head": "15bd32fd35382d08599bf54e36870ec1c704c134",
+  "sourceFiles": {
+    "tools/chromium/build-linux-image.py": "4a4926c8b648ca75fddb8c3bdca3711b7e4fdd9906d7f946f4d915b1b46dc836",
+    "tools/chromium/guest/start-browser.sh": "371645dfa37e992cd1e49e7c923dff1f6b40625757e83af266dd45859b9e1ad4",
+    "tools/chromium/guest/smoke.html": "57120c461d57d019adef3a4f36f78fea014f9f140afe330f380a7a7a62082533",
+    "tools/chromium/built/manifest.json": "c941656bd9852959c0443dccef94d89c98c88e3d847eccc9a4501644996f4680",
+    "tools/chromium/built/runtime-files.json": "cd4432a21a160bdfa9f86ccd9cf07cc76fc202c9f3ea5210db160c73ac4aab0d"
+  },
+  "commands": [
+    {
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "--format",
+        "{{.Id}}"
+      ],
+      "exit": 0,
+      "log": "tool-image.txt",
+      "sha256": "3bd27a33644a957a1d7884c8c7f561134006046932890dfb4f6517d5a9dd88d7"
+    },
+    {
+      "command": [
+        "cp",
+        "-c",
+        "/Users/blamy/Documents/Codex/wasm-vm/local/chromium-riscv64/gui/ubuntu-riscv-gui.ext4",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "clone.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "cat /etc/systemd/system/replay-desktop.service",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "desktop-service-before.txt",
+      "sha256": "45a27c82396b48a616421716316a69c52387c5f93325cad9f1fb3990c00bcefb"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "cat /usr/local/bin/replay-desktop",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "desktop-before.sh",
+      "sha256": "c690b69bcb9701fe50917cb64c38e494c4513b8d792b2a40e702cb7a84362145"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-w",
+        "-f",
+        "/work/commands",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "debugfs-write.txt",
+      "sha256": "e699181f04d21340f6f7518d4321a6af37b56d2eace5e21f71fcdfc048bf1952"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/chrome /work/roundtrip-00",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-00.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/chrome",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-00.txt",
+      "sha256": "55f50d6ff61f00936e1edb3aac61299c105fe47675cce66218bbbae139eaf859"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/chrome_crashpad_handler /work/roundtrip-01",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-01.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/chrome_crashpad_handler",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-01.txt",
+      "sha256": "8c7c7bf2f2c6e8d803fd8f07fba68369781fd96a053ddb9f014114811410ad8e"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/chrome_100_percent.pak /work/roundtrip-02",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-02.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/chrome_100_percent.pak",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-02.txt",
+      "sha256": "54e7e36d571b9c8eaf34cd7a07fd7b2fb537ffd86b3da9fc05f7ed1428edbf6a"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/chrome_200_percent.pak /work/roundtrip-03",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-03.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/chrome_200_percent.pak",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-03.txt",
+      "sha256": "cbbe13264f02ee71e846b1502d6a83d483470787cda5fc27ad5693360db2fcd6"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/resources.pak /work/roundtrip-04",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-04.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/resources.pak",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-04.txt",
+      "sha256": "f0ef02ba5b87b9117f6efba9af7624a9909a9bdffd506158e727e183b7d78fa1"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/icudtl.dat /work/roundtrip-05",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-05.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/icudtl.dat",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-05.txt",
+      "sha256": "74cdc20cc09ffd021442310ece04a6d85d998ef8423b3cbfa50f9c547683339b"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/snapshot_blob.bin /work/roundtrip-06",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-06.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/snapshot_blob.bin",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-06.txt",
+      "sha256": "96ebc68095db7291999e7cb4a460402394c27bd4fa3872ea9c7c94ef4dfdccfe"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/locales/en-US.pak /work/roundtrip-07",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-07.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/locales/en-US.pak",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-07.txt",
+      "sha256": "54ea51a47e07c274549d1a0eec7e3a53cef957f89c9611953dd72f5e2a035f1d"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/libEGL.so /work/roundtrip-08",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-08.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/libEGL.so",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-08.txt",
+      "sha256": "5c3289a902e960c6f233da5cae7d5e4eff79dd05d507de2add3711f689d0fb27"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/libGLESv2.so /work/roundtrip-09",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-09.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/libGLESv2.so",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-09.txt",
+      "sha256": "628015489cc375189b06f333a389f5e1676556a4ded07af5e380d3b5562b0ff5"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/libvk_swiftshader.so /work/roundtrip-10",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-10.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/libvk_swiftshader.so",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-10.txt",
+      "sha256": "73666ccc91fd15d57bab27e0dc97398f8482fe1ce427154d83d48e647bc87a4e"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/libvulkan.so.1 /work/roundtrip-11",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-11.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/libvulkan.so.1",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-11.txt",
+      "sha256": "0f37abe81d0e62d3ccc4463f9238cccffc7493184883dfb1d4c3f3c724be1695"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/vk_swiftshader_icd.json /work/roundtrip-12",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-12.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/vk_swiftshader_icd.json",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-12.txt",
+      "sha256": "4fc58319a1074e3950f633094a7866d10a77681972cd57b29c14695d88267348"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /opt/replay-chromium/smoke.html /work/roundtrip-13",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-13.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /opt/replay-chromium/smoke.html",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-13.txt",
+      "sha256": "e6248d36694b481c777a1ede398c83687e651fc9c3d36d3e36af9a5efd744bb8"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /usr/local/bin/replay-chromium /work/roundtrip-14",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-14.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /usr/local/bin/replay-chromium",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-14.txt",
+      "sha256": "58a929573e6b6fb733b3eab27dfca1aaccf0944c49f9cb14cc414bccd7ad4518"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "dump /usr/local/bin/replay-desktop /work/roundtrip-15",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "dump-15.txt",
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "stat /usr/local/bin/replay-desktop",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "stat-15.txt",
+      "sha256": "8478027ca907e025bff6fa0a90253c254f4959cf1e72f8f758df6f4791e24646"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "debugfs",
+        "-R",
+        "cat /etc/systemd/system/replay-desktop.service",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "desktop-service-after.txt",
+      "sha256": "45a27c82396b48a616421716316a69c52387c5f93325cad9f1fb3990c00bcefb"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/guest.ext4:/disk/guest.ext4:ro",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/replay-chromium-image/work:/work",
+        "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+        "e2fsck",
+        "-f",
+        "-n",
+        "/disk/guest.ext4"
+      ],
+      "exit": 0,
+      "log": "filesystem-check.txt",
+      "sha256": "3bf73be99bb56d76a7014a7fcb57ed74e357080ed84effd02969738a72ebdcf0"
+    }
+  ],
+  "installedFiles": [
+    {
+      "path": "/opt/replay-chromium/chrome",
+      "mode": "0755",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 387891736,
+      "sha256": "df9b431511f435c463e5d39f3dde30d2d204e06105685b601b8ce2372819b8ef"
+    },
+    {
+      "path": "/opt/replay-chromium/chrome_crashpad_handler",
+      "mode": "0755",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 2578512,
+      "sha256": "65d5c7826b72225e0a80e23a11b89dd90d189443bf530547e2003debb77e6107"
+    },
+    {
+      "path": "/opt/replay-chromium/chrome_100_percent.pak",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 612656,
+      "sha256": "b9e388df551fc3fbe23b13441577d001a2fe3cb208e7afe91cd72b44c9c1470e"
+    },
+    {
+      "path": "/opt/replay-chromium/chrome_200_percent.pak",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 917216,
+      "sha256": "6c8a8e65ff5fe21a3c31a3eb5be1642adcb600903e5d1dad2f9173b6b48056ee"
+    },
+    {
+      "path": "/opt/replay-chromium/resources.pak",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 8279417,
+      "sha256": "de7504c00ce5d94eb8193c17bdc2635a9d736ddf13726e5e476fcd9a4d8b8ac1"
+    },
+    {
+      "path": "/opt/replay-chromium/icudtl.dat",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 10463232,
+      "sha256": "762a0ae89a8cbf8b5173cc33e1104c6b9321251588a7baa445156a69ba4f69c9"
+    },
+    {
+      "path": "/opt/replay-chromium/snapshot_blob.bin",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 349816,
+      "sha256": "f78b815ec3f7b46f72d24282f734dcb2ed48ceadebc8af7925d53d7553dd2a32"
+    },
+    {
+      "path": "/opt/replay-chromium/locales/en-US.pak",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 351915,
+      "sha256": "5f017fec41b7e6b5fa011a874a07892086ba301c4ff35e7fa0ca0a758aceb681"
+    },
+    {
+      "path": "/opt/replay-chromium/libEGL.so",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 1097832,
+      "sha256": "2bedc402f48a4a0616644812aaa2ef1b6b9824742f3d58550a5912c83e0982c8"
+    },
+    {
+      "path": "/opt/replay-chromium/libGLESv2.so",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 10979680,
+      "sha256": "d51c3f53b4944bae1132ea3f0aef22a37a28e631eed3dd1adda6b4c06eb2b83c"
+    },
+    {
+      "path": "/opt/replay-chromium/libvk_swiftshader.so",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 23329968,
+      "sha256": "8fb66ed5e3573c535eec46559941596dbcb5c59e13d340a6f4a9f1fa606fc80c"
+    },
+    {
+      "path": "/opt/replay-chromium/libvulkan.so.1",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 1624040,
+      "sha256": "2fdb88b5143f99199423aaf1aebb8fd7d18e45752ffa180084eaee84c75b81ed"
+    },
+    {
+      "path": "/opt/replay-chromium/vk_swiftshader_icd.json",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 107,
+      "sha256": "c9eef28b6b984fec220ef0abfecc40b502d46946706e47bfe97707027cb818bd"
+    },
+    {
+      "path": "/opt/replay-chromium/smoke.html",
+      "mode": "0644",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 1905,
+      "sha256": "57120c461d57d019adef3a4f36f78fea014f9f140afe330f380a7a7a62082533"
+    },
+    {
+      "path": "/usr/local/bin/replay-chromium",
+      "mode": "0755",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 3193,
+      "sha256": "371645dfa37e992cd1e49e7c923dff1f6b40625757e83af266dd45859b9e1ad4"
+    },
+    {
+      "path": "/usr/local/bin/replay-desktop",
+      "mode": "0755",
+      "uid": 0,
+      "gid": 0,
+      "bytes": 638,
+      "sha256": "ee293371ee49ac4bab84a7e1906316ebf8a48cdbf2ad52137cc1ccff8d5e9063"
+    }
+  ],
+  "image": {
+    "bytes": 8589934592,
+    "sha256": "41127a0f843033df732ff1e1790408a657d76b1d18cb06e05a0c6103d9115228"
+  },
+  "manifestSha256": "ee94a280c2fa49a8f0f14a9e47df1c6ec717e0bfeaa78a96da09417ad48c4ac3",
+  "uniqueChunks": 4798,
+  "browserBootVerified": false
+}

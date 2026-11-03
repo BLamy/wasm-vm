@@ -1,0 +1,149 @@
+debugfs: mkdir /opt/replay-chromium
+debugfs: mkdir /opt/replay-chromium/locales
+debugfs: rm /usr/local/bin/replay-desktop
+
+debugfs: write /work/runtime/chrome /opt/replay-chromium/chrome
+Allocated inode: 25911
+debugfs: set_inode_field /opt/replay-chromium/chrome mode 0100755
+debugfs: set_inode_field /opt/replay-chromium/chrome uid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome gid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome crtime @1793491200
+debugfs: write /work/runtime/chrome_crashpad_handler /opt/replay-chromium/chrome_crashpad_handler
+Allocated inode: 25912
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler mode 0100755
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler uid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler gid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_crashpad_handler crtime @1793491200
+debugfs: write /work/runtime/chrome_100_percent.pak /opt/replay-chromium/chrome_100_percent.pak
+Allocated inode: 25913
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak uid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak gid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_100_percent.pak crtime @1793491200
+debugfs: write /work/runtime/chrome_200_percent.pak /opt/replay-chromium/chrome_200_percent.pak
+Allocated inode: 25914
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak uid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak gid 0
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/chrome_200_percent.pak crtime @1793491200
+debugfs: write /work/runtime/resources.pak /opt/replay-chromium/resources.pak
+Allocated inode: 25915
+debugfs: set_inode_field /opt/replay-chromium/resources.pak mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/resources.pak uid 0
+debugfs: set_inode_field /opt/replay-chromium/resources.pak gid 0
+debugfs: set_inode_field /opt/replay-chromium/resources.pak atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/resources.pak ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/resources.pak mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/resources.pak crtime @1793491200
+debugfs: write /work/runtime/icudtl.dat /opt/replay-chromium/icudtl.dat
+Allocated inode: 25916
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat uid 0
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat gid 0
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/icudtl.dat crtime @1793491200
+debugfs: write /work/runtime/snapshot_blob.bin /opt/replay-chromium/snapshot_blob.bin
+Allocated inode: 25917
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin uid 0
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin gid 0
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/snapshot_blob.bin crtime @1793491200
+debugfs: write /work/runtime/locales/en-US.pak /opt/replay-chromium/locales/en-US.pak
+Allocated inode: 25918
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak uid 0
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak gid 0
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/locales/en-US.pak crtime @1793491200
+debugfs: write /work/runtime/libEGL.so /opt/replay-chromium/libEGL.so
+Allocated inode: 25919
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so uid 0
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so gid 0
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libEGL.so crtime @1793491200
+debugfs: write /work/runtime/libGLESv2.so /opt/replay-chromium/libGLESv2.so
+Allocated inode: 25920
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so uid 0
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so gid 0
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libGLESv2.so crtime @1793491200
+debugfs: write /work/runtime/libvk_swiftshader.so /opt/replay-chromium/libvk_swiftshader.so
+Allocated inode: 25921
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so uid 0
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so gid 0
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libvk_swiftshader.so crtime @1793491200
+debugfs: write /work/runtime/libvulkan.so.1 /opt/replay-chromium/libvulkan.so.1
+Allocated inode: 25922
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 uid 0
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 gid 0
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/libvulkan.so.1 crtime @1793491200
+debugfs: write /work/runtime/vk_swiftshader_icd.json /opt/replay-chromium/vk_swiftshader_icd.json
+Allocated inode: 25923
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json uid 0
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json gid 0
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/vk_swiftshader_icd.json crtime @1793491200
+debugfs: write /work/smoke.html /opt/replay-chromium/smoke.html
+Allocated inode: 25924
+debugfs: set_inode_field /opt/replay-chromium/smoke.html mode 0100644
+debugfs: set_inode_field /opt/replay-chromium/smoke.html uid 0
+debugfs: set_inode_field /opt/replay-chromium/smoke.html gid 0
+debugfs: set_inode_field /opt/replay-chromium/smoke.html atime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/smoke.html ctime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/smoke.html mtime @1793491200
+debugfs: set_inode_field /opt/replay-chromium/smoke.html crtime @1793491200
+debugfs: write /work/replay-chromium /usr/local/bin/replay-chromium
+Allocated inode: 3659
+debugfs: set_inode_field /usr/local/bin/replay-chromium mode 0100755
+debugfs: set_inode_field /usr/local/bin/replay-chromium uid 0
+debugfs: set_inode_field /usr/local/bin/replay-chromium gid 0
+debugfs: set_inode_field /usr/local/bin/replay-chromium atime @1793491200
+debugfs: set_inode_field /usr/local/bin/replay-chromium ctime @1793491200
+debugfs: set_inode_field /usr/local/bin/replay-chromium mtime @1793491200
+debugfs: set_inode_field /usr/local/bin/replay-chromium crtime @1793491200
+debugfs: write /work/replay-desktop /usr/local/bin/replay-desktop
+Allocated inode: 25925
+debugfs: set_inode_field /usr/local/bin/replay-desktop mode 0100755
+debugfs: set_inode_field /usr/local/bin/replay-desktop uid 0
+debugfs: set_inode_field /usr/local/bin/replay-desktop gid 0
+debugfs: set_inode_field /usr/local/bin/replay-desktop atime @1793491200
+debugfs: set_inode_field /usr/local/bin/replay-desktop ctime @1793491200
+debugfs: set_inode_field /usr/local/bin/replay-desktop mtime @1793491200
+debugfs: set_inode_field /usr/local/bin/replay-desktop crtime @1793491200
+debugfs 1.47.0 (5-Feb-2023)

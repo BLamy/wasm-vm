@@ -22,8 +22,11 @@ and roadmap.js. The existing demo and other profiles must continue to work.
 `make verify-E5-T29c`
 
 Build the affected wasm/web target, load the built page with Playwright, and prove
-that the visible guest browser executes JS/WASM/canvas and responds to real DOM
-keyboard/pointer input. Record actual input effects, guest state/digests, startup
+that the visible guest browser executes JS/WASM/canvas with the genuine Replay driver enabled and responds to real DOM
+keyboard/pointer input. Require an actual recording of those actions and successful validation/replay
+through Replay's implementation; recording-disabled browsing cannot pass. Keep
+private backend source and driver artifacts local unless publication is authorized.
+Record actual input effects, guest state/digests, startup
 and interaction timing, and a screenshot. Require zero host-page console errors
 and the unchanged live ISA suite passing (or its new exact total). Compare only
 bounded measured clock/startup options; do not assert a fastest distro without
