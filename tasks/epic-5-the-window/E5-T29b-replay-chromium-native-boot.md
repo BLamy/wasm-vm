@@ -4,7 +4,7 @@ epic: 5
 title: Run recording-capable Replay Chromium on native wasm-vm and capture its image pair
 priority: 0.382
 status: pending
-depends_on: [E5-T29a]
+depends_on: [E5-T29a, E5-T30d]
 estimate: S
 risk: medium
 capstone: false
