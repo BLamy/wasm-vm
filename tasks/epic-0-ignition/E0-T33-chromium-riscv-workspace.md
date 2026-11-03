@@ -3,7 +3,7 @@ id: E0-T33
 epic: 0
 title: Preserve the local Replay Chromium RISC-V build workspace
 priority: 0.36
-status: evidence-needed
+status: implemented
 depends_on: [E0-T32]
 estimate: S
 risk: low
@@ -171,3 +171,15 @@ the checker; independent filesystem repository inventory, SHA-256/byte compariso
 patch-header/change-set comparison, read-only reverse patch checks, and a traced
 direct acceptance run. Worker JSON SHA-256:
 `07344746ea8c648d60d29cf6773950d38b2b9fdd65bebd1034174d4b571d876a`.
+
+### 2026-11-03 — worker — missing setup pin supplied
+
+Frozen follow-up product head: `29359c386` (manifest only). Added the retained
+`tools/depot_tools` checkout at `bed65db1bb5d1022dab89cf62e7609b12084747b`.
+Evidence: `evidence/e0-t33/worker-followup.json`, SHA-256
+`e2edab16bbadc0c2e055c77eb6b58ccfb7798ec1d7e08e6194711ed9c610e96d`.
+The direct acceptance command passed with **126** pinned repositories. Its record
+compares the manifest to the prior product head: exactly one repository entry was
+added, and every other manifest field and product file is unchanged. All earlier
+HELD results carry forward; no source, checker, patch or license bytes changed.
+No runtime gates were restarted for this setup-provenance proof gap.
