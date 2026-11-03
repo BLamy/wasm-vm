@@ -3,7 +3,7 @@ id: E0-T34
 epic: 0
 title: Preserve the built Replay RISC-V browser and exact local port sources
 priority: 0.37
-status: in-progress
+status: implemented
 depends_on: [E0-T33]
 estimate: S
 risk: low
@@ -70,3 +70,18 @@ promote the external sandbox port to a production security guarantee or claim
 execution inside wasm-vm. Guest/browser runtime gates for a later integration
 remain separate. Low-risk submission binds these inert archives and the read-only
 checker at the frozen product head recorded below.
+
+### 2026-11-03 — worker — implemented
+
+Frozen product head: `2457ab808fda3b6a9a4d5c4e116b1ce335f5c3ce`. Recorded submission:
+`evidence/e0-t34/worker.json`, SHA-256
+`7b4fe7439923713521aad4fc8aa1e79971879d74bf91437e06dd6ad8d57b68a4`.
+All four recorded commands passed: scoped `git diff --check`, checker Python
+compilation, task policy, and `python3 tools/chromium/check-built-artifacts.py`.
+The direct command validates all 32 archived files, 3 retained artifacts, both
+RISC-V ELF headers, all 13 runtime bundle contents, source-record correspondence,
+and the cited reference transcript. It performs no source mutation, patch
+application, execution, network request or publication. Original raw CRLF serial
+bytes are preserved using path-specific Git attributes. No runtime, web, deploy
+or GitHub workflow changes are part of this layer. Only a fresh verifier may
+set this preservation task to verified.

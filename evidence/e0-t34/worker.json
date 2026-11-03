@@ -1,0 +1,89 @@
+{
+  "head": "2457ab808fda3b6a9a4d5c4e116b1ce335f5c3ce",
+  "scope": "Low-risk archival integrity of local external port sources, binaries and reference observations",
+  "productFiles": {
+    ".gitattributes": "b2f87370a0d7addc103683944d02c72e910adbee29571d6932cff035074cbad2",
+    "docs/chromium-riscv64-build.md": "36dad463059d76703c59088db544b2187e345612d4eec2fa53cb8a6755d832ff",
+    "evidence/e0-t34/reference/chromium-build-20-frozen-check.log": "b5d4e3db6bd62c757d49186b70593c47ffb2a8127c993b948ddeffbe6e186963",
+    "evidence/e0-t34/reference/chromium-build-20.log": "deaf2f418d32478bc61b0093ae806df136ed644d99456b9ef1bec66af4543fbb",
+    "evidence/e0-t34/reference/chromium-gui-build20-input.png": "e4bee6b401e704d8077e237d6fce7bf61ba70df21f2a0ecddd46f4d7ea43256d",
+    "evidence/e0-t34/reference/chromium-gui-build20.png": "94bf8229d7ff7363b4d69772b48a62a6c639a4b60bb9bda1c7dfcddbdf6ea320",
+    "evidence/e0-t34/reference/guest-build20-evidence.log": "e9ee3dc222ab9ebb5913e6759de549a340b276539848f8946acae6cdba137249",
+    "evidence/e0-t34/reference/guest-build20-gui.log": "4fafeeeaa531c0cfd4f51d6494c161b0cfe8914e2caf77d36f5e58c50f9b0e71",
+    "evidence/e0-t34/reference/guest-build20-sandbox.log": "befd7e1f697a59bf5cf43fd0d8a7dff40a377e7562807d94f52ca066bd6bc195",
+    "evidence/e0-t34/reference/guest-command.py": "4123198fc6a2c27d193d26f25747dd66fc5b0fcfcb83efe05eabfd49988284db",
+    "evidence/e0-t34/reference/gui-launch.sh": "723be22e716b0b667e9db9e280ddd3c67cbf99f387405d9c31f0611564d5a60e",
+    "evidence/e0-t34/reference/qemu-build20-keyboard.json": "487dc699cc25ce0a7348b0c6f91d2ee748a208f4b27fe447c51ec3c699b20707",
+    "evidence/e0-t34/reference/qmp-keyboard.py": "806510bc48718f2d4c488750d2aa2c3de78c59df9def3fef36fb82a171462edd",
+    "evidence/e0-t34/reference/riscv-build20-evidence.sh": "e93267d591af92462fe99e9154a64b6aa702233e71fafc6af47c93f893d09c18",
+    "evidence/e0-t34/reference/riscv-build20-gui.sh": "4c406f7af48d6b625e403466e6defebf1ea322477f932d951a5f5aaf4ad06590",
+    "evidence/e0-t34/reference/riscv-build20-sandbox.sh": "fb3089d9dd291f3110832bdf7b927d75ce839fbc3e7f2ec5f31789d11fcd5857",
+    "evidence/e0-t34/reference/runtime-build20-package.log": "59b8100fb1524c13c396928eda56d6fa14ac335145f4397eac01db6e18fb3f22",
+    "tools/chromium/built/abseil-LICENSE.txt": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747",
+    "tools/chromium/built/angle.patch": "2fa5cebbd9a0d0d447670308ffaf8e57fb5b7a411c086757783030e46371ea62",
+    "tools/chromium/built/args-riscv64.gn": "18e92cbf3c4bc21feb87324ba3076ce1395f8879e56965ccbfaeb859d75fd1a1",
+    "tools/chromium/built/chromium.patch": "6905888fd3cf380396da80561b16a21b3e86ee62fd6ce510a10ae89a183c8193",
+    "tools/chromium/built/configure-and-build.sh": "7f7e755d6a1c0d87fd538ab190c1f693f6bc2c8cdd198c3c992bdc55a1b08024",
+    "tools/chromium/built/ffmpeg.patch": "6c1f802dbfd42b9977a5912bf62d1161a5e64a74e013c30af7ebd7baca794fa2",
+    "tools/chromium/built/install-target-libraries.sh": "23e7e81d079e645bdcd12d3ed59b26a14405ef7f3752ac22028cdf647ad80831",
+    "tools/chromium/built/manifest.json": "c941656bd9852959c0443dccef94d89c98c88e3d847eccc9a4501644996f4680",
+    "tools/chromium/built/native-source-check.json": "5ff9fb460fd442f37412e71fa9d5120b220d2d721962a6df737452db7074f164",
+    "tools/chromium/built/opensuse-sandbox-upstream.patch": "a62540edb30728a79b9b44c128b8ae23e8dcb677248102524be5c98f139e874f",
+    "tools/chromium/built/prepare-host-tools.sh": "e88c2e3f6c2d0ebc4a1380407f3206f898265394fb9f9163b78674a33230fcc9",
+    "tools/chromium/built/prepare-unbundled-driver.py": "116cbaeb2f29445da8f0f71f0b0300a77ceea95c6e2382fa8eb146df598b4250",
+    "tools/chromium/built/runtime-files.json": "cd4432a21a160bdfa9f86ccd9cf07cc76fc202c9f3ea5210db160c73ac4aab0d",
+    "tools/chromium/built/sandbox-adaptations.json": "c5396a84695d4837f17e70495a8df7e87c61a630b9f38d3d07e8ac64efb6e80e",
+    "tools/chromium/built/smoke.html": "6ab30a8cecec763b75657af6f3b78ec4145adc686be377f8adbd8590a947bf01",
+    "tools/chromium/built/source-inputs.json": "e79567192049860336654f5ae0bef1b0dc261a93e7551e4d4b93616680c51aea",
+    "tools/chromium/built/swiftshader.patch": "518c1b2d08859a2e75a422c7052eb3fae43fa2165edb872d26fb1d040f45852d",
+    "tools/chromium/built/webrtc.patch": "971d8196af9631aae8254842a94ccbabb559aec19d1ae317c3eb649727c88c4c",
+    "tools/chromium/check-built-artifacts.py": "6af5301230a93560a9ff82e848f348438d491727d6c681675faeb2d8f1831e62"
+  },
+  "commands": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "93f6b72f93e7d211d521f88eb2263e15a6fa4313",
+        "2457ab808fda3b6a9a4d5c4e116b1ce335f5c3ce"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "seconds": 0.03779795799999999
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "tools/chromium/check-built-artifacts.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "seconds": 0.075841834
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exit": 0,
+      "stdout": "task-policy: OK (active=E0-T34)\n",
+      "stderr": "",
+      "seconds": 0.25229129100000003
+    },
+    {
+      "command": [
+        "python3",
+        "tools/chromium/check-built-artifacts.py"
+      ],
+      "exit": 0,
+      "stdout": "OK: 32 archived files and 3 retained build artifacts match their digests\nOK: ELF64 RISC-V browser and sandbox tests; 92 source inputs match the native-build record\nOK: preserved QEMU reference transcript: 338 suite cases and two seccomp observations\nScope: archival integrity; no browser execution or wasm-vm integration is claimed by this check\n",
+      "stderr": "",
+      "seconds": 1.825282417
+    }
+  ]
+}
