@@ -3,7 +3,7 @@ id: E0-T33
 epic: 0
 title: Preserve the local Replay Chromium RISC-V build workspace
 priority: 0.36
-status: implemented
+status: verified
 depends_on: [E0-T32]
 estimate: S
 risk: low
@@ -241,3 +241,47 @@ The guide incorrectly said the copied launcher creates an overlay. Its actual
 `qemu-img create` command; source, manifest, runtime and acceptance checker are
 unchanged. This is a low-risk documentation correction. All earlier HELD results
 carry forward; only the new command and launcher correspondence need inspection.
+
+### 2026-11-03 — verifier — overlay-doc predictions before inspection
+
+- P7: From the project root, the documented command will name the retained raw
+  base as its backing file and create a qcow2 at the copied launcher's default
+  image path. The launcher will require that file rather than create it. A
+  temporary-output check will produce qcow2 metadata with the raw backing file
+  and its 8 GiB virtual size without changing the retained base or launching a VM.
+- P8: The correction will change only the guide and task/queue bookkeeping;
+  manifest, checker, patch/license archive, and prior evidence bytes will remain
+  unchanged. Earlier HELD results therefore carry forward.
+
+### 2026-11-03 — verifier — overlay-doc VERDICT: verified
+
+VERDICT: verified
+
+- P7 command/launcher correspondence — HELD. Guide lines 98-100 name the retained
+  raw base and the exact default overlay path from retained
+  `gui/start-riscv-linux.sh:3,8`. The launcher requires `test -f "$image"` at line 11
+  and contains no `qemu-img` command. Parsed the guide's shell block and executed
+  its exact arguments with only the output redirected to a temporary directory.
+  Creation exited zero; `qemu-img info --output=json` reported `format=qcow2`,
+  `backing-filename-format=raw`, the retained absolute base path, and
+  `virtual-size=8589934592`. The temporary overlay was removed. Retained base
+  inode/size/mtime/ctime were unchanged, the retained overlay remained absent,
+  and no launcher, VM, browser, or build was run.
+- P8 incremental binding — HELD. Frozen product head
+  `a25d37e9530842b41b9f59273674bd208c75ebad` changes only the guide and task/queue
+  bookkeeping. Current guide bytes match that head with SHA-256
+  `77f440fdc6aec36986dcb533f289cf0353e451814b9ffa2687073ff6b8972e36`.
+  Manifest, checker, patch/license archive, and all three prior evidence files
+  are unchanged; their recorded evidence digests still match. Prior HELD results
+  and coverage waivers carry forward for those unchanged boundaries. This direct
+  result supplies the binding for the corrected guide.
+- COVERAGE/SUITE — The only changed product hunk is the overlay prerequisite and
+  command at `docs/chromium-riscv64.md:93-104`, directly inspected and exercised
+  above. No new runtime test or full archive rehash is appropriate for this
+  documentation correction. Temporary proof output was discarded after inspecting
+  its metadata; the command and observed values are recorded here.
+
+Commands: parsed `qemu-img create -f qcow2 -F raw -b <retained absolute raw base>
+<temporary output>`; `qemu-img info --output=json <temporary output>`; read-only
+launcher inspection; Git diff/byte and prior-evidence digest comparisons;
+`git diff --check 4bbbd6dfc..a25d37e95`; `git diff --check`.
