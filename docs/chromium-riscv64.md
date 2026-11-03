@@ -91,8 +91,17 @@ Chromium integration and performance comparisons are pending. No fastest-distro
 claim has been measured.
 
 The immutable base image is retained. Live sockets/PID files and the running VM's
-writable qcow2 overlay are omitted from the copy; the launcher can create a fresh
-overlay. The original running VM stays separate. Native Cocoa-window verification
+writable qcow2 overlay are omitted from the copy. Before using the copied launcher,
+create its required overlay from the project root:
+
+```sh
+qemu-img create -f qcow2 -F raw \
+  -b "$PWD/local/chromium-riscv64/gui/ubuntu-riscv-gui.ext4" \
+  "$PWD/local/chromium-riscv64/gui/ubuntu-riscv-gui.qcow2"
+```
+
+The launcher checks that the overlay exists; it does not create it. The original
+running VM stays separate. Native Cocoa-window verification
 was incomplete because the Mac was locked during that check. Consult this guide
 for project-copy status; copied notes containing original absolute paths describe
 the original workspace.

@@ -3,7 +3,7 @@ id: E0-T33
 epic: 0
 title: Preserve the local Replay Chromium RISC-V build workspace
 priority: 0.36
-status: verified
+status: implemented
 depends_on: [E0-T32]
 estimate: S
 risk: low
@@ -233,3 +233,11 @@ for the added repository; independent JSON/byte/SHA-256 comparisons against the
 two frozen product heads and original evidence; `git diff --check
 9029967f4..29359c386`; `git diff --check`. This verification changes only this log,
 task status, and the generated queue.
+
+### 2026-11-03 — worker — copied-launcher documentation correction
+
+The guide incorrectly said the copied launcher creates an overlay. Its actual
+`test -f "$image"` requires one. Replaced that sentence with the explicit
+`qemu-img create` command; source, manifest, runtime and acceptance checker are
+unchanged. This is a low-risk documentation correction. All earlier HELD results
+carry forward; only the new command and launcher correspondence need inspection.
