@@ -1,0 +1,13 @@
+diff --git a/third_party/ipcz/src/ipcz/buffer_id.h b/third_party/ipcz/src/ipcz/buffer_id.h
+index 9963505036..1127d6157d 100644
+--- a/third_party/ipcz/src/ipcz/buffer_id.h
++++ b/third_party/ipcz/src/ipcz/buffer_id.h
+@@ -16,7 +16,7 @@ namespace ipcz {
+ // either side of the NodeLink.
+ using BufferId = StrongAlias<class BufferIdTag, uint64_t>;
+ 
+-constexpr BufferId kInvalidBufferId{~0};
++constexpr BufferId kInvalidBufferId{~uint64_t{0}};
+ 
+ }  // namespace ipcz
+ 

@@ -1,0 +1,22 @@
+diff --git a/third_party/blink/renderer/core/paint/paint_layer.cc b/third_party/blink/renderer/core/paint/paint_layer.cc
+index e7e9eb3319..c4d510d6a8 100644
+--- a/third_party/blink/renderer/core/paint/paint_layer.cc
++++ b/third_party/blink/renderer/core/paint/paint_layer.cc
+@@ -114,13 +114,10 @@ namespace {
+ 
+ #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
+ struct SameSizeAsPaintLayer : GarbageCollected<PaintLayer>, DisplayItemClient {
+-  // The bit fields may fit into the machine word of DisplayItemClient which
+-  // has only 8-bit data.
+-  unsigned bit_fields1 : 24;
+-  // The number of bitfields here is greater than the number in the actual struct.
+-  // DisplayItemClient has a record_replay_id member which affects the field layout
+-  // vs. upstream chromium.
+-  //unsigned bit_fields2 : 24;
++  // Match PaintLayer's 29 release-mode flag bits. Replay's record_replay_id_
++  // leaves only 24 bits of tail padding in DisplayItemClient on this ABI; the
++  // remaining bits move the first pointer to the next aligned slot.
++  unsigned bit_fields1 : 29;
+ #if DCHECK_IS_ON()
+   bool is_destroyed;
+ #endif

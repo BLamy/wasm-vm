@@ -1,0 +1,998 @@
+{
+  "schema": 1,
+  "local_path": "local/chromium-riscv64",
+  "upstream_repository": "https://github.com/replayio/chromium",
+  "selected_branch": "master",
+  "source_revision": "f2472ba7bee0ed0d91736df49035af867cce6692",
+  "chromium_version": "108.0.5359.0",
+  "checkpoint_date": "2026-11-03",
+  "full_chrome_built": false,
+  "sandbox_backport_applied": false,
+  "recording_driver": "unbundled; no RISC-V record/replay claim",
+  "repositories": [
+    {
+      "path": "src",
+      "revision": "f2472ba7bee0ed0d91736df49035af867cce6692"
+    },
+    {
+      "path": "src/buildtools/clang_format/script",
+      "revision": "8b525d2747f2584fc35d8c7e612e66f377858df7"
+    },
+    {
+      "path": "src/buildtools/third_party/libc++/trunk",
+      "revision": "64d36e572d3f9719c5d75011a718f33f11126851"
+    },
+    {
+      "path": "src/buildtools/third_party/libc++abi/trunk",
+      "revision": "9572e56a12c88c011d504a707ca94952be4664f9"
+    },
+    {
+      "path": "src/buildtools/third_party/libunwind/trunk",
+      "revision": "1111799723f6a003e6f52202b9bf84387c552081"
+    },
+    {
+      "path": "src/chrome/test/data/perf/canvas_bench",
+      "revision": "a7b40ea5ae0239517d78845a5fc9b12976bfc732"
+    },
+    {
+      "path": "src/chrome/test/data/perf/frame_rate/content",
+      "revision": "c10272c88463efeef6bb19c9ec07c42bc8fe22b9"
+    },
+    {
+      "path": "src/chrome/test/data/xr/webvr_info",
+      "revision": "c58ae99b9ff9e2aa4c524633519570bf33536248"
+    },
+    {
+      "path": "src/docs/website",
+      "revision": "7da061134f35c390ac1549a82704a1762f9a5261"
+    },
+    {
+      "path": "src/media/cdm/api",
+      "revision": "fef0b5aa1bd31efb88dfab804bdbe614f3d54f28"
+    },
+    {
+      "path": "src/net/third_party/quiche/src",
+      "revision": "a338ea8277642f6d78022dc8e3aaed182a804413"
+    },
+    {
+      "path": "src/third_party/angle",
+      "revision": "96bbc80b87000005dbec2a8034e37deec91538a3"
+    },
+    {
+      "path": "src/third_party/angle/third_party/VK-GL-CTS/src",
+      "revision": "f4ed7376e1da2e720211bcddd605bc0599e91920"
+    },
+    {
+      "path": "src/third_party/angle/third_party/glmark2/src",
+      "revision": "ca8de51fedb70bace5351c6b002eb952c747e889"
+    },
+    {
+      "path": "src/third_party/angle/third_party/rapidjson/src",
+      "revision": "781a4e667d84aeedbeb8184b7b62425ea66ec59f"
+    },
+    {
+      "path": "src/third_party/boringssl/src",
+      "revision": "c366ab49b0a58a4d92b1bfc66a31abbe76131a49"
+    },
+    {
+      "path": "src/third_party/breakpad/breakpad",
+      "revision": "e085b3b50bde862d0cf3ce4594e3f391bcf5faec"
+    },
+    {
+      "path": "src/third_party/cast_core/public/src",
+      "revision": "469e045e514c09701ab674d023cbaa6562866f83"
+    },
+    {
+      "path": "src/third_party/catapult",
+      "revision": "4793433248183dd073e608f655204d4acfdc7193"
+    },
+    {
+      "path": "src/third_party/ced/src",
+      "revision": "ba412eaaacd3186085babcd901679a48863c7dd5"
+    },
+    {
+      "path": "src/third_party/cld_3/src",
+      "revision": "b48dc46512566f5a2d41118c8c1116c4f96dc661"
+    },
+    {
+      "path": "src/third_party/colorama/src",
+      "revision": "799604a1041e9b3bc5d2789ecbd7e8db2e18e6b8"
+    },
+    {
+      "path": "src/third_party/content_analysis_sdk/src",
+      "revision": "3d3f3d6f27288d7b0628ae5259238162c5e5ae76"
+    },
+    {
+      "path": "src/third_party/cpuinfo/src",
+      "revision": "beb46ca0319882f262e682dd596880c92830687f"
+    },
+    {
+      "path": "src/third_party/crc32c/src",
+      "revision": "fa5ade41ee480003d9c5af6f43567ba22e4e17e6"
+    },
+    {
+      "path": "src/third_party/cros_components",
+      "revision": "a0979aacb8744f42ed7abd966a6b0ac7578a73e9"
+    },
+    {
+      "path": "src/third_party/cros_system_api",
+      "revision": "67bca80707449bad87a17de8c937634ff1ab3272"
+    },
+    {
+      "path": "src/third_party/dav1d/libdav1d",
+      "revision": "87f9a81cd770e49394a45deca7a3df41243de00b"
+    },
+    {
+      "path": "src/third_party/dawn",
+      "revision": "c84d06e8603ce9c4b5c8d86e42e9ec0acf3bd689"
+    },
+    {
+      "path": "src/third_party/dawn/third_party/glfw",
+      "revision": "62e175ef9fae75335575964c845a302447c012c7"
+    },
+    {
+      "path": "src/third_party/dawn/third_party/webgpu-cts",
+      "revision": "d8a28755b2327c2bb55cbc9923eadee0a67a3db6"
+    },
+    {
+      "path": "src/third_party/depot_tools",
+      "revision": "2c0a8c736a59044e4acc7be9e172343adc5c4310"
+    },
+    {
+      "path": "src/third_party/devtools-frontend/src",
+      "revision": "33bb29b551b54b0ac67025e8b3e0ce69352c9504"
+    },
+    {
+      "path": "src/third_party/dom_distiller_js/dist",
+      "revision": "199de96b345ada7c6e7e6ba3d2fa7a6911b8767d"
+    },
+    {
+      "path": "src/third_party/eigen3/src",
+      "revision": "b3bf8d6a13585ff248c079402654647d298de60b"
+    },
+    {
+      "path": "src/third_party/emoji-segmenter/src",
+      "revision": "9ba6d25d0d9313569665d4a9d2b34f0f39f9a50e"
+    },
+    {
+      "path": "src/third_party/expat/src",
+      "revision": "53fbdf5b8925a426e1b41a9e09b833986b87524e"
+    },
+    {
+      "path": "src/third_party/farmhash/src",
+      "revision": "816a4ae622e964763ca0862d9dbd19324a1eaf45"
+    },
+    {
+      "path": "src/third_party/ffmpeg",
+      "revision": "b9f01c3c54576330b2cf8918c54d5ee5be8faefe"
+    },
+    {
+      "path": "src/third_party/flac",
+      "revision": "af862024c8c8fa0ae07ced05e89013d881b00596"
+    },
+    {
+      "path": "src/third_party/flatbuffers/src",
+      "revision": "0fe13cb28ce5a3fb81f654b21cb37c9821194962"
+    },
+    {
+      "path": "src/third_party/fontconfig/src",
+      "revision": "452be8125f0e2a18a7dfef469e05d19374d36307"
+    },
+    {
+      "path": "src/third_party/fp16/src",
+      "revision": "4dfe081cf6bcd15db339cf2680b9281b8451eeb3"
+    },
+    {
+      "path": "src/third_party/freetype-testing/src",
+      "revision": "7a69b1a2b028476f840ab7d4a2ffdfe4eb2c389f"
+    },
+    {
+      "path": "src/third_party/freetype/src",
+      "revision": "5182264a40e70ff31be0a0ec8a0d5ffb5f65582e"
+    },
+    {
+      "path": "src/third_party/fxdiv/src",
+      "revision": "63058eff77e11aa15bf531df5dd34395ec3017c8"
+    },
+    {
+      "path": "src/third_party/gemmlowp/src",
+      "revision": "13d57703abca3005d97b19df1f2db731607a7dc2"
+    },
+    {
+      "path": "src/third_party/googletest/src",
+      "revision": "af29db7ec28d6df1c7f0f745186884091e602e07"
+    },
+    {
+      "path": "src/third_party/grpc/src",
+      "revision": "dd77c67217b10ffeaf766e25eb8b46d2d59de4ff"
+    },
+    {
+      "path": "src/third_party/harfbuzz-ng/src",
+      "revision": "56c467093598ec559a7148b61e112e9de52b7076"
+    },
+    {
+      "path": "src/third_party/highway/src",
+      "revision": "8ae5b88670fb918f815b717c7c13d38a9b0eb4bb"
+    },
+    {
+      "path": "src/third_party/hunspell_dictionaries",
+      "revision": "41cdffd71c9948f63c7ad36e1fb0ff519aa7a37e"
+    },
+    {
+      "path": "src/third_party/icu",
+      "revision": "20f8ac695af59b6c830def7d4e95bfeb13dd7be5"
+    },
+    {
+      "path": "src/third_party/jsoncpp/source",
+      "revision": "42e892d96e47b1f6e29844cc705e148ec4856448"
+    },
+    {
+      "path": "src/third_party/leveldatabase/src",
+      "revision": "d019e3605f222ebc5a3a2484a2cb29db537551dd"
+    },
+    {
+      "path": "src/third_party/libFuzzer/src",
+      "revision": "debe7d2d1982e540fbd6bd78604bf001753f9e74"
+    },
+    {
+      "path": "src/third_party/libaddressinput/src",
+      "revision": "df35d6c42da4fa2759e4cfb592afe33817993b89"
+    },
+    {
+      "path": "src/third_party/libaom/source/libaom",
+      "revision": "7f32eb35ff2589369f095388701e3dfc4d6a9381"
+    },
+    {
+      "path": "src/third_party/libavif/src",
+      "revision": "de7e6c0d98abcd6843c4a9bf4cee731141dca566"
+    },
+    {
+      "path": "src/third_party/libdrm/src",
+      "revision": "56f81e6776c1c100c3f627b2c1feb9dcae2aad3c"
+    },
+    {
+      "path": "src/third_party/libgav1/src",
+      "revision": "cd53f7c0d6a1c005e38874d143c8876d375bae70"
+    },
+    {
+      "path": "src/third_party/libipp/libipp",
+      "revision": "6c45a4f3a05cb5dd700414fe4d94cf685159d3ce"
+    },
+    {
+      "path": "src/third_party/libjpeg_turbo",
+      "revision": "ed683925e4897a84b3bffc5c1414c85b97a129a3"
+    },
+    {
+      "path": "src/third_party/libjxl/src",
+      "revision": "8001738dc9cd8dc6fa24cf75fefd08f909b2ac3c"
+    },
+    {
+      "path": "src/third_party/liblouis/src",
+      "revision": "9700847afb92cb35969bdfcbbfbbb74b9c7b3376"
+    },
+    {
+      "path": "src/third_party/libphonenumber/dist",
+      "revision": "140dfeb81b753388e8a672900fb7a971e9a0d362"
+    },
+    {
+      "path": "src/third_party/libprotobuf-mutator/src",
+      "revision": "a304ec48dcf15d942607032151f7e9ee504b5dcf"
+    },
+    {
+      "path": "src/third_party/libsrtp",
+      "revision": "5b7c744eb8310250ccc534f3f86a2015b3887a0a"
+    },
+    {
+      "path": "src/third_party/libsync/src",
+      "revision": "f4f4387b6bf2387efbcfd1453af4892e8982faf6"
+    },
+    {
+      "path": "src/third_party/libvpx/source/libvpx",
+      "revision": "9d6d0624d7943a09cc0be9df1a7402522989ac1a"
+    },
+    {
+      "path": "src/third_party/libwebm/source",
+      "revision": "e4fbea0c9751ae8aa86629b197a28d8276a2b0da"
+    },
+    {
+      "path": "src/third_party/libwebp/src",
+      "revision": "7366f7f394af26de814296152c50e673ed0a832f"
+    },
+    {
+      "path": "src/third_party/libyuv",
+      "revision": "00950840d1c9bcbb3eb6ebc5aac5793e71166c8b"
+    },
+    {
+      "path": "src/third_party/lss",
+      "revision": "ce877209e11aa69dcfffbd53ef90ea1d07136521"
+    },
+    {
+      "path": "src/third_party/minigbm/src",
+      "revision": "d73fa7ff377919d94d4ed675cc91a070f0631548"
+    },
+    {
+      "path": "src/third_party/minizip/src",
+      "revision": "1ff40343b55e738d941abb51c70eddb803db16e2"
+    },
+    {
+      "path": "src/third_party/nasm",
+      "revision": "9215e8e1d0fe474ffd3e16c1a07a0f97089e6224"
+    },
+    {
+      "path": "src/third_party/nearby/src",
+      "revision": "4bd0337c105c502de845ba9501ad6e0350f613b9"
+    },
+    {
+      "path": "src/third_party/neon_2_sse/src",
+      "revision": "a15b489e1222b2087007546b4912e21293ea86ff"
+    },
+    {
+      "path": "src/third_party/openh264/src",
+      "revision": "fac04ceb3e966f613ed17e98178e9d690280bba6"
+    },
+    {
+      "path": "src/third_party/openscreen/src",
+      "revision": "940f6edf1274146fa1bfbda146b98d6aa16a0887"
+    },
+    {
+      "path": "src/third_party/openscreen/src/third_party/tinycbor/src",
+      "revision": "d393c16f3eb30d0c47e6f9d92db62272f0ec4dc7"
+    },
+    {
+      "path": "src/third_party/ots/src",
+      "revision": "46bea9879127d0ff1c6601b078e2ce98e83fcd33"
+    },
+    {
+      "path": "src/third_party/pdfium",
+      "revision": "9d2c662f557544e5edb74a60b52fb297f4c5dfee"
+    },
+    {
+      "path": "src/third_party/perfetto",
+      "revision": "280f0b23c5c8b98248cf0ccf3d011c4fd4bb74f5"
+    },
+    {
+      "path": "src/third_party/pthreadpool/src",
+      "revision": "1787867f6183f056420e532eec640cba25efafea"
+    },
+    {
+      "path": "src/third_party/pyelftools",
+      "revision": "19b3e610c86fcadb837d252c794cb5e8008826ae"
+    },
+    {
+      "path": "src/third_party/pywebsocket3/src",
+      "revision": "50602a14f1b6da17e0b619833a13addc6ea78bc2"
+    },
+    {
+      "path": "src/third_party/quic_trace/src",
+      "revision": "c7b993eb750e60c307e82f75763600d9c06a6de1"
+    },
+    {
+      "path": "src/third_party/re2/src",
+      "revision": "d2836d1b1c34c4e330a85a1006201db474bf2c8a"
+    },
+    {
+      "path": "src/third_party/reclient_configs",
+      "revision": "c7c2f495ab4637bf5977a8f8f7c65ded468843b3"
+    },
+    {
+      "path": "src/third_party/ruy/src",
+      "revision": "841ea4172ba904fe3536789497f9565f2ef64129"
+    },
+    {
+      "path": "src/third_party/securemessage/src",
+      "revision": "fa07beb12babc3b25e0c5b1f38c16aa8cb6b8f84"
+    },
+    {
+      "path": "src/third_party/skia",
+      "revision": "9d82664bf982ef32890213b24dd8c285253fe8ed"
+    },
+    {
+      "path": "src/third_party/smhasher/src",
+      "revision": "e87738e57558e0ec472b2fc3a643b838e5b6e88f"
+    },
+    {
+      "path": "src/third_party/snappy/src",
+      "revision": "65dc7b383985eb4f63cd3e752136db8d9b4be8c0"
+    },
+    {
+      "path": "src/third_party/sqlite/src",
+      "revision": "b48b7b78fcdf0227c59a1fde8bc7e19362239e97"
+    },
+    {
+      "path": "src/third_party/swiftshader",
+      "revision": "b22b1b1f2dddcf5eacc8d2a37e7d27f650e1c1e2"
+    },
+    {
+      "path": "src/third_party/text-fragments-polyfill/src",
+      "revision": "c036420683f672d685e27415de0a5f5e85bdc23f"
+    },
+    {
+      "path": "src/third_party/tflite/src",
+      "revision": "14b52bb67edccf9f250085f83cc0e8aad03824f0"
+    },
+    {
+      "path": "src/third_party/ukey2/src",
+      "revision": "0275885d8e6038c39b8a8ca55e75d1d4d1727f47"
+    },
+    {
+      "path": "src/third_party/vulkan-deps",
+      "revision": "f310d85385dfddbe1deeb05deda1045593225710"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/glslang/src",
+      "revision": "5755de46b07e4374c05fb1081f65f7ae1f8cca81"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/spirv-cross/src",
+      "revision": "f09ba2777714871bddb70d049878af34b94fa54d"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/spirv-headers/src",
+      "revision": "85a1ed200d50660786c1a88d9166e871123cce39"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/spirv-tools/src",
+      "revision": "b53d3a6be38b032dedbc72639dfc6249b5e92697"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/vulkan-headers/src",
+      "revision": "98f440ce6868c94f5ec6e198cc1adda4760e8849"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/vulkan-loader/src",
+      "revision": "61187c40845c92a80bcd2216089dd01badcda7ac"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/vulkan-tools/src",
+      "revision": "e52fa1cf2d95503d28f9d020800cbab15aaa304b"
+    },
+    {
+      "path": "src/third_party/vulkan-deps/vulkan-validation-layers/src",
+      "revision": "ada4a476f4dfadda94f21ca80d35f7a0cd37cba9"
+    },
+    {
+      "path": "src/third_party/vulkan_memory_allocator",
+      "revision": "ebe84bec02c041d28f902da0214bf442743fc907"
+    },
+    {
+      "path": "src/third_party/wayland-protocols/gtk",
+      "revision": "40ebed3a03aef096addc0af09fec4ec529d882a0"
+    },
+    {
+      "path": "src/third_party/wayland-protocols/kde",
+      "revision": "0b07950714b3a36c9b9f71fc025fc7783e82926e"
+    },
+    {
+      "path": "src/third_party/wayland-protocols/src",
+      "revision": "83866f19d3d61b28e94d71781646466b3a6623d8"
+    },
+    {
+      "path": "src/third_party/wayland/src",
+      "revision": "8135e856ebd79872f886466e9cee39affb7d9ee8"
+    },
+    {
+      "path": "src/third_party/webdriver/pylib",
+      "revision": "fc5e7e70c098bfb189a9a74746809ad3c5c34e04"
+    },
+    {
+      "path": "src/third_party/webgl/src",
+      "revision": "d1b65aa5a88f6efd900604dfcda840154e9f16e2"
+    },
+    {
+      "path": "src/third_party/webgpu-cts/src",
+      "revision": "eba1a78f3d741241b0dbee728561b61e9587a686"
+    },
+    {
+      "path": "src/third_party/webrtc",
+      "revision": "9c3f9db59a66e3ee1aeb6d74c43b483f099a837d"
+    },
+    {
+      "path": "src/third_party/weston/src",
+      "revision": "420cfd00f2de91de74bd9d4d8348e43c582d29f0"
+    },
+    {
+      "path": "src/third_party/wuffs/src",
+      "revision": "a8205c2fe7564b12fea81ee028ba670112cc7719"
+    },
+    {
+      "path": "src/third_party/xdg-utils",
+      "revision": "d80274d5869b17b8c9067a1022e4416ee7ed5e0d"
+    },
+    {
+      "path": "src/third_party/xnnpack/src",
+      "revision": "e8f74a9763aa36559980a0c2f37f587794995622"
+    },
+    {
+      "path": "src/tools/page_cycler/acid3",
+      "revision": "6be0a66a1ebd7ebc5abc1b2f405a945f6d871521"
+    },
+    {
+      "path": "src/v8",
+      "revision": "a2e99099884e96a4f9b8fa52e0d6a3b3d8f4eefe"
+    }
+  ],
+  "changes": [
+    {
+      "repository": "src",
+      "paths": [
+        "build/config/posix/BUILD.gn",
+        "cc/layers/mirror_layer_impl.h",
+        "third_party/blink/renderer/core/paint/paint_layer.cc",
+        "third_party/crashpad/crashpad/minidump/minidump_context.h",
+        "third_party/crashpad/crashpad/minidump/minidump_context_writer.cc",
+        "third_party/crashpad/crashpad/minidump/minidump_context_writer.h",
+        "third_party/crashpad/crashpad/minidump/minidump_context_writer_test.cc",
+        "third_party/crashpad/crashpad/minidump/minidump_extensions.h",
+        "third_party/crashpad/crashpad/minidump/minidump_misc_info_writer.cc",
+        "third_party/crashpad/crashpad/minidump/minidump_system_info_writer.cc",
+        "third_party/crashpad/crashpad/minidump/test/minidump_context_test_util.cc",
+        "third_party/crashpad/crashpad/minidump/test/minidump_context_test_util.h",
+        "third_party/crashpad/crashpad/snapshot/capture_memory.cc",
+        "third_party/crashpad/crashpad/snapshot/cpu_architecture.h",
+        "third_party/crashpad/crashpad/snapshot/cpu_context.cc",
+        "third_party/crashpad/crashpad/snapshot/cpu_context.h",
+        "third_party/crashpad/crashpad/snapshot/elf/elf_image_reader.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/cpu_context_linux.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/cpu_context_linux.h",
+        "third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux.h",
+        "third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux_test.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/process_reader_linux.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/signal_context.h",
+        "third_party/crashpad/crashpad/snapshot/linux/system_snapshot_linux.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/test_modules.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/thread_snapshot_linux.cc",
+        "third_party/crashpad/crashpad/snapshot/linux/thread_snapshot_linux.h",
+        "third_party/crashpad/crashpad/snapshot/minidump/minidump_context_converter.cc",
+        "third_party/crashpad/crashpad/snapshot/minidump/system_snapshot_minidump.cc",
+        "third_party/crashpad/crashpad/snapshot/test/test_cpu_context.cc",
+        "third_party/crashpad/crashpad/snapshot/test/test_cpu_context.h",
+        "third_party/crashpad/crashpad/test/linux/get_tls.cc",
+        "third_party/crashpad/crashpad/util/linux/auxiliary_vector_test.cc",
+        "third_party/crashpad/crashpad/util/linux/ptracer.cc",
+        "third_party/crashpad/crashpad/util/linux/thread_info.h",
+        "third_party/crashpad/crashpad/util/misc/capture_context.h",
+        "third_party/crashpad/crashpad/util/misc/capture_context_linux.S",
+        "third_party/crashpad/crashpad/util/misc/capture_context_test_util_linux.cc",
+        "third_party/crashpad/crashpad/util/net/http_transport_libcurl.cc",
+        "third_party/ipcz/src/ipcz/buffer_id.h"
+      ]
+    },
+    {
+      "repository": "src/third_party/angle",
+      "paths": [
+        "gni/angle.gni"
+      ]
+    },
+    {
+      "repository": "src/third_party/ffmpeg",
+      "paths": [
+        "chromium/config/Chromium/linux/riscv64/config.h",
+        "chromium/config/Chromium/linux/riscv64/config_components.h",
+        "chromium/config/Chromium/linux/riscv64/libavcodec/bsf_list.c",
+        "chromium/config/Chromium/linux/riscv64/libavcodec/codec_list.c",
+        "chromium/config/Chromium/linux/riscv64/libavcodec/parser_list.c",
+        "chromium/config/Chromium/linux/riscv64/libavformat/demuxer_list.c",
+        "chromium/config/Chromium/linux/riscv64/libavformat/muxer_list.c",
+        "chromium/config/Chromium/linux/riscv64/libavformat/protocol_list.c",
+        "chromium/config/Chromium/linux/riscv64/libavutil/avconfig.h",
+        "chromium/config/Chromium/linux/riscv64/libavutil/ffversion.h",
+        "chromium/scripts/build_ffmpeg.py",
+        "chromium/scripts/copy_config.sh"
+      ]
+    },
+    {
+      "repository": "src/third_party/swiftshader",
+      "paths": [
+        "src/Vulkan/BUILD.gn"
+      ]
+    },
+    {
+      "repository": "src/third_party/webrtc",
+      "paths": [
+        "pc/legacy_stats_collector.cc"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": ".gclient",
+      "sha256": "d378f620fd2733e73c9a6cea80e5548d87f955180a268ecc804d5636fc4cf44a"
+    },
+    {
+      "path": ".gclient_entries",
+      "sha256": "93e06b88874314b910e28e9b7dc43e724eea2318a2e4222e95c867112885045c"
+    },
+    {
+      "path": "BUILDING-RISCV64.txt",
+      "sha256": "531dd84e4cfb9a1c3aa70938132835b7773f893434cb68a74e87748ca6049d18"
+    },
+    {
+      "path": "args-riscv64.gn",
+      "sha256": "18e92cbf3c4bc21feb87324ba3076ce1395f8879e56965ccbfaeb859d75fd1a1"
+    },
+    {
+      "path": "build-riscv64.sh",
+      "sha256": "1d87b7282e3a9fc8b2e8c27e0b413799db19fa21d4bfca435407cde9912c615b"
+    },
+    {
+      "path": "configure-and-build.sh",
+      "sha256": "7f7e755d6a1c0d87fd538ab190c1f693f6bc2c8cdd198c3c992bdc55a1b08024"
+    },
+    {
+      "path": "fetch-pinned-dependency.sh",
+      "sha256": "be161aab08f14ecddeb0d0f4fd0ab757716d3fa94f388660875c55be7138fb12"
+    },
+    {
+      "path": "gui/desktop-verified.png",
+      "sha256": "8a8a6508078a47eb8cf553765eb654b3744cdf14dc743131067d120f2d5d4116"
+    },
+    {
+      "path": "gui/ubuntu-riscv-gui.ext4",
+      "sha256": "9a9b656f654ed0a3783385e6bd153775ea56dfe62de85cd8b155ed798c2f9558"
+    },
+    {
+      "path": "gui/verification.json",
+      "sha256": "52172e5645486a3e86489048fec4f09267dd3a1b82f6b4348f9800372c8e3b1f"
+    },
+    {
+      "path": "install-target-libraries.sh",
+      "sha256": "23e7e81d079e645bdcd12d3ed59b26a14405ef7f3752ac22028cdf647ad80831"
+    },
+    {
+      "path": "logs/blink-paint-layer-compile-check.log",
+      "sha256": "b3c41bfd6fd312d685564185098513b94a6e3b90467cf6e7ae9c7c0dce0ec6c1"
+    },
+    {
+      "path": "logs/build-state.json",
+      "sha256": "2ac31387f202e9da37058b1d30c572baa26db49c9337022a5a8af33e91fe47fc"
+    },
+    {
+      "path": "logs/gui-guest-system-info.txt",
+      "sha256": "7d36d2e613b766d6cf0f7dd7bbbb265710583c107371cbed1a39e193437722ff"
+    },
+    {
+      "path": "logs/kerberos-compile-check.log",
+      "sha256": "8cdb7edf57a9f0857a0363706b20cc1e1f794a642e74390faba81460bcdccda1"
+    },
+    {
+      "path": "prepare-ffmpeg-riscv64.sh",
+      "sha256": "c0586804f396abcfc538e6f62b675636d278490c4a90d71037c95cb77181c339"
+    },
+    {
+      "path": "prepare-host-tools.sh",
+      "sha256": "e88c2e3f6c2d0ebc4a1380407f3206f898265394fb9f9163b78674a33230fcc9"
+    },
+    {
+      "path": "prepare-riscv-sysroot.sh",
+      "sha256": "cd8b63d0ba1df0690ecd5f36e1a138e42493cfbb1ceb2bbe452e71f5bf624ede"
+    },
+    {
+      "path": "prepare-unbundled-driver.py",
+      "sha256": "116cbaeb2f29445da8f0f71f0b0300a77ceea95c6e2382fa8eb146df598b4250"
+    },
+    {
+      "path": "src/base/record_replay_driver.cc",
+      "sha256": "d304779b83f9a6a482752a72d8c69d4a5efb00e4b5af37e1ba4d11703d869966"
+    },
+    {
+      "path": "src/base/record_replay_driver.h",
+      "sha256": "ef782bec611cc6c13bb4ef298ee082918a1655861692e05dc08099d2383f69ac"
+    },
+    {
+      "path": "src/build/config/posix/BUILD.gn",
+      "sha256": "c8871f0729f21f235d9801d5d456debcd65eb7c13e734ad875ccc2bb68c5495d"
+    },
+    {
+      "path": "src/cc/layers/mirror_layer_impl.h",
+      "sha256": "287f69c5ddd33f25cd2c5f17ebf57018b3046f6774ec1d047906c689ba4e8bee"
+    },
+    {
+      "path": "src/third_party/angle/gni/angle.gni",
+      "sha256": "a4f3122f39388dc057b7caf62755b2bd74675c48aa2f99c018b95db7f7f0cc68"
+    },
+    {
+      "path": "src/third_party/blink/renderer/core/paint/paint_layer.cc",
+      "sha256": "e882960a091739c358c46e8faa47c3ba2bd16631eaf90543c0e9670014140a0a"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_context.h",
+      "sha256": "b0fd7245b1e9a8b6d80c53645fff65033f4bf7c38941a4e4f5d887f337f23e53"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_context_writer.cc",
+      "sha256": "c8dc33a44a97f4b659199725c3b577d9c4a4fdb4a6ce12cef74136d550ae0462"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_context_writer.h",
+      "sha256": "598b86787df8f6aeb2d0a56d2b8bc7ec9b57b9adce59beb3462c4f8f1a6bde55"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_context_writer_test.cc",
+      "sha256": "8c0b84fe59b858200a6dcec5926cf10ed83a9f5344a2dbd08e73f61ca0d51b2c"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_extensions.h",
+      "sha256": "a91553cc5ca076f49115ecfe45e5097241b4aed819cebef4982f78cdcd9f15a7"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_misc_info_writer.cc",
+      "sha256": "3c4909ddad98a3664e9c21071cb1c46802df73296dbf48569ebaf7d5818dba13"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/minidump_system_info_writer.cc",
+      "sha256": "001ad2991fce20a15944fa2d34a769770470c61bf0b6d3addc149a447c864bea"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/test/minidump_context_test_util.cc",
+      "sha256": "2018f286101b15213401e3366b7e5a342025c5a6fa6c0183d7ec8899f8f00cbc"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/minidump/test/minidump_context_test_util.h",
+      "sha256": "4d3c21a628f509117d6bd5e6e37dc3394ef8a6e1727cb61310e7c1082a057467"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/capture_memory.cc",
+      "sha256": "2bde604ac673e5834a2bfef7037c08d7cd1d51d12427d13683e3c8cea28dcf38"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/cpu_architecture.h",
+      "sha256": "dd9bedae878341cd1f15c0a12234e059b74d452a8d8dbbb3232c5697257beb8a"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/cpu_context.cc",
+      "sha256": "cb619538451ba2a5404922cdbcb5414698005a56d6b268f18f66bfad660f0ab7"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/cpu_context.h",
+      "sha256": "6119f9e22c5fef2300ca1acb31b5bf0d1ce1ba54e84f427723ca0514f01bc535"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/elf/elf_image_reader.cc",
+      "sha256": "b332860da39449c2a754554be1736a16275a5597ff0e520d48d70b6bffb8e1ce"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/cpu_context_linux.cc",
+      "sha256": "66d078a40e9bf2e5858f15eed13e344ee037aaa30fe038eb43d23dc2374d07a4"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/cpu_context_linux.h",
+      "sha256": "6705cfa4790ef309d255cf97ba72582ba3ea1bcefda54e3d41d9ff8327d46a72"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux.cc",
+      "sha256": "c1894b249a704c11489c7bc473e9715d4037a4dd9c1e356e99cc69b5f7edff77"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux.h",
+      "sha256": "baee0866adecafaaf6c69caa33018912471e27681b5c1c42074c42ef26795514"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/exception_snapshot_linux_test.cc",
+      "sha256": "8de3364cf8d7d2ea12857ba9191dfa3100d4d3080f769b279cf1bd721022f76a"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/process_reader_linux.cc",
+      "sha256": "779dba126afcc7f827627fd6f50dc168cb88bb7e9a77a5a57594372bc2bebc5f"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/signal_context.h",
+      "sha256": "6bd6cc0d6f48fb04921e32401573e0e25aa142f520cc0f0b81377e5b746ac325"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/system_snapshot_linux.cc",
+      "sha256": "9aea66da81711fb12b2f9b4e9f793f75043b472ee839b9e9569f33bc5e13c6e4"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/test_modules.cc",
+      "sha256": "0d7b8dde4b1792744128f9943b2be638e12c192078c3dafcbddc1b34117f5bb5"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/thread_snapshot_linux.cc",
+      "sha256": "012c6d7826fd1800bb98bf58072d911bc598f4423c5ab6bba71e199316c3bd98"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/linux/thread_snapshot_linux.h",
+      "sha256": "f67d0360344158805099bbfa0f720d6a8b270056b445cbcb476985ef1dd0a22a"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/minidump/minidump_context_converter.cc",
+      "sha256": "8877d66110679aff425420c59fa12d956b6c7eb55fccc8af2b0903a96f8a1aa8"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/minidump/system_snapshot_minidump.cc",
+      "sha256": "a57350430389785bc5fa049f316f76fa4ce3bfe9b7bd85ff307ecd42b87989e3"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/test/test_cpu_context.cc",
+      "sha256": "45c3201a7349c677da0bccc089134641b88b385d8e3d9c02ca789078a05a33d0"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/snapshot/test/test_cpu_context.h",
+      "sha256": "7a4f62d140b303057a11d99837e5f8b1c1e2d91f629ca29c9a82eae87bc1971b"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/test/linux/get_tls.cc",
+      "sha256": "7fb1fae2bb48033b528a31c9541b00c2973cb18a611c315a5c1691717840e3f5"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/linux/auxiliary_vector_test.cc",
+      "sha256": "0e11a062d6c57535a6093c776d8505af09e55064a1f7fdb5a1c02d4e35832b64"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/linux/ptracer.cc",
+      "sha256": "28fd43d4453a4b7408d9042035893a483f14709ac5c15fd40807d4b0ba669e8d"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/linux/thread_info.h",
+      "sha256": "f6a9a64384623b0f598b9fd353e464a8ef060a0020bd8c9ed53fef9d9b55f22d"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/misc/capture_context.h",
+      "sha256": "6ef8430b3538b0deaf501c4e712510b1fee4f497f17b6bf93ae31814b147d36f"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/misc/capture_context_linux.S",
+      "sha256": "adafdede5dde494cac3aa5a87769f5c53dc08be04a8c04bd2e26fd7554618d04"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/misc/capture_context_test_util_linux.cc",
+      "sha256": "56b73fe9dafa8b65225817cb3e75c433d8014974178d1f75b4155d3920baad43"
+    },
+    {
+      "path": "src/third_party/crashpad/crashpad/util/net/http_transport_libcurl.cc",
+      "sha256": "0599b2e5323ebb817f932ca7126dc437edd22dd78c086ce94355f6111c739be8"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/config.h",
+      "sha256": "0ed66d66ec2ab2b5c5d76b168144ac1dbf0239d888d017f80e60c3250e2fd714"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/config_components.h",
+      "sha256": "9ac5fefb1bbef07bb58a6203369d00ab669618221422e321afc990bfdded42cb"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavcodec/bsf_list.c",
+      "sha256": "bdd8790c519c97b62a52edba0b6d0b2241695e08d3c03bf026984c5e21a3e8a7"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavcodec/codec_list.c",
+      "sha256": "150bc5ff7c9ff8558224a32f0940ec531891bb9de812f46e7adaa361e70caa30"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavcodec/parser_list.c",
+      "sha256": "3736bb213f204f6831bb9a6df2e7524452a76edb55fdb621a11002df079b7b4c"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavformat/demuxer_list.c",
+      "sha256": "b2422dc8b56fbb4d6c103d2ce2cdacc0f82b8181a560a8849c2f6460b88c1149"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavformat/muxer_list.c",
+      "sha256": "4c5f3df77a6f18a739571693f4e3ea48ed9b0c41cd8ec56c25327dbe4af87f00"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavformat/protocol_list.c",
+      "sha256": "20390d2af0b45f7de454ca6f3b806275de063a3de97e80feea6857da98e60b67"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavutil/avconfig.h",
+      "sha256": "6d78a911a2128e926262114c9904209209674e3bc1a18c208c850ecbfc3393ec"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/config/Chromium/linux/riscv64/libavutil/ffversion.h",
+      "sha256": "8107bf6d11736286513dcb1c102a8917ce78e205b22295f1fe933a24873d773b"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/scripts/build_ffmpeg.py",
+      "sha256": "d2102c008a49ea35079d110d64aa983eb41fb315f1e3a7b7906337d5c9ff5c22"
+    },
+    {
+      "path": "src/third_party/ffmpeg/chromium/scripts/copy_config.sh",
+      "sha256": "2f37a63020026c85f654f37829954b88b3a197c7a604aecd71fd72642c4aa7b1"
+    },
+    {
+      "path": "src/third_party/ipcz/src/ipcz/buffer_id.h",
+      "sha256": "a0872d5b2951e209b854c1054c1ad9cda20d0b7228c3da11413f2b7049afc4df"
+    },
+    {
+      "path": "src/third_party/swiftshader/src/Vulkan/BUILD.gn",
+      "sha256": "5d8b37b9cc18dd1cbc569e33441e6695160c1e30038cca916d2568a2766afa4a"
+    },
+    {
+      "path": "src/third_party/webrtc/pc/legacy_stats_collector.cc",
+      "sha256": "ed4955a08c1b204f427aa7610971c8c3285155413b7b820bfc8902585703f80b"
+    },
+    {
+      "path": "sync-dependencies.sh",
+      "sha256": "262f37283e1b072ac25fdaa1b3aa298d01d2fb481b437aa1fbe876e1a8aa8bae"
+    },
+    {
+      "path": "verify-clang18-compatibility.py",
+      "sha256": "af7cd52af1e12302c5e511d45dfdeae0c9040918c3d36247a9b4ec88b731a93e"
+    },
+    {
+      "path": "verify-crashpad-context.sh",
+      "sha256": "6a7d8eb6b705486fab339ceb5a5ff5f4efcd9e7d1508c1db6bbf5825aa4e80e8"
+    },
+    {
+      "path": "verify-riscv64.sh",
+      "sha256": "9b54cca1c4b49c333b8f669ea56b7ce0822cad00f8f097444b5f04d8111f237d"
+    }
+  ],
+  "patches": [
+    {
+      "name": "angle-riscv64.patch",
+      "sha256": "2fa5cebbd9a0d0d447670308ffaf8e57fb5b7a411c086757783030e46371ea62"
+    },
+    {
+      "name": "blink-paint-layer-size.patch",
+      "sha256": "867505f9af18581aa3c6d08c1a0234637a8ddfd2b569a6b758e70f98eb404c29"
+    },
+    {
+      "name": "chromium-riscv64.patch",
+      "sha256": "2e679c1614f55ae678b79654d62fe48096085659602aab6beea4426246563275"
+    },
+    {
+      "name": "crashpad-riscv64-upstream.patch",
+      "sha256": "6ed06d00fb6e56730c6630a998b987e19c67afd7405aea0777800fc314d23b0b"
+    },
+    {
+      "name": "ffmpeg-riscv64.patch",
+      "sha256": "6c1f802dbfd42b9977a5912bf62d1161a5e64a74e013c30af7ebd7baca794fa2"
+    },
+    {
+      "name": "ipcz-clang18.patch",
+      "sha256": "cbc15ecbd64c4ecc73de48d0e5b3c74b75ae1c71ba61bee924710e5f727bbf37"
+    },
+    {
+      "name": "mirror-layer-clang18.patch",
+      "sha256": "2792ad56eb2b5733d901086e846d904fe14aa19372032bb65b88112bff62dfaf"
+    },
+    {
+      "name": "swiftshader-lld.patch",
+      "sha256": "518c1b2d08859a2e75a422c7052eb3fae43fa2165edb872d26fb1d040f45852d"
+    },
+    {
+      "name": "webrtc-clang18.patch",
+      "sha256": "971d8196af9631aae8254842a94ccbabb559aec19d1ae317c3eb649727c88c4c"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "licenses/chromium.txt",
+      "source_path": "src/LICENSE",
+      "sha256": "368cca1106be99d39ecd32a38d8305585d802a475effb66380b91ffc9bcf709b"
+    },
+    {
+      "path": "licenses/crashpad.txt",
+      "source_path": "src/third_party/crashpad/crashpad/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/ipcz.txt",
+      "source_path": "src/third_party/ipcz/LICENSE",
+      "sha256": "8938c6deca58d85570c8887b6abf2c415e444299b7ec8752fcdb4e40935d8794"
+    },
+    {
+      "path": "licenses/angle.txt",
+      "source_path": "src/third_party/angle/LICENSE",
+      "sha256": "bf4da21bd20bcfb5b60b7ecc67fa864a79be049e21d6178076887f178dd6c71a"
+    },
+    {
+      "path": "licenses/ffmpeg-lgpl2.1.txt",
+      "source_path": "src/third_party/ffmpeg/COPYING.LGPLv2.1",
+      "sha256": "b634ab5640e258563c536e658cad87080553df6f34f62269a21d554844e58bfe"
+    },
+    {
+      "path": "licenses/swiftshader.txt",
+      "source_path": "src/third_party/swiftshader/LICENSE.txt",
+      "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+    },
+    {
+      "path": "licenses/webrtc.txt",
+      "source_path": "src/third_party/webrtc/LICENSE",
+      "sha256": "ab00a482b6a3902e40211b43c5d0441962ea99b6cc7c25c0f243fa270b78d482"
+    }
+  ]
+}
