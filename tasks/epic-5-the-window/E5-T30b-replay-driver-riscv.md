@@ -3,7 +3,7 @@ id: E5-T30b
 epic: 5
 title: Generate genuine RISC-V call bridges for the local Replay driver
 priority: 0.3812
-status: implemented
+status: verified
 depends_on: [E5-T30a]
 estimate: S
 risk: high
@@ -77,3 +77,21 @@ cache API. Ten malformed-input cases require the real driver's fatal source
 location/reason, and the generated breakpoint executes as SIGTRAP. This proves
 the local generated-call boundary, not physical cache hardware, ELF attachment,
 browser recording, or replay. Those remain required subsequent gates.
+
+### 2026-11-03 — verifier
+
+VERDICT: verified
+
+Private head: `7c5e9e37807ce1bd0b31fd5fe9e446276ec99bef`.
+
+Private verdict:
+`local/chromium-riscv64/driver/critic-call-abi-7c5e9e3/verdict.md`.
+SHA-256: `d9fd4ad1bf2e0d14f0c3a262545497826fb71d0b01e008dc43c97c54e028e07b`.
+
+Private coverage:
+`local/chromium-riscv64/driver/critic-call-abi-7c5e9e3/coverage.md`.
+SHA-256: `ebcdedfcfd7d6cea3482959e941f2b2149690a66be6bc58958fc21f635e6e9d8`.
+
+Private proof manifest:
+`local/chromium-riscv64/driver/critic-call-abi-7c5e9e3/verifier-manifest.json`.
+SHA-256: `43e058314e6d76ad920e12e09195d4095cccfd34bc9ec3a49e38d80bc4edcb58`.
