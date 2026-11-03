@@ -3,7 +3,7 @@ id: E5-T30d
 epic: 5
 title: Attach the real RISC-V Replay driver and validate genuine recordings
 priority: 0.3814
-status: implemented
+status: verified
 depends_on: [E5-T30c]
 estimate: S
 risk: high
@@ -111,3 +111,32 @@ Full private source, binaries, recordings, decoded streams, negative probes and
 serial transcripts remain local. Public changes contain task/evidence metadata
 only. No emulator semantic change, browser-source change, private upload, Replay
 push/PR, GitHub Actions, or merge is part of this submission.
+
+### 2026-11-03 — fresh verifier — VERDICT: verified
+
+- P1–P6 — HELD. Independently checked the frozen source and artifact bindings,
+  actual recorded inputs and consumed output, native component/reader evidence,
+  negative cases, one bounded novel corruption, and a private scratch sabotage.
+  The unchanged T30a/T30b/T30c HELD results carry forward.
+- COVERAGE — all 15 changed hunks across 11 private files are exercised or waived
+  with specific reasons. No unproven runtime hunk remains in this scoped claim.
+- SUITE — retained deterministic corruption and scratch falsification artifacts
+  privately. No private implementation, recording bytes, or full logs are copied
+  into the public repository.
+
+Worker submission: `8551c8d7e2467d832b7f495781ff47928d64ddd0`. The official
+`recording-final-framing/report.json` digest remains
+`586c45941242b9ccdbdef92a3e37fbce6641600c821badcd497cf0d0d4d98094`.
+Predictions, exact commands, source/input comparisons, evidence points, coverage,
+and full results remain below
+`local/chromium-riscv64/driver/critic-recording-a92baa3/`:
+
+- `verifier-manifest.json`:
+  `f937ca4a5c96a59f52b7ce8a9f051578d0f8509eeec7a2515e7e814ddc947628`.
+- `verdict.txt`:
+  `e92bb03ea132bea66cf4f11fcad6831a59876f8c76b6eeb305e61be0eeda678a`.
+
+This verifies the labelled reference recording and production reader on native
+wasm-vm. Backend instruction re-execution and native browser/GUI integration remain
+separate claims. Repository checks: `python3 tools/check_task_policy.py`, then
+`python3 tools/build_queue.py`.
