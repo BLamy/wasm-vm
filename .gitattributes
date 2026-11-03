@@ -8,3 +8,6 @@ tools/chromium/licenses/*.txt -text -whitespace
 # Preserve the built external port archives byte-for-byte.
 tools/chromium/built/*.patch -text -whitespace
 tools/chromium/built/*LICENSE.txt -text -whitespace
+
+# Serial evidence retains its original CRLF and terminal control bytes.
+evidence/e0-t34/reference/*.log -text -whitespace
