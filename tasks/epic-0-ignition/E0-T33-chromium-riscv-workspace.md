@@ -3,7 +3,7 @@ id: E0-T33
 epic: 0
 title: Preserve the local Replay Chromium RISC-V build workspace
 priority: 0.36
-status: in-progress
+status: implemented
 depends_on: [E0-T32]
 estimate: S
 risk: low
@@ -56,3 +56,35 @@ Requested directly by the user while cleaning old worktrees and updating to main
 Parent E0-T32 is verified. Based on `origin/main` at
 `24e2a1a639993394f6dbddc74970eeeac8c0f054`; previous local edits and worktree proofs
 are preserved outside this task's diff.
+
+### 2026-11-03 — worker — implemented
+
+Frozen product head: `d7afe1dffdba5bb6ffcc6df6b2f54f3f66a12438` above activation
+`0c0148060`. Evidence: `evidence/e0-t33/worker.json` and `worker.txt`; transcript
+SHA-256 `a9660cf492e4ecd9f795a749c2529a49d5d82364bf6753471e8684510c788976`.
+The JSON binds every product file's bytes to this head and records each command
+and exit code. Commands, all exit 0:
+
+```sh
+git diff --check HEAD^ HEAD
+python3 -m py_compile tools/chromium/check-local-copy.py
+python3 tools/check_task_policy.py
+python3 tools/chromium/check-local-copy.py
+```
+
+The retained copy contains 724,964 files (24,912,955,843 logical bytes before the
+small follow-up compile records). The direct check validates 125 installed Git
+repository heads, 81 source/setup/evidence files (including the GUI raw-image
+digest), 9 port patches, and 7 license notices. It checks the real Git directories
+are inside the project copy, expected source-change sets, Git/Docker exclusions,
+and the absence of sandbox changes or a complete Chrome executable in this
+checkpoint. The active container's subsequent build 12 completed 1,761 actions
+and failed only on 29 sandbox actions; the user has since explicitly approved
+the local sandbox backport and tests. That follow-up is outside this preserved
+pre-backport snapshot and outside this task's correctness claim.
+
+All changed runtime-looking lines are inert archival patch data, not applied by
+the new check. The claim is preservation and honest provenance, not validity of
+those external runtime changes. No Rust, wasm, demo, CI, or deploy behavior changes;
+guest execution evidence and those build/browser gates are inapplicable here.
+Only a fresh verifier may promote this task to verified.
