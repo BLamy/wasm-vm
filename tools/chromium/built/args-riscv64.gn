@@ -1,0 +1,39 @@
+# Linux RISC-V target, native ARM64 Linux build tools.
+target_os = "linux"
+target_cpu = "riscv64"
+is_clang = true
+clang_base_path = "/usr/lib/llvm-18"
+clang_use_chrome_plugins = false
+host_toolchain = "//build/toolchain/linux:clang_arm64"
+v8_snapshot_toolchain = "//build/toolchain/linux:clang_riscv64"
+use_sysroot = false
+target_sysroot = "/opt/replay-riscv-sysroot"
+system_libdir = "lib/riscv64-linux-gnu"
+use_custom_libcxx = true
+pkg_config = "/usr/bin/pkg-config"
+host_pkg_config = "/usr/bin/pkg-config"
+
+# Local release build with reduced disk and linker memory requirements.
+is_debug = false
+is_component_build = false
+dcheck_always_on = false
+symbol_level = 0
+blink_symbol_level = 0
+v8_symbol_level = 0
+treat_warnings_as_errors = false
+use_remoteexec = false
+use_goma = false
+use_lld = true
+use_gold = false
+chrome_pgo_phase = 0
+concurrent_links = 1
+
+enable_nacl = false
+use_allocator = "none"
+use_allocator_shim = false
+
+# Ubuntu 24.04 uses libsecret; the legacy GNOME keyring API was removed.
+use_gnome_keyring = false
+
+# Build Blink contexts at runtime during this cross build.
+use_v8_context_snapshot = false

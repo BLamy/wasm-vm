@@ -1,0 +1,21 @@
+{
+  "target": "riscv64-linux-gnu LP64D",
+  "source_revision": "f2472ba7bee0ed0d91736df49035af867cce6692",
+  "version": "108.0.5359.0",
+  "driver": "unbundled; normal browsing only",
+  "files": {
+    "chrome": "df9b431511f435c463e5d39f3dde30d2d204e06105685b601b8ce2372819b8ef",
+    "chrome_crashpad_handler": "65d5c7826b72225e0a80e23a11b89dd90d189443bf530547e2003debb77e6107",
+    "chrome_100_percent.pak": "b9e388df551fc3fbe23b13441577d001a2fe3cb208e7afe91cd72b44c9c1470e",
+    "chrome_200_percent.pak": "6c8a8e65ff5fe21a3c31a3eb5be1642adcb600903e5d1dad2f9173b6b48056ee",
+    "resources.pak": "de7504c00ce5d94eb8193c17bdc2635a9d736ddf13726e5e476fcd9a4d8b8ac1",
+    "icudtl.dat": "762a0ae89a8cbf8b5173cc33e1104c6b9321251588a7baa445156a69ba4f69c9",
+    "snapshot_blob.bin": "f78b815ec3f7b46f72d24282f734dcb2ed48ceadebc8af7925d53d7553dd2a32",
+    "locales/en-US.pak": "5f017fec41b7e6b5fa011a874a07892086ba301c4ff35e7fa0ca0a758aceb681",
+    "libEGL.so": "2bedc402f48a4a0616644812aaa2ef1b6b9824742f3d58550a5912c83e0982c8",
+    "libGLESv2.so": "d51c3f53b4944bae1132ea3f0aef22a37a28e631eed3dd1adda6b4c06eb2b83c",
+    "libvk_swiftshader.so": "8fb66ed5e3573c535eec46559941596dbcb5c59e13d340a6f4a9f1fa606fc80c",
+    "libvulkan.so.1": "2fdb88b5143f99199423aaf1aebb8fd7d18e45752ffa180084eaee84c75b81ed",
+    "vk_swiftshader_icd.json": "c9eef28b6b984fec220ef0abfecc40b502d46946706e47bfe97707027cb818bd"
+  }
+}

@@ -1,0 +1,18 @@
+printf '%s' 'c2V0IC1ldW8gcGlwZWZhaWwKY2QgIiRIT01FL2Nocm9taXVtLXNtb2tlL3JlcGxheS1jaHJvbWl1bSIKZXhlYyAzPD4vZGV2L3RjcC8xMC4wLjIuMi84NTMwCnByaW50ZiAnR0VUIC9idWlsZDIwL3NhbmRib3hfbGludXhfdW5pdHRlc3RzIEhUVFAvMS4wXHJcbkhvc3Q6IGxvY2FsaG9zdFxyXG5cclxuJyA+JjMKSUZTPSByZWFkIC1yIHJlc3BvbnNlIDwmMwpbWyAiJHJlc3BvbnNlIiA9PSAqJyAyMDAgJyogXV0Kd2hpbGUgSUZTPSByZWFkIC1yIGhlYWRlciA8JjM7IGRvIFsgIiRoZWFkZXIiID0gJCdccicgXSAmJiBicmVhazsgZG9uZQpjYXQgPCYzID4gc2FuZGJveF9saW51eF91bml0dGVzdHMubmV3CmV4ZWMgMzwmLQpjaG1vZCAreCBzYW5kYm94X2xpbnV4X3VuaXR0ZXN0cy5uZXcKc2hhMjU2c3VtIHNhbmRib3hfbGludXhfdW5pdHRlc3RzLm5ldwptdiBzYW5kYm94X2xpbnV4X3VuaXR0ZXN0cy5uZXcgc2FuZGJveF9saW51eF91bml0dGVzdHMKdWxpbWl0IC1jIDAKZXhwb3J0IFJFQ09SRF9SRVBMQVlfRE9OVF9SRUNPUkQ9MQp0aW1lb3V0IDYwMCAuL3NhbmRib3hfbGludXhfdW5pdHRlc3RzIC0tZ3Rlc3RfY29sb3I9bm8gLS10ZXN0LWxhdW5jaGVyLWpvYnM9MSAtLXRlc3QtbGF1bmNoZXItcmV0cnktbGltaXQ9MCA+IC4uL3NhbmRib3gtdGVzdHMtYnVpbGQyMC5sb2cgMj4mMQpyZXN1bHQ9JD8KdGFpbCAtMTQgLi4vc2FuZGJveC10ZXN0cy1idWlsZDIwLmxvZwpleGl0ICIkcmVzdWx0Igo=' | base64 -d > /tmp/replay-387cc5c2f8104f8eb4d7f90ebaf06f04.sh; bash /tmp/replay-387cc5c2f8104f8eb4d7f90ebaf06f04.sh; replay_result=$?; printf '\n__REPLAY_END_387cc5c2f8104f8eb4d7f90ebaf06f04:%s\n' "$replay_result"
+[?2004l14e72a5ca6982fc6c04ba44e999cc77545a975fe7999db5f1efdc67dc8f82154  sandbox_linux_unittests.new
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test suite ran. (2818 ms total)
+[  PASSED  ] 8 tests.
+[331/338] SandboxTypeTest.Empty (3 ms)
+[332/338] SandboxTypeTest.Renderer (1 ms)
+[333/338] SandboxTypeTest.Utility (16 ms)
+[334/338] SandboxTypeTest.UtilityDeath (2777 ms)
+[335/338] SandboxTypeTest.GPU (1 ms)
+[336/338] SandboxTypeTest.PPAPIPlugin (1 ms)
+[337/338] SandboxTypeTest.Nonesuch (0 ms)
+[338/338] SandboxTypeTest.ElevatedPrivileges (1 ms)
+SUCCESS: all tests passed.
+Tests took 166 seconds.
+
+__REPLAY_END_387cc5c2f8104f8eb4d7f90ebaf06f04:0

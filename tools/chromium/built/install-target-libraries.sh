@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
+apt-get install -y --no-install-recommends libasound2-dev:riscv64 libatk1.0-dev:riscv64 libatk-bridge2.0-dev:riscv64 libatspi2.0-dev:riscv64 libcap-dev:riscv64 libcups2-dev:riscv64 libdbus-1-dev:riscv64 libdrm-dev:riscv64 libexpat1-dev:riscv64 libgbm-dev:riscv64 libglib2.0-dev:riscv64 libgtk-3-dev:riscv64 libkrb5-dev:riscv64 krb5-multidev:riscv64 libnspr4-dev:riscv64 libnss3-dev:riscv64 libpango1.0-dev:riscv64 libpci-dev:riscv64 libpulse-dev:riscv64 libudev-dev:riscv64 libva-dev:riscv64 libwayland-dev:riscv64 libx11-dev:riscv64 libx11-xcb-dev:riscv64 libxcomposite-dev:riscv64 libxcursor-dev:riscv64 libxdamage-dev:riscv64 libxext-dev:riscv64 libxfixes-dev:riscv64 libxi-dev:riscv64 libxkbcommon-dev:riscv64 libxrandr-dev:riscv64 libxrender-dev:riscv64 libxshmfence-dev:riscv64 libxss-dev:riscv64 libxtst-dev:riscv64 zlib1g-dev:riscv64
+apt-get install -y --no-install-recommends libglib2.0-dev libkrb5-dev krb5-multidev libdbus-1-dev libfontconfig1-dev libfreetype-dev libx11-dev libxext-dev zlib1g-dev libwayland-bin python3-httplib2 python3-jinja2 python3-pyparsing python3-six
