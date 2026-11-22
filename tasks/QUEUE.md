@@ -38,7 +38,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `0.382` [E5-T29b](epic-5-the-window/E5-T29b-replay-chromium-native-boot.md) — Run recording-capable Replay Chromium on native wasm-vm and capture its image pair *(deps: E5-T29a, E5-T30d)*
 - [ ] `0.383` [E5-T29c](epic-5-the-window/E5-T29c-replay-chromium-browser-profile.md) — Launch and use the Replay Chromium desktop in the wasm-vm demo *(deps: E5-T29b)*
 - [-] `0.385` [E5-T32](epic-5-the-window/E5-T32-replay-chrome-157-riscv.md) — Replay Chrome 157 for riscv64, unbundled driver, client-shippable (planning parent) *(deps: E5-T31)*
-- [~] `0.3851` [E5-T32a](epic-5-the-window/E5-T32a-replay-chrome-157-source.md) — Sync Replay Chromium 157 source and toolchains for a riscv64 cross build *(deps: E5-T31)*
+- [?] `0.3851` [E5-T32a](epic-5-the-window/E5-T32a-replay-chrome-157-source.md) — Sync Replay Chromium 157 source and toolchains for a riscv64 cross build *(deps: E5-T31)*
 - [ ] `0.3852` [E5-T32b](epic-5-the-window/E5-T32b-replay-chrome-157-build.md) — Build optimized Replay Chrome 157 for riscv64 with the unbundled driver *(deps: E5-T32a)*
 - [ ] `0.386` [E5-T33](epic-5-the-window/E5-T33-replay-node-26-riscv.md) — Build Replay Node 26 for riscv64 with the unbundled driver *(deps: E5-T31)*
 - [-] `0.387` [E5-T34](epic-5-the-window/E5-T34-replay-shared-desktop-image.md) — Minimal single-fetch shared desktop OS for Replay Chrome 157 and Node 26 (planning parent) *(deps: E5-T32b, E5-T33)*

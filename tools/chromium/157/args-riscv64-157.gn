@@ -1,0 +1,17 @@
+# Replay Chromium 157 -> linux/riscv64 (rv64gc, LP64D), unbundled driver (E5-T32b).
+# Mirrors replay_build_scripts/linux_args.gn, minus remote execution.
+import("//replay_build_scripts/linux_args.gn")
+use_remoteexec = false
+target_os = "linux"
+target_cpu = "riscv64"
+use_sysroot = true
+
+# Size/speed for an emulated client: no symbols, release codegen.
+symbol_level = 0
+blink_symbol_level = 0
+v8_symbol_level = 0
+is_component_build = false
+treat_warnings_as_errors = false
+chrome_pgo_phase = 0
+concurrent_links = 2
+enable_rust = true
