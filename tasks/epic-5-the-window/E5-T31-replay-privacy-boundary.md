@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: in-progress
+status: implemented
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -125,3 +125,24 @@ index was left clean.
   the renamed real driver (returns 0), so the acceptance checks can fail.
 - SUITE: none promoted until the refutations clear. There are no committed tests for
   the guard; the fix should add them for the four cases above.
+
+### 2026-11-22 — worker — rework after refutation
+
+All four findings are fixed in `c64905af1`, with one regression test per finding
+(`python3 tools/privacy/test_check_no_replay_backend.py`, 12 tests, synthetic marker):
+1. Type changes: staged and range scans use `--diff-filter=ACMRT`.
+2. Symlinks: trees are walked with `followlinks=True` and cycle protection; a link
+   to a private file or directory is rejected, labelled `link -> target`.
+3. Compression: raw bytes are always scanned, and decoded bytes are scanned in
+   addition. A zstd decoder failure now raises instead of reading nothing. Real
+   driver behind a fake zstd header: rejected.
+4. History: `--git-range` scans every blob each commit in the range introduced.
+   At the user's direction, the two pushed commits holding the private build
+   identifier were rewritten (see the E5-T30d log) and force-pushed.
+
+Sabotage: reverting each fix in a scratch copy fails exactly its test. Real data:
+driver raw, copied, symlinked and fake-zstd all exit 1; real Chromium 108 `chrome`
+exits 0; `web/dist releases tools docs tasks` OK (25,582 files);
+`--git-range origin/main..HEAD` OK (190 blobs, every commit). The `zstandard`
+module path is waived (module absent here; the CLI path is exercised by the fake-zstd
+test and the real `zstd -19` stream).
