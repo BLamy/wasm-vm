@@ -3,7 +3,7 @@ id: E5-T32b
 epic: 5
 title: Build optimized Replay Chrome 157 for riscv64 with the unbundled driver
 priority: 0.3852
-status: pending
+status: in-progress
 depends_on: [E5-T32a]
 estimate: S
 risk: high
