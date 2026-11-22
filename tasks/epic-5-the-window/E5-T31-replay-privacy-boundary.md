@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: implemented
+status: verified
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -426,3 +426,68 @@ OK (every commit).
 
 Stated limits, adding r4's note: zip, jar and wheel members (raw deflate without a
 gzip header) and other undecoded formats are not decoded.
+
+### 2026-11-22 — fresh verifier (r5) — VERDICT: verified
+
+Head `232013897` (only an unrelated E5-T34a doc atop the guard rework `0fb0d6343`);
+base `origin/main` = `24e2a1a63` (fetched). Predictions written before each check.
+Markers cited by index only. Every real-driver copy and all scratch were `rm -rf`'d
+before finishing; the git index is clean.
+
+Carried forward HELD (code unchanged this round): git-history rewrite; pre-commit hook
+and deploy wiring (`tools/deploy-cloudflare.sh:228`, `tools/git-hooks/pre-commit:12`);
+fail-closed on missing lists (`--markers /nonexistent` → exit 2) and missing path
+(exit 1). The changed decode/carve code did not regress r1–r3: with the real driver,
+raw, renamed, gzip, xz, bzip2, zstd, nested gzip(xz), truncated gzip, a symlink, and an
+in-tar member all exit 1; a clean file exits 0.
+
+- (a) r4 FEXTRA-hidden streams — FIXED, own real-driver repro. Predicted exit 1 and that
+  the hidden payload is recoverable. Observed: the driver split into 24 xz slices, one per
+  gzip member FEXTRA field, benign deflate bodies (24 members, decoded output 528 bytes,
+  no driver). `gunzip -t` accepts it; carving the FEXTRA xz streams back out and
+  concatenating reproduces the driver's exact SHA-256. The guard returns 1 in 0.1 s,
+  standalone and inside a `rootfs.tar`, naming the private markers in the carved layers.
+  FNAME/FCOMMENT are NUL-terminated, so a NUL-containing stream cannot sit there verbatim;
+  the fix leaves those fields carvable regardless. xz/bzip2 header/padding: the whole
+  stream is covered, but no byte-aligned, independently-recoverable stream can be placed in
+  a successfully-decoded payload (its bytes are a function of the benign output), so no
+  recoverable hiding spot exists there.
+- (b) r4 disk-full write failure — FIXED. Predicted exit 1 under a tiny `RLIMIT_FSIZE`.
+  Observed: `gzip(60 MiB zeros + driver)` (453,652 bytes) decodes to ~61 MB; with
+  `RLIMIT_FSIZE`=1 MiB the staging write hits EFBIG and the guard exits 1 with
+  "could not stage decoded bytes (File too large); cannot prove it clean" (exit 1 without
+  the limit too). `_write_capped` now raises `_Unprovable` (not an `OSError`) on a failed
+  `out.write`, and `scan_file` additionally catches `OSError` around the flush, so ENOSPC
+  and EFBIG both fail closed rather than reading as end of stream.
+- (c) No regression — HELD. 30 committed tests OK; they drive the CLI with an independent
+  synthetic marker/digest written into a fresh list (not self-licking) and assert the
+  marker is absent from benign decoded output. Real build20 `chrome` accepted (exit 0,
+  2.4 s). `web/dist releases tools docs tasks` exit 0 (25,582 files scanned, ~168 s, peak
+  RSS 151 MB). `--git-range origin/main..codex/replay-private-boundary` exit 0 (212 blobs).
+  SABOTAGE: reverting the gzip header-field skip (`body_start` → `return pos`) makes the
+  real-driver FEXTRA file evade (exit 0) and fails the committed FEXTRA test — the fix is
+  load-bearing and guarded.
+- (d) Covered-interval / member-start abuse — HELD (no refutation). Only a member whose
+  payload decoded successfully adds a covered interval `(header_end, consumed)`; a corrupt
+  or truncated member returns without covering, so its range stays carvable (fail-safe).
+  The member-start byte `(pos, pos+1)` covers one byte, and a differently-typed stream
+  cannot start at the same offset (distinct magic first bytes). zstd returns no intervals,
+  so nothing inside a zstd region is ever skipped. A recoverable stream cannot be placed in
+  a covered deflate payload without either being emitted to output (then recursively scanned
+  — output is never covered) or corrupting the member (then not covered). No construction
+  evades.
+- (e) COVERAGE — all changed hunks executed: `_gzip_header_len` FEXTRA/FNAME/FHCRC branches
+  (novel full-FLG run), `body_start`, `_Intervals.add/contains` (long member chains),
+  `_write_capped`'s `_Unprovable`/OSError paths (EFBIG run), the `_Unprovable` catch in
+  `scan_file`, the zstd-spawn budget (committed test). `MAX_ATTEMPTS` is a simple guard
+  (waived, not hit). No dead changed code.
+- (f) NOVEL ATTACKS (distinct from all priors) — both caught. (1) Full-FLG hiding:
+  FEXTRA+FNAME+FHCRC flags all set, driver split into 24 FEXTRA xz slices, benign bodies —
+  exits 1, recovered to the exact driver SHA, exercising the FHCRC/FNAME header-length
+  branches the committed FEXTRA-only test does not. (2) zstd skippable frame (magic
+  0x184D2A50) carrying the raw driver appended to a benign zstd stream — exits 1 (zstd
+  marks nothing covered, so the raw-byte scan sees the verbatim driver).
+
+SUITE: the three r4-driven tests (FEXTRA hiding direct + in-tar, RLIMIT_FSIZE staging
+failure, zstd budget) are the right permanent artifacts and are already committed; the
+sabotage above confirms they fail when the fix is reverted. Nothing further to promote.
