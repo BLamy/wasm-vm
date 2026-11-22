@@ -12,8 +12,10 @@ in `local/private-boundary/` (gitignored). Without them this check FAILS CLOSED:
 publishing from a machine that cannot run the full check is refused.
 
 Usage:
-  check-no-replay-backend.py PATH...            scan files, directories, ext4/tar/cpio
-                                                 images (raw bytes) and .gz/.xz/.zst/.bz2
+  check-no-replay-backend.py PATH...            scan files and directories (following
+                                                 symlinks): raw bytes, plus every gzip/xz/
+                                                 bzip2/zstd stream at any offset (nested
+                                                 layers, members inside tar/cpio/ext4 images)
   check-no-replay-backend.py --git-range A..B    scan every blob each commit in A..B introduced
   check-no-replay-backend.py --staged            scan the git index (pre-commit)
   --markers FILE / --digests FILE                override the private list locations
@@ -26,6 +28,8 @@ import zlib
 import hashlib
 import lzma
 import os
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -45,100 +49,33 @@ def load_lines(path: Path) -> list[str]:
     return [l.strip() for l in path.read_text().splitlines() if l.strip() and not l.startswith("#")]
 
 
-class _ProcStream:
-    """A subprocess decoder's stdout that raises if the decoder fails (no silent empty read)."""
-
-    def __init__(self, proc):
-        self.proc = proc
-
-    def read(self, n):
-        data = self.proc.stdout.read(n)
-        if not data and self.proc.wait() != 0:
-            raise ValueError(f"decoder exited {self.proc.returncode}")
-        return data
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *exc):
-        self.proc.stdout.close()
-        if self.proc.poll() is None:
-            self.proc.kill()
-        self.proc.wait()
+# Compressed-stream signatures, searched at EVERY offset (binwalk-style carving), so
+# members embedded in tar/cpio/ext4 images and nested layers are decoded too.
+_SIG_RE = re.compile(rb"\x1f\x8b\x08|\xfd7zXZ\x00|BZh[1-9]1AY&SY|\x28\xb5\x2f\xfd")
+_SIG_LEN = 10
+_MAGIC = {"gzip": b"\x1f\x8b\x08", "xz": b"\xfd7zXZ\x00", "bzip2": b"BZh", "zstd": b"\x28\xb5\x2f\xfd"}
+FEED = 16 << 10       # input slice per decompress call: bounds per-member copies
+MAX_DEPTH = 4         # nested compression layers decoded before failing closed
+MAX_CARVES = 200_000  # decode attempts per file before failing closed
+MAX_DECODED = int(os.environ.get("PRIVACY_MAX_DECODED", 8 << 30))  # bytes per decoded layer
 
 
-class _IncrementalStream:
-    """Decode a compressed file chunk by chunk with decompressor objects.
-
-    Every byte decoded before a truncation, junk suffix or corrupt block is returned to
-    the scanner (file-object readers such as gzip.open lose the whole read call when they
-    raise). Concatenated members are followed; decoding stops quietly at the first byte
-    that does not start a valid member.
-    """
-
-    def __init__(self, path: Path, factory):
-        self.fh = path.open("rb")
-        self.factory = factory
-        self.dec = factory()
-        self.pending = b""
-        self.done = False
-
-    def read(self, n):
-        while not self.done:
-            data = self.pending or self.fh.read(CHUNK)
-            self.pending = b""
-            if not data:
-                self.done = True
-                break
-            try:
-                out = self.dec.decompress(data)
-            except (OSError, EOFError, lzma.LZMAError, ValueError, zlib.error):
-                self.done = True
-                break
-            if self.dec.eof:
-                rest = self.dec.unused_data
-                self.dec = self.factory()
-                self.pending = rest
-            if out:
-                return out
-        return b""
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *exc):
-        self.fh.close()
+def _kind(sig: bytes) -> str:
+    if sig.startswith(b"\x1f\x8b"):
+        return "gzip"
+    if sig.startswith(b"\xfd7z"):
+        return "xz"
+    if sig.startswith(b"BZh"):
+        return "bzip2"
+    return "zstd"
 
 
-def open_decoded(path: Path):
-    """Return (decoded stream, kind) for a recognised compressed file, else (None, None)."""
-    with path.open("rb") as probe:
-        magic = probe.read(6)
-    if magic[:2] == b"\x1f\x8b":
-        return _IncrementalStream(path, lambda: zlib.decompressobj(31)), "gzip"
-    if magic[:6] == b"\xfd7zXZ\x00":
-        return _IncrementalStream(path, lzma.LZMADecompressor), "xz"
-    if magic[:3] == b"BZh":
-        return _IncrementalStream(path, bz2.BZ2Decompressor), "bzip2"
-    if magic[:4] == b"\x28\xb5\x2f\xfd":
-        try:
-            import zstandard  # type: ignore
-        except ImportError:
-            proc = subprocess.Popen(["zstd", "-dcq", str(path)], stdout=subprocess.PIPE,
-                                    stderr=subprocess.DEVNULL)
-            return _ProcStream(proc), "zstd"
-        return zstandard.ZstdDecompressor().stream_reader(path.open("rb")), "zstd"
-    return None, None
-
-
-def scan_stream(stream, markers: list[bytes], found: set[bytes] | None = None) -> tuple[list[bytes], str]:
-    """Return (markers found, sha256 of the stream).
-
-    `found` is filled in place, so a caller that catches a mid-stream decode error
-    still sees every marker in the bytes decoded before the error.
-    """
-    keep = max(len(m) for m in markers) - 1
+def scan_stream(stream, markers: list[bytes], found: set[bytes] | None = None,
+                carve: set[tuple[int, str]] | None = None) -> tuple[list[bytes], str]:
+    """Return (markers found, sha256 of the stream); optionally collect carve offsets."""
+    keep = max(max(len(m) for m in markers), _SIG_LEN) - 1
     tail = b""
+    pos = 0
     found = set() if found is None else found
     digest = hashlib.sha256()
     while True:
@@ -150,8 +87,108 @@ def scan_stream(stream, markers: list[bytes], found: set[bytes] | None = None) -
         for m in markers:
             if m not in found and m in window:
                 found.add(m)
+        if carve is not None:
+            base = pos - len(tail)
+            for hit in _SIG_RE.finditer(window):
+                carve.add((base + hit.start(), _kind(hit.group())))
+        pos += len(block)
         tail = window[-keep:] if keep else b""
     return sorted(found), digest.hexdigest()
+
+
+class _LayerTooLarge(Exception):
+    pass
+
+
+def _write_capped(out, data: bytes, written: int) -> int:
+    written += len(data)
+    if written > MAX_DECODED:
+        raise _LayerTooLarge
+    out.write(data)
+    return written
+
+
+def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]:
+    """Decode the stream starting at `offset` into `out`, following concatenated members.
+
+    Returns (bytes written, input end offset or None if unknown). Every byte decoded
+    before truncation, junk or corruption is kept. Raises _LayerTooLarge past the cap.
+    """
+    written = 0
+    if kind == "zstd":
+        try:
+            import zstandard  # type: ignore
+        except ImportError:
+            zstandard = None
+        with src.open("rb") as fh:
+            fh.seek(offset)
+            if zstandard is not None:
+                reader = zstandard.ZstdDecompressor().stream_reader(fh, read_across_frames=True)
+                try:
+                    while chunk := reader.read(CHUNK):
+                        written = _write_capped(out, chunk, written)
+                except zstandard.ZstdError:
+                    pass
+                return written, None
+            if not shutil.which("zstd"):
+                raise FileNotFoundError("zstd decoder unavailable")
+            proc = subprocess.Popen(["zstd", "-dcq"], stdin=fh, stdout=subprocess.PIPE,
+                                    stderr=subprocess.DEVNULL)
+            try:
+                while chunk := proc.stdout.read(CHUNK):
+                    written = _write_capped(out, chunk, written)
+            finally:
+                proc.stdout.close()
+                if proc.poll() is None:
+                    proc.kill()
+                proc.wait()
+            return written, None
+
+    factory = {"gzip": lambda: zlib.decompressobj(31), "xz": lzma.LZMADecompressor,
+               "bzip2": bz2.BZ2Decompressor}[kind]
+    errors = (OSError, EOFError, lzma.LZMAError, ValueError, zlib.error)
+    with src.open("rb") as fh:
+        fh.seek(offset)
+        dec = factory()
+        consumed = offset
+        pending = b""
+        while True:
+            data = pending or fh.read(FEED)
+            pending = b""
+            if not data:
+                return written, consumed
+            buf = data
+            try:
+                while True:
+                    if kind == "gzip":
+                        chunk = dec.decompress(buf, CHUNK)
+                    else:
+                        chunk = dec.decompress(buf, max_length=CHUNK)
+                    written = _write_capped(out, chunk, written)
+                    if dec.eof:
+                        break
+                    if kind == "gzip":
+                        buf = dec.unconsumed_tail
+                        if not buf:
+                            break
+                    elif dec.needs_input:
+                        break
+                    else:
+                        buf = b""
+            except errors:
+                return written, None
+            if dec.eof:
+                rest = dec.unused_data
+                consumed += len(data) - len(rest)
+                magic = _MAGIC[kind]
+                if len(rest) < len(magic):
+                    rest += fh.read(FEED)
+                if not rest.startswith(magic):
+                    return written, consumed
+                dec = factory()  # a concatenated member: gzip -dc joins them, so do we
+                pending = rest
+            else:
+                consumed += len(data)
 
 
 SELF = Path(__file__).resolve()
@@ -162,41 +199,55 @@ def _label(m: bytes, markers) -> str:
     return m.decode(errors="replace") if m in PUBLIC_MARKERS else f"private marker #{markers.index(m)}"
 
 
-def scan_file(path: Path, markers, digests, problems: list[str], label: str | None = None) -> None:
-    """Scan the raw bytes ALWAYS, and additionally the decoded bytes of compressed files.
+def scan_file(path: Path, markers, digests, problems: list[str], label: str | None = None,
+              depth: int = 0) -> None:
+    """Scan raw bytes, then every compressed stream found at any offset, recursively.
 
-    Raw scanning cannot be skipped by a fake or corrupt compression header: a file is
-    only cleared when its shipped bytes are clean and (if it decodes) its content is too.
+    A file is cleared only when its shipped bytes are clean and every layer that
+    decodes from it (nested, embedded in an archive or image, truncated or
+    junk-suffixed) is clean too. Undecidable cases fail closed.
     """
     label = label or str(path)
-    if any(d in label.lower() for d in PATH_DENY):
+    if depth == 0 and any(d in label.lower() for d in PATH_DENY):
         problems.append(f"{label}: private driver/backend path")
+    carve: set[tuple[int, str]] = set()
     with path.open("rb") as fh:
-        found, raw = scan_stream(fh, markers)
+        found, raw = scan_stream(fh, markers, carve=carve)
     if raw in digests:
         problems.append(f"{label}: matches a private driver binary digest")
     for m in found:
         problems.append(f"{label}: contains {_label(m, markers)}")
-    stream, kind = open_decoded(path)
-    if stream is None:
+    if not carve:
         return
-    partial: set[bytes] = set()
-    try:
-        with stream:
-            found, decoded = scan_stream(stream, markers, partial)
-    except (OSError, EOFError, lzma.LZMAError, ValueError) as err:
-        # Truncated or junk-suffixed streams still decode a prefix, and that prefix is
-        # what an extractor would recover: report its markers, never drop them.
-        if os.environ.get("PRIVACY_VERBOSE"):
-            print(f"[privacy] note: {label}: {kind} stopped decoding ({err}); raw bytes and "
-                  "the decoded prefix were scanned", file=sys.stderr)
-        for m in sorted(partial):
-            problems.append(f"{label} ({kind}, partial decode): contains {_label(m, markers)}")
+    if depth >= MAX_DEPTH:
+        problems.append(f"{label}: compressed data nested deeper than {MAX_DEPTH} layers; "
+                        "cannot prove it clean")
         return
-    if decoded in digests:
-        problems.append(f"{label} ({kind}): decompresses to a private driver binary")
-    for m in found:
-        problems.append(f"{label} ({kind}): contains {_label(m, markers)}")
+    covered = -1
+    attempts = 0
+    for offset, kind in sorted(carve):
+        if offset < covered:
+            continue
+        attempts += 1
+        if attempts > MAX_CARVES:
+            problems.append(f"{label}: more than {MAX_CARVES} embedded streams; cannot prove it clean")
+            return
+        with tempfile.NamedTemporaryFile(prefix="privacy-layer-") as out:
+            try:
+                written, end = _decode_at(path, offset, kind, out)
+            except _LayerTooLarge:
+                problems.append(f"{label}@{offset} ({kind}): decodes past {MAX_DECODED} bytes; "
+                                "cannot prove it clean (raise PRIVACY_MAX_DECODED)")
+                continue
+            except FileNotFoundError as err:
+                problems.append(f"{label}@{offset} ({kind}): {err}; cannot prove it clean")
+                continue
+            if end is not None:
+                covered = end
+            if written:
+                out.flush()
+                scan_file(Path(out.name), markers, digests, problems,
+                          label=f"{label}@{offset}:{kind}", depth=depth + 1)
 
 
 def scan_paths(paths, markers, digests, problems) -> int:
@@ -205,6 +256,9 @@ def scan_paths(paths, markers, digests, problems) -> int:
     seen_dirs: set[str] = set()
     for root in paths:
         root = Path(root)
+        if not root.exists():
+            problems.append(f"{root}: path does not exist; nothing was proven clean")
+            continue
         if root.is_file():
             if root.resolve() != SELF:
                 scan_file(root, markers, digests, problems)

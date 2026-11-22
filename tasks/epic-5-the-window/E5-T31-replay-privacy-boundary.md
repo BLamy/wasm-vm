@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: in-progress
+status: implemented
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -295,3 +295,37 @@ and the deploy-ordering read. All HELD.
   packing" as an explicit limit next to the existing ones. Then add a synthetic regression
   test (compressible data, as in the r2 tests) for whichever is chosen.
 - SUITE: none promoted until the refutation clears.
+
+### 2026-11-22 — worker — rework after r3 refutation
+
+The decoder core is restructured, not patched:
+- **Carving:** gzip, xz, bzip2 and zstd signatures are found at every offset of
+  every file (binwalk-style), so compressed members inside tar, cpio or ext4
+  images are decoded.
+- **Recursion:** each decoded layer is scanned the same way (raw markers, digest,
+  carving) to a depth of 4. Deeper nesting fails closed.
+- **Bounded:** decoded output streams to a temp file. Input is fed in 16 KiB
+  slices with `max_length`/`unconsumed_tail`, so memory is bounded and
+  concatenated members are followed (a marker split across gzip members is
+  caught). A layer past `PRIVACY_MAX_DECODED` (default 8 GiB) fails closed. Byte
+  ranges already consumed are skipped, so many tiny members stay linear. A zstd
+  stream with no available decoder now fails closed.
+- **Missing path:** a nonexistent path now fails instead of reporting "0 files OK".
+  This was found by the worker when a mis-quoted path passed.
+
+Tests: 27 (`tools/privacy/test_check_no_replay_backend.py`, OK). New ones cover
+nested gzip(gzip), gzip(xz) and xz(bzip2), an xz member inside a tar and a tar.gz,
+a zstd member inside a tar, a marker split across gzip members, nesting too deep,
+the decode cap with bounded memory, 100,000 tiny members within 20 s, a clean
+tar.gz and a missing path. Sabotage: offset-0-only carving fails 3 tests, removing
+recursion fails 5, and not following concatenation fails 2.
+
+Real driver: gzip(gzip), gzip(gzip(xz)), gzip(xz), xz(bzip2), a tar holding
+`x.so.xz` and a tgz holding `x.so.xz` all exit 1, each in 0.3 s or less, with the
+decode chain in the label. Acceptance: Chromium 108 `chrome` OK (4.6 s); public
+trees OK (25,582 files, 167 s); `--git-range origin/main..HEAD` OK (every commit).
+
+The r3 memory note is addressed by bounded decoding. Remaining stated limits: a
+marker split across separate files, encryption, compressors not decoded (brotli,
+lz4, compressed-filesystem blocks) and fragmented files inside filesystem images.
+For those, image builders scan the source tree before packing (E5-T34b).

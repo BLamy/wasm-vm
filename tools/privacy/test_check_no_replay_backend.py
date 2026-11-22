@@ -91,6 +91,9 @@ class Guard(unittest.TestCase):
         self.put("edge.bin", pad + MARKER)
         self.assertEqual(self.run_guard(str(self.tree)), 1)
 
+    def test_missing_path_fails_closed(self):
+        self.assertEqual(self.run_guard(str(self.tree / "does-not-exist")), 1)
+
     def test_fails_closed_without_private_lists(self):
         r = subprocess.run([sys.executable, str(GUARD), "--markers", str(self.dir / "nope"),
                             str(self.tree)], capture_output=True)
@@ -137,6 +140,89 @@ class Guard(unittest.TestCase):
         self.assertNotIn(MARKER, data)
         self.put("junk.zst", data + b"JUNKJUNK")
         self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    # --- verifier r3 finding: nested layers and archive members ------------------
+    def test_nested_layers_rejected(self):
+        import lzma
+        cases = {
+            "gz_gz": gzip.compress(gzip.compress(SOFT, mtime=0), mtime=0),
+            "gz_xz": gzip.compress(lzma.compress(SOFT), mtime=0),
+            "xz_bz2": lzma.compress(bz2.compress(SOFT)),
+        }
+        for name, data in cases.items():
+            with self.subTest(name):
+                self.assertNotIn(MARKER, data)
+                self.put(name, data)
+                self.assertEqual(self.run_guard(str(self.tree / name)), 1)
+
+    def _tar(self, members, mode="w"):
+        import io, tarfile
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode=mode) as tar:
+            for name, data in members.items():
+                info = tarfile.TarInfo(name)
+                info.size = len(data)
+                tar.addfile(info, io.BytesIO(data))
+        return buf.getvalue()
+
+    def test_compressed_member_inside_tar_rejected(self):
+        import lzma
+        data = self._tar({"mod.bin": lzma.compress(SOFT)})
+        self.assertNotIn(MARKER, data)
+        self.put("image.tar", data)
+        self.assertEqual(self.run_guard(str(self.tree / "image.tar")), 1)
+
+    def test_compressed_member_inside_tar_gz_rejected(self):
+        import lzma
+        data = self._tar({"x.bin": lzma.compress(SOFT)}, mode="w:gz")
+        self.put("image.tgz", data)
+        self.assertEqual(self.run_guard(str(self.tree / "image.tgz")), 1)
+
+    @unittest.skipUnless(shutil.which("zstd"), "zstd CLI absent")
+    def test_zstd_member_inside_tar_rejected(self):
+        z = subprocess.run(["zstd", "-q", "-c"], input=ZSOFT, capture_output=True, check=True).stdout
+        data = self._tar({"pad": b"\0" * 777, "k.zst": z})
+        self.assertNotIn(MARKER, data)
+        self.put("z.tar", data)
+        self.assertEqual(self.run_guard(str(self.tree / "z.tar")), 1)
+
+    def test_marker_split_across_gzip_members_rejected(self):
+        half = len(MARKER) // 2
+        a = gzip.compress(b"A" * 4096 + MARKER[:half], mtime=0)
+        b = gzip.compress(MARKER[half:] + b"B" * 4096, mtime=0)
+        self.put("split.gz", a + b)
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    def test_too_deep_nesting_fails_closed(self):
+        data = b"harmless"
+        for _ in range(6):
+            data = gzip.compress(data, mtime=0)
+        self.put("deep.gz", data)
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    def test_decode_cap_fails_closed_and_bounds_memory(self):
+        import lzma
+        self.put("bomb.xz", lzma.compress(b"\0" * (64 << 20)))
+        r = subprocess.run([sys.executable, str(GUARD), "--markers", str(self.markers),
+                            "--digests", str(self.digests), str(self.tree)],
+                           capture_output=True, text=True,
+                           env={**os.environ, "PRIVACY_MAX_DECODED": str(1 << 20)})
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("cannot prove", r.stderr)
+
+    def test_many_tiny_members_linear_time(self):
+        import time
+        member = gzip.compress(b"x", mtime=0)
+        self.put("tiny.gz", member * 100_000)  # ~2 MiB of members
+        start = time.monotonic()
+        self.assertEqual(self.run_guard(str(self.tree)), 0)
+        self.assertLess(time.monotonic() - start, 20)
+
+    def test_clean_tar_gz_passes(self):
+        data = self._tar({"a.txt": b"hello\n" * 1000, "b.txt.gz": gzip.compress(b"world\n" * 1000)},
+                         mode="w:gz")
+        self.put("ok.tgz", data)
+        self.assertEqual(self.run_guard(str(self.tree)), 0)
 
     # --- verifier finding 2: symlinks are followed -------------------------------
     def test_symlink_to_private_file_rejected(self):
