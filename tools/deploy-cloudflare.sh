@@ -220,6 +220,14 @@ python3 tools/validate-deploy-artifacts.py \
   --reject-local-prefix releases/chunked-omarchy/ \
   --binding-file "$R2_QUEUE" --binding-root "$PWD" --r2-base "$R2_PUBLIC"
 
+# Privacy boundary: nothing built from Replay's private backend (src/cpp: recording driver, linker,
+# reader) may reach a visitor. Scan the exact Pages tree and every R2 upload source. Fail closed: the
+# check refuses to pass on a machine without the private marker lists.
+PRIVACY_PATHS=("$DIST")
+while IFS=$'\t' read -r source _key _size _sha; do PRIVACY_PATHS+=("$source"); done < "$R2_QUEUE"
+python3 tools/privacy/check-no-replay-backend.py "${PRIVACY_PATHS[@]}" || {
+  echo "[deploy] ERROR: privacy boundary check failed; refusing to publish" >&2; exit 1; }
+
 # Check R2 without credentials first. A missing or mismatched public object is not accepted as
 # "close enough": the deploy must have credentials to publish the exact already-validated bytes,
 # then it must pass the same public check again. The content-addressed key also prevents later drift.
