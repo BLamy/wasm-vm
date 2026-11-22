@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: implemented
+status: in-progress
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -146,3 +146,66 @@ exits 0; `web/dist releases tools docs tasks` OK (25,582 files);
 `--git-range origin/main..HEAD` OK (190 blobs, every commit). The `zstandard`
 module path is waived (module absent here; the CLI path is exercised by the fake-zstd
 test and the real `zstd -19` stream).
+
+### 2026-11-22 — fresh verifier (r2) — VERDICT: refuted
+
+Head `831a46ce5`, base `origin/main` = `24e2a1a63` (fetched). Predictions were written before
+each check. Markers are cited by index only. Scratch work stayed outside the repo; the index
+was left clean.
+
+- P1 acceptance scans: HELD. `--git-range origin/main..codex/replay-private-boundary` returns 0
+  (193 blobs over every commit, 12 markers, 11 digests). `web/dist releases tools docs tasks`
+  returns 0 (25,582 files). Control: the same range against
+  `backup/replay-private-boundary-pre-scrub` returns 1 at `8551c8d7e` and `4fd6a7ac7`
+  (private marker #5), so the per-commit scan is live.
+- P2 real driver / Chromium / fail closed: HELD (re-run, since the guard changed). Real `zstd -19`
+  and `xz` streams of the driver return 1. The real build20 `chrome` returns 0.
+  `--markers /nonexistent` returns 2.
+- Finding 1 (type change): FIXED, own repro. In a scratch repo a symlink was replaced by the
+  real driver (`git diff --cached --name-status` shows `T`). `--staged` returns 1, and after
+  commit `--git-range` returns 1 on the type-change commit.
+- Finding 2 (symlinks): FIXED, own repro. A tree with only a symlink to the real driver returns 1,
+  labelled `link -> target`. A tree holding a symlinked directory with a driver copy returns 1.
+  A dangling link is skipped (returns 0, nothing to upload).
+- Finding 3 (fake header fail-open): FIXED as stated. The zstd, xz and bzip2 magic bytes each
+  followed by the real driver return 1 (raw scan).
+- Finding 4 / history rewrite: HELD. After `git fetch`, `origin/codex/replay-driver-recording`
+  = `8f346d217`. Neither `8551c8d7e` nor `4fd6a7ac7` is an ancestor of it or of this branch, and
+  no ref from `git ls-remote origin` points at either. The rewritten pairs are
+  8551c8d7e→0b241368c, 4fd6a7ac7→8f346d217, 9d6340130→000a0d18c, 300db8b8b→d1c952c64 and
+  70e0b9eee→c64905af1. For each pair, `git diff old new` is either one line (`@@ -77 +77 @@` in
+  the E5-T30d task file; the removed line holds private marker #5 and the added line holds
+  none) or empty for the later three. Messages and author/date match. Old SHAs may stay
+  fetchable on GitHub until it runs GC; that is the user's call, not this guard's.
+- Committed tests: HELD. `python3 tools/privacy/test_check_no_replay_backend.py` gives 12 OK.
+  They are not self-licking: they use an independent synthetic marker and digest, and they
+  assert exit codes from the CLI.
+- COVERAGE: executed: `_ProcStream` error path (fake zstd, bad zstd), symlink follow,
+  `seen_dirs` cycle skip (committed test), dangling-link skip, `ACMRT` in both git modes,
+  `diff-tree -m` on an evil merge (a marker added only in the merge resolution returns 1), and
+  the `local/` history path rule (returns 1). Waived: the `zstandard` module branch (module
+  absent here).
+- NOVEL ATTACK (valid compressed stream plus trailing junk, or truncation): FAILED. This is
+  not a stated limit, because gzip and zstd are decoders the guard claims to handle.
+  Predicted: exit 0, because `scan_file` discards the decoded-stream findings when the decoder
+  raises after emitting data. Observed with the real driver:
+  - `gzip.compress(driver, mtime=0) + 8 junk bytes` returns 0. `gunzip -c` of that file
+    recovers bytes whose sha256 equals the driver's.
+  - `zstd -c driver` plus 8 junk bytes returns 0. `zstd -dc` writes the full driver (same
+    sha256) and then exits 1.
+  - gzip truncated by 100 bytes returns 0. `gunzip` still recovers 1,376,256 of 1,413,712
+    bytes.
+  - `PRIVACY_VERBOSE=1` shows "undecodable gzip/zstd ...; raw bytes scanned" for each case.
+  Synthetic repro without private bytes: driver = `\x7fELF` + `A`*4096 + marker + `B`*4096,
+  gzip-compressed (the marker is absent from the compressed bytes). Clean returns 1, plus
+  8 junk bytes returns 0, truncated by 12 bytes returns 0.
+  Root cause: the `except (OSError, EOFError, lzma.LZMAError, ValueError)` branch in
+  `scan_file` returns without reporting the markers `scan_stream` had already matched in the
+  decoded prefix. Demand: keep and report the markers (and any digest) found before a decode
+  error, or treat a recognised-but-undecodable compressed file as a failure. Add regression
+  tests for junk and truncation with a compressible synthetic driver. (Random-filled synthetic
+  data hides this, because deflate stores it uncompressed and the raw scan then sees the
+  marker.)
+- Commit messages in the range: no marker hits (checked off-tree). The guard scans blobs only;
+  this is not raised, since no message carries a marker.
+- SUITE: none promoted until the refutation clears.
