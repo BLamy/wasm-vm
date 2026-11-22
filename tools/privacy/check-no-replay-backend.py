@@ -14,7 +14,8 @@ publishing from a machine that cannot run the full check is refused.
 Usage:
   check-no-replay-backend.py PATH...            scan files, directories, ext4/tar/cpio
                                                  images (raw bytes) and .gz/.xz/.zst/.bz2
-  check-no-replay-backend.py --git-range A..B    scan blobs added/changed in a git range
+  check-no-replay-backend.py --git-range A..B    scan every blob each commit in A..B introduced
+  check-no-replay-backend.py --staged            scan the git index (pre-commit)
   --markers FILE / --digests FILE                override the private list locations
 """
 from __future__ import annotations
@@ -23,11 +24,11 @@ import argparse
 import bz2
 import gzip
 import hashlib
-import io
 import lzma
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -44,7 +45,30 @@ def load_lines(path: Path) -> list[str]:
     return [l.strip() for l in path.read_text().splitlines() if l.strip() and not l.startswith("#")]
 
 
-def open_stream(path: Path):
+class _ProcStream:
+    """A subprocess decoder's stdout that raises if the decoder fails (no silent empty read)."""
+
+    def __init__(self, proc):
+        self.proc = proc
+
+    def read(self, n):
+        data = self.proc.stdout.read(n)
+        if not data and self.proc.wait() != 0:
+            raise ValueError(f"decoder exited {self.proc.returncode}")
+        return data
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.proc.stdout.close()
+        if self.proc.poll() is None:
+            self.proc.kill()
+        self.proc.wait()
+
+
+def open_decoded(path: Path):
+    """Return (decoded stream, kind) for a recognised compressed file, else (None, None)."""
     with path.open("rb") as probe:
         magic = probe.read(6)
     if magic[:2] == b"\x1f\x8b":
@@ -57,14 +81,15 @@ def open_stream(path: Path):
         try:
             import zstandard  # type: ignore
         except ImportError:
-            proc = subprocess.Popen(["zstd", "-dc", str(path)], stdout=subprocess.PIPE)
-            return proc.stdout, "zstd"
+            proc = subprocess.Popen(["zstd", "-dcq", str(path)], stdout=subprocess.PIPE,
+                                    stderr=subprocess.DEVNULL)
+            return _ProcStream(proc), "zstd"
         return zstandard.ZstdDecompressor().stream_reader(path.open("rb")), "zstd"
-    return path.open("rb"), None
+    return None, None
 
 
 def scan_stream(stream, markers: list[bytes]) -> tuple[list[bytes], str]:
-    """Return (markers found, sha256 of the decoded stream)."""
+    """Return (markers found, sha256 of the stream)."""
     keep = max(len(m) for m in markers) - 1
     tail = b""
     found: set[bytes] = set()
@@ -83,79 +108,110 @@ def scan_stream(stream, markers: list[bytes]) -> tuple[list[bytes], str]:
 
 
 SELF = Path(__file__).resolve()
+SELF_REL = "tools/privacy/check-no-replay-backend.py"
 
 
-def scan_file(path: Path, markers, digests, problems: list[str]) -> None:
-    if path.resolve() == SELF:
-        return
-    low = str(path).lower()
-    if any(d in low for d in PATH_DENY):
-        problems.append(f"{path}: private driver/backend path")
-    raw = hashlib.sha256()
+def _label(m: bytes, markers) -> str:
+    return m.decode(errors="replace") if m in PUBLIC_MARKERS else f"private marker #{markers.index(m)}"
+
+
+def scan_file(path: Path, markers, digests, problems: list[str], label: str | None = None) -> None:
+    """Scan the raw bytes ALWAYS, and additionally the decoded bytes of compressed files.
+
+    Raw scanning cannot be skipped by a fake or corrupt compression header: a file is
+    only cleared when its shipped bytes are clean and (if it decodes) its content is too.
+    """
+    label = label or str(path)
+    if any(d in label.lower() for d in PATH_DENY):
+        problems.append(f"{label}: private driver/backend path")
     with path.open("rb") as fh:
-        for block in iter(lambda: fh.read(CHUNK), b""):
-            raw.update(block)
-    if raw.hexdigest() in digests:
-        problems.append(f"{path}: matches a private driver binary digest")
-    stream, kind = open_stream(path)
+        found, raw = scan_stream(fh, markers)
+    if raw in digests:
+        problems.append(f"{label}: matches a private driver binary digest")
+    for m in found:
+        problems.append(f"{label}: contains {_label(m, markers)}")
+    stream, kind = open_decoded(path)
+    if stream is None:
+        return
     try:
         with stream:
             found, decoded = scan_stream(stream, markers)
     except (OSError, EOFError, lzma.LZMAError, ValueError) as err:
-        # Not actually (or not cleanly) compressed: the raw bytes are what ships.
-        problems_note = f"undecodable {kind} stream ({err.__class__.__name__}); scanned raw bytes"
         if os.environ.get("PRIVACY_VERBOSE"):
-            print(f"[privacy] note: {path}: {problems_note}", file=sys.stderr)
-        kind = None
-        with path.open("rb") as fh:
-            found, decoded = scan_stream(fh, markers)
-    if kind and decoded in digests:
-        problems.append(f"{path} ({kind}): decompresses to a private driver binary")
+            print(f"[privacy] note: {label}: undecodable {kind} ({err}); raw bytes scanned",
+                  file=sys.stderr)
+        return
+    if decoded in digests:
+        problems.append(f"{label} ({kind}): decompresses to a private driver binary")
     for m in found:
-        label = m.decode(errors="replace") if m in PUBLIC_MARKERS else f"private marker #{markers.index(m)}"
-        problems.append(f"{path}{' (' + kind + ')' if kind else ''}: contains {label}")
+        problems.append(f"{label} ({kind}): contains {_label(m, markers)}")
 
 
 def scan_paths(paths, markers, digests, problems) -> int:
+    """Walk trees FOLLOWING symlinks: uploaders such as wrangler publish link targets."""
     count = 0
+    seen_dirs: set[str] = set()
     for root in paths:
         root = Path(root)
         if root.is_file():
-            scan_file(root, markers, digests, problems)
-            count += 1
+            if root.resolve() != SELF:
+                scan_file(root, markers, digests, problems)
+                count += 1
             continue
-        for dirpath, dirnames, filenames in os.walk(root):
+        for dirpath, dirnames, filenames in os.walk(root, followlinks=True):
+            real = os.path.realpath(dirpath)
+            if real in seen_dirs:
+                dirnames[:] = []
+                continue
+            seen_dirs.add(real)
             dirnames[:] = [d for d in dirnames if d != ".git"]
             for name in filenames:
                 p = Path(dirpath, name)
-                if p.is_symlink() or not p.is_file():
+                if not p.is_file():  # dangling links, sockets, devices
                     continue
-                scan_file(p, markers, digests, problems)
+                if p.resolve() == SELF:
+                    continue
+                label = f"{p} -> {p.resolve()}" if p.is_symlink() else str(p)
+                scan_file(p, markers, digests, problems, label)
                 count += 1
     return count
 
 
-def scan_git_range(rng: str | None, markers, digests, problems) -> int:
-    """rng=None scans the index (staged files); otherwise blobs at the range's tip."""
-    which = ["--cached"] if rng is None else [rng]
-    names = subprocess.check_output(
-        ["git", "-C", str(ROOT), "diff", "--name-only", "-z", "--diff-filter=AMR", *which], text=True
-    ).split("\0")
-    names = [n for n in names if n]
-    tip = "" if rng is None else (rng.split("..")[-1] or "HEAD")
+def _git(repo: Path, *args: str) -> bytes:
+    return subprocess.check_output(["git", "-C", str(repo), *args])
+
+
+def _scan_blob(repo: Path, spec: str, name: str, markers, digests, problems) -> None:
+    if name == SELF_REL:
+        return
+    if any(d in name.lower() for d in PATH_DENY) or name.startswith("local/"):
+        problems.append(f"{spec}: private path in git history")
+    data = _git(repo, "cat-file", "blob", spec)
+    with tempfile.NamedTemporaryFile(prefix="privacy-blob-") as tmp:
+        tmp.write(data)
+        tmp.flush()
+        scan_file(Path(tmp.name), markers, digests, problems, label=spec)
+
+
+def scan_git_staged(repo: Path, markers, digests, problems) -> int:
+    names = [n for n in _git(repo, "diff", "--cached", "--name-only", "-z",
+                             "--diff-filter=ACMRT").decode().split("\0") if n]
     for name in names:
-        if name == "tools/privacy/check-no-replay-backend.py":
-            continue
-        if any(d in name.lower() for d in PATH_DENY) or name.startswith("local/"):
-            problems.append(f"{tip}:{name}: private path in git range")
-        data = subprocess.check_output(["git", "-C", str(ROOT), "show", f"{tip}:{name}"])
-        if hashlib.sha256(data).hexdigest() in digests:
-            problems.append(f"{tip}:{name}: matches a private driver binary digest")
-        found, _ = scan_stream(io.BytesIO(data), markers)
-        for m in found:
-            label = m.decode(errors="replace") if m in PUBLIC_MARKERS else f"private marker #{markers.index(m)}"
-            problems.append(f"{tip}:{name}: contains {label}")
+        _scan_blob(repo, f":{name}", name, markers, digests, problems)
     return len(names)
+
+
+def scan_git_range(repo: Path, rng: str, markers, digests, problems) -> int:
+    """Scan every blob any commit in the range introduced, not just the range's tip."""
+    commits = [c for c in _git(repo, "rev-list", "--reverse", rng).decode().split() if c]
+    count = 0
+    for commit in commits:
+        names = [n for n in _git(repo, "diff-tree", "-r", "-m", "-z", "--root", "--no-commit-id",
+                                 "--name-only", "--diff-filter=ACMRT", commit).decode().split("\0") if n]
+        for name in dict.fromkeys(names):
+            _scan_blob(repo, f"{commit[:12]}:{name}", name, markers, digests, problems)
+            count += 1
+    return count
 
 
 def main() -> int:
@@ -165,6 +221,7 @@ def main() -> int:
     ap.add_argument("--staged", action="store_true", help="scan files staged in the git index")
     ap.add_argument("--allow-missing-private", action="store_true",
                     help="(hook use) on machines without the private lists, check public markers only")
+    ap.add_argument("--repo", type=Path, default=ROOT, help="git repository for --git-range/--staged")
     ap.add_argument("--markers", type=Path, default=DEFAULT_MARKERS)
     ap.add_argument("--digests", type=Path, default=DEFAULT_DIGESTS)
     args = ap.parse_args()
@@ -180,9 +237,9 @@ def main() -> int:
     problems: list[str] = []
     n = 0
     if args.git_range:
-        n += scan_git_range(args.git_range, markers, digests, problems)
+        n += scan_git_range(args.repo, args.git_range, markers, digests, problems)
     if args.staged:
-        n += scan_git_range(None, markers, digests, problems)
+        n += scan_git_staged(args.repo, markers, digests, problems)
     if args.paths:
         n += scan_paths(args.paths, markers, digests, problems)
     if problems:
