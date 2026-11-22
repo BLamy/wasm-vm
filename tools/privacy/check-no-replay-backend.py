@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import argparse
 import bz2
-import gzip
+import zlib
 import hashlib
 import lzma
 import os
@@ -67,16 +67,59 @@ class _ProcStream:
         self.proc.wait()
 
 
+class _IncrementalStream:
+    """Decode a compressed file chunk by chunk with decompressor objects.
+
+    Every byte decoded before a truncation, junk suffix or corrupt block is returned to
+    the scanner (file-object readers such as gzip.open lose the whole read call when they
+    raise). Concatenated members are followed; decoding stops quietly at the first byte
+    that does not start a valid member.
+    """
+
+    def __init__(self, path: Path, factory):
+        self.fh = path.open("rb")
+        self.factory = factory
+        self.dec = factory()
+        self.pending = b""
+        self.done = False
+
+    def read(self, n):
+        while not self.done:
+            data = self.pending or self.fh.read(CHUNK)
+            self.pending = b""
+            if not data:
+                self.done = True
+                break
+            try:
+                out = self.dec.decompress(data)
+            except (OSError, EOFError, lzma.LZMAError, ValueError, zlib.error):
+                self.done = True
+                break
+            if self.dec.eof:
+                rest = self.dec.unused_data
+                self.dec = self.factory()
+                self.pending = rest
+            if out:
+                return out
+        return b""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.fh.close()
+
+
 def open_decoded(path: Path):
     """Return (decoded stream, kind) for a recognised compressed file, else (None, None)."""
     with path.open("rb") as probe:
         magic = probe.read(6)
     if magic[:2] == b"\x1f\x8b":
-        return gzip.open(path, "rb"), "gzip"
+        return _IncrementalStream(path, lambda: zlib.decompressobj(31)), "gzip"
     if magic[:6] == b"\xfd7zXZ\x00":
-        return lzma.open(path, "rb"), "xz"
+        return _IncrementalStream(path, lzma.LZMADecompressor), "xz"
     if magic[:3] == b"BZh":
-        return bz2.open(path, "rb"), "bzip2"
+        return _IncrementalStream(path, bz2.BZ2Decompressor), "bzip2"
     if magic[:4] == b"\x28\xb5\x2f\xfd":
         try:
             import zstandard  # type: ignore
@@ -88,11 +131,15 @@ def open_decoded(path: Path):
     return None, None
 
 
-def scan_stream(stream, markers: list[bytes]) -> tuple[list[bytes], str]:
-    """Return (markers found, sha256 of the stream)."""
+def scan_stream(stream, markers: list[bytes], found: set[bytes] | None = None) -> tuple[list[bytes], str]:
+    """Return (markers found, sha256 of the stream).
+
+    `found` is filled in place, so a caller that catches a mid-stream decode error
+    still sees every marker in the bytes decoded before the error.
+    """
     keep = max(len(m) for m in markers) - 1
     tail = b""
-    found: set[bytes] = set()
+    found = set() if found is None else found
     digest = hashlib.sha256()
     while True:
         block = stream.read(CHUNK)
@@ -133,13 +180,18 @@ def scan_file(path: Path, markers, digests, problems: list[str], label: str | No
     stream, kind = open_decoded(path)
     if stream is None:
         return
+    partial: set[bytes] = set()
     try:
         with stream:
-            found, decoded = scan_stream(stream, markers)
+            found, decoded = scan_stream(stream, markers, partial)
     except (OSError, EOFError, lzma.LZMAError, ValueError) as err:
+        # Truncated or junk-suffixed streams still decode a prefix, and that prefix is
+        # what an extractor would recover: report its markers, never drop them.
         if os.environ.get("PRIVACY_VERBOSE"):
-            print(f"[privacy] note: {label}: undecodable {kind} ({err}); raw bytes scanned",
-                  file=sys.stderr)
+            print(f"[privacy] note: {label}: {kind} stopped decoding ({err}); raw bytes and "
+                  "the decoded prefix were scanned", file=sys.stderr)
+        for m in sorted(partial):
+            problems.append(f"{label} ({kind}, partial decode): contains {_label(m, markers)}")
         return
     if decoded in digests:
         problems.append(f"{label} ({kind}): decompresses to a private driver binary")

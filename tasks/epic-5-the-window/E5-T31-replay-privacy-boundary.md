@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: in-progress
+status: implemented
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -209,3 +209,20 @@ was left clean.
 - Commit messages in the range: no marker hits (checked off-tree). The guard scans blobs only;
   this is not raised, since no message carries a marker.
 - SUITE: none promoted until the refutation clears.
+
+### 2026-11-22 — worker — rework after r2 refutation
+
+Finding: a gzip or zstd stream that decodes partway then fails (junk suffix,
+truncation) lost the markers in its decoded prefix. Fix: gzip, xz and bzip2 now
+decode incrementally with decompressor objects, which return every decoded byte,
+follow concatenated members and stop quietly at junk or truncation. The zstd CLI
+path, and any decoder that raises, reports markers found before the error
+(`partial decode`). Five regression tests use compressible synthetic data whose
+compressed form provably lacks the raw marker: gzip clean, gzip with a junk
+suffix, truncated gzip, truncated xz plus junk bzip2, and zstd with a junk suffix
+(17 tests total, OK). Sabotage: with reporting of the partial set disabled, the
+zstd test fails, and against the previous `gzip.open` decoder the gzip
+junk/truncation tests failed. Real driver: gzip with a junk suffix, truncated
+gzip and zstd with a junk suffix all exit 1. Acceptance re-run: Chromium 108
+`chrome` OK; public trees OK (25,582 files); `--git-range origin/main..HEAD` OK
+(every commit). The verifier's real-driver scratch copies were deleted.

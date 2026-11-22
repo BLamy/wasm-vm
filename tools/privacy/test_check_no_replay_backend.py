@@ -9,6 +9,8 @@ import bz2
 import gzip
 import hashlib
 import os
+import random
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -18,6 +20,13 @@ from pathlib import Path
 GUARD = Path(__file__).with_name("check-no-replay-backend.py")
 MARKER = b"SYNTHETIC-PRIVATE-MARKER-7f3a9c"
 DRIVER = b"\x7fELF" + os.urandom(4096) + MARKER + os.urandom(4096)
+# Compressible: once compressed the marker no longer appears in the raw bytes, so only
+# decoding can find it (random filler is stored verbatim and would hide decode gaps).
+SOFT = b"\x7fELF" + b"A" * 4096 + MARKER + b"B" * 4096
+# Low-entropy filler makes zstd Huffman-code its literals, so the marker is not stored raw.
+_rng = random.Random(7)
+ZSOFT = bytes(_rng.choice(b"abcd") for _ in range(20000)) + MARKER + bytes(
+    _rng.choice(b"abcd") for _ in range(20000))
 
 
 class Guard(unittest.TestCase):
@@ -94,6 +103,39 @@ class Guard(unittest.TestCase):
 
     def test_fake_gzip_header_rejected(self):
         self.put("fake.gz", b"\x1f\x8b" + DRIVER)
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    # --- verifier r2 finding: partial decodes keep their markers ------------------
+    def test_compressible_gzip_needs_decoding(self):
+        data = gzip.compress(SOFT, mtime=0)
+        self.assertNotIn(MARKER, data)
+        self.put("soft.gz", data)
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    def test_gzip_with_junk_suffix_rejected(self):
+        self.put("junk.gz", gzip.compress(SOFT, mtime=0) + b"JUNKJUNK")
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    def test_truncated_gzip_rejected(self):
+        self.put("cut.gz", gzip.compress(SOFT, mtime=0)[:-12])
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+
+    def test_truncated_xz_and_junk_bzip2_rejected(self):
+        import lzma
+        data = lzma.compress(SOFT)
+        self.assertNotIn(MARKER, data)
+        self.put("cut.xz", data[:-16])
+        self.assertEqual(self.run_guard(str(self.tree / "cut.xz")), 1)
+        data = bz2.compress(SOFT)
+        self.assertNotIn(MARKER, data)
+        self.put("junk.bz2", data + b"JUNKJUNK")
+        self.assertEqual(self.run_guard(str(self.tree / "junk.bz2")), 1)
+
+    @unittest.skipUnless(shutil.which("zstd"), "zstd CLI absent")
+    def test_zstd_with_junk_suffix_rejected(self):
+        data = subprocess.run(["zstd", "-q", "-c"], input=ZSOFT, capture_output=True, check=True).stdout
+        self.assertNotIn(MARKER, data)
+        self.put("junk.zst", data + b"JUNKJUNK")
         self.assertEqual(self.run_guard(str(self.tree)), 1)
 
     # --- verifier finding 2: symlinks are followed -------------------------------
