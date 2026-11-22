@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: implemented
+status: in-progress
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -329,3 +329,71 @@ The r3 memory note is addressed by bounded decoding. Remaining stated limits: a
 marker split across separate files, encryption, compressors not decoded (brotli,
 lz4, compressed-filesystem blocks) and fragmented files inside filesystem images.
 For those, image builders scan the source tree before packing (E5-T34b).
+
+### 2026-11-22 — fresh verifier (r4) — VERDICT: refuted
+
+Head `311321a75`, base `origin/main` = `24e2a1a63` (fetched). Predictions were written before
+each check. Markers are cited by index only. Scratch work (including every real-driver copy and a
+32 MiB RAM disk) was deleted, and the index was left clean.
+
+Carried forward unchanged from r2/r3: the history rewrite, the pre-commit hook and deploy-script
+wiring (`tools/deploy-cloudflare.sh:226-229`, hook lines 12-13), all HELD.
+
+- (a) r3 nested and in-archive findings: FIXED, own real-driver repros. Predicted exit 1 for each;
+  observed 1, each in 0.4 s or less, with the decode chain in the label: gzip(gzip), gzip(xz),
+  xz(bzip2), gzip(gzip(xz(bzip2))) (depth 4, digest hit at `@0:gzip@0:gzip@0:xz@0:bzip2`), a tgz
+  holding `lib/x.so.xz`, a plain tar holding `lib/mod.so.xz`, a tar holding a `zstd -19` member,
+  a tar holding a nameless gzip member (no FNAME hint), an xz-compressed tar holding a zstd member,
+  and a newc cpio holding `lib/m.so.xz`.
+- (b) r1/r2 findings: HELD. Symlink to the driver: 1. Symlinked dir holding a copy: 1. Symlink
+  replaced by the driver (`T` in `--name-status`): `--staged` 1, and `--git-range` over
+  add-then-delete commits 1 (the tip-only range returns 0, so the per-commit scan is live). gzip
+  plus junk, gzip truncated by 100 bytes, `zstd -19` plus junk, xz truncated by 100 bytes, and a
+  zstd magic followed by the raw driver: all 1. `--markers /nonexistent`: 2. Nonexistent path: 1.
+- (c) No regression: HELD. Real build20 `chrome` is accepted (checked by the worker at this head;
+  not re-run). `web/dist releases tools docs tasks` returns 0 (25,582 files, 186 s, max RSS
+  164 MB). `--git-range origin/main..codex/replay-private-boundary` returns 0 (205 blobs).
+  `test_check_no_replay_backend.py`: 27 OK. The tests are not self-licking: they drive the CLI with
+  an independent synthetic marker and digest. SABOTAGE: with the recursion call disabled in a
+  scratch copy, 14 of the 27 tests fail.
+- (d) Consumed-range skip abuse: FAILED. Predicted exit 0, because the gzip decoder consumes the
+  gzip header's FEXTRA field (up to 65,535 arbitrary bytes, never written to the decoded output),
+  `covered` is set to the member end, and any stream carved inside the field is skipped. Observed:
+  the real driver was cut into 10 slices, each xz-compressed into the FEXTRA field of its own gzip
+  member, with benign text as the deflate payload. The 10 members were concatenated (321,782 bytes,
+  `CHANGELOG.gz`). The guard returned 0 ("1 file(s) scanned") in 0.11 s, and also returned 0 when
+  the file sat inside a plain `rootfs.tar`. `gunzip -t` accepts the file, and carving the xz streams
+  back out gives bytes whose sha256 equals the driver's. Control: in a scratch copy with only the
+  `offset < covered` skip disabled, the same file returns 1. Synthetic repro without private bytes:
+  one gzip member whose FEXTRA holds `xz(b"\x7fELF" + b"A"*4096 + <public path marker #0> +
+  b"B"*4096)` returns 0. Demand: skip only ranges whose bytes were emitted as decoded output, or
+  carve the gzip header's FEXTRA/FNAME/FCOMMENT bytes separately (or carve every offset, including
+  inside consumed ranges, and bound the cost another way). Add a regression test.
+- (f) NOVEL ATTACK (temp-space exhaustion): FAILED. Predicted exit 0, because `_write_capped`'s
+  `out.write` runs inside the `except errors` block of `_decode_at`, and `errors` includes `OSError`.
+  A disk-full ENOSPC is therefore treated as a truncated stream, and only the prefix that was written
+  gets scanned. Observed: `gzip(60 MiB of zeros + driver)` (453,652 bytes) returns 0 with
+  `TMPDIR` on a 32 MiB RAM disk, and returns 1 with the normal `TMPDIR`. This is reachable without
+  a special `TMPDIR`. This Mac has 41 GiB free, and a decoded layer may grow to 8 GiB
+  (`PRIVACY_MAX_DECODED`), with up to 4 nested layers holding temp files at the same time. A gzip of
+  tens of GiB of zeros followed by the driver is a few tens of MB. Demand: let write errors (and any
+  `OSError` not raised by the decoder) fail closed. Add a test, for example with a tiny cap on the
+  temp filesystem or a patched writer.
+- Robustness (non-blocking, no budget stated): memory is now bounded. A 1 GiB-zeros gzip peaks at
+  574 MB max RSS (the r3 run used 1,041 MB) in 9 s. A fan-out bomb (12 junk-separated members per
+  layer, 4 layers, 1,308 bytes) runs 20,736 decodes in 12.8 s, so cost grows as N^4. Each carved
+  zstd magic starts a `zstd` subprocess and sets no `covered`. 1,000 magics (4 KB) take 10 s.
+  20,000 (80 KB) did not finish in 120 s. `MAX_CARVES` = 200,000 implies roughly 30+ minutes for an
+  800 KB file. These hang rather than pass, so they fail safe. Suggested follow-up: a global decode
+  budget per scanned file.
+- (e) COVERAGE: executed: carving at nonzero offsets (tar/cpio members), recursion, the depth-4
+  path, concatenated-member follow, the `covered` skip (the FEXTRA case and the committed
+  tiny-members test), the zstd CLI path, the zstd "decoder unavailable" fail-closed path
+  (`PATH=/usr/bin:/bin`: 1), the missing-path failure, and the `_LayerTooLarge` path (committed
+  test). Not executed: `MAX_CARVES` overflow (too slow, see above) and the `zstandard` module branch
+  (waived; module absent).
+- Stated limits (split across files, encryption, brotli/lz4, compressed-filesystem blocks,
+  fragmented image files): HELD as stated. Note that zip/jar/wheel members use raw deflate without a
+  gzip header and are not decoded. That falls under "compressors not decoded", but it should be
+  listed explicitly.
+- SUITE: none promoted until the refutations clear.
