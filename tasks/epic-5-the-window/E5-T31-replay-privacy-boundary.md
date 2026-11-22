@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: implemented
+status: in-progress
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -226,3 +226,72 @@ junk/truncation tests failed. Real driver: gzip with a junk suffix, truncated
 gzip and zstd with a junk suffix all exit 1. Acceptance re-run: Chromium 108
 `chrome` OK; public trees OK (25,582 files); `--git-range origin/main..HEAD` OK
 (every commit). The verifier's real-driver scratch copies were deleted.
+
+### 2026-11-22 — fresh verifier (r3) — VERDICT: refuted
+
+Head `fa08ba5e8`, base `origin/main` = `24e2a1a63` (fetched). Predictions were written before
+each check. Markers are cited by index only. Scratch work (including every real-driver copy)
+was deleted, and the index was left clean.
+
+Carried forward unchanged from r2 (code and evidence not touched by `fa08ba5e8`): the history
+rewrite, r1 findings 1–4 (type change, symlinks, fake-header fail-open, per-commit range scan)
+and the deploy-ordering read. All HELD.
+
+- (a) r2 partial-decode finding: FIXED, own real-driver repros. Predicted exit 1 for each;
+  observed 1 for gzip -9 plus 8 junk bytes, gzip truncated by 100 bytes, gzip cut to half its
+  length, `zstd -19` plus junk, `zstd -19` truncated by 100 bytes, xz truncated by 100 bytes,
+  xz plus junk, bzip2 -9 truncated by 100 bytes, bzip2 plus junk, a benign gzip member followed
+  by the driver member, and the driver member followed by a bogus member header.
+  `PRIVACY_VERBOSE=1` on the truncated zstd shows "zstd stopped decoding (decoder exited 1)",
+  then "(zstd, partial decode): contains private marker #N" lines.
+- (b) No regression: HELD. Real build20 `chrome` returns 0. `--git-range
+  origin/main..codex/replay-private-boundary` returns 0 (199 blobs). `web/dist releases tools
+  docs tasks` returns 0 (25,582 files, 45.8 s, max RSS 1.45 GB). `--markers /nonexistent` and
+  `--digests /nonexistent` each return 2 (FAIL CLOSED). Pre-commit hook: a staged decoy holding
+  the public path marker inside a gzip stream with a junk suffix was refused, reported as
+  "(gzip): contains" plus the public path marker. HEAD did not move, and the decoy was unstaged and
+  removed. `test_check_no_replay_backend.py`: 17 OK.
+- (c) Adversarial decoder input: no hang, but memory is unbounded (non-blocking). Predicted
+  that peak memory tracks the expansion of one 8 MiB input chunk, because `decompress(data)`
+  is called without `max_length`. Observed: a 1.0 MB gzip of 1 GiB of zeros used 1041 MiB RSS
+  in 1.5 s; a 153 KiB xz of 1 GiB used 1048 MiB; a 610 KiB xz of 4 GiB used 4121 MiB in 23 s.
+  The old `gzip.open(...).read(CHUNK)` was bounded at about 8 MiB of output. Concatenated
+  empty gzip members (20 B each) are quadratic within each chunk, from copying `unused_data`
+  for each member: 1 MiB took 0.7 s, 2 MiB 2.7 s, 4 MiB 10.3 s (about 40 s per 8 MiB chunk,
+  linear across chunks). Both fail closed: a MemoryError is uncaught, so the exit is non-zero,
+  and an OOM kill is also non-zero, which the hook's `||` and deploy's `set -e` both refuse.
+  The real public trees peak at 1.45 GB. No budget is stated, so this is not a refutation.
+  Suggested follow-up: `decompress(data, max_length)` plus `unconsumed_tail`, and a
+  memoryview offset instead of re-slicing `unused_data`.
+- (d) COVERAGE: every changed hunk ran. Of `_IncrementalStream`, the end-of-file
+  path ran on truncation, the decoder-error path on junk, the `eof`/`unused_data` member
+  follow on concatenation and on many tiny members, and the `if out` return on all inputs.
+  The xz and bzip2 factories ran on cut/junk xz and bz2. The `found`-in-place parameter and
+  the partial-report branch in `scan_file` ran on cut/junk zstd. The `zstandard` module branch
+  is still waived (module absent). SABOTAGE: HELD. With partial reporting disabled and
+  incremental errors re-raised in a scratch copy, 3 of the new tests fail (gzip junk, xz/bz2,
+  zstd junk), so the tests can fail.
+- (e) NOVEL ATTACK (nested or embedded compression): FAILED. Predicted exit 0, because only
+  files whose magic is at offset 0 are decoded, and decoding goes one level deep. Observed with
+  the real driver (each case alone in a scratch tree):
+  - gzip(gzip(driver)) returns 0.
+  - gzip(xz(driver)) returns 0.
+  - xz(bzip2(driver)) returns 0.
+  - A `.tar.gz` holding `lib/x.so.xz` returns 0.
+  - An uncompressed `img.tar` holding `lib/mod.so.xz` returns 0.
+
+  Control: the same tar holding `mod.so.gz` from `gzip -c` returns 1, but only by accident,
+  because the gzip FNAME header stores the original public filename. The same tree before
+  packing returns 1 (all digests and markers).
+
+  This is not a stated limit. The stated limits are markers split across files, encryption,
+  compressors the guard does not decode (brotli) and compressed-filesystem blocks. Here every
+  layer is gzip, xz or bzip2, which the guard claims to decode. The acceptance says
+  "recompressed", and the usage docstring claims tar/cpio/ext4 images are scanned. A guest
+  rootfs tar or ext4 image that ships a compressed `.so.xz` passes the guard. Demand: decode
+  nested decoded-compressor streams to a bounded depth, and either scan compressed members
+  inside tar/cpio images (by magic at any offset or by tar member walking) or state
+  "compressed files inside archives or images are not decoded; scan the source tree before
+  packing" as an explicit limit next to the existing ones. Then add a synthetic regression
+  test (compressible data, as in the r2 tests) for whichever is chosen.
+- SUITE: none promoted until the refutation clears.
