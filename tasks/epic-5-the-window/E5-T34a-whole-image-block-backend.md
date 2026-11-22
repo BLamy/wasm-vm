@@ -12,7 +12,15 @@ capstone: false
 
 ## Boundary
 
-Add a disk mode that fetches one compressed image in a single streamed request, checks its SHA-256, decompresses it into host-side memory (OPFS when available) and serves virtio-blk reads locally with a tmpfs-backed write overlay in the guest. Existing chunked profiles stay unchanged.
+Design (2026-11-22 survey of `web/loader.js`): the existing `disk` mode already
+fetches a whole image, but the desktop paths (worker mode, virgl) require the
+chunked boot. So instead of a new block device, add a **prefill** to chunked mode.
+One streamed request fetches a single content-addressed pack holding every chunk
+of the image manifest, verifies each chunk's SHA-256 against the manifest, and
+writes it into the existing chunk cache before boot. During boot `fetchPending`
+then resolves every chunk locally. Worker/GPU machinery, overlays and integrity
+checks are unchanged, and other chunked profiles keep lazy loading unless their
+profile opts in.
 
 ## Deterministic acceptance
 
