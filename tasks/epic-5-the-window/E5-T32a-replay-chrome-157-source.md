@@ -3,7 +3,7 @@ id: E5-T32a
 epic: 5
 title: Sync Replay Chromium 157 source and toolchains for a riscv64 cross build
 priority: 0.3851
-status: pending
+status: in-progress
 depends_on: [E5-T31]
 estimate: S
 risk: medium
