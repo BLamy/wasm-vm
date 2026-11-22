@@ -23,6 +23,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import bisect
 import bz2
 import zlib
 import hashlib
@@ -56,7 +57,8 @@ _SIG_LEN = 10
 _MAGIC = {"gzip": b"\x1f\x8b\x08", "xz": b"\xfd7zXZ\x00", "bzip2": b"BZh", "zstd": b"\x28\xb5\x2f\xfd"}
 FEED = 16 << 10       # input slice per decompress call: bounds per-member copies
 MAX_DEPTH = 4         # nested compression layers decoded before failing closed
-MAX_CARVES = 200_000  # decode attempts per file before failing closed
+MAX_ATTEMPTS = 50_000     # decode attempts per top-level file, all layers, before failing closed
+MAX_ZSTD_SPAWNS = int(os.environ.get("PRIVACY_MAX_ZSTD_SPAWNS", 20_000))  # zstd CLI decodes per top-level file before failing closed
 MAX_DECODED = int(os.environ.get("PRIVACY_MAX_DECODED", 8 << 30))  # bytes per decoded layer
 
 
@@ -96,23 +98,58 @@ def scan_stream(stream, markers: list[bytes], found: set[bytes] | None = None,
     return sorted(found), digest.hexdigest()
 
 
-class _LayerTooLarge(Exception):
-    pass
+class _Unprovable(Exception):
+    """A layer whose content could not be fully examined: the caller fails closed."""
 
 
 def _write_capped(out, data: bytes, written: int) -> int:
     written += len(data)
     if written > MAX_DECODED:
-        raise _LayerTooLarge
-    out.write(data)
+        raise _Unprovable(f"decodes past {MAX_DECODED} bytes (raise PRIVACY_MAX_DECODED)")
+    try:
+        out.write(data)
+    except OSError as err:  # e.g. ENOSPC: never mistake a failed write for end of stream
+        raise _Unprovable(f"could not stage decoded bytes ({err.strerror or err})") from err
     return written
 
 
-def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]:
+def _gzip_header_len(fh, pos: int) -> int | None:
+    """Length of the gzip member header at `pos` (FEXTRA/FNAME/FCOMMENT/FHCRC included)."""
+    fh.seek(pos)
+    head = fh.read(10)
+    if len(head) < 10 or head[:3] != b"\x1f\x8b\x08":
+        return None
+    flags, n = head[3], 10
+    if flags & 4:
+        xlen = fh.read(2)
+        if len(xlen) < 2:
+            return None
+        size = int.from_bytes(xlen, "little")
+        fh.seek(size, 1)
+        n += 2 + size
+    for bit in (8, 16):
+        if flags & bit:
+            while True:
+                b = fh.read(1)
+                if not b:
+                    return None
+                n += 1
+                if b == b"\0":
+                    break
+    if flags & 2:
+        n += 2
+    return n
+
+
+def _decode_at(src: Path, offset: int, kind: str, out, budget: dict) -> tuple[int, list]:
     """Decode the stream starting at `offset` into `out`, following concatenated members.
 
-    Returns (bytes written, input end offset or None if unknown). Every byte decoded
-    before truncation, junk or corruption is kept. Raises _LayerTooLarge past the cap.
+    Returns (bytes written, body intervals). The intervals are input ranges whose bytes
+    were consumed as compressed payload; only those may be skipped by later carving.
+    Header fields that a decoder reads past without output (gzip FEXTRA/FNAME/FCOMMENT)
+    are deliberately not included, so streams hidden there are still carved and decoded.
+    Every byte decoded before truncation, junk or corruption is kept. Raises
+    _Unprovable on the size cap, a staging-write failure, or a missing decoder.
     """
     written = 0
     if kind == "zstd":
@@ -129,9 +166,12 @@ def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]
                         written = _write_capped(out, chunk, written)
                 except zstandard.ZstdError:
                     pass
-                return written, None
+                return written, []
             if not shutil.which("zstd"):
-                raise FileNotFoundError("zstd decoder unavailable")
+                raise _Unprovable("zstd decoder unavailable")
+            budget["zstd"] += 1
+            if budget["zstd"] > MAX_ZSTD_SPAWNS:
+                raise _Unprovable(f"more than {MAX_ZSTD_SPAWNS} zstd streams")
             proc = subprocess.Popen(["zstd", "-dcq"], stdin=fh, stdout=subprocess.PIPE,
                                     stderr=subprocess.DEVNULL)
             try:
@@ -142,12 +182,26 @@ def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]
                 if proc.poll() is None:
                     proc.kill()
                 proc.wait()
-            return written, None
+            return written, []
 
     factory = {"gzip": lambda: zlib.decompressobj(31), "xz": lzma.LZMADecompressor,
                "bzip2": bz2.BZ2Decompressor}[kind]
     errors = (OSError, EOFError, lzma.LZMAError, ValueError, zlib.error)
+    intervals: list[tuple[int, int]] = []
     with src.open("rb") as fh:
+        member = offset
+
+        hfh = src.open("rb") if kind == "gzip" else None
+
+        def body_start(pos: int) -> int:
+            # The member's own start offset is covered (already decoded as part of this
+            # chain); the variable header fields after it are not.
+            intervals.append((pos, pos + 1))
+            if hfh is None:
+                return pos
+            h = _gzip_header_len(hfh, pos)
+            return pos + h if h is not None else pos + 10**18  # unparsable: skip nothing
+
         fh.seek(offset)
         dec = factory()
         consumed = offset
@@ -156,7 +210,8 @@ def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]
             data = pending or fh.read(FEED)
             pending = b""
             if not data:
-                return written, consumed
+                intervals.append((body_start(member), consumed))
+                return written, intervals
             buf = data
             try:
                 while True:
@@ -164,7 +219,10 @@ def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]
                         chunk = dec.decompress(buf, CHUNK)
                     else:
                         chunk = dec.decompress(buf, max_length=CHUNK)
-                    written = _write_capped(out, chunk, written)
+                    if chunk:
+                        # Outside the decoder's error handling only in effect: _Unprovable
+                        # is not an OSError subclass, so a failed write propagates.
+                        written = _write_capped(out, chunk, written)
                     if dec.eof:
                         break
                     if kind == "gzip":
@@ -176,19 +234,46 @@ def _decode_at(src: Path, offset: int, kind: str, out) -> tuple[int, int | None]
                     else:
                         buf = b""
             except errors:
-                return written, None
+                return written, intervals  # the failing member's range stays carvable
             if dec.eof:
                 rest = dec.unused_data
                 consumed += len(data) - len(rest)
+                intervals.append((body_start(member), consumed))
                 magic = _MAGIC[kind]
                 if len(rest) < len(magic):
                     rest += fh.read(FEED)
                 if not rest.startswith(magic):
-                    return written, consumed
+                    return written, intervals
+                member = consumed
                 dec = factory()  # a concatenated member: gzip -dc joins them, so do we
                 pending = rest
             else:
                 consumed += len(data)
+
+
+class _Intervals:
+    """Disjoint half-open ranges with O(log n) membership (overlaps are merged)."""
+
+    def __init__(self):
+        self.starts: list[int] = []
+        self.ends: list[int] = []
+
+    def contains(self, x: int) -> bool:
+        i = bisect.bisect_right(self.starts, x) - 1
+        return i >= 0 and x < self.ends[i]
+
+    def add(self, a: int, b: int) -> None:
+        if b <= a:
+            return
+        i = bisect.bisect_left(self.starts, a)
+        j = bisect.bisect_right(self.starts, b)
+        if i > 0 and self.ends[i - 1] >= a:
+            i -= 1
+        if i < j:
+            a = min(a, self.starts[i])
+            b = max(b, self.ends[j - 1])
+        self.starts[i:j] = [a]
+        self.ends[i:j] = [b]
 
 
 SELF = Path(__file__).resolve()
@@ -200,14 +285,16 @@ def _label(m: bytes, markers) -> str:
 
 
 def scan_file(path: Path, markers, digests, problems: list[str], label: str | None = None,
-              depth: int = 0) -> None:
+              depth: int = 0, budget: dict | None = None) -> None:
     """Scan raw bytes, then every compressed stream found at any offset, recursively.
 
     A file is cleared only when its shipped bytes are clean and every layer that
-    decodes from it (nested, embedded in an archive or image, truncated or
-    junk-suffixed) is clean too. Undecidable cases fail closed.
+    decodes from it (nested, embedded in an archive or image, hidden in header fields,
+    truncated or junk-suffixed) is clean too. Undecidable cases fail closed: depth,
+    decoded size, decode-attempt budget, staging-write failures, missing decoders.
     """
     label = label or str(path)
+    budget = {"attempts": 0, "zstd": 0} if budget is None else budget
     if depth == 0 and any(d in label.lower() for d in PATH_DENY):
         problems.append(f"{label}: private driver/backend path")
     carve: set[tuple[int, str]] = set()
@@ -223,31 +310,31 @@ def scan_file(path: Path, markers, digests, problems: list[str], label: str | No
         problems.append(f"{label}: compressed data nested deeper than {MAX_DEPTH} layers; "
                         "cannot prove it clean")
         return
-    covered = -1
-    attempts = 0
+    covered = _Intervals()  # payload ranges already decoded from this file
     for offset, kind in sorted(carve):
-        if offset < covered:
+        if covered.contains(offset):
             continue
-        attempts += 1
-        if attempts > MAX_CARVES:
-            problems.append(f"{label}: more than {MAX_CARVES} embedded streams; cannot prove it clean")
+        budget["attempts"] += 1
+        if budget["attempts"] > MAX_ATTEMPTS:
+            problems.append(f"{label}: more than {MAX_ATTEMPTS} decode attempts; cannot prove it clean")
             return
         with tempfile.NamedTemporaryFile(prefix="privacy-layer-") as out:
             try:
-                written, end = _decode_at(path, offset, kind, out)
-            except _LayerTooLarge:
-                problems.append(f"{label}@{offset} ({kind}): decodes past {MAX_DECODED} bytes; "
-                                "cannot prove it clean (raise PRIVACY_MAX_DECODED)")
-                continue
-            except FileNotFoundError as err:
+                written, intervals = _decode_at(path, offset, kind, out, budget)
+                if written:
+                    out.flush()
+            except _Unprovable as err:
                 problems.append(f"{label}@{offset} ({kind}): {err}; cannot prove it clean")
                 continue
-            if end is not None:
-                covered = end
+            except OSError as err:
+                problems.append(f"{label}@{offset} ({kind}): staging failed ({err}); "
+                                "cannot prove it clean")
+                continue
+            for a, b in intervals:
+                covered.add(a, b)
             if written:
-                out.flush()
                 scan_file(Path(out.name), markers, digests, problems,
-                          label=f"{label}@{offset}:{kind}", depth=depth + 1)
+                          label=f"{label}@{offset}:{kind}", depth=depth + 1, budget=budget)
 
 
 def scan_paths(paths, markers, digests, problems) -> int:

@@ -3,7 +3,7 @@ id: E5-T31
 epic: 5
 title: Enforce the Replay backend privacy boundary on PRs, guest images and deploys
 priority: 0.3815
-status: in-progress
+status: implemented
 depends_on: [E5-T30d]
 estimate: S
 risk: medium
@@ -397,3 +397,32 @@ wiring (`tools/deploy-cloudflare.sh:226-229`, hook lines 12-13), all HELD.
   gzip header and are not decoded. That falls under "compressors not decoded", but it should be
   listed explicitly.
 - SUITE: none promoted until the refutations clear.
+
+### 2026-11-22 — worker — rework after r4 refutation
+
+1. **Header-field hiding.** Only compressed-payload ranges are now skipped by later
+   carving. Each gzip member's FEXTRA, FNAME, FCOMMENT and FHCRC bytes are parsed
+   and left carvable, so streams hidden there are decoded. A member's own start
+   offset is marked covered, which keeps long member chains linear (100,000 members
+   in about 1 s). Covered ranges use bisected disjoint intervals.
+2. **Staging-write failure.** Temp-file writes raise `_Unprovable`, which is not an
+   `OSError`, so ENOSPC or EFBIG can no longer read as end of stream. Any staging
+   failure fails closed with its cause.
+3. **Budgets** (r4's non-refuting slow inputs). Decode attempts are capped at 50,000
+   and zstd CLI decodes at 20,000 per top-level file, across all layers
+   (`PRIVACY_MAX_ZSTD_SPAWNS`). Both caps fail closed.
+
+Tests: 30 OK. New: a complete xz stream in one member's FEXTRA among benign
+members (direct and inside a tar), staging failure via `RLIMIT_FSIZE`, and the zstd
+budget. Sabotage: skipping gzip headers fails the FEXTRA test; treating a write
+failure as EOF fails the staging test.
+
+Real driver: the r4 construction (24 FEXTRA slices, each xz, benign member bodies;
+reassembly verified to match the driver's SHA-256) exits 1 directly and inside a
+tar. 60 MiB of zeros plus the driver, gzipped, under a 32 MiB file-size limit,
+exits 1 ("could not stage decoded bytes (File too large)"). Acceptance: Chromium
+108 `chrome` OK; public trees OK (25,582 files); `--git-range origin/main..HEAD`
+OK (every commit).
+
+Stated limits, adding r4's note: zip, jar and wheel members (raw deflate without a
+gzip header) and other undecoded formats are not decoded.

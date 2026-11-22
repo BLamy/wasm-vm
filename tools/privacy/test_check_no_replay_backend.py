@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zlib
 from pathlib import Path
 
 GUARD = Path(__file__).with_name("check-no-replay-backend.py")
@@ -223,6 +224,56 @@ class Guard(unittest.TestCase):
                          mode="w:gz")
         self.put("ok.tgz", data)
         self.assertEqual(self.run_guard(str(self.tree)), 0)
+
+    # --- verifier r4 findings: header-field hiding, staging-write failure --------
+    @staticmethod
+    def _gzip_with_extra(extra: bytes, body: bytes) -> bytes:
+        import struct
+        header = b"\x1f\x8b\x08\x04" + b"\0\0\0\0" + b"\0\xff" + struct.pack("<H", len(extra)) + extra
+        comp = zlib.compressobj(9, zlib.DEFLATED, -15)
+        deflated = comp.compress(body) + comp.flush()
+        return header + deflated + struct.pack("<II", zlib.crc32(body), len(body))
+
+    def test_stream_hidden_in_gzip_fextra_rejected(self):
+        import lzma
+        hidden = lzma.compress(SOFT)
+        self.assertNotIn(MARKER, hidden)
+        # Ten members, all with benign decoded content; one carries a complete xz
+        # stream in its FEXTRA field, which decoders read past without output.
+        extras = [b"pad"] * 10
+        extras[6] = hidden
+        members = b"".join(self._gzip_with_extra(e, b"benign changelog text\n") for e in extras)
+        self.assertNotIn(MARKER, gzip.decompress(members))
+        self.put("CHANGELOG.gz", members)
+        self.assertEqual(self.run_guard(str(self.tree)), 1)
+        self.put("x.tar", self._tar({"CHANGELOG.gz": members}))
+        self.assertEqual(self.run_guard(str(self.tree / "x.tar")), 1)
+
+    def test_staging_write_failure_fails_closed(self):
+        import resource
+        import signal
+        data = gzip.compress(b"\0" * (8 << 20) + SOFT, mtime=0)
+        self.put("big.gz", data)
+
+        def limit():
+            signal.signal(signal.SIGXFSZ, signal.SIG_IGN)
+            resource.setrlimit(resource.RLIMIT_FSIZE, (1 << 20, 1 << 20))
+
+        r = subprocess.run([sys.executable, str(GUARD), "--markers", str(self.markers),
+                            "--digests", str(self.digests), str(self.tree)],
+                           capture_output=True, text=True, preexec_fn=limit)
+        self.assertEqual(r.returncode, 1, r.stderr)
+        self.assertIn("cannot prove", r.stderr)
+
+    @unittest.skipUnless(shutil.which("zstd"), "zstd CLI absent")
+    def test_zstd_spawn_budget_fails_closed(self):
+        self.put("many.bin", b"\x28\xb5\x2f\xfd" * 3000)
+        r = subprocess.run([sys.executable, str(GUARD), "--markers", str(self.markers),
+                            "--digests", str(self.digests), str(self.tree)],
+                           capture_output=True, text=True,
+                           env={**os.environ, "PRIVACY_MAX_ZSTD_SPAWNS": "100"})
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("zstd streams", r.stderr)
 
     # --- verifier finding 2: symlinks are followed -------------------------------
     def test_symlink_to_private_file_rejected(self):
