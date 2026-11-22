@@ -36,6 +36,18 @@ def main():
             bad.append(f"revision mismatch: {repo['path']} manifest={repo['revision']} live={live.get(repo['path'])}")
     extra = set(live) - {r["path"] for r in manifest["repositories"]}
     bad += [f"unrecorded dependency: {p}" for p in sorted(extra)]
+    # gclient revinfo reports what DEPS requests; also check what is actually checked
+    # out, and that no dependency repository carries local edits.
+    for repo in manifest["repositories"]:
+        path = os.path.join(ROOT, repo["path"])
+        if repo["revision"] and os.path.isdir(os.path.join(path, ".git")):
+            actual = run(["git", "rev-parse", "HEAD"], cwd=path).strip()
+            if actual != repo["revision"]:
+                bad.append(f"checkout mismatch: {repo['path']} HEAD={actual} manifest={repo['revision']}")
+            dirty = run(["git", "status", "--porcelain", "--untracked-files=no", "--ignore-submodules=all"],
+                        cwd=path).strip()
+            if dirty and repo["path"] != "src":
+                bad.append(f"local edits in dependency {repo['path']}: {dirty.splitlines()[0]}")
     head = run(["git", "rev-parse", "HEAD"]).strip()
     if head != manifest["source_revision"]:
         bad.append(f"src HEAD {head} != {manifest['source_revision']}")
