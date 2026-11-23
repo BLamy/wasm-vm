@@ -1,0 +1,5 @@
+E5-T34a size: PASS (1579 ms)
+E5-T34a corrupt: PASS (7365 ms)
+E5-T34a prefill: PASS (1725591 ms)
+E5-T34a lazy: PASS (124843 ms)
+EXIT 0
