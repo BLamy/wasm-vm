@@ -10,7 +10,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 1. **E5-T29b** — Run recording-capable Replay Chromium on native wasm-vm and capture its image pair
 1. **E5-T32b** — Build optimized Replay Chrome 157 for riscv64 with the unbundled driver
-1. **E5-T34a** — Whole-image single-fetch block backend for the browser runtime
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 1. **E5.5-T06** — Diagnose missing package-bar foreground on the cold GPU desktop
@@ -42,7 +41,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `0.3852` [E5-T32b](epic-5-the-window/E5-T32b-replay-chrome-157-build.md) — Build optimized Replay Chrome 157 for riscv64 with the unbundled driver *(deps: E5-T32a)*
 - [x] `0.386` [E5-T33](epic-5-the-window/E5-T33-replay-node-26-riscv.md) — Build Replay Node 26 for riscv64 with the unbundled driver *(deps: E5-T31)*
 - [-] `0.387` [E5-T34](epic-5-the-window/E5-T34-replay-shared-desktop-image.md) — Minimal single-fetch shared desktop OS for Replay Chrome 157 and Node 26 (planning parent) *(deps: E5-T32b, E5-T33)*
-- [ ] `0.3871` [E5-T34a](epic-5-the-window/E5-T34a-whole-image-block-backend.md) — Whole-image single-fetch block backend for the browser runtime *(deps: E5-T31)*
+- [~] `0.3871` [E5-T34a](epic-5-the-window/E5-T34a-whole-image-block-backend.md) — Whole-image single-fetch block backend for the browser runtime *(deps: E5-T31)*
 - [ ] `0.3872` [E5-T34b](epic-5-the-window/E5-T34b-minimal-replay-desktop-rootfs.md) — Minimal read-only rootfs for Replay Chrome 157 and Node 26 on one desktop *(deps: E5-T32b, E5-T33)*
 - [ ] `0.3873` [E5-T34c](epic-5-the-window/E5-T34c-shared-replay-desktop-browser.md) — Boot the shared Replay Chrome 157 and Node 26 desktop in the browser demo *(deps: E5-T34a, E5-T34b)*
 
