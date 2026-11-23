@@ -1889,6 +1889,24 @@ if (new URLSearchParams(location.search).has("testHooks")) {
       "E4-T28e GCC interactive browser proof",
       { requestKey: "gcc", onClaim: () => setGuestChip("alpine") },
     );
+  // E5-T34a test-only hook: a COLD (no snapshot, no persistence) local chunked Alpine boot. Pass
+  // `{ wholeImageUrl, wholeImageSha256, wholeImageSize }` for whole-image prefill, or nothing for
+  // the lazy per-chunk baseline the prefill must match.
+  window.__bootAlpineChunkedCold = (extra = {}) =>
+    runLinuxBoot(
+      {
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        bootProfileUrl: null,
+        persist: false,
+        bootSnapshot: false,
+        ramMib: 256,
+        ...extra,
+      },
+      extra.wholeImageUrl ? "E5-T34a whole-image prefill boot" : "E5-T34a lazy chunked baseline boot",
+      { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
+    );
 }
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never

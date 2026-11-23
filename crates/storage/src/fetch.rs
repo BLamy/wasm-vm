@@ -107,6 +107,10 @@ pub enum FetchFailure {
     HttpStatus { status: u16 },
     /// Retries were exhausted for a chunk (network/5xx/hash mismatch that never resolved).
     RetriesExhausted { chunk: usize },
+    /// E5-T34a: the whole-image prefill buffer's bytes for this chunk failed verification (or the
+    /// chunk is outside it). Permanent — never retried and never silently re-fetched from the
+    /// network.
+    LocalImageCorrupt { chunk: usize },
 }
 
 /// Decide what to do with a response `status` for the given `layout`.

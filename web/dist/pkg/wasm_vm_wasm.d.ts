@@ -654,6 +654,13 @@ export class WasmLinux {
     setICountDivider(value: any): void;
     setInputPointerMode(relative: boolean): void;
     /**
+     * E5-T34a: install the whole raw base image (already downloaded + SHA-256 checked by the
+     * loader) as the chunk source, so every chunk is served from it with no network request. The
+     * `Uint8Array` stays in JS memory; each chunk is sliced, hash-verified, and cached on demand.
+     * Errors unless this is a chunked boot and `image.length == manifest.image_len`.
+     */
+    setLocalImage(image: Uint8Array): void;
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -1079,6 +1086,7 @@ export interface InitOutput {
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setGuestClock: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setICountDivider: (a: number, b: any) => [number, number];
+    readonly wasmlinux_setLocalImage: (a: number, b: any) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
@@ -1109,11 +1117,15 @@ export interface InitOutput {
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_takeTrace: (a: number) => [number, number, number, number];
-    readonly wasmlinux_cancelOwnedLocalHttp: (a: number) => [number, number, number];
-    readonly wasmlinux_openOwnedLocalHttp: (a: number) => [number, number];
-    readonly wasmlinux_ownedLocalHttpFactoryEntries: () => [number, number];
-    readonly wasmlinux_ownedLocalHttpState: (a: number) => [number, number, number];
-    readonly wasmlinux_pumpOwnedLocalHttp: (a: number) => [number, number, number];
+    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
+    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
+    readonly setSlirpMtu: (a: number) => void;
+    readonly setSlirpNet: (a: number) => void;
+    readonly setSlirpRelay: (a: number, b: number) => void;
+    readonly setSlirpRelayToken: (a: number, b: number) => void;
+    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
+    readonly slirpDhcpStats: () => [number, number];
+    readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
     readonly __wbg_sessionnetworklease_free: (a: number, b: number) => void;
     readonly __wbg_sessionsourceprobe_free: (a: number, b: number) => void;
@@ -1153,15 +1165,24 @@ export interface InitOutput {
     readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
     readonly wasmmachine_replayNetworkEvent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
     readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
-    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
-    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
-    readonly setSlirpMtu: (a: number) => void;
-    readonly setSlirpNet: (a: number) => void;
-    readonly setSlirpRelay: (a: number, b: number) => void;
-    readonly setSlirpRelayToken: (a: number, b: number) => void;
-    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
-    readonly slirpDhcpStats: () => [number, number];
-    readonly slirpTailscaleCommand: (a: number, b: number) => number;
+    readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
+    readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
+    readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
+    readonly __jit_fp_flags: () => number;
+    readonly __jit_fp_fmadd_s: (a: number, b: number, c: number, d: number) => bigint;
+    readonly __jit_fp_from_int_s: (a: bigint, b: number, c: number) => bigint;
+    readonly __jit_fp_op32: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
+    readonly __jit_fp_op64: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
+    readonly __jit_fp_to_word_s: (a: number, b: number, c: number) => bigint;
+    readonly __jit_load: (a: bigint, b: number) => bigint;
+    readonly __jit_lr: (a: bigint, b: number) => bigint;
+    readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
+    readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
+    readonly wasmlinux_cancelOwnedLocalHttp: (a: number) => [number, number, number];
+    readonly wasmlinux_openOwnedLocalHttp: (a: number) => [number, number];
+    readonly wasmlinux_ownedLocalHttpFactoryEntries: () => [number, number];
+    readonly wasmlinux_ownedLocalHttpState: (a: number) => [number, number, number];
+    readonly wasmlinux_pumpOwnedLocalHttp: (a: number) => [number, number, number];
     readonly __wbg_wasmgputransport_free: (a: number, b: number) => void;
     readonly wasmgputransport_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
     readonly wasmgputransport_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
@@ -1175,11 +1196,36 @@ export interface InitOutput {
     readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
     readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
     readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
+    readonly wasmlinux_captureDiskDelta: (a: number) => any;
+    readonly sessionInspectClockOrigin: (a: any) => [number, number, number, number];
+    readonly wasmlinux_beginExactBranch: (a: number, b: any, c: any, d: number) => [number, number];
+    readonly wasmlinux_beginExactReplay: (a: number, b: any, c: any, d: any, e: any, f: number, g: number) => [number, number];
+    readonly wasmlinux_canContinueExactBranch: (a: number) => [number, number, number];
+    readonly wasmlinux_captureExactBranch: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_continueExactReplay: (a: number, b: number, c: number, d: any, e: any, f: any, g: any, h: number) => [number, number];
+    readonly wasmlinux_exactBranchNetworkOffline: (a: number) => [number, number, number];
+    readonly wasmlinux_exactReplayFrontier: (a: number) => [number, number, number, number];
+    readonly wasmlinux_exactSessionHostQueues: (a: number) => [number, number, number];
+    readonly wasmlinux_exactSessionWitness: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_markExactBranchReplayOffline: (a: number) => [number, number];
+    readonly wasmlinux_requestExactBranchGoLive: (a: number) => [number, number];
+    readonly wasmlinux_runExactReplayChunkTo: (a: number, b: any, c: number) => [number, number, number];
+    readonly wasmlinux_runExactReplayToEnd: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_takeExactSessionDeliveries: (a: number) => [number, number, number];
+    readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
+    readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
+    readonly wasmmachine_jitDirectStoreMarks: (a: number) => [number, number, number];
+    readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
+    readonly wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
+    readonly wasmmachine_stageEventPending: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
+    readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
+    readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
     readonly sessionExactGpuIdentity: () => [number, number, number, number];
     readonly sessionGpuResultInfo: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_applySoftwareRamDeltaChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
-    readonly wasmlinux_captureDiskDelta: (a: number) => any;
     readonly wasmlinux_captureExactGpuKeyframe: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
     readonly wasmlinux_captureSoftwareBaseKeyframe: (a: number, b: number, c: number) => any;
@@ -1214,44 +1260,6 @@ export interface InitOutput {
     readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
     readonly wasmlinux_softwareRamDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeExactGpuBatch: (a: number) => [number, number, number];
-    readonly sessionInspectClockOrigin: (a: any) => [number, number, number, number];
-    readonly wasmlinux_beginExactBranch: (a: number, b: any, c: any, d: number) => [number, number];
-    readonly wasmlinux_beginExactReplay: (a: number, b: any, c: any, d: any, e: any, f: number, g: number) => [number, number];
-    readonly wasmlinux_canContinueExactBranch: (a: number) => [number, number, number];
-    readonly wasmlinux_captureExactBranch: (a: number, b: number) => [number, number, number];
-    readonly wasmlinux_continueExactReplay: (a: number, b: number, c: number, d: any, e: any, f: any, g: any, h: number) => [number, number];
-    readonly wasmlinux_exactBranchNetworkOffline: (a: number) => [number, number, number];
-    readonly wasmlinux_exactReplayFrontier: (a: number) => [number, number, number, number];
-    readonly wasmlinux_exactSessionHostQueues: (a: number) => [number, number, number];
-    readonly wasmlinux_exactSessionWitness: (a: number, b: number) => [number, number, number];
-    readonly wasmlinux_markExactBranchReplayOffline: (a: number) => [number, number];
-    readonly wasmlinux_requestExactBranchGoLive: (a: number) => [number, number];
-    readonly wasmlinux_runExactReplayChunkTo: (a: number, b: any, c: number) => [number, number, number];
-    readonly wasmlinux_runExactReplayToEnd: (a: number, b: number) => [number, number, number];
-    readonly wasmlinux_takeExactSessionDeliveries: (a: number) => [number, number, number];
-    readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
-    readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
-    readonly wasmmachine_jitDirectStoreMarks: (a: number) => [number, number, number];
-    readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
-    readonly wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
-    readonly wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
-    readonly wasmmachine_stageEventPending: (a: number, b: number, c: number, d: number) => [number, number, number, number];
-    readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
-    readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
-    readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
-    readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
-    readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
-    readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
-    readonly __jit_fp_flags: () => number;
-    readonly __jit_fp_fmadd_s: (a: number, b: number, c: number, d: number) => bigint;
-    readonly __jit_fp_from_int_s: (a: bigint, b: number, c: number) => bigint;
-    readonly __jit_fp_op32: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
-    readonly __jit_fp_op64: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
-    readonly __jit_fp_to_word_s: (a: number, b: number, c: number) => bigint;
-    readonly __jit_load: (a: bigint, b: number) => bigint;
-    readonly __jit_lr: (a: bigint, b: number) => bigint;
-    readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
-    readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
     readonly wasmmachine_takeNetworkDeliveries: (a: number) => [number, number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;

@@ -7,6 +7,11 @@
 //! resident or already in-flight (`plan_fetches`), fetch each missing chunk (per-chunk file for
 //! `split`, `Range:` for `blob`), verify its hash on arrival (`ChunkStore::provide`), and populate
 //! the shared store. A parked virtio-blk read then completes on the next `runChunk` boundary.
+//!
+//! E5-T34a whole-image prefill: when the loader has handed over the entire raw image as a JS
+//! `Uint8Array` (`setLocalImage`), `fetch_one` slices each chunk out of that buffer (the handle
+//! stays in JS memory — only the one chunk is copied into linear memory), verifies it, and inserts
+//! it with no network request. The admission/extent/verify decisions are `wasm_vm_storage::LocalImage`.
 
 use std::cell::Cell;
 use std::collections::BTreeSet;
@@ -19,8 +24,8 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, Response};
 
 use wasm_vm_storage::{
-    BlockCache, FetchFailure, ImageManifest, Readahead, ResponseAction, RetryPolicy, boot_prefetch,
-    classify_response, plan_fetches,
+    BlockCache, FetchFailure, ImageManifest, LocalImage, LocalImageError, Readahead,
+    ResponseAction, RetryPolicy, boot_prefetch, classify_response, plan_fetches,
 };
 
 use std::cell::RefCell;
@@ -58,6 +63,11 @@ pub struct FetchState {
     pub bytes_transferred: Cell<u64>,
     /// The first permanent fetch failure, surfaced to JS (the guest already saw an I/O error).
     pub last_error: RefCell<Option<String>>,
+    /// E5-T34a: the admitted whole-image source (a JS-memory handle), if the loader prefilled one.
+    local_image: RefCell<Option<(LocalImage, Uint8Array)>>,
+    /// E5-T34a: chunks served from the local image (no network) and their bytes.
+    pub local_hits: Cell<u32>,
+    pub local_bytes: Cell<u64>,
 }
 
 impl FetchState {
@@ -81,7 +91,23 @@ impl FetchState {
             fetch_count: Cell::new(0),
             bytes_transferred: Cell::new(0),
             last_error: RefCell::new(None),
+            local_image: RefCell::new(None),
+            local_hits: Cell::new(0),
+            local_bytes: Cell::new(0),
         }
+    }
+
+    /// E5-T34a: install the whole raw image as the chunk source. Refused unless its length is
+    /// exactly the manifest's `image_len`. The handle is kept as-is (no copy into linear memory).
+    pub fn set_local_image(&self, image: Uint8Array) -> Result<(), LocalImageError> {
+        let admitted = LocalImage::admit(&self.manifest, u64::from(image.length()))?;
+        *self.local_image.borrow_mut() = Some((admitted, image));
+        Ok(())
+    }
+
+    /// Whether a whole-image source is installed.
+    pub fn has_local_image(&self) -> bool {
+        self.local_image.borrow().is_some()
     }
 
     /// The recorded boot access profile as a JSON array of chunk indices (dev-mode recorder →
@@ -203,6 +229,11 @@ fn record_error(state: &Rc<FetchState>, chunk: usize, f: FetchFailure) {
 /// (a non-retryable status, or `blob`-layout 200-instead-of-206) fails immediately; exhausting the
 /// retries yields [`FetchFailure::RetriesExhausted`]. Never buffers a full-image 200 body.
 async fn fetch_one(state: &Rc<FetchState>, chunk: usize) -> Result<(), FetchFailure> {
+    // E5-T34a: a prefilled whole image serves the chunk locally — never the network, even on a
+    // hash mismatch (a permanent `LocalImageCorrupt`).
+    if let Some(result) = fetch_local(state, chunk) {
+        return result;
+    }
     let req = state
         .manifest
         .chunk_request(&state.base_url, chunk)
@@ -255,6 +286,28 @@ async fn fetch_one(state: &Rc<FetchState>, chunk: usize) -> Result<(), FetchFail
         sleep_ms(state.retry.backoff_ms(attempt)).await;
         attempt += 1;
     }
+}
+
+/// Serve `chunk` from the installed whole-image source: copy exactly its byte range out of the JS
+/// buffer, verify it, insert it. `None` when no local image is installed (use the network).
+fn fetch_local(state: &Rc<FetchState>, chunk: usize) -> Option<Result<(), FetchFailure>> {
+    let local = state.local_image.borrow();
+    let (admitted, image) = local.as_ref()?;
+    let result = admitted
+        .chunk_range(&state.manifest, chunk)
+        .and_then(|(start, end)| {
+            let bytes = image.subarray(start, end).to_vec();
+            admitted.verify(&state.manifest, chunk, &bytes)?;
+            Ok(bytes)
+        })
+        .map(|bytes| {
+            state.local_hits.set(state.local_hits.get() + 1);
+            state
+                .local_bytes
+                .set(state.local_bytes.get() + bytes.len() as u64);
+            state.store.borrow_mut().insert(chunk, bytes);
+        });
+    Some(result)
 }
 
 /// Send a GET for `url` (optionally with an inclusive `Range`) and await the RESPONSE HEADERS only —
