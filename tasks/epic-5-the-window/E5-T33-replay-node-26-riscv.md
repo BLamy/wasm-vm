@@ -3,7 +3,7 @@ id: E5-T33
 epic: 5
 title: Build Replay Node 26 for riscv64 with the unbundled driver
 priority: 0.386
-status: pending
+status: in-progress
 depends_on: [E5-T31]
 estimate: S
 risk: medium
