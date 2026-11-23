@@ -75,8 +75,13 @@ async function open(extra) {
   return { page, requests, consoleErrors, bootAt };
 }
 
+// Boot time is not an acceptance criterion and a loaded host (e.g. a concurrent Chromium build,
+// load average ~99) made a correct prefill boot exceed 30 min. Default to 4 h; override with
+// E5T34A_LOGIN_TIMEOUT_MS. Request counts, not timing, are what this script proves.
+const LOGIN_TIMEOUT_MS = Number(process.env.E5T34A_LOGIN_TIMEOUT_MS ?? 4 * 60 * 60 * 1000);
+
 async function login(page) {
-  await waitScreen(page, "login:", 1_800_000);
+  await waitScreen(page, "login:", LOGIN_TIMEOUT_MS);
   const screen = await screenText(page);
   assert.doesNotMatch(screen, /Kernel panic|Unable to mount root/);
   const type = (s) => page.evaluate((x) => window.__term.typeBytes(new TextEncoder().encode(x)), s);
