@@ -1,0 +1,29 @@
+    fadd_s(dst, src1, src2);
+  } else {
+    fadd_d(dst, src1, src2);
+  }
+
+  bind(&done);
+}
+
+void MacroAssembler::Float32Max(FPURegister dst, FPURegister src1,
+                                FPURegister src2) {
+  ASM_CODE_COMMENT(this);
+diff --git a/deps/v8/src/codegen/riscv/macro-assembler-riscv.cc b/deps/v8/src/codegen/riscv/macro-assembler-riscv.cc
+index 0cbaf849..3eea26ea 100644
+--- a/deps/v8/src/codegen/riscv/macro-assembler-riscv.cc
++++ b/deps/v8/src/codegen/riscv/macro-assembler-riscv.cc
+@@ -7245,6 +7245,13 @@ void MacroAssembler::FloatMinMaxHelper(FPURegister dst, FPURegister src1,
+   bind(&done);
+ }
+ 
++// Explicit instantiations: maglev-ir-riscv.cc calls the double variant from another
++// translation unit, and GCC may inline every local use without emitting it.
++template void MacroAssembler::FloatMinMaxHelper<float>(FPURegister, FPURegister,
++                                                       FPURegister, MaxMinKind);
++template void MacroAssembler::FloatMinMaxHelper<double>(FPURegister, FPURegister,
++                                                        FPURegister, MaxMinKind);
++
+ void MacroAssembler::Float32Max(FPURegister dst, FPURegister src1,
+                                 FPURegister src2) {
+   ASM_CODE_COMMENT(this);
