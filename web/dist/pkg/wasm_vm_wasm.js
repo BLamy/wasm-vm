@@ -1,8 +1,8 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
 import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
-import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
+import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 
 
 /**
@@ -2565,6 +2565,19 @@ export class WasmLinux {
         }
     }
     /**
+     * E5-T34a: install the whole raw base image (already downloaded + SHA-256 checked by the
+     * loader) as the chunk source, so every chunk is served from it with no network request. The
+     * `Uint8Array` stays in JS memory; each chunk is sliced, hash-verified, and cached on demand.
+     * Errors unless this is a chunked boot and `image.length == manifest.image_len`.
+     * @param {Uint8Array} image
+     */
+    setLocalImage(image) {
+        const ret = wasm.wasmlinux_setLocalImage(this.__wbg_ptr, image);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -4472,8 +4485,8 @@ function __wbg_get_imports() {
     return {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import2,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import1,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import2,
     };
 }
 

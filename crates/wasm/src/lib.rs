@@ -4789,6 +4789,27 @@ impl WasmLinux {
         Ok(http_fetch::fetch_pending(&state, &pending).await)
     }
 
+    /// E5-T34a: install the whole raw base image (already downloaded + SHA-256 checked by the
+    /// loader) as the chunk source, so every chunk is served from it with no network request. The
+    /// `Uint8Array` stays in JS memory; each chunk is sliced, hash-verified, and cached on demand.
+    /// Errors unless this is a chunked boot and `image.length == manifest.image_len`.
+    #[wasm_bindgen(js_name = setLocalImage)]
+    pub fn set_local_image(&self, image: js_sys::Uint8Array) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .fetch
+            .as_ref()
+            .ok_or_else(|| JsError::new("setLocalImage: not a chunked boot"))?;
+        state.set_local_image(image).map_err(|e| match e {
+            wasm_vm_storage::LocalImageError::SizeMismatch { expected, got } => JsError::new(
+                &format!("setLocalImage: image is {got} bytes, manifest image_len is {expected}"),
+            ),
+            wasm_vm_storage::LocalImageError::TooLarge { image_len } => JsError::new(&format!(
+                "setLocalImage: {image_len}-byte image exceeds the 32-bit typed-array range"
+            )),
+        })
+    }
+
     /// E3-T05: durably flush the overlay's pending writes to IndexedDB. Resolves to the number of
     /// blocks persisted; its Promise resolves only after the IndexedDB transaction `complete` event
     /// (`durability` per the store), so a caller that awaits it knows the writes survive a reload. A
@@ -5286,6 +5307,14 @@ impl WasmLinux {
             Some(s) => {
                 set_num(&obj, "fetches", s.fetch_count.get() as f64);
                 set_num(&obj, "bytes", s.bytes_transferred.get() as f64);
+                // E5-T34a: chunks served from the prefilled whole image (no network).
+                set_num(&obj, "localHits", s.local_hits.get() as f64);
+                set_num(&obj, "localBytes", s.local_bytes.get() as f64);
+                let _ = js_sys::Reflect::set(
+                    &obj,
+                    &"localImage".into(),
+                    &JsValue::from_bool(s.has_local_image()),
+                );
                 let _ = js_sys::Reflect::set(
                     &obj,
                     &"error".into(),
@@ -5319,6 +5348,9 @@ impl WasmLinux {
             None => {
                 set_num(&obj, "fetches", 0.0);
                 set_num(&obj, "bytes", 0.0);
+                set_num(&obj, "localHits", 0.0);
+                set_num(&obj, "localBytes", 0.0);
+                let _ = js_sys::Reflect::set(&obj, &"localImage".into(), &JsValue::FALSE);
                 let _ = js_sys::Reflect::set(&obj, &"error".into(), &JsValue::NULL);
                 let _ = js_sys::Reflect::set(&obj, &"cache".into(), &JsValue::NULL);
                 let _ = js_sys::Reflect::set(&obj, &"prefetch".into(), &JsValue::NULL);

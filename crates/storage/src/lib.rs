@@ -23,6 +23,7 @@ pub mod checkpoint;
 mod dbmeta;
 pub mod disk_root;
 mod fetch;
+mod local_image;
 pub mod oci;
 mod overlay;
 mod overlay_delta;
@@ -40,6 +41,7 @@ pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
 };
+pub use local_image::{LocalImage, LocalImageError};
 pub use overlay::{
     MemOverlay, OVERLAY_BLOCK, OVERLAY_FORMAT_VERSION, OverlayBackend, OverlayDisk, OverlayError,
     OverlayOutcome,

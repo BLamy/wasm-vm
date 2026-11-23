@@ -1,0 +1,20 @@
+[
+ {
+  "s": 60,
+  "last": " * Scanning hardware for mdev ...modprobe: can't change directory to '/lib/modules': No such file or",
+  "fetches": 0,
+  "localHits": 61
+ },
+ {
+  "s": 120,
+  "last": " [ ok ]",
+  "fetches": 0,
+  "localHits": 81
+ },
+ {
+  "s": 180,
+  "last": "wasm-vm login: ",
+  "fetches": 0,
+  "localHits": 113
+ }
+]

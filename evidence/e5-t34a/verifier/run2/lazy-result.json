@@ -1,0 +1,20 @@
+{
+ "mode": "lazy",
+ "loginS": 180,
+ "ok": true,
+ "marker": "PREFILL_42_OK",
+ "whole": 0,
+ "chunkOrRange": 113,
+ "total": 282,
+ "stats": {
+  "localImage": false,
+  "localHits": 0,
+  "localBytes": 0,
+  "fetches": 113,
+  "bytes": 14811136,
+  "error": null
+ },
+ "errs": [
+  "Failed to load resource: the server responded with a status of 404 (File not found)"
+ ]
+}

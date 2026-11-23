@@ -1,0 +1,14 @@
+E5-T34a size: PASS (2261 ms)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Timeout 1800000ms exceeded.
+    at waitScreen (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34a-whole-image-prefill.mjs:52:8)
+    at login (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34a-whole-image-prefill.mjs:79:9)
+    at run (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34a-whole-image-prefill.mjs:131:26)
+    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34a-whole-image-prefill.mjs:165:26 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.20.0

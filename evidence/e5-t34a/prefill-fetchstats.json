@@ -1,0 +1,21 @@
+{
+  "fetches": 0,
+  "bytes": 0,
+  "localHits": 113,
+  "localBytes": 14811136,
+  "localImage": true,
+  "error": null,
+  "cache": {
+    "hits": 3205923,
+    "misses": 17554450,
+    "evictions": 0,
+    "residentBytes": 14811136,
+    "budgetBytes": 268435456
+  },
+  "prefetch": {
+    "issued": 10,
+    "used": 7,
+    "profileEntries": 0,
+    "accuracyPct": 70
+  }
+}

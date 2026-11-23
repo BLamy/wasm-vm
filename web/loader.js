@@ -33,6 +33,7 @@ import { validateGuestClock, validateICountDivider, validateInteractiveClock, cr
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
 import { stageGzipSnapshot } from "./snapshot-stream.js";
+import { fetchWholeImage } from "./whole-image.js";
 import { applyAdmissionProbe } from "./admission-probe.js";
 import { applyColdCounterRecycling, isLoopbackOrigin } from "./cold-counter-recycling.js";
 
@@ -248,6 +249,13 @@ export async function startLinuxBoot(opts = {}) {
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
     cacheBudgetMib = 0,
+    // E5-T34a whole-image prefill (chunked mode only, opt-in): ONE streamed request for the gzip of
+    // the raw base image, decoded into a JS-side buffer and checked against the decompressed SHA-256
+    // (and size, which must equal the chunk manifest's image_len). Every chunk is then served from
+    // that buffer — no per-chunk network requests during boot. Unset keeps lazy loading.
+    wholeImageUrl = null,
+    wholeImageSha256 = null,
+    wholeImageSize = null,
     // E4-T28e: optional fully resident read-only secondary virtio-blk image. Production Alpine
     // boots leave this unset; the browser GCC proof supplies the pinned local overlay explicitly.
     extraDiskUrl = null,
@@ -405,6 +413,9 @@ export async function startLinuxBoot(opts = {}) {
     validateInteractiveClock(interactiveClock, guestClock);
     if (interactiveClock !== undefined && virgl !== true) throw new Error("interactiveClock requires accelerated graphics");
     if (virgl && (!workerMode || freshDesktop || !isChunked || extraDiskUrl)) throw new Error("Accelerated graphics requires a whole-machine chunked worker boot");
+    if (wholeImageUrl != null && (!isChunked || typeof wholeImageUrl !== "string" || !wholeImageSha256)) {
+      throw new Error("whole-image prefill requires a chunked boot with wholeImageUrl and wholeImageSha256");
+    }
     if (virgl && opts.bootSnapshot !== false && startPaused) throw new Error("GPU warm boot must render new guest work before ready; startPaused is unsupported");
     if (virgl && opts.bootSnapshot !== false && persist) throw new Error("GPU warm boot currently requires persist=false");
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
@@ -473,6 +484,7 @@ export async function startLinuxBoot(opts = {}) {
     let secondaryBytes = null;
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
+    let wholeImage = null;
     if (isChunked) {
       // The chunked image manifest (JSON text handed to wasm as-is). Clear error if the local-only
       // asset is missing rather than a cryptic parse failure later.
@@ -503,6 +515,20 @@ export async function startLinuxBoot(opts = {}) {
             if (Array.isArray(arr)) bootProfile = Uint32Array.from(arr.filter((n) => Number.isInteger(n) && n >= 0));
           }
         } catch { /* no profile → readahead-only */ }
+      }
+      if (wholeImageUrl != null) {
+        // E5-T34a: the decompressed size must be the manifest's image_len — wasm re-checks it.
+        let imageLen;
+        try { imageLen = JSON.parse(imageManifestText).image_len; } catch { imageLen = undefined; }
+        if (!Number.isSafeInteger(imageLen)) throw new Error("whole image: chunk manifest has no image_len");
+        if (wholeImageSize != null && wholeImageSize !== imageLen) {
+          throw new Error(`whole image: declared size ${wholeImageSize} differs from manifest image_len ${imageLen}`);
+        }
+        wholeImage = await fetchWholeImage(wholeImageUrl, {
+          size: imageLen,
+          sha256: wholeImageSha256,
+          onProgress: (l, t) => onProgress("wholeImage", l, t),
+        });
       }
     } else {
       const secondary = manifest.artifacts[role];
@@ -737,6 +763,8 @@ export async function startLinuxBoot(opts = {}) {
     } else {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     }
+    // E5-T34a: serve every base chunk from the verified whole image (JS memory, sliced per chunk).
+    if (wholeImage) machine.setLocalImage(wholeImage);
 
     let productionGpu = null;
     if (virgl) {

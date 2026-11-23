@@ -1,0 +1,32 @@
+[
+ {
+  "s": 60,
+  "last": " * /run/lock: correcting owner",
+  "fetches": 0,
+  "localHits": 54
+ },
+ {
+  "s": 458,
+  "last": " * Scanning hardware for mdev ...",
+  "fetches": 0,
+  "localHits": 61
+ },
+ {
+  "s": 702,
+  "last": " * Scanning hardware for mdev ...",
+  "fetches": 0,
+  "localHits": 61
+ },
+ {
+  "s": 762,
+  "last": " * Cleaning /tmp directory ... [ ok ]",
+  "fetches": 0,
+  "localHits": 79
+ },
+ {
+  "s": 822,
+  "last": "wasm-vm login: ",
+  "fetches": 0,
+  "localHits": 113
+ }
+]
