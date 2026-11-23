@@ -1,0 +1,24 @@
+{
+  "zz-verifier-trunc": {
+    "screen": [
+      "boot error: Compressed input was truncated.",
+      "cannot boot: TypeError: Compressed input was truncated."
+    ],
+    "wholeReqs": 1,
+    "chunkOrRange": 0,
+    "total": 169,
+    "errs": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ]
+  },
+  "zz-verifier-lastflip": {
+    "screen": [
+      "boot error: whole image: integrity check failed: expected 58f3f9a45da2e1f2a3b0d7e97a9188f847ed2f3f6d58a48507cd35a3dd4457db, got f3a3569d6d0d35a6afd7e1e2f77fb77db82806b3e95d0ef0498559cf2252da48 — refusing to boot corrupt bytes",
+      "cannot boot: Error: whole image: integrity check failed: expected 58f3f9a45da2e1f2a3b0d7e97a9188f847ed2f3f6d58a48507cd35a3dd4457db, got f3a3569d6d0d35a6afd7e1e2f77fb77db82806b3e95d0ef0498559cf2252da48 — refusing to boot corrupt bytes"
+    ],
+    "wholeReqs": 1,
+    "chunkOrRange": 0,
+    "total": 169,
+    "errs": []
+  }
+}

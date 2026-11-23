@@ -1,0 +1,20 @@
+[
+ {
+  "s": 60,
+  "last": " * Loading hardware drivers ...",
+  "fetches": 73,
+  "localHits": 0
+ },
+ {
+  "s": 120,
+  "last": " [ ok ]",
+  "fetches": 102,
+  "localHits": 0
+ },
+ {
+  "s": 180,
+  "last": "wasm-vm login: ",
+  "fetches": 113,
+  "localHits": 0
+ }
+]
