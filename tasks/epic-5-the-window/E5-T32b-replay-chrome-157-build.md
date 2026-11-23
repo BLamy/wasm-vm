@@ -3,7 +3,7 @@ id: E5-T32b
 epic: 5
 title: Build optimized Replay Chrome 157 for riscv64 with the unbundled driver
 priority: 0.3852
-status: in-progress
+status: pending
 depends_on: [E5-T32a]
 estimate: S
 risk: high
@@ -35,6 +35,12 @@ record to justify each carried hunk.
 
 (empty)
 
+### 2026-11-23 — worker — parked while compiling
+
+The first full `ninja -k 0` build round (`tools/chromium/157/build-157.sh`) runs
+unattended in the x64 container. The task returns to pending so that E5-T33 can be
+submitted and verified under the one-in-flight rule. It is reactivated when the
+round finishes.
 ### 2026-11-23 — worker — build round 1 result (progress note, not a claim)
 
 Round 1 (`ninja -k 0 chrome chrome_sandbox`) compiled about 56k of 94,084 steps

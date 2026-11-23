@@ -1,0 +1,13 @@
+diff --git a/tools/v8_gypfiles/highway.gyp b/tools/v8_gypfiles/highway.gyp
+index c7f915b7..a677478c 100644
+--- a/tools/v8_gypfiles/highway.gyp
++++ b/tools/v8_gypfiles/highway.gyp
+@@ -22,7 +22,7 @@
+           ['v8_target_arch=="ppc64" or v8_target_arch=="s390x"', {
+             'defines': ['TOOLCHAIN_MISS_ASM_HWCAP_H',],
+           }],
+-          ['v8_target_arch=="s390x"', {
++          ['v8_target_arch=="s390x" or v8_target_arch=="riscv64"', {
+             'defines': ['HWY_BROKEN_EMU128=0',],
+           }],
+           ['OS in "aix os400"', {
