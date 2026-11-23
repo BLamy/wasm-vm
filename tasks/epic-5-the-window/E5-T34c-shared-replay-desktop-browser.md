@@ -1,7 +1,7 @@
 ---
 id: E5-T34c
 epic: 5
-title: Boot the shared Replay Chrome 157 and Node 26 desktop in the browser demo
+title: Boot the shared Replay Chrome and Node 26 desktop in the browser demo
 priority: 0.3873
 status: pending
 depends_on: [E5-T34a, E5-T34b]

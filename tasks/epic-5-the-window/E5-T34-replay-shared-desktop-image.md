@@ -1,10 +1,10 @@
 ---
 id: E5-T34
 epic: 5
-title: Minimal single-fetch shared desktop OS for Replay Chrome 157 and Node 26 (planning parent)
+title: Minimal single-fetch shared desktop OS for Replay Chrome and Node 26 (planning parent)
 priority: 0.387
 status: cancelled
-depends_on: [E5-T32b, E5-T33]
+depends_on: [E0-T34, E5-T33]
 estimate: M
 risk: high
 capstone: false
@@ -24,3 +24,6 @@ or OPFS and served to virtio-blk locally, with a tmpfs overlay for writes. Split
   filesystem, privacy-scanned at its source tree before packing (risk medium).
 - E5-T34c — boot both on the shared desktop in the browser, measure boot time and
   download size, publish (risk medium).
+
+User decision (2026-11-23): the first desktop ships Replay Chrome 108 (verified
+riscv64, E0-T34) because Replay's 157 uplift does not compile yet (E5-T32b, blocked).
