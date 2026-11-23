@@ -44,3 +44,15 @@ panel as execution on wasm-vm. No merges or upstream Replay publication.
 ## Verification log
 
 (empty)
+
+### 2026-11-22 — scope correction (privacy boundary)
+
+The user directed that normal Replay Chromium and Replay Node builds ship to the
+client, but nothing built from Replay's private backend `src/cpp` (the recording
+driver port, linker, recording reader) may enter any public PR, guest image,
+`web/dist` or Cloudflare deploy. The public demo therefore runs the
+**unbundled-driver** browser; its acceptance is visible JS/WASM/canvas plus real
+DOM input with no driver bytes present (`tools/privacy/check-no-replay-backend.py`
+on the exact shipped image and dist). Driver-enabled recording is proven only in
+private native wasm-vm runs (E5-T29b), and recordings go to the Replay server for
+processing rather than a local reader. See E5-T31.

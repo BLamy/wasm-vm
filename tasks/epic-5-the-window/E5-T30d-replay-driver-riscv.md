@@ -140,3 +140,11 @@ This verifies the labelled reference recording and production reader on native
 wasm-vm. Backend instruction re-execution and native browser/GUI integration remain
 separate claims. Repository checks: `python3 tools/check_task_policy.py`, then
 `python3 tools/build_queue.py`.
+
+### 2026-11-22 — history rewrite (privacy boundary, user-directed)
+
+At the user's direction, this branch's history was rewritten to purge a private
+driver build identifier from this log (E5-T31). Only that one line changed. The
+cited submission `8551c8d7e2467d832b7f495781ff47928d64ddd0` is now `0b241368c`, and
+`4fd6a7ac7` is now `8f346d217`. All other bytes of each commit's tree are identical,
+and the verdict and private evidence digests above are unaffected.

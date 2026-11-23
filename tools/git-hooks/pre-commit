@@ -7,6 +7,11 @@
 # Bypass:   SKIP_WEB_BUILD=1 git commit …   (or git commit --no-verify to skip all hooks)
 set -euo pipefail
 
+# Privacy boundary (always runs, even with SKIP_WEB_BUILD): no Replay backend src/cpp material
+# (recording driver, linker, reader) may be committed to this public repo.
+python3 "$(git rev-parse --show-toplevel)/tools/privacy/check-no-replay-backend.py" --staged --allow-missing-private \
+  || { echo "[pre-commit] privacy boundary check failed; unstage the private material" >&2; exit 1; }
+
 [ "${SKIP_WEB_BUILD:-0}" = "1" ] && { echo "[pre-commit] SKIP_WEB_BUILD=1 — not rebuilding web/dist"; exit 0; }
 
 repo=$(git rev-parse --show-toplevel)

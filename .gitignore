@@ -4,6 +4,8 @@
 
 # Local Replay Chromium source, dependency checkouts, build outputs, and GUI disks.
 /local/chromium-riscv64/
+# Everything under local/ is private (Replay backend/driver sources, markers, proofs). Never commit.
+/local/
 
 # rr traces are evidence, not source — they move via artifact upload, not git
 rr-traces/
