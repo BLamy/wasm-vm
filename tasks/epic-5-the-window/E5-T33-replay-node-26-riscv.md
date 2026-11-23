@@ -3,7 +3,7 @@ id: E5-T33
 epic: 5
 title: Build Replay Node 26 for riscv64 with the unbundled driver
 priority: 0.386
-status: implemented
+status: verified
 depends_on: [E5-T31]
 estimate: S
 risk: medium
@@ -74,3 +74,51 @@ under gitignored `local/node-26/`).
 
 Runtime dependency for the desktop image (E5-T34b): glibc 2.39 and GCC 14's
 `libstdc++.so.6.0.33`. No emulator, web or Chrome change.
+
+### 2026-11-23 — fresh verifier — VERDICT: verified
+
+Head `2b206d69c`, medium risk: acceptance criteria plus one bounded novel attack.
+Each prediction was written down before looking.
+- P1 acceptance — HELD. Predicted `E5-T33 acceptance: OK`. `bash tools/node/verify-node26.sh`
+  printed it (8 s): interfaces `lo`, `v26.13.1`, smoke digest `4beac423…882fa` (same as the
+  claim), no-env run `v26.13.1 riscv64` with the dlopen "file too short" degrade, privacy OK on
+  the binary and package. `node` SHA-256 `0a1942ad…4956` matches the claim, and so does the
+  package `e5c6c904…873d`. The package's `bin/node`, extracted, hashes to the same `0a1942ad…`.
+  The package holds only LICENSE, README and `bin/node`.
+- P2 source — HELD. `gh api repos/replayio/node/branches/v26.13.1-replay` gives
+  `333e17dfafb5890231f51926f335e1314c53ce6e`, which equals `git rev-parse HEAD` in
+  `/opt/replay-node-26` (there is no tag of that name; it is a branch). `git status` shows
+  exactly two modified files. Their `git diff` lines are identical to
+  `tools/node/patches/*.patch`, and both patches pass `git apply --reverse --check`. The other
+  untracked files are build logs; the ignored ones are generated configure output. The
+  `src/node_record_replay_driver.cc` stub is gitignored (`.gitignore:187`). It holds exactly the
+  `prepare-unbundled-driver.py` text: a `""` array, `gRecordReplayDriverSize = 0`, and build ID
+  `linux-riscv64-node-333e17dfafb5-unbundled-driver`. Not a finding: the floatminmax patch file
+  starts with 11 stray context lines before `diff --git`. `git apply` ignores them as a preamble.
+- P3 arch/ABI — HELD. Predicted e_flags 0x5, no V, lp64d interpreter. readelf shows: ELF64 DYN
+  (PIE), Machine RISC-V, Flags `0x5, RVC, double-float ABI`. `Tag_RISCV_arch` is
+  `rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zmmul1p0`, which is RV64GC with no V
+  and no Zb*. Interpreter is `/lib/ld-linux-riscv64-lp64d.so.1`. NEEDED is libstdc++/libm/
+  libgcc_s/libc/ld. The highest GLIBC symbol version is 2.38.
+- P4 no driver bytes — HELD. The privacy guard passes on `local/node-26/node` (exit 0; 12
+  markers, 11 digests). Positive control: a scratch concatenation of that node and the private
+  driver FAILED the guard (private markers #2–#7 plus the driver name). The scratch file was
+  then deleted.
+- P5 no fetch at startup — HELD. Predicted zero network syscalls. In a `--network none`
+  container, `QEMU_STRACE=1` traces were taken of the smoke (4413 lines, exit 0, same digest)
+  and of the no-env `-e` run (2006 lines). Both show zero `socket`/`connect`/`bind`/`sendto`/
+  `sendmsg`/`socketpair` calls. The no-env driver path creates a temp `recordreplay.so-*`,
+  makes a single `write(3,…,0) = 0` (0 bytes), and dlopen rejects the file. The grep was
+  shown to work by the attack below, which caught `socket`×2, `bind` and `connect`.
+- P6 novel attacks — HELD. (a) A loopback `http.createServer` plus `fetch` run, with
+  `RECORD_REPLAY_DRIVER=/nonexistent/driver.so`, printed `http 200 pong:riscv64` and exited 0.
+  The trace shows the ENOENT open and the "Loading Record Replay driver failed" warning, so the
+  driver failure degrades. (b) The smoke ran under an RV64GC-only QEMU CPU model
+  (`QEMU_CPU=rv64,v=false,zba=false,zbb=false,zbc=false,zbs=false,zfh=false,zvfh=false`). It
+  passed with the same digest `4beac423…882fa`, so no V/Zb instruction runs on these paths
+  (this matters for wasm-vm's RV64GC guest).
+- COVERAGE: every tracked file in the diff ran. The build script and stub generator produced the
+  source tree checked in P2. Waived: the GCC 14 runtime-library packaging is left to E5-T34b, as
+  the claim states.
+- SUITE: `verify-node26.sh` is already the recurring acceptance command. Discarded: the strace
+  and QEMU_CPU checks, which are one-off attacks.
