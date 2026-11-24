@@ -14,8 +14,9 @@
 //
 // Scenarios (all wall-clock milliseconds, measured in the page with performance.now()):
 //   idle    guest MIPS and presents while nobody touches the desktop
-//   click   pointer already resting on Chrome's "Run again"; press+release; time to the first
-//           repaint of the button (feedback) and to the "runs" line changing (result)
+//   click   pointer resting on Chrome's "Run again" (moved there, and drawn there by the guest,
+//           beforehand); press+release; time to the "runs" line changing (result). A repaint of
+//           the button before the result is reported as an optional pressed-state frame.
 //   sweep   a human-like 0.5 s pointer sweep from the terminal to the button, then an immediate
 //           click; time from the press to the "runs" line changing (shows motion backlog)
 //   type    one key into the focused foot terminal; time to the glyph appearing
@@ -138,15 +139,28 @@ async function latency(name, t, timeout = TRIAL_TIMEOUT_MS) {
   } catch { return null; }
   return +(await page.evaluate(([n, at]) => window.__lat.firstAfter(n, at) - at, [name, t])).toFixed(1);
 }
-// Wait until none of the watched regions has changed for `quietMs` (bounded by `maxMs`).
+// Wait until none of the watched regions has changed for `quietMs`, counted from this call at
+// the earliest (so a repaint the caller just provoked, e.g. by moving the pointer, has time to
+// arrive before the quiet period can be satisfied). Bounded by `maxMs`.
 async function settle(quietMs = 2500, maxMs = 120_000) {
   const t0 = Date.now();
+  const start = await page.evaluate(() => performance.now());
   for (;;) {
-    const last = await page.evaluate(() => Math.max(0, ...Object.values(window.__lat.changes()).flat()));
-    const now = await page.evaluate(() => performance.now());
-    if (now - last >= quietMs || Date.now() - t0 > maxMs) return;
+    const [last, now] = await page.evaluate(() => [
+      Math.max(0, ...Object.values(window.__lat.changes()).flat()), performance.now()]);
+    if (now - Math.max(last, start) >= quietMs || Date.now() - t0 > maxMs) return;
     await sleep(250);
   }
+}
+// Move the pointer onto `p` and wait for the guest to have drawn it there: the watched `region`
+// repaints (the guest composites its own cursor and the hover state), then goes quiet.
+async function restOn(p, region) {
+  await page.evaluate(() => window.__lat.reset());
+  await moveTo(p);
+  const t = await page.evaluate(() => window.__lat.lastInput("pointermove") ?? performance.now());
+  const arrived = await latency(region, t, 30_000);
+  await settle();
+  return arrived;
 }
 const stats = (xs) => {
   const v = xs.filter((x) => x !== null).sort((a, b) => a - b);
@@ -175,21 +189,34 @@ const run = {
     result.yieldMode = b.yieldMode; result.maxSliceMs = b.maxSliceMs; result.maxStretchGapMs = b.maxStretchGapMs;
   },
   async click() {
-    await moveTo(BUTTON); await settle();
-    const feedback = [], answered = [], rates = [];
+    // Park the pointer elsewhere first so the move onto the button is a real one, then wait
+    // for the guest to draw the pointer there: the press below is on a resting pointer.
+    await moveTo(TERMINAL); await settle();
+    const arrived = await restOn(BUTTON, "button");
+    assert.ok(arrived !== null, "the guest never drew the pointer on the button");
+    const pressed = [], answered = [], rates = [];
     for (let i = 0; i < N; i++) {
       await page.evaluate(() => window.__lat.reset());
       const a = await sched();
       await page.mouse.down(); await sleep(60); await page.mouse.up();
       const t = await page.evaluate(() => window.__lat.firstInput("pointerdown"));
       const r = await latency("runs", t);
-      const f = await page.evaluate(([at]) => { const c = window.__lat.firstAfter("button", at); return c === null ? null : +(c - at).toFixed(1); }, [t]);
+      // The pressed-state frame is optional: a 60 ms press can be released before the guest
+      // has painted it, and then the first repaint of the button is the result frame itself.
+      // Only a button repaint strictly before the result counts as a pressed-state frame.
+      const f = r === null ? null : await page.evaluate(([at, res]) => {
+        const c = window.__lat.firstAfter("button", at);
+        return c !== null && c - at < res ? +(c - at).toFixed(1) : null;
+      }, [t, r]);
       const b = await sched();
-      feedback.push(f); answered.push(r); rates.push(rate(a, b));
-      log(`click #${i + 1}: feedback ${f} ms, result ${r} ms, ${rates.at(-1).instructionsM}M instr @ ${rates.at(-1).mips} MIPS`);
+      pressed.push(f); answered.push(r); rates.push(rate(a, b));
+      log(`click #${i + 1}: result ${r} ms, pressed-state frame ${f === null ? "none" : f + " ms"}, ${rates.at(-1).instructionsM}M instr @ ${rates.at(-1).mips} MIPS`);
       await settle();
     }
-    result.scenarios.click = { feedbackMs: stats(feedback), resultMs: stats(answered), raw: { feedback, answered, rates } };
+    const seen = pressed.filter((x) => x !== null);
+    result.scenarios.click = { resultMs: stats(answered), pointerArrivedMs: arrived,
+      pressedFrame: { seen: seen.length, none: pressed.length - seen.length, ms: seen.length ? stats(seen) : null },
+      raw: { pressed, answered, rates } };
   },
   async sweep() {
     const answered = [], cursor = [];
@@ -272,6 +299,11 @@ try {
     if (name !== "click" && name !== "sweep") log(JSON.stringify({ ...result.scenarios[name], raw: undefined }));
   }
   result.jit = await page.evaluate(async () => { try { return await window.__jitStats?.(); } catch { return null; } });
+  // Required measures: a missing sample means the tool could not see the effect it timed.
+  const required = { click: ["resultMs"], sweep: ["resultMs", "cursorArriveMs"], type: ["echoMs"], node: ["promptMs"] };
+  result.missing = Object.entries(required).flatMap(([name, keys]) => keys
+    .filter((k) => result.scenarios[name] && result.scenarios[name][k].missing !== 0)
+    .map((k) => `${name}.${k}`));
 } finally {
   result.consoleErrors = consoleErrors;
   result.finishedAt = new Date().toISOString();
@@ -284,4 +316,8 @@ try {
     log("wrote", opt.out);
   }
   await browser.close();
+}
+if (result.missing?.length) {
+  console.error(`[desktop-latency] missing samples: ${result.missing.join(", ")}`);
+  process.exit(1);
 }

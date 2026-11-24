@@ -52,7 +52,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Epic 4 — `epic-4-acceleration`
 
 - [-] `0.3876` [E4-T40](epic-4-acceleration/E4-T40-usable-replay-desktop.md) — Usable Replay desktop — interaction latency and guest CPU throughput (planning parent) *(deps: E5-T34e)*
-- [~] `0.38761` [E4-T40a](epic-4-acceleration/E4-T40a-desktop-latency-benchmark.md) — Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline *(deps: E5-T34e)*
+- [?] `0.38761` [E4-T40a](epic-4-acceleration/E4-T40a-desktop-latency-benchmark.md) — Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline *(deps: E5-T34e)*
 
 ## Epic 0 — `epic-0-ignition`
 

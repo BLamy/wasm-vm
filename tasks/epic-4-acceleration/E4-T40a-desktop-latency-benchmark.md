@@ -3,7 +3,7 @@ id: E4-T40a
 epic: 4
 title: Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline
 priority: 0.38761
-status: in-progress
+status: implemented
 depends_on: [E5-T34e]
 estimate: S
 risk: low
@@ -32,7 +32,12 @@ node tools/perf/desktop-latency.mjs --label baseline --n 3 --out evidence/deskto
 ```
 
 exits 0, reports every scenario with no missing sample, and writes the JSON. The
-recorded baseline is `evidence/desktop-latency/baseline-{a,b,mips,jit0}.json`.
+recorded baseline is `evidence/desktop-latency/baseline-{1,2,jit0}.json`.
+
+Required samples are the result of a click, the result and pointer arrival of a sweep,
+the key echo and the Node prompt; the tool exits 1 if any is missing. A pressed-state
+frame of the button before the result is optional (a 60 ms press can be released before
+the guest paints it) and is reported as seen/none, never as a missing sample.
 
 ## Adversarial verification
 
@@ -180,3 +185,48 @@ Commands:
 - `node tools/perf/desktop-latency.mjs --n 3 --scenarios click --out <scratch>` twice;
 - a scratch static-canvas Playwright script (P2) and a scratch move-without-press script (P5);
 - a Python comparison of the log table with the four baseline JSON files.
+
+### 2026-11-24 — worker — rework after the refutation
+
+All four demands are addressed; P1, P2 and the P3 table carry forward (the tool's
+probe, `latency()` and `stats()` are unchanged).
+
+- **P4 (pressed-state sample missing).** The measure is redefined, not made to look
+  reliable: a button repaint strictly before the result is an optional pressed-state
+  frame, reported as `pressedFrame.{seen,none,ms}`. It is no longer a required sample,
+  so it can never be "missing". The tool now exits 1 when a required sample is missing
+  (`result.missing`), which the first version did not enforce.
+- **P5 (first press not on a resting pointer).** `settle()` now counts its quiet period
+  from the call at the earliest, so it cannot return before a repaint the caller just
+  provoked. `click` parks the pointer on the terminal, moves it onto the button, waits
+  for the guest to draw it there (`pointerArrivedMs`, asserted present) and then for
+  quiet, before the first press.
+- **P3 (wrong prose number).** The earlier entry's "580–947 M" should have read
+  572–947 M; that entry's files are superseded by the runs below.
+- **Acceptance command.** Recorded twice, literally, on the unchanged build (`web/pkg`
+  restored to `web/dist`'s `c6cc6692…` wasm for these runs), plus once with `?jit=0`:
+
+```
+node tools/perf/desktop-latency.mjs --label baseline --n 3 --out evidence/desktop-latency/baseline-1.json
+node tools/perf/desktop-latency.mjs --label baseline --n 3 --out evidence/desktop-latency/baseline-2.json
+node tools/perf/desktop-latency.mjs --label baseline-jit0 --query "&jit=0" --n 3 --out evidence/desktop-latency/baseline-jit0.json
+```
+
+All three exited 0 with `missing: []`. Median of 3 (range):
+
+| Measure | Shipped, run 1 | Shipped, run 2 | `?jit=0` |
+|---|---:|---:|---:|
+| Idle guest speed | 46.0 MIPS | 44.3 MIPS | 70.2 MIPS |
+| Click: "runs" line repainted | 1,965 ms (1,060–2,379) | 1,492 ms (1,021–2,964) | 931 ms (762–1,822) |
+| Click: guest instructions | 33–114 M | 35–146 M | 34–42 M |
+| Sweep then click: "runs" repainted | 1,119 ms (1,019–1,233) | 900 ms (887–1,702) | 849 ms (768–898) |
+| Key echo in foot | 82 ms (55–252) | 92 ms (81–237) | 83 ms (62–184) |
+| `node -e 'console.log(6*7)'` to prompt | 14,249 ms (13,910–41,492) | 13,719 ms (13,531–39,368) | 11,472 ms (11,428–40,517) |
+| Node integer loop (wall) | 17.5 s | 17.7 s | 21.6 s |
+| Shell loop (wall, 762 M instructions) | 16.3 s | 15.7 s | 13.7 s |
+
+The first Node run of a session is the cold one (878–892 M instructions, 39–41 s);
+the next two are warm (564–582 M). The earlier entry's 1.6 s key-echo median does not
+reproduce with the corrected settle and is withdrawn. The Node integer loop is
+order-dependent, as the verifier noted: 1,105 M instructions here after the `node`
+scenario, 2,380 M when `mips` ran alone. Each file records one console 404.
