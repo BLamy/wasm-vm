@@ -1,0 +1,8 @@
+{
+  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
+    "chunkManifest": { "url": "releases/rootfs/replay-desktop-2af6100e9b37.chunks.json", "sha256": "2e644ad8f01ac9c80813a5953efeeeabf50e6d8badea3aab16c469ba1a922ecc", "size": 128555 },
+    "wholeImage": { "url": "releases/rootfs/replay-desktop-2af6100e9b37.img.gz", "sha256": "37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba", "size": 189669297, "uncompressedSize": 467664896, "uncompressedSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05" }
+  }
+}

@@ -6,7 +6,7 @@
     <title>wasm-vm — RV64 in the browser</title>
     <link rel="stylesheet" href="./node_modules/@xterm/xterm/css/xterm.css" />
     <link rel="stylesheet" href="./session-library.css" />
-    <link rel="stylesheet" href="./ui.css?rev=74f187f16a37" />
+    <link rel="stylesheet" href="./ui.css?rev=1d9da085070f" />
     <style>
       :root {
         color-scheme: dark;
@@ -522,7 +522,7 @@
       .panel.active { display: block; }
       /* Under automation (Playwright) reveal every panel so existing element-level e2e specs stay
          actionable; the ordinary demo opens the guest launcher (see tabs.js). */
-      :root.e2e-showall:not([data-wvm-desktop="omarchy"]) .panel { display: block !important; }
+      :root.e2e-showall:not([data-wvm-desktop]) .panel { display: block !important; }
       :root.e2e-showall .tests-layout { min-height: 0; }
       main { min-height: calc(100vh - 51px); }
 
@@ -786,48 +786,48 @@
          items. Scoped to the ordinary app: the Omarchy desktop keeps its full-window layout, and
          ?testHooks (html.e2e-showall) keeps the original activity bar / status bar workbench for
          the core suite. */
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]):not(.embed) body {
+      :root:not(.e2e-showall):not([data-wvm-desktop]):not(.embed) body {
         display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
       }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]):not(.embed) #panel-ide.active {
+      :root:not(.e2e-showall):not([data-wvm-desktop]):not(.embed) #panel-ide.active {
         flex: 1 1 auto; height: auto; min-height: 0; display: flex; flex-direction: column;
       }
       :root:not(.e2e-showall) #panel-ide:not([data-os-selected="true"]) { overflow-y: auto; }
-      :root.e2e-showall .ws-bar-host, :root[data-wvm-desktop="omarchy"] .ws-bar-host,
+      :root.e2e-showall .ws-bar-host, :root[data-wvm-desktop] .ws-bar-host,
       :root.embed .ws-bar-host { display: none; }
       .ws-bar-host { flex: 0 0 auto; border-bottom: 1px solid var(--line); background: var(--panel); }
 
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root {
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root {
         display: grid;
         grid-template-columns: auto minmax(0, 1fr);
         grid-template-rows: auto auto minmax(0, 0fr) auto minmax(0, 1fr);
         grid-template-areas: "side tabs" "side tool" "side edit" "side split" "side main";
       }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-body,
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-editor-area { display: contents; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root :is(.ide-activity, .ide-vsplit, .ide-hsplit, .ide-statusbar, .ide-term-bar) { display: none; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-side { grid-area: side; width: 320px; display: none; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-side] .ide-side { display: flex; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-tabstrip { grid-area: tabs; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-editor-toolbar { grid-area: tool; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-editor-body { grid-area: edit; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root:not([data-ws-editor]) :is(.ide-tabstrip, .ide-editor-toolbar, .ide-editor-body) { display: none; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-editor] {
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-body,
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-editor-area { display: contents; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root :is(.ide-activity, .ide-vsplit, .ide-hsplit, .ide-statusbar, .ide-term-bar) { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-side { grid-area: side; width: 320px; display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-side] .ide-side { display: flex; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-tabstrip { grid-area: tabs; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-editor-toolbar { grid-area: tool; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-editor-body { grid-area: edit; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root:not([data-ws-editor]) :is(.ide-tabstrip, .ide-editor-toolbar, .ide-editor-body) { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-editor] {
         grid-template-rows: auto auto minmax(0, 1.25fr) auto minmax(0, 1fr);
       }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-editor] .ide-term-pane,
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-editor] .ide-display-pane { border-top: 1px solid var(--line); }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-editor] .ide-term-pane,
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-editor] .ide-display-pane { border-top: 1px solid var(--line); }
       /* Tool panes: ide.js's native file tree, transfers, container controls, editor tabs and
          toolbar stay in the DOM as the engine's controls; the library projections beside them
          (web/ui tool-panes.jsx) are what people see and press. */
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root :is(.ide-side-title, .ide-side-view, .ide-tabstrip, .ide-editor-toolbar, .ide-ctr-head, .ide-ctr-exec-head, .ide-ctr-exec-provenance, .ide-ctr-exec-form) { display: none; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-side] .ide-side { flex-direction: column; overflow: hidden; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root :is(.ide-side-title, .ide-side-view, .ide-tabstrip, .ide-editor-toolbar, .ide-ctr-head, .ide-ctr-exec-head, .ide-ctr-exec-provenance, .ide-ctr-exec-form) { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-side] .ide-side { flex-direction: column; overflow: hidden; }
 
       /* Main area: the terminal, or the guest display when chosen. */
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-pane { grid-area: main; height: auto !important; min-height: 0; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-display-pane { grid-area: main; flex: none; min-height: 0; border-bottom: 0; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root:not([data-ws-view="display"]) .ide-display-pane,
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-view="display"] .ide-term-pane { display: none; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-term-pane { grid-area: main; height: auto !important; min-height: 0; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-display-pane { grid-area: main; flex: none; min-height: 0; border-bottom: 0; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root:not([data-ws-view="display"]) .ide-display-pane,
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-view="display"] .ide-term-pane { display: none; }
 
       /* App header: one row at every width. The core version readout gives way below 1100 px (it
          stays in the DOM for main.js) instead of wrapping under the nav. */
@@ -846,28 +846,28 @@
          Self-checks panes instead; ?testHooks keeps the native panels visible for the E9 probes. */
       :root:not(.e2e-showall)[data-wv-ui~="workspace"] #panel-ide > details.session-library { display: none; }
       @media (min-width: 761px) {
-        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root:is([data-ws-side="recordings"], [data-ws-side="checks"]) .ide-side { width: 440px; }
+        :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root:is([data-ws-side="recordings"], [data-ws-side="checks"]) .ide-side { width: 440px; }
       }
 
       /* xterm's FitAddon measures #term's computed width, which includes padding under the page's
          border-box sizing, so padded #term gets a few columns too many and clips at the right
          edge. In the workspace the padding sits on the console instead. */
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-scroll .console { padding: 10px 12px 12px 16px; }
-      :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-scroll #term { padding: 0; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-term-scroll .console { padding: 10px 12px 12px 16px; }
+      :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-term-scroll #term { padding: 0; }
       @media (max-width: 760px) {
-        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-term-scroll .console { padding: 8px 6px 8px 10px; }
+        :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-term-scroll .console { padding: 8px 6px 8px 10px; }
       }
 
       /* Phones: one pane at a time. Files, containers or the editor replace the main area until the
          workspace bar's Back button closes them; the terminal otherwise has the full width. */
       @media (max-width: 760px) {
-        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root {
+        :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root {
           grid-template-columns: minmax(0, 1fr);
           grid-template-areas: "tabs" "tool" "edit" "split" "main";
         }
-        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root .ide-side { grid-area: main; width: auto; border-right: 0; }
-        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-pane] :is(.ide-term-pane, .ide-display-pane) { display: none; }
-        :root:not(.e2e-showall):not([data-wvm-desktop="omarchy"]) #ide-root[data-ws-pane="editor"] {
+        :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root .ide-side { grid-area: main; width: auto; border-right: 0; }
+        :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-pane] :is(.ide-term-pane, .ide-display-pane) { display: none; }
+        :root:not(.e2e-showall):not([data-wvm-desktop]) #ide-root[data-ws-pane="editor"] {
           grid-template-rows: auto auto minmax(0, 1fr) 0 0;
         }
       }
@@ -979,6 +979,11 @@
               <span class="os-option-title">Omarchy</span>
               <span class="os-option-detail">Open Hyprland with Chromium, LibreOffice, Node.js and Foot. The desktop fits your window and restores from a prepared checkpoint, with GPU compositing after a hardware check.</span>
               <span class="os-option-meta" data-os-meta="omarchy" data-state="checking">checking image…</span>
+            </button>
+            <button class="os-option" type="button" data-os="replay-desktop" role="listitem">
+              <span class="os-option-title">Replay desktop</span>
+              <span class="os-option-detail">Replay Chrome 108 and a Node 26 terminal side by side on one sway desktop. The whole read-only OS downloads in one request, then cold-boots with software rendering.</span>
+              <span class="os-option-meta" data-os-meta="replay-desktop" data-state="checking">checking image…</span>
             </button>
             <button class="os-option" type="button" data-os="node-alpine" role="listitem">
               <span class="os-option-title">Alpine + Node.js</span>
@@ -1319,7 +1324,7 @@
     <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
     <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
-    <script type="module" src="./ui.js?rev=76d15e673a14"></script>
+    <script type="module" src="./ui.js?rev=39072d85bfba"></script>
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./ide.js"></script>
     <!-- E4-T22b: establish isolation/fallback before main.js evaluates any backend or wasm imports.

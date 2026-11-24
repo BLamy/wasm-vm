@@ -171,6 +171,7 @@ export const ROADMAP = [
       { name: "Live priority for pending JIT compilation", status: "verified", evidence: "E5-T26l: real cross-pump priority, stale-byte safety, fixed budgets and independent clone/sabotage verified; new browser screen still fails F at 4727.945 ms, so its two-second gate remains unchanged" },
       { name: "Measured desktop drag FPS + bottleneck attribution", status: "in-progress", evidence: "E5-T25b: five real Foot-window drag runs with drawn-present, guest-instruction, transfer, and present buckets" },
       { name: "Measured focused-key input-to-photon latency", status: "in-progress", evidence: "E5-T25c: 100 post-warm-up focused key trials, first intersecting drawn damage, rAF/vsync bound, histogram, and 100 ms delay calibration" },
+      { name: "Shared Replay Chrome + Node 26 desktop, one-download boot", status: "in-progress", evidence: "E5-T34a verifies the whole-image single-fetch prefill; E5-T34b verifies the minimal read-only sway image natively. E5-T34c submits the browser launch (Replay desktop in the launcher): one 181 MiB .img.gz request and zero chunk requests, Replay Chrome 108 smoke PASS and a DOM-typed Node 26 command on one desktop, about 3 minutes to desktop on a local Chromium run. Awaiting a fresh verifier." },
       { name: "Bounded desktop recovery + tty1 fallback", status: "verified", evidence: "E5-T18d: three distinct rendered compositor attempts, bounded crash budget, and visible tty1 fallback in two fresh local Chromium boots; fresh verifier sign-off" },
     ],
   },
@@ -861,7 +862,7 @@ function wireControls() {
   document.addEventListener("keydown", (e) => {
     // A guest canvas owns its keyboard. Never steal a captured slash (or Escape)
     // for the host roadmap, including when explicit UI-test hooks reveal panels.
-    if (e.defaultPrevented || document.documentElement.dataset.wvmDesktop === "omarchy") return;
+    if (e.defaultPrevented || document.documentElement.dataset.wvmDesktop) return;
     if (e.key === "Escape") closeDetail();
     if (e.key === "/" && document.activeElement !== search && !document.getElementById("rm-detail")?.hidden === false) {
       // focus search unless typing in a field
