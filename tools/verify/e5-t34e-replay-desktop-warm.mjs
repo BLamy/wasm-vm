@@ -301,12 +301,24 @@ async function attackMode(mode) {
       url: `http://127.0.0.1:${server.address().port}/tampered/${snapName}` };
   }
   const { page, w, url } = await openPage("", async (p) => {
-    await p.route(/\/artifacts-replay-desktop\.json(\?.*)?$/u, (route) => route.fulfill({
-      status: 200, contentType: "application/json", body: JSON.stringify(manifest) }));
+    // Mutate the manifest the host actually serves (the live one carries R2 URLs).
+    await p.route(/\/artifacts-replay-desktop\.json(\?.*)?$/u, async (route) => {
+      const served = await (await route.fetch()).json();
+      served.artifacts.bootSnapshot = mode === "attack-identity"
+        ? { ...served.artifacts.bootSnapshot, identity: manifest.artifacts.bootSnapshot.identity }
+        : manifest.artifacts.bootSnapshot;
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(served) });
+    });
   });
   // The cold-boot fallback is proven by the guest's own boot output; it is not run to the desktop.
-  await page.waitForFunction(`/REPLAY_DESKTOP_MONITOR start/u.test(window.__e5t34eSerial ?? "") || Boolean((${BOOT_ERROR})())`,
-    null, { timeout: READY_TIMEOUT_MS, polling: 2000 });
+  try {
+    await page.waitForFunction(`/REPLAY_DESKTOP_MONITOR start/u.test(window.__e5t34eSerial ?? "") || Boolean((${BOOT_ERROR})())`,
+      null, { timeout: READY_TIMEOUT_MS, polling: 2000 });
+  } catch (error) {
+    save(`${mode}-timeout.json`, { states: await page.evaluate(() => window.__e5t34eStates).catch(() => null),
+      serialTail: (await serial(page).catch(() => "")).slice(-2000), requests: w.requests, console: w.consoleLog });
+    throw error;
+  }
   const failed = await page.evaluate(`(${BOOT_ERROR})()`);
   const states = await page.evaluate(() => window.__e5t34eStates);
   const warnings = w.consoleLog.filter((e) => /warm snapshot/u.test(e.text)).map((e) => e.text);

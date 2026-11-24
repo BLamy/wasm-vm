@@ -1,0 +1,19 @@
+[e5-t34e 2026-11-24T03:48:19.942Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-24T03:49:28.607Z] attack-identity PASS {"states":["fetching","instantiating","booting"],"warnings":["wasm-vm: warm snapshot not admitted (kernel) — cold booting"]}
+[e5-t34e 2026-11-24T03:49:31.605Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: warning: wasm-vm: warm snapshot restore failed, cold booting: Failed to fetch
+    at attackMode (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34e-replay-desktop-warm.mjs:337:12)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34e-replay-desktop-warm.mjs:349:62 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

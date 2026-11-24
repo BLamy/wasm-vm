@@ -1,0 +1,18 @@
+{
+  "url": "https://wasm-vm.pages.dev/app?noAutoBoot=1#ide",
+  "browser": "158.0.8127.88",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "launcher": {
+    "meta": "ready · 181 + 119 MiB download, warm resume",
+    "state": "ready",
+    "disabled": false,
+    "roadmapRow": "Shared Replay Chrome + Node 26 desktop, one-download bootE5-T34a/b/c: the minimal read-only sway image (446 MiB raw) boots in the browser from one 181 MiB .img.gz request with zero chunk/Range requests; Replay Chrome 108 (riscv64, unbundled driver) passes smoke.html beside a Node 26 terminal answering a DOM-typed command, on the live site; privacy guard clean; fresh verifier sign-off. Chrome 157 awaits Replay's uplift (E5-T32b).",
+    "roadmapPip": "cap-pip verified"
+  },
+  "consoleErrors": [],
+  "screenshotSha256": "6487d15e73fb7a47929be2daf1f9a1e6d7eb9b177dc4d6347f2953b295c5cef5"
+}
