@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>static stand-in for the desktop (desktop-latency self-test)</title></head>
+<body style="margin:0;background:#000">
+<div id="omarchy-boot-overlay" hidden></div>
+<canvas id="ide-display-canvas" width="1280" height="800" style="display:block;width:1280px;height:800px"></canvas>
+<script>
+// A static 1280x800 canvas with no guest. A "repaint" is a fill of the tool's own region with a
+// new colour. ?mode= selects what a pointerdown repaints:
+//   before  button at +100 ms, runs at +300 ms
+//   none    runs at +300 ms, button never
+//   same    button and runs in one timer task at +300 ms (one animation frame)
+//   after   runs at +300 ms, button at +600 ms
+//   miss2   as `before`, but the 2nd press never repaints runs
+const mode = new URLSearchParams(location.search).get("mode") || "before";
+const canvas = document.getElementById("ide-display-canvas");
+const g = canvas.getContext("2d");
+g.fillStyle = "#202428"; g.fillRect(0, 0, 1280, 800);
+const BUTTON = { x: 22, y: 490, w: 144, h: 54 }, RUNS = { x: 36, y: 252, w: 110, h: 20 };
+let n = 0;
+const paint = (r) => { n += 1; g.fillStyle = `rgb(${(n * 37) % 256},${(n * 91) % 256},${(n * 53) % 256})`; g.fillRect(r.x, r.y, r.w, r.h); };
+const onButton = (e) => {
+  const b = canvas.getBoundingClientRect();
+  const x = ((e.clientX - b.left) * 1280) / b.width, y = ((e.clientY - b.top) * 800) / b.height;
+  return x >= BUTTON.x && x < BUTTON.x + BUTTON.w && y >= BUTTON.y && y < BUTTON.y + BUTTON.h;
+};
+let hovered = false, presses = 0;
+window.__fake = { log: [] };
+window.addEventListener("pointermove", (e) => {
+  const h = onButton(e);
+  if (h !== hovered) { hovered = h; setTimeout(() => paint(BUTTON), 100); } // hover repaint
+});
+window.addEventListener("pointerdown", () => {
+  presses += 1;
+  window.__fake.log.push({ press: presses, at: performance.now() });
+  if (mode === "before") { setTimeout(() => paint(BUTTON), 100); setTimeout(() => paint(RUNS), 300); }
+  else if (mode === "none") { setTimeout(() => paint(RUNS), 300); }
+  else if (mode === "same") { setTimeout(() => { paint(BUTTON); paint(RUNS); }, 300); }
+  else if (mode === "after") { setTimeout(() => paint(RUNS), 300); setTimeout(() => paint(BUTTON), 600); }
+  else if (mode === "miss2") { setTimeout(() => paint(BUTTON), 100); if (presses !== 2) setTimeout(() => paint(RUNS), 300); }
+});
+window.dispatchEvent(new Event("wvm:desktop-ready"));
+</script>
+</body>
+</html>
