@@ -3,7 +3,7 @@ id: E5-T34c
 epic: 5
 title: Boot the shared Replay Chrome and Node 26 desktop in the browser demo
 priority: 0.3873
-status: evidence-needed
+status: implemented
 depends_on: [E5-T34a, E5-T34b]
 estimate: S
 risk: medium
@@ -228,3 +228,26 @@ Commands:
 - `check-no-replay-backend.py` (three scopes above);
 - `node --test` over `web/tests/*.test.mjs` at HEAD and at the base worktree;
 - a scratch Playwright attack script (launcher click + `route.fulfill` of the corrupt image).
+
+### 2026-11-24 — worker — evidence response (test-only; no runtime change)
+
+The verifier found one gap: `web/tests/omarchy-desktop-services.test.mjs` went from
+8 pass / 0 fail to 4/4, and nothing covered the desktop-session rule for
+`replay-desktop`. Fixed in the test only:
+- The fixtures now evaluate the exact production lines `const DESKTOP_GUESTS = …` and
+  `const DESKTOP_SESSION_KEYS = …` from `ide.js`, not a copy (fixes
+  `ReferenceError: DESKTOP_SESSION_KEYS is not defined`). Stubbed
+  `cliGuestServicesSession` follows the same set.
+- The source-pattern assertions follow the E5-T34c rename (`_desktopMode`,
+  `DESKTOP_SESSION_KEYS.has(guestSession()?.key)`).
+- New `replay-desktop` cases cover: the production set is exactly {omarchy,
+  replay-desktop}; a Replay desktop owner's RPC is rejected (raced against 1 s, so
+  a wrongly allowed RPC fails instead of hanging) and a late CLI completion is
+  fenced; and Replay desktop ready events cannot start Explorer or Docker.
+
+Results: 11 pass / 0 fail. Sabotage (remove `replay-desktop` from production
+`DESKTOP_GUESTS`): exactly the 3 new tests fail; `ide.js` was restored
+byte-identical. Full sweep of the 80 `web/tests/*.test.mjs` files: 10 files fail, and
+all 10 give identical pass/fail counts on parent `681109bc0` (temporary worktree,
+removed). They are pre-existing, environment-dependent failures, not E5-T34c
+regressions. No runtime JS changed, so the live/browser evidence carries forward.

@@ -8,6 +8,20 @@ const ide = readFileSync(new URL("../ide.js", import.meta.url), "utf8");
 const main = readFileSync(new URL("../main.js", import.meta.url), "utf8");
 const loader = readFileSync(new URL("../loader.js", import.meta.url), "utf8");
 
+// The production declarations of which request keys are desktop sessions (Omarchy and, since
+// E5-T34c, the shared Replay desktop). Fixtures evaluate these exact lines, not a copy.
+const DESKTOP_DECLARATIONS = [
+  ide.match(/^const DESKTOP_GUESTS = Object\.freeze\(\{[^\n]*\}\);$/mu)?.[0],
+  ide.match(/^const DESKTOP_SESSION_KEYS = new Set\(Object\.keys\(DESKTOP_GUESTS\)\);$/mu)?.[0],
+];
+assert.ok(DESKTOP_DECLARATIONS.every(Boolean), "missing production desktop-session declarations");
+const DESKTOP_KEYS = vm.runInNewContext(`${DESKTOP_DECLARATIONS.join("\n")}; DESKTOP_SESSION_KEYS`);
+
+// An RPC the gate wrongly allows never settles in these fixtures; race it so the test fails
+// with a clear reason instead of hanging.
+const settlesWithin = (promise, ms) => Promise.race([promise, new Promise((_, reject) =>
+  setTimeout(() => reject(new Error(`RPC was not rejected within ${ms} ms (gate allowed it)`)), ms).unref())]);
+
 function sourceFunction(source, signature, nextDeclaration) {
   const start = source.indexOf(signature);
   assert.ok(start >= 0, `missing production ${signature}`);
@@ -21,7 +35,7 @@ function lifecycleFixture() {
   let rawSession = null;
   let sideView = "files";
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     resetDockerRuntime: () => calls.push("reset"),
@@ -65,7 +79,7 @@ function rpcFixture({ desktopFlag = false } = {}) {
     },
   };
   const helpers = sourceFunction(ide, "  function guestSession() {", "\n\n  function selectedProvider()");
-  vm.runInNewContext(`const api = () => window.wvmDemo; const OMARCHY_DESKTOP_MODE = ${desktopFlag}; ${helpers} globalThis.bgExec = bgExec;`, context);
+  vm.runInNewContext(`const api = () => window.wvmDemo; const OMARCHY_DESKTOP_MODE = ${desktopFlag}; ${DESKTOP_DECLARATIONS.join("\n")}\n${helpers} globalThis.bgExec = bgExec;`, context);
   return {
     calls,
     setSession(value) { rawSession = value; },
@@ -79,7 +93,7 @@ function logStreamFixture() {
   let rawSession = { key: "alpine", generation: 31 };
   let releaseRefresh;
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     api: () => ({
@@ -129,7 +143,7 @@ function catalogFixture() {
   let rawSession = { key: "alpine", generation: 41 };
   const response = deferred();
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     runtimeReady: () => rawSession?.key !== "omarchy" && rawSession != null,
@@ -164,7 +178,7 @@ function probeFixture() {
     hasContainerRuntime() { calls.push("hasContainerRuntime"); return response.promise; },
   };
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     api: () => currentApi,
@@ -197,7 +211,7 @@ function snapshotFixture(kind) {
     snapshotSave() { calls.push("snapshotSave"); return response.promise; },
   };
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     api: () => currentApi,
@@ -227,7 +241,7 @@ function containersFixture() {
   let rawSession = { key: "alpine", generation: 71 };
   const response = deferred();
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     runtimeReady: () => rawSession?.key !== "omarchy" && rawSession != null,
@@ -259,7 +273,7 @@ function actionFixture() {
   let resolveCommandEntered;
   const commandEntered = new Promise((resolve) => { resolveCommandEntered = resolve; });
   const context = {
-    cliGuestServicesSession: () => rawSession?.key === "omarchy" ? null : rawSession,
+    cliGuestServicesSession: () => DESKTOP_KEYS.has(rawSession?.key) ? null : rawSession,
     sameGuestSession: (expected) => Boolean(expected && rawSession &&
       expected.key === rawSession.key && expected.generation === rawSession.generation),
     runtimeReady: () => rawSession?.key !== "omarchy" && rawSession != null,
@@ -352,9 +366,39 @@ test("the authoritative Omarchy key blocks service RPC even when the page is not
   assert.equal(f.calls.length, 0);
 });
 
+test("the production desktop-session set covers Omarchy and the shared Replay desktop", () => {
+  assert.deepEqual([...DESKTOP_KEYS].sort(), ["omarchy", "replay-desktop"]);
+});
+
+test("the Replay desktop key blocks service RPC and fences late CLI completion", async () => {
+  const f = rpcFixture({ desktopFlag: false });
+  f.setSession({ key: "replay-desktop", generation: 41 });
+  await assert.rejects(settlesWithin(f.call("ls -la '/root'"), 1000), /disabled/u);
+  assert.equal(f.calls.length, 0, "a Replay desktop owner cannot issue Explorer/Docker RPC");
+
+  f.setSession({ key: "alpine", generation: 42 });
+  const pending = f.call("ls -la '/root'");
+  f.setSession({ key: "replay-desktop", generation: 43 });
+  f.resolve({ exit: 0, stdout: "stale" });
+  await assert.rejects(pending, /retired session/u);
+});
+
+test("the ready lifecycle isolates the Replay desktop like Omarchy", () => {
+  const f = lifecycleFixture();
+  f.setSession({ key: "replay-desktop", generation: 3 });
+  f.setSideView("docker");
+  f.showReady();
+  f.showReady();
+  assert.equal(f.calls.filter((call) => call === "loadTree").length, 0,
+    "Replay desktop ready events cannot initialize Explorer");
+  assert.equal(f.calls.filter((call) => call === "renderDocker").length, 0,
+    "a saved Docker view cannot start Replay desktop guest services");
+});
+
 test("desktop control entry points remain wired to the existing production bridges", () => {
-  assert.match(main, /const keyboardHost = _omarchyDesktopMode \? displayCanvas/u);
-  assert.match(main, /const pointerHost = _omarchyDesktopMode \? displayCanvas/u);
+  assert.match(main, /const keyboardHost = _desktopMode \? displayCanvas/u);
+  assert.match(main, /const pointerHost = _desktopMode \? displayCanvas/u);
+  assert.match(main, /const _desktopMode = _omarchyDesktopMode \|\| _replayDesktopMode;/u);
   assert.match(main, /new DisplayViewportController\(/u);
   assert.match(main, /onDisplayFrame: handleDisplayFrame/u);
   assert.match(main, /startKeyboardLedPoll\(ctlForRelease\)/u);
@@ -368,9 +412,9 @@ test("desktop control entry points remain wired to the existing production bridg
 });
 
 test("host-only preboot Docker affordance remains available, but an Omarchy owner blocks it", () => {
-  assert.match(ide, /function probeAlpineAssets\(\) \{\s*if \(guestSession\(\)\?\.key === "omarchy"\) return Promise\.resolve\(false\);/u);
-  assert.match(ide, /function bootAlpineFromDocker\(\) \{\s*const current = api\(\);\s*if \(guestSession\(\)\?\.key === "omarchy"\) return;/u);
-  assert.match(ide, /function renderDocker\(\) \{\s*dkEl\.replaceChildren\(\);\s*if \(guestSession\(\)\?\.key === "omarchy"\)/u);
+  assert.match(ide, /function probeAlpineAssets\(\) \{\s*if \(DESKTOP_SESSION_KEYS\.has\(guestSession\(\)\?\.key\)\) return Promise\.resolve\(false\);/u);
+  assert.match(ide, /function bootAlpineFromDocker\(\) \{\s*const current = api\(\);\s*if \(DESKTOP_SESSION_KEYS\.has\(guestSession\(\)\?\.key\)\) return;/u);
+  assert.match(ide, /function renderDocker\(\) \{\s*dkEl\.replaceChildren\(\);\s*if \(DESKTOP_SESSION_KEYS\.has\(guestSession\(\)\?\.key\)\)/u);
 });
 
 test("a retired CLI log refresh cannot create a stream for the Omarchy owner", async () => {
