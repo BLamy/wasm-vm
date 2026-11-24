@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 569,
+    "verified": 571,
     "total": 780
   },
   "epics": [
@@ -68,7 +68,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-11-22"
+    "end": "2026-11-23"
   },
   "tasks": [
     {
@@ -23343,7 +23343,7 @@
       "epicKey": "5",
       "title": "Build optimized Replay Chrome 157 for riscv64 with the unbundled driver",
       "priority": null,
-      "status": "pending",
+      "status": "blocked",
       "depends_on": [
         "E5-T32a"
       ],
@@ -23356,7 +23356,7 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)\n\n### 2026-11-23 — worker — parked while compiling\n\nThe first full `ninja -k 0` build round (`tools/chromium/157/build-157.sh`) runs\nunattended in the x64 container. The task returns to pending so that E5-T33 can be\nsubmitted and verified under the one-in-flight rule. It is reactivated when the\nround finishes.",
+      "verificationLog": "(empty)\n\n### 2026-11-23 — worker — parked while compiling\n\nThe first full `ninja -k 0` build round (`tools/chromium/157/build-157.sh`) runs\nunattended in the x64 container. The task returns to pending so that E5-T33 can be\nsubmitted and verified under the one-in-flight rule. It is reactivated when the\nround finishes.\n### 2026-11-23 — worker — build round 1 result (progress note, not a claim)\n\nRound 1 (`ninja -k 0 chrome chrome_sandbox`) compiled about 56k of 94,084 steps\nunder Rosetta, with 23 failed steps and 37,952 left. All 23 failures had one cause:\nChromium's clang `raw-ptr-plugin` (`check-raw-ref-fields`, on by default in\nnon-official builds) rejects native reference fields in Replay's own\n`base/deterministic_containers.h` (iterator `vector_`) and `base/record_replay.h`\n(`AutoLock/AutoUnlockMaybeEventsDisallowed::lock_`). The fix is Chromium's\ndocumented `RAW_PTR_EXCLUSION` annotation on those four fields\n(`tools/chromium/157/patches/replay-rawref-exclusions.patch`). It is lint only, with\nno codegen change. Turning the check off in GN args was rejected because it would\nchange every compile command and rebuild every finished step. Before patching,\nninja's deps log showed 0 and 4 compiled dependents of those headers. All 23 failed\nobjects then compiled cleanly, and round 2 started for the remaining steps.\n\n### 2026-11-23 — worker — blocked: Replay's 157 uplift does not compile on any architecture\n\nRound 2 (after the raw_ref and include fixes, `tools/chromium/157/patches/`) and round\n3 (`use_v8_context_snapshot = false`) leave 12 failed steps and 12,553 steps left.\nThe remaining errors are architecture-independent, and several are in host\n(`clang_x64`) objects, so an x64 build of the same branch hits them as well. These\nare Replay sources that were not adapted to Chromium 157 APIs:\n\n1. `base/observer_list_threadsafe.h:153` calls `.contains()` on Replay's\n   `base::deterministic_unordered_map`, which has none (13 errors, net/ and\n   performance_manager/). Release `DCHECK`s still type-check.\n2. `third_party/blink/renderer/bindings/core/v8/serialization/serialized_script_value.h:421`\n   calls `.get()` on `base::HeapArray`.\n3. `components/viz/service/display/record_replay_render.cc:144-164` uses\n   `viz::TransferableResource::size`.\n4. `content/renderer/render_thread_impl.cc` includes Replay's Blink-internal\n   `record_replay_interface.h`, which pulls `*.mojom-blink.h` into content/\n   (\"File must only be imported inside blink\").\n5. Replay's `chrome/browser/resources/record_replay` WebUI TypeScript imports\n   `//resources/mojo/mojo/public/js/bindings.js`, which no longer exists.\n6. `third_party/skia/src/sksl/SkSLPool.cpp:29` has a module-visibility error on\n   `pthread_key_create` (`clang_x64`), possibly a knock-on of the above.\n\nThe GitHub API shows the same `observer_list_threadsafe.h` /\n`deterministic_containers.h` state on `156.0.8078.0-replay` and\n`158.0.8127.0-replay`, while the default branch `master` is 108. Repro: in the\nE5-T32a workspace (`tools/chromium/workspace-157.json`) with the recorded\npatches and args, `third_party/ninja/ninja -C out/RISCV64 -k 0 chrome`. The log\nis `/opt/replay-chromium-157/build-round3.log` in container\n`replay-chromium-157-x64`.\n\nUser decision (2026-11-23): ship Replay Chrome 108, the verified riscv64 build\n(E0-T34), for the shared desktop now, and resume 157 when Replay's uplift\ncompiles. The 157 tree, patches and build container are preserved for that; they\nare not deleted.",
       "adversarial": "High risk: confirm the sandbox is actually engaged (seccomp state of the renderer),\nprove no driver bytes are embedded, and diff the port patches against the 108\nrecord to justify each carried hunk.",
       "file": "tasks/epic-5-the-window/E5-T32b-replay-chrome-157-build.md",
       "activity": [
@@ -23367,11 +23367,20 @@
             "Park E5-T32b during its compile and start E5-T33 (Replay Node 26)",
             "Start E5-T32b: build Replay Chrome 157 for riscv64"
           ]
+        },
+        {
+          "date": "2026-11-23",
+          "commits": 3,
+          "labels": [
+            "Block E5-T32b on Replay's 157 uplift; ship Chrome 108 on the shared desktop",
+            "Record Chrome 157 build round 1 and the Replay raw_ref lint fix",
+            "Record the Chrome 157 round-2/3 args and include patch behind the E5-T32b block"
+          ]
         }
       ],
       "firstActivity": "2026-11-22",
-      "lastActivity": "2026-11-22",
-      "commitCount": 2
+      "lastActivity": "2026-11-23",
+      "commitCount": 5
     },
     {
       "id": "E5-T33",
@@ -23404,21 +23413,26 @@
             "Submit E5-T33: Replay Node 26 for riscv64 with the unbundled driver",
             "Park E5-T32b during its compile and start E5-T33 (Replay Node 26)"
           ]
+        },
+        {
+          "date": "2026-11-23",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-11-22",
-      "lastActivity": "2026-11-22",
+      "lastActivity": "2026-11-23",
       "commitCount": 3
     },
     {
       "id": "E5-T34",
       "epic": "5",
       "epicKey": "5",
-      "title": "Minimal single-fetch shared desktop OS for Replay Chrome 157 and Node 26 (planning parent)",
+      "title": "Minimal single-fetch shared desktop OS for Replay Chrome and Node 26 (planning parent)",
       "priority": null,
       "status": "cancelled",
       "depends_on": [
-        "E5-T32b",
+        "E0-T34",
         "E5-T33"
       ],
       "decomposed_into": [],
@@ -23433,10 +23447,18 @@
       "verificationLog": "",
       "adversarial": "",
       "file": "tasks/epic-5-the-window/E5-T34-replay-shared-desktop-image.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-23",
+          "commits": 1,
+          "labels": [
+            "Block E5-T32b on Replay's 157 uplift; ship Chrome 108 on the shared desktop"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-23",
+      "lastActivity": "2026-11-23",
+      "commitCount": 1
     },
     {
       "id": "E5-T34a",
@@ -23444,7 +23466,7 @@
       "epicKey": "5",
       "title": "Whole-image single-fetch block backend for the browser runtime",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T31"
       ],
@@ -23457,58 +23479,85 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-11-23 — worker — submitted at 197c09be2\n\n**Claim.** Chunked boots accept an opt-in whole-image prefill (`wholeImageUrl`, `wholeImageSha256`,\n`wholeImageSize`). The loader (`web/whole-image.js`, called from `web/loader.js`, which runs inside\nthe whole-machine worker, so no transfer step is needed) makes one streamed request for the gzip of\nthe raw image. It decodes it with `DecompressionStream` into a `Uint8Array(image_len)` allocated up\nfront, rejects a size or SHA-256 mismatch, then calls the new `machine.setLocalImage(u8)`. The array\nstays in JS memory. `FetchState::fetch_one` (`crates/wasm/src/http_fetch.rs`) slices exactly\n`[i*chunk_size, i*chunk_size + chunk_len(i))` out of that buffer, verifies it with\n`manifest.verify_chunk`, and inserts it. It never issues a request in this mode. A mismatch is a\npermanent `FetchFailure::LocalImageCorrupt` and never falls back to the network. Admission, chunk\nextents and verification live in `wasm_vm_storage::LocalImage`, which has native tests.\nAdmission requires `len == image_len` and an image no larger than `u32::MAX`. `fetchStats` gains\n`localImage`, `localHits` and `localBytes`. Profiles that do not opt in are unchanged: no shipping\ncaller sets the option. Only the `?testHooks=1` hook `__bootAlpineChunkedCold` does.\n\n**Artifact.** `bash tools/build-whole-image.sh releases/rootfs/alpine-warm-rootfs.ext4\nreleases/chunked-alpine/manifest.json releases/chunked-alpine/alpine-rootfs.img.gz`. The script\nchecks the size and all 6144 chunk hashes against the manifest before it writes anything. Result:\n805306368 bytes decompressed, sha256 `58f3f9a4…57db`, 13970446 bytes gzipped. Gitignored, not\ncommitted.\n\n**Commands (exact head 197c09be2, wasm sha256 `c6cc6692…ddd5` in both web/pkg and web/dist/pkg):**\n- `cargo fmt --check -p wasm-vm-storage -p wasm-vm-wasm`;\n  `cargo clippy -p wasm-vm-storage --all-targets -- -D warnings`;\n  `cargo clippy -p wasm-vm-wasm -- -D warnings`;\n  `cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings`. All clean.\n- `cargo test -p wasm-vm-storage`: all pass. That includes 6 new `local_image::tests`: exact-size\n  admission, the u32 bound, chunk extents including the short tail, local hit for every chunk, hash\n  mismatch as a permanent failure, and a short buffer.\n- `cd web && node --test tests/e5-t34a-local-image-wasm.test.mjs tests/e5-t34a-whole-image.test.mjs`:\n  9 pass (`evidence/e5-t34a/unit-tests-node.log`). These run the BUILT wasm: setLocalImage size\n  mismatch throws; a local hit serves 3 of 3 chunks with `fetches == 0`; a corrupt chunk is never\n  cached or fetched from the network. Loader cases: gzip decode, a pre-decoded body, short, long,\n  SHA mismatch, HTTP 404, bad arguments.\n- `make web-build`, then the pre-commit hook rebuilt and staged `web/dist`.\n- `bash tools/serve-dev.sh 8123 &` and `node tools/verify/e5-t34a-whole-image-prefill.mjs`, which\n  drives system Chrome headless through `size`, `corrupt`, `prefill` and `lazy` and passed all four\n  (`boot-run.log`).\n- ISA suite on the built `web/dist`: `evidence/e5-t34a/demo-suite-only.mjs`. This is\n  `tools/verify/e5-t18e-demo-smoke.mjs` without its roadmap-search step, because `#rm-search` is not\n  visible on the current roadmap page. Result: 127 passed, 0 failed, 127 done, zero console or HTTP\n  errors, unchanged from E5-T18e (`demo-suite.json`, `demo-suite.png`).\n\n**Evidence (`evidence/e5-t34a/`).**\n- `prefill-requests.json`: 170 requests in total. Exactly 1 request for `alpine-rootfs.img.gz`, and\n  0 requests to `/chunked-alpine/chunks/` or with a `Range` header. Worker requests are included:\n  the kernel and manifest fetches made inside the worker appear in the log.\n- `prefill-fetchstats.json`: `localImage: true`, `localHits: 113` (14811136 bytes), `fetches: 0`,\n  `bytes: 0`, `error: null`.\n- `prefill-serial.log` and `prefill-login.png`: `wasm-vm login:`, then root login, then\n  `PREFILL_42_OK`. Zero console errors apart from the favicon 404.\n- `lazy-*`: the same cold boot without prefill. 113 chunk requests, `fetches: 113`, the same 14811136\n  bytes, `localHits: 0`, the same login and `PREFILL_42_OK` marker.\n- `corrupt-*`: attack 1. The image has one byte flipped at offset 0 and its declared sha256 is the\n  corrupted image's own hash, so the loader admits it. Wasm reports `chunk 0: LocalImageCorrupt` and\n  the machine halts with `lazy chunk fetch failed`. There is 1 image request and 0 chunk or Range\n  requests, so there was no network fallback.\n- `size-mismatch.json`: attack 2. `wholeImageSize = image_len - 1` is refused before any image\n  request.\n- `server.log`: the dev server's own request log, which corroborates the counts on the server side.\n\n**Not proven / caveats.**\n- Login time is unreliable. The final-head prefill run reached login after 1725 s, while the earlier\n  run took 135 s and a rerun at the same head took 141 s (`rerun/`). Lazy mode took 124 to 146 s.\n  The host load average was 16 to 21 because of a concurrent Docker Chromium build. The guest saw\n  the same 113 chunks in every run. The 1725 s outlier is unexplained.\n- On localhost, prefill is not measurably faster than lazy. The benefit is removing about 113\n  network round trips, which only matters against a remote CDN.\n- No R2 or Cloudflare deployment was made, and the `.img.gz` is not published. A CDN that applies\n  `Content-Encoding: gzip` is handled by gzip-magic sniffing, which is unit-tested only.\n- `wholeImageUrl` was not exercised with virgl, persistence or a warm snapshot (out of scope; the\n  path is the same `setLocalImage` after construction).\n- The `@playwright/test` runner hangs at collection under Node 24 on this machine, so the acceptance\n  runs as a standalone Playwright-library script, the pattern used in `tools/verify/`.\n\n### 2026-11-23 — fresh verifier — VERDICT: verified\n\nVerified on branch head 308d1d3dc (implementation 197c09be2). Built wasm sha256 `c6cc6692…ddd5` is the same in\n`web/pkg` and `web/dist/pkg`. `web/{whole-image,loader,main}.js` are byte-identical to their `web/dist` copies.\nNo rebuild was needed. Host load average was 16 to 99 during the runs because of the concurrent Docker build. Verifier artifacts are in\n`evidence/e5-t34a/verifier/`. Predictions were written before each observation.\n\n- **P1 acceptance (prefill in the browser): HELD.** Prediction: exactly 1 `.img.gz` request, 0 chunk or `Range`\n  requests, `localHits == 113`, `fetches == 0`, and the same login plus marker as lazy. I re-ran this with my own\n  driver (`verifier/diag.mjs`, system Chrome headless, `tools/serve-dev.sh 8123`), which records serial progress every 60 s.\n  - `run1/prefill-result.json`: login and `PREFILL_42_OK`. Requests: whole=1, chunkOrRange=0, total=170. Stats:\n    `localImage:true`, `localHits:113`, `localBytes:14811136`, `fetches:0`, `bytes:0`, `error:null`.\n  - `run{1,2}/lazy-result.json`: same login and marker. Requests: whole=0, chunkOrRange=113. Stats: `fetches:113`,\n    the same 14811136 bytes, `localHits:0`.\n  - These shapes and counts match the worker's `prefill-*`/`lazy-*` evidence exactly: 170 requests, 113 chunks, 14811136 bytes.\n  - The only console error was `/favicon.ico` 404. The server log shows 404s for favicon only, which is the allowed exception.\n  - My first attempt used the committed `tools/verify/e5-t34a-whole-image-prefill.mjs size prefill lazy`. `size`\n    passed (2261 ms), but prefill timed out at its 1800 s login wait at load average about 99\n    (`verifier/acceptance-script-timeout.log`).\n  - The instrumented rerun shows why. Run 1: prefill logged in at 822 s, and its 60 s polls stretched to about 400 s of\n    wall time, so the browser was starved. Run 2 ran in the reverse order (lazy, then prefill) at load 16 to 18. Lazy\n    logged in by 180 s and prefill also by 180 s (`run2/*-progress.json`), at 60 s polling granularity, with prefill\n    ahead at every poll.\n  - The slow runs (worker's 1725 s, my 822 s and timeout) track host load, not the prefill mode. They do not contradict\n    the claim, and timing is not an acceptance criterion.\n- **P2 the image stays out of linear memory: HELD.** Code: `FetchState` keeps the `Uint8Array` handle, and\n  `fetch_local` copies only `image.subarray(start,end).to_vec()`. Measured with the built wasm (`verifier/mem.mjs`,\n  `mem.out`): a 256 MiB + 4 KiB image left `memory.buffer.byteLength` at 11534336 before `setLocalImage`, after it,\n  and after serving 3 chunks (growth 0). `localBytes` was 266240 = 2×128 KiB + the 4 KiB short tail.\n- **P3 a different corruption fails closed with no network fallback: HELD.** I made two new browser attacks\n  (`verifier/atk.mjs`, `atk.out`), each served with the GENUINE sha256 and size:\n  - (a) The `.img.gz` truncated at half its bytes → `cannot boot: TypeError: Compressed input was truncated.`\n  - (b) A gzip that decompresses to exactly 805306368 bytes with the LAST byte (in the short-tail region) flipped →\n    `whole image: integrity check failed: expected 58f3…57db, got f3a3…da48`.\n  - Both made 1 image request and 0 chunk or Range requests.\n  - Wasm-level, same corruption with a self-consistent admission: only the last (short) chunk corrupt, requested\n    twice → `localHits:0`, `fetches:0`, `resident:0` (`mem.out`). It was never cached and never fetched from the network.\n- **P4 lazy and non-opted profiles unchanged: HELD.** Lazy boots still fetch 113 chunks per-chunk (`run{1,2}/lazy-*`).\n  `fetch_local` returns `None` without a local image, so `fetch_one` follows its pre-existing path.\n  `wholeImageUrl` is set only by the `?testHooks=1` `__bootAlpineChunkedCold` hook (`grep` over `web/*.js`).\n- **P5 unit tests are real and not self-licking: HELD.**\n  - `cargo test -p wasm-vm-storage --lib local_image`: 6/6 pass.\n  - `node --test tests/e5-t34a-local-image-wasm.test.mjs tests/e5-t34a-whole-image.test.mjs`: 9/9 pass.\n  - Expected values come from independent sha2 and node:crypto hashing, not from the code under test.\n  - Sabotage: `chunk_range` `end = start + len - 1` made 3 of the 6 tests fail (`chunk_ranges_match…`,\n    `local_hit_serves…`, `hash_mismatch…`). Restored with `git checkout`. The file sha256 `e42945f2…` matches HEAD.\n- **COVERAGE.**\n  - Executed in the browser: `fetch_local` hit path, `set_local_image`/`has_local_image`, fetchStats fields,\n    `setLocalImage` success, loader size check (`size` mode), and `fetchWholeImage` gzip, SHA-mismatch and\n    truncated-stream paths.\n  - Executed via the built wasm in node: the `setLocalImage` SizeMismatch error and the corrupt-chunk refusal.\n  - Waived (unit-tested only):\n    - Non-gzip/`Content-Encoding` pre-decoded branch. Node test `accepts a body the server already gzip-decoded`;\n      CDN behaviour is disclosed as not proven, and the SHA/size gate still applies.\n    - Oversize branch. Node test `long decompressed image`.\n  - Waived (unreachable or trivial):\n    - `TooLarge` from JS: a browser Uint8Array length is ≤ 2^32−1 and the manifest bound is tested natively.\n    - `setLocalImage: not a chunked boot`: the loader only calls it when `isChunked`.\n    - Loader `wholeImageUrl`-without-sha and manifest-without-`image_len` guards: argument validation.\n    - The `fetchStats` `None` branch: constant fields.\n    - `LocalImage::image_len()`: a public accessor with no caller.\n    - `gpu-checkpoint-build.js`: generated.\n  - `tools/build-whole-image.sh` output: the gzip sha256 matches the sidecar `gzipSha256` (`7ab0c395…`), and the\n    browser verified the decompressed sha256 on every prefill boot.\n- **Novel attack:** the linear-memory measurement (P2) plus last-short-chunk and truncated-gzip corruption (P3). All held.\n- **SUITE:** No new promoted tests. The committed native and node tests already pin hit, mismatch, size, tail-extent,\n  and no-fallback behaviour. The diagnostic driver (`verifier/diag.mjs`) is kept as evidence. Suggested follow-up,\n  not filed: raise the acceptance script's 1800 s login timeout or poll progress, so it is robust on a loaded host.\n\nCommands: `cargo test -p wasm-vm-storage --lib local_image`; `cd web && node --test tests/e5-t34a-*.test.mjs`;\n`bash tools/serve-dev.sh 8123`; `node tools/verify/e5-t34a-whole-image-prefill.mjs size prefill lazy`\n(size PASS, prefill timed out under load); `node evidence/e5-t34a/verifier/diag.mjs <out> prefill lazy` and\n`… lazy prefill`; `node evidence/e5-t34a/verifier/atk.mjs` (attack files built under `releases/chunked-alpine/`\nand deleted afterwards); `node evidence/e5-t34a/verifier/mem.mjs`.",
       "adversarial": "Medium risk: check the acceptance criteria against recorded evidence and run one\nbounded novel attack.",
       "file": "tasks/epic-5-the-window/E5-T34a-whole-image-block-backend.md",
       "activity": [
         {
           "date": "2026-11-22",
-          "commits": 2,
+          "commits": 3,
           "labels": [
             "Start E5-T34a: whole-image single-request prefill for chunked boots",
-            "Record the E5-T34a single-request prefill design"
+            "Record the E5-T34a single-request prefill design",
+            "E5-T34a: whole-image single-request prefill for chunked boots"
+          ]
+        },
+        {
+          "date": "2026-11-23",
+          "commits": 3,
+          "labels": [
+            "Verify E5-T34a: whole-image prefill holds (1 image request, 0 chunk/Range, image outside linear memory, corruption fails closed)",
+            "Submit E5-T34a: whole-image prefill proven in the browser (1 image request, 0 chunk/Range requests)",
+            "Make the E5-T34a acceptance login wait load-tolerant"
           ]
         }
       ],
       "firstActivity": "2026-11-22",
-      "lastActivity": "2026-11-22",
-      "commitCount": 2
+      "lastActivity": "2026-11-23",
+      "commitCount": 6
     },
     {
       "id": "E5-T34b",
       "epic": "5",
       "epicKey": "5",
-      "title": "Minimal read-only rootfs for Replay Chrome 157 and Node 26 on one desktop",
+      "title": "Minimal read-only rootfs for Replay Chrome 108 and Node 26 on one desktop",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
-        "E5-T32b",
-        "E5-T33"
+        "E0-T34",
+        "E5-T33",
+        "E5-T34a"
       ],
       "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "",
-      "boundary": "## Boundary\n\nBuild the smallest rootfs that runs both: kernel config trimmed to the wasm-vm device set, busybox init, a single-process Wayland kiosk compositor, minimal fonts, Chrome 157, Node 26 and a terminal. Pack it as a compressed read-only filesystem; run tools/privacy/check-no-replay-backend.py over the source tree before packing and over the packed image after.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\nNative wasm-vm boot reaches the desktop with Chrome showing smoke.html success and a Node 26 terminal, with recorded boot time, image size and guest RAM high-water mark.\n\n",
+      "boundary": "## Boundary\n\nBuild the smallest rootfs that runs both: kernel config trimmed to the wasm-vm device set, busybox init, a single-process Wayland kiosk compositor, minimal fonts, Replay Chrome 108 (the verified riscv64 build, E0-T34; Chrome 157 is blocked on Replay's uplift, E5-T32b), Node 26 and a terminal. Pack it as a compressed read-only filesystem; run tools/privacy/check-no-replay-backend.py over the source tree before packing and over the packed image after.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nNative wasm-vm boot reaches the desktop with Replay Chrome 108 showing smoke.html success and a Node 26 terminal, with recorded boot time, image size and guest RAM high-water mark.\n\n",
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-11-23 — worker — submitted at e01d14ed1\n\n**Claim.** `bash tools/build-replay-desktop-image.sh target/e5-t34b/image` builds a 446 MiB raw ext4\nrootfs (467,664,896 B, SHA-256 `2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05`;\n`.img.gz` 189,669,297 B / 181 MiB, SHA-256 `37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba`;\nblob chunk manifest, 1,784 × 256 KiB, SHA-256 `2e644ad8f01ac9c80813a5953efeeeabf50e6d8badea3aab16c469ba1a922ecc`,\nverified against the image by `tools/build-whole-image.sh`, so the E5-T34a prefill can serve it). The image\nmounts read-only, has no journal, and uses tmpfs for `/run /tmp /home /var /root /dev/shm`. It contains busybox\ninit, `systemd-udevd`/udevadm (input classification only), seatd, sway 1.9 (wlroots DRM backend, pixman\nrenderer, no bar or background client), foot, grim, Replay Chrome 108 (E0-T34 bundle, with `.symtab`/`.strtab`\nstripped from the binaries), Replay Node 26.13.1 (E5-T33, unchanged), DejaVu Sans/Mono, xkb data, and glibc\nC.UTF-8. The staged files total 412.9 MiB: Chrome 253.7, Node 105.8, system libraries/userland 48.2, xkb 3.2\nand fonts 2.1. Files come from 208 apt-resolved Ubuntu 24.04 riscv64 packages, pinned by version and .deb SHA-256\nin `stage-manifest.json`. Only the ELF NEEDED closure of the roots plus an explicit data list is copied, which\ndraws files from 123 packages. The image has no dpkg/apt database, docs, man pages, or locales other than\nC.UTF-8. The privacy check passed on the staged tree before packing (705 files), on the packed ext4, and on the\n`.img.gz`.\n\nOn native wasm-vm, `node tools/replay-desktop/native-boot.mjs --image target/e5-t34b/image/replay-desktop.ext4\n--out target/e5-t34b/native-final` cold-boots the image. It uses the browser desktop device layout\n(`--browser-topology --jit --block-cache --interrupt-batching --icount-divider 64 --ram-mib 2048 --net\n--virtio-rng`, kernel `releases/kernel/6.6.63/Image`, drive `ro`). Results:\n- The guest reached `REPLAY_DESKTOP_READY` **88.6 s host wall time** after spawn, at guest uptime 5.29 s on the\n  icount-divided virtual clock. Sway IPC was up at 27.6 s, the terminal mapped at 28.6 s, and Chrome mapped and\n  passed at 88.0 s.\n- Chrome's private DevTools pipe reported the page title `Replay RISC-V PASS #1`.\n  `Runtime.evaluate` returned `pass {\"pass\": true, \"javascript\": 42, \"webassembly\": 42, \"pixel\": [42,128,64,255],\n  \"browser\": \"Chrome/108.0.0.0\"}`. The renderer was sandboxed (`NoNewPrivs=1 Seccomp=2`, own PID namespace).\n- The keyboard path works end to end. With foot focused through swaymsg, the CLI's `--keyboard-proof` injected\n  one virtio KEY_A (evdev → udev/libinput → sway → foot), and `/tmp/keyboard.txt` read `KEYBOARD_a`.\n- `node -e \"console.log(process.version)\" | tee /tmp/node-version.txt` was typed into foot's pty (TIOCSTI) and\n  printed `v26.13.1` 30.4 s later.\n- grim captured a 1280×800 desktop screenshot (`desktop.png`, SHA-256 `e3022fb3…0dda`). It shows Chrome tiled\n  left with the PASS JSON and the terminal right with `KEYBOARD_a` and `v26.13.1`.\n- The guest RAM high-water mark was **181,972 KiB** (MemTotal − MemAvailable, sampled every guest second over\n  the whole run). It was 172,228 KiB at ready. Chrome browser-process VmHWM was 141 MB, renderer 96 MB, sway\n  31 MB and foot 15 MB.\n- Totals: 8,096,213,035 retired instructions, final state SHA-256 `52db2dcb…fc1a`, exit 0. The image SHA-256 was\n  unchanged after the boot, so the read-only mount held.\n\n**Commands.**\n- `cargo build --release -p wasm-vm-cli` (cold, 2m21s).\n- `bash tools/build-replay-desktop-image.sh target/e5-t34b/image` (1m18s, Docker context\n  `colima-replay-chromium`, throwaway container from `wasm-vm-replay-desktop-build:local`).\n- `node tools/replay-desktop/native-boot.mjs --image target/e5-t34b/image/replay-desktop.ext4 --out\n  target/e5-t34b/native-final --timeout-min 60` (206.7 s total).\n- Gates: `python3 -m py_compile`, `node --check`, `sh -n`/`bash -n` on all new scripts. There are no Rust or\n  `web/` changes, so fmt/clippy, wasm and Playwright gates are not applicable. Browser proof is E5-T34c.\n\n**Evidence.**\n- `evidence/e5-t34b/build/`: `build.json` receipt, `stage-manifest.json` (package closure plus every file's\n  path, size, mode, SHA-256 and source package), `chunk-manifest.json`, `replay-desktop.img.gz.json`, three\n  `privacy-*.txt`, and the pack/stage logs.\n- `evidence/e5-t34b/native/`: `native-boot.json` (timings, markers, keyboard/Node/Chrome results, raw guest\n  metrics), `console.log` (serial, with the PNG base64 elided), `stderr.log` (JIT stats and keyboard-proof\n  lines), `desktop.png`, and `guest-evidence.txt`.\n\n**Choices and deviations (for the verifier).**\n- *Compositor: sway.* It shows both windows side by side deterministically in one compositor process.\n  - Weston desktop-shell places new toplevels at random positions and needs a separate desktop-shell client.\n  - kiosk-shell and cage show one application at a time.\n  - Sway is wlroots, the same stack as the labwc finalist that E5-T16 measured under emulation. No sway-vs-weston\n    bake-off was run for this image.\n- *Kernel and filesystem.* The existing `releases/kernel/6.6.63` kernel was used unchanged (no emulator or\n  kernel changes). It has no SquashFS or EROFS, so the \"compressed read-only filesystem\" is raw ext4 mounted\n  `ro`, with compression in the `.img.gz` single-fetch transport. This is the raw image that the E5-T34a prefill\n  requires.\n- *udevd is included.* Without it libinput ignored the virtio input devices. `WLR_LIBINPUT_NO_DEVICES` is\n  deliberately unset: with it set, wlroots defers device enumeration until the first input event and drops that\n  event.\n- *TIOCSTI typing.* The native CLI's only host keyboard path is the fixed KEY_A proof hook. Command text is\n  therefore typed with `wvm-type`, a root-only (mode 0700) 1 KiB TIOCSTI helper assembled from\n  `tools/replay-desktop/wvm-type.S`. The kernel has `CONFIG_LEGACY_TIOCSTI=y`.\n- *Chrome digest.* The image `chrome` is the verified binary (`df9b4315…`) with symbols stripped\n  (387,891,736 → 220,220,600 B, `ddc58592…`). Both digests are in `stage-manifest.json`.\n\n**Not proven or known gaps.**\n- No browser (wasm) boot; that is E5-T34c.\n- No recording: `RECORD_REPLAY_DONT_RECORD=1`, unbundled driver.\n- No byte-reproducibility claim: two builds of the same inputs produced different ext4 digests, and this was not\n  investigated.\n- Package downloads need network access to ports.ubuntu.com.\n- The RAM high-water mark is sampled, so peaks shorter than one sample interval can be missed.\n- Expected noise: Chrome logs D-Bus connection errors (no bus in the image); foot warns that there is no X11\n  Compose table (dead keys only); sway logs one `Unable to clone DRM fd` error.\n- The smoke page's subtitle still reads \"Weston / Wayland\": the page is copied verbatim from E5-T29a.\n- The pre-commit hook ran only its privacy check (no `web/` changes), so no `rg` shim was needed.\n\n### 2026-11-24 — fresh verifier — VERDICT: verified\n\nVerified at head 14f2c04eb (implementation e01d14ed1, submission 9d8f5b4ab; 14f2c04eb touches only\n`tools/chromium/157/`). `target/release/wasm-vm` is current (`cargo build --release -p wasm-vm-cli` was a\nno-op; no `crates/` change after e01d14ed1). Predictions were written before each check.\n\n- P1 native cold boot reproduces the acceptance — **HELD**. I re-ran\n  `node tools/replay-desktop/native-boot.mjs --image target/e5-t34b/image/replay-desktop.ext4 --out <scratch>/native-verifier --timeout-min 60`.\n  It exited 0. `REPLAY_DESKTOP_READY` came at 87.9 s host time, guest uptime 5.30 s. The page title was\n  `Replay RISC-V PASS #1`; smoke.html sets that title only when `pass` is true. `Runtime.evaluate` returned\n  `pass:true, javascript:42, webassembly:42, pixel:[42,128,64,255], browser:Chrome/108.0.0.0`. The renderer\n  reported `NoNewPrivs=1 Seccomp=2`, with NSpid `182 10 1` (its own PID namespace), and `sandboxed=1`. The keyboard\n  output was `KEYBOARD_a`; Node printed `v26.13.1` 30.4 s after typing. The guest RAM high-water mark was\n  181,620 KiB (worker: 181,972), and 2 GiB RAM was configured. The guest mounted `/dev/root` as `ext4 (ro,relatime)`,\n  with tmpfs on /run, /tmp, /home, /var and /root. The image SHA-256 was `2af6100e…5b05` before and after the boot.\n  My summary JSON has the same key set as the worker's, and the same values apart from timing and RAM noise.\n  The screenshot is byte-identical to the worker's (`e3022fb3…0dda`, 1280×800). I inspected it: Chrome is tiled\n  left with the PASS JSON, and foot is on the right with `KEYBOARD_a` and `v26.13.1`. Retired instructions differ\n  (8,004,094,902 vs 8,096,213,035), as expected for host-timed runs. No panic or oops appears in either console.\n- P2 the image's binaries are bound to the verified inputs — **HELD**. I extracted both from the ext4 with\n  `debugfs dump` in a throwaway `wasm-vm-replay-desktop-build:local` container. The image's `node` is\n  `0a1942ad…4956`, byte-identical to E5-T33's binary. The image's `chrome` is `ddc58592…e9c1`. Re-running\n  `riscv64-linux-gnu-strip --strip-all` on the E0-T34 binary (`df9b4315…`, which matches\n  `runtime-files.json` and E0-T34's log) produced a file that `cmp` reports identical to the image's `chrome`.\n  The program headers are identical, apart from the non-loaded `PT_RISCV_ATTRIBUTES` p_memsz (0x53→0). All four\n  PT_LOAD segments are byte-identical, apart from the ELF header's e_shoff, e_shnum and e_shstrndx inside segment 0.\n  Only the `.symtab` and `.strtab` sections were removed. So the strip removed only non-loaded metadata.\n- P3 privacy — **HELD**. `python3 tools/privacy/check-no-replay-backend.py` printed OK for the raw ext4 and for the\n  `.img.gz` (the checker decodes embedded gzip/xz). The builder reads only\n  `local/chromium-riscv64/artifacts/2026-11-03/build20/replay-chromium-riscv64.tar.gz` and the Node tarball;\n  `driver` appears only in a comment in `etc/profile`. I compared the 1,002-entry `stage-manifest.json` against\n  the SHA-256 of all 38,200 files under `local/chromium-riscv64/driver/`. They share 17 digests, all stock\n  Ubuntu 24.04 riscv64 libraries: libz, libstdc++, libgcc_s, liblzma, libzstd and similar. The manifest\n  attributes each one to its apt package, and copies of the same libraries also sit in the driver test\n  initramfs trees. They are not driver material.\n- P4 minimality claims — **HELD**. On the image itself, `/var/lib` is empty, and `/usr/share` holds only X11\n  (xkb), fontconfig, fonts, libinput and terminfo: no doc, man or info. The only locale data is\n  `usr/lib/locale/C.utf8`, plus Chrome's own `locales/en-US.pak`. There is no `has_journal` feature. The largest\n  files are chrome (220.2 MB), node (110.8 MB), libvk_swiftshader (14.6 MB), icudtl.dat, resources.pak and\n  libGLESv2. The regular bytes sum to 432,953,717 B (412.9 MiB), matching the claim.\n- P5 prefill compatibility — **HELD**. I recomputed all 1,784 chunk hashes of 256 KiB over the raw image against\n  `evidence/e5-t34b/build/chunk-manifest.json`: 0 mismatches, and no trailing bytes. That manifest is\n  byte-identical to `target/e5-t34b/image/chunked/manifest.json` (`2e644ad8…`). The `.img.gz` gunzips to\n  467,664,896 B with SHA-256 `2af6100e…5b05`.\n- P6 COVERAGE — **HELD / waived**.\n  - Executed in my boot: rcS, inittab, sway.conf, replay-desktop-session, replay-chromium, replay-desktop-monitor,\n    replay-desktop-type, wvm-type.S, replay-desktop-shot, foot.ini, and every harness step (ready, keyboard,\n    typing, screenshot, metrics, poweroff).\n  - Not re-run, waived: the builder, assemble.py, the Dockerfile and packages.txt. Reproducibility is\n    explicitly not claimed, and I proved their outputs' bindings directly (P2, P4, P5).\n  - Waived as a dev-loop flag: `--keep-debs`.\n  - Non-blocking observation: native-boot.mjs records the page result, sandbox, keyboard and Node results\n    but does not fail on them. Its exit code gates only on reaching READY and the shell steps; the values were\n    checked by hand above.\n- P7 novel attack: a broken Chrome must be detected — **HELD**. In a scratch copy I renamed\n  `/usr/lib/riscv64-linux-gnu/libnss3.so` to `.disabled` with `debugfs -w`; `e2fsck -fn` was clean. I predicted\n  no READY marker and a harness failure. Observed: the guest emitted `REPLAY_CHROMIUM_STARTUP_FAILED uptime=6.62`\n  and never `REPLAY_CHROMIUM_TARGETS` or `REPLAY_DESKTOP_READY`. The harness exited 1 with\n  `timeout waiting for REPLAY_DESKTOP_READY` and the emulator was killed with SIGKILL. The scratch image and\n  container were deleted.\n- SUITE: discard. The acceptance is a multi-minute emulator boot that depends on gitignored local inputs, so it\n  cannot be a cheap committed gate. The committed evidence plus this entry are the record.\n\nCommands: `cargo build --release -p wasm-vm-cli`; the native-boot.mjs run above (in the background, about 3.5\nmin); `shasum -a 256` on the image before and after; `debugfs dump`, `riscv64-linux-gnu-strip`/`readelf` and a\nPython PT_LOAD diff in a throwaway container; `check-no-replay-backend.py` ×2; a Python chunk and gunzip\nrecomputation; the broken-image boot with `--timeout-min 5`.",
       "adversarial": "Medium risk: check the acceptance criteria against recorded evidence and run one\nbounded novel attack.",
       "file": "tasks/epic-5-the-window/E5-T34b-minimal-replay-desktop-rootfs.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-03",
+          "commits": 0,
+          "labels": []
+        },
+        {
+          "date": "2026-11-23",
+          "commits": 5,
+          "labels": [
+            "Verify E5-T34b: native re-boot, Chrome/Node input binding, privacy, chunk manifest, broken-lib attack",
+            "Submit E5-T34b: minimal Replay desktop rootfs boots natively to Chrome 108 PASS + Node 26 terminal",
+            "Block E5-T32b on Replay's 157 uplift; ship Chrome 108 on the shared desktop",
+            "Assert the E5-T34b acceptance values in the native harness"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-03",
+      "lastActivity": "2026-11-23",
+      "commitCount": 5
     },
     {
       "id": "E5-T34c",
       "epic": "5",
       "epicKey": "5",
-      "title": "Boot the shared Replay Chrome 157 and Node 26 desktop in the browser demo",
+      "title": "Boot the shared Replay Chrome and Node 26 desktop in the browser demo",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T34a",
         "E5-T34b"
@@ -23525,10 +23574,19 @@
       "verificationLog": "(empty)",
       "adversarial": "Medium risk: check the acceptance criteria against recorded evidence and run one\nbounded novel attack.",
       "file": "tasks/epic-5-the-window/E5-T34c-shared-replay-desktop-browser.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-23",
+          "commits": 2,
+          "labels": [
+            "Start E5-T34c: shared Replay desktop in the browser",
+            "Block E5-T32b on Replay's 157 uplift; ship Chrome 108 on the shared desktop"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-23",
+      "lastActivity": "2026-11-23",
+      "commitCount": 2
     },
     {
       "id": "E5.5-T01a",

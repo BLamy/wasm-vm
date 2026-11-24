@@ -1,0 +1,20 @@
+[deploy] target: production (branch 'main')
+[deploy] staging and validating artifact manifests …
+[deploy] shipped busybox-ready.snap.gz on Pages
+[deploy] shipped alpine-ready.snap.gz on Pages
+[deploy] shipped alpine-overlay-delta.bin.gz on Pages
+[deploy] shipped node-alpine-overlay-delta.bin.gz on Pages
+[deploy] shipped omarchy-apps-overlay-delta-bc36948ac61a.bin.gz on Pages
+[privacy] OK: 796 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[deploy] R2 already exact: sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+[deploy] R2 already exact: sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz
+[deploy] R2 already exact: sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4
+[deploy] R2 already exact: sha256/f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0/releases/boot-snapshot/node-alpine-ready.snap.gz
+[deploy] R2 already exact: sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image
+[deploy] R2 already exact: sha256/98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22/releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz
+[deploy] uploaded and verified R2 object: sha256/3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd/releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair
+[deploy] uploaded and verified R2 object: sha256/2e644ad8f01ac9c80813a5953efeeeabf50e6d8badea3aab16c469ba1a922ecc/releases/rootfs/replay-desktop-2af6100e9b37.chunks.json
+[deploy] uploaded and verified R2 object: sha256/37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba/releases/rootfs/replay-desktop-2af6100e9b37.img.gz
+[deploy] deploying web/dist to Cloudflare Pages project 'wasm-vm', production (branch 'main')…
+✨ Deployment complete! Take a peek over at https://bcd9f1bb.wasm-vm.pages.dev
+[deploy] published to production (branch 'main'): https://wasm-vm.pages.dev/
