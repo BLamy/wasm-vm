@@ -1,0 +1,101 @@
+#!/bin/bash
+# E5-T34b: Replay Chrome 108 launcher for the shared sway desktop. Derived from the E5-T29a
+# tools/chromium/guest/start-browser.sh: same flags, same private DevTools pipe (no TCP listener)
+# and the same renderer-sandbox inspection. Differences: it runs under sway (not the Ubuntu
+# desktop service), it tiles instead of --start-maximized, and its readiness/sandbox lines are
+# appended to /run/replay-desktop/events, which the root monitor relays to the serial console.
+set -euo pipefail
+umask 077
+events=/run/replay-desktop/events
+say() { printf '%s uptime=%s\n' "$*" "$(cut -d' ' -f1 /proc/uptime)" >>"$events"; }
+test "$(id -u)" = 1000
+test -d "$XDG_RUNTIME_DIR" -a -O "$XDG_RUNTIME_DIR"
+control="$XDG_RUNTIME_DIR/replay-chromium"
+mkdir "$control"
+mkdir -p "$HOME/.local/state/replay-chromium"
+mkfifo "$control/in" "$control/out"
+exec 3<>"$control/in" 4<>"$control/out"
+export RECORD_REPLAY_DONT_RECORD=1
+say REPLAY_CHROMIUM_LAUNCH
+/opt/replay-chromium/chrome \
+  --ozone-platform=wayland --disable-gpu \
+  --no-first-run --no-default-browser-check \
+  --disable-background-networking --disable-component-update --disable-sync \
+  --password-store=basic --lang=en-US \
+  --num-raster-threads=1 --renderer-process-limit=1 \
+  --user-data-dir="$HOME/.config/replay-chromium" --remote-debugging-pipe \
+  file:///opt/replay-chromium/smoke.html \
+  3<"$control/in" 4>"$control/out" \
+  >"$HOME/.local/state/replay-chromium/browser.log" 2>&1 &
+browser_pid=$!
+ready=0
+cleanup() {
+  [ "$ready" = 1 ] || say REPLAY_CHROMIUM_STARTUP_FAILED
+}
+trap cleanup EXIT
+printf '%s\n' "$browser_pid" > "$control/pid"
+
+title_ready=0
+attempt=0
+# Interpreted/JIT riscv64 is slow: allow up to ~60 minutes of guest time for the first paint.
+while [ "$attempt" -lt 36000 ]; do
+  attempt=$((attempt + 1))
+  kill -0 "$browser_pid"
+  printf '{"id":%d,"method":"Target.getTargets"}\0' "$attempt" >&3
+  message=
+  if IFS= read -r -d '' -t 5 message <&4; then
+    if [[ "$message" =~ \"title\"[[:space:]]*:[[:space:]]*\"Replay\ RISC-V\ PASS\ \#1\" ]]; then
+      say "REPLAY_CHROMIUM_TARGETS $message"
+      title_ready=1
+      break
+    fi
+  fi
+  sleep 0.1
+done
+[ "$title_ready" = 1 ] || exit 1
+
+# Ask the page itself for its result object (JS + WASM + canvas pixel) through the same pipe.
+target=
+if [[ "$message" =~ \"targetId\":\"([0-9A-F]+)\",\"type\":\"page\" ]]; then target="${BASH_REMATCH[1]}"; fi
+session=
+if [ -n "$target" ]; then
+  printf '{"id":900001,"method":"Target.attachToTarget","params":{"targetId":"%s","flatten":true}}\0' "$target" >&3
+  for _ in $(seq 1 120); do
+    IFS= read -r -d '' -t 5 reply <&4 || continue
+    if [[ "$reply" =~ \"sessionId\":\"([0-9A-F]+)\" ]]; then session="${BASH_REMATCH[1]}"; break; fi
+  done
+fi
+if [ -n "$session" ]; then
+  printf '{"id":900002,"sessionId":"%s","method":"Runtime.evaluate","params":{"expression":"document.body.dataset.result+%s+document.querySelector(%s).textContent","returnByValue":true}}\0' \
+    "$session" "' '" "'#result'" >&3
+  for _ in $(seq 1 120); do
+    IFS= read -r -d '' -t 5 reply <&4 || continue
+    if [[ "$reply" == *'"id":900002'* ]]; then say "REPLAY_CHROMIUM_PAGE $reply"; break; fi
+  done
+fi
+
+renderers=0 sandboxed=0
+for command in /proc/[0-9]*/cmdline; do
+  renderer=0 profile=0
+  while IFS= read -r -d '' argument; do
+    if [[ " $argument " == *" --type=renderer "* ]]; then renderer=1; fi
+    if [[ " $argument " == *" --user-data-dir=$HOME/.config/replay-chromium "* ]]; then profile=1; fi
+    if [ "$renderer" = 1 ] && [ "$profile" = 1 ]; then break; fi
+  done 2>/dev/null < "$command" || true
+  [ "$renderer" = 1 ] && [ "$profile" = 1 ] || continue
+  status="${command%/cmdline}/status"
+  no_new_privs= seccomp= namespace=
+  while IFS=: read -r key value; do
+    case "$key" in
+      NoNewPrivs) no_new_privs="${value//[[:space:]]/}" ;;
+      Seccomp) seccomp="${value//[[:space:]]/}" ;;
+      NSpid) namespace="$value" ;;
+    esac
+  done < "$status"
+  say "REPLAY_RENDERER_SANDBOX pid=${command%/cmdline} NoNewPrivs=$no_new_privs Seccomp=$seccomp NSpid=$namespace"
+  renderers=$((renderers + 1))
+  [ "$no_new_privs" = 1 ] && [ "$seccomp" = 2 ] && sandboxed=$((sandboxed + 1))
+done
+ready=1
+say "REPLAY_CHROMIUM_READY renderers=$renderers sandboxed=$sandboxed"
+wait "$browser_pid"

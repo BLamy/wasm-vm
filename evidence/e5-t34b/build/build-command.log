@@ -1,0 +1,40 @@
+[replay-desktop] stage
+[replay-desktop] privacy check: staged tree (before packing)
+[privacy] OK: 705 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[replay-desktop] pack
+Creating regular file /out/rootfs.ext4
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+replay-desktop: 1084/2176 files (0.5% non-contiguous), 106082/114176 blocks
+[replay-desktop] privacy check: packed image
+[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[replay-desktop] chunk + whole-image prefill artifact
+chunk_image: 467664896 bytes → 1784 chunks of 262144 B (blob); wrote target/e5-t34b/image/chunked/manifest.json
+build-whole-image: target/e5-t34b/image/replay-desktop.ext4 matches all 1784 chunks of target/e5-t34b/image/chunked/manifest.json
+{"size": 467664896, "sha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05", "gzipSize": 189669297, "gzipSha256": "37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba", "manifestImageLen": 467664896}
+[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+{
+  "image": {
+    "file": "replay-desktop.ext4",
+    "bytes": 467664896,
+    "sha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05",
+    "fs": "ext4 (no journal), mounted read-only"
+  },
+  "imgGz": {
+    "file": "replay-desktop.img.gz",
+    "bytes": 189669297,
+    "sha256": "37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba"
+  },
+  "chunkManifest": {
+    "file": "chunked/manifest.json",
+    "sha256": "2e644ad8f01ac9c80813a5953efeeeabf50e6d8badea3aab16c469ba1a922ecc",
+    "chunk_size": 262144,
+    "layout": "blob",
+    "chunks": 1784
+  },
+  "stagedRegularBytes": 432953717
+}
+bash tools/build-replay-desktop-image.sh target/e5-t34b/image  20.40s user 3.41s system 30% cpu 1:18.08 total

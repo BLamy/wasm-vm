@@ -1,0 +1,12 @@
+#!/bin/sh
+# E5-T34b: the desktop session, run as desktop (uid 1000) by rcS. One compositor process (sway,
+# wlroots DRM backend + pixman software renderer); sway's config starts Chrome and foot.
+export HOME=/home/desktop USER=desktop LOGNAME=desktop SHELL=/bin/sh
+export XDG_RUNTIME_DIR=/run/user/1000 XDG_SESSION_TYPE=wayland LANG=C.UTF-8
+export PATH=/usr/local/bin:/usr/bin:/usr/sbin
+# No WLR_LIBINPUT_NO_DEVICES: with it set, wlroots skips its initial libinput dispatch and the
+# udev-enumerated devices are only added on the first input event (which is then lost).
+export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 LIBSEAT_BACKEND=seatd
+export RECORD_REPLAY_DONT_RECORD=1
+cd "$HOME"
+exec sway -c /etc/replay-desktop/sway.conf >"$XDG_RUNTIME_DIR/sway.log" 2>&1

@@ -1,0 +1,28 @@
+#!/bin/sh
+# E5-T34b: PID-1 sysinit. Root is ext4 mounted read-only; all writable state is tmpfs.
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+grep -q ' /dev ' /proc/mounts || mount -t devtmpfs devtmpfs /dev
+mkdir -p /dev/pts /dev/shm
+mount -t devpts -o gid=5,mode=620,ptmxmode=666 devpts /dev/pts
+mount -t tmpfs -o nosuid,nodev,mode=1777 shm /dev/shm
+for d in /run:755 /tmp:1777 /home:755 /var:755 /root:700; do
+  mount -t tmpfs -o nosuid,nodev,mode=${d#*:} tmpfs ${d%:*}
+done
+mkdir -p -m 1777 /var/tmp
+hostname -F /etc/hostname
+ip link set lo up 2>/dev/null
+mkdir -p /home/desktop /run/user/1000 /run/replay-desktop
+chown 1000:1000 /home/desktop /run/user/1000 /run/replay-desktop
+chmod 700 /run/user/1000
+: > /run/replay-desktop/events
+chown 1000:1000 /run/replay-desktop/events
+# udevd tags the virtio keyboard/tablet/mouse (ID_INPUT_*) so libinput (sway) accepts them.
+/usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
+udevadm trigger --action=add --subsystem-match=input --subsystem-match=drm
+udevadm settle --timeout=60
+seatd -g video >/run/seatd.log 2>&1 &
+i=0; while [ ! -S /run/seatd.sock ] && [ $i -lt 600 ]; do sleep 0.1; i=$((i+1)); done
+su -s /bin/sh desktop -c /usr/local/bin/replay-desktop-session </dev/null >/run/session.log 2>&1 &
+replay-desktop-monitor </dev/null >/dev/console 2>&1 &

@@ -1,0 +1,10 @@
+#!/bin/sh
+# E5-T34b proof helper (root): capture the sway output with grim (wlr-screencopy, run as the
+# desktop user) and print it base64-encoded between markers on stdout (the serial console).
+set -e
+name=${1:-shot}
+disp=$(cd /run/user/1000 && ls wayland-[0-9] | head -n 1)
+su -s /bin/sh desktop -c "XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$disp grim -l 9 /tmp/$name.png"
+echo "WVM_PNG_BEGIN $name $(wc -c < /tmp/$name.png) $(sha256sum /tmp/$name.png | cut -d' ' -f1)"
+base64 /tmp/$name.png
+echo "WVM_PNG_END $name"

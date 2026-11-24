@@ -1,0 +1,6 @@
+root:x:0:
+tty:x:5:
+video:x:44:desktop
+input:x:105:desktop
+render:x:106:desktop
+desktop:x:1000:
