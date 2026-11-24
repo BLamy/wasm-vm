@@ -1,0 +1,5 @@
+# E5-T34b busybox init: bring up the read-only desktop, keep a root shell on the serial console.
+::sysinit:/etc/init.d/rcS
+ttyS0::respawn:-/bin/sh
+::ctrlaltdel:/sbin/reboot
+::shutdown:/bin/sync

@@ -1,0 +1,48 @@
+# E5-T34b: Ubuntu 24.04 (noble) riscv64 packages used as the SOURCE of the minimal rootfs.
+# Packages are downloaded through apt (signed InRelease, per-deb SHA256 checked by apt) and
+# unpacked into a scratch pool; they are never "installed". Only the files selected by
+# tools/replay-desktop/assemble.py (ELF NEEDED closure of the roots + listed data paths) enter
+# the image, so no dpkg/apt databases, docs, man pages or locales are shipped.
+#
+# Runtime base (glibc 2.39, GCC 14 libstdc++ GLIBCXX_3.4.33 for Node 26)
+libc6
+# libc-bin only for its static ldconfig (run under qemu-user at build time to write ld.so.cache; not shipped)
+libc-bin
+libstdc++6
+libgcc-s1
+# Replay Chrome 108 NEEDED set (readelf -d chrome) + NSS soft-token
+libglib2.0-0t64
+libnss3
+libnspr4
+libatk1.0-0t64
+libatk-bridge2.0-0t64
+libcups2t64
+libdbus-1-3
+libatspi2.0-0t64
+libx11-6
+libxcomposite1
+libxdamage1
+libxext6
+libxfixes3
+libxrandr2
+libexpat1
+libdrm2
+libxcb1
+libxkbcommon0
+libgbm1
+libpango-1.0-0
+libcairo2
+libasound2t64
+# Desktop: sway (wlroots, DRM backend + pixman renderer), seatd, foot, grim
+sway
+seatd
+foot
+grim
+# Init/userland (bash only for the DevTools-pipe launcher), fonts, keymaps, input quirks
+busybox-static
+bash
+fonts-dejavu-core
+xkb-data
+libinput-bin
+# udevd classifies input devices (ID_INPUT_*) so libinput accepts them; udevadm is self-contained
+udev

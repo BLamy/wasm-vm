@@ -1,0 +1,18 @@
+#!/bin/sh
+# E5-T34b proof helper (root): type into the foot terminal's shell, i.e. into the pty that foot's
+# child shell reads, via TIOCSTI (wvm-type), exactly as if typed in foot. Appends Enter unless -n.
+set -e
+enter=$(printf '\r')
+[ "${1:-}" = -n ] && { enter=; shift; }
+text="$*$enter"
+foot=$(pidof foot | cut -d' ' -f1)
+[ -n "$foot" ] || { echo "replay-desktop-type: foot is not running" >&2; exit 1; }
+child=
+for s in /proc/[0-9]*/stat; do
+  ppid=$(awk '{ sub(/^.*\) /, ""); print $2 }' "$s" 2>/dev/null) || continue
+  [ "$ppid" = "$foot" ] && { child=${s#/proc/}; child=${child%/stat}; break; }
+done
+[ -n "$child" ] || { echo "replay-desktop-type: foot has no child shell" >&2; exit 1; }
+tty=$(readlink /proc/$child/fd/0)
+echo "WVM_TYPE foot=$foot shell=$child tty=$tty"
+wvm-type "$tty" "$text"
