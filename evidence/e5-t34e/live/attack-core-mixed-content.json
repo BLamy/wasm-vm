@@ -1,0 +1,26 @@
+{
+  "task": "E5-T34e",
+  "mode": "attack-core",
+  "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide",
+  "states": [
+    {
+      "state": "fetching",
+      "at": 3152.8400000333786
+    },
+    {
+      "state": "instantiating",
+      "at": 63011.67999994755
+    },
+    {
+      "state": "booting",
+      "at": 63356.924999952316
+    }
+  ],
+  "warnings": [
+    "wasm-vm: warm snapshot restore failed, cold booting: Failed to fetch"
+  ],
+  "failed": null,
+  "tamperedCoreOffset": 12,
+  "snapshotRequests": 1,
+  "consoleErrors": []
+}

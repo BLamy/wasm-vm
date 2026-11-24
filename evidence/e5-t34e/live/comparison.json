@@ -1,0 +1,44 @@
+{
+  "warm": {
+    "wholeImageFinishedMs": 97840,
+    "snapshotStartedMs": 2583,
+    "snapshotFinishedMs": 70380,
+    "wholeImageStartedMs": 29278,
+    "downloadsFinishedMs": 97840,
+    "desktopVisibleMs": 99864,
+    "downloadEndToDesktopMs": 2024,
+    "runAgainAnsweredMs": 6237,
+    "nodeAnswerAfterTypingMs": 47335
+  },
+  "cold": {
+    "wholeImageFinishedMs": 50447,
+    "wholeImageStartedMs": 7528,
+    "downloadsFinishedMs": 50447,
+    "desktopVisibleMs": 210535,
+    "downloadEndToDesktopMs": 160088,
+    "runAgainAnsweredMs": 6078,
+    "nodeAnswerAfterTypingMs": 45348
+  },
+  "warmDownloads": {
+    "wholeImage": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba/releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "bytes": 189669297,
+      "declared": 189669297
+    },
+    "snapshot": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/dfcf85c2c260f7de5858a0e95c3ce4d0862cc1e489ecc64328f38957f1854cb3/releases/boot-snapshot/replay-desktop-ready-dfcf85c2c260.snap.gz",
+      "bytes": 124609647,
+      "declared": 124609647
+    }
+  },
+  "coldDownloads": {
+    "wholeImage": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba/releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "bytes": 189669297,
+      "declared": 189669297
+    },
+    "snapshot": null
+  },
+  "warmDesktopAfterDownloadMs": 2024,
+  "coldDesktopAfterDownloadMs": 160088
+}

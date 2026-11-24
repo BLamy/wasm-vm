@@ -1,0 +1,26 @@
+{
+  "task": "E5-T34e",
+  "mode": "attack-identity",
+  "url": "http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide",
+  "states": [
+    {
+      "state": "fetching",
+      "at": 593.5699999332428
+    },
+    {
+      "state": "instantiating",
+      "at": 1612.704999923706
+    },
+    {
+      "state": "booting",
+      "at": 1731.9099999666214
+    }
+  ],
+  "warnings": [
+    "wasm-vm: warm snapshot not admitted (kernel) — cold booting"
+  ],
+  "failed": null,
+  "tamperedCoreOffset": null,
+  "snapshotRequests": 0,
+  "consoleErrors": []
+}

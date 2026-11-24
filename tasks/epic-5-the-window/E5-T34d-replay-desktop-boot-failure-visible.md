@@ -21,6 +21,10 @@ overlay and in the boot state. Do not change the fail-closed behaviour.
 
 ## Deterministic acceptance
 
+The E5-T34e verifier found the same silent overlay when the whole image is swapped
+under an unchanged manifest (with or without `?noSnapshot`). That case is in scope
+too.
+
 A Playwright run of the built page serves a corrupted `.img.gz`, then a truncated
 one. Each must show a visible error naming the integrity or size failure within the
 download time plus a bounded margin, make zero chunk or Range requests, and produce

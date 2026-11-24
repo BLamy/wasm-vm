@@ -1,0 +1,26 @@
+[e5-t34e 2026-11-24T03:20:40.708Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-24T03:22:18.545Z] downloads finished {"wholeImageFinishedMs":97840,"snapshotStartedMs":2583,"snapshotFinishedMs":70380,"wholeImageStartedMs":29278,"downloadsFinishedMs":97840}
+[e5-t34e 2026-11-24T03:22:20.569Z] desktop visible 99864 ms; 2024 ms after the downloads finished
+[e5-t34e 2026-11-24T03:22:21.197Z] Chrome runs before click 1
+[e5-t34e 2026-11-24T03:22:27.434Z] Chrome runs after click 2 (6237 ms)
+[e5-t34e 2026-11-24T03:22:45.761Z] typed node -e "console.log('E5T34E_A90129E4', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-24T03:23:17.802Z] node answered 47335 ms after typing began
+[e5-t34e 2026-11-24T03:23:22.848Z] warm PASS {"times":{"wholeImageFinishedMs":97840,"snapshotStartedMs":2583,"snapshotFinishedMs":70380,"wholeImageStartedMs":29278,"downloadsFinishedMs":97840,"desktopVisibleMs":99864,"downloadEndToDesktopMs":2024,"runAgainAnsweredMs":6237,"nodeAnswerAfterTypingMs":47335},"counts":{"total":174,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
+[e5-t34e 2026-11-24T03:23:22.939Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1&noSnapshot#ide
+[e5-t34e 2026-11-24T03:24:13.386Z] downloads finished {"wholeImageFinishedMs":50447,"wholeImageStartedMs":7528,"downloadsFinishedMs":50447}
+[e5-t34e 2026-11-24T03:26:53.474Z] desktop visible 210535 ms; 160088 ms after the downloads finished
+[e5-t34e 2026-11-24T03:26:53.855Z] Chrome runs before click 1
+[e5-t34e 2026-11-24T03:26:59.933Z] Chrome runs after click 2 (6078 ms)
+[e5-t34e 2026-11-24T03:27:18.278Z] typed node -e "console.log('E5T34E_05848197', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-24T03:27:48.311Z] node answered 45348 ms after typing began
+[e5-t34e 2026-11-24T03:27:53.359Z] cold PASS {"times":{"wholeImageFinishedMs":50447,"wholeImageStartedMs":7528,"downloadsFinishedMs":50447,"desktopVisibleMs":210535,"downloadEndToDesktopMs":160088,"runAgainAnsweredMs":6078,"nodeAnswerAfterTypingMs":45348},"counts":{"total":173,"wholeImage":1,"snapshot":0,"chunkOrRange":0,"diskRelated":1,"chunkManifest":1,"bootDiskRelated":1}}
+[e5-t34e 2026-11-24T03:27:53.447Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Target page, context or browser has been closed
+    at attackMode (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34e-replay-desktop-warm.mjs:308:14)
+    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34e-replay-desktop-warm.mjs:337:62
+
+Node.js v24.20.0

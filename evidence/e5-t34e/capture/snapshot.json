@@ -1,0 +1,21 @@
+{
+  "task": "E5-T34e",
+  "url": "releases/boot-snapshot/replay-desktop-ready-dfcf85c2c260.snap.gz",
+  "sha256": "dfcf85c2c260f7de5858a0e95c3ce4d0862cc1e489ecc64328f38957f1854cb3",
+  "size": 124609647,
+  "uncompressedSize": 338770744,
+  "uncompressedSha256": "f41f820c47dae1ccd21897f77b4c771b5965ac90ab79c339ac6edc8f82c8bd03",
+  "identity": {
+    "imageSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05",
+    "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "baseId": "d8dffa52bfe242fc63d713bfb0249579a7b45a7872178f7238d32be7da91f929",
+    "ramMib": 1024,
+    "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
+    "guestClock": "icount",
+    "icountDivider": 64,
+    "deviceLayout": "browser-topology",
+    "readOnlyRoot": true
+  },
+  "captureHostSeconds": 89
+}

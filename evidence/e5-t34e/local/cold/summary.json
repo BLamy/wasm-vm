@@ -1,0 +1,85 @@
+{
+  "task": "E5-T34e",
+  "mode": "cold",
+  "url": "http://127.0.0.1:8123/?guest=replay-desktop&desktop=1&noSnapshot#ide",
+  "browser": "158.0.8127.88",
+  "budgetMs": 15000,
+  "nonce": "E51421E8",
+  "command": "node -e \"console.log('E5T34E_E51421E8', process.version)\" | tee -a /run/replay-desktop/events",
+  "times": {
+    "wholeImageFinishedMs": 1562,
+    "wholeImageStartedMs": 587,
+    "downloadsFinishedMs": 1562,
+    "desktopVisibleMs": 168880,
+    "downloadEndToDesktopMs": 167318,
+    "runAgainAnsweredMs": 6095,
+    "nodeAnswerAfterTypingMs": 47362
+  },
+  "states": [
+    {
+      "state": "fetching",
+      "at": 568.4449999332428
+    },
+    {
+      "state": "instantiating",
+      "at": 1556.3849999904633
+    },
+    {
+      "state": "booting",
+      "at": 1675.4649999141693
+    }
+  ],
+  "downloads": {
+    "wholeImage": {
+      "url": "http://127.0.0.1:8123/releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "bytes": 189669297,
+      "declared": 189669297
+    },
+    "snapshot": null
+  },
+  "counts": {
+    "total": 173,
+    "wholeImage": 1,
+    "snapshot": 0,
+    "chunkOrRange": 0,
+    "diskRelated": [
+      "http://127.0.0.1:8123/releases/rootfs/replay-desktop-2af6100e9b37.img.gz"
+    ],
+    "chunkManifest": 1,
+    "bootDiskRelated": 1
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 1227,
+    "localBytes": 321650688,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 266064469,
+      "misses": 86251326,
+      "evictions": 203,
+      "residentBytes": 268435456,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 95,
+      "used": 88,
+      "profileEntries": 0,
+      "accuracyPct": 92
+    }
+  },
+  "chrome": {
+    "runsBefore": 1,
+    "runsAfter": 2
+  },
+  "node": [
+    "root@replay-desktop# \u001b[6nE5T34E_E51421E8 v26.13.1\r"
+  ],
+  "keyboard": {
+    "framesBefore": 0,
+    "framesAfter": 210,
+    "typedChars": 93
+  },
+  "consoleErrors": []
+}

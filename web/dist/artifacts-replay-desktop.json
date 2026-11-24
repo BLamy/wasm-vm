@@ -1,8 +1,41 @@
 {
-  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill",
+  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill; E5-T34e warm RAM/device bootSnapshot captured at REPLAY_DESKTOP_READY from the same image and browser device layout (tools/build-replay-desktop-snapshot.sh; read-only root, no disk delta), fetched in parallel with the whole image",
   "artifacts": {
-    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce", "size": 24208896 },
-    "chunkManifest": { "url": "releases/rootfs/replay-desktop-2af6100e9b37.chunks.json", "sha256": "2e644ad8f01ac9c80813a5953efeeeabf50e6d8badea3aab16c469ba1a922ecc", "size": 128555 },
-    "wholeImage": { "url": "releases/rootfs/replay-desktop-2af6100e9b37.img.gz", "sha256": "37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba", "size": 189669297, "uncompressedSize": 467664896, "uncompressedSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05" }
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896
+    },
+    "chunkManifest": {
+      "url": "releases/rootfs/replay-desktop-2af6100e9b37.chunks.json",
+      "sha256": "2e644ad8f01ac9c80813a5953efeeeabf50e6d8badea3aab16c469ba1a922ecc",
+      "size": 128555
+    },
+    "wholeImage": {
+      "url": "releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "sha256": "37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba",
+      "size": 189669297,
+      "uncompressedSize": 467664896,
+      "uncompressedSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05"
+    },
+    "bootSnapshot": {
+      "url": "releases/boot-snapshot/replay-desktop-ready-dfcf85c2c260.snap.gz",
+      "sha256": "dfcf85c2c260f7de5858a0e95c3ce4d0862cc1e489ecc64328f38957f1854cb3",
+      "size": 124609647,
+      "uncompressedSize": 338770744,
+      "uncompressedSha256": "f41f820c47dae1ccd21897f77b4c771b5965ac90ab79c339ac6edc8f82c8bd03",
+      "identity": {
+        "imageSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05",
+        "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+        "baseId": "d8dffa52bfe242fc63d713bfb0249579a7b45a7872178f7238d32be7da91f929",
+        "ramMib": 1024,
+        "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
+        "guestClock": "icount",
+        "icountDivider": 64,
+        "deviceLayout": "browser-topology",
+        "readOnlyRoot": true
+      }
+    }
   }
 }
