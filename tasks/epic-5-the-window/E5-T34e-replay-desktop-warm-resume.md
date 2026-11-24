@@ -3,7 +3,7 @@ id: E5-T34e
 epic: 5
 title: Warm-resume the Replay desktop as soon as its single download finishes
 priority: 0.38735
-status: implemented
+status: verified
 depends_on: [E5-T34c]
 estimate: S
 risk: medium
@@ -138,3 +138,96 @@ the wasm-guard refusal is proven locally only. (3) "wasm build" binding is the c
 id, exactly as Omarchy's — a rebuilt wasm with an incompatible device format but the same crate
 version would be refused only by `load_resume`'s component checks. (4) Every visitor restores the
 same guest CRNG state (virtio-rng keeps feeding it), as with Omarchy.
+
+### 2026-11-24 — fresh verifier — VERDICT: verified
+
+Head `027717ded` (a38a66be2 + a30861760 + 027717ded). Medium risk: acceptance criteria on the
+live site, binding attacks on the built page, one novel attack. Every prediction below was written
+before observing the state it names.
+
+- P1 live warm, one image + one snapshot, zero chunk/Range: HELD. Committed
+  `tools/verify/e5-t34e-replay-desktop-warm.mjs warm cold` against https://wasm-vm.pages.dev/app
+  (Chrome 158 headless): wholeImage 1 (189,669,297 B), snapshot 1 (124,609,647 B, started 2.5 s,
+  finished 68.2 s), chunkOrRange 0, diskRelated 2, `fetchStats.fetches` 0, `localImage` true.
+- P2 desktop within 15 s of the downloads finishing: HELD. Downloads finished 74.4 s; desktop
+  visible 76.5 s, so **2,057 ms**. States `fetching → instantiating → restoring → restored`, never
+  `booting`; no `Linux version`/`Run /sbin/init`/`MONITOR start` in the serial log.
+- P3 live session, not a picture: HELD. The `runs` count is read inside the guest (`swaymsg -t
+  get_tree` over the serial root shell gives Chrome's own document title), not from a page overlay:
+  `PASS #1` before, `PASS #2` 6.7 s after one DOM click. The DOM-typed fresh nonce gave
+  `E5T34E_04DBC0D9 v26.13.1` (51 s), and it went through the keyboard bridge (frames 0 → 214).
+  That output cannot be in a snapshot captured before the nonce existed. The screenshot shows
+  smoke.html `"runs": 2` and the nonce line in the foot terminal.
+- P4 zero console errors (warm and cold): HELD. `consoleErrors: []` in both.
+- P5 `?noSnapshot` cold run gives the same result: HELD. 1 image, 0 snapshot, 0 chunk/Range,
+  `booting` and never `restored`, PASS #1→#2, `E5T34E_59EE8EEA v26.13.1`. Downloads finished
+  71.8 s and the desktop appeared 238.7 s, so 166.9 s after the downloads (warm is 2.1 s).
+- P6 deployed bytes match the committed bytes: HELD. The live `artifacts-replay-desktop.json`
+  matches the committed manifest on every field except the R2-rewritten `url`. The identity blocks
+  are equal. Live `loader.js`, `main.js`, `readonly-root-snapshot.js` and `gpu-checkpoint-build.js`
+  are byte-identical to `web/dist`. The live wasm SHA (`c6cc6692…`) equals `web/dist/pkg` and
+  `web/pkg`. I downloaded the live .snap.gz once: SHA-256 `dfcf85c2…54cb3`, 124,609,647 B. Its
+  gunzipped SHA is `f41f820c…bd03` (= `uncompressedSha256`). `check-no-replay-backend.py` is OK
+  on both the gz and the raw snapshot. Both files were deleted afterwards.
+- P7 binding: every mismatch cold-boots or fails visibly, never restores, never fetches chunks.
+  HELD for every snapshot mismatch. These ran on the built page (`tools/serve-dev.sh 8123`), with
+  the manifest route intercepted and the fixtures served from a separate loopback origin. A
+  positive control served the genuine snapshot the same way and reached `restored`, so the
+  harness can restore.
+  - Snapshot built for another image: header base id flipped, the manifest identity still naming
+    the right image, digests re-derived. Result: `not coherent (foreign_image)`, then `booting`.
+  - The wasm sees a different device layout: the virtio-rng section is removed from the blob.
+    Result: `restore failed … corrupt`, then `booting`.
+  - Raw snapshot truncated mid-RAM, with consistent digests: `not coherent (corrupt)`, then
+    `booting`.
+  - .snap.gz truncated under the real declared SHA/size, and .snap.gz with a byte flipped (wrong
+    SHA, right size): both `integrity check failed` before `restoring`, then `booting`.
+  - Identity `imageSha256`, `ramMib: 2048` and `deviceLayout: "native"`: refused before download
+    (`not admitted (image|ram|device_layout)`, 0 snapshot requests), then `booting`.
+  - Every case: 0 chunk/Range requests, a cold guest boot visible on serial, no console errors.
+  - Not covered: a cold boot that also gets a wrong image. Whole image swapped (gz of zeros) under
+    the unchanged manifest gives `fetching → error`. The snapshot is never restored and no chunks
+    are fetched, but the overlay stays on "Booting Replay desktop…" with a black screen and no
+    console error. The same happens with `?noSnapshot`, so this comes from the E5-T34c whole-image
+    prefill error path, not from this diff. It is filed as a follow-up observation, not a finding
+    against this task (the task binds the snapshot to the image; the prefill integrity refusal
+    itself works).
+  - wasm-build binding (gap 3): the core id is the crate version (`0.0.1`, NUL-padded), exactly
+    as Omarchy's. A same-version rebuild with an incompatible device encoding would pass the
+    header check and depend on `load_resume`'s transactional component checks. The drop-a-section
+    attack above shows those checks refuse layout drift. A semantically different encoding of
+    the same length would not be caught. The task claims binding "the way Omarchy's paired
+    artifacts are bound", and that is what ships, with the gap disclosed. Not a finding; a
+    content-hash core id is a worthwhile follow-up for both.
+- P8 novel attack: the snapshot URL returns 404. HELD. `restore failed, cold booting: … HTTP 404`
+  (states `fetching → instantiating → booting`), with no hang and no chunk requests.
+- P9 non-regression: HELD. `node --test tests/e5-t34e-readonly-root-snapshot.test.mjs
+  tests/omarchy-desktop-services.test.mjs tests/e5-t34a-whole-image.test.mjs` gives 20/0.
+  `omarchy-seeded-loader.test.mjs` has 12 pass / 1 fail ("freshDesktop rejects a RAM snapshot
+  coherence mismatch…"). The same single failure happens on the parent `2651ac2f9`, run in a
+  temporary worktree (since removed) with node_modules/pkg symlinked, so it predates this task.
+- COVERAGE (from a38a66be2 to 027717ded):
+  - loader import, admission and parallel fetch: executed (warm; `id-*` refusals).
+  - Restore success: executed (warm, control).
+  - Integrity-throw branch: executed (`gz-trunc`, `gz-flip`).
+  - Non-resume decision branch: executed (`foreign-base`, `trunc-raw`, `unknown-tag`, worker's
+    `foreign_build`).
+  - Catch on `load_resume` Err: executed (`no-rng`).
+  - Download-error branch: executed (`snap-404`).
+  - Precondition `throw` (readOnlyRootSnapshot with an incompatible option set): waived. It is a
+    defensive guard that the shipped `replayDesktopBootOptions` can never reach.
+  - main.js `watchReplayDesktopPixels` split: executed on both paths (warm via the restored
+    branch, cold via the marker).
+  - Warm/cold option, banner and launcher text: both branches executed.
+  - Availability label: executed on load.
+  - roadmap row, manifest, `gpu-checkpoint-build.js`/`sw.js` build ids: waived (declarative or
+    generated).
+  - `build-replay-desktop-snapshot.sh`: executed by the worker. Its `snapshot.json` record equals
+    the manifest entry field for field, and its own exit-on-SHA-change makes "image unchanged" a
+    precondition of the published artifact.
+- SUITE: the committed verify script already holds the acceptance. The binding attacks (foreign
+  base id, dropped device section, truncated raw, unknown trailing section) would be worth
+  promoting as `attack-*` modes of that script; I'm not adding them here because the verifier's
+  writes are limited to this log. Discarded: the scratch runner and fixtures (deleted).
+- Roadmap: the "Replay desktop warm resume after its download" row in `web/roadmap.js` is still
+  `in-progress`. The worker should now flip it to `verified` (web change → web/dist + deploy).
