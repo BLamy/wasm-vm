@@ -1,0 +1,12 @@
+[assemble] closure: 208 packages
+W: Download is performed unsandboxed as root as file '/scratch/debs/adduser_3.137ubuntu1_all.deb' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)
+[assemble] $ riscv64-linux-gnu-strip --strip-all /out/stage/opt/replay-chromium/chrome
+[assemble] $ riscv64-linux-gnu-strip --strip-all /out/stage/opt/replay-chromium/chrome_crashpad_handler
+[assemble] $ riscv64-linux-gnu-strip --strip-all /out/stage/opt/replay-chromium/libEGL.so
+[assemble] $ riscv64-linux-gnu-strip --strip-all /out/stage/opt/replay-chromium/libGLESv2.so
+[assemble] $ riscv64-linux-gnu-strip --strip-all /out/stage/opt/replay-chromium/libvk_swiftshader.so
+[assemble] $ riscv64-linux-gnu-strip --strip-all /out/stage/opt/replay-chromium/libvulkan.so.1
+[assemble] $ riscv64-linux-gnu-as -o /scratch/wvm-type.o /in/tools/replay-desktop/wvm-type.S
+[assemble] $ riscv64-linux-gnu-ld -static -s -o /out/stage/usr/local/sbin/wvm-type /scratch/wvm-type.o
+[assemble] $ qemu-riscv64 /out/stage/usr/sbin/ldconfig.real -r /out/stage -X
+[assemble] staged 1002 entries, 432953717 regular bytes; contributing packages 123

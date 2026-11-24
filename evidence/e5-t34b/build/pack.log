@@ -1,0 +1,5 @@
+[assemble] $ tar -x -p --numeric-owner -f /out/stage.tar -C /scratch/packtree
+[assemble] $ mke2fs -q -F -t ext4 -b 4096 -N 2161 -m 0 -L replay-desktop -U e5734b00-0000-4000-8000-000000000034 -E hash_seed=e5734b00-0000-4000-8000-000000000034,root_owner=0:0,lazy_itable_init=0,nodiscard -O ^has_journal,^metadata_csum_seed -d /scratch/packtree /out/rootfs.ext4 456704k
+[assemble] $ e2fsck -f -n /out/rootfs.ext4
+e2fsck 1.47.0 (5-Feb-2023)
+[assemble] packed {'bytes': 467664896, 'sha256': '2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05', 'treeApparentBytes': 432961861, 'inodes': 1137}
