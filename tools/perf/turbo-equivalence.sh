@@ -11,9 +11,11 @@
 #
 # Inputs (gitignored build outputs / release artifacts):
 #   BIN       target/release/wasm-vm                      (cargo build --release -p wasm-vm-cli)
-#   KERNEL    releases/kernel/6.6.63/Image
-#   SNAPSHOT  the bootSnapshot named by web/artifacts-replay-desktop.json (releases/boot-snapshot/)
-#   IMAGE     target/e5-t34b/image/replay-desktop.ext4, else the wholeImage .img.gz under releases/
+#   RELEASES  the release-artifact root (default ./releases). A pristine clone holds only the
+#             tracked artifacts, so point this at a checkout that has the large gitignored ones.
+#   KERNEL    $RELEASES/kernel/6.6.63/Image
+#   SNAPSHOT  the bootSnapshot named by web/artifacts-replay-desktop.json ($RELEASES/boot-snapshot/)
+#   IMAGE     target/e5-t34b/image/replay-desktop.ext4, else the wholeImage .img.gz under $RELEASES
 #
 # The run is made reproducible by pinning its only host inputs: no stdin (`--no-input`), a fixed
 # RTC (`--fixed-rtc-ns`) and a seeded byte stream for the entropy device (`--virtio-rng-seed`; the
@@ -23,10 +25,13 @@ cd "$(dirname "$0")/../.."
 N="${1:-2000000000}"
 OUT="${2:-target/turbo-equivalence}"
 BIN="${BIN:-target/release/wasm-vm}"
-KERNEL="${KERNEL:-releases/kernel/6.6.63/Image}"
+RELEASES="${RELEASES:-releases}"
+KERNEL="${KERNEL:-$RELEASES/kernel/6.6.63/Image}"
 MANIFEST=web/artifacts-replay-desktop.json
 field() { python3 -c "import json,sys; d=json.load(open('$MANIFEST'))['artifacts']; print(eval(sys.argv[1], {'d': d}))" "$1"; }
-SNAPSHOT="${SNAPSHOT:-$(field "d['bootSnapshot']['url']")}"
+# Manifest URLs are relative to the page (`releases/...`); resolve them under $RELEASES.
+artifact() { local url; url=$(field "$1"); echo "$RELEASES/${url#releases/}"; }
+SNAPSHOT="${SNAPSHOT:-$(artifact "d['bootSnapshot']['url']")}"
 CORE_ID=$(field "d['bootSnapshot']['identity']['coreId']")
 BASE_ID=$(field "d['bootSnapshot']['identity']['baseId']")
 APPEND=$(field "d['bootSnapshot']['identity']['bootargs']")
@@ -42,7 +47,7 @@ if [ -n "${IMAGE:-}" ]; then :
 elif [ -f target/e5-t34b/image/replay-desktop.ext4 ]; then IMAGE=target/e5-t34b/image/replay-desktop.ext4
 else
   IMAGE="$OUT/replay-desktop.ext4"
-  gunzip -c "$(field "d['wholeImage']['url']")" > "$IMAGE"
+  gunzip -c "$(artifact "d['wholeImage']['url']")" > "$IMAGE"
 fi
 EXPECT=$(field "d['wholeImage']['uncompressedSha256']")
 ACTUAL=$(shasum -a 256 "$IMAGE" | awk '{print $1}')
