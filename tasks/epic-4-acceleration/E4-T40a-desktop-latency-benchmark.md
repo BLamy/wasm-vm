@@ -3,7 +3,7 @@ id: E4-T40a
 epic: 4
 title: Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline
 priority: 0.38761
-status: in-progress
+status: implemented
 depends_on: [E5-T34e]
 estimate: S
 risk: low
@@ -33,6 +33,11 @@ node tools/perf/desktop-latency.mjs --label baseline --n 3 --out evidence/deskto
 
 exits 0, reports every scenario with no missing sample, and writes the JSON. The
 recorded baseline is `evidence/desktop-latency/baseline-{1,2,jit0}.json`.
+
+`node tools/perf/desktop-latency-selftest.mjs` prints `desktop-latency self-test PASS`:
+against a static stand-in page with scripted repaints, the tool reports a pressed-state
+frame only when the button repaints before the result, and exits 1 when a result is
+missing.
 
 Required samples are the result of a click, the result and pointer arrival of a sweep,
 the key echo and the Node prompt; the tool exits 1 if any is missing. A pressed-state
@@ -353,3 +358,25 @@ Commands:
   for `before`, `none` and `after`; `miss2` with `--trial-timeout-s 3`; `same` twice with
   `--n 12`;
 - a scratch Playwright script for the P5 move-without-press probe.
+
+### 2026-11-24 — worker — rework after round 2 (P4c)
+
+- **P4c.** The pressed-state decision is now made in the page from the two unrounded
+  change timestamps: the button's first change must be earlier than the first change
+  of `runs` (`tools/perf/desktop-latency.mjs`, `click()`); a repaint in the same
+  animation frame as the result is not a pressed-state frame.
+- **Shown.** The round-2 verifier's stand-in page is committed as
+  `tools/perf/fixtures/desktop-latency-standin.html` with
+  `tools/perf/desktop-latency-selftest.mjs`, which runs the unmodified tool's `click`
+  scenario (6 trials per mode) and asserts: `before` 6/6 pressed frames, each earlier
+  than its result; `same`, `none` and `after` 0/6; `miss2` exit 1 with
+  `missing: ["click.resultMs"]`. Run at this head: `desktop-latency self-test PASS`.
+  Before the fix the `same` mode reported pressed frames on 12 of 24 trials (round 2).
+- **Acceptance command rerun once:**
+  `node tools/perf/desktop-latency.mjs --label rework-check --n 3 --out evidence/desktop-latency/rework-check.json`
+  exited 0, all six scenarios, `missing: []`. It ran against the working tree's
+  in-progress E4-T40b build, so its timings are not baseline numbers.
+- The `?jit=0` shell loop retired 763 M instructions, not 762 M (table label).
+
+P1, P2, the P3 table, P4a, P4b, P5 and P6 carry forward; the changed lines are the
+pressed-frame comparison in `click()` only.

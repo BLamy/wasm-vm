@@ -204,10 +204,13 @@ const run = {
       // The pressed-state frame is optional: a 60 ms press can be released before the guest
       // has painted it, and then the first repaint of the button is the result frame itself.
       // Only a button repaint strictly before the result counts as a pressed-state frame.
-      const f = r === null ? null : await page.evaluate(([at, res]) => {
+      // Both change timestamps are compared unrounded, in the page: a button repaint in the
+      // same animation frame as the result is not a pressed-state frame.
+      const f = r === null ? null : await page.evaluate(([at]) => {
         const c = window.__lat.firstAfter("button", at);
-        return c !== null && c - at < res ? +(c - at).toFixed(1) : null;
-      }, [t, r]);
+        const res = window.__lat.firstAfter("runs", at);
+        return c !== null && res !== null && c < res ? +(c - at).toFixed(1) : null;
+      }, [t]);
       const b = await sched();
       pressed.push(f); answered.push(r); rates.push(rate(a, b));
       log(`click #${i + 1}: result ${r} ms, pressed-state frame ${f === null ? "none" : f + " ms"}, ${rates.at(-1).instructionsM}M instr @ ${rates.at(-1).mips} MIPS`);
