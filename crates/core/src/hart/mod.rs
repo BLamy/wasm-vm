@@ -26,6 +26,8 @@
 
 pub mod fregs;
 pub mod regs;
+#[cfg(not(feature = "zicsr-stub"))]
+pub(crate) mod turbo;
 
 use crate::bus::{Bus, BusFault};
 use crate::decode::{Instr, decode};

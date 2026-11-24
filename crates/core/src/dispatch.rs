@@ -303,6 +303,23 @@ pub fn is_terminator(instr: &Instr) -> bool {
     )
 }
 
+/// `true` for a conditional branch or a jump: a terminator whose only architectural effect is the
+/// link register and the PC.
+pub(crate) fn is_control_transfer(instr: &Instr) -> bool {
+    use Instr::*;
+    matches!(
+        instr,
+        Beq { .. }
+            | Bne { .. }
+            | Blt { .. }
+            | Bge { .. }
+            | Bltu { .. }
+            | Bgeu { .. }
+            | Jal { .. }
+            | Jalr { .. }
+    )
+}
+
 /// A contiguous run of predecoded micro-ops from `phys_start` to (and including) the first
 /// terminator — or up to (not across) a physical page boundary, or 128 ops. No op straddles
 /// a page (debug-asserted at build). `page_frame` is `phys_start >> 12` (all ops share it).
@@ -322,6 +339,12 @@ pub struct DecodedBlock {
     /// Bit `i` set ⇔ op `i` is [`retire_deferrable`] (derived from `ops`, never serialized).
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     deferrable: u128,
+    /// The block ends in a terminator other than a branch or jump (CSR, `ecall`/`ebreak`, xRET,
+    /// `wfi`, a fence). Such an op can observe or change what the run loop samples at a block
+    /// boundary, so the turbo loop brings the boundary state up to date before running the block.
+    /// Derived from `ops`, never serialized.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    system_end: bool,
     /// The block's cached discovery decision (see [`BlockDiscovery::on_block_entry_memo`]).
     /// Derived host state, never serialized.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
@@ -401,6 +424,9 @@ impl DecodedBlock {
             .enumerate()
             .filter(|(_, op)| retire_deferrable(&op.instr))
             .fold(0u128, |mask, (i, _)| mask | (1 << i));
+        let system_end = ops
+            .last()
+            .is_some_and(|op| is_terminator(&op.instr) && !is_control_transfer(&op.instr));
         Self {
             phys_start,
             ops,
@@ -408,8 +434,16 @@ impl DecodedBlock {
             page_frame: phys_start >> 12,
             block_gen: 0,
             deferrable,
+            system_end,
             disc: Cell::new(DiscMemo::default()),
         }
+    }
+
+    /// Whether the block ends in a non-control-transfer terminator (see the field).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    #[inline(always)]
+    pub(crate) fn system_end(&self) -> bool {
+        self.system_end
     }
 
     /// Whether op `idx` is [`retire_deferrable`] (always `false` past the 128-op mask).

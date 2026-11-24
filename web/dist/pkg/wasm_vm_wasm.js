@@ -1,8 +1,8 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
 import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
-import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
+import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
 
 
 /**
@@ -2592,6 +2592,17 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * A/B switch for the turbo run loop, which is on by default and engages whenever the fast
+     * interpreter runs without the JIT. Guest-visible results are identical either way.
+     * @param {boolean} on
+     */
+    setTurbo(on) {
+        const ret = wasm.wasmlinux_setTurbo(this.__wbg_ptr, on);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Device map of the standard Linux constructor, using the authoritative platform constants.
      * @returns {string}
      */
@@ -4485,8 +4496,8 @@ function __wbg_get_imports() {
     return {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import2,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import2,
     };
 }
 

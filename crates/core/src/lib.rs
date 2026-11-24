@@ -65,6 +65,10 @@ pub mod softfloat;
 pub mod time;
 pub mod tlb;
 pub mod trace;
+#[cfg(not(feature = "zicsr-stub"))]
+mod turbo;
+#[cfg(not(feature = "zicsr-stub"))]
+pub use turbo::TurboStats;
 #[cfg(feature = "zicsr-stub")]
 pub mod zicsr_stub;
 
@@ -658,6 +662,13 @@ pub struct Machine {
     /// Test-only work counter: boundaries served by the quiescent fast path.
     #[cfg(all(test, not(feature = "zicsr-stub")))]
     fabric_fast_hits: u64,
+    /// Whether the turbo run loop may engage (see `turbo.rs`). Host configuration, not machine
+    /// state: never serialized, and the guest-visible result is the same either way.
+    #[cfg(not(feature = "zicsr-stub"))]
+    turbo_enabled: bool,
+    /// Diagnostics for the turbo run loop.
+    #[cfg(not(feature = "zicsr-stub"))]
+    turbo_stats: turbo::TurboStats,
     /// Test-only control: route every mid-block op through the general loop body instead of the
     /// replay loop, so equivalence tests can compare both paths.
     #[cfg(all(test, not(feature = "zicsr-stub")))]
@@ -1087,6 +1098,10 @@ impl Machine {
             fabric_fast_path_off: false,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
             fabric_fast_hits: 0,
+            #[cfg(not(feature = "zicsr-stub"))]
+            turbo_enabled: true,
+            #[cfg(not(feature = "zicsr-stub"))]
+            turbo_stats: turbo::TurboStats::default(),
             #[cfg(all(test, not(feature = "zicsr-stub")))]
             replay_tail_off: false,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
@@ -7251,6 +7266,13 @@ impl Machine {
 
         #[cfg(not(feature = "zicsr-stub"))]
         let source_capture = self.session_sources_active();
+        // The turbo loop (see `turbo.rs`) takes whole blocks from a sampled boundary. Beyond the
+        // replay loop's conditions it needs the retire-count clock (a wall-derived `mtime` has
+        // no retire-count horizon), no JIT (compiled blocks are chosen at the same boundaries)
+        // and no observation scopes.
+        #[cfg(not(feature = "zicsr-stub"))]
+        let turbo_ok =
+            tail_ok && self.turbo_enabled && !jit_on && !source_capture && self.wall_time.is_none();
         let mut remaining_work = self.live_work_budget(max_instrs);
         if max_instrs != 0 && remaining_work == 0 {
             return RunOutcome::SessionStopped(
@@ -7386,6 +7408,15 @@ impl Machine {
                         Some(trap) => (Err(trap), false, 1),
                     }
                 }
+                // At a sampled boundary with nothing to deliver: run whole blocks until
+                // something needs this loop again (see `turbo.rs`).
+                None if turbo_ok && sample_boundary => match self.turbo_entry() {
+                    Some(ctx) => match self.run_turbo(ctx, &mut remaining_work, capture) {
+                        None => continue,
+                        Some(trap) => (Err(trap), false, 1),
+                    },
+                    None => (capture.step(self, cache_on), false, 1),
+                },
                 None => (capture.step(self, cache_on), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
@@ -7841,12 +7872,13 @@ mod tests {
         let back = (code.len() - lp) as i32;
         code.push(bne_back(back));
         code.push(JDOT);
-        let run = |tail_off: bool, traced: bool, slices: &[u64]| {
+        let run = |tail_off: bool, turbo: bool, traced: bool, slices: &[u64]| {
             let mut m = Machine::new(8 * 1024 * 1024);
             m.enable_clint(3);
             m.hart.csr.pmp.allow_all();
             m.set_block_cache(true);
             m.set_interrupt_batching(true);
+            m.set_turbo(turbo);
             m.replay_tail_off = tail_off;
             for (i, insn) in code.iter().enumerate() {
                 m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
@@ -7878,22 +7910,225 @@ mod tests {
                     trace.retired(),
                     regs,
                     m.clint_mtime(),
+                    m.tick_accum,
+                    m.irq_stats().retired,
                     m.snapshot(),
                     m.hart.to_snapshot(),
                 ),
                 m.replay_deferred_ops,
+                m.turbo_stats(),
             )
         };
         for traced in [true, false] {
             for slices in [&[1_000_000][..], &[1, 7, 333][..], &[5, 3][..], &[2][..]] {
-                let (control, off_deferred) = run(true, traced, slices);
-                let (fast, deferred) = run(false, traced, slices);
+                let (control, off_deferred, off_turbo) = run(true, false, traced, slices);
+                let (fast, deferred, tail_turbo) = run(false, false, traced, slices);
                 assert_eq!(off_deferred, 0);
+                assert_eq!(off_turbo.entries + tail_turbo.entries, 0);
                 assert!(
                     deferred > 1000,
                     "deferred accounting must engage: {deferred}"
                 );
                 assert_eq!(control, fast, "traced={traced} slices={slices:?}");
+                // The turbo loop defers the same accounting across whole blocks, including the
+                // CLINT load, the counter CSRs and the `time` shadow this guest reads.
+                let (turbo, _, stats) = run(false, true, traced, slices);
+                assert!(
+                    stats.inline_ops > 1000 && stats.slow_ops > 100,
+                    "the turbo loop must engage: {stats:?}"
+                );
+                assert_eq!(control, turbo, "turbo traced={traced} slices={slices:?}");
+            }
+        }
+    }
+
+    /// The turbo loop decides in advance, as a retire count, the first block boundary at which a
+    /// timer interrupt could become pending. This guest makes that decision observable: an
+    /// M-mode timer handler folds every interrupted `mepc` into a register and re-arms
+    /// `mtimecmp`, and the main loop — short blocks of RAM loads, stores and branches — also
+    /// rewrites `mtimecmp` through the CLINT from the middle of a block every 64th pass. Every
+    /// interrupt must therefore land on exactly the boundary the ordinary loop picks, for every
+    /// way of slicing the run, including after a deadline moved while blocks were being run.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn turbo_loop_takes_timer_interrupts_at_the_same_boundaries() {
+        use crate::bus::Bus;
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        fn s_type(imm: i32, rs2: u32, rs1: u32, f3: u32) -> u32 {
+            let iu = (imm as u32) & 0xFFF;
+            ((iu >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | ((iu & 0x1F) << 7) | 0x23
+        }
+        fn b_type(off: i32, rs2: u32, rs1: u32, f3: u32) -> u32 {
+            let o = off as u32;
+            (((o >> 12) & 1) << 31)
+                | (((o >> 5) & 0x3F) << 25)
+                | (rs2 << 20)
+                | (rs1 << 15)
+                | (f3 << 12)
+                | (((o >> 1) & 0xF) << 8)
+                | (((o >> 11) & 1) << 7)
+                | 0x63
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let andi = |rd, rs1, imm| i_type(imm, rs1, 7, rd, 0x13);
+        let slli = |rd, rs1, sh| i_type(sh, rs1, 1, rd, 0x13);
+        let srli = |rd, rs1, sh| i_type(sh, rs1, 5, rd, 0x13);
+        let add = |rd: u32, rs1: u32, rs2: u32| (rs2 << 20) | (rs1 << 15) | (rd << 7) | 0x33;
+        let xor =
+            |rd: u32, rs1: u32, rs2: u32| (rs2 << 20) | (rs1 << 15) | (4 << 12) | (rd << 7) | 0x33;
+        let lui = |rd: u32, imm20: u32| ((imm20 & 0xF_FFFF) << 12) | (rd << 7) | 0x37;
+        let la = |rd: u32, v: u32| {
+            let lo = ((v & 0xFFF) as i32) << 20 >> 20;
+            let hi = v.wrapping_sub(lo as u32) >> 12;
+            [
+                lui(rd, hi),
+                addi(rd, rd, lo),
+                slli(rd, rd, 32),
+                srli(rd, rd, 32),
+            ]
+        };
+        let ld = |rd, rs1, imm| i_type(imm, rs1, 3, rd, 0x03);
+        let sd = |rs2, rs1, imm| s_type(imm, rs2, rs1, 3);
+        let sw = |rs2, rs1, imm| s_type(imm, rs2, rs1, 2);
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        const MRET: u32 = 0x3020_0073;
+        const JDOT: u32 = 0x0000_006F;
+        const MSTATUS: u32 = 0x300;
+        const MIE: u32 = 0x304;
+        const MTVEC: u32 = 0x305;
+        const MEPC: u32 = 0x341;
+        let base = platform::virt::KERNEL_BASE;
+        let clint = bus::mmap::CLINT_BASE as u32;
+        let mut code = alloc::vec::Vec::new();
+        code.extend(la(6, (base + 0x800) as u32));
+        code.push(csrrw(0, MTVEC, 6));
+        code.extend(la(10, (base + 0x3000) as u32)); // x10 = data page
+        code.extend(la(13, clint + 0x4000)); // x13 = &mtimecmp
+        code.extend(la(14, clint + 0xBFF8)); // x14 = &mtime
+        code.extend([ld(5, 14, 0), addi(5, 5, 50), sd(5, 13, 0)]); // first deadline
+        code.extend([addi(7, 0, 0x80), csrrs(0, MIE, 7)]); // MTIE
+        code.extend([addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]); // MIE
+        code.extend([lui(11, 1), addi(11, 11, -1096)]); // x11 = 3000 passes
+        code.extend([
+            addi(15, 15, 3),       // +0
+            sd(15, 10, 0),         // +1 RAM store
+            ld(16, 10, 0),         // +2 RAM load
+            xor(17, 16, 15),       // +3
+            andi(18, 11, 63),      // +4
+            b_type(24, 0, 18, 1),  // +5 bne x18, x0, +11
+            ld(5, 14, 0),          // +6 CLINT mtime load, mid-block
+            addi(5, 5, 7),         // +7
+            sd(5, 13, 0),          // +8 move the deadline from inside a block
+            addi(19, 19, 1),       // +9 inline ops after the device access
+            add(20, 20, 19),       // +10
+            addi(21, 21, 1),       // +11
+            b_type(4, 0, 0, 0),    // +12 beq x0, x0, +13 (a boundary)
+            add(22, 22, 21),       // +13
+            addi(11, 11, -1),      // +14
+            b_type(-60, 0, 11, 1), // +15 bne x11, x0, loop
+        ]);
+        code.extend(la(26, platform::virt::TEST_BASE as u32));
+        code.extend([lui(27, 5), addi(27, 27, 0x555), sw(27, 26, 0), JDOT]);
+        let handler = [
+            csrrs(24, MEPC, 0),
+            slli(25, 30, 5),
+            add(30, 30, 25),
+            add(30, 30, 24), // x30 = x30 * 33 + mepc
+            addi(29, 29, 1), // interrupts taken
+            ld(5, 14, 0),
+            addi(5, 5, 37),
+            sd(5, 13, 0), // next deadline
+            MRET,
+        ];
+        let run = |turbo: bool, traced: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(10);
+            m.enable_syscon();
+            m.hart.csr.pmp.allow_all();
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.set_turbo(turbo);
+            m.replay_tail_off = !turbo;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
+            }
+            for (i, insn) in handler.iter().enumerate() {
+                m.bus_mut()
+                    .store32(base + 0x800 + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            m.hart.regs.pc = base;
+            let mut trace = HashSink::new();
+            let mut outcomes = alloc::vec::Vec::new();
+            let mut step = 0;
+            let mut total = 0u64;
+            while total < 400_000 {
+                let budget = slices[step % slices.len()];
+                step += 1;
+                total += budget;
+                let outcome = if traced {
+                    m.run_traced(budget, &mut trace)
+                } else {
+                    m.run(budget)
+                };
+                outcomes.push(outcome);
+                if outcome != RunOutcome::MaxInstrs {
+                    break;
+                }
+            }
+            let regs: alloc::vec::Vec<u64> = (0..32).map(|r| m.hart.regs.read(r)).collect();
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    outcomes,
+                    regs,
+                    m.clint_mtime(),
+                    m.tick_accum,
+                    m.irq_stats().retired,
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.turbo_stats(),
+            )
+        };
+        for traced in [true, false] {
+            for slices in [
+                &[1_000_000][..],
+                &[1, 7, 333][..],
+                &[4096, 3][..],
+                &[2, 5][..],
+                &[97][..],
+            ] {
+                let (control, off) = run(false, traced, slices);
+                let (turbo, stats) = run(true, traced, slices);
+                assert_eq!(off.entries, 0);
+                assert_eq!(turbo, control, "traced={traced} {slices:?}");
+                let (_, _, outcomes, regs, ..) = &control;
+                assert_eq!(
+                    outcomes.last(),
+                    Some(&RunOutcome::Reset(ExitReason::PowerOff)),
+                    "the guest reached the poweroff store"
+                );
+                assert_eq!(regs[11], 0, "the loop ran to completion");
+                assert!(regs[29] > 50, "timer interrupts were taken: {}", regs[29]);
+                assert_eq!(
+                    regs[19], 46,
+                    "the mid-block deadline rewrite ran every 64th pass"
+                );
+                if slices == [1_000_000] {
+                    assert!(
+                        stats.exit_horizon > 20 && stats.inline_ops > 20_000,
+                        "the turbo loop must run to its horizon: {stats:?}"
+                    );
+                }
             }
         }
     }
@@ -7995,7 +8230,7 @@ mod tests {
             addi(29, 29, 1),
             SRET,
         ];
-        let run = |tail_off: bool, traced: bool, trigger: bool, slices: &[u64]| {
+        let run = |tail_off: bool, turbo: bool, traced: bool, trigger: bool, slices: &[u64]| {
             let mut m = Machine::new(8 * 1024 * 1024);
             m.enable_clint(10);
             m.enable_plic();
@@ -8004,6 +8239,7 @@ mod tests {
             m.boot_supervisor(0, 0);
             m.set_block_cache(true);
             m.set_interrupt_batching(true);
+            m.set_turbo(turbo);
             m.replay_tail_off = tail_off;
             for (i, insn) in code.iter().enumerate() {
                 m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
@@ -8058,6 +8294,12 @@ mod tests {
                     m.hart.to_snapshot(),
                 ),
                 m.replay_tail_ops,
+                (
+                    m.turbo_stats(),
+                    m.clint_mtime(),
+                    m.tick_accum,
+                    m.irq_stats().retired,
+                ),
             )
         };
         for trigger in [false, true] {
@@ -8068,9 +8310,34 @@ mod tests {
                     &[4096, 3][..],
                     &[2, 5][..],
                 ] {
-                    let (control, off_ops) = run(true, traced, trigger, slices);
-                    let (fast, tail_ops) = run(false, traced, trigger, slices);
+                    let (control, off_ops, control_clock) =
+                        run(true, false, traced, trigger, slices);
+                    let (fast, tail_ops, _) = run(false, false, traced, trigger, slices);
                     assert_eq!(off_ops, 0);
+                    // The turbo loop: same guest (RAM stores and loads, a faulting load, a
+                    // store that rewrites its own block, traps, CSR ops, `sret`, a mid-block
+                    // poweroff), same result, same clock.
+                    let (turbo, _, turbo_clock) = run(false, true, traced, trigger, slices);
+                    assert_eq!(
+                        turbo, control,
+                        "turbo trigger={trigger} traced={traced} {slices:?}"
+                    );
+                    assert_eq!(turbo_clock.1, control_clock.1, "mtime");
+                    assert_eq!(turbo_clock.2, control_clock.2, "tick residue");
+                    assert_eq!(turbo_clock.3, control_clock.3, "progress counter");
+                    assert_eq!(control_clock.0.entries, 0);
+                    if trigger {
+                        assert_eq!(
+                            turbo_clock.0.entries, 0,
+                            "an armed trigger must keep the turbo loop out"
+                        );
+                    } else {
+                        assert!(
+                            turbo_clock.0.inline_ops > 1000,
+                            "the turbo loop must engage: {:?}",
+                            turbo_clock.0
+                        );
+                    }
                     if trigger {
                         // An armed execute trigger keeps every block on the general path.
                         assert_eq!(tail_ops, 0, "an armed trigger must disable the replay loop");

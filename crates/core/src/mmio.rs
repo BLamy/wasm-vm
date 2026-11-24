@@ -132,6 +132,30 @@ impl SystemBus {
         }
     }
 
+    /// Turbo-loop RAM load (see [`Ram::turbo_load`]): no device fallback, no side effect.
+    #[inline(always)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    pub(crate) fn turbo_load<const W: usize>(&self, addr: u64) -> Option<[u8; W]> {
+        self.ram.turbo_load::<W>(addr)
+    }
+
+    /// Turbo-loop RAM store (see [`Ram::turbo_store`]). Unlike the `ram_store*` accessors this
+    /// does NOT append to the code-write log: the turbo loop tests the stored frame against the
+    /// block cache's code filter itself and only logs a frame that may hold code, which is the
+    /// net effect of `ram_store*` followed by the run loop's post-retire drain.
+    #[inline(always)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    pub(crate) fn turbo_store<const W: usize>(&mut self, addr: u64, bytes: [u8; W]) -> bool {
+        self.ram.turbo_store::<W>(addr, bytes)
+    }
+
+    /// Whether RAM stores are being recorded for code-page invalidation.
+    #[inline(always)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    pub(crate) fn tracks_code_writes(&self) -> bool {
+        self.track_code_writes
+    }
+
     /// E4-T05 Phase B: arm/disarm physical-frame recording of RAM stores. The `Machine` arms this
     /// exactly when the block cache is enabled, so the normal (cache-off) build pays only one
     /// predictable, never-taken branch per store and never touches the log.

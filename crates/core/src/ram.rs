@@ -125,6 +125,35 @@ impl Ram {
         self.data.get_mut(off..off.checked_add(W)?)?.try_into().ok()
     }
 
+    /// Turbo-loop load: the `W` bytes at `addr`, which a live fast-TLB entry already proved
+    /// aligned and inside RAM. Range-checked by the slice lookup; `None` = outside RAM (the
+    /// caller then takes the exact checked path, which raises the architectural fault).
+    #[inline(always)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    pub(crate) fn turbo_load<const W: usize>(&self, addr: u64) -> Option<[u8; W]> {
+        self.fast_bytes::<W>(addr).copied()
+    }
+
+    /// Turbo-loop store: write `W` bytes at a fast-TLB-proven RAM address and mark the keyframe
+    /// dirty bit exactly as [`Bus::ram_store8`]..`64` do. Returns `false` (nothing written) when
+    /// the address is outside RAM. The caller owns the code-write bookkeeping.
+    #[inline(always)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    pub(crate) fn turbo_store<const W: usize>(&mut self, addr: u64, bytes: [u8; W]) -> bool {
+        let Ok(offset) = usize::try_from(addr.wrapping_sub(self.base)) else {
+            return false;
+        };
+        let Some(end) = offset.checked_add(W) else {
+            return false;
+        };
+        let Some(slot) = self.data.get_mut(offset..end) else {
+            return false;
+        };
+        slot.copy_from_slice(&bytes);
+        self.mark_dirty_offset(offset, W);
+        true
+    }
+
     /// Range-check (no alignment requirement) for byte-granular slice access.
     #[inline]
     fn range(&self, addr: u64, len: u64) -> Result<usize, BusFault> {

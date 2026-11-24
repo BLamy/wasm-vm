@@ -1362,6 +1362,8 @@ async function runLinuxBootOwned(opts, banner, request) {
       // instruction-at-a-time A/B path. Pass it as DATA so the whole-machine worker sees the page's
       // choice instead of trying to read the worker script URL.
       fastInterpreter: selectedFastInterpreter,
+      // `?turbo=0` is the A/B switch for the turbo run loop (interpreter-only execution).
+      turbo: query.has("turbo") ? query.get("turbo") !== "0" : opts.turbo,
       // E4-T33 bounded compiled handles make JIT safe to request, and the restored-Node screen is
       // faster with JIT at the shipping threshold. Keep it on for the isolated production path;
       // `?jit=0` remains the explicit interpreter A/B and rollback switch.
@@ -2306,7 +2308,11 @@ function replayDesktopBootOptions(manifest) {
     guestClock: "icount",
     icountDivider: 64,
     fastInterpreter: true,
-    jit: true,
+    // Interpreter only: on this desktop the JIT retired 27% of instructions and recompiled most
+    // of what it installed, and was slower than the interpreter (E4-T40a). Without it the turbo
+    // run loop takes over (E4-T40b). `?jit=1` restores the JIT for an A/B.
+    jit: false,
+    decodedCacheEntries: 16384,
     quantum: 500_000,
   };
 }

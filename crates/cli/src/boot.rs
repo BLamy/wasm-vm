@@ -369,6 +369,16 @@ pub struct BootArgs {
     /// so `--jit` vs `--jit --no-chain` measures the chaining uplift on the same binary.
     #[arg(long, requires = "jit")]
     pub no_chain: bool,
+    /// A/B switch for the turbo run loop, which is on by default whenever `--block-cache
+    /// --interrupt-batching` run without `--jit`. With this flag every block goes through the
+    /// ordinary batched loop instead. Guest-visible results are identical either way; only host
+    /// time differs.
+    #[arg(long)]
+    pub no_turbo: bool,
+    /// Slots in the predecoded block cache (rounded up to a power of two; default 4096). Host
+    /// configuration only: results are identical at any size, a larger cache re-decodes less.
+    #[arg(long)]
+    pub decoded_cache_entries: Option<usize>,
     /// E4-T19 A/B: cap the number of translated blocks packed into one JIT module. `1` forces
     /// one-block-per-module (unbatched); the default executor value is 64. Only meaningful with
     /// `--jit`.
@@ -403,6 +413,11 @@ pub struct BootArgs {
     /// evidence is unaffected; turn it on for network/TLS workloads that need prompt entropy.
     #[arg(long)]
     pub virtio_rng: bool,
+    /// With `--virtio-rng`, feed the device a fixed seeded byte stream instead of the OS CSPRNG.
+    /// This is NOT entropy: use it only to reproduce a run bit-for-bit (equivalence evidence for
+    /// a snapshot that was taken with the rng slot present). Never for a guest that makes keys.
+    #[arg(long, requires = "virtio_rng")]
+    pub virtio_rng_seed: Option<u64>,
     /// Assemble the browser's complete desktop device topology for a shipped resume snapshot:
     /// keyboard, tablet, mouse, sound, GPU, and the ninth-slot agent console. This is opt-in so
     /// ordinary headless CLI boots keep their smaller native topology.
@@ -461,6 +476,17 @@ pub struct BootArgs {
     /// (E3-T12c3); reopen the SAME `--drive` image the snapshot was taken against.
     #[arg(long)]
     pub resume_from: Option<PathBuf>,
+    /// With `--resume-from`: the coherence `core_hash` (64 hex chars) the blob was stamped with.
+    /// A snapshot written with `--snapshot-core-id` (every shipped browser snapshot) is refused
+    /// by a machine with the default all-zero identity; this adopts that identity BEFORE the
+    /// blob is validated, so the same snapshot can be resumed natively. The guard still runs: a
+    /// blob stamped with any other identity is refused.
+    #[arg(long, requires = "resume_from")]
+    pub resume_core_id: Option<String>,
+    /// With `--resume-from`: the coherence `base_image_hash` the blob was stamped with (see
+    /// `--resume-core-id`).
+    #[arg(long, requires = "resume_from")]
+    pub resume_base_id: Option<String>,
     /// E4 boot-snapshot: stamp the snapshot's coherence `core_hash` (64 hex chars → 32 bytes) so the
     /// shipped browser boot-snapshot binds to the matching wasm build. The browser derives the same
     /// value from its crate version; a mismatch makes the coherence guard reject the snapshot (cold
@@ -936,6 +962,27 @@ pub fn boot(a: BootArgs) -> ExitCode {
         // coherence header is validated first (E3-T12c3); RAM/CPU/CLINT/virtio transport are
         // overwritten from the blob (the cold kernel placement above is discarded, intentionally).
         if boot_num == 1
+            && a.resume_from.is_some()
+            && (a.resume_core_id.is_some() || a.resume_base_id.is_some())
+        {
+            let mut ids = [[0u8; 32]; 2];
+            for (slot, (flag, value)) in ids.iter_mut().zip([
+                ("--resume-core-id", &a.resume_core_id),
+                ("--resume-base-id", &a.resume_base_id),
+            ]) {
+                if let Some(hex) = value {
+                    match parse_id32(hex) {
+                        Ok(id) => *slot = id,
+                        Err(e) => {
+                            eprintln!("wasm-vm: bad {flag}: {e}");
+                            return ExitCode::from(2);
+                        }
+                    }
+                }
+            }
+            m.set_snapshot_identity(ids[0], ids[1]);
+        }
+        if boot_num == 1
             && let Some(path) = &a.resume_from
         {
             let blob = match std::fs::read(path) {
@@ -1147,6 +1194,28 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
         }
+        // Turbo run-loop diagnostics (host-side counters; not part of any digest).
+        if a.stats || a.jit || a.block_cache {
+            let t = m.turbo_stats();
+            let retired = t.inline_ops + t.slow_ops;
+            eprintln!(
+                "turbo: enabled={} entries={} blocks={} inline_ops={} slow_ops={} ops_per_entry={:.1} exits: horizon={} budget={} boundary={} trap={}",
+                m.turbo(),
+                t.entries,
+                t.blocks,
+                t.inline_ops,
+                t.slow_ops,
+                if t.entries == 0 {
+                    0.0
+                } else {
+                    retired as f64 / t.entries as f64
+                },
+                t.exit_horizon,
+                t.exit_budget,
+                t.exit_boundary,
+                t.exit_trap,
+            );
+        }
         // E4-T29: JIT activity summary at exit (blocks compiled/executed, chaining, cache/eviction).
         if a.jit {
             print_jit_stats(&m);
@@ -1311,6 +1380,10 @@ fn assemble(
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
     m.set_block_cache(a.block_cache); // E4-T05: default off; additive decode-cache toggle
     m.set_interrupt_batching(a.interrupt_batching); // E4-T05 Phase C: block-boundary interrupt poll
+    m.set_turbo(!a.no_turbo);
+    if let Some(entries) = a.decoded_cache_entries {
+        m.set_block_cache_capacity(entries);
+    }
     // E4-T29 (NATIVE): opt-in JIT. Construct the wasmtime executor exactly as the jit-runtime tests
     // do, then enable the JIT. `set_jit(true)` also turns the block cache on (discovery is the JIT's
     // front end); the block-boundary interrupt poll matches the proven test config. Off by default:
@@ -1390,7 +1463,10 @@ fn assemble(
     }
     if a.virtio_rng {
         // virtio-rng in slot 2, backed by the OS CSPRNG — seeds the guest CRNG promptly.
-        let _ = m.enable_virtio_rng(Box::new(crate::os_entropy::OsEntropy));
+        let _ = match a.virtio_rng_seed {
+            Some(seed) => m.enable_virtio_rng(Box::new(crate::os_entropy::SeededEntropy(seed))),
+            None => m.enable_virtio_rng(Box::new(crate::os_entropy::OsEntropy)),
+        };
     }
     // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
     // can bind /dev/input/event0 before the host's first key injection.

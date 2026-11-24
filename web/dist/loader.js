@@ -311,6 +311,9 @@ export async function startLinuxBoot(opts = {}) {
     // E4-T30: the production interpreter uses the predecoded entry cache plus bounded (<=128 retire)
     // interrupt/device batching. `false` is the byte-identical legacy A/B path for diagnosis.
     fastInterpreter = true,
+    // The turbo run loop engages when the fast interpreter runs without the JIT. `false` is the
+    // A/B switch back to the ordinary batched loop (identical guest-visible results).
+    turbo = undefined,
     // E5-T26i: explicit experiment; deterministic instruction time remains the default.
     guestClock = "icount",
     // Accelerated Omarchy keeps deterministic boot time, then uses real time
@@ -861,6 +864,9 @@ export async function startLinuxBoot(opts = {}) {
     // interpreter, while `fastInterpreter=false` remains an explicit legacy differential path.
     if (typeof machine.setFastInterpreter === "function") {
       machine.setFastInterpreter(Boolean(fastInterpreter));
+    }
+    if (turbo !== undefined && typeof machine.setTurbo === "function") {
+      machine.setTurbo(Boolean(turbo));
     }
     try {
       window.__interpreter = {
