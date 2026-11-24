@@ -1,0 +1,15 @@
+cold clone at 33b11bdd8a8d8ba87ee2664bfbb436fd9ab6e290, tracked changes=0
+ tools/perf/turbo-equivalence.sh | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.21s
+test tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries ... ok
+test tests::deferred_retire_accounting_is_unobservable ... ok
+test tests::replay_block_tail_is_unobservable ... ok
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 408 filtered out; finished in 0.72s
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+oracle: the only difference above must be the baseline README
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+COLD_DONE rc=0
