@@ -1,0 +1,47 @@
+SABOTAGE device-access-not-recorded (crates/core/src/turbo.rs): 2 failed / 14 passed
+  worker's tests failing (1/3): turbo_loop_takes_timer_interrupts_at_the_same_boundaries
+  verifier's tests failing (1/13): misaligned_and_device_accesses_in_the_middle_of_a_block
+    misaligned_and_device_accesses_in_the_middle_of_a_block: thread 'turbo_equivalence_tests::misaligned_and_device_accesses_in_the_middle_of_a_block' (25592890) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("mmio-misaligned", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 5308901804073116499, trace_retired: 12111, pc:
+    turbo_loop_takes_timer_interrupts_at_the_same_boundaries: thread 'tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries' (25592882) panicked at crates/core/src/lib.rs:8116:17: | assertion `left == right` failed: traced=true [1000000] | left: (13057184124356729144, 34082, [Reset(PowerOff)], [0, 0, 0, 0, 0, 3437, 2149582848, 8, 0, 0, 2149593088, 0, 0, 33570816, 33603576, 9000, 9000, 0, 1, 46, 1081, 3000, 4501500, 0, 2149580904, 10510129767201514112, 1048576, 21845, 
+SABOTAGE reservation-clear-in-inline-store (crates/core/src/hart/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): inline_stores_clear_exactly_the_overlapping_reservation
+    inline_stores_clear_exactly_the_overlapping_reservation: thread 'turbo_equivalence_tests::inline_stores_clear_exactly_the_overlapping_reservation' (25593512) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("lr-sc", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 16213030092735729057, trace_retired: 8713, pc: 214748381
+SABOTAGE horizon-ignores-sbi-timer (crates/core/src/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): sbi_timer_deadlines_future_past_and_rearmed
+    sbi_timer_deadlines_future_past_and_rearmed: thread 'turbo_equivalence_tests::sbi_timer_deadlines_future_past_and_rearmed' (25594124) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("sbi-timer", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 11576076819389413485, trace_retired: 9766, pc: 2147483832, hart:
+SABOTAGE jalr-keeps-bit0 (crates/core/src/hart/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): jalr_targets_and_compressed_inline_ops
+    jalr_targets_and_compressed_inline_ops: thread 'turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops' (25594747) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("jalr", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Trapped(Trap { cause: InstrAddrMisaligned, tval: 2147483877 }), trace_hash: 4280106450961132120, trace_
+SABOTAGE slow-op-live-work-not-counted (crates/core/src/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in
+    wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in: thread 'turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in' (25595337) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("wfi", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 1976549282777764043, trace_retired: 4532, pc: 2147483824, hart
+SABOTAGE lh-zero-extends (crates/core/src/hart/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): inline_load_store_widths_and_all_six_branches
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25595981) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 85210355437392500, trace_retired: 11426, pc: 2147483916,
+SABOTAGE bge-is-strict (crates/core/src/hart/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): inline_load_store_widths_and_all_six_branches
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25597093) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 5558191053253031651, trace_retired: 11427, pc: 214748391
+SABOTAGE uncached-entry-no-settle (crates/core/src/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): page_straddling_entries_and_the_128_op_cap
+    page_straddling_entries_and_the_128_op_cap: thread 'turbo_equivalence_tests::page_straddling_entries_and_the_128_op_cap' (25598489) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("block-shapes", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 17076329262807598728, trace_retired: 13941, pc: 2147495976, ha
+SABOTAGE enter-block-trap-no-settle (crates/core/src/turbo.rs): 1 failed / 15 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (1/13): self_modifying_stores_and_page_faults_under_sv39
+    self_modifying_stores_and_page_faults_under_sv39: thread 'turbo_equivalence_tests::self_modifying_stores_and_page_faults_under_sv39' (25599560) panicked at crates/core/src/turbo_equivalence_tests.rs:490:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("smc-sv39", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(PowerOff), trace_hash: 10599118812931324596, trace_retired: 10142, pc: 2147484020, 
+SABOTAGE system-end-settle-on-entry (crates/core/src/turbo.rs): 0 failed / 16 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (0/13): NONE
+SABOTAGE fetch-walk-ordinary-next (crates/core/src/turbo.rs): 0 failed / 16 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (0/13): NONE
+SABOTAGE ctx-not-refreshed-after-slow-op (crates/core/src/turbo.rs): 0 failed / 16 passed
+  worker's tests failing (0/3): NONE
+  verifier's tests failing (0/13): NONE
+restored; git diff --stat on the two files: ''

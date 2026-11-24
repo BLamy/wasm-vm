@@ -3,7 +3,7 @@ id: E4-T40b
 epic: 4
 title: Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter
 priority: 0.38762
-status: implemented
+status: evidence-needed
 depends_on: [E4-T40a]
 estimate: S
 risk: high
@@ -192,3 +192,181 @@ used `tools/serve-dev.sh` (the source tree with the same wasm as `web/dist`); a
 two-trial click check against the committed bundle through `tools/serve-dist.sh`
 booted the desktop and answered (1,679 ms first click, 575 ms second) but is not a
 recorded run.
+
+### 2026-11-24 — verifier — VERDICT: needs-evidence
+
+Fresh session, runtime head `16ed17e48` (tree `d6bc706ba`; `crates/` untouched by me). Nothing I
+ran contradicts the claim: every acceptance command reproduces, and 14 new guest programs,
+compared after every `run()` call, agree with the general loop. The submission is short on
+proof, not on correctness: five changed hunks are executed by none of the recorded runs, or are
+executed without any recorded check depending on them, and one branch cannot run at all.
+Evidence: `evidence/e4-t40b/verifier/`.
+
+**Predictions (each fixed before its check was run).**
+
+- P1 sweeps — predicted no `#[ignore]`, no removed assert or test, no disabled `debug_assert`
+  in `git diff 79b5c2817..d6bc706ba -- crates/`, and that the two modified tests still compare
+  general vs replay loop with turbo off. Observed: only added `debug_assert`s
+  (`turbo.rs:300`, `hart/turbo.rs:68,98,117`); `lib.rs:7924-7932` and `lib.rs:8313-8350` keep
+  the original comparisons (`deferred > 1000`, `tail_ops > 1000`, turbo `entries == 0`). HELD.
+- P2 acceptance 1 — the three tests pass in release. Observed `3 passed`
+  (`verifier/acceptance1.log`). HELD.
+- P3 acceptance 2 — six digests equal the baseline with the loop engaged. Observed
+  `diff -r` reports only the README; `turbo: entries=2360038` (busybox-fast) and `15084958`
+  (alpine-fast); the `-jit` and `-cache` cases report `entries=0` and the legacy case, with
+  no block cache, prints no turbo line (`verifier/oracle.log`). HELD.
+- P4 acceptance 3 — `EQUIVALENT` at 2,000,000,000 with the worker's digest. Observed FNV
+  `0dab1ccaa237df29`, 1,999,831,660 retired, state `ed70e270…38701`, 10,927,101 entries. HELD.
+  Independent configurations through a copy of the script (`verifier/turbo-equivalence-param.sh`),
+  all `EQUIVALENT` with identical console output (`verifier/equivalence-batch{,2}.log`):
+
+  | Instructions | rng seed | quantum | decoded cache | trace FNV (both runs) | retired |
+  |---:|---:|---:|---:|---|---:|
+  | 137,000,001 | 42 | 500,000 | default | `7b5b69137e65f17e` | 136,989,303 |
+  | 911,111,111 | 7 | 7,919 | default | `257433fd92660a1b` | 911,008,830 |
+  | 3,141,592,653 | 123456789 | 123,457 | default | `14ab1a116c04b2d9` | 3,141,326,734 |
+  | 50,000,017 | 99 | 1 | default | `2be0aad58afc55f3` | 49,996,707 |
+  | 733,333,337 | 31337 | 1,000,003 | default | `62c304f1a7739ac8` | 733,252,036 |
+  | 1,234,567,891 | 42 | 500,000 | 16,384 (the browser's) | `967e7d0701d4c52b` | 1,234,462,395 |
+  | 311,111,113 | 5 | 65,537 | 64 | `ceb343d0c685db0e` | 311,078,832 |
+  | 97,000,003 | 11 | 500,000 | 1 | `552ad037953547d2` | 96,993,073 |
+
+- P5 acceptance 4 — on the committed `web/dist` (`tools/serve-dist.sh 8125`, wasm SHA-256
+  `ba675629…d479fb` as served): exit 0, `missing: []`, loop engaged, no JIT, timings within 40%
+  of the claim. Observed (`verifier/browser-dist.json`): `jit.turbo.enabled: true`,
+  `entries: 76831910`, `jit.hasExecutor: false`, one console error (the favicon 404); idle
+  150 MIPS; click 393 ms median (393–1,548); sweep-then-click 384 ms; key echo 44 ms; `node -e`
+  5.3 s median (first run 26.9 s); Node loop 11.5 s; shell loop 6.3 s. HELD.
+- P6 own guests — predicted every observable equal after every `run()` call for slicings
+  `[1000000] [1] [2] [3] [5] [1,7,333] [4096,3] [97]`, traced and untraced. Observed: all 14
+  tests in `verifier/turbo_equivalence_tests.rs` pass at this head, debug (assertions on, 16 s)
+  and release (2.2 s). They compare outcome, trace hash and count, the whole hart snapshot, CLINT
+  registers, tick residue, `stimecmp`, progress/interrupt/`wfi` counters, the resume position,
+  live-work counters, all RAM bytes, and the dirty-page set after a mid-run commit. Scenarios:
+  SBI `set_timer` future / past / re-armed from the handler (dividers 1, 3, 10); counter CSRs
+  after inline ops and first in a block; Sv39 with stores rewriting an earlier op, a later op
+  and another page's block, load/store/fetch page faults, an undecodable op, and page-table
+  stores with and without a TLB flush; LR/SC around inline stores; `jalr` with bit 0 set,
+  `rd == rs1`, its own block as target, compressed ops; all load/store widths and six branch
+  kinds; misaligned accesses, UART and CLINT accesses mid-block, an `msip` interrupt, a write to
+  `mtime`; page-straddling entries (one trapping) and the 128-op cap under a timer; FP and AMO
+  ops; an unhandled trap; `wfi` in plain, paced and live-unrecorded modes; 32 seeded random
+  programs. HELD.
+- P7 exclusions — predicted `turbo_stats().entries == 0` with a trigger armed, wall clock, JIT
+  attached, session clock, profiler, HTIF, batching off, cache off, `set_turbo(false)`, and
+  `> 0` otherwise. Observed so (`excluded_modes_never_enter_the_turbo_loop`). The loop is NOT
+  excluded in paced-ICount and live-unrecorded modes; equivalence holds there
+  (`wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in`). I found no mode that should be
+  excluded and is not. HELD.
+- P8 exit states — for each `return` in `turbo_loop` (`turbo.rs:333, 346, 360, 363, 383, 434,
+  439, 445, 452, 484`) I predicted the cursor, settled accounting and `time` shadow the ordinary
+  loop has at that point, then checked by reading and by the per-call comparison of the resume
+  position and hart snapshot. Observed equal; a boundary exit leaves `block_cursor = None` where
+  the ordinary loop leaves a cursor parked past its block's last op, which `at_block_boundary`
+  and `next_micro_op` treat identically (`lib.rs:6003-6011, 6132-6137`). HELD.
+- P9 sabotage (task list) — predicted each makes one of the three acceptance tests fail.
+  Observed in release (`verifier/sabotage-round1.log`): horizon test (`turbo.rs:316`) → timer
+  test; device-access stop (`:320`) → timer test; device access not recorded (`:455-458`) →
+  timer test; `time`-shadow refresh (`:214`) → deferred and timer tests; code-filter test
+  (`:467-469`) → replay test. HELD for the task's four.
+- P10 sabotage (reservation clear, `hart/turbo.rs:121-126`) — predicted one of the three tests
+  fails. Observed: all three pass. FAILED → NEEDS EVIDENCE, item 1 below.
+- P11 pre-existing failures — the five `zicsr-stub` dead-code errors: identical on a pristine
+  worktree of `79b5c2817`. `gpu_transfer_full_frame_native_budget`: passes alone 3/3 and in a
+  single-threaded release run of all 411 core lib tests; the diff touches nothing under
+  `crates/core/src/dev`. Both independent of this task. HELD.
+
+**COVERAGE.** Hit counts from a scratch build with a counter on every changed hunk
+(`verifier/instrument.py`, table in `verifier/coverage-hit-counts.txt`; the instrumented binary
+reproduced the baseline digests). "Recorded" = the whole `cargo test --workspace --exclude
+wasm-vm-wvseccomp` run (340 result lines, none failed, the three acceptance tests among them),
+both `-fast` oracle boots and the 2,000,000,000-instruction desktop run.
+
+NEEDS EVIDENCE — commit a test that executes and observes each (the named test in
+`verifier/turbo_equivalence_tests.rs` does; see SUITE):
+
+1. `hart/turbo.rs:121-126`, the inline store clearing the LR/SC reservation: 0 executions in
+   every recorded run, so none can observe it; removing it passes all three acceptance tests.
+   `inline_stores_clear_exactly_the_overlapping_reservation`
+   runs it 10,916 times and fails without it.
+2. `turbo.rs:357-361`, a trap from an uncached page-straddling entry op: 0 executions recorded
+   (the non-trapping path ran 1,048,982 times on the desktop).
+   `page_straddling_entries_and_the_128_op_cap`
+   runs it 640 times; dropping the settle at `:356` fails only that test.
+3. `turbo.rs:486`, carrying on after a code-filter hit that drops nothing: 0 executions
+   recorded. Reachable after a whole-cache flush (a PMP change leaves stale page records in the
+   filter, `dispatch.rs:655`) or with more than 1 GiB of RAM (`dispatch.rs:475-477`).
+   `inline_store_to_a_page_whose_code_was_flushed_wholesale` runs it 3,558 times.
+4. `hart/turbo.rs:181`, `& !1` on the `jalr` target: the inline `jalr` runs in no workspace
+   test (0 hits) and 43 M times on the desktop; removing the mask passes the three tests and
+   leaves the busybox-fast digest unchanged (the other boots were not retried).
+   `jalr_targets_and_compressed_inline_ops` fails without it.
+5. `turbo.rs:248`, live-work accounting of an op run through the ordinary executor: removing
+   it passes the three tests (the rest of the workspace was not retried). The live-unrecorded
+   case of `wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in` fails without it.
+6. Fast-gate breadth: the inline `Lwu/Lh/Lhu/Lbu/Sh`, `Bge/Bgeu` and `Jalr` arms and the
+   uncached entry (`turbo.rs:352-364`) run in no workspace test, only in the Linux boots (which
+   need the release artifacts); `Blt/Bltu` and the `enter_block` trap exit (`:344-347`) run in
+   none of the three acceptance tests. Zero-extending `Lh` or making `Bge` strict passes all
+   three tests.
+   `inline_load_store_widths_and_all_six_branches`,
+   the Sv39 test and the block-shapes test cover them. (The SBI term of the horizon,
+   `turbo.rs:194-196`, is likewise caught by no unit test but IS caught by acceptance 2: the
+   busybox-fast digest changes.)
+
+DEAD — delete:
+
+7. `turbo.rs:371` and `:389-391` (`ordinary_next`), with the "Fetch walks" paragraph at
+   `:49-51`. The paragraph says a fetch translation can update a PTE and log the frame; this
+   MMU never writes a PTE (`mmu.rs:11-12`, Svade trap scheme; no store in `mmu.rs`), and
+   `enter_block` drains the log before translating (`lib.rs:6025`), so the log is always empty
+   at `:371`. 0 hits in every run above and in all 14 verifier tests; forcing it `false` changes
+   no test. Delete it, or state the invariant as a `debug_assert!` on the empty log.
+
+WAIVED (one line each): `turbo.rs:450-453` — `turbo_ctx()` is `None` only with a trigger armed,
+which only a CSR instruction can do, and that ends its block at `:441-446`; the arm just hands
+back to the ordinary loop. `hart/turbo.rs:97-100, 116-119` — invariant guard (fast-TLB entries
+exist only for all-RAM pages) that falls back to the ordinary executor. `hart/turbo.rs:137-139,
+172-174` — mirror of `execute`'s odd-target check; the PC and B/J offsets are even; falls back
+to the ordinary executor. `turbo.rs:320`, `!fabric_quiescent()` as the only stop reason —
+evaluated at every boundary; alone it can only follow an instruction fetch from a fabric
+window. Stats, CLI/wasm/page switches — configuration and logging; `--no-turbo`,
+`--virtio-rng-seed`, `--decoded-cache-entries`, `--resume-core-id/--resume-base-id` all ran in
+the equivalence batches, `?turbo=0` in the worker's browser run.
+
+Not findings, for the same edit: removing the settle-on-entry for a block that ends in a system
+op (`turbo.rs:365-367`, and with it `DecodedBlock::system_end` and `is_control_transfer` in
+`dispatch.rs`) changes no test and not the busybox-fast digest — the settle before the system
+op itself does the same work — so the module doc's sentence about it is not load-bearing, and
+without the field the Boundary's "no change to the block cache" would be literally true. The
+same holds for `ctx = next` at `turbo.rs:454`, which the `TurboCtx` doc already says cannot
+change. `--resume-core-id` and `--resume-base-id` are in the diff but not in the Boundary's
+list of proof-support flags.
+
+**SUITE.** Nothing promoted: coverage does not hold at this head, so the tests stay evidence.
+`evidence/e4-t40b/verifier/turbo_equivalence_tests.rs` (14 tests, SHA-256 `f84e6ff2…1c567f`)
+passes at `16ed17e48` in debug and release and is `cargo fmt`/clippy clean; its header says
+where it goes. Sabotage against it (release; `verifier/sabotage-round1.log` with its first nine
+tests, `verifier/sabotage-round2.log` with thirteen; the fourteenth, random programs, came
+after): every sabotage above that changes behavior fails at least one of its tests; the three
+that change nothing (item 7 and the two non-findings) fail none.
+
+**For the next round.** Add tests for items 1–6 (adopting the file is enough), delete item 7,
+rerun acceptance 1–4 at the new head. A later verifier can carry P1, P7, P8 and P11 forward and
+needs only the acceptance commands, the 14 tests and the hit counts for items 1–7.
+
+Commands: the acceptance 1 test command as written; `bash tools/perf/oracle.sh target/release/wasm-vm
+target/verifier-oracle && diff -r evidence/perf-overhaul/oracle-baseline
+target/verifier-oracle/digests`; `bash tools/perf/turbo-equivalence.sh 2000000000
+target/verifier-equiv`; `verifier/equiv-batch.sh`, `verifier/equiv-batch2.sh`;
+`cargo test [--release] -p wasm-vm-core --lib -- turbo_equivalence_tests` (file placed in
+`crates/core/src`, then removed); `python3 verifier/sabotage.py . [names]`;
+`python3 verifier/sabotage_cli.py . OUT horizon-ignores-sbi-timer jalr-keeps-bit0
+system-end-settle-on-entry ctx-not-refreshed-after-slow-op` then `ORACLE_CASES=busybox-fast
+bash tools/perf/oracle.sh OUT/wasm-vm-sab-… …`; `python3 verifier/instrument.py .` then the
+tests, `TURBO_COV=1` oracle and equivalence runs; `python3 verifier/instrument_atexit.py .`
+then `TURBO_COV_FILE=… cargo test --workspace --exclude wasm-vm-wvseccomp --no-fail-fast`;
+`cargo clippy -p wasm-vm-core
+--no-default-features --features std,trace,zicsr-stub --lib -- -D warnings` on a worktree of
+`79b5c2817`; `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html
+--label verifier --n 3 --out evidence/e4-t40b/verifier/browser-dist.json`.
