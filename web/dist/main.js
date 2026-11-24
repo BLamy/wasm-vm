@@ -34,6 +34,11 @@ import {runWitnessPages} from "./witness-pages-probe.js";
 const _startupQuery = new URLSearchParams(location.search);
 const _startupGuest = (_startupQuery.get("guest") || _startupQuery.get("boot") || _startupQuery.get("os") || "").toLowerCase();
 const _omarchyDesktopMode = _startupQuery.get("desktop") === "1" && _startupGuest === "omarchy";
+// E5-T34c: the shared Replay Chrome + Node desktop is the second full-window desktop guest. It
+// reuses the Omarchy desktop surface (display canvas as the keyboard/pointer host, boot overlay)
+// but none of Omarchy's guest-specific readiness or GPU-session paths.
+const _replayDesktopMode = _startupQuery.get("desktop") === "1" && _startupGuest === "replay-desktop";
+const _desktopMode = _omarchyDesktopMode || _replayDesktopMode;
 const _workerQuery = _startupQuery.get("worker");
 const _singleThreadForced = _workerQuery === "0" || _startupQuery.get("singlethread") === "1";
 const _workerAvailable = typeof globalThis.Worker === "function";
@@ -91,7 +96,7 @@ globalThis.vm = pageVm;
 // WebGL context loss can replay it through Canvas2D without re-entering the guest.
 const displayCanvas = document.getElementById("ide-display-canvas");
 const displayStatusEl = document.getElementById("ide-display-status");
-if (_omarchyDesktopMode && displayCanvas) displayCanvas.tabIndex = 0;
+if (_desktopMode && displayCanvas) displayCanvas.tabIndex = 0;
 let presentation = null;
 let displayViewport = null;
 if (displayCanvas) {
@@ -120,7 +125,7 @@ if (displayCanvas) {
 const displayViewportEl = document.getElementById("ide-display-viewport");
 if (presentation && displayViewportEl) {
   displayViewport = new DisplayViewportController({ container: displayViewportEl, presentation,
-    modeForRect: _omarchyDesktopMode ? desktopViewportPixelMode : undefined,
+    modeForRect: _desktopMode ? desktopViewportPixelMode : undefined,
     onState: (state) => {
       if (displayStatusEl && state.error) displayStatusEl.textContent = "display: " + state.error;
     },
@@ -177,7 +182,7 @@ function handleDisplayFrame(frame) {
 }
 
 function emitGuestLifecycleEvent(type, detail = {}) {
-  if (!_omarchyDesktopMode) return;
+  if (!_desktopMode) return;
   try { window.dispatchEvent(new CustomEvent(type, { detail })); } catch { /* UI diagnostics only */ }
 }
 try {
@@ -564,7 +569,7 @@ if (new URLSearchParams(location.search).has("testHooks")) {
 // host in capture phase, ahead of xterm's handlers, while leaving the existing serial onData path
 // intact. Physical transitions additionally flow through the T11 evdev bridge once a guest boots;
 // the serial getty remains the byte-oriented foreground console used by the demo.
-const keyboardHost = _omarchyDesktopMode ? displayCanvas : document.getElementById("term");
+const keyboardHost = _desktopMode ? displayCanvas : document.getElementById("term");
 const keyboardStateEl = document.getElementById("ide-keyboard-state");
 const keyboardToggle = document.getElementById("ide-keyboard-toggle");
 const keyboardReleaseButton = document.getElementById("ide-keyboard-release");
@@ -835,11 +840,11 @@ try {
 // adapter is deliberately dynamic because the controller is replaced on every boot and may be a
 // direct WasmLinux object or a whole-machine Worker proxy. Pointer frames remain no-ops before a
 // guest is live, while the mode/Pointer Lock state remains inspectable for UI and tests.
-const pointerHost = _omarchyDesktopMode ? displayCanvas : document.getElementById("term");
+const pointerHost = _desktopMode ? displayCanvas : document.getElementById("term");
 const pointerStateEl = document.getElementById("ide-pointer-state");
 const pointerToggle = document.getElementById("ide-pointer-toggle");
 const pointerDebugEl = document.getElementById("ide-pointer-debug");
-const cursorOverlayParent = _omarchyDesktopMode
+const cursorOverlayParent = _desktopMode
   ? document.getElementById("ide-display-viewport")
   : pointerHost;
 const pointerDiagnostics = [];
@@ -1471,6 +1476,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           const s = new TextDecoder().decode(u8);
           if (!quietGuestExec) emitGuestLifecycleEvent("wvm:guest-output", { text: s });
           bootProgress.scanOutput(s);
+          scanReplayDesktopOutput(s);
           promptTail = (promptTail + s).slice(-200);
           // xterm answers the guest's cursor-position query with a CSI sequence (for example
           // ESC[6n) immediately after the prompt. Strip terminal control sequences before matching
@@ -1782,7 +1788,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     ui.fitNow();
     // The guest is live and the input sink is attached. A desktop session owns the display canvas
     // as its keyboard/pointer surface; the editor profiles keep the terminal's original focus UX.
-    if (_omarchyDesktopMode) displayCanvas?.focus();
+    if (_desktopMode) displayCanvas?.focus();
     else if (!softwareSession) ui.focus();
     sessionLibrary?.ownerChanged();
   } catch (e) {
@@ -2041,6 +2047,9 @@ let nodeAlpineAvailable = false;
 // E5.5-T03a: whether the immutable Omarchy desktop manifest is present. Its 4 GiB image is
 // chunked on R2 and deliberately does not participate in Alpine's persistent overlay/snapshot path.
 let omarchyAvailable = false;
+// E5-T34c: the shared Replay Chrome 108 + Node 26 desktop. Its boot manifest names the kernel, the
+// chunk manifest and the whole-image .img.gz; null until the load-time probe has read it.
+let replayDesktopManifest = null;
 const graphicsSelect = document.getElementById("desktop-graphics");
 if (graphicsSelect) graphicsSelect.value = _startupQuery.get("gpu") === "0" || !_useCpuWorker ? "software" : "gpu";
 const gpuStatusEl = document.getElementById("gpu-status");
@@ -2085,6 +2094,30 @@ function watchOmarchyDesktop() {
   };
   desktopReadinessTimer = setTimeout(check, 1000);
 }
+// E5-T34c: the Replay desktop's root monitor prints REPLAY_DESKTOP_READY on the serial console
+// only after sway has mapped both the Chrome window and the Node terminal AND Chrome reported its
+// smoke-page PASS title (tools/replay-desktop/rootfs/usr/local/sbin/replay-desktop-monitor). The
+// marker alone never uncovers the canvas: real, non-uniform presented pixels are also required.
+let replayDesktopTail = "";
+let replayDesktopMarkerSeen = false;
+function scanReplayDesktopOutput(text) {
+  if (!_replayDesktopMode || currentGuestKind !== "replay-desktop" || replayDesktopMarkerSeen) return;
+  replayDesktopTail = (replayDesktopTail + text).slice(-4096);
+  if (!/REPLAY_DESKTOP_READY uptime=/.test(replayDesktopTail)) return;
+  replayDesktopMarkerSeen = true;
+  markGuestReady();
+  const generation = desktopReadinessGeneration;
+  const check = () => {
+    if (generation !== desktopReadinessGeneration || !guestReady) return;
+    if (presentation?.snapshot().successfulPresents > 0 && hasDesktopPixels(presentation.readPixels())) {
+      desktopReady = true;
+      emitGuestLifecycleEvent("wvm:desktop-ready");
+      return;
+    }
+    desktopReadinessTimer = setTimeout(check, 1000);
+  };
+  desktopReadinessTimer = setTimeout(check, 250);
+}
 function markGuestReady() {
   if (guestReady) return;
   guestReady = true;
@@ -2097,6 +2130,8 @@ function resetGuestReady() {
   guestReady = false;
   desktopReady = false;
   promptTail = "";
+  replayDesktopTail = "";
+  replayDesktopMarkerSeen = false;
   try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
 }
 
@@ -2212,6 +2247,78 @@ async function bootOmarchy() {
     },
   );
   if (boot?.winner !== "omarchy") {
+    return { ok: false, conflict: true, error: `${boot?.winner ?? "another guest"} boot already owns the VM` };
+  }
+  return linuxCtl
+    ? { ok: true, ...(boot?.already ? { already: true } : {}) }
+    : { ok: false, error: lastBootError || "boot failed" };
+}
+
+// E5-T34c: the shared Replay Chrome 108 + Node 26 desktop (the E5-T34b image). A cold boot of a
+// read-only ext4 with the E5-T34a whole-image prefill: ONE streamed .img.gz request, every 256 KiB
+// chunk then sliced from that verified JS-side buffer, so there is no per-chunk network fetch. The
+// device layout matches the native E5-T34b harness (tools/replay-desktop/native-boot.mjs): the
+// browser assembly's keyboard/tablet/mouse + software virtio-gpu, the 6.6.63 kernel, JIT with
+// deterministic instruction time divided by 64. RAM is 1 GiB (the browser Omarchy size), not the
+// native 2 GiB: guest RAM is one wasm32 allocation and 2048 MiB = 2^31 B exceeds isize::MAX, so
+// `Machine::try_new` refuses it. E5-T34b measured a 182 MiB guest RAM high-water mark.
+const REPLAY_DESKTOP_BOOTARGS =
+  "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4";
+function replayDesktopBootOptions(manifest) {
+  const artifacts = manifest?.artifacts ?? {};
+  const chunks = artifacts.chunkManifest;
+  const whole = artifacts.wholeImage;
+  if (typeof chunks?.url !== "string" || typeof whole?.url !== "string"
+    || !/^[0-9a-f]{64}$/u.test(whole.uncompressedSha256 ?? "") || !Number.isSafeInteger(whole.uncompressedSize)) {
+    throw new Error("Replay desktop manifest is missing its chunk manifest or whole image");
+  }
+  const absolute = (url) => new URL(url, location.href).href;
+  return {
+    manifestUrl: "./artifacts-replay-desktop.json",
+    mode: "chunked",
+    imageManifestUrl: absolute(chunks.url),
+    bootProfileUrl: null,
+    wholeImageUrl: absolute(whole.url),
+    wholeImageSha256: whole.uncompressedSha256,
+    wholeImageSize: whole.uncompressedSize,
+    bootargs: REPLAY_DESKTOP_BOOTARGS,
+    persist: false,
+    bootSnapshot: false,
+    ramMib: 1024,
+    fileTransfer: false,
+    slirpNet: false,
+    slirpProvider: "offline",
+    enableMic: false,
+    guestClock: "icount",
+    icountDivider: 64,
+    fastInterpreter: true,
+    jit: true,
+    quantum: 500_000,
+  };
+}
+async function bootReplayDesktop() {
+  let options;
+  try {
+    options = replayDesktopBootOptions(replayDesktopManifest);
+  } catch (error) {
+    return { ok: false, error: error?.message || String(error) };
+  }
+  const boot = await runLinuxBoot(
+    options,
+    "booting the shared Replay Chrome 108 + Node 26 desktop on RISC-V…",
+    {
+      requestKey: "replay-desktop",
+      onClaim: () => {
+        lastBootError = null;
+        setRunBanner(
+          "Booting the <b>Replay desktop</b> (one whole-image download, then a cold boot)… the display and serial console are live guest output.",
+        );
+        setGuestChip("replay-desktop");
+        if (osLauncherStatusEl) osLauncherStatusEl.textContent = "Downloading the whole Replay desktop image…";
+      },
+    },
+  );
+  if (boot?.winner !== "replay-desktop") {
     return { ok: false, conflict: true, error: `${boot?.winner ?? "another guest"} boot already owns the VM` };
   }
   return linuxCtl
@@ -2379,6 +2486,11 @@ window.wvmDemo = {
   async bootOmarchy() {
     return bootOmarchy();
   },
+  // E5-T34c: the shared Replay Chrome 108 + Node 26 desktop (whole-image prefill, cold boot).
+  async bootReplayDesktop() {
+    return bootReplayDesktop();
+  },
+  replayDesktopArtifactsPresent: () => replayDesktopManifest !== null,
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
   // initramfs). The Docker tab uses this to know whether it can run wvrun.
   alpineArtifactsPresent: () => alpineAvailable,
@@ -2858,13 +2970,16 @@ function setGuestChip(kind) {
   const el = document.getElementById("ide-term-who");
   if (!el) return;
   if (kind) {
-    el.textContent = kind === "omarchy" ? "omarchy@omarchy-demo" : `root@${kind}`;
+    el.textContent = kind === "omarchy" ? "omarchy@omarchy-demo"
+      : kind === "replay-desktop" ? "desktop@replay-desktop" : `root@${kind}`;
     el.title = kind === "node-alpine"
       ? "Alpine Linux userland with Node.js preinstalled — container-capable (wvrun / OCI)"
       : kind === "alpine"
       ? "Alpine Linux userland — container-capable (wvrun / OCI)"
       : kind === "omarchy"
       ? "Omarchy desktop image — Hyprland, Foot, and Quickshell"
+      : kind === "replay-desktop"
+      ? "Replay desktop image — sway with Replay Chrome 108 and a Node 26 terminal"
       : "busybox userland (initramfs)";
     el.hidden = false;
   } else {
@@ -3645,7 +3760,21 @@ setInteractiveState();
   } catch {
     omarchyAvailable = false;
   }
+  // E5-T34c: the Replay desktop manifest is small; the image itself downloads only on launch.
+  try {
+    const probe = await fetch("./artifacts-replay-desktop.json", { method: "GET", cache: "no-store" });
+    const text = probe.ok ? await probe.text() : "";
+    const parsed = probe.ok && !text.trimStart().startsWith("<") ? JSON.parse(text) : null;
+    replayDesktopManifest = parsed && replayDesktopBootOptions(parsed) ? parsed : null;
+  } catch {
+    replayDesktopManifest = null;
+  }
   setOsOptionAvailability("omarchy", omarchyAvailable, "ready · 4 GiB desktop");
+  {
+    const gz = replayDesktopManifest?.artifacts?.wholeImage?.size;
+    setOsOptionAvailability("replay-desktop", replayDesktopManifest !== null,
+      `ready · one ${Number.isFinite(gz) ? Math.round(gz / 1048576) : "?"} MiB download`);
+  }
   setOsOptionAvailability("node-alpine", nodeAlpineAvailable, "ready · fast restore");
   setOsOptionAvailability("alpine", alpineAvailable, "ready · fast restore");
 
@@ -3659,6 +3788,11 @@ setInteractiveState();
       return omarchyAvailable
         ? window.wvmDemo.bootOmarchy()
         : Promise.resolve({ ok: false, error: "Omarchy image manifest is not published on this host" });
+    }
+    if (_guest === "replay-desktop") {
+      return replayDesktopManifest !== null
+        ? window.wvmDemo.bootReplayDesktop()
+        : Promise.resolve({ ok: false, error: "Replay desktop image manifest is not published on this host" });
     }
     if (_guest === "node-alpine" || _guest === "nodealpine") {
       return nodeAlpineAvailable
@@ -3677,6 +3811,7 @@ setInteractiveState();
     const normalized = kind === "nodealpine" ? "node-alpine" : kind;
     const available = normalized === "busybox" ||
       (normalized === "omarchy" && omarchyAvailable) ||
+      (normalized === "replay-desktop" && replayDesktopManifest !== null) ||
       (normalized === "node-alpine" && nodeAlpineAvailable) ||
       (normalized === "alpine" && alpineAvailable);
     if (!available) {
@@ -3693,8 +3828,20 @@ setInteractiveState();
       location.assign(next.href);
       return Promise.resolve({ ok: true, navigating: true });
     }
+    // The Replay desktop is a full-window desktop session too: the display canvas must own the
+    // keyboard and pointer, which is fixed when the page loads.
+    if (normalized === "replay-desktop" && navigateToDesktop && !_replayDesktopMode) {
+      const next = new URL(location.href);
+      next.searchParams.set("guest", "replay-desktop");
+      next.searchParams.set("desktop", "1");
+      next.hash = "ide";
+      location.assign(next.href);
+      return Promise.resolve({ ok: true, navigating: true });
+    }
     const method = normalized === "omarchy"
       ? window.wvmDemo.bootOmarchy
+      : normalized === "replay-desktop"
+      ? window.wvmDemo.bootReplayDesktop
       : normalized === "node-alpine"
         ? window.wvmDemo.bootNodeAlpine
         : normalized === "alpine"

@@ -22,9 +22,15 @@ import {
 const ROOT = "/root";
 const _ideQuery = new URLSearchParams(location.search);
 const _ideGuest = (_ideQuery.get("guest") || _ideQuery.get("boot") || _ideQuery.get("os") || "").toLowerCase();
-const OMARCHY_DESKTOP_MODE = _ideQuery.get("desktop") === "1" && _ideGuest === "omarchy";
+// Full-window desktop guests (E5-T34c adds the shared Replay Chrome + Node desktop beside Omarchy).
+// They share the desktop surface below; the dataset value names the guest.
+const DESKTOP_GUESTS = Object.freeze({ omarchy: "Omarchy", "replay-desktop": "Replay desktop" });
+// Request keys of desktop sessions: no Explorer/Docker control-plane RPCs over their serial shell.
+const DESKTOP_SESSION_KEYS = new Set(Object.keys(DESKTOP_GUESTS));
+const OMARCHY_DESKTOP_MODE = _ideQuery.get("desktop") === "1" && Object.hasOwn(DESKTOP_GUESTS, _ideGuest);
+const DESKTOP_LABEL = DESKTOP_GUESTS[_ideGuest] ?? "Omarchy";
 if (OMARCHY_DESKTOP_MODE) {
-  document.documentElement.dataset.wvmDesktop = "omarchy";
+  document.documentElement.dataset.wvmDesktop = _ideGuest;
   document.getElementById("session-library")?.removeAttribute("open");
 }
 
@@ -262,55 +268,55 @@ const css = `
 
 /* Omarchy is a desktop session, not an editor session. Keep the same guest display/controller,
    but promote its viewport to the whole page and remove every VS Code surface around it. */
-html[data-wvm-desktop="omarchy"], html[data-wvm-desktop="omarchy"] body {
+html[data-wvm-desktop], html[data-wvm-desktop] body {
   width: 100%; height: 100%; min-height: 100%; overflow: hidden;
 }
-html[data-wvm-desktop="omarchy"] header,
-html[data-wvm-desktop="omarchy"] .os-launcher,
-html[data-wvm-desktop="omarchy"] .ide-activity,
-html[data-wvm-desktop="omarchy"] .ide-side,
-html[data-wvm-desktop="omarchy"] .ide-vsplit,
-html[data-wvm-desktop="omarchy"] .ide-tabstrip,
-html[data-wvm-desktop="omarchy"] .ide-editor-toolbar,
-html[data-wvm-desktop="omarchy"] .ide-editor-body,
-html[data-wvm-desktop="omarchy"] .ide-hsplit,
-html[data-wvm-desktop="omarchy"] .ide-term-pane,
-html[data-wvm-desktop="omarchy"] .ide-statusbar {
+html[data-wvm-desktop] header,
+html[data-wvm-desktop] .os-launcher,
+html[data-wvm-desktop] .ide-activity,
+html[data-wvm-desktop] .ide-side,
+html[data-wvm-desktop] .ide-vsplit,
+html[data-wvm-desktop] .ide-tabstrip,
+html[data-wvm-desktop] .ide-editor-toolbar,
+html[data-wvm-desktop] .ide-editor-body,
+html[data-wvm-desktop] .ide-hsplit,
+html[data-wvm-desktop] .ide-term-pane,
+html[data-wvm-desktop] .ide-statusbar {
   display: none !important;
 }
-html[data-wvm-desktop="omarchy"][data-gpu-boot-error="true"] .os-launcher:not([hidden]) {
+html[data-wvm-desktop][data-gpu-boot-error="true"] .os-launcher:not([hidden]) {
   display: block !important; position: fixed; inset: 0; z-index: 100;
   overflow: auto;
 }
-html[data-wvm-desktop="omarchy"] #panel-ide.active {
+html[data-wvm-desktop] #panel-ide.active {
   display: flex; height: 100vh; min-height: 100vh; overflow: hidden;
 }
-html[data-wvm-desktop="omarchy"] #panel-ide > details.session-library:not(#session-library) {
+html[data-wvm-desktop] #panel-ide > details.session-library:not(#session-library) {
   display: none !important;
 }
-html[data-wvm-desktop="omarchy"] #session-library {
+html[data-wvm-desktop] #session-library {
   position: fixed; top: 12px; right: 12px; z-index: 20;
   width: min(540px, calc(100vw - 24px)); max-height: calc(100vh - 24px);
   margin: 0; overflow: auto;
 }
-html[data-wvm-desktop="omarchy"] #session-library:not([open]) { width: auto; }
-html[data-wvm-desktop="omarchy"] #ide-root {
+html[data-wvm-desktop] #session-library:not([open]) { width: auto; }
+html[data-wvm-desktop] #ide-root {
   position: relative; flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;
 }
-html[data-wvm-desktop="omarchy"] .ide-body,
-html[data-wvm-desktop="omarchy"] .ide-editor-area,
-html[data-wvm-desktop="omarchy"] .ide-display-pane {
+html[data-wvm-desktop] .ide-body,
+html[data-wvm-desktop] .ide-editor-area,
+html[data-wvm-desktop] .ide-display-pane {
   width: 100%; height: 100%; min-height: 0;
 }
-html[data-wvm-desktop="omarchy"] .ide-editor-area { display: flex; }
-html[data-wvm-desktop="omarchy"] .ide-display-pane { flex: 1 1 auto; border: 0; }
-html[data-wvm-desktop="omarchy"] .ide-display-head {
+html[data-wvm-desktop] .ide-editor-area { display: flex; }
+html[data-wvm-desktop] .ide-display-pane { flex: 1 1 auto; border: 0; }
+html[data-wvm-desktop] .ide-display-head {
   display: none !important;
 }
-html[data-wvm-desktop="omarchy"] .ide-display-viewport {
+html[data-wvm-desktop] .ide-display-viewport {
   width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
 }
-html[data-wvm-desktop="omarchy"] .ide-display-canvas {
+html[data-wvm-desktop] .ide-display-canvas {
   position: relative; left: auto; top: auto; flex: 0 0 auto;
   image-rendering: auto; touch-action: none; outline: none;
 }
@@ -321,10 +327,10 @@ html[data-wvm-desktop="omarchy"] .ide-display-canvas {
   border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); backdrop-filter: blur(8px);
   opacity: 0; transition: opacity .16s ease;
 }
-html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:hover,
-html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar:focus-within { opacity: 1; }
-html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="error"],
-html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="halted"] { opacity: 1; }
+html[data-wvm-desktop] .omarchy-desktop-toolbar:hover,
+html[data-wvm-desktop] .omarchy-desktop-toolbar:focus-within { opacity: 1; }
+html[data-wvm-desktop] .omarchy-desktop-toolbar[data-state="error"],
+html[data-wvm-desktop] .omarchy-desktop-toolbar[data-state="halted"] { opacity: 1; }
 .omarchy-desktop-toolbar[hidden] { display: none; }
 .omarchy-desktop-toolbar .brand { color: #fff; font-weight: 700; }
 .omarchy-desktop-toolbar .status { color: var(--muted); font-size: 11px; }
@@ -503,7 +509,7 @@ if (root) {
   root.innerHTML = `
     <div class="omarchy-boot-overlay" id="omarchy-boot-overlay" hidden>
       <div class="omarchy-boot-card" role="status" aria-live="polite">
-        <h1>Starting Omarchy desktop</h1>
+        <h1>Starting ${DESKTOP_LABEL}</h1>
         <div class="omarchy-boot-status" id="omarchy-boot-status">Waiting for boot events…</div>
         <progress class="omarchy-boot-progress" id="omarchy-boot-progress" max="1" value="0" hidden></progress>
         <div class="omarchy-boot-actions">
@@ -515,7 +521,7 @@ if (root) {
       </div>
     </div>
     <div class="omarchy-desktop-toolbar" id="omarchy-desktop-toolbar" hidden>
-      <span class="brand">Omarchy</span>
+      <span class="brand">${DESKTOP_LABEL}</span>
       <span class="status" id="omarchy-desktop-status">desktop · fit to window</span>
       <span class="sp"></span>
       <button id="omarchy-fullscreen" type="button">Full screen</button>
@@ -698,10 +704,10 @@ if (root) {
         bootLogToggle.setAttribute("aria-expanded", "false");
       }
       clearBootProgress();
-      if (desktopStatus) desktopStatus.textContent = "desktop · booting Omarchy…";
+      if (desktopStatus) desktopStatus.textContent = `desktop · booting ${DESKTOP_LABEL}…`;
       if (desktopToolbar) desktopToolbar.dataset.state = "booting";
       setOverlayInteractive(false);
-      setBootStatus("Booting Omarchy…");
+      setBootStatus(`Booting ${DESKTOP_LABEL}…`);
       if (bootOverlay) bootOverlay.hidden = false;
     });
     window.addEventListener("wvm:guest-progress", (event) => {
@@ -728,7 +734,7 @@ if (root) {
     window.addEventListener("wvm:guest-state", (event) => {
       const state = event.detail?.state;
       if (!startupLifecycle.state(state)) return;
-      const label = omarchyGuestStateLabel(state);
+      const label = omarchyGuestStateLabel(state)?.replace(/Omarchy/g, DESKTOP_LABEL) ?? null;
       if (label) {
         clearBootProgress();
         if (desktopStatus) desktopStatus.textContent = `desktop · ${label}`;
@@ -819,7 +825,7 @@ if (root) {
     const session = guestSession();
     // The visual desktop flag selects CSS and boot status only. The live request identity is the
     // authority for whether the current guest is the Omarchy desktop or a CLI-capable session.
-    if (!session || session.key === "omarchy") return null;
+    if (!session || DESKTOP_SESSION_KEYS.has(session.key)) return null;
     return session;
   }
   function guestServiceError(code, message) {
@@ -865,7 +871,7 @@ if (root) {
   // the short window in which a real local manifest is still being fetched. This independent
   // manifest check is still fail-closed: only a valid artifacts object counts as present.
   function probeAlpineAssets() {
-    if (guestSession()?.key === "omarchy") return Promise.resolve(false);
+    if (DESKTOP_SESSION_KEYS.has(guestSession()?.key)) return Promise.resolve(false);
     const session = guestSession();
     if (dockerRuntime.alpineStatus === "present") return Promise.resolve(true);
     if (dockerRuntime.alpineStatus === "absent") return Promise.resolve(false);
@@ -1260,7 +1266,7 @@ if (root) {
 
   function bootAlpineFromDocker() {
     const current = api();
-    if (guestSession()?.key === "omarchy") return;
+    if (DESKTOP_SESSION_KEYS.has(guestSession()?.key)) return;
     if (dockerRuntime.booting) return;
     if (!current || typeof current.bootAlpine !== "function") {
       setDockerError("ALPINE_BRIDGE_UNAVAILABLE", "The Alpine boot bridge is still loading.");
@@ -1454,7 +1460,7 @@ if (root) {
     q("#ide-view-docker").classList.toggle("active", view === "docker");
     sideTitle.textContent = view === "files" ? "Explorer" : "Docker";
     if (view === "docker") {
-      if (guestSession()?.key !== "omarchy") { renderDocker(); startPsPoll(); }
+      if (!DESKTOP_SESSION_KEYS.has(guestSession()?.key)) { renderDocker(); startPsPoll(); }
       else stopPsPoll();
     } else { stopPsPoll(); }
   }
@@ -2518,7 +2524,7 @@ if (root) {
 
   function renderDocker() {
     dkEl.replaceChildren();
-    if (guestSession()?.key === "omarchy") {
+    if (DESKTOP_SESSION_KEYS.has(guestSession()?.key)) {
       dkEl.appendChild(mk("div", "ide-dk-note", "Docker services are unavailable for this guest session."));
       return;
     }
@@ -2906,7 +2912,7 @@ if (root) {
     if (!session) {
       initializedGuestServices = null;
       resetDockerRuntime("unknown");
-      explorerEl.innerHTML = '<div class="ide-explorer-ph">Explorer services are disabled for the Omarchy desktop session.</div>';
+      explorerEl.innerHTML = '<div class="ide-explorer-ph">Explorer services are disabled for desktop sessions.</div>';
     } else if (firstReadyForSession) {
       initializedGuestServices = session;
       resetDockerRuntime("unknown");

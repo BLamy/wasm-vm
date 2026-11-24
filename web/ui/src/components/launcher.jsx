@@ -22,6 +22,11 @@ const OTHER_MACHINES = [
     detail: "A small Alpine system. Its disk is fetched in pieces; changes are kept in this browser.",
   },
   {
+    os: "replay-desktop",
+    title: "Replay desktop",
+    detail: "Replay Chrome 108 and a Node 26 terminal on one sway desktop. The whole read-only OS (about 181 MiB) downloads in one request, then cold-boots with software rendering; the first boot takes minutes.",
+  },
+  {
     os: "omarchy",
     title: "Omarchy desktop",
     detail: "A Hyprland desktop with Chromium, LibreOffice, Node.js and Foot. It opens full window from a prepared checkpoint; GPU compositing needs a hardware check.",

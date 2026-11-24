@@ -1,0 +1,9 @@
+[e5-t34c 2026-11-24T01:29:24.600Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t34c 2026-11-24T01:30:49.289Z] whole image downloaded 84689 ms 189669297 B
+[e5-t34c 2026-11-24T01:31:49.293Z] serial 1046 B REPLAY_SWAY_IPC uptime=24.18 | REPLAY_CHROMIUM_LAUNCH uptime=40.05 | REPLAY_TERMINAL_MAPPED uptime=40.69
+[e5-t34c 2026-11-24T01:33:27.502Z] desktop visible 242903 ms
+[e5-t34c 2026-11-24T01:33:45.854Z] typed node -e "console.log('E5T34C_18436867', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34c 2026-11-24T01:34:21.886Z] node answered 51336 ms after typing began
+[e5-t34c 2026-11-24T01:34:26.927Z] boot PASS {"times":{"wholeImageFinishedMs":84689,"guestReadyMarkerMs":242902,"desktopVisibleMs":242903,"nodeAnswerAfterTypingMs":51336},"counts":{"total":171,"wholeImage":1,"chunkOrRange":0,"bootTotal":171,"bootWholeImage":1,"bootChunkOrRange":0}}
+[e5-t34c 2026-11-24T01:35:02.848Z] suite PASS {"metrics":{"metric-pass":"127","metric-fail":"0","metric-done":"127"},"launcher":"ready · one 181 MiB download"}
+exit=0

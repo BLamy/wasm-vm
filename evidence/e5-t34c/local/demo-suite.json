@@ -1,0 +1,18 @@
+{
+  "url": "http://127.0.0.1:8123/?noAutoBoot=1#ide",
+  "browser": "158.0.8127.88",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "launcher": {
+    "meta": "ready · one 181 MiB download",
+    "state": "ready",
+    "disabled": false,
+    "roadmapRow": "Shared Replay Chrome + Node 26 desktop, one-download bootE5-T34a verifies the whole-image single-fetch prefill; E5-T34b verifies the minimal read-only sway image natively (Replay Chrome 108 smoke PASS + Node 26 terminal). E5-T34c submits the browser launch: one .img.gz request, zero chunk requests, DOM-typed Node command; awaiting a fresh verifier.",
+    "roadmapPip": "cap-pip in-progress"
+  },
+  "consoleErrors": [],
+  "screenshotSha256": "6487d15e73fb7a47929be2daf1f9a1e6d7eb9b177dc4d6347f2953b295c5cef5"
+}

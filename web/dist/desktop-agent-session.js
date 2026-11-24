@@ -8,7 +8,8 @@ export function createDesktopAgentSession({ request, isCurrent, onError = null,
       || request.generation < 1 || typeof isCurrent !== "function") {
     throw new TypeError("desktop agent session requires an owned boot request");
   }
-  const automatic = request.key !== "omarchy";
+  // Desktop guests (Omarchy, E5-T34c Replay desktop) connect the agent lazily, on first use.
+  const automatic = request.key !== "omarchy" && request.key !== "replay-desktop";
   let controller = null;
   let bridge = null;
   let closed = false;

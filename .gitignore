@@ -57,6 +57,9 @@ compliance/sail-riscv/
 # E2-T18: the Alpine rootfs ext4 is 512 MiB (sparse ~10 MiB actual) — reproducible from
 # `bash tools/build-rootfs.sh` and pinned by releases/rootfs/MANIFEST.txt (package-level; see build-rootfs.sh drift gate), so it's not tracked.
 releases/rootfs/*.ext4
+# E5-T34c: the Replay desktop whole-image .img.gz (181 MiB) is deployed to R2, rebuilt by
+# tools/build-replay-desktop-image.sh; only its chunk manifest is tracked.
+releases/rootfs/*.img.gz
 releases/rootfs/MANIFEST.new
 releases/rootfs/FILE-MANIFEST.new
 releases/wvft-agent-riscv64

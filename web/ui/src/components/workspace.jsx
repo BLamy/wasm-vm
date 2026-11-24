@@ -29,6 +29,7 @@ const GUEST_NAMES = {
   alpine: "Alpine Linux",
   "node-alpine": "Alpine + Node.js",
   omarchy: "Omarchy",
+  "replay-desktop": "Replay desktop",
 };
 
 const PHONE = "(max-width: 760px)";
@@ -370,7 +371,7 @@ export function Workspace() {
           )}
         </SettingsSheet>
       </div>
-      {hint && guest.ready && view === "terminal" && guest.kind !== "omarchy" ? (
+      {hint && guest.ready && view === "terminal" && guest.kind !== "omarchy" && guest.kind !== "replay-desktop" ? (
         <p className="wv-ws-hint" data-wv="first-use-hint">
           Shell ready. Type a command and press Enter, for example <code className="wv-mono">uname -a</code> or <code className="wv-mono">ls /</code>.
         </p>

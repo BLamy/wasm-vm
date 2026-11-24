@@ -1,0 +1,132 @@
+{
+  "task": "E5-T34c",
+  "url": "http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "nonce": "56D18492",
+  "command": "node -e \"console.log('E5T34C_56D18492', process.version)\" | tee -a /run/replay-desktop/events",
+  "times": {
+    "wholeImageFinishedMs": 1724,
+    "guestReadyMarkerMs": 167946,
+    "desktopVisibleMs": 167947,
+    "nodeAnswerAfterTypingMs": 51214
+  },
+  "wholeImage": {
+    "url": "http://127.0.0.1:8123/releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+    "declared": {
+      "url": "releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "sha256": "37911eaa6efbdae7a826bd96e4addc1dece21eef8b68e23d346e003aeec8faba",
+      "size": 189669297,
+      "uncompressedSize": 467664896,
+      "uncompressedSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05"
+    },
+    "responseBodySize": 189669297,
+    "contentEncoding": null,
+    "contentType": "application/gzip"
+  },
+  "counts": {
+    "total": 169,
+    "wholeImage": 1,
+    "chunkOrRange": 0,
+    "bootTotal": 169,
+    "bootWholeImage": 1,
+    "bootChunkOrRange": 0
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 1221,
+    "localBytes": 320077824,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 272089536,
+      "misses": 88663226,
+      "evictions": 197,
+      "residentBytes": 268435456,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 90,
+      "used": 86,
+      "profileEntries": 0,
+      "accuracyPct": 95
+    }
+  },
+  "display": {
+    "backend": "canvas2d",
+    "width": 1280,
+    "height": 800,
+    "successfulPresents": 131
+  },
+  "chrome": {
+    "targets": "REPLAY_CHROMIUM_TARGETS {\"id\":12,\"result\":{\"targetInfos\":[{\"targetId\":\"722CC6F7B18A4DC7422EC1ABE97B9D3C\",\"type\":\"page\",\"title\":\"Replay RISC-V PASS #1\",\"url\":\"file:///opt/replay-chromium/smoke.html\",\"attached\":false,\"canAccessOpener\":false,\"browserContextId\":\"48D94B8C2D94C3AC4E8DD75109EC0AA9\"}]}} uptime=63.52\r",
+    "page": "REPLAY_CHROMIUM_PAGE {\"id\":900002,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"pass {\\n  \\\"pass\\\": true,\\n  \\\"runs\\\": 1,\\n  \\\"javascript\\\": 42,\\n  \\\"webassembly\\\": 42,\\n  \\\"pixel\\\": [\\n    42,\\n    128,\\n    64,\\n    255\\n  ],\\n  \\\"browser\\\": \\\"Chrome/108.0.0.0\\\"\\n}\"}},\"sessionId\":\"4B4B48236F5AF44C90B6EF01EB3B4DC4\"} uptime=63.59\r",
+    "ready": "REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=63.64\r"
+  },
+  "node": [
+    "E5T34C_56D18492 v26.13.1\r"
+  ],
+  "keyboard": {
+    "framesBeforeTyping": 0,
+    "framesAfterTyping": 208,
+    "typedChars": 93,
+    "stats": {
+      "held": [],
+      "modifierRepairs": 0,
+      "lockRepairs": 0,
+      "pendingLockRepairs": [],
+      "releaseCount": 0,
+      "lastReleaseReason": null,
+      "leds": {
+        "numLock": false,
+        "capsLock": false,
+        "scrollLock": false
+      }
+    },
+    "sampleFrames": [
+      {
+        "eventType": 1,
+        "code": "KeyT",
+        "evdev": 20,
+        "value": 1,
+        "sync": 0
+      },
+      {
+        "eventType": 1,
+        "code": "KeyT",
+        "evdev": 20,
+        "value": 0,
+        "sync": 0
+      },
+      {
+        "eventType": 1,
+        "code": "KeyS",
+        "evdev": 31,
+        "value": 1,
+        "sync": 0
+      },
+      {
+        "eventType": 1,
+        "code": "KeyS",
+        "evdev": 31,
+        "value": 0,
+        "sync": 0
+      },
+      {
+        "eventType": 1,
+        "code": "Enter",
+        "evdev": 28,
+        "value": 1,
+        "sync": 0
+      },
+      {
+        "eventType": 1,
+        "code": "Enter",
+        "evdev": 28,
+        "value": 0,
+        "sync": 0
+      }
+    ]
+  },
+  "consoleErrors": []
+}

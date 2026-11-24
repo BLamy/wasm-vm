@@ -291,7 +291,7 @@
   }
 
   /* ── Projected tool panes (projection.jsx / tool-panes.jsx) ────────────── */
-  :root.e2e-showall .wv-proj-host, :root[data-wvm-desktop="omarchy"] .wv-proj-host { display: none; }
+  :root.e2e-showall .wv-proj-host, :root[data-wvm-desktop] .wv-proj-host { display: none; }
   .wv-proj-host { display: block; background: var(--background); color: var(--foreground); }
   .wv-proj-host[data-wv-host="side"] { flex: 1 1 auto; min-height: 0; overflow: auto; padding-bottom: var(--wv-space-4); }
   .wv-proj-host.wv-proj-editor-host { grid-area: tabs; border-bottom: 1px solid var(--border); }

@@ -1,0 +1,8 @@
+[e5-t34c 2026-11-24T01:07:51.291Z] open http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide
+[e5-t34c 2026-11-24T01:07:53.013Z] whole image downloaded 1724 ms 189669297 B
+[e5-t34c 2026-11-24T01:08:53.016Z] serial 1046 B REPLAY_SWAY_IPC uptime=25.40 | REPLAY_CHROMIUM_LAUNCH uptime=41.31 | REPLAY_TERMINAL_MAPPED uptime=41.97
+[e5-t34c 2026-11-24T01:10:39.235Z] desktop visible 167947 ms
+[e5-t34c 2026-11-24T01:10:57.469Z] typed node -e "console.log('E5T34C_56D18492', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34c 2026-11-24T01:11:33.501Z] node answered 51214 ms after typing began
+[e5-t34c 2026-11-24T01:11:38.547Z] boot PASS {"times":{"wholeImageFinishedMs":1724,"guestReadyMarkerMs":167946,"desktopVisibleMs":167947,"nodeAnswerAfterTypingMs":51214},"counts":{"total":169,"wholeImage":1,"chunkOrRange":0,"bootTotal":169,"bootWholeImage":1,"bootChunkOrRange":0}}
+exit=0
