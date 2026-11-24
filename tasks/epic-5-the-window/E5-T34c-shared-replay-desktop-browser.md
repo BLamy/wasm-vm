@@ -3,7 +3,7 @@ id: E5-T34c
 epic: 5
 title: Boot the shared Replay Chrome and Node 26 desktop in the browser demo
 priority: 0.3873
-status: implemented
+status: evidence-needed
 depends_on: [E5-T34a, E5-T34b]
 estimate: S
 risk: medium
@@ -123,3 +123,108 @@ and the line is relayed to serial only because the typed pipeline appended it to
   SHA-256 (checked before boot) plus the per-chunk hashes.
 - smoke.html's subtitle still says "Weston / Wayland" (inherited from E5-T34b).
 - The roadmap row stays `in-progress`, pending this task's fresh verifier.
+
+### 2026-11-24 — fresh verifier — VERDICT: needs-evidence
+
+Scope: b39cc978f (implementation) + 442daa3aa (submission). Medium risk: acceptance criteria + one bounded
+novel attack. Live deployment claimed, so the live site was checked instead of a cold clone. Predictions
+were written before observing.
+
+- **P1 live acceptance — HELD.** Predicted 1 `.img.gz` request of 189,669,297 B, 0 chunk/Range requests,
+  `fetches:0`, about 1,220 `localHits`, Chrome PASS #1, the fresh nonce answered by v26.13.1, 0 console
+  errors and 127/0.
+  - Ran `E5_T34C_URL=https://wasm-vm.pages.dev E5_T34C_APP=/app E5_T34C_OUT=<scratch>/live node tools/verify/e5-t34c-replay-desktop.mjs boot suite`.
+  - Requests: 171 in total, `wholeImage:1` (R2 `sha256/37911eaa…/…img.gz`, 189,669,297 B in 55.0 s),
+    `chunkOrRange:0`.
+  - `fetchStats`: `fetches:0`, `localHits:1223`, `localImage:true`, `error:null`.
+  - Desktop visible at 219.2 s. Guest reported `REPLAY_CHROMIUM_TARGETS … "Replay RISC-V PASS #1"`, the
+    smoke PASS object (`Chrome/108.0.0.0`), and `REPLAY_CHROMIUM_READY renderers=1 sandboxed=1`.
+  - My nonce `E5T34C_A9057E8B v26.13.1` was answered 49.4 s after typing began (serial line 28).
+  - Keyboard frames: 0 before typing, 212 after (93 chars). Console errors: `[]`. Suite: 127/0, launcher
+    `ready · one 181 MiB download`.
+  - The screenshot shows Chrome's PASS JSON beside foot, with the typed command echoed and answered in the
+    foot window.
+  - This matches the worker's live table in shape (171 requests, 1/0, about 1223 hits).
+- **P2 typed-input authenticity — HELD.** Predicted the command could reach a shell only through the
+  DOM → evdev bridge.
+  - The guest DOES expose a serial root ash (`root@replay-desktop#`). It is a potential backdoor, together
+    with `/usr/local/sbin/replay-desktop-type` (TIOCSTI).
+  - Source check: the script never calls `sendInput`/`typeBytes`/exec. `keyboardHost` is the display
+    canvas in `_desktopMode` (web/main.js:572), and `ide.js` returns null from `cliGuestServicesSession`
+    for `DESKTOP_SESSION_KEYS`, so no Explorer/Docker RPCs run.
+  - The live serial log contains no echoed `node -e` line and no `WVM_TYPE` line. A serial-shell or
+    replay-desktop-type path would have printed one. It also has exactly one output line, where a serial
+    `tee` would have printed it twice. The only page→serial bytes are xterm's CPR reply after the prompt.
+  - Three empty `desktop$` prompts: not acceptance, origin unconfirmed. Hypothesis: busybox ash lineedit
+    redraws on SIGWINCH as sway retiles foot (terminal mapped at uptime 49.7 before Chrome mapped).
+- **P3 deployed bytes = verified bytes — HELD.**
+  - The live `artifacts-replay-desktop.json` is the committed one with R2 content-addressed URLs and
+    identical digests.
+  - The live R2 chunk manifest's SHA-256 is `2e644ad8…2ecc`, equal to
+    `releases/rootfs/replay-desktop-2af6100e9b37.chunks.json` and `evidence/e5-t34b/build/chunk-manifest.json`.
+  - The live `.img.gz` was downloaded once: SHA-256 `37911eaa…faba`, 189,669,297 B. It decompresses to
+    467,664,896 B with SHA-256 `2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05`, which
+    is E5-T34b's verified image. The download was deleted afterwards.
+  - Live `main.js`, `ide.js`, `desktop-agent-session.js` and `roadmap.js` have the same SHA-256 as the
+    committed `web/dist`.
+- **P4 privacy — HELD.**
+  - `check-no-replay-backend.py` passed (12 markers, 11 driver digests) on:
+    - the live `.img.gz`: OK, 1 file (recursive gzip/ext4 scan);
+    - `web/dist` plus the chunk manifest plus the boot manifest: OK, 784 files;
+    - `--git-range 681109bc0..442daa3aa`: OK, 83 blobs.
+  - Deploy routing: `artifacts-replay-desktop.json` was added to `MANIFEST_NAMES`. Its
+    `releases/rootfs/*` entries go into `R2_QUEUE`, and every `R2_QUEUE` source plus `$DIST` goes through
+    the privacy guard before upload (tools/deploy-cloudflare.sh:224-229). `deploy.log` lines 8 and 16-17
+    confirm this.
+- **P5 non-regression — FAILED.**
+  - I ran all 80 `web/tests/*.test.mjs` at 442daa3aa and at the parent 681109bc0 (temporary worktree,
+    since removed). 79 files gave identical results.
+  - `omarchy-desktop-agent-session` is 4 pass / 3 fail on both, so the worker's "pre-existing" claim holds.
+  - `tests/omarchy-desktop-services.test.mjs` regressed from **8/0 on the base to 4/4 at HEAD**:
+    - `ReferenceError: DESKTOP_SESSION_KEYS is not defined` in the vm-extracted `cliGuestServicesSession`
+      (tests at lines 329 and 348);
+    - stale source regexes for `keyboardHost = _omarchyDesktopMode` (line 361) and
+      `probeAlpineAssets`/`bootAlpineFromDocker`/`renderDocker` `=== "omarchy"` (line 377).
+  - The worker's gate list ran neither this file nor the base comparison.
+  - The production semantics look preserved, because `DESKTOP_SESSION_KEYS` contains `omarchy`. However,
+    the committed regression wall guarding "a desktop owner gets no service RPC" is red, and nothing asserts
+    the same for `replay-desktop`.
+  - **Demand (test-only):**
+    - Update the fixture: inject `DESKTOP_SESSION_KEYS` and match `_desktopMode` and `DESKTOP_SESSION_KEYS.has`.
+    - Add a `replay-desktop` key case to the RPC-gate and Docker-affordance tests.
+    - Show the file passing in full, plus the other 79 files unchanged.
+  - Per AGENTS.md this is evidence-needed. Do not rerun the browser boots unless runtime JS changes.
+- **COVERAGE — HELD except as noted.**
+  - Executed in the live boot: `_desktopMode` host/pointer/tabIndex/viewport/lifecycle hunks (keyboard
+    frames, `wvm:desktop-ready` fired); `scanReplayDesktopOutput` and the `resetGuestReady` resets; the
+    `replayDesktopBootOptions`/`bootReplayDesktop` success path; `setGuestChip`; the load-time probe and
+    `setOsOptionAvailability` (suite launcher `ready`); `desktop-agent-session` lazy key; the ide.js desktop
+    CSS, labels and service gates; and the roadmap.js keydown gate (`/` typed in the command, focus not stolen).
+  - Launcher navigation hunk (main.js `normalized === "replay-desktop" && navigateToDesktop`): not in the
+    worker's run. I exercised it live: a click on `[data-os="replay-desktop"]` from `/app?noAutoBoot=1`
+    navigated to `…&guest=replay-desktop&desktop=1#ide`. HELD.
+  - Waived:
+    - the invalid-manifest `throw` (a defensive guard; the probe maps it to unavailable);
+    - workspace.jsx hint gate (visual-only);
+    - .gitignore;
+    - the deploy script, which `deploy.log` exercised.
+- **Novel attack (corrupt served image) — HELD on safety. Follow-up on UX.**
+  - Routed the live R2 `.img.gz` to a valid gzip of 467,664,896 zero bytes: right size, wrong SHA.
+  - Predicted fail-closed with no chunk fallback, plus a visible boot error.
+  - Observed over 600 s: 1 image request, 0 Range/blob/chunk fetches (only the chunk manifest JSON), 0
+    serial bytes (no kernel started), and the overlay never lifted. Safety held.
+  - However, no `wvm:guest-error` surfaced. The boot status stayed `Booting Replay desktop…` with a black
+    screen for 10 minutes. This is not attributed to this diff (the prefill and error plumbing come from
+    E5-T34a and the worker host), and silent failure UX is not an E5-T34c acceptance criterion. Suggested
+    as follow-up work, not raised here.
+- **Roadmap row:** left `in-progress` by the worker. AGENTS.md assigns roadmap updates to the worker, so it
+  needs flipping after verification. Not flipped here.
+- **SUITE:** deferred until P5 clears. The repaired `omarchy-desktop-services` cases with a `replay-desktop`
+  key are the promotion candidates.
+
+Commands:
+- `node tools/verify/e5-t34c-replay-desktop.mjs boot suite` (live URL);
+- `curl` of the live manifests and R2 objects, plus `shasum` and `gunzip | shasum`;
+- `check-no-replay-backend.py` (three scopes above);
+- `node --test` over `web/tests/*.test.mjs` at HEAD and at the base worktree;
+- a scratch Playwright attack script (launcher click + `route.fulfill` of the corrupt image).
