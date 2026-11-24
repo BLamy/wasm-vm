@@ -15,3 +15,9 @@ treat_warnings_as_errors = false
 chrome_pgo_phase = 0
 concurrent_links = 2
 enable_rust = true
+
+# Cross build: the V8 context snapshot needs a host (x64, riscv64-simulator) build of
+# Blink only to generate it, which Replay's native builds never compile and which
+# fails on Replay's blink changes. Build Blink contexts at runtime instead, as the
+# 108 port did; measuring the startup cost is a follow-up optimization.
+use_v8_context_snapshot = false
