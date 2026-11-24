@@ -1,0 +1,258 @@
+{
+  "label": "verifier",
+  "url": "http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "startedAt": "2026-11-24T20:01:58.060Z",
+  "trials": 3,
+  "scenarios": {
+    "idle": {
+      "wallMs": 8003,
+      "instructionsM": 323.5,
+      "mips": 40.4,
+      "framesReceived": 3,
+      "drawnPresents": 3
+    },
+    "click": {
+      "feedbackMs": {
+        "n": 1,
+        "missing": 2,
+        "min": 436.2,
+        "median": 436.2,
+        "max": 436.2
+      },
+      "resultMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 1943.6,
+        "median": 2136.6,
+        "max": 2172.2
+      },
+      "raw": {
+        "feedback": [
+          436.2,
+          null,
+          null
+        ],
+        "answered": [
+          2136.6,
+          1943.6,
+          2172.2
+        ],
+        "rates": [
+          {
+            "wallMs": 2175,
+            "instructionsM": 73,
+            "mips": 33.6,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 1971,
+            "instructionsM": 79.5,
+            "mips": 40.3,
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 2195,
+            "instructionsM": 94,
+            "mips": 42.8,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          }
+        ]
+      }
+    },
+    "sweep": {
+      "resultMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 969.6,
+        "median": 2132.8,
+        "max": 3652.7
+      },
+      "cursorArriveMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 66.1,
+        "median": 166.6,
+        "max": 1983.3
+      },
+      "raw": {
+        "answered": [
+          2132.8,
+          3652.7,
+          969.6
+        ],
+        "cursor": [
+          66.1,
+          1983.3,
+          166.6
+        ]
+      }
+    },
+    "type": {
+      "echoMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 57.4,
+        "median": 301.8,
+        "max": 312.6
+      },
+      "raw": {
+        "echo": [
+          312.6,
+          301.8,
+          57.4
+        ]
+      }
+    },
+    "node": {
+      "promptMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 14602.3,
+        "median": 15086.3,
+        "max": 42392.4
+      },
+      "raw": {
+        "done": [
+          42392.4,
+          14602.3,
+          15086.3
+        ],
+        "rates": [
+          {
+            "wallMs": 42450,
+            "instructionsM": 889.5,
+            "mips": 21,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 14611,
+            "instructionsM": 575.5,
+            "mips": 39.4,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 15137,
+            "instructionsM": 564.5,
+            "mips": 37.3,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          }
+        ]
+      }
+    },
+    "mips": {
+      "nodeIntLoop": {
+        "wallMs": 19130,
+        "instructionsM": 1103,
+        "mips": 57.7,
+        "framesReceived": 3,
+        "drawnPresents": 3
+      },
+      "shellLoop": {
+        "wallMs": 17673,
+        "instructionsM": 762.5,
+        "mips": 43.1,
+        "framesReceived": 0,
+        "drawnPresents": 0
+      }
+    }
+  },
+  "yieldMode": "scheduler.postTask",
+  "maxSliceMs": 50.0349999666214,
+  "maxStretchGapMs": 51.389999985694885,
+  "jit": {
+    "hasExecutor": true,
+    "compiledBlocks": 168,
+    "executedBlocks": 117327218,
+    "retiredViaJit": 2207636969,
+    "directChainEntries": 429762586,
+    "directChainLinks": 312436195,
+    "dynamicLinkAttempts": 38388896,
+    "dynamicLinkHits": 11258421,
+    "dynamicLinkRefusals": 27130475,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 1,
+    "dynamicLinkInstalls": 4183588,
+    "entryCost": {
+      "timingEnabled": false,
+      "timerReads": 0,
+      "hostEntries": 117327218,
+      "stateCopyCalls": 234654436,
+      "stateCopyBytes": 25318061248,
+      "stateCopyNs": 0,
+      "engineEntryNs": 0,
+      "indirectTableDispatches": 59695283,
+      "authorityChecks": 148037103,
+      "memorySplitExits": 2866937,
+      "deviceBoundaries": 12044,
+      "deviceBoundaryNs": 0
+    },
+    "jitRegionChaining": true,
+    "jitDynamicChaining": true,
+    "guestRetired": 7403679495,
+    "jitEngineCalls": 117327218,
+    "jitLogicalBlocksPerEngineCall": 3.6629402224469345,
+    "jitRetiredShare": 0.2981810558507976,
+    "chainLinksMade": 31958,
+    "chainLinksCut": 31905,
+    "chainDispatchEntries": 83673208,
+    "chainMaxDepth": 128,
+    "chainLinksFollowed": 109336296,
+    "jitResidencyPolicy": "repack-off",
+    "jitResidencyCap": 24,
+    "jitSubmittedMembers": 83608,
+    "jitCompilePauseNs": 0,
+    "jitCompilePauseMaxNs": 0,
+    "jitCompilePauseSamples": 14362,
+    "jitCacheInstalls": 83607,
+    "jitCacheRetranslations": 76528,
+    "jitCacheEvictions": 14042,
+    "jitCacheBatches": 21,
+    "jitCacheCodeBytes": 1839044,
+    "compileQueue": {
+      "admitted": 254182,
+      "droppedBackpressure": 437903,
+      "cancelledStale": 16476,
+      "popped": 108170,
+      "queueHighWater": 256,
+      "queueDepth": 248,
+      "capacity": 256
+    },
+    "discovery": {
+      "nominated": 562800,
+      "deduped": 191960814,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 266000677,
+      "excluded": 447,
+      "queueDepth": 3,
+      "queueHighWater": 869,
+      "candidates": 40155,
+      "generation": 99
+    },
+    "decodedCacheEntries": 4096,
+    "decodedBlocksDiscarded": 59,
+    "decodedCacheFlushes": 4,
+    "discoveryGeneration": 99,
+    "blockEntryHits": 797153209,
+    "blockBuilds": 57303889,
+    "admissionProbe": false,
+    "coldCounterRecycling": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    }
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "finishedAt": "2026-11-24T20:05:19.388Z"
+}

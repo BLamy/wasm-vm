@@ -3,7 +3,7 @@ id: E4-T40a
 epic: 4
 title: Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline
 priority: 0.38761
-status: implemented
+status: in-progress
 depends_on: [E5-T34e]
 estimate: S
 risk: low
@@ -79,3 +79,104 @@ the benchmark does not assert on console errors.
 What the recording demonstrates: the tool measures the interaction latencies a
 person sees on the built page, from the DOM event to the canvas pixels, and the
 shipped configuration is slower than the same build with the JIT off.
+
+### 2026-11-24 — verifier — VERDICT: refuted
+
+Scope: 47bcbe417 (tool, baseline files, claim). Low risk: direct result only, with no cold
+clone, sabotage or novel attack. P1–P4 were predicted before reading the JSON or running
+anything. P5 arose from the P4 result; its experiment's predictions were written before it
+ran. Build checked first: `web/pkg/wasm_vm_wasm_bg.wasm`, `web/dist/pkg/…` and the bytes
+served on :8123 all have SHA-256 `c6cc6692…5ddd5`, as claimed, and the tool on disk is the
+committed one.
+
+- **P1 latencies come from DOM events and canvas pixels, not the serial console — HELD.**
+  - Start times are capture-phase `window` listeners stamping `performance.now()`
+    (`tools/perf/desktop-latency.mjs:92-94`), read at :184, :206, :222 and :242.
+  - End times are a per-animation-frame hash of each named region, recorded only when it
+    differs from the previous hash (:83-90, :96-105). `latency()` reads nothing else (:135-140).
+  - The only serial call is `window.wvmDemo.exec` at :259, inside `mips()`, which reports wall
+    time and instructions and no latency.
+  - The display canvas defaults to the Canvas2D backend (`web/main.js:105`), so the `drawImage`
+    readback at :85 sees persistent pixels.
+  - Data cross-check: the independent `sched()` bracket is 12–57 ms longer than each pixel
+    latency. `baseline-a.json` `scenarios.click.raw`: wallMs 2604/2441/1305 against answered
+    2561.1/2428.8/1283.2. `baseline-b.json` `scenarios.node.raw`: 24911/15012/14565 against
+    24853.8/14979.2/14541.8.
+- **P2 a region that never changes gives a missing sample, not a number — HELD, demonstrated.**
+  - Scratch Playwright experiment (not committed): the tool's own probe, `latency()` and
+    `stats()` source, sliced out of the file at run time, against a static 1280×800 canvas
+    with no guest and no `wvmDemo`. A real `page.mouse.down()` repaints only the `button`
+    region 300 ms later.
+  - Predicted a `button` latency of 300–450 ms and `runs` null. Observed `button`
+    315.4/315.2/316.0 ms; `runs` null three times with 0 recorded changes;
+    `stats([null,null,null])` gives `{n:0, missing:3}` with no median.
+  - Code path: `waitForFunction` timeout → `catch { return null }` (:136-138) → `stats()`
+    drops nulls and counts them as `missing` (:151-155).
+  - The same thing happened on the real desktop in P4.
+- **P3 log numbers match the files — table HELD; one prose number FAILED.**
+  - Every table cell matches after rounding: idle 40.6/59 MIPS; click feedback 651.9/380.7;
+    click result 2428.8 (1283.2–2561.1) and 1264.8 (714–1589.2); sweep 1151.5 (1020.7–2818.8);
+    key echo 1607.7 (84.4–2619.5); node 14979.2 (14541.8–24853.8); Node loop 54047/46532 ms;
+    shell loop 16505 ms, 46.2 MIPS and 14211 ms, 53.6 MIPS, both 762 M. Also correct: 2,380 M
+    against 1,445 M, 50–101 M per click (`baseline-a`), one 404 console error per file,
+    `missing: 0` everywhere, Chrome 158.0.8127.88.
+  - FAILED: "the Node command retired 580–947 M". `baseline-b.json`
+    `scenarios.node.raw.rates[].instructionsM` is 946.5, 580, 572, so the range is 572–947 M.
+    Correct the sentence.
+- **P4 acceptance command reports every scenario with no missing sample — FAILED.**
+  - Ran it once: `node tools/perf/desktop-latency.mjs --label verifier --n 3 --out evidence/desktop-latency/verifier-check.json`.
+    It exited 0, reported all six scenarios and wrote the JSON and PNG.
+  - `verifier-check.json` `scenarios.click.feedbackMs` is `{n:1, missing:2}`, with
+    `raw.feedback` `[436.2, null, null]`. Every other measure has `missing: 0`.
+  - In the two failing trials the button region did not change between the press and the
+    start of the next trial. Each following `settle()` returned about 2.5 s after the result
+    (tool stdout: click #2 at 20:02:12.792, click #3 at 20:02:17.519 with a 2172.2 ms result,
+    `scenario sweep` at 20:02:20.046), so nothing repainted after the result either. The
+    guest painted no pressed state for a 60 ms press (:183), and :186 reads the button once,
+    right after `runs` changes.
+  - Re-check: two click-only reruns (scratch output) had all 6 feedback samples present
+    (153.6/1954.8/410.2 and 121.7/1830.4/581.8). The failure is intermittent: 2 of 15
+    feedback samples across the worker's runs and mine.
+  - Not attributed to host load: the guest ran at 33.6–42.8 MIPS in these trials against
+    34.2–41.6 in `baseline-a`. I cannot exclude load as a contributor.
+  - `verifier-check.png` shows the Replay desktop: Chromium on `smoke.html` with `"runs": 7`
+    (1 + 3 clicks + 3 sweep clicks) and the foot terminal with
+    `desktop$ node -e 'console.log(6*7)'`, `42` and a new prompt.
+  - Demand: make the feedback measure reliable, or report "no feedback frame before the
+    result" as a result of its own instead of a missing sample. Then record the literal
+    acceptance command, all six scenarios in one run, more than once.
+- **P5 click: "pointer already resting on the button" — FAILED for trial 1.**
+  - `click()` calls `moveTo(BUTTON); settle()` (:178). `settle()` returns at once when no
+    watched region changed in the last 2.5 s (:142-149), which is the state `idle` leaves.
+  - Scratch experiment on the real page, using the tool's own probe and `settle()`: after
+    6 s parked at (640,700), a pointer move onto the button with no press. `settle()`
+    returned after 1 ms in both rounds. The `button` region then changed 416.2/732.8/1082.4 ms
+    and 216.6/233.3 ms after the move; `runs` did not change.
+  - In my acceptance run the trial-1 press came within about 60 ms of `scenario click`
+    being logged (20:02:06.082; click #1 logged at 20:02:08.284 with a 2136.6 ms result).
+  - So a trial-1 feedback sample (394.4 in `baseline-a`, 256.1 in `baseline-jit0`, 436.2 in
+    mine) cannot be told apart from the pointer's own arrival repaint. The table medians,
+    651.9 and 380.7, are both trial 3 and are not affected.
+  - Demand: wait for the move's repaint to finish before the first press.
+- **COVERAGE — HELD.** Every scenario function ran across the four baseline runs and
+  `--query` ran in `baseline-jit0`. The timeout-to-null path (:138) ran only in my P2
+  experiment. Waived as configuration: `--url`, `--app`, `--headed`, `--chrome` and the two
+  timeout options.
+- **Carried forward for the next verifier:** P1, P2 and the P3 table are HELD and need no
+  re-check unless the probe, `latency()`, `stats()` or the baseline files change.
+- **Notes, not findings.**
+  - The worker recorded four partial-scenario runs, never the literal acceptance command.
+  - The Node integer loop depends on what ran before it. In my six-scenario run it took
+    19,130 ms and 1,103 M instructions (`verifier-check.json` `scenarios.mips.nodeIntLoop`),
+    against 54,047 ms and 2,379.9 M in `baseline-mips.json`, where `mips` ran alone. The shipped
+    and `?jit=0` rows for this loop also came from different scenario lists (`mips` against
+    `idle,click,mips`). Cause not investigated. The shell loop is stable at 762–762.5 M.
+  - Timings in my run are not compared with the baseline; other jobs were running.
+- **SUITE:** n/a until the refutation clears.
+
+Commands:
+- `shasum -a 256` on `web/pkg`, `web/dist/pkg` and the served wasm;
+- the acceptance command above, once;
+- `node tools/perf/desktop-latency.mjs --n 3 --scenarios click --out <scratch>` twice;
+- a scratch static-canvas Playwright script (P2) and a scratch move-without-press script (P5);
+- a Python comparison of the log table with the four baseline JSON files.
