@@ -156,6 +156,21 @@ try {
   summary.memHwmKib = Number((metrics.match(/^\s*(\d+)\s*$/m) || [])[1]);
   child.stdin.write("sync; poweroff -f\n");
   await Promise.race([exit, new Promise((r) => setTimeout(r, 120_000))]);
+  // Acceptance is asserted, not just recorded: any wrong value fails the run (exit 1).
+  const page = summary.chromium.page || "";
+  const checks = {
+    titlePass: /"title":"Replay RISC-V PASS #\d+"/.test(summary.chromium.targets || ""),
+    pagePass: /\\"pass\\": true/.test(page) && /\\"javascript\\": 42/.test(page) &&
+      /\\"webassembly\\": 42/.test(page) && /42,\\n\s*128,\\n\s*64,\\n\s*255/.test(page),
+    rendererSandboxed: summary.chromium.sandbox.length > 0 &&
+      summary.chromium.sandbox.every((l) => /NoNewPrivs=1/.test(l) && /Seccomp=2/.test(l)),
+    keyboard: summary.keyboard?.pass === true,
+    node26: summary.terminal?.nodeVersion === "v26.13.1",
+  };
+  summary.acceptance = { checks, pass: Object.values(checks).every(Boolean) };
+  if (!summary.acceptance.pass) {
+    throw new Error(`acceptance failed: ${Object.entries(checks).filter(([, v]) => !v).map(([k]) => k).join(", ")}`);
+  }
 } catch (e) {
   summary.error = String(e.stack || e);
   process.stderr.write(`[native-boot] ${summary.error}\n`);
