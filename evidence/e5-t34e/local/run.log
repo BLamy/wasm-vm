@@ -1,0 +1,29 @@
+[e5-t34e 2026-11-24T03:05:54.914Z] open http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-24T03:05:56.736Z] downloads finished {"wholeImageFinishedMs":1827,"snapshotStartedMs":745,"snapshotFinishedMs":801,"wholeImageStartedMs":802,"downloadsFinishedMs":1827}
+[e5-t34e 2026-11-24T03:05:58.511Z] desktop visible 3603 ms; 1776 ms after the downloads finished
+[e5-t34e 2026-11-24T03:05:59.099Z] Chrome runs before click 1
+[e5-t34e 2026-11-24T03:06:05.554Z] Chrome runs after click 2 (6455 ms)
+[e5-t34e 2026-11-24T03:06:23.937Z] typed node -e "console.log('E5T34E_86A8BEDD', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-24T03:06:57.973Z] node answered 49365 ms after typing began
+[e5-t34e 2026-11-24T03:07:03.028Z] warm PASS {"times":{"wholeImageFinishedMs":1827,"snapshotStartedMs":745,"snapshotFinishedMs":801,"wholeImageStartedMs":802,"downloadsFinishedMs":1827,"desktopVisibleMs":3603,"downloadEndToDesktopMs":1776,"runAgainAnsweredMs":6455,"nodeAnswerAfterTypingMs":49365},"counts":{"total":174,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
+[e5-t34e 2026-11-24T03:07:03.130Z] open http://127.0.0.1:8123/?guest=replay-desktop&desktop=1&noSnapshot#ide
+[e5-t34e 2026-11-24T03:07:04.689Z] downloads finished {"wholeImageFinishedMs":1562,"wholeImageStartedMs":587,"downloadsFinishedMs":1562}
+[e5-t34e 2026-11-24T03:09:52.007Z] desktop visible 168880 ms; 167318 ms after the downloads finished
+[e5-t34e 2026-11-24T03:09:52.411Z] Chrome runs before click 1
+[e5-t34e 2026-11-24T03:09:58.506Z] Chrome runs after click 2 (6095 ms)
+[e5-t34e 2026-11-24T03:10:16.864Z] typed node -e "console.log('E5T34E_E51421E8', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-24T03:10:48.899Z] node answered 47362 ms after typing began
+[e5-t34e 2026-11-24T03:10:53.950Z] cold PASS {"times":{"wholeImageFinishedMs":1562,"wholeImageStartedMs":587,"downloadsFinishedMs":1562,"desktopVisibleMs":168880,"downloadEndToDesktopMs":167318,"runAgainAnsweredMs":6095,"nodeAnswerAfterTypingMs":47362},"counts":{"total":173,"wholeImage":1,"snapshot":0,"chunkOrRange":0,"diskRelated":1,"chunkManifest":1,"bootDiskRelated":1}}
+[e5-t34e 2026-11-24T03:10:54.051Z] open http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-24T03:11:06.164Z] attack-identity PASS {"states":["fetching","instantiating","booting"],"warnings":["wasm-vm: warm snapshot not admitted (kernel) — cold booting"]}
+[e5-t34e 2026-11-24T03:11:09.141Z] open http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Target page, context or browser has been closed
+    at attackMode (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34e-replay-desktop-warm.mjs:303:14)
+    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t34e-replay-desktop-warm.mjs:331:62
+
+Node.js v24.20.0
+EXIT=1

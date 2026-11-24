@@ -1,0 +1,30 @@
+{
+  "task": "E5-T34e",
+  "mode": "attack-core",
+  "url": "http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide",
+  "states": [
+    {
+      "state": "fetching",
+      "at": 771.4700000286102
+    },
+    {
+      "state": "instantiating",
+      "at": 1866.6399999856949
+    },
+    {
+      "state": "restoring",
+      "at": 2060.7200000286102
+    },
+    {
+      "state": "booting",
+      "at": 3298.4900000095367
+    }
+  ],
+  "warnings": [
+    "wasm-vm: warm snapshot not coherent (foreign_build) — cold booting"
+  ],
+  "failed": null,
+  "tamperedCoreOffset": 12,
+  "snapshotRequests": 1,
+  "consoleErrors": []
+}

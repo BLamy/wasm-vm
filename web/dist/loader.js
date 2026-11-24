@@ -34,6 +34,7 @@ import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
 import { stageGzipSnapshot } from "./snapshot-stream.js";
 import { fetchWholeImage } from "./whole-image.js";
+import { readOnlyRootSnapshotMismatch } from "./readonly-root-snapshot.js";
 import { applyAdmissionProbe } from "./admission-probe.js";
 import { applyColdCounterRecycling, isLoopbackOrigin } from "./cold-counter-recycling.js";
 
@@ -266,6 +267,10 @@ export async function startLinuxBoot(opts = {}) {
     // A demo desktop always starts from the shipped RAM+disk pair in memory. No shared writer
     // lock, durable user overlay, or long cold boot on the next visit.
     freshDesktop = false,
+    // E5-T34e: restore the manifest's warm RAM/device `bootSnapshot` of a guest whose root disk is
+    // mounted read-only (no overlay delta), on top of the whole-image prefill. The snapshot is
+    // fetched in parallel with the image; an absent, mismatched or refused snapshot cold-boots.
+    readOnlyRootSnapshot = false,
     // E9-T04: cold-boot a historical disk into an ephemeral private COW backend. CPU/RAM
     // checkpoint restore is coordinated separately by E9-T05; never combine this with a factory pair.
     sessionDiskRoot = null,
@@ -421,6 +426,10 @@ export async function startLinuxBoot(opts = {}) {
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
       throw new Error("fresh desktop requires an ephemeral chunked warm boot");
     }
+    if (readOnlyRootSnapshot && (!isChunked || persist || freshDesktop || virgl || extraDiskUrl
+      || wholeImageUrl == null || sessionAdmission || gpuSessionAdmission)) {
+      throw new Error("a read-only-root warm snapshot requires an ephemeral software chunked boot with a whole-image prefill");
+    }
     if (sessionDiskRoot !== null && (!isChunked || persist || freshDesktop || virgl || extraDiskUrl
       || opts.bootSnapshot !== false)) {
       throw new Error("historical disk roots require an ephemeral software chunked boot with bootSnapshot=false");
@@ -475,6 +484,24 @@ export async function startLinuxBoot(opts = {}) {
         onProgress: (loaded, total) => onProgress(phase, loaded, total),
       });
     };
+
+    // E5-T34e: admit (or refuse) the read-only-root warm snapshot from its declared identity, then
+    // start its download NOW so it overlaps the kernel and whole-image downloads below.
+    let roSnapshotEntry = null;
+    let roSnapshotDownload = null;
+    if (readOnlyRootSnapshot && opts.bootSnapshot !== false) {
+      const mismatch = readOnlyRootSnapshotMismatch(bootSnap, {
+        imageSha256: wholeImageSha256, kernelSha256: km.sha256, ramMib, bootargs,
+        guestClock, icountDivider,
+      });
+      if (mismatch) {
+        console.warn(`wasm-vm: warm snapshot not admitted (${mismatch}) — cold booting`);
+      } else {
+        roSnapshotEntry = bootSnap;
+        roSnapshotDownload = fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t))
+          .then((bytes) => ({ bytes }), (error) => ({ error }));
+      }
+    }
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
@@ -1022,6 +1049,37 @@ export async function startLinuxBoot(opts = {}) {
         alpineRamBlob = null;
         alpineStagedSnapshot?.free();
         alpineStagedSnapshot = null;
+      }
+    }
+    // E5-T34e: the read-only-root warm snapshot. The machine above is a fresh plain chunked boot
+    // whose resume identity is (build core hash, chunk-manifest base hash, generation 0); the wasm
+    // coherence guard compares the snapshot header against exactly that before any state changes.
+    if (roSnapshotDownload) {
+      let staged = null;
+      try {
+        const { bytes, error } = await roSnapshotDownload;
+        if (error) throw error;
+        if (bytes.byteLength !== roSnapshotEntry.size || (await sha256hex(bytes)) !== roSnapshotEntry.sha256) {
+          throw new Error("warm snapshot integrity check failed");
+        }
+        onState("restoring");
+        onProgress("bootSnapshot: unpacking", null, null);
+        staged = (await stageGzipSnapshot(bytes, roSnapshotEntry, (size) => new SnapshotBuffer(size))).buffer;
+        const owned = staged;
+        staged = null; // consumed even if the restore refuses/throws.
+        const decision = machine.restoreSnapshotBuffer(owned);
+        if (decision === "resume") {
+          restoredFromBootSnapshot = true;
+          onState("restored");
+        } else {
+          console.warn(`wasm-vm: warm snapshot not coherent (${decision}) — cold booting`);
+        }
+      } catch (e) {
+        console.warn("wasm-vm: warm snapshot restore failed, cold booting:", e?.message || e);
+        restoredFromBootSnapshot = false;
+      } finally {
+        staged?.free();
+        roSnapshotDownload = null;
       }
     }
     if (mode === "initramfs" && bootSnap && opts.bootSnapshot !== false) {

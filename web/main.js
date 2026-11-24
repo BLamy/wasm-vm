@@ -1740,6 +1740,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       // caused an otherwise-idle whole-machine Worker to receive four diagnostic RPCs per second.
       bootProgress.dispatch({ kind: "ready" });
       markGuestReady();
+      watchReplayDesktopPixels();
     }
     // A restored guest is parked at its shell prompt with no pending output; send a newline so the
     // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady has already
@@ -2104,6 +2105,12 @@ function scanReplayDesktopOutput(text) {
   if (!_replayDesktopMode || currentGuestKind !== "replay-desktop" || replayDesktopMarkerSeen) return;
   replayDesktopTail = (replayDesktopTail + text).slice(-4096);
   if (!/REPLAY_DESKTOP_READY uptime=/.test(replayDesktopTail)) return;
+  watchReplayDesktopPixels();
+}
+// E5-T34e: a warm restore resumes AFTER the guest printed REPLAY_DESKTOP_READY (the snapshot was
+// captured on that marker), so the restored path enters the same pixel gate directly.
+function watchReplayDesktopPixels() {
+  if (!_replayDesktopMode || currentGuestKind !== "replay-desktop" || replayDesktopMarkerSeen) return;
   replayDesktopMarkerSeen = true;
   markGuestReady();
   const generation = desktopReadinessGeneration;
@@ -2262,6 +2269,11 @@ async function bootOmarchy() {
 // deterministic instruction time divided by 64. RAM is 1 GiB (the browser Omarchy size), not the
 // native 2 GiB: guest RAM is one wasm32 allocation and 2048 MiB = 2^31 B exceeds isize::MAX, so
 // `Machine::try_new` refuses it. E5-T34b measured a 182 MiB guest RAM high-water mark.
+// E5-T34e: when the manifest carries the warm `bootSnapshot` (captured at REPLAY_DESKTOP_READY by
+// tools/build-replay-desktop-snapshot.sh from this exact image and device layout), it downloads in
+// parallel with the image and is restored instead of the cold boot; the loader cold-boots if it is
+// absent, declared for another image/kernel/layout, or refused by the wasm coherence guard.
+// `?noSnapshot` forces the cold boot.
 const REPLAY_DESKTOP_BOOTARGS =
   "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4";
 function replayDesktopBootOptions(manifest) {
@@ -2273,6 +2285,7 @@ function replayDesktopBootOptions(manifest) {
     throw new Error("Replay desktop manifest is missing its chunk manifest or whole image");
   }
   const absolute = (url) => new URL(url, location.href).href;
+  const warm = Boolean(artifacts.bootSnapshot) && !new URLSearchParams(location.search).has("noSnapshot");
   return {
     manifestUrl: "./artifacts-replay-desktop.json",
     mode: "chunked",
@@ -2283,7 +2296,8 @@ function replayDesktopBootOptions(manifest) {
     wholeImageSize: whole.uncompressedSize,
     bootargs: REPLAY_DESKTOP_BOOTARGS,
     persist: false,
-    bootSnapshot: false,
+    bootSnapshot: warm,
+    readOnlyRootSnapshot: warm,
     ramMib: 1024,
     fileTransfer: false,
     slirpNet: false,
@@ -2310,11 +2324,14 @@ async function bootReplayDesktop() {
       requestKey: "replay-desktop",
       onClaim: () => {
         lastBootError = null;
-        setRunBanner(
-          "Booting the <b>Replay desktop</b> (one whole-image download, then a cold boot)… the display and serial console are live guest output.",
+        setRunBanner(options.readOnlyRootSnapshot
+          ? "Starting the <b>Replay desktop</b> (the whole image and its warm snapshot download together, then it resumes)… the display and serial console are live guest output."
+          : "Booting the <b>Replay desktop</b> (one whole-image download, then a cold boot)… the display and serial console are live guest output.",
         );
         setGuestChip("replay-desktop");
-        if (osLauncherStatusEl) osLauncherStatusEl.textContent = "Downloading the whole Replay desktop image…";
+        if (osLauncherStatusEl) osLauncherStatusEl.textContent = options.readOnlyRootSnapshot
+          ? "Downloading the Replay desktop image and its warm snapshot…"
+          : "Downloading the whole Replay desktop image…";
       },
     },
   );
@@ -3772,8 +3789,11 @@ setInteractiveState();
   setOsOptionAvailability("omarchy", omarchyAvailable, "ready · 4 GiB desktop");
   {
     const gz = replayDesktopManifest?.artifacts?.wholeImage?.size;
-    setOsOptionAvailability("replay-desktop", replayDesktopManifest !== null,
-      `ready · one ${Number.isFinite(gz) ? Math.round(gz / 1048576) : "?"} MiB download`);
+    const warm = replayDesktopManifest?.artifacts?.bootSnapshot?.size;
+    const mib = (n) => (Number.isFinite(n) ? Math.round(n / 1048576) : "?");
+    setOsOptionAvailability("replay-desktop", replayDesktopManifest !== null, Number.isFinite(warm)
+      ? `ready · ${mib(gz)} + ${mib(warm)} MiB download, warm resume`
+      : `ready · one ${mib(gz)} MiB download`);
   }
   setOsOptionAvailability("node-alpine", nodeAlpineAvailable, "ready · fast restore");
   setOsOptionAvailability("alpine", alpineAvailable, "ready · fast restore");

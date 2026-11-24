@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 572,
-    "total": 781
+    "total": 782
   },
   "epics": [
     {
@@ -23612,10 +23612,53 @@
       "verificationLog": "(empty)",
       "adversarial": "Low risk: inspect the direct result.",
       "file": "tasks/epic-5-the-window/E5-T34d-replay-desktop-boot-failure-visible.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-23",
+          "commits": 1,
+          "labels": [
+            "Mark the shared Replay desktop verified on the roadmap; file E5-T34d"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-23",
+      "lastActivity": "2026-11-23",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T34e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Warm-resume the Replay desktop as soon as its single download finishes",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T34c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\nUser request (2026-11-24): the Replay desktop must fast-boot once it has finished\ndownloading. Today (E5-T34c) the 181 MiB whole-image prefill takes about 85 s on the\nlive site, and a cold guest boot then takes about 2.5 more minutes to reach the\ndesktop.\n\nReuse the verified warm-image machinery (Omarchy paired snapshots,\n`tools/build-omarchy-snapshot.sh`, E5-T26 restore and reconciliation; the loader's\n`bootSnapshot`). Do not build a new restore path. The Replay rootfs is mounted\nread-only, so its warm image is a RAM/device snapshot taken at\n`REPLAY_DESKTOP_READY` from the exact browser device topology and the exact\nE5-T34b image. A disk delta is needed only if the capture proves one (the image\nSHA-256 must be unchanged).\n\nShip the snapshot as one content-addressed artifact fetched in parallel with the\nimage prefill, so the whole download is still the whole OS at once. The guest\nrestores from the locally prefetched image with zero chunk or Range requests. The\ncold boot stays as an automatic fallback when no matching snapshot exists, and as\nthe `?noSnapshot` diagnostic. Bind the snapshot to the image SHA-256, kernel,\ndevice layout and wasm build, the way Omarchy's paired artifacts are bound, so a\nmismatch falls back to cold boot instead of restoring wrong state. No emulator\nsemantic change. Run the privacy guard on the snapshot (it holds guest RAM).\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nA Playwright script on the built page and on the live site must show:\n1. The image and snapshot downloads are the only disk-related requests, with zero\n   chunk or Range requests.\n2. The desktop is visible within a bounded time after both downloads finish\n   (target ≤ 15 s; record the measured value).\n3. The restored session is live, not a picture: clicking Chrome's \"Run again\"\n   increments `runs`, and a DOM-typed Node command prints `v26.13.1` with a fresh\n   nonce.\n4. Zero console errors.\n5. `?noSnapshot` still cold-boots to the same result.\n\nRecord download sizes, time from end of download to desktop, and the cold-boot\ncomparison.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Medium risk: check the acceptance criteria against recorded evidence. Attack the\nbinding by serving a snapshot that does not match the image, wasm build or device\nlayout: it must fall back to cold boot (or fail visibly), never restore. Try one\nbounded novel attack.",
+      "file": "tasks/epic-5-the-window/E5-T34e-replay-desktop-warm-resume.md",
+      "activity": [
+        {
+          "date": "2026-11-23",
+          "commits": 1,
+          "labels": [
+            "Start E5-T34e: warm-resume the Replay desktop after its single download"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-23",
+      "lastActivity": "2026-11-23",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T01a",

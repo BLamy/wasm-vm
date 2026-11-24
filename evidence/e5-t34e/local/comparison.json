@@ -1,0 +1,44 @@
+{
+  "warm": {
+    "wholeImageFinishedMs": 1827,
+    "snapshotStartedMs": 745,
+    "snapshotFinishedMs": 801,
+    "wholeImageStartedMs": 802,
+    "downloadsFinishedMs": 1827,
+    "desktopVisibleMs": 3603,
+    "downloadEndToDesktopMs": 1776,
+    "runAgainAnsweredMs": 6455,
+    "nodeAnswerAfterTypingMs": 49365
+  },
+  "cold": {
+    "wholeImageFinishedMs": 1562,
+    "wholeImageStartedMs": 587,
+    "downloadsFinishedMs": 1562,
+    "desktopVisibleMs": 168880,
+    "downloadEndToDesktopMs": 167318,
+    "runAgainAnsweredMs": 6095,
+    "nodeAnswerAfterTypingMs": 47362
+  },
+  "warmDownloads": {
+    "wholeImage": {
+      "url": "http://127.0.0.1:8123/releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "bytes": 189669297,
+      "declared": 189669297
+    },
+    "snapshot": {
+      "url": "http://127.0.0.1:8123/releases/boot-snapshot/replay-desktop-ready-dfcf85c2c260.snap.gz",
+      "bytes": 124609647,
+      "declared": 124609647
+    }
+  },
+  "coldDownloads": {
+    "wholeImage": {
+      "url": "http://127.0.0.1:8123/releases/rootfs/replay-desktop-2af6100e9b37.img.gz",
+      "bytes": 189669297,
+      "declared": 189669297
+    },
+    "snapshot": null
+  },
+  "warmDesktopAfterDownloadMs": 1776,
+  "coldDesktopAfterDownloadMs": 167318
+}
