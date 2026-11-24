@@ -3,7 +3,7 @@ id: E4-T40a
 epic: 4
 title: Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline
 priority: 0.38761
-status: implemented
+status: verified
 depends_on: [E5-T34e]
 estimate: S
 risk: low
@@ -380,3 +380,88 @@ Commands:
 
 P1, P2, the P3 table, P4a, P4b, P5 and P6 carry forward; the changed lines are the
 pressed-frame comparison in `click()` only.
+
+### 2026-11-24 — verifier (round 3) — VERDICT: verified
+
+Scope: 7bb0f1fb1 (the P4c fix, the committed self-test and fixture, one acceptance rerun).
+Low risk: direct result only. The tool, self-test and fixture on disk are the committed ones
+(`git diff HEAD -- tools/perf` is empty). The P4c prediction was written before the self-test
+ran. The prediction for the rerun was written before `rework-check.json` was read.
+
+- **P1, P2, P3, P4a, P4b, P5, P6 — HELD, carried forward from round 2.**
+  - `git show 7bb0f1fb1 -- tools/perf/desktop-latency.mjs` is one hunk, :207-213 (round 2's
+    :207-210). The probe (:79-117), `latency()` (:136-141), `settle()` (:145-154), `restOn()`
+    (:157-164), `stats()` (:165-170), the `required` check (:306-309) and the exit (:323-326)
+    are unchanged. The last two moved down three lines.
+  - The three baseline files are unchanged since 07e312517. The worker's label correction is
+    right: `baseline-jit0.json` `scenarios.mips.shellLoop.instructionsM` is 763.
+  - My self-test run repeated P4a at this head (`miss2`: exit 1, `missing: ["click.resultMs"]`)
+    and P4b (`none` and `after`: 0 of 6 pressed frames, `missing: []`, exit 0).
+- **P4c only a button repaint strictly before the result counts as a pressed frame — HELD.**
+  - The decision is made in the page from two unrounded timestamps. `c` is
+    `firstAfter("button", at)`, `res` is `firstAfter("runs", at)`, and a pressed frame is
+    reported only when `c < res` (`tools/perf/desktop-latency.mjs:210-212`). Rounding is
+    applied to the reported value, after the decision (:212).
+  - Predicted from the code: the probe takes one `performance.now()` per animation frame (:98)
+    and records it for every region that changed in that frame (:102). Two regions repainted
+    in one frame therefore get the same timestamp and `c < res` is false. So `same` reports 0
+    of 6, `before` 6 of 6, and the self-test passes.
+  - Observed, `node tools/perf/desktop-latency-selftest.mjs`, once, exit 0: `before` 6/6,
+    `same` 0/6, `none` 0/6, `after` 0/6, `miss2` exit 1 with `click.resultMs` missing, then
+    `desktop-latency self-test PASS`.
+  - The self-test tests what the worker says it does.
+    - It spawns the committed tool unmodified against the fixture
+      (`tools/perf/desktop-latency-selftest.mjs:31-34`).
+    - In `same` the fixture paints both regions in one timer callback
+      (`tools/perf/fixtures/desktop-latency-standin.html:38`). In `before` it paints the button
+      at +100 ms and `runs` at +300 ms (:36). The fixture's two regions equal the tool's
+      (fixture :19, tool :51-52) and do not overlap.
+    - Selftest :51 requires `[seen, none]` to equal `[0, 6]` for `same`, `none` and `after`,
+      and `[6, 0]` for `before`. :52 requires the latest pressed frame of `before` to be
+      earlier than its earliest result. :56-59 check `miss2`.
+  - The self-test fails on the round-2 bug. Scratch copy outside the repo: the tool from
+    07e312517, which differs from HEAD only at :207-213, with the committed self-test and
+    fixture byte-identical. Predicted a failure at `same`. Observed `before` ok 6/6, then
+    `AssertionError: same: pressed frames seen/none`, actual `[3, 3]`, expected `[0, 6]`, exit 1.
+- **Acceptance command rerun once (round 2's demand) — HELD, by inspection of the worker's file.**
+  - `evidence/desktop-latency/rework-check.json`: `scenarios` has idle, click, sweep, type,
+    node and mips. `missing` is `[]`. `click.resultMs`, `sweep.resultMs`,
+    `sweep.cursorArriveMs`, `type.echoMs` and `node.promptMs` are each `n: 3, missing: 0`.
+    `click.pressedFrame` is `{seen: 3, none: 0}`.
+  - `click.raw.pressed` is 602.6/268.6/287.7 against `click.raw.answered` 1835.9/552.1/570.2.
+    Each pressed frame is at least 282 ms before its result, so the old and the new comparison
+    agree on all three.
+  - `rework-check.png` shows `"runs": 7` and the terminal with `42` and a new prompt. Its
+    SHA-256 is `438989a0…caa4aaa5`, the end state round 2 noted for the baseline PNGs.
+  - I did not rerun the command. The file does not record which version of the tool wrote it;
+    it finished at 21:17:06Z, 20 s before the commit. `jit.hasExecutor` is false: the run was
+    on the working-tree build, as the worker says, and its timings are not compared with the
+    baseline.
+- **COVERAGE — HELD.**
+  - My self-test run executed :209-213 on every side: `c < res` true (`before`), `c` null
+    (`none`, `after`), `c` equal to `res` (`same`) and `r === null` (`miss2`, second press).
+  - Waived: `res !== null` at :212, which cannot be false once `latency()` has returned a
+    value; the child-error and no-result-file paths of the self-test (:37, :40), which are
+    error reporting; `window.__fake.log` in the fixture (:28, :35), a debugging aid that
+    nothing reads.
+- **Note, not a finding.** `sweep.raw.cursor` holds values of 0.1–0.2 ms in all five recorded
+  files, 9 of 15 samples (`baseline-1`, `baseline-2`, `baseline-jit0`, `verifier-check-r2`,
+  `rework-check`). A change of the button region 0.1 ms after the last `pointermove` is too
+  early to be the guest's response to that event. The last four sweep steps are already
+  inside the button region (:229-232 with :47-48 and :51), so it is presumably the repaint of
+  an earlier step; I did not check the pixels. That code is unchanged since round 1, no table
+  cites the number, and the acceptance text requires only that the sample is present. Check
+  this before citing `sweep.cursorArriveMs` as a latency.
+- **SUITE.** The committed self-test is the promoted deterministic test for the pressed-frame
+  rule and the missing-sample exit. Nothing else to promote. The scratch copy is discarded; it
+  is two `git show` commands.
+
+Commands:
+- `git show 7bb0f1fb1 --stat`; `git show 7bb0f1fb1 -- tools/perf`;
+  `git diff --stat HEAD -- tools/perf evidence/desktop-latency`;
+  `git diff --stat 07e312517 7bb0f1fb1 -- tools evidence web crates`;
+- `node tools/perf/desktop-latency-selftest.mjs`, once (3 min 58 s here);
+- the same self-test in a scratch directory, with `git show 07e312517:tools/perf/desktop-latency.mjs`
+  as the tool and `web/node_modules` symlinked, once;
+- a Python read of `rework-check.json` and of `sweep.raw.cursor` in the five JSON files;
+  `shasum -a 256 evidence/desktop-latency/*.png`.
