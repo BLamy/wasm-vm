@@ -3,7 +3,7 @@ id: E4-T40b
 epic: 4
 title: Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter
 priority: 0.38762
-status: pending
+status: in-progress
 depends_on: [E4-T40a]
 estimate: S
 risk: high
