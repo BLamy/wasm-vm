@@ -53,7 +53,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [-] `0.3876` [E4-T40](epic-4-acceleration/E4-T40-usable-replay-desktop.md) — Usable Replay desktop — interaction latency and guest CPU throughput (planning parent) *(deps: E5-T34e)*
 - [x] `0.38761` [E4-T40a](epic-4-acceleration/E4-T40a-desktop-latency-benchmark.md) — Interaction-latency benchmark for the in-browser Replay desktop, with a recorded baseline *(deps: E5-T34e)*
-- [~] `0.38762` [E4-T40b](epic-4-acceleration/E4-T40b-turbo-run-loop.md) — Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter *(deps: E4-T40a)*
+- [?] `0.38762` [E4-T40b](epic-4-acceleration/E4-T40b-turbo-run-loop.md) — Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter *(deps: E4-T40a)*
 
 ## Epic 0 — `epic-0-ignition`
 

@@ -1,0 +1,8 @@
+   1     Finished `dev` profile [unoptimized + debuginfo] target(s) in 19.72s
+   1 error: could not compile `wasm-vm-core` (lib) due to 5 previous errors
+   1 error: enum `Preparation` is never used
+   1 error: method `sync_session_devices` is never used
+   1 error: methods `begin_source_scope` and `commit_source_scope` are never used
+   1 error: methods `begin`, `end`, and `commit` are never used
+   1 error: methods `next_transition`, `reserve_transition`, and `advance` are never used
+   1 make: *** [clippy] Error 101

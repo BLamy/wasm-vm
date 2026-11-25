@@ -1,0 +1,10 @@
+busybox-legacy   state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+oracle diff rc=1 (1 = only the baseline README)
+turbo: enabled=true entries=2360038 blocks=47664512 inline_ops=396188013 slow_ops=3740642 ops_per_entry=169.5 
+turbo: enabled=true entries=15084958 blocks=370425648 inline_ops=1976057188 slow_ops=23717557 ops_per_entry=13

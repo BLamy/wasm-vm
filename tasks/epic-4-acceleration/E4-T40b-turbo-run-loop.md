@@ -3,7 +3,7 @@ id: E4-T40b
 epic: 4
 title: Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter
 priority: 0.38762
-status: in-progress
+status: implemented
 depends_on: [E4-T40a]
 estimate: S
 risk: high
@@ -372,3 +372,70 @@ then `TURBO_COV_FILE=… cargo test --workspace --exclude wasm-vm-wvseccomp --no
 --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings` on a worktree of
 `79b5c2817`; `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html
 --label verifier --n 3 --out evidence/e4-t40b/verifier/browser-dist.json`.
+
+### 2026-11-24 — worker — rework after `needs-evidence`
+
+Runtime head `a2233d307` (`7ac39f427` plus the regenerated GPU checkpoint build id);
+built page wasm SHA-256
+`3b26459e9fd454a8773fef90230206278123861bd8a67dc57043e56609e0198f`. Evidence:
+`evidence/e4-t40b/r2/`.
+
+**Items 1–6 (tests).** The verifier's file is adopted unchanged as
+`crates/core/src/turbo_equivalence_tests.rs` (SHA-256 `f84e6ff2…1c567f`, 14 tests) and
+acceptance 1 now names it: 17 tests pass (`r2/gates.log`). Per the verifier's hit
+counts and sabotage log, each of items 1–6 is executed by one of them and each
+sabotage fails one of them: the reservation clear
+(`inline_stores_clear_exactly_the_overlapping_reservation`), the trapping
+page-straddling entry (`page_straddling_entries_and_the_128_op_cap`), carrying on after
+a code-filter hit that drops nothing
+(`inline_store_to_a_page_whose_code_was_flushed_wholesale`), the `jalr` bit-0 mask
+(`jalr_targets_and_compressed_inline_ops`), live-work accounting of an ordinary-path op
+(`wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in`), and the remaining load/store
+widths and branch kinds (`inline_load_store_widths_and_all_six_branches`, the Sv39 and
+block-shape tests).
+
+**Item 7 (dead code).** `ordinary_next` and the "Fetch walks" paragraph are deleted.
+The invariant is stated where the branch was: `debug_assert!` that the code-write log
+is empty when a block's ops start. My claim that a fetch translation can update a PTE
+was wrong for this MMU.
+
+**The two non-findings.** Also removed, as inert: the settle-on-entry for a block that
+ends in a system op, with `DecodedBlock::system_end` and `is_control_transfer` — the
+ordinary-executor path settles before the system op and refreshes the `time` shadow at
+that block's boundary, which is what the module doc now says. `crates/core/src/dispatch.rs`
+is unchanged by this task again, so the Boundary's "no change to the block cache" holds
+literally. `ctx = next` after an ordinary-path op is kept (waived by the verifier). The
+Boundary now lists `--resume-core-id` / `--resume-base-id`.
+
+**Acceptance at this head.**
+
+1. 17 tests pass (`r2/gates.log`).
+2. Oracle: `diff -r` reports only the baseline README; busybox-fast 2,360,038 entries,
+   alpine-fast 15,084,958 (`r2/oracle.log`) — the same entry counts as before the rework.
+3. `EQUIVALENT (2000000000 instructions)`: FNV `0dab1ccaa237df29`, 1,999,831,660
+   retired, RAM `ed70e270…38701` — the digests of the previous head
+   (`r2/equivalence-2b.log`).
+4. Browser, on the committed `web/dist` through `tools/serve-dist.sh 8125`
+   (`r2/browser-dist.json`): exit 0, `missing: []`, turbo enabled with 70,439,402
+   entries, no JIT executor; click 488 ms median (482–1,682), sweep-then-click 434 ms,
+   key echo 50 ms, `node -e` 5.8 s (first run 26.6 s), Node loop 12.4 s, shell loop
+   6.7 s.
+
+**Gates.** `cargo fmt --all --check` clean. `make clippy`: the workspace command
+passes, the `zicsr-stub` command shows the same five pre-existing dead-code errors
+(`r2/clippy.log`). `cargo test --workspace --exclude wasm-vm-wvseccomp`: every binary ok,
+340 result lines, no failure (`r2/workspace-tests.log`). wasm32 core build and
+`wasm-pack test --node crates/wasm`: 81 result lines, all ok (`r2/wasm-tests.log`).
+
+**Cold clone** at `a2233d307` (`r2/cold-clone.log`; sparse checkout that leaves out
+`evidence/` except the oracle baseline, and `web/dist`, to fit this machine's disk; no
+tracked change; `RUSTFLAGS`/`RUST_LOG`/`CARGO_TARGET_DIR` unset): 17 tests pass, the
+oracle reproduces the baseline, and `EQUIVALENT (2000000000 instructions)` with RAM
+`ed70e270…38701`.
+
+**For the verifier.** Changed since the head you examined: `crates/core/src/turbo.rs`
+(the `ordinary_next` branch and its doc paragraph deleted, a `debug_assert!` in their
+place; the system-end settle and its doc sentence deleted), `crates/core/src/dispatch.rs`
+(back to the parent's content), `crates/core/src/lib.rs` (one `mod` line), the new test
+file, and this task file's Boundary and acceptance 1. `crates/core/src/hart/turbo.rs`,
+the CLI, the wasm crate and `web/` sources are untouched.
