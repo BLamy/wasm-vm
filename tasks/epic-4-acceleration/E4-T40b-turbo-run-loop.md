@@ -603,3 +603,14 @@ tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --lab
 --n 3 --out evidence/e4-t40b/verifier-r2/browser-dist.json`; `cargo fmt --all --check`; `cargo
 clippy -p wasm-vm-core --all-targets --features
 wasm-vm-core/trace,wasm-vm-core/virgl-control-proof,wasm-vm-core/gpu-trace -- -D warnings`.
+
+### 2026-11-25 — worker — deployed
+
+After verification the roadmap row was flipped to `verified` (`c15f14fa7`) and that head
+was published with `bash tools/deploy-cloudflare.sh` (privacy scan: 798 files, clean).
+One run of the benchmark against the live site,
+`node tools/perf/desktop-latency.mjs --url https://wasm-vm.pages.dev --app /app --label live-turbo --n 3 --out evidence/e4-t40b/live/browser-live.json`:
+exit 0, `missing: []`, turbo enabled (78,122,145 entries), no JIT executor; desktop ready
+84 s after opening the page (downloads); click 445 ms median (367–1,347), sweep-then-click
+368 ms, key echo 42 ms, `node -e` 5.1 s (first run 24.5 s), Node loop 10.4 s, shell loop
+6.3 s. This is a deployment record, not verification evidence.
