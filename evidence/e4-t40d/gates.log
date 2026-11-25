@@ -1,0 +1,109 @@
+# 2353157fe + working tree (E4-T40d)
+
+$ cargo fmt --check
+exit=0
+
+$ cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.11s
+exit=0
+
+# crates/wasm: --tests as a whole fails on two files this task does not touch (tests/hart.rs clippy::collapsible_match, tests/hart_ctrl.rs unused import), so lint the lib and the touched test.
+
+$ cargo clippy -p wasm-vm-wasm --lib --test decoded_cache_capacity --target wasm32-unknown-unknown -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+exit=0
+
+$ cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests
+running 8 tests
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 417 filtered out; finished in 0.03s
+
+exit=0
+
+$ cargo test -p wasm-vm-core --lib turbo
+test turbo_equivalence_tests::page_straddling_entries_and_the_128_op_cap ... ok
+test turbo_equivalence_tests::self_modifying_stores_and_page_faults_under_sv39 ... ok
+test turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops ... ok
+test turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches ... ok
+test turbo_equivalence_tests::counter_csrs_after_inline_ops_and_first_in_block ... ok
+test turbo_equivalence_tests::sbi_timer_deadlines_future_past_and_rearmed ... ok
+test turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in ... ok
+test tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries ... ok
+test turbo_equivalence_tests::random_programs_agree_under_every_slicing ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 410 filtered out; finished in 15.89s
+
+exit=0
+
+$ cargo test -p wasm-vm-core --test predecode_diff --test predecode_smc_diff
+test riscv_tests_cache_on_is_byte_identical has been running for over 60 seconds
+test riscv_tests_cache_on_is_byte_identical ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 80.51s
+
+     Running tests/predecode_smc_diff.rs (target/debug/deps/predecode_smc_diff-4d673f16f47cce90)
+
+running 1 test
+test smc_store_patches_cached_block_is_byte_identical ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+exit=0
+
+$ cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.37s
+exit=0
+
+$ wasm-pack test --node crates/wasm --test decoded_cache_capacity
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.38s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/decoded_cache_capacity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-a6539fff26c3f0cb.wasm)
+running 3 tests
+test whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compiled_state ... ok
+test strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutation ... ok
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 7.13s
+
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+exit=0
+
+$ node --test tests/e4-t40d-decoded-cache-sizes.test.mjs
+✔ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (1.119084ms)
+✔ numbers and exact decimal strings of the three sizes validate; nothing else does (0.699542ms)
+✔ every size pair: same size only reads, a change calls the setter once and verifies (0.218625ms)
+✔ an unsupported actual capacity or a setter that did not take effect fails closed (0.278042ms)
+✔ the Replay desktop asks for 262144 and takes an explicit query value verbatim (2.82425ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.548791
+exit=0

@@ -67,7 +67,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 4 — `epic-4-acceleration`
 
-- [~] `0.387642` [E4-T40d](epic-4-acceleration/E4-T40d-desktop-decoded-cache.md) — Size the Replay desktop's decoded-block cache to its working set (262144 entries) *(deps: E4-T40b, E5-T26k)*
+- [?] `0.387642` [E4-T40d](epic-4-acceleration/E4-T40d-desktop-decoded-cache.md) — Size the Replay desktop's decoded-block cache to its working set (262144 entries) *(deps: E4-T40b, E5-T26k)*
 
 ## Epic 5 — `epic-5-the-window`
 
