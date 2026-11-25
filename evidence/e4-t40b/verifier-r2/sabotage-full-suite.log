@@ -1,0 +1,14 @@
+SABOTAGE none [whole core lib suite]: 1 failed / 422 passed
+  FAILED dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget
+    gpu_transfer_full_frame_native_budget: 1280x800 transfer: 9.155292ms
+SABOTAGE item4-jalr-keeps-bit0 [whole core lib suite]: 2 failed / 421 passed
+  FAILED dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget
+  FAILED turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops
+    gpu_transfer_full_frame_native_budget: 1280x800 transfer: 7.256209ms
+    jalr_targets_and_compressed_inline_ops: thread 'turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops' (25896656) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("jalr", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Trapped(Trap 
+SABOTAGE item5-slow-op-live-work-not-counted [whole core lib suite]: 2 failed / 421 passed
+  FAILED dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget
+  FAILED turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in
+    gpu_transfer_full_frame_native_budget: 1280x800 transfer: 8.222292ms
+    wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in: thread 'turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in' (25897804) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("wfi", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: R
+restored; git status --short crates/: ''

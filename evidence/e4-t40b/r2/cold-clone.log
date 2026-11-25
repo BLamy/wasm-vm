@@ -1,0 +1,10 @@
+cold clone (sparse: no evidence/ except the oracle baseline, no web/dist) at a2233d307ec87943c32f532beb0b7b3791751eee, tracked changes=0
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 35s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 408 filtered out; finished in 2.24s
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+oracle: the only difference above must be the baseline README
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+COLD_DONE rc=0

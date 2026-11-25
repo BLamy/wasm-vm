@@ -1130,6 +1130,31 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
         "coldCounterRecycling",
         &cold_counter_recycling_object(machine),
     );
+    // The turbo run loop (interpreter-only execution): host-side counters, never machine state.
+    let turbo = machine.turbo_stats();
+    let turbo_obj = js_sys::Object::new();
+    let _ = js_sys::Reflect::set(
+        &turbo_obj,
+        &JsValue::from_str("enabled"),
+        &JsValue::from_bool(machine.turbo()),
+    );
+    for (key, value) in [
+        ("entries", turbo.entries),
+        ("blocks", turbo.blocks),
+        ("inlineOps", turbo.inline_ops),
+        ("slowOps", turbo.slow_ops),
+        ("exitHorizon", turbo.exit_horizon),
+        ("exitBudget", turbo.exit_budget),
+        ("exitBoundary", turbo.exit_boundary),
+        ("exitTrap", turbo.exit_trap),
+    ] {
+        let _ = js_sys::Reflect::set(
+            &turbo_obj,
+            &JsValue::from_str(key),
+            &JsValue::from_f64(value as f64),
+        );
+    }
+    set("turbo", &turbo_obj.into());
     obj.into()
 }
 
@@ -3966,6 +3991,15 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.machine.set_block_cache(on);
         inner.machine.set_interrupt_batching(on);
+        Ok(())
+    }
+
+    /// A/B switch for the turbo run loop, which is on by default and engages whenever the fast
+    /// interpreter runs without the JIT. Guest-visible results are identical either way.
+    #[wasm_bindgen(js_name = setTurbo)]
+    pub fn set_turbo(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_turbo(on);
         Ok(())
     }
 

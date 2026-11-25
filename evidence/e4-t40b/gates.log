@@ -1,0 +1,5 @@
+fmt: OK
+test tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries ... ok
+test tests::deferred_retire_accounting_is_unobservable ... ok
+test tests::replay_block_tail_is_unobservable ... ok
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 408 filtered out; finished in 0.72s

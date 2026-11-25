@@ -1,0 +1,16 @@
+test turbo_equivalence_tests::excluded_modes_never_enter_the_turbo_loop ... ok
+test turbo_equivalence_tests::unhandled_trap_escapes_identically ... ok
+test turbo_equivalence_tests::inline_store_to_a_page_whose_code_was_flushed_wholesale ... ok
+test turbo_equivalence_tests::fp_and_amo_ops_between_inline_ops ... ok
+test turbo_equivalence_tests::inline_stores_clear_exactly_the_overlapping_reservation ... ok
+test turbo_equivalence_tests::misaligned_and_device_accesses_in_the_middle_of_a_block ... ok
+test turbo_equivalence_tests::self_modifying_stores_and_page_faults_under_sv39 ... ok
+test turbo_equivalence_tests::page_straddling_entries_and_the_128_op_cap ... ok
+test turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops ... ok
+test turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches ... ok
+test turbo_equivalence_tests::verifier_r2_time_shadow_in_blocks_that_end_in_a_system_op ... ok
+test turbo_equivalence_tests::counter_csrs_after_inline_ops_and_first_in_block ... ok
+test turbo_equivalence_tests::sbi_timer_deadlines_future_past_and_rearmed ... ok
+test turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in ... ok
+test turbo_equivalence_tests::random_programs_agree_under_every_slicing ... ok
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 411 filtered out; finished in 15.60s

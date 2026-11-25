@@ -1,0 +1,209 @@
+hunk                                         worker-3-tests   busybox-fast    alpine-fast    desktop-2e9 verifier-tests
+stop_horizon                                            782            773           4822            765           6238
+stop_budget_at_boundary                               11534            228           1873            476          36338
+stop_device_touched                                     356           2568           4683            264          12832
+stop_device_fabric_epoch_only                             0              0              0              0              0
+enter_block_trap                                          0            134           3613           7900           5760
+uncached_straddling_entry                                 0          40215          99131        1048982           1920
+uncached_straddling_entry_trap                            0              0              0              0            640
+system_end_settle_on_entry                            15098        2314031       14940959        9831979         417296
+ordinary_next_fetch_walk_logged                           0              0              0              0              0
+budget_exit_mid_block                                 17932           1756           7992           3473         246812
+inline_integer                                       215256      200685986      853964393     1182670344        1207096
+step_retired                                        2129814      135158045      805672896      574942824         587007
+step_stored                                           30244       60343982      316419899      222553367         241303
+step_slow                                             15638        3722943       23754195       18684396         579412
+slow_op_trap                                            890          22516         135769         158684           9762
+slow_op_budget_exit                                     992             16            134             47          86818
+slow_op_syscon_exit                                      14              0              0              0            412
+slow_op_boundary_exit_cursor_dropped                      6            427            659            148           1656
+slow_op_boundary_exit_block_end                       10242        2291402       14826277        9706362         260180
+slow_op_turbo_ctx_none                                    0              0              0              0              0
+slow_op_continue_inline                                3494        1408582        8791356        8819155         220584
+slow_op_device_touched                                 3470           4937           8475            528          87684
+inline_store_code_hit_block_dropped                     892              3              5              0           2130
+inline_store_code_filter_false_positive                   0              0              0              0           3558
+settle_before_block_nonzero                           17102        2816084       18183265       15013848         107814
+settle_time_shadow_refresh                            43648        3117742       21899503       18052096         695757
+settle_rest_only                                      15714        1652343        9043471        5799492         302790
+capture_unit                                          21820              0              0              0         335431
+capture_traced                                        21820        2360038       15084958       10927101         335427
+entry_refused_trigger_armed                           12016              0              0              0           4000
+entry_refused_fabric_or_residue                           0              3              4              1              0
+horizon_no_clint                                          0              0              0              0          12504
+horizon_mtimecmp_ahead                                41780        2360038       15084958       10927101         565556
+horizon_stimecmp_ahead                                 6330        2008424       14736737       10800749         127460
+horizon_span_overflow                                 27604         365315         361877         126352         305830
+slow_op_wfi                                               0           3699              0            882          19790
+H_load_inline                                         27530       90766927      451664815      333920022         282787
+H_load_probe_miss_or_misaligned                        3386         427478        1335826        1527718          84831
+H_load_non_ram                                            0              0              0              0              0
+H_store_probe_miss_or_misaligned                       1172         353597         511946         424371          97895
+H_store_non_ram                                           0              0              0              0              0
+H_store_inline                                        30244       60343982      316419899      222553367         241303
+H_store_cleared_reservation                               0              0              0              0          10916
+H_branch_odd_target                                       0              0              0              0              0
+H_branch_taken                                        79766       13621421       88586110       56403119         197356
+H_branch_not_taken                                      382       17474479      144434314      102938252          66014
+H_jal_odd_target                                          0              0              0              0              0
+H_jal                                               2022136        5695182       63107848       38418338          13224
+H_jalr                                                    0        7600036       57879809       43263093          27626
+H_other_instruction_class                             11080        2941868       21906423       16732307         396686
+H_turbo_ctx_trigger_armed                             12016              0              0              0           4000
+H_variant_Ld                                          28834       70723726      323959720      224803865         226338
+H_variant_Lw                                           2082        9393289       72034466       71964365          27934
+H_variant_Lwu                                             0         267197        1315836         766312          19458
+H_variant_Lh                                              0          10660          61155          90106          23882
+H_variant_Lhu                                             0        2009092        7460242        3319459          20118
+H_variant_Lb                                              0         704206        4597799        5900217          29870
+H_variant_Lbu                                             0        8086235       43571423       28603416          20018
+H_variant_Sd                                          29310       53318747      266719868      180874727         214676
+H_variant_Sw                                           2106        3571725       31693443       25752234          61174
+H_variant_Sh                                              0        1121792        4947832        2669990          32406
+H_variant_Sb                                              0        2685315       13570702       13680787          30942
+H_variant_Beq                                         28092       10956649      103459158       61700525          44098
+H_variant_Bne                                         52056       10939878       87150935       62988635         153484
+H_variant_Blt                                             0        1278255       10178527        7482279          14524
+H_variant_Bge                                             0         563211        5307330        2458029          17884
+H_variant_Bltu                                            0        4822855       17096926       15036690          17164
+H_variant_Bgeu                                            0        2535052        9827548        9675213          16216
+
+hunk                                         core-lib-suite(412 tests, no verifier tests)
+stop_horizon                                            782
+stop_budget_at_boundary                               12168
+stop_device_touched                                     356
+stop_device_fabric_epoch_only                             0
+enter_block_trap                                          0
+uncached_straddling_entry                                 0
+uncached_straddling_entry_trap                            0
+system_end_settle_on_entry                            15113
+ordinary_next_fetch_walk_logged                           0
+budget_exit_mid_block                                 18782
+inline_integer                                       364662
+step_retired                                        2273087
+step_stored                                           30244
+step_slow                                             15735
+slow_op_trap                                            890
+slow_op_budget_exit                                     995
+slow_op_syscon_exit                                      14
+slow_op_boundary_exit_cursor_dropped                      6
+slow_op_boundary_exit_block_end                       10254
+slow_op_turbo_ctx_none                                    0
+slow_op_continue_inline                                3576
+slow_op_device_touched                                 3552
+inline_store_code_hit_block_dropped                     892
+inline_store_code_filter_false_positive                   0
+settle_before_block_nonzero                           18304
+settle_time_shadow_refresh                            45147
+settle_rest_only                                      15729
+capture_unit                                          21834
+capture_traced                                        23305
+entry_refused_trigger_armed                           12016
+entry_refused_fabric_or_residue                      174456
+horizon_no_clint                                        830
+horizon_mtimecmp_ahead                                42449
+horizon_stimecmp_ahead                                 6999
+horizon_span_overflow                                 28273
+slow_op_wfi                                               0
+H_load_inline                                         27530
+H_load_probe_miss_or_misaligned                        3431
+H_load_non_ram                                            0
+H_store_probe_miss_or_misaligned                       1212
+H_store_non_ram                                           0
+H_store_inline                                        30244
+H_store_cleared_reservation                               0
+H_branch_odd_target                                       0
+H_branch_taken                                        79964
+H_branch_not_taken                                      384
+H_jal_odd_target                                          0
+H_jal                                               2165209
+H_jalr                                                    0
+H_other_instruction_class                             11092
+H_turbo_ctx_trigger_armed                             12016
+H_variant_Ld                                          28834
+H_variant_Lw                                           2097
+H_variant_Lwu                                             0
+H_variant_Lh                                              0
+H_variant_Lhu                                             0
+H_variant_Lb                                             30
+H_variant_Lbu                                             0
+H_variant_Sd                                          29310
+H_variant_Sw                                           2131
+H_variant_Sh                                              0
+H_variant_Sb                                             15
+H_variant_Beq                                         28092
+H_variant_Bne                                         52256
+H_variant_Blt                                             0
+H_variant_Bge                                             0
+H_variant_Bltu                                            0
+H_variant_Bgeu                                            0
+
+hunk                                         whole workspace test run (cargo test --workspace --exclude wasm-vm-wvseccomp --no-fail-fast, debug; 340 result lines, 0 failed; 15 processes reached the loop)
+H_branch_not_taken                                   271756
+H_branch_odd_target                                       0
+H_branch_taken                                       776872
+H_jal                                               2291985
+H_jal_odd_target                                          0
+H_jalr                                                    0
+H_load_inline                                         27530
+H_load_non_ram                                            0
+H_load_probe_miss_or_misaligned                        4698
+H_other_instruction_class                           4000799
+H_store_cleared_reservation                               0
+H_store_inline                                       216106
+H_store_non_ram                                           0
+H_store_probe_miss_or_misaligned                       5679
+H_turbo_ctx_trigger_armed                             12016
+H_variant_Beq                                         28092
+H_variant_Bge                                             0
+H_variant_Bgeu                                            0
+H_variant_Blt                                        181508
+H_variant_Bltu                                       179934
+H_variant_Bne                                        659094
+H_variant_Lb                                             30
+H_variant_Lbu                                             0
+H_variant_Ld                                          28834
+H_variant_Lh                                              0
+H_variant_Lhu                                             0
+H_variant_Lw                                           3364
+H_variant_Lwu                                             0
+H_variant_Sb                                           2549
+H_variant_Sd                                          29730
+H_variant_Sh                                              0
+H_variant_Sw                                         189506
+budget_exit_mid_block                                 61050
+capture_traced                                        26149
+capture_unit                                        2827576
+enter_block_trap                                          2
+entry_refused_fabric_or_residue                      174456
+entry_refused_trigger_armed                           12016
+horizon_mtimecmp_ahead                              2849500
+horizon_no_clint                                       1430
+horizon_span_overflow                                 30456
+horizon_stimecmp_ahead                                 6999
+inline_integer                                      4243599
+inline_store_code_filter_false_positive                   0
+inline_store_code_hit_block_dropped                    3679
+ordinary_next_fetch_walk_logged                           0
+settle_before_block_nonzero                          887144
+settle_rest_only                                    1433468
+settle_time_shadow_refresh                          2853733
+slow_op_boundary_exit_block_end                     2493673
+slow_op_boundary_exit_cursor_dropped                    133
+slow_op_budget_exit                                   86628
+slow_op_continue_inline                             1248486
+slow_op_device_touched                                 9030
+slow_op_syscon_exit                                      14
+slow_op_trap                                         182242
+slow_op_turbo_ctx_none                                    0
+slow_op_wfi                                              31
+step_retired                                        3368143
+step_slow                                           4011176
+step_stored                                          216106
+stop_budget_at_boundary                               23823
+stop_device_fabric_epoch_only                             0
+stop_device_touched                                    1623
+stop_horizon                                            858
+system_end_settle_on_entry                          2804122
+uncached_straddling_entry                                 0
+uncached_straddling_entry_trap                            0

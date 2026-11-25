@@ -1,0 +1,57 @@
+=== N=1234567891 seed=42 quantum=500000 extra='--decoded-cache-entries 16384'
+turbo: exit 102, 14 s, turbo: enabled=true entries=6177392 blocks=112900967 inline_ops=1224690323 slow_ops=9689057 ops_per_entry=199.8 exits: horizon=474 budget=2466 boundary=6069666 trap=104786
+ordinary: exit 102, 17 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=967e7d0701d4c52b
+trace retired=1234462395
+trace mode=retirement-records
+state sha256=e65b4f3a56ebaf1568406bb0fa90cc9e873882cbfbd5e5fb57e21b09bf662c37
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=967e7d0701d4c52b
+trace retired=1234462395
+trace mode=retirement-records
+state sha256=e65b4f3a56ebaf1568406bb0fa90cc9e873882cbfbd5e5fb57e21b09bf662c37
+outcome=MaxInstrs
+EQUIVALENT (1234567891 instructions)
+rc=0
+=== N=311111113 seed=5 quantum=65537 extra='--decoded-cache-entries 64'
+turbo: exit 102, 8 s, turbo: enabled=true entries=1897711 blocks=42068143 inline_ops=307487424 slow_ops=3494457 ops_per_entry=163.9 exits: horizon=116 budget=4745 boundary=1860830 trap=32020
+ordinary: exit 102, 9 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=ceb343d0c685db0e
+trace retired=311078832
+trace mode=retirement-records
+state sha256=eb6adbdd10ae27e2bc2fda236dd870c406417674f6795ca3aa1c86ababbf7671
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=ceb343d0c685db0e
+trace retired=311078832
+trace mode=retirement-records
+state sha256=eb6adbdd10ae27e2bc2fda236dd870c406417674f6795ca3aa1c86ababbf7671
+outcome=MaxInstrs
+EQUIVALENT (311111113 instructions)
+rc=0
+=== N=97000003 seed=11 quantum=500000 extra='--decoded-cache-entries 1'
+turbo: exit 102, 5 s, turbo: enabled=true entries=515124 blocks=17607961 inline_ops=95723137 slow_ops=1268670 ops_per_entry=188.3 exits: horizon=34 budget=195 boundary=508128 trap=6767
+ordinary: exit 102, 5 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=552ad037953547d2
+trace retired=96993073
+trace mode=retirement-records
+state sha256=6eadeb473fbb7259ffbe783cbdaca3068b39a7d37d35ecd5437c2b252cb1c61a
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=552ad037953547d2
+trace retired=96993073
+trace mode=retirement-records
+state sha256=6eadeb473fbb7259ffbe783cbdaca3068b39a7d37d35ecd5437c2b252cb1c61a
+outcome=MaxInstrs
+EQUIVALENT (97000003 instructions)
+rc=0

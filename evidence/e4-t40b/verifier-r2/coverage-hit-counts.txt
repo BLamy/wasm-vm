@@ -1,0 +1,220 @@
+E4-T40b verifier round 2: hit counts at runtime head a2233d307 (instrument_r2.py + instrument_atexit.py),
+release test binary, one process per test (`--exact`). Columns: the 14 committed
+turbo_equivalence_tests summed, the 3 older acceptance tests summed, all together.
+
+hunk                                                            committed        older            all
+stop_horizon                                                         6238          782           7020
+stop_budget_at_boundary                                             36338        11534          47872
+stop_device_touched                                                 12832          356          13188
+stop_device_fabric_epoch_only                                           0            0              0
+enter_block_trap                                                     5760            0           5760
+uncached_straddling_entry                                            1920            0           1920
+uncached_straddling_entry_trap                                        640            0            640
+cached_block_entry_assert_site                                     913104      2133252        3046356
+code_write_log_NONEMPTY_at_block_entry                                  0            0              0
+slow_op_is_first_settle_of_its_block                               405603        12580         418183
+code_filter_hit_is_first_settle_of_its_block                         5688          892           6580
+budget_exit_mid_block                                              246812        17932         264744
+inline_integer                                                    1207096       215256        1422352
+step_retired                                                       587007      2129814        2716821
+step_stored                                                        241303        30244         271547
+step_slow                                                          579412        15638         595050
+slow_op_trap                                                         9762          890          10652
+slow_op_budget_exit                                                 86818          992          87810
+slow_op_syscon_exit                                                   412           14            426
+slow_op_boundary_exit_cursor_dropped                                 1656            6           1662
+slow_op_boundary_exit_block_end                                    260180        10242         270422
+slow_op_turbo_ctx_none                                                  0            0              0
+slow_op_continue_inline                                            220584         3494         224078
+slow_op_device_touched                                              87684         3470          91154
+inline_store_code_hit_block_dropped                                  2130          892           3022
+inline_store_code_filter_false_positive                              3558            0           3558
+ordinary_op_live_work_accounting                                   570930        14748         585678
+ordinary_op_live_work_accounting_in_live_unrecorded_mode            11504            0          11504
+settle_before_block_nonzero                                        107814        17102         124916
+settle_time_shadow_refresh                                         695757        43648         739405
+settle_rest_only                                                   115014         2746         117760
+capture_unit                                                       335431        21820         357251
+capture_traced                                                     335427        21820         357247
+entry_refused_trigger_armed                                          4000        12016          16016
+entry_refused_fabric_or_residue                                         0            0              0
+horizon_no_clint                                                    12504            0          12504
+horizon_mtimecmp_ahead                                             565556        41780         607336
+horizon_stimecmp_ahead                                             127460         6330         133790
+horizon_span_overflow                                              305830        27604         333434
+slow_op_wfi                                                         19790            0          19790
+H_load_inline                                                      282787        27530         310317
+H_load_probe_miss_or_misaligned                                     84831         3386          88217
+H_load_non_ram                                                          0            0              0
+H_store_probe_miss_or_misaligned                                    97895         1172          99067
+H_store_non_ram                                                         0            0              0
+H_store_inline                                                     241303        30244         271547
+H_store_cleared_reservation                                         10916            0          10916
+H_branch_odd_target                                                     0            0              0
+H_branch_taken                                                     197356        79766         277122
+H_branch_not_taken                                                  66014          382          66396
+H_jal_odd_target                                                        0            0              0
+H_jal                                                               13224      2022136        2035360
+H_jalr                                                              27626            0          27626
+H_other_instruction_class                                          396686        11080         407766
+H_turbo_ctx_trigger_armed                                            4000        12016          16016
+H_variant_Ld                                                       226338        28834         255172
+H_variant_Lw                                                        27934         2082          30016
+H_variant_Lwu                                                       19458            0          19458
+H_variant_Lh                                                        23882            0          23882
+H_variant_Lhu                                                       20118            0          20118
+H_variant_Lb                                                        29870            0          29870
+H_variant_Lbu                                                       20018            0          20018
+H_variant_Sd                                                       214676        29310         243986
+H_variant_Sw                                                        61174         2106          63280
+H_variant_Sh                                                        32406            0          32406
+H_variant_Sb                                                        30942            0          30942
+H_variant_Beq                                                       44098        28092          72190
+H_variant_Bne                                                      153484        52056         205540
+H_variant_Blt                                                       14524            0          14524
+H_variant_Bge                                                       17884            0          17884
+H_variant_Bltu                                                      17164            0          17164
+H_variant_Bgeu                                                      16216            0          16216
+
+Per test (the hunks of round-1 items 1-6, the assert site and the first-settle sites; zero rows omitted):
+
+counter_csrs_after_inline_ops_and_first_in_block
+    ordinary_op_live_work_accounting                                 146034
+    cached_block_entry_assert_site                                   211248
+    slow_op_is_first_settle_of_its_block                             145998
+    settle_time_shadow_refresh                                       189246
+
+excluded_modes_never_enter_the_turbo_loop
+    ordinary_op_live_work_accounting                                      2
+    cached_block_entry_assert_site                                     4000
+    slow_op_is_first_settle_of_its_block                                  1
+    settle_time_shadow_refresh                                            5
+
+fp_and_amo_ops_between_inline_ops
+    ordinary_op_live_work_accounting                                  17260
+    cached_block_entry_assert_site                                     4832
+    slow_op_is_first_settle_of_its_block                               3184
+    settle_time_shadow_refresh                                         4832
+
+inline_load_store_widths_and_all_six_branches
+    ordinary_op_live_work_accounting                                     40
+    H_variant_Lwu                                                      4688
+    H_variant_Lh                                                      10304
+    H_variant_Lhu                                                      5208
+    H_variant_Lbu                                                      6528
+    H_variant_Sh                                                       4492
+    H_variant_Blt                                                      4348
+    H_variant_Bge                                                      8788
+    H_variant_Bltu                                                     7900
+    H_variant_Bgeu                                                     7972
+    cached_block_entry_assert_site                                    67232
+    slow_op_is_first_settle_of_its_block                                 28
+    settle_time_shadow_refresh                                        25020
+
+inline_store_to_a_page_whose_code_was_flushed_wholesale
+    inline_store_code_filter_false_positive                            3558
+    ordinary_op_live_work_accounting                                     52
+    cached_block_entry_assert_site                                     4848
+    slow_op_is_first_settle_of_its_block                                 34
+    code_filter_hit_is_first_settle_of_its_block                       3558
+    settle_time_shadow_refresh                                         4842
+
+inline_stores_clear_exactly_the_overlapping_reservation
+    H_store_cleared_reservation                                        7468
+    ordinary_op_live_work_accounting                                  31472
+    H_variant_Sh                                                       2238
+    cached_block_entry_assert_site                                     9616
+    slow_op_is_first_settle_of_its_block                               8368
+    settle_time_shadow_refresh                                         9616
+
+jalr_targets_and_compressed_inline_ops
+    H_jalr                                                            23228
+    ordinary_op_live_work_accounting                                     28
+    cached_block_entry_assert_site                                    44816
+    slow_op_is_first_settle_of_its_block                                 20
+    settle_time_shadow_refresh                                        21274
+
+misaligned_and_device_accesses_in_the_middle_of_a_block
+    ordinary_op_live_work_accounting                                  32110
+    H_variant_Lwu                                                      3074
+    H_variant_Lh                                                       3070
+    H_variant_Lhu                                                      3132
+    H_variant_Lbu                                                      1600
+    H_variant_Sh                                                       3190
+    cached_block_entry_assert_site                                    35088
+    slow_op_is_first_settle_of_its_block                               9788
+    settle_time_shadow_refresh                                        22394
+
+page_straddling_entries_and_the_128_op_cap
+    uncached_straddling_entry                                          1920
+    uncached_straddling_entry_trap                                      640
+    ordinary_op_live_work_accounting                                   7950
+    H_variant_Blt                                                      1904
+    cached_block_entry_assert_site                                    14064
+    slow_op_is_first_settle_of_its_block                               5426
+    settle_time_shadow_refresh                                        12026
+
+random_programs_agree_under_every_slicing
+    H_store_cleared_reservation                                        3448
+    ordinary_op_live_work_accounting                                 236298
+    H_variant_Lwu                                                     11696
+    H_variant_Lh                                                      10508
+    H_variant_Lhu                                                     11778
+    H_variant_Lbu                                                     11890
+    H_variant_Sh                                                      22486
+    H_variant_Blt                                                      8272
+    H_variant_Bge                                                      9096
+    H_variant_Bltu                                                     9264
+    H_variant_Bgeu                                                     8244
+    cached_block_entry_assert_site                                   228928
+    slow_op_is_first_settle_of_its_block                             138342
+    settle_time_shadow_refresh                                       197076
+
+sbi_timer_deadlines_future_past_and_rearmed
+    ordinary_op_live_work_accounting                                  18660
+    cached_block_entry_assert_site                                   117248
+    slow_op_is_first_settle_of_its_block                              25252
+    settle_time_shadow_refresh                                        77388
+
+self_modifying_stores_and_page_faults_under_sv39
+    inline_store_code_hit_block_dropped                                2130
+    H_jalr                                                             4398
+    ordinary_op_live_work_accounting                                  46516
+    enter_block_trap                                                   5760
+    cached_block_entry_assert_site                                    83584
+    slow_op_is_first_settle_of_its_block                              45270
+    code_filter_hit_is_first_settle_of_its_block                       2130
+    settle_time_shadow_refresh                                        71642
+
+unhandled_trap_escapes_identically
+    ordinary_op_live_work_accounting                                     12
+    cached_block_entry_assert_site                                      816
+    slow_op_is_first_settle_of_its_block                                 18
+    settle_time_shadow_refresh                                          428
+
+wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in
+    ordinary_op_live_work_accounting                                  34496
+    ordinary_op_live_work_accounting_in_live_unrecorded_mode          11504
+    cached_block_entry_assert_site                                    86784
+    slow_op_is_first_settle_of_its_block                              23874
+    settle_time_shadow_refresh                                        59968
+
+turbo_loop_takes_timer_interrupts_at_the_same_boundaries
+    ordinary_op_live_work_accounting                                   4070
+    cached_block_entry_assert_site                                    91900
+    slow_op_is_first_settle_of_its_block                               2190
+    settle_time_shadow_refresh                                        17924
+
+replay_block_tail_is_unobservable
+    inline_store_code_hit_block_dropped                                 892
+    ordinary_op_live_work_accounting                                   3318
+    cached_block_entry_assert_site                                     7216
+    slow_op_is_first_settle_of_its_block                               4200
+    code_filter_hit_is_first_settle_of_its_block                        892
+    settle_time_shadow_refresh                                         6330
+
+deferred_retire_accounting_is_unobservable
+    ordinary_op_live_work_accounting                                   7360
+    cached_block_entry_assert_site                                  2034136
+    slow_op_is_first_settle_of_its_block                               6190
+    settle_time_shadow_refresh                                        19394
