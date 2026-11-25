@@ -165,3 +165,15 @@ tests/e5-t06d-presentation.test.mjs`, `git checkout -- web/src/sink/presentation
 web/dist/src/sink/presentation.js`. Mutants, probes and fuzz ran against a scratch copy of
 `web/src/sink` and `web/tests` outside the repo; each mutant is one edit listed at the top of
 `mutants.log`.
+
+### 2026-11-24 — worker — deployed (no status change)
+
+`bash tools/deploy-cloudflare.sh` at `36965b9dd` published `web/dist` to
+<https://wasm-vm.pages.dev> (log `evidence/e5-t35a/live/deploy.log`); the live
+`/src/sink/presentation.js` has the sha256 of `web/dist/src/sink/presentation.js`
+(`02adc5a3…1908c3`). This deploy also carries E5-T34g. Benchmark against the live site:
+`node tools/perf/desktop-latency.mjs --url https://wasm-vm.pages.dev --app /app --label live-sync-reads-damage-union --n 5 --scenarios idle,click,sweep,type,node,mips --out evidence/e5-t35a/live/live.json`
+→ exit 0, no missing samples, console clean apart from the favicon 404; disk: 0 fetch waits,
+279 chunks served from the prefill, 0 network fetches; click result median 475 ms (424–503),
+pressed-state frame median 259 ms, key echo median 51 ms, `node -e` median 5.36 s (first run
+6.09 s), idle 148.5 MIPS.
