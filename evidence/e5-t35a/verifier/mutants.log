@@ -1,0 +1,48 @@
+# verifier mutants of web/src/sink/presentation.js (line numbers as of 2356edbd1), applied one at a
+# time to a scratch copy of web/src/sink and run against the acceptance test files. The repo file
+# was not edited for these. KILLED = at least one test fails; SURVIVED = all tests pass.
+#
+#   M1  delete line 363                         (_deliver never clears pending damage)
+#   M2  delete lines 349-350                    (no size check: always union with pending damage)
+#   M3  delete line 350                         (size check ignores the height)
+#   M9  delete line 349                         (size check ignores the width)
+#   M4  delete line 515                         (invalidate keeps pending damage)
+#   M5  line 363 without `if (!replay)`         (a replay clears pending damage as well)
+#   M6  line 503 -> `const immediate = checked; this._pendingDamage = null;`
+#   M7  line 351 -> `rect: pending.rect`        (keeps only the older rect)
+#   M8  line 354 -> `rect: checked.rect`        (pending damage records the newest rect, not the union)
+
+## against the worker's tests (e5-t06d-presentation.test.mjs at fed441d08, t09c, t09d)
+M1 deliver never clears pending damage: exit=1 KILLED
+     ✖ frames coalesced within one animation frame paint the union of their damage
+M2 no size guard (always union): exit=0 SURVIVED
+M3 guard ignores height: exit=0 SURVIVED
+M9 guard ignores width: exit=0 SURVIVED
+M4 invalidate keeps pending damage: exit=0 SURVIVED
+M5 deliver clears pending damage on replay too: exit=0 SURVIVED
+M6 presentNow drops queued damage: exit=1 KILLED
+     ✖ an immediate present keeps the damage of the queued frame it replaces
+M7 union keeps only pending rect: exit=1 KILLED
+     ✖ an immediate present keeps the damage of the queued frame it replaces
+     ✖ frames coalesced within one animation frame paint the union of their damage
+M8 pending damage records own rect not union: exit=1 KILLED
+     ✖ frames coalesced within one animation frame paint the union of their damage
+
+## against the tests as committed with this entry (adds the promoted fixed-viewport case)
+M1 deliver never clears pending damage: exit=1 KILLED
+     ✖ frames coalesced within one animation frame paint the union of their damage
+M2 no size guard (always union): exit=1 KILLED
+     ✖ under a fixed viewport, queued damage of another resource size is not unioned
+M3 guard ignores height: exit=1 KILLED
+     ✖ under a fixed viewport, queued damage of another resource size is not unioned
+M9 guard ignores width: exit=1 KILLED
+     ✖ under a fixed viewport, queued damage of another resource size is not unioned
+M4 invalidate keeps pending damage: exit=0 SURVIVED
+M5 deliver clears pending damage on replay too: exit=0 SURVIVED
+M6 presentNow drops queued damage: exit=1 KILLED
+     ✖ an immediate present keeps the damage of the queued frame it replaces
+M7 union keeps only pending rect: exit=1 KILLED
+     ✖ an immediate present keeps the damage of the queued frame it replaces
+     ✖ frames coalesced within one animation frame paint the union of their damage
+M8 pending damage records own rect not union: exit=1 KILLED
+     ✖ frames coalesced within one animation frame paint the union of their damage

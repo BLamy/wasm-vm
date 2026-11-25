@@ -1,0 +1,23 @@
+# verifier sabotage: presentation.js from dd668e65e (before the change), tests as committed with this entry
+# run in a scratch copy of web/src/sink + web/tests; the same swap in the repo against the worker's test file gave 6 pass, 2 fail (same two tests) and was restored
+# node --test tests/e5-t06d-presentation.test.mjs
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back (0.691667ms)
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery (0.485333ms)
+✔ clear control drops the retained frame and resets the presentation surface (0.142583ms)
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D (0.310708ms)
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded (1.695792ms)
+✖ frames coalesced within one animation frame paint the union of their damage (0.761875ms)
+✔ queued damage of another resource size is not unioned into a resized frame (0.1125ms)
+✖ an immediate present keeps the damage of the queued frame it replaces (0.163958ms)
+✔ under a fixed viewport, queued damage of another resource size is not unioned (0.282666ms)
+ℹ tests 9
+ℹ pass 7
+ℹ fail 2
+✖ failing tests:
+✖ frames coalesced within one animation frame paint the union of their damage (0.761875ms)
+    actual: { x: 5, y: 6, width: 1, height: 1 },
+    expected: { x: 1, y: 1, width: 5, height: 6 },
+✖ an immediate present keeps the damage of the queued frame it replaces (0.163958ms)
+    actual: { x: 6, y: 6, width: 2, height: 2 },
+    expected: { x: 0, y: 0, width: 8, height: 8 },
+exit=1

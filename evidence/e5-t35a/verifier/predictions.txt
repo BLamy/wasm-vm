@@ -1,0 +1,51 @@
+E5-T35a verifier predictions
+
+Formed from the task file and
+`git diff dd668e65e 2356edbd1 -- web/src/sink/presentation.js web/tests/e5-t06d-presentation.test.mjs`
+before the first run of this session (the worker's claim and its two test logs had been read by
+then). Saved to this file afterwards; outcomes are in the task's Verification log.
+
+Acceptance points
+
+P1  Union with the newest pixels. After an 8x8 full paint, flushes {1,1,2,2} (value 2) and
+    {5,6,1,1} (value 3) before one animation frame give exactly one backend present, rect
+    {1,1,5,6}, all 64 words equal to 3. The previous presentation.js paints {5,6,1,1}.
+
+P2  Painted damage is not carried. The next flush {7,0,1,1} paints exactly {7,0,1,1}. If the clear
+    at presentation.js:363 is removed, the worker's first new test fails (the rect would be
+    {1,0,7,7}).
+
+P3  Other-size queued damage is not unioned. After 8x8 {6,6,2,2} is queued and a 4x4 {0,0,1,1}
+    frame replaces it, the backend gets {0,0,4,4} with 16 words and `snapshot().latest.rect` is
+    {0,0,1,1}. Also predicted: the worker's test for this point cannot tell whether the size check
+    (presentation.js:349-350) works, because `present` calls `resize` first, which clears
+    `_paintedResource`, so `_deliver` repaints in full whatever rect the frame carries. Deleting
+    the check should leave all of the worker's tests passing. Where the check does matter: a fixed
+    viewport (no resize on a new resource size) with the painted size equal to the newest frame's
+    size; there the frame's own rect must reach the backend.
+
+P4  An immediate present keeps replaced damage. Queued {0,0,2,2}, then presentNow {6,6,2,2}: one
+    synchronous backend present with rect {0,0,8,8} and the newer frame's pixels; the following
+    animation frame paints nothing. The previous presentation.js paints {6,6,2,2}.
+
+Sabotage  With dd668e65e's presentation.js, e5-t06d-presentation.test.mjs: the first and third new
+    tests fail, the second passes (the old file never unions).
+
+Probes chosen from the diff (expected results)
+
+- invalidate / clear with damage queued: the next frame repaints in full (painted size forgotten),
+  the one after paints its own rect; `snapshot().latest.rect` is the frame's own rect.
+- pause/resume and the hidden-tab timer: everything queued in the interval is painted as one union.
+- a present made from inside a delivery: tracked as fresh damage, painted alone on the next frame.
+- WebGL context loss with coalesced damage queued: full replay on the new canvas, then the queued
+  union, then own rects.
+- `setViewport` replay while damage is queued: `_deliver(…, replay = true)` does not clear pending
+  damage, so the next frame should paint a union that includes already painted damage (too large,
+  not wrong).
+- `controller.discardPending()`: the scheduler drops the frame, pending damage stays, so the next
+  frame paints the union.
+- a backend present that throws: pending damage was cleared before the call, so the next frame
+  paints only its own rect and the failed region stays as it was (expected to match the old file).
+- fixed viewport, 8x8 damage queued, then a 16x16 frame, then an 8x8 frame, no paint in between:
+  the 8x8 damage from before the 16x16 frame is expected to be lost (pending damage was replaced by
+  the 16x16 record and the painted size is still 8x8). Expected to match the old file.

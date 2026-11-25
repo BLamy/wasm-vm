@@ -1,0 +1,43 @@
+# verifier probes: short scripted sequences against a recording backend that keeps a surface.
+# OK = the stated expectation held; a trailing note reports an observed value where the probe only measures.
+# 'new' is web/src/sink/presentation.js at 2356edbd1, 'old' is the file at dd668e65e.
+
+== new presentation.js ==
+OK    L union carries the newest frame's pixels everywhere (all 64 words)
+OK    P2 painted damage not carried: next frame is its own rect
+OK    A guard: fixed viewport, larger other-size queued damage is not unioned (would be out of bounds)
+OK    A2 guard: same width, different height is not unioned
+OK    A3 guard: non-fixed worker scenario, snapshot latest rect is the frame's own rect
+OK    B size round trip in one animation frame, fixed viewport: is same-size damage older than the flip painted? -- painted rect {"x":0,"y":0,"width":1,"height":1}; surface(6,6)=1 (newest frame value 4)
+OK    C invalidate with queued damage: next frame full, snapshot rect own, then own rect
+OK    D clear control with queued damage: same
+OK    E backend throws on the coalesced delivery: what does the next frame paint? -- after failure presents=1; next rect {"x":7,"y":0,"width":1,"height":1}; surface(1,1)=1 (newest 4); errors=["present via canvas2d: injected backend failure"]
+OK    F pause/resume accumulates the union
+OK    G hidden-tab timer drain paints the union
+OK    H re-entrant present during delivery is tracked as fresh damage
+OK    I setViewport replay while a frame is queued, then a later partial -- replay rect {"x":0,"y":0,"width":8,"height":8}; next rect {"x":1,"y":1,"width":5,"height":6}; surface(1,1)=3
+OK    J controller.discardPending keeps the discarded frame's damage for the next frame -- next rect {"x":1,"y":1,"width":5,"height":6}
+OK    K webgl context loss with coalesced damage queued -- after loss: replay full, then scheduled {"x":1,"y":1,"width":5,"height":6}, then own rect
+OK    O no scheduler: present/presentNow never union
+OK    P4 presentNow keeps replaced damage, paints synchronously, and nothing repaints on the tick
+OK    P presentNow of another size after queued damage repaints in full at the new size
+
+== old presentation.js ==
+FAIL  L union carries the newest frame's pixels everywhere (all 64 words) -- Expected values to be strictly deep-equal: | + actual - expected |  |   { | +   height: 1, | +   width: 1, | +   x: 5, | +   y: 6 | -   height: 6, | -   width: 5, | -   x: 1, | -   y: 1
+OK    P2 painted damage not carried: next frame is its own rect
+OK    A guard: fixed viewport, larger other-size queued damage is not unioned (would be out of bounds)
+OK    A2 guard: same width, different height is not unioned
+OK    A3 guard: non-fixed worker scenario, snapshot latest rect is the frame's own rect
+OK    B size round trip in one animation frame, fixed viewport: is same-size damage older than the flip painted? -- painted rect {"x":0,"y":0,"width":1,"height":1}; surface(6,6)=1 (newest frame value 4)
+OK    C invalidate with queued damage: next frame full, snapshot rect own, then own rect
+OK    D clear control with queued damage: same
+OK    E backend throws on the coalesced delivery: what does the next frame paint? -- after failure presents=1; next rect {"x":7,"y":0,"width":1,"height":1}; surface(1,1)=1 (newest 4); errors=["present via canvas2d: injected backend failure"]
+FAIL  F pause/resume accumulates the union -- Expected values to be strictly deep-equal: | + actual - expected |  |   { | +   height: 1, | +   width: 1, | +   x: 5, | +   y: 6 | -   height: 6, | -   width: 5, | -   x: 1, | -   y: 1
+FAIL  G hidden-tab timer drain paints the union -- Expected values to be strictly deep-equal: | + actual - expected |  |   { | +   height: 1, | +   width: 1, | -   height: 7, | -   width: 6, |     x: 0, | +   y: 7 | -   y: 1 |   }
+FAIL  H re-entrant present during delivery is tracked as fresh damage -- Expected values to be strictly deep-equal: | + actual - expected |  |   { | +   height: 1, | +   width: 1, | +   x: 5, | +   y: 6 | -   height: 6, | -   width: 5, | -   x: 1, | -   y: 1
+OK    I setViewport replay while a frame is queued, then a later partial -- replay rect {"x":0,"y":0,"width":8,"height":8}; next rect {"x":5,"y":6,"width":1,"height":1}; surface(1,1)=2
+OK    J controller.discardPending keeps the discarded frame's damage for the next frame -- next rect {"x":5,"y":6,"width":1,"height":1}
+OK    K webgl context loss with coalesced damage queued -- after loss: replay full, then scheduled {"x":5,"y":6,"width":1,"height":1}, then own rect
+OK    O no scheduler: present/presentNow never union
+FAIL  P4 presentNow keeps replaced damage, paints synchronously, and nothing repaints on the tick -- Expected values to be strictly deep-equal: | + actual - expected |  |   { | +   height: 2, | +   width: 2, | +   x: 6, | +   y: 6 | -   height: 8, | -   width: 8, | -   x: 0, | -   y: 0
+OK    P presentNow of another size after queued damage repaints in full at the new size
