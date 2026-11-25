@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 576,
-    "total": 787
+    "verified": 577,
+    "total": 792
   },
   "epics": [
     {
@@ -16230,6 +16230,41 @@
       "commitCount": 12
     },
     {
+      "id": "E4-T40c",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Compiled tier for the turbo loop — region-sized units (planning parent)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T40b"
+      ],
+      "decomposed_into": [],
+      "estimate": "L",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-4-acceleration/E4-T40c-turbo-compiled-regions.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
+    },
+    {
       "id": "E5-T01",
       "epic": "5",
       "epicKey": "5",
@@ -23863,6 +23898,141 @@
       "firstActivity": "2026-11-24",
       "lastActivity": "2026-11-24",
       "commitCount": 7
+    },
+    {
+      "id": "E5-T35a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Paint the union of coalesced damage so an earlier flush is never left stale on the canvas",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E4-T40b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`web/src/sink/presentation.js` only (host presentation; no guest or wasm change).\n\nThe frame scheduler keeps one pending frame and presents at most once per animation frame.\nEvery frame carries the whole resource, but the presentation controller painted only the\nnewest frame's rect. When two guest flushes land inside one animation frame — a button\nrepaint, then a flush elsewhere such as the cursor — the first region was never painted and\nstayed stale until some later flush happened to cover it.\n\nTrack the damage queued behind the scheduler and paint its union with the newest rect (same\nresource size only; a resized resource already repaints in full). An immediate present that\nreplaces a queued frame keeps that frame's damage too.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`cd web && node --test tests/e5-t06d-presentation.test.mjs tests/e5-t09c-present-scheduler.test.mjs tests/e5-t09d-hidden-present.test.mjs`\npasses, including three new cases: coalesced flushes paint the union with the newest pixels\nand painted damage is not carried into the next frame; queued damage of another resource\nsize is not unioned into a resized frame; an immediate present keeps the damage of the\nqueued frame it replaces.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-11-24 — worker — claim (head `2356edbd1`)\n\nImplementation: `08d2fdda9` (`web/src/sink/presentation.js`, tests in\n`web/tests/e5-t06d-presentation.test.mjs`, rebuilt `web/dist`); `2356edbd1` only refreshes the\ngenerated `web/gpu-checkpoint-build.js` so it equals the copy in `web/dist`.\n\nCommands, at `2356edbd1`:\n\n- `cd web && node --test tests/e5-t06d-presentation.test.mjs tests/e5-t09c-present-scheduler.test.mjs tests/e5-t09d-hidden-present.test.mjs`\n  → 19 pass, 0 fail. Log `evidence/e5-t35a/tests.log`\n  (sha256 `386820a8068acb153f7ee534d3f273676c9c887126418ee4868bd79fb81fa1c7`).\n- Sabotage: `git show dd668e65e:web/src/sink/presentation.js > web/src/sink/presentation.js`,\n  then `node --test tests/e5-t06d-presentation.test.mjs` → 6 pass, 2 fail (\"frames coalesced\n  within one animation frame paint the union of their damage\", \"an immediate present keeps the\n  damage of the queued frame it replaces\"); file restored afterwards. Log\n  `evidence/e5-t35a/sabotage-old-presentation.log`\n  (sha256 `781ee96b66d4a59c5b4e701bb1114e9b0517189509f127a2736707260c97e009`). The third new\n  case (another resource size is not unioned) passes on the old code too: it guards the new\n  code against over-painting, it does not detect the old bug.\n- `cmp web/src/sink/presentation.js web/dist/src/sink/presentation.js` → identical.\n- Browser sanity on the committed bundle (`bash tools/serve-dist.sh 8125`):\n  `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --label damage-union --n 3 --scenarios idle,click,sweep,type --out evidence/e5-t35a/browser-dist.json`\n  → exit 0, no missing samples, one console message (the favicon 404). Click result median\n  516 ms, sweep 454 ms, key echo 43 ms: the same range as before the change, so the union does\n  not cost visible latency. `evidence/e5-t35a/browser-dist.json`\n  (sha256 `1c6f4adb6edc2947ce44e03a5e2fd9b03a53310acab87ab9d20be1df82ee7491`).\n\nWhat this shows: with two flushes inside one animation frame the controller now paints one rect\ncovering both, using the newest frame's pixels, and forgets that damage once painted; a queued\nframe of another size is not folded into a resized frame; a synchronous present that replaces a\nqueued frame still paints the queued frame's region. Not shown: a browser capture of the stale\nregion itself. The stale-rect symptom needs two guest flushes to fall inside one 16 ms frame,\nwhich I could not force reliably from outside the guest, so the unit tests are the evidence of\nrecord and the browser run is only a no-regression check.\n\n### 2026-11-24 — verifier — VERDICT: verified\n\nFresh session; no implementation code edited (the sabotage swap was restored and\n`git diff --quiet HEAD -- web/src/sink/presentation.js` is clean). Under test:\n`web/src/sink/presentation.js` as of `2356edbd1`, head `fed441d08`. The claim's three sha256\nvalues match the files, and `cmp web/src/sink/presentation.js web/dist/src/sink/presentation.js`\nis identical. Predictions were formed from the diff before my first run\n(`evidence/e5-t35a/verifier/predictions.txt`); logs are in `evidence/e5-t35a/verifier/`.\n\n- **P1 union painted with the newest pixels — HELD.** Predicted: after an 8x8 full paint, flushes\n  `{1,1,2,2}` then `{5,6,1,1}` before one animation frame give exactly one backend present, rect\n  `{1,1,5,6}`, carrying the second frame's pixels. Observed that (test \"frames coalesced within one\n  animation frame paint the union of their damage\"; probe L in `probes.log` checks all 64 words,\n  the test checks `pixels[0]`). The same holds across pause/resume and the 250 ms hidden-tab timer\n  (probes F, G). The previous file paints `{5,6,1,1}`.\n- **P2 painted damage not carried — HELD.** Predicted: the next flush `{7,0,1,1}` paints exactly\n  that rect, and deleting the clear at presentation.js:363 fails the worker's test. Observed both\n  (mutant M1 killed, `mutants.log`). M1 trips earlier than I predicted: the first full frame's\n  damage is never cleared, so the union assertion already sees `{0,0,8,8}`. A frame presented from\n  inside a delivery is tracked as fresh damage and painted alone on the next frame (probe H).\n- **P3 other-size queued damage not unioned — HELD, after closing a proof gap.** Predicted before\n  running: the worker's case cannot tell whether the size check at presentation.js:349-350 works,\n  because `present` resizes first, which clears `_paintedResource`, and `_deliver` then repaints in\n  full whatever rect the frame carries. Observed: with the check deleted (M2) or reduced to one\n  dimension (M3, M9), all 19 of the worker's tests still pass. The product itself is right: under\n  a fixed viewport, where nothing forces a full repaint, a queued 16x16, 8x16 or 4x8 frame replaced\n  by an 8x8 frame reaches the backend as the 8x8 frame's own rect `{0,0,1,1}` with no controller\n  error (probes A, A2), and in the worker's own scenario `snapshot().latest.rect` is `{0,0,1,1}`\n  (probe A3). Promoted as a test (see SUITE); it kills M2, M3 and M9.\n- **P4 immediate present keeps replaced damage — HELD.** Predicted: queued `{0,0,2,2}`, then\n  `presentNow` `{6,6,2,2}`, paints `{0,0,8,8}` at once with the newer pixels, and the following\n  animation frame paints nothing. Observed (test \"an immediate present keeps the damage of the\n  queued frame it replaces\"; probe P4; M6 killed). The previous file paints `{6,6,2,2}`.\n- **Acceptance command — HELD.** 19 pass, 0 fail at `fed441d08`; 20 pass with the promoted case\n  (`tests.log`). The two other unit files that import the module, `e5-t25a-perf-hooks` and\n  `e5-t22b-viewport`, pass 16/16.\n- **Sabotage — HELD.** With `dd668e65e`'s presentation.js in the repo: 6 pass, 2 fail, the two\n  tests and the rects the claim reports; restored. `sabotage-old-presentation.log` repeats it\n  against the final test file in a scratch copy: 7 pass, 2 fail. The promoted case passes on the\n  previous file by design (that file never unions); its sabotage is M2/M3/M9.\n- **COVERAGE.** `node --test --experimental-test-coverage` over the three acceptance files (worker's\n  tests): every changed line of presentation.js executes (75-85, 133, 346-359, 363, 487-493, 501,\n  503, 507-508, 515); the uncovered lines are all outside the diff. Two changed lines execute but\n  no test distinguishes them; both waived. Line 515 (`invalidate` clears pending damage; M4\n  survives) shows only in `snapshot().latest.rect`, because `invalidate` also forgets the painted\n  size and the next frame repaints in full (probes C, D). The `if (!replay)` on line 363 (M5\n  survives) only keeps damage that the replay has just painted in full, so its one effect is a\n  larger rect than needed on the frame after a `setViewport` replay (probe I: `{1,1,5,6}` where\n  `{5,6,1,1}` would do), never a missing one.\n- **Bounded attack.** Seeded fuzz, 600 seeds of 600 operations (present, presentNow, tick, pause,\n  resume, discardPending, invalidate, clear) with partial rects over a cumulative resource,\n  checking after every backend present that the surface equals the buffer that present carried.\n  0 failures for one resource size with and without a fixed viewport, for resource-following\n  resizes, and for a fixed viewport when a new size arrives as a full flush. The previous file\n  fails every seed in the single-size modes (`fuzz.log`).\n- **Browser run — not re-run** (this session was told not to start servers). `browser-dist.json`\n  agrees with the claim: `missing: []`, medians 515.9 ms click, 454.2 ms sweep, 42.6 ms key echo,\n  one console message (a 404). The claim already states it is a no-regression check and that no\n  browser capture of the stale region exists; the unit tests stay the evidence of record.\n- **SUITE.** Promoted \"under a fixed viewport, queued damage of another resource size is not\n  unioned\" into `web/tests/e5-t06d-presentation.test.mjs`. It accepts the frame's own rect or a\n  full repaint and rejects a rect that mixes two resource sizes. Probe and fuzz scripts: discarded\n  (throwaway harness); their outputs are kept in the verifier folder.\n- **Observations, no demand.** None is stated by the task and none is a regression: the previous\n  file does the same or worse in each.\n  1. Fixed viewport, a resource-size round trip with no paint in between: 8x8 `{6,6,2,2}` queued,\n     a 16x16 frame queued, 8x8 `{0,0,1,1}` queued, then one animation frame paints `{0,0,1,1}` only\n     and `{6,6,2,2}` stays stale (probe B; fuzz mode \"fixed viewport, resources persist across size\n     changes\", 71 of 600 seeds). The task's \"a resized resource already repaints in full\" is true\n     for resource-following resizes but not here: the pending record was replaced by the 16x16 one\n     and `_paintedResource` still names 8x8. It needs two size changes inside one pause, one\n     hidden-tab timer period or one animation frame, and a partial first flush after the second.\n  2. A backend `present` that throws loses the coalesced damage: line 363 clears it before the\n     call, so the next frame paints only its own rect (probe E).\n  3. `snapshot().latest.rect` now reports the coalesced union, not the newest flush's own rect.\n     `tools/verify/omarchy-opaque-foot-command.mjs:33` compares it exactly and\n     `tools/verify/omarchy-compositor-input-capture.mjs:19-21` bounds it. A union of rects inside\n     the scanout stays inside it, so I expect no change there; the field's meaning did change.\n- **For the worker/orchestrator (outside the verifier's writes):** the `web/roadmap.js` entry\n  still reads `in-progress … Awaiting a fresh verifier`.\n\nCommands: `cd web && node --test tests/e5-t06d-presentation.test.mjs\ntests/e5-t09c-present-scheduler.test.mjs tests/e5-t09d-hidden-present.test.mjs` (before and after\nthe promoted case, and once with `--experimental-test-coverage`);\n`git show dd668e65e:web/src/sink/presentation.js > web/src/sink/presentation.js`, `node --test\ntests/e5-t06d-presentation.test.mjs`, `git checkout -- web/src/sink/presentation.js`;\n`node --test tests/e5-t25a-perf-hooks.test.mjs tests/e5-t22b-viewport.test.mjs`;\n`shasum -a 256 evidence/e5-t35a/*`; `cmp web/src/sink/presentation.js\nweb/dist/src/sink/presentation.js`. Mutants, probes and fuzz ran against a scratch copy of\n`web/src/sink` and `web/tests` outside the repo; each mutant is one edit listed at the top of\n`mutants.log`.",
+      "adversarial": "Low risk: inspect the direct result. The new test must fail on the previous\n`presentation.js`.",
+      "file": "tasks/epic-5-the-window/E5-T35a-present-damage-union.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 5,
+          "labels": [
+            "E5-T35a verified: verifier",
+            "E5-T35a implemented: claim and evidence",
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements",
+            "E5-T35a: regenerated GPU checkpoint build id (matches web/dist)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 5
+    },
+    {
+      "id": "E5-T35b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Keep queued damage across a resource size round trip and across a failed backend present",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T35a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`web/src/sink/presentation.js` only. Two gaps the E5-T35a verifier found. Neither is a\nregression (the previous file behaves the same or worse) and neither has been seen on the live\ndesktop; both were found by fuzzing the controller.\n\n1. **Size round trip under a fixed viewport.** Queue an 8x8 frame with rect `{6,6,2,2}`, then a\n   16x16 frame, then an 8x8 frame with rect `{0,0,1,1}`, with no paint in between (one paused\n   period, one hidden-tab timer period or one animation frame). Only `{0,0,1,1}` is painted and\n   `{6,6,2,2}` stays stale: pending damage of the first size is dropped when the second size\n   arrives, and E5-T35a's premise that a resized resource repaints in full does not hold under a\n   fixed viewport. The verifier's fuzz hit it in 71 of 600 seeds in that mode\n   (`evidence/e5-t35a/verifier/`).\n2. **A backend `present` that throws.** Pending damage is cleared before the backend call, so\n   after a throw the next frame paints only its own rect.\n\nFix: when the queued size changes, promote the next paint to the whole resource instead of\ndropping the queued damage; clear pending damage only after the backend call returns.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`cd web && node --test tests/e5-t06d-presentation.test.mjs` passes with two new cases: the\nround trip above paints a rect covering `{6,6,2,2}`; after a backend that throws once, the next\npresent covers the rect of the failed one. Both must fail on the E5-T35a `presentation.js`.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Low risk: inspect the direct result and re-run the verifier's fixed-viewport fuzz mode from\n`evidence/e5-t35a/verifier/` with fresh seeds; no seed may leave a stale pixel.",
+      "file": "tasks/epic-5-the-window/E5-T35b-damage-across-size-round-trip.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T36",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Hardware cursor plane on the Replay desktop — pointer drawn by the host, instantly (planning parent)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T34g"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-5-the-window/E5-T36-replay-desktop-hardware-cursor.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T37",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Stop spinning a host core while the desktop is idle (planning parent)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T34g"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-5-the-window/E5-T37-idle-yield-and-pacing.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T01a",

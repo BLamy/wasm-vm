@@ -1,0 +1,73 @@
+[desktop-latency 02:42:39.566] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 02:42:43.190] desktop ready after 3.6 s
+[desktop-latency 02:42:43.201] scenario idle
+[desktop-latency 02:42:53.736] {"wallMs":8002,"instructionsM":1115.9,"mips":139.5,"framesReceived":0,"drawnPresents":0}
+[desktop-latency 02:42:53.736] scenario click
+[desktop-latency 02:42:59.735] click #1: result 613.5 ms, pressed-state frame 279.8 ms, 37.5M instr @ 58.9 MIPS
+[desktop-latency 02:43:03.237] click #2: result 470 ms, pressed-state frame 253.4 ms, 33.5M instr @ 70 MIPS
+[desktop-latency 02:43:06.788] click #3: result 515.9 ms, pressed-state frame 282.9 ms, 36.5M instr @ 69.4 MIPS
+[desktop-latency 02:43:09.810] scenario sweep
+[desktop-latency 02:43:13.799] sweep #1: pointer shown on the button 0.1 ms after arriving, result 486.2 ms after the press
+[desktop-latency 02:43:20.748] sweep #2: pointer shown on the button 16.6 ms after arriving, result 454.2 ms after the press
+[desktop-latency 02:43:27.198] sweep #3: pointer shown on the button 16.5 ms after arriving, result 435.8 ms after the press
+[desktop-latency 02:43:29.712] scenario type
+[desktop-latency 02:43:36.629] type #1: echo 42.6 ms
+[desktop-latency 02:43:38.184] type #2: echo 37.7 ms
+[desktop-latency 02:43:39.790] type #3: echo 65.3 ms
+[desktop-latency 02:43:44.104] {"echoMs":{"n":3,"missing":0,"min":37.7,"median":42.6,"max":65.3}}
+[desktop-latency 02:43:44.119] SUMMARY {
+ "idle": {
+  "wallMs": 8002,
+  "instructionsM": 1115.9,
+  "mips": 139.5,
+  "framesReceived": 0,
+  "drawnPresents": 0
+ },
+ "click": {
+  "resultMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 470,
+   "median": 515.9,
+   "max": 613.5
+  },
+  "pointerArrivedMs": 33,
+  "pressedFrame": {
+   "seen": 3,
+   "none": 0,
+   "ms": {
+    "n": 3,
+    "missing": 0,
+    "min": 253.4,
+    "median": 279.8,
+    "max": 282.9
+   }
+  }
+ },
+ "sweep": {
+  "resultMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 435.8,
+   "median": 454.2,
+   "max": 486.2
+  },
+  "cursorArriveMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 0.1,
+   "median": 16.5,
+   "max": 16.6
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 37.7,
+   "median": 42.6,
+   "max": 65.3
+  }
+ }
+}
+[desktop-latency 02:43:44.225] wrote evidence/e5-t35a/browser-dist.json

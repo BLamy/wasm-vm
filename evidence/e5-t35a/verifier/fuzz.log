@@ -1,0 +1,35 @@
+# verifier fuzz: seeded random sequences of present / presentNow / tick / pause / resume /
+# discardPending / invalidate / clear with partial rects over a cumulative resource. Invariant:
+# after every backend present, the backend surface equals the whole pixel buffer that present
+# carried (no pixel still shows an older frame). 600 operations per seed.
+
+== new presentation.js, 300 seeds from 858 ==
+HOLDS  single-size: 0/300 seeds fail
+HOLDS  single-size fixed viewport: 0/300 seeds fail
+HOLDS  resource-following resize, partial rects after a size change: 0/300 seeds fail
+HOLDS  fixed viewport, new resource is flushed in full on a size change: 0/300 seeds fail
+BREAKS fixed viewport, new resource with a partial first flush (guest under-reports damage): 50/300 seeds fail
+         first: seed 865 after 560 ops (tick): stale pixel at (0,0) surface=297 newest=327, painted rect {"x":1,"y":0,"width":7,"height":8}; tail present 8x8 {"x":3,"y":6,"width":5,"height":1} ; tick ; present 8x8 {"x":5,"y":7,"width":3,"height":1} ; resume ; present 8x8 {"x":2,"y":4,"width":3,"height":1} ; tick
+HOLDS  resource-following resize, resources persist across size changes, partial rects: 0/300 seeds fail
+BREAKS fixed viewport, resources persist across size changes, partial rects: 33/300 seeds fail
+         first: seed 888 after 478 ops (tick): stale pixel at (3,0) surface=259 newest=276, painted rect {"x":7,"y":7,"width":1,"height":1}; tail tick ; present 4x4 {"x":3,"y":2,"width":1,"height":2} ; resume ; present 4x4 {"x":1,"y":0,"width":2,"height":3} ; present 8x8 {"x":7,"y":7,"width":1,"height":1} ; tick
+
+== new presentation.js, 300 seeds from 20261124 ==
+HOLDS  single-size: 0/300 seeds fail
+HOLDS  single-size fixed viewport: 0/300 seeds fail
+HOLDS  resource-following resize, partial rects after a size change: 0/300 seeds fail
+HOLDS  fixed viewport, new resource is flushed in full on a size change: 0/300 seeds fail
+BREAKS fixed viewport, new resource with a partial first flush (guest under-reports damage): 55/300 seeds fail
+         first: seed 20261124 after 124 ops (tick): stale pixel at (0,0) surface=25 newest=81, painted rect {"x":1,"y":2,"width":7,"height":6}; tail resume ; present 8x8 {"x":5,"y":3,"width":2,"height":3} ; present 8x8 {"x":6,"y":2,"width":1,"height":2} ; discardPending ; present 8x8 {"x":7,"y":6,"width":1,"height":1} ; tick
+HOLDS  resource-following resize, resources persist across size changes, partial rects: 0/300 seeds fail
+BREAKS fixed viewport, resources persist across size changes, partial rects: 38/300 seeds fail
+         first: seed 20261124 after 124 ops (tick): stale pixel at (0,0) surface=10 newest=63, painted rect {"x":1,"y":2,"width":7,"height":6}; tail resume ; present 8x8 {"x":5,"y":3,"width":2,"height":3} ; present 8x8 {"x":6,"y":2,"width":1,"height":2} ; discardPending ; present 8x8 {"x":7,"y":6,"width":1,"height":1} ; tick
+
+== old presentation.js, 300 seeds from 858 ==
+BREAKS single-size: 300/300 seeds fail
+BREAKS single-size fixed viewport: 300/300 seeds fail
+BREAKS resource-following resize, partial rects after a size change: 300/300 seeds fail
+BREAKS fixed viewport, new resource is flushed in full on a size change: 297/300 seeds fail
+BREAKS fixed viewport, new resource with a partial first flush (guest under-reports damage): 300/300 seeds fail
+BREAKS resource-following resize, resources persist across size changes, partial rects: 300/300 seeds fail
+BREAKS fixed viewport, resources persist across size changes, partial rects: 300/300 seeds fail

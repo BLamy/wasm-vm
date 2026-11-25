@@ -2,6 +2,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
+import { isDeepStrictEqual } from "node:util";
 
 import { PresentationController } from "../src/sink/presentation.js";
 
@@ -207,4 +208,135 @@ test("rapid presents are synchronous, last-frame-wins, and listener ownership is
   controller.dispose();
   assert.equal(controller.snapshot().listenerCount, 0);
   assert.equal(canvas.listeners.get("webglcontextlost")?.size ?? 0, 0);
+});
+
+// A manual animation-frame source: callbacks run only when the test calls `tick()`.
+function manualFrames() {
+  const queue = new Map();
+  let next = 1;
+  return {
+    request(callback) { const id = next++; queue.set(id, callback); return id; },
+    cancel(id) { queue.delete(id); },
+    tick() {
+      const callbacks = [...queue.values()];
+      queue.clear();
+      for (const callback of callbacks) callback(0);
+    },
+  };
+}
+
+function partial(value, rect, width = 8, height = 8) {
+  return { scanout: 0, rect, resourceWidth: width, resourceHeight: height,
+    pixels: new Uint32Array(width * height).fill(value) };
+}
+
+test("frames coalesced within one animation frame paint the union of their damage", () => {
+  const instances = [];
+  const raf = manualFrames();
+  const controller = new PresentationController(new FakeCanvas(8, 8), {
+    backendFactories: factories(instances), scheduleFrames: true,
+    requestFrame: raf.request, cancelFrame: raf.cancel,
+  });
+  // The first frame reaches the backend as a full repaint (nothing has been painted yet).
+  controller.present(partial(1, { x: 0, y: 0, width: 8, height: 8 }));
+  raf.tick();
+  const backend = controller.backend;
+  assert.deepEqual({ ...backend.presents.at(-1).rect }, { x: 0, y: 0, width: 8, height: 8 });
+
+  // Two flushes land before the next animation frame: a "button" repaint, then a "cursor" flush
+  // elsewhere. Only the newest frame is kept, but both regions must be painted.
+  controller.present(partial(2, { x: 1, y: 1, width: 2, height: 2 }));
+  controller.present(partial(3, { x: 5, y: 6, width: 1, height: 1 }));
+  assert.equal(backend.presents.length, 1, "nothing is painted before the animation frame");
+  raf.tick();
+  assert.equal(backend.presents.length, 2, "the two flushes coalesce into one present");
+  assert.deepEqual({ ...backend.presents.at(-1).rect }, { x: 1, y: 1, width: 5, height: 6 });
+  assert.equal(backend.presents.at(-1).pixels[0], 3, "with the newest frame's pixels");
+
+  // Painted damage is not carried into the next animation frame.
+  controller.present(partial(4, { x: 7, y: 0, width: 1, height: 1 }));
+  raf.tick();
+  assert.deepEqual({ ...backend.presents.at(-1).rect }, { x: 7, y: 0, width: 1, height: 1 });
+
+  // Three coalesced flushes, the middle one inside the first: still one covering rect.
+  controller.present(partial(5, { x: 0, y: 0, width: 4, height: 4 }));
+  controller.present(partial(6, { x: 1, y: 1, width: 1, height: 1 }));
+  controller.present(partial(7, { x: 3, y: 3, width: 2, height: 2 }));
+  raf.tick();
+  assert.deepEqual({ ...backend.presents.at(-1).rect }, { x: 0, y: 0, width: 5, height: 5 });
+  assert.equal(controller.snapshot().framesReceived, 7);
+  controller.dispose();
+});
+
+test("queued damage of another resource size is not unioned into a resized frame", () => {
+  const instances = [];
+  const raf = manualFrames();
+  const controller = new PresentationController(new FakeCanvas(8, 8), {
+    backendFactories: factories(instances), scheduleFrames: true,
+    requestFrame: raf.request, cancelFrame: raf.cancel,
+  });
+  controller.present(partial(1, { x: 0, y: 0, width: 8, height: 8 }));
+  raf.tick();
+  controller.present(partial(2, { x: 6, y: 6, width: 2, height: 2 }));
+  // The resource shrinks before the animation frame: the old rect no longer describes it.
+  controller.present(partial(3, { x: 0, y: 0, width: 1, height: 1 }, 4, 4));
+  raf.tick();
+  const last = controller.backend.presents.at(-1);
+  assert.deepEqual({ ...last.rect }, { x: 0, y: 0, width: 4, height: 4 }, "a new size repaints in full");
+  assert.equal(last.pixels.length, 16);
+  controller.dispose();
+});
+
+test("an immediate present keeps the damage of the queued frame it replaces", () => {
+  const instances = [];
+  const raf = manualFrames();
+  const controller = new PresentationController(new FakeCanvas(8, 8), {
+    backendFactories: factories(instances), scheduleFrames: true,
+    requestFrame: raf.request, cancelFrame: raf.cancel,
+  });
+  controller.present(partial(1, { x: 0, y: 0, width: 8, height: 8 }));
+  raf.tick();
+  controller.present(partial(2, { x: 0, y: 0, width: 2, height: 2 }));
+  controller.presentNow(partial(3, { x: 6, y: 6, width: 2, height: 2 }));
+  assert.deepEqual({ ...controller.backend.presents.at(-1).rect }, { x: 0, y: 0, width: 8, height: 8 });
+  raf.tick();
+  assert.equal(controller.backend.presents.length, 2, "the replaced frame is not painted again");
+  controller.dispose();
+});
+
+// Promoted by the E5-T35a verifier. The resized case above repaints in full with or without the
+// size check, because a resource-following resize forgets the painted size. A fixed viewport has no
+// such reset, so there a rect unioned across two resource sizes would reach the backend unchanged.
+test("under a fixed viewport, queued damage of another resource size is not unioned", () => {
+  const own = { x: 0, y: 0, width: 1, height: 1 };
+  const whole = { x: 0, y: 0, width: 8, height: 8 };
+  for (const [width, height, rect] of [
+    [16, 16, { x: 12, y: 12, width: 4, height: 4 }], // larger: a union would leave the 8x8 resource
+    [8, 16, { x: 0, y: 12, width: 8, height: 4 }], // same width, taller
+    [4, 8, { x: 2, y: 5, width: 2, height: 3 }], // same height, narrower: a union would stay in bounds
+  ]) {
+    const instances = [];
+    const raf = manualFrames();
+    const controller = new PresentationController(new FakeCanvas(8, 8), {
+      backendFactories: factories(instances), scheduleFrames: true,
+      requestFrame: raf.request, cancelFrame: raf.cancel,
+    });
+    controller.setViewport(8, 8);
+    controller.present(partial(1, whole));
+    raf.tick();
+    // A frame of another size is queued, then replaced before it is painted.
+    controller.present(partial(2, rect, width, height));
+    controller.present(partial(3, own));
+    raf.tick();
+    const backend = controller.backend;
+    assert.equal(backend.presents.length, 2, `${width}x${height}: the pair coalesces into one present`);
+    const painted = { ...backend.presents.at(-1).rect };
+    // The controller paints the frame's own rect today; a full repaint would be correct as well.
+    // A rect that mixes the two coordinate spaces is not.
+    assert.ok(isDeepStrictEqual(painted, own) || isDeepStrictEqual(painted, whole),
+      `${width}x${height}: painted ${JSON.stringify(painted)}`);
+    assert.equal(backend.presents.at(-1).pixels[0], 3, "with the newest frame's pixels");
+    assert.deepEqual(controller.snapshot().errors, []);
+    controller.dispose();
+  }
 });

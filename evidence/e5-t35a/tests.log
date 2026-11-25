@@ -1,0 +1,29 @@
+# head 2356edbd1 — node --test tests/e5-t06d-presentation.test.mjs tests/e5-t09c-present-scheduler.test.mjs tests/e5-t09d-hidden-present.test.mjs
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back (0.676042ms)
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery (0.487667ms)
+✔ clear control drops the retained frame and resets the presentation surface (0.179166ms)
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D (0.311709ms)
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded (1.970541ms)
+✔ frames coalesced within one animation frame paint the union of their damage (0.467875ms)
+✔ queued damage of another resource size is not unioned into a resized frame (0.120083ms)
+✔ an immediate present keeps the damage of the queued frame it replaces (0.131958ms)
+✔ latest-wins enqueue is idempotently scheduled and bounded to one pending plan (0.741375ms)
+✔ a 240-plans/sec producer with a 4x-slow backend never grows the queue (0.319083ms)
+✔ reentrant enqueue records one overrun and keeps one rAF chain (0.087416ms)
+✔ pause/resume preserves only the latest plan and stale callbacks cannot revive a chain (0.09175ms)
+✔ dispose drops pending work and makes both queued and stale callbacks inert (0.188584ms)
+✔ false or throwing backend delivery is skipped, never counted as presented (0.102667ms)
+✔ scheduled PresentationController presents only on rAF and retires resized work (1.045625ms)
+✔ hidden mode drains through one 250 ms timer while producer work continues (0.970292ms)
+✔ visibility transition cancels a delayed timer and resumes the latest plan on rAF (0.173708ms)
+✔ 1,000 alternating visibility callbacks keep one chain and deliver every latest frame (1.986791ms)
+✔ PresentationController exposes fresh scalar vm.stats.gpu snapshots (0.811958ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42.917792
+exit=0

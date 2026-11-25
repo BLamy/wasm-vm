@@ -1,0 +1,33 @@
+# verifier, source head fed441d08 (presentation.js as of 2356edbd1) plus the promoted test
+# cd web && node --test tests/e5-t06d-presentation.test.mjs tests/e5-t09c-present-scheduler.test.mjs tests/e5-t09d-hidden-present.test.mjs
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back (0.694375ms)
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery (0.48625ms)
+✔ clear control drops the retained frame and resets the presentation surface (0.148125ms)
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D (0.309166ms)
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded (1.93525ms)
+✔ frames coalesced within one animation frame paint the union of their damage (0.447416ms)
+✔ queued damage of another resource size is not unioned into a resized frame (0.114833ms)
+✔ an immediate present keeps the damage of the queued frame it replaces (0.121458ms)
+✔ under a fixed viewport, queued damage of another resource size is not unioned (0.300125ms)
+✔ latest-wins enqueue is idempotently scheduled and bounded to one pending plan (0.771583ms)
+✔ a 240-plans/sec producer with a 4x-slow backend never grows the queue (0.383416ms)
+✔ reentrant enqueue records one overrun and keeps one rAF chain (0.10875ms)
+✔ pause/resume preserves only the latest plan and stale callbacks cannot revive a chain (0.109084ms)
+✔ dispose drops pending work and makes both queued and stale callbacks inert (0.212959ms)
+✔ false or throwing backend delivery is skipped, never counted as presented (0.113917ms)
+✔ scheduled PresentationController presents only on rAF and retires resized work (1.218625ms)
+✔ hidden mode drains through one 250 ms timer while producer work continues (0.997958ms)
+✔ visibility transition cancels a delayed timer and resumes the latest plan on rAF (0.179667ms)
+✔ 1,000 alternating visibility callbacks keep one chain and deliver every latest frame (1.9625ms)
+✔ PresentationController exposes fresh scalar vm.stats.gpu snapshots (0.772541ms)
+ℹ tests 20
+ℹ pass 20
+ℹ fail 0
+exit=0
+
+# the two other unit files that import src/sink/presentation.js
+# cd web && node --test tests/e5-t25a-perf-hooks.test.mjs tests/e5-t22b-viewport.test.mjs
+ℹ tests 16
+ℹ pass 16
+ℹ fail 0
+exit=0
