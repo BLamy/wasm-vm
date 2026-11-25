@@ -1,0 +1,46 @@
+E5-T34g verifier predictions (written before inspecting evidence values or running anything)
+head under test: a56948a09 (runtime), e491a570c (claim). Written 2026-11-24 local.
+
+P1  cargo test -p wasm-vm-wasm --lib chunked -> "24 passed; 0 failed", output names
+    a_local_reader_serves_absent_chunks_without_parking,
+    a_local_reader_that_cannot_supply_a_chunk_leaves_the_read_parked,
+    a_store_too_small_for_a_request_parks_instead_of_resupplying_forever.
+P1s Sabotage: widen the bound (supplied < MAX*4) in ChunkedBackend::read ->
+    a_store_too_small_... fails on calls.len()==MAX (256 != 64); the other 23 pass.
+P2  desktop-latency on :8125 (committed web/dist, wasm sha b1e07965...5e588): exit 0, missing [],
+    disk.fetchWaits == 0, disk.localHits > 0, disk.networkFetches == 0,
+    node.raw.done[0] <= 1.5 * max(done[1], done[2]).
+    Before-column: evidence/e4-t40b first node run 26-30 s vs later 5-6 s; first click 1.0-1.8 s.
+P3a t34a corrupt: PASS; page halts with
+    "lazy chunk fetch failed: chunk 0: LocalImageCorrupt { chunk: 0 }"; zero chunk/Range requests.
+P3b t34a size: PASS.  P3c t34e warm: PASS.
+P4  Novel attack (chosen before running): see attack-plan below.
+P5  COVERAGE: reader closure and read loop execute in browser runs only on the construction site(s)
+    the Replay desktop / Alpine whole-image / warm legs use; I expect ChunkedWithExtra and
+    ChunkedPersistent sites, and set_local_image's local_failed.clear() on a non-empty set, to be
+    unexecuted by any recorded run.
+
+P4 attack plan (written before running evidence/e5-t34g/verifier/novel-attack.mjs)
+N1 corrupt-late: whole image with one byte flipped in chunk 74 (first demanded ~23 s into the lazy
+   boot, long after the root mount; evidence/e5-t34g/t34a/lazy-requests.json), declared sha256 =
+   the corrupted bytes. Predict: boot proceeds past "Mounted root", then the page halts with
+   "lazy chunk fetch failed: chunk 74: LocalImageCorrupt { chunk: 74 }"; the tab does not crash and
+   still evaluates JS; exactly one whole-image request; zero chunk/Range requests.
+N2 persist-prefill (ChunkedPersistent + local image; the case the worker lists as not covered):
+   Predict: reaches login; write+sync+readback prints VERIFIER_42_A; a 2-byte overwrite inside
+   /etc/motd reads back; COLDSUM (sha256 over a sorted fixed file set) is produced; fetchStats
+   {localImage:true, fetches:0, error:null, localHits>0}; zero chunk/Range requests; no console
+   error; no crash.
+N3 persist-lazy (same boot, no local image; the unchanged asynchronous path): reaches the same
+   markers and its COLDSUM equals N2's.
+
+Note (after the runs): the attack script named above was promoted to
+tools/verify/e5-t34g-local-read-attacks.mjs; attacks-run1/ holds the first run (pre-promotion
+copy, same leg bodies), attacks/ the run of the promoted script.
+
+N4 tight-prefill (added after noticing every recorded cache shows evictions: 0; written before the
+   run): whole image + cacheBudgetMib=1 (the smallest settable budget: 8 chunks of 128 KiB).
+   Predict: reaches login and the same COLDSUM 3c4852bb...263d3b; cache.evictions > 0;
+   localHits > 189 (evicted chunks are supplied again); fetches 0; zero chunk/Range requests;
+   fetchWaits 0 (every request fits 8 chunks, so no read parks); no crash, no console error.
+N4 observed: evictions 292, localHits 300, fetchWaits 0, same COLDSUM (attacks/tight-prefill.json).

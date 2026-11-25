@@ -1,0 +1,44 @@
+{
+  "mode": "persist-lazy",
+  "loginMs": 110301,
+  "coldsum": "3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b",
+  "crashed": false,
+  "consoleErrors": [],
+  "counts": {
+    "total": 365,
+    "whole": 0,
+    "chunkOrRange": 193
+  },
+  "fetchStats": {
+    "fetches": 193,
+    "bytes": 25296896,
+    "localHits": 0,
+    "localBytes": 0,
+    "localImage": false,
+    "error": null,
+    "cache": {
+      "hits": 5343502,
+      "misses": 16530022,
+      "evictions": 0,
+      "residentBytes": 25296896,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 46,
+      "used": 42,
+      "profileEntries": 0,
+      "accuracyPct": 91
+    }
+  },
+  "persistStats": {
+    "pendingBlocks": 0,
+    "pendingBytes": 0,
+    "flushWaiting": false,
+    "writeWaiting": false
+  },
+  "scheduler": {
+    "fetchWaits": 139,
+    "fetchRequestedChunks": 147,
+    "fetchWaitTotalMs": 341.4849992990494
+  }
+}

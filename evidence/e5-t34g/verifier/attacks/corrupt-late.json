@@ -1,0 +1,24 @@
+{
+  "mode": "corrupt-late",
+  "corrupt": {
+    "name": "corrupt-chunk74.img.gz",
+    "size": 805306368,
+    "sha256": "a385a3fdc425fa21f47508aad8b7abd607e0887759f6fde96b69dd18abb03697",
+    "corruptedOffset": 9703425,
+    "corruptedChunk": 74,
+    "from": "58f3f9a45da2e1f2a3b0d7e97a9188f847ed2f3f6d58a48507cd35a3dd4457db"
+  },
+  "haltMs": 21078,
+  "alive": 42,
+  "crashed": false,
+  "consoleErrors": [
+    "lazy fetch failed — chunk 74: LocalImageCorrupt { chunk: 74 }"
+  ],
+  "mountedRoot": true,
+  "counts": {
+    "total": 173,
+    "whole": 1,
+    "chunkOrRange": 0
+  },
+  "chunkRequests": []
+}

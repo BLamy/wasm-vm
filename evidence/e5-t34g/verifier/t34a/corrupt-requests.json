@@ -1,0 +1,1060 @@
+{
+  "corrupt": {
+    "size": 805306368,
+    "sha256": "571b12b2b4ea3242dcd1da34a561df2a54d5ae0013aaa206159add888e34e105",
+    "corruptedOffset": 0,
+    "corruptedChunk": 0
+  },
+  "consoleErrors": [
+    "lazy fetch failed — chunk 0: LocalImageCorrupt { chunk: 0 }"
+  ],
+  "wholeRequests": [
+    {
+      "t": 374,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/releases/chunked-alpine/corrupt-chunk0.img.gz",
+      "range": null
+    }
+  ],
+  "chunkRequests": [],
+  "requests": [
+    {
+      "t": 5,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/?testHooks=1&noAutoBoot=1",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/node_modules/@xterm/xterm/css/xterm.css",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-library.css",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/ui.css?rev=1d9da085070f",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/node_modules/@xterm/xterm/lib/xterm.js",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/node_modules/@xterm/addon-fit/lib/addon-fit.js",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/ui.js?rev=39072d85bfba",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/tabs.js",
+      "range": null
+    },
+    {
+      "t": 12,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/ide.js",
+      "range": null
+    },
+    {
+      "t": 30,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/omarchy-startup-state.js",
+      "range": null
+    },
+    {
+      "t": 30,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/coi-serviceworker-register.js",
+      "range": null
+    },
+    {
+      "t": 30,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/cpu-isolation.js",
+      "range": null
+    },
+    {
+      "t": 87,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+      "range": null
+    },
+    {
+      "t": 87,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+      "range": null
+    },
+    {
+      "t": 88,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/main.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/riscv-tests.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-gpu-reader-demo.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/roadmap.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/loader.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/linux-worker-host.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/overlay-reset-target.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-library.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-timeline.js",
+      "range": null
+    },
+    {
+      "t": 112,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/gpu-checkpoint-build.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/event-clock-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/input-recording-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/time-entropy-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/device-completions-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/network-capture-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-replay-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-streamed-replay-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-keyframe-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-seek-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/unrecorded-control-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/owned-http-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/gpu-journal-stream-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/witness-pages-probe.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/terminal.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/file-transfer.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/boot-progress.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/guest-rpc.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/input/keyboard.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/input/capture.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/input/held-keys.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/input/reconciliation.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/autoplay.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/sink.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/capture-ring.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/microphone.js",
+      "range": null
+    },
+    {
+      "t": 113,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/input/pointer.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/presentation.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/viewport.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/cursor-controller.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/desktop-agent-session.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/desktop-restore.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/cold-counter-recycling.js",
+      "range": null
+    },
+    {
+      "t": 114,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/omarchy-desktop-readiness.js",
+      "range": null
+    },
+    {
+      "t": 116,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/gpu-history-reader-probe.js",
+      "range": null
+    },
+    {
+      "t": 116,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-store.js",
+      "range": null
+    },
+    {
+      "t": 116,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-gpu-history-reader.js",
+      "range": null
+    },
+    {
+      "t": 116,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-gpu-replay.js",
+      "range": null
+    },
+    {
+      "t": 116,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/linux-worker-protocol.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/boot-path.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/overlay-seed-identity.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/gpu-checkpoint.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/task-quiescence.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/guest-clock.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/decoded-cache.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/boot-asset-cache.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/snapshot-stream.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/whole-image.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/readonly-root-snapshot.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/admission-probe.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-timeline-runtime.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-checkpoints.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-inputs.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-pkg/wasm_vm_session.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-network.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-devices.js",
+      "range": null
+    },
+    {
+      "t": 119,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-block-transfer-probe.js",
+      "range": null
+    },
+    {
+      "t": 120,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-seek.js",
+      "range": null
+    },
+    {
+      "t": 120,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-gpu-journal.js",
+      "range": null
+    },
+    {
+      "t": 120,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/production.mjs",
+      "range": null
+    },
+    {
+      "t": 121,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-witness-pages.js",
+      "range": null
+    },
+    {
+      "t": 121,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-witness-graph.js",
+      "range": null
+    },
+    {
+      "t": 121,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-witness-archives.js",
+      "range": null
+    },
+    {
+      "t": 121,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/osc52.js",
+      "range": null
+    },
+    {
+      "t": 121,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/paste.js",
+      "range": null
+    },
+    {
+      "t": 121,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/progress.js",
+      "range": null
+    },
+    {
+      "t": 122,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/input/keymap.js",
+      "range": null
+    },
+    {
+      "t": 123,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/ring.js",
+      "range": null
+    },
+    {
+      "t": 124,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/worklet.js",
+      "range": null
+    },
+    {
+      "t": 124,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/audio/capture-worklet.js",
+      "range": null
+    },
+    {
+      "t": 125,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/canvas2d.js",
+      "range": null
+    },
+    {
+      "t": 125,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/webgl.js",
+      "range": null
+    },
+    {
+      "t": 125,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/frame-scheduler.js",
+      "range": null
+    },
+    {
+      "t": 125,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/visibility-scheduler.js",
+      "range": null
+    },
+    {
+      "t": 126,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/cursor.js",
+      "range": null
+    },
+    {
+      "t": 126,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/desktop-agent-bridge.js",
+      "range": null
+    },
+    {
+      "t": 126,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/agent-channel.js",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-keyframes.js",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/checkpoint-codec.mjs",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/checkpoint-profile.mjs",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-gpu-frame-inspection.js",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-gpu-replay-format.js",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-witnesses.js",
+      "range": null
+    },
+    {
+      "t": 128,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-witness-graph-limits.js",
+      "range": null
+    },
+    {
+      "t": 134,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-disk-roots.js",
+      "range": null
+    },
+    {
+      "t": 134,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-branch-format.js",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/checkpoint.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/multisample.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-shader/standard.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/resources.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/decoder.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/color-images.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/float-images.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/packed-float-images.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/shared-exponent-images.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/integer-images.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/packed-normalized-images.mjs",
+      "range": null
+    },
+    {
+      "t": 136,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/packed-unsigned-images.mjs",
+      "range": null
+    },
+    {
+      "t": 137,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/floating-depth-images.mjs",
+      "range": null
+    },
+    {
+      "t": 137,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/unorm-depth-images.mjs",
+      "range": null
+    },
+    {
+      "t": 137,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-bundle-format.js",
+      "range": null
+    },
+    {
+      "t": 139,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/src/sink/present-backend.js",
+      "range": null
+    },
+    {
+      "t": 144,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/control-bridge.mjs",
+      "range": null
+    },
+    {
+      "t": 144,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/checkpoint-dma.mjs",
+      "range": null
+    },
+    {
+      "t": 146,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/dimensional-depth-images.mjs",
+      "range": null
+    },
+    {
+      "t": 146,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "range": null
+    },
+    {
+      "t": 146,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/floating-depth-gpu.mjs",
+      "range": null
+    },
+    {
+      "t": 148,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/scanout.mjs",
+      "range": null
+    },
+    {
+      "t": 148,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/state.mjs",
+      "range": null
+    },
+    {
+      "t": 151,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/queries.mjs",
+      "range": null
+    },
+    {
+      "t": 151,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-shader/index.mjs",
+      "range": null
+    },
+    {
+      "t": 151,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/cache.mjs",
+      "range": null
+    },
+    {
+      "t": 151,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/constant-domain.mjs",
+      "range": null
+    },
+    {
+      "t": 155,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/session-pkg/wasm_vm_session_bg.wasm",
+      "range": null
+    },
+    {
+      "t": 321,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm_bg.wasm",
+      "range": null
+    },
+    {
+      "t": 330,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/assets/hello.elf",
+      "range": null
+    },
+    {
+      "t": 332,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/artifacts-alpine.json",
+      "range": null
+    },
+    {
+      "t": 334,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/artifacts-node-alpine.json",
+      "range": null
+    },
+    {
+      "t": 335,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/artifacts-omarchy.json",
+      "range": null
+    },
+    {
+      "t": 335,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/artifacts-replay-desktop.json",
+      "range": null
+    },
+    {
+      "t": 342,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/linux-worker.js",
+      "range": null
+    },
+    {
+      "t": 351,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/loader.js",
+      "range": null
+    },
+    {
+      "t": 352,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/linux-worker-protocol.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/boot-path.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/overlay-seed-identity.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/gpu-checkpoint-build.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/gpu-checkpoint.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/task-quiescence.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/guest-clock.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/decoded-cache.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/boot-asset-cache.js",
+      "range": null
+    },
+    {
+      "t": 353,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/snapshot-stream.js",
+      "range": null
+    },
+    {
+      "t": 354,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/whole-image.js",
+      "range": null
+    },
+    {
+      "t": 354,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/readonly-root-snapshot.js",
+      "range": null
+    },
+    {
+      "t": 354,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/admission-probe.js",
+      "range": null
+    },
+    {
+      "t": 354,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/cold-counter-recycling.js",
+      "range": null
+    },
+    {
+      "t": 355,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "range": null
+    },
+    {
+      "t": 356,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "range": null
+    },
+    {
+      "t": 356,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+      "range": null
+    },
+    {
+      "t": 356,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/renderer/virgl-command/checkpoint-codec.mjs",
+      "range": null
+    },
+    {
+      "t": 360,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/artifacts-alpine.json",
+      "range": null
+    },
+    {
+      "t": 361,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/releases/kernel/6.6.63/Image",
+      "range": null
+    },
+    {
+      "t": 372,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/releases/chunked-alpine/manifest.json",
+      "range": null
+    },
+    {
+      "t": 374,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/releases/chunked-alpine/corrupt-chunk0.img.gz",
+      "range": null
+    },
+    {
+      "t": 955,
+      "method": "GET",
+      "url": "http://127.0.0.1:8123/pkg/wasm_vm_wasm_bg.wasm",
+      "range": null
+    }
+  ]
+}

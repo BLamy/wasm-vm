@@ -1,0 +1,6 @@
+E5-T34g corrupt-late: PASS (26455 ms)
+E5-T34g persist-prefill: PASS (126711 ms)
+E5-T34g persist-lazy: PASS (134711 ms)
+E5-T34g extra-prefill: PASS (119650 ms)
+E5-T34g differential: PASS (persist-prefill = persist-lazy = extra-prefill) 3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b
+RC=0

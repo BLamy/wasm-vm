@@ -1,0 +1,2 @@
+E5-T34g novel corrupt-late: PASS (24531 ms) {"mode":"corrupt-late","haltMs":21053,"alive":42,"crashed":false,"reachedKernel":true,"mountedRoot":true,"counts":{"total":173,"whole":1,"chunkOrRange":0}}
+RC=0
