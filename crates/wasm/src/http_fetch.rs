@@ -310,6 +310,17 @@ fn fetch_local(state: &Rc<FetchState>, chunk: usize) -> Option<Result<(), FetchF
     Some(result)
 }
 
+/// The whole-image source as a synchronous chunk reader for the block backend
+/// ([`crate::chunked::LocalChunkReader`]): a guest read of a chunk that is not resident is served
+/// from the installed image at once — sliced, hash-verified and inserted by the same
+/// [`fetch_local`] the asynchronous path uses — instead of parking until the next `fetchPending`.
+/// With no image installed, or for a chunk that fails verification, it answers `false`; the read
+/// then parks and the asynchronous path fetches the chunk or records the permanent failure.
+pub fn local_reader(state: &Rc<FetchState>) -> crate::chunked::LocalChunkReader {
+    let state = Rc::clone(state);
+    Rc::new(move |chunk| matches!(fetch_local(&state, chunk), Some(Ok(()))))
+}
+
 /// Send a GET for `url` (optionally with an inclusive `Range`) and await the RESPONSE HEADERS only —
 /// the status is available, but the body is NOT read (so it is not downloaded). A rejected promise
 /// (network/CORS) is `Err`. The caller inspects the status and reads the body via [`read_body`] only
