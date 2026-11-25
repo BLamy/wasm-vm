@@ -1,0 +1,29 @@
+test chunked::tests::a_read_spanning_present_and_absent_chunks_parks_on_the_absent_one ... ok
+test chunked::critic_e3t10_hostile::quota_failure_then_redirty_then_retry_never_loses_the_newest_bytes ... ok
+test chunked::tests::a_store_too_small_for_a_request_parks_instead_of_resupplying_forever ... FAILED
+test chunked::tests::absent_chunk_parks_then_resident_read_returns_bytes ... ok
+test chunked::tests::bad_requests_are_typed_errors_not_panics ... ok
+test chunked::tests::a_local_reader_that_cannot_supply_a_chunk_leaves_the_read_parked ... ok
+test chunked::tests::a_local_reader_serves_absent_chunks_without_parking ... ok
+test chunked::tests::flush_commits_the_overlay ... ok
+test chunked::tests::overlay_shadows_base_within_a_spanning_read ... ok
+test chunked::tests::checkpoint_disk_owns_complete_detached_seed_and_new_write_set ... ok
+test chunked::tests::checkpoint_persistent_disk_refuses_uncommitted_and_unacknowledged_writes ... ok
+test chunked::tests::seeded_delta_rejects_block_index_multiplication_overflow ... ok
+test chunked::tests::partial_block_write_parks_until_its_base_chunk_is_resident ... ok
+test chunked::tests::seeded_delta_rejects_duplicate_blocks ... ok
+test chunked::tests::seeded_delta_rejects_foreign_length_and_out_of_bounds_blocks ... ok
+test chunked::tests::seeded_delta_blocks_read_without_resident_base_chunks ... ok
+test chunked::tests::seeded_overlay_writes_are_isolated_from_the_base_cache ... ok
+test chunked::reset_scope_tests::overlay_db_name_is_per_image_and_stable ... ok
+test chunked::durable_write_ack_tests::persistent_write_waits_for_exact_barrier_then_acks_or_returns_read_only ... ok
+test chunked::ro_tests::read_only_backend_serves_reads_refuses_writes ... ok
+test chunked::critic_e3t10_hostile::continue_read_only_flush_parks_until_backlog_drains_then_acks ... ok
+test chunked::flush_tests::flush_barrier_over_writeback_overlay ... ok
+test chunked::ro_tests::ro_check_precedes_range_validation_and_reads_never_dirty_queue ... ok
+test chunked::ro_tests::ro_backend_with_forged_dirty_queue_would_park_flush_forever ... ok
+thread 'chunked::tests::a_store_too_small_for_a_request_parks_instead_of_resupplying_forever' (26011947) panicked at crates/wasm/src/chunked.rs:767:9:
+assertion `left == right` failed
+  left: 256
+ right: 64
+test result: FAILED. 23 passed; 1 failed; 0 ignored; 0 measured; 28 filtered out; finished in 0.02s

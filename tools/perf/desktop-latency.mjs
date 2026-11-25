@@ -302,6 +302,17 @@ try {
     if (name !== "click" && name !== "sweep") log(JSON.stringify({ ...result.scenarios[name], raw: undefined }));
   }
   result.jit = await page.evaluate(async () => { try { return await window.__jitStats?.(); } catch { return null; } });
+  // Disk I/O of the session: reads that had to wait for the end of a run slice (`fetchWaits`)
+  // and chunks served from the whole-image prefill (`localHits`).
+  result.disk = await page.evaluate(async () => {
+    try {
+      const s = await window.__schedulerStats?.();
+      const f = await window.__chunkedStats?.();
+      return { fetchWaits: s?.fetchWaits ?? null, fetchRequestedChunks: s?.fetchRequestedChunks ?? null,
+        fetchWaitTotalMs: s?.fetchWaitTotalMs ?? null, localImage: f?.localImage ?? null,
+        localHits: f?.localHits ?? null, localBytes: f?.localBytes ?? null, networkFetches: f?.fetches ?? null };
+    } catch { return null; }
+  });
   // Required measures: a missing sample means the tool could not see the effect it timed.
   const required = { click: ["resultMs"], sweep: ["resultMs", "cursorArriveMs"], type: ["echoMs"], node: ["promptMs"] };
   result.missing = Object.entries(required).flatMap(([name, keys]) => keys

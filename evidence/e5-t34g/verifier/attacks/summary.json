@@ -1,0 +1,62 @@
+{
+  "corrupt-late": {
+    "haltMs": 21078,
+    "counts": {
+      "total": 173,
+      "whole": 1,
+      "chunkOrRange": 0
+    }
+  },
+  "persist-prefill": {
+    "loginMs": 103305,
+    "coldsum": "3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b",
+    "counts": {
+      "total": 173,
+      "whole": 1,
+      "chunkOrRange": 0
+    },
+    "localHits": 189,
+    "fetches": 0,
+    "fetchWaits": 0,
+    "evictions": 0
+  },
+  "persist-lazy": {
+    "loginMs": 110301,
+    "coldsum": "3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b",
+    "counts": {
+      "total": 365,
+      "whole": 0,
+      "chunkOrRange": 193
+    },
+    "localHits": 0,
+    "fetches": 193,
+    "fetchWaits": 139,
+    "evictions": 0
+  },
+  "extra-prefill": {
+    "loginMs": 99263,
+    "coldsum": "3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b",
+    "counts": {
+      "total": 174,
+      "whole": 1,
+      "chunkOrRange": 0
+    },
+    "localHits": 189,
+    "fetches": 0,
+    "fetchWaits": 0,
+    "evictions": 0
+  },
+  "tight-prefill": {
+    "loginMs": 99282,
+    "coldsum": "3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b",
+    "counts": {
+      "total": 173,
+      "whole": 1,
+      "chunkOrRange": 0
+    },
+    "localHits": 300,
+    "fetches": 0,
+    "fetchWaits": 0,
+    "evictions": 292
+  }
+}

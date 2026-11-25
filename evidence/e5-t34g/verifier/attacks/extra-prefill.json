@@ -1,0 +1,39 @@
+{
+  "mode": "extra-prefill",
+  "loginMs": 99263,
+  "coldsum": "3c4852bbf36a4476947674a33004b847ffad38749fc31cf804497132c5263d3b",
+  "extra": "804_version",
+  "crashed": false,
+  "consoleErrors": [],
+  "counts": {
+    "total": 174,
+    "whole": 1,
+    "chunkOrRange": 0
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 189,
+    "localBytes": 24772608,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 6013,
+      "misses": 189,
+      "evictions": 0,
+      "residentBytes": 24772608,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 0,
+      "used": 0,
+      "profileEntries": 0,
+      "accuracyPct": 0
+    }
+  },
+  "scheduler": {
+    "fetchWaits": 0,
+    "fetchRequestedChunks": 0,
+    "fetchWaitTotalMs": 0
+  }
+}

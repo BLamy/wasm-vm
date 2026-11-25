@@ -1,0 +1,23 @@
+{
+  "mode": "corrupt-late",
+  "corrupt": {
+    "size": 805306368,
+    "sha256": "a385a3fdc425fa21f47508aad8b7abd607e0887759f6fde96b69dd18abb03697",
+    "corruptedOffset": 9703425,
+    "corruptedChunk": 74
+  },
+  "haltMs": 21053,
+  "alive": 42,
+  "crashed": false,
+  "consoleErrors": [
+    "lazy fetch failed — chunk 74: LocalImageCorrupt { chunk: 74 }"
+  ],
+  "reachedKernel": true,
+  "mountedRoot": true,
+  "counts": {
+    "total": 173,
+    "whole": 1,
+    "chunkOrRange": 0
+  },
+  "chunkRequests": []
+}

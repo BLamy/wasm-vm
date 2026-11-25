@@ -1,0 +1,9 @@
+[e5-t34e 2026-11-25T02:06:10.129Z] open http://127.0.0.1:8123/?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-25T02:06:11.888Z] downloads finished {"wholeImageFinishedMs":1761,"snapshotStartedMs":729,"snapshotFinishedMs":839,"wholeImageStartedMs":764,"downloadsFinishedMs":1761}
+[e5-t34e 2026-11-25T02:06:13.662Z] desktop visible 3535 ms; 1774 ms after the downloads finished
+[e5-t34e 2026-11-25T02:06:13.855Z] Chrome runs before click 1
+[e5-t34e 2026-11-25T02:06:19.223Z] Chrome runs after click 2 (5368 ms)
+[e5-t34e 2026-11-25T02:06:37.594Z] typed node -e "console.log('E5T34E_DAC46794', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-25T02:06:45.604Z] node answered 23343 ms after typing began
+[e5-t34e 2026-11-25T02:06:50.661Z] warm PASS {"times":{"wholeImageFinishedMs":1761,"snapshotStartedMs":729,"snapshotFinishedMs":839,"wholeImageStartedMs":764,"downloadsFinishedMs":1761,"desktopVisibleMs":3535,"downloadEndToDesktopMs":1774,"runAgainAnsweredMs":5368,"nodeAnswerAfterTypingMs":23343},"counts":{"total":174,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
+T34E_RC=0

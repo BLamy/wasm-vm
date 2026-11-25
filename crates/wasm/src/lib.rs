@@ -3194,15 +3194,20 @@ impl WasmLinux {
                 resume_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
-                let backend = chunked::CheckpointDisk::new(chunked::ChunkedBackend::new(
-                    &manifest,
+                // The fetch state comes first so the block backend can read a missing chunk
+                // straight from a whole-image prefill (`setLocalImage`) instead of parking.
+                let fetch_state = std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest.clone(),
+                    base_url,
                     store.clone(),
+                    profile,
                 ));
+                let mut backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                backend.set_local_reader(http_fetch::local_reader(&fetch_state));
+                let backend = chunked::CheckpointDisk::new(backend);
                 checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
-                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
-                    manifest, base_url, store, profile,
-                )));
+                fetch = Some(fetch_state);
             }
             DiskChoice::ChunkedSeeded {
                 manifest,
@@ -3221,15 +3226,22 @@ impl WasmLinux {
                 resume_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
-                let backend =
+                // The fetch state comes first so the block backend can read a missing chunk
+                // straight from a whole-image prefill (`setLocalImage`) instead of parking.
+                let fetch_state = std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest.clone(),
+                    base_url,
+                    store.clone(),
+                    profile,
+                ));
+                let mut backend =
                     chunked::ChunkedBackend::with_overlay(overlay, &manifest, store.clone())
                         .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
+                backend.set_local_reader(http_fetch::local_reader(&fetch_state));
                 let backend = chunked::CheckpointDisk::new(backend);
                 checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
-                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
-                    manifest, base_url, store, profile,
-                )));
+                fetch = Some(fetch_state);
             }
             DiskChoice::ChunkedWithExtra {
                 manifest,
@@ -3240,7 +3252,16 @@ impl WasmLinux {
             } => {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
-                let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                // The fetch state comes first so the block backend can read a missing chunk
+                // straight from a whole-image prefill (`setLocalImage`) instead of parking.
+                let fetch_state = std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest.clone(),
+                    base_url,
+                    store.clone(),
+                    profile,
+                ));
+                let mut backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                backend.set_local_reader(http_fetch::local_reader(&fetch_state));
                 machine.enable_virtio_blk(Box::new(backend));
                 // Keep slots 1/2 available for net/rng, slot 3 for the keyboard, and slots 4/5 for
                 // the tablet/mouse pair. Linux's block-major enumeration still names this second
@@ -3249,9 +3270,7 @@ impl WasmLinux {
                     wasm_vm_core::dev::virtio::input::pointer::FIRST_FREE_VIRTIO_SLOT,
                     Box::new(wasm_vm_core::block::MemBackend::new_read_only(extra_disk)),
                 );
-                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
-                    manifest, base_url, store, profile,
-                )));
+                fetch = Some(fetch_state);
             }
             // E3-T05 durable chunked image: the overlay is a WriteBackOverlay (reopened blocks +
             // shared persist queue) so guest writes survive a reload; base chunks still lazily fetched.
@@ -3290,8 +3309,17 @@ impl WasmLinux {
                 let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
                     .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
                 let overlay_meta = wasm_vm_storage::OverlayMeta::new(&manifest);
+                // The fetch state comes first so the block backend can read a missing chunk
+                // straight from a whole-image prefill (`setLocalImage`) instead of parking.
+                let fetch_state = std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest.clone(),
+                    base_url,
+                    store.clone(),
+                    profile,
+                ));
                 let mut backend =
                     chunked::ChunkedBackend::from_persistent_disk(disk, store.clone());
+                backend.set_local_reader(http_fetch::local_reader(&fetch_state));
                 if read_only {
                     // E3-T09: writes refused at this seam; the device advertises F_RO; and no
                     // persist pump exists (`persist` stays None), so an RO tab cannot touch
@@ -3308,9 +3336,7 @@ impl WasmLinux {
                 let backend = chunked::CheckpointDisk::new(backend);
                 checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
-                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
-                    manifest, base_url, store, profile,
-                )));
+                fetch = Some(fetch_state);
                 if !read_only {
                     persist = Some((idb, queue, overlay_meta));
                 }

@@ -80,9 +80,23 @@ struct PendingWrite {
 /// Generic over the overlay backend `B`: the default [`MemOverlay`] is the ephemeral in-memory overlay
 /// (`newChunkedDisk`); the durable IndexedDB path (`newChunkedDiskPersistent`, E3-T05) builds it over a
 /// `WriteBackOverlay` via [`Self::from_disk`].
+/// A synchronous source for a base chunk that is not resident: called with a chunk index, it
+/// returns `true` once it has put that chunk's verified bytes into the shared store. The
+/// whole-image prefill provides one (the image is already in host memory, so a missing chunk is a
+/// copy and a hash, not a network round trip). `false` means "not available here": the read
+/// parks exactly as it always did and the asynchronous fetch path takes over.
+pub type LocalChunkReader = Rc<dyn Fn(usize) -> bool>;
+
+/// Chunks one read may take from a [`LocalChunkReader`] before it parks instead. A request spans
+/// a handful of chunks; the bound only stops a store too small to hold a request's chunks at once
+/// from evicting and re-supplying them forever.
+const MAX_LOCAL_CHUNKS_PER_READ: usize = 64;
+
 pub struct ChunkedBackend<B: OverlayBackend = MemOverlay> {
     /// The base chunk cache, shared with the fetch layer which verifies+inserts chunks (E3-T03).
     store: Rc<RefCell<BlockCache>>,
+    /// Supplies a missing base chunk at once instead of parking the read (see the type).
+    local_reader: Option<LocalChunkReader>,
     /// The E3-T04 copy-on-write overlay over the base.
     disk: OverlayDisk<B>,
     capacity_sectors: u64,
@@ -155,12 +169,21 @@ impl<B: OverlayBackend> ChunkedBackend<B> {
         ChunkedBackend {
             capacity_sectors: disk.len() / SECTOR_SIZE as u64,
             store,
+            local_reader: None,
             disk,
             flush_barrier: None,
             durable_write_ack,
             pending_write: None,
             read_only: Rc::new(std::cell::Cell::new(false)),
         }
+    }
+
+    /// Serve reads of absent base chunks from `reader` at once instead of parking them. Reads
+    /// only: a partial-block write still parks until its base chunk is resident.
+    /// (Installed only by the wasm32 `assemble` path; the native build uses it from tests.)
+    #[allow(dead_code)]
+    pub fn set_local_reader(&mut self, reader: LocalChunkReader) {
+        self.local_reader = Some(reader);
     }
 
     /// E3-T09: mark this backend read-only (the writer Web Lock is held by another tab). The
@@ -187,14 +210,33 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
         // Validate alignment + range up front (also gives the byte offset). Rejects the same cases
         // MemBackend does, so the device model sees identical error behaviour on bad requests.
         let off = check_range(self.capacity_sectors, sector, buf.len())?;
-        // `disk` reads &self; `store` borrows immutably — disjoint fields of `self`.
-        match self.disk.read(&*self.store.borrow(), off, buf.len() as u64) {
-            Ok(OverlayOutcome::Done(bytes)) => {
-                buf.copy_from_slice(&bytes);
-                Ok(())
+        let mut supplied = 0usize;
+        loop {
+            // `disk` reads &self; `store` borrows immutably — disjoint fields of `self`. The
+            // borrow ends with this block: a local reader inserts into the same store.
+            let outcome = {
+                let store = self.store.borrow();
+                self.disk.read(&*store, off, buf.len() as u64)
+            };
+            match outcome {
+                Ok(OverlayOutcome::Done(bytes)) => {
+                    buf.copy_from_slice(&bytes);
+                    return Ok(());
+                }
+                Ok(OverlayOutcome::NeedChunk(c)) => {
+                    // A local source can make the chunk resident right now; retry the read. If
+                    // it cannot (no local image, a chunk that fails verification), park: the
+                    // asynchronous fetch path then fetches it or reports the failure.
+                    if supplied < MAX_LOCAL_CHUNKS_PER_READ
+                        && self.local_reader.as_ref().is_some_and(|read| read(c))
+                    {
+                        supplied += 1;
+                        continue;
+                    }
+                    return Err(BlockError::WouldBlock { chunk: c });
+                }
+                Err(_) => return Err(BlockError::Io),
             }
-            Ok(OverlayOutcome::NeedChunk(c)) => Err(BlockError::WouldBlock { chunk: c }),
-            Err(_) => Err(BlockError::Io),
         }
     }
 
@@ -637,6 +679,96 @@ mod tests {
         let mut big = [0u8; NSEC * SECTOR_SIZE];
         be.read(0, &mut big).unwrap();
         assert_eq!(&big[..], &data[..]);
+    }
+
+    /// A local reader over `data` that verifies nothing (the fetch layer's job) and counts calls.
+    fn reader_over(
+        store: &Rc<RefCell<BlockCache>>,
+        data: &[u8],
+        cs: usize,
+        refuse: Option<usize>,
+    ) -> (LocalChunkReader, Rc<RefCell<Vec<usize>>>) {
+        let calls = Rc::new(RefCell::new(Vec::new()));
+        let (store, data, log) = (store.clone(), data.to_vec(), calls.clone());
+        let reader: LocalChunkReader = Rc::new(move |c| {
+            log.borrow_mut().push(c);
+            if refuse == Some(c) {
+                return false;
+            }
+            let lo = c * cs;
+            let hi = (lo + cs).min(data.len());
+            store.borrow_mut().insert(c, data[lo..hi].to_vec());
+            true
+        });
+        (reader, calls)
+    }
+
+    #[test]
+    fn a_local_reader_serves_absent_chunks_without_parking() {
+        let (data, _m, store, mut be) = setup(NSEC, CS);
+        let (reader, calls) = reader_over(&store, &data, CS as usize, None);
+        be.set_local_reader(reader);
+        // One sector of an absent chunk: supplied and read in the same call.
+        let mut buf = [0u8; SECTOR_SIZE];
+        be.read(8, &mut buf).unwrap();
+        assert_eq!(&buf[..], &data[4096..4096 + SECTOR_SIZE]);
+        assert_eq!(*calls.borrow(), vec![1]);
+        // A read spanning both chunks asks only for the one still missing, then never again.
+        let mut big = [0u8; NSEC * SECTOR_SIZE];
+        be.read(0, &mut big).unwrap();
+        assert_eq!(&big[..], &data[..]);
+        be.read(0, &mut big).unwrap();
+        assert_eq!(*calls.borrow(), vec![1, 0]);
+    }
+
+    #[test]
+    fn a_local_reader_that_cannot_supply_a_chunk_leaves_the_read_parked() {
+        let (data, m, store, mut be) = setup(NSEC, CS);
+        let (reader, calls) = reader_over(&store, &data, CS as usize, Some(1));
+        be.set_local_reader(reader);
+        let mut big = [0u8; NSEC * SECTOR_SIZE];
+        // Chunk 0 is supplied; chunk 1 is refused (say it failed verification): the read parks
+        // on chunk 1 with nothing copied out, exactly as with no local reader.
+        assert_eq!(
+            be.read(0, &mut big),
+            Err(BlockError::WouldBlock { chunk: 1 })
+        );
+        assert_eq!(big, [0u8; NSEC * SECTOR_SIZE]);
+        assert_eq!(*calls.borrow(), vec![0, 1]);
+        // The asynchronous path then makes it resident and the retried read completes.
+        give(&store, &m, &data, 1, CS as usize);
+        be.read(0, &mut big).unwrap();
+        assert_eq!(&big[..], &data[..]);
+    }
+
+    #[test]
+    fn a_store_too_small_for_a_request_parks_instead_of_resupplying_forever() {
+        // 64 sectors in 4096-byte chunks = 8 chunks, but the store holds only one chunk at a
+        // time: every supplied chunk evicts the previous one, so a spanning read can never see
+        // them all resident. It must give up after a bounded number of supplies and park.
+        let data: Vec<u8> = (0..64 * SECTOR_SIZE).map(|i| (i % 251) as u8).collect();
+        let chunks: Vec<String> = data.chunks(CS as usize).map(sha_hex).collect();
+        let m = ImageManifest {
+            version: FORMAT_VERSION,
+            image_len: data.len() as u64,
+            chunk_size: CS,
+            layout: Layout::Split,
+            chunks,
+        };
+        let store = Rc::new(RefCell::new(BlockCache::new(u64::from(CS))));
+        let mut be = ChunkedBackend::new(&m, store.clone());
+        let (reader, calls) = reader_over(&store, &data, CS as usize, None);
+        be.set_local_reader(reader);
+        let mut big = vec![0u8; 64 * SECTOR_SIZE];
+        assert!(matches!(
+            be.read(0, &mut big),
+            Err(BlockError::WouldBlock { .. })
+        ));
+        assert_eq!(calls.borrow().len(), MAX_LOCAL_CHUNKS_PER_READ);
+        // A read that fits the store still completes.
+        let mut one = [0u8; SECTOR_SIZE];
+        be.read(40, &mut one).unwrap();
+        assert_eq!(&one[..], &data[40 * SECTOR_SIZE..41 * SECTOR_SIZE]);
     }
 
     #[test]

@@ -1,0 +1,21 @@
+{
+  "fetches": 0,
+  "bytes": 0,
+  "localHits": 110,
+  "localBytes": 14417920,
+  "localImage": true,
+  "error": null,
+  "cache": {
+    "hits": 2020,
+    "misses": 110,
+    "evictions": 0,
+    "residentBytes": 14417920,
+    "budgetBytes": 268435456
+  },
+  "prefetch": {
+    "issued": 0,
+    "used": 0,
+    "profileEntries": 0,
+    "accuracyPct": 0
+  }
+}
