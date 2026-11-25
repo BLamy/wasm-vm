@@ -68,6 +68,11 @@ pub struct FetchState {
     /// E5-T34a: chunks served from the local image (no network) and their bytes.
     pub local_hits: Cell<u32>,
     pub local_bytes: Cell<u64>,
+    /// E5-T34g: chunks the synchronous local reader could not supply (failed verification or out
+    /// of range). A parked read is retried at every device service; without this the reader
+    /// would copy and hash the same bad chunk each time. The asynchronous path still fetches such
+    /// a chunk once and records the permanent failure.
+    local_failed: RefCell<BTreeSet<usize>>,
 }
 
 impl FetchState {
@@ -94,6 +99,7 @@ impl FetchState {
             local_image: RefCell::new(None),
             local_hits: Cell::new(0),
             local_bytes: Cell::new(0),
+            local_failed: RefCell::new(BTreeSet::new()),
         }
     }
 
@@ -102,6 +108,8 @@ impl FetchState {
     pub fn set_local_image(&self, image: Uint8Array) -> Result<(), LocalImageError> {
         let admitted = LocalImage::admit(&self.manifest, u64::from(image.length()))?;
         *self.local_image.borrow_mut() = Some((admitted, image));
+        // A different source: what the previous one could not supply says nothing about it.
+        self.local_failed.borrow_mut().clear();
         Ok(())
     }
 
@@ -315,10 +323,24 @@ fn fetch_local(state: &Rc<FetchState>, chunk: usize) -> Option<Result<(), FetchF
 /// from the installed image at once — sliced, hash-verified and inserted by the same
 /// [`fetch_local`] the asynchronous path uses — instead of parking until the next `fetchPending`.
 /// With no image installed, or for a chunk that fails verification, it answers `false`; the read
-/// then parks and the asynchronous path fetches the chunk or records the permanent failure.
+/// then parks and the asynchronous path fetches the chunk or records the permanent failure. A
+/// chunk that failed once is not tried again here: the parked read is retried at every device
+/// service, and each try would otherwise copy and hash the chunk afresh.
 pub fn local_reader(state: &Rc<FetchState>) -> crate::chunked::LocalChunkReader {
     let state = Rc::clone(state);
-    Rc::new(move |chunk| matches!(fetch_local(&state, chunk), Some(Ok(()))))
+    Rc::new(move |chunk| {
+        if state.local_failed.borrow().contains(&chunk) {
+            return false;
+        }
+        match fetch_local(&state, chunk) {
+            Some(Ok(())) => true,
+            Some(Err(_)) => {
+                state.local_failed.borrow_mut().insert(chunk);
+                false
+            }
+            None => false,
+        }
+    })
 }
 
 /// Send a GET for `url` (optionally with an inclusive `Range`) and await the RESPONSE HEADERS only —

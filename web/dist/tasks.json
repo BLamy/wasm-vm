@@ -23851,15 +23851,17 @@
       "activity": [
         {
           "date": "2026-11-24",
-          "commits": 1,
+          "commits": 3,
           "labels": [
-            "E5-T34g in progress: serve whole-image reads synchronously"
+            "E5-T34g in progress: serve whole-image reads synchronously",
+            "E5-T34g: regenerated GPU checkpoint build id (matches web/dist)",
+            "E5-T34g: serve disk reads from the whole-image prefill at once"
           ]
         }
       ],
       "firstActivity": "2026-11-24",
       "lastActivity": "2026-11-24",
-      "commitCount": 1
+      "commitCount": 3
     },
     {
       "id": "E5.5-T01a",
