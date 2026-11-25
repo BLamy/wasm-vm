@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 577,
-    "total": 791
+    "total": 792
   },
   "epics": [
     {
@@ -23924,18 +23924,45 @@
       "activity": [
         {
           "date": "2026-11-24",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "E5-T35a verified: verifier",
             "E5-T35a implemented: claim and evidence",
             "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements",
-            "E5-T35a: regenerated GPU checkpoint build id (matches web/dist)",
-            "E5-T35a: paint the union of coalesced damage"
+            "E5-T35a: regenerated GPU checkpoint build id (matches web/dist)"
           ]
         }
       ],
       "firstActivity": "2026-11-24",
       "lastActivity": "2026-11-24",
-      "commitCount": 4
+      "commitCount": 5
+    },
+    {
+      "id": "E5-T35b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Keep queued damage across a resource size round trip and across a failed backend present",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T35a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`web/src/sink/presentation.js` only. Two gaps the E5-T35a verifier found. Neither is a\nregression (the previous file behaves the same or worse) and neither has been seen on the live\ndesktop; both were found by fuzzing the controller.\n\n1. **Size round trip under a fixed viewport.** Queue an 8x8 frame with rect `{6,6,2,2}`, then a\n   16x16 frame, then an 8x8 frame with rect `{0,0,1,1}`, with no paint in between (one paused\n   period, one hidden-tab timer period or one animation frame). Only `{0,0,1,1}` is painted and\n   `{6,6,2,2}` stays stale: pending damage of the first size is dropped when the second size\n   arrives, and E5-T35a's premise that a resized resource repaints in full does not hold under a\n   fixed viewport. The verifier's fuzz hit it in 71 of 600 seeds in that mode\n   (`evidence/e5-t35a/verifier/`).\n2. **A backend `present` that throws.** Pending damage is cleared before the backend call, so\n   after a throw the next frame paints only its own rect.\n\nFix: when the queued size changes, promote the next paint to the whole resource instead of\ndropping the queued damage; clear pending damage only after the backend call returns.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`cd web && node --test tests/e5-t06d-presentation.test.mjs` passes with two new cases: the\nround trip above paints a rect covering `{6,6,2,2}`; after a backend that throws once, the next\npresent covers the rect of the failed one. Both must fail on the E5-T35a `presentation.js`.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Low risk: inspect the direct result and re-run the verifier's fixed-viewport fuzz mode from\n`evidence/e5-t35a/verifier/` with fresh seeds; no seed may leave a stale pixel.",
+      "file": "tasks/epic-5-the-window/E5-T35b-damage-across-size-round-trip.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
     },
     {
       "id": "E5-T36",
