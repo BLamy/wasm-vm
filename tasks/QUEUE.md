@@ -57,7 +57,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 5 — `epic-5-the-window`
 
-- [~] `0.38763` [E5-T34g](epic-5-the-window/E5-T34g-whole-image-sync-reads.md) — Serve disk reads from the whole-image prefill at once instead of parking them *(deps: E4-T40b, E5-T34a)*
+- [?] `0.38763` [E5-T34g](epic-5-the-window/E5-T34g-whole-image-sync-reads.md) — Serve disk reads from the whole-image prefill at once instead of parking them *(deps: E4-T40b, E5-T34a)*
 
 ## Epic 0 — `epic-0-ignition`
 

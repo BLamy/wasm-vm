@@ -1,0 +1,7 @@
+test chunked::tests::a_read_spanning_present_and_absent_chunks_parks_on_the_absent_one ... ok
+test chunked::tests::a_local_reader_that_cannot_supply_a_chunk_leaves_the_read_parked ... ok
+test chunked::tests::a_local_reader_serves_absent_chunks_without_parking ... ok
+test chunked::tests::a_store_too_small_for_a_request_parks_instead_of_resupplying_forever ... ok
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 28 filtered out; finished in 0.01s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.13s
+81 wasm ok result lines
