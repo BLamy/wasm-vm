@@ -3,7 +3,7 @@ id: E4-T40b
 epic: 4
 title: Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter
 priority: 0.38762
-status: evidence-needed
+status: in-progress
 depends_on: [E4-T40a]
 estimate: S
 risk: high
@@ -51,15 +51,17 @@ engages there (the JIT was slower on it, E4-T40a); `?jit=1` restores the JIT.
 
 Also in scope, because the proofs need them: CLI `--virtio-rng-seed` (a fixed byte
 stream for the entropy device, so a snapshot that has the rng slot can be replayed
-bit-for-bit) and CLI `--decoded-cache-entries`.
+bit-for-bit), CLI `--decoded-cache-entries`, and CLI `--resume-core-id` /
+`--resume-base-id` (adopt a stamped snapshot's identity before it is validated, so the
+shipped desktop snapshot can be resumed natively).
 
 Out of scope: block chaining, a larger default decoded cache, superinstructions, any
 JIT change, other guests' boot options.
 
 ## Deterministic acceptance
 
-1. `cargo test --release -p wasm-vm-core --lib -- tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries tests::replay_block_tail_is_unobservable tests::deferred_retire_accounting_is_unobservable`
-   passes: with the loop on, the retire-trace hash, retired count, run outcomes,
+1. `cargo test --release -p wasm-vm-core --lib -- turbo_equivalence_tests tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries tests::replay_block_tail_is_unobservable tests::deferred_retire_accounting_is_unobservable`
+   (17 tests) passes: with the loop on, the retire-trace hash, retired count, run outcomes,
    registers, full hart snapshot, RAM digest, `mtime`, tick residue and progress
    counter equal the general loop's for every slicing, and the loop demonstrably
    engaged.

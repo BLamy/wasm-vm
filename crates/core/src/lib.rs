@@ -69,6 +69,8 @@ pub mod trace;
 mod turbo;
 #[cfg(not(feature = "zicsr-stub"))]
 pub use turbo::TurboStats;
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod turbo_equivalence_tests;
 #[cfg(feature = "zicsr-stub")]
 pub mod zicsr_stub;
 

@@ -35,8 +35,9 @@
 //!   boundary, so it holds `mtime` as of the start of the block being executed. The loop
 //!   reproduces that: whenever it settles, it first settles up to the start of the current
 //!   block, refreshes the shadow there ([`Machine::sync_clint`], whose `mip` writes cannot change
-//!   inside the horizon), then settles the rest. A block that ends in a CSR or system op is
-//!   settled this way on entry.
+//!   inside the horizon), then settles the rest. A CSR or system op always goes through the
+//!   ordinary executor, and that path settles first, so the shadow it reads is the one the
+//!   ordinary loop would have refreshed at its block's boundary.
 //! * **Instructions.** Integer ops use the same `integer_result` the ordinary deferred path uses;
 //!   loads, stores, branches and jumps use [`Hart::turbo_step`], which completes an op only on the
 //!   path `Hart::execute` would take without leaving the hart, and otherwise leaves it to
@@ -45,10 +46,6 @@
 //!   on a possible hit, goes through the ordinary page invalidation. If that drops the running
 //!   block the loop returns at the next instruction, which the ordinary loop treats as a
 //!   boundary, as it always did.
-//!
-//! * **Fetch walks.** When translating a block's entry walks the page table and updates a PTE,
-//!   the written frame is logged like any store; the entry op then takes the ordinary path, whose
-//!   post-retire drain processes that log at the same point as before.
 //!
 //! Block entry still goes through [`Machine::enter_block`], so translation, the TLBs, the block
 //! cache and JIT discovery see the same sequence of lookups as before.
@@ -362,13 +359,10 @@ impl Machine {
                 self.turbo_stats.exit_boundary += 1;
                 return None;
             };
-            if block.system_end() {
-                self.turbo_settle(&mut deferred);
-            }
-            // The fetch translation of this entry may have walked the page table and logged the
-            // frame of a PTE it updated. The ordinary loop drains that log when the entry op
-            // retires, so in that (rare) case the entry op takes the ordinary path here too.
-            let mut ordinary_next = !self.bus.code_write_log_mut().is_empty();
+            // `enter_block` drained the code-write log and nothing has stored since (this MMU
+            // never writes a PTE while translating), so the inline ops below start from an
+            // empty log, as the ordinary loop's entry op does.
+            debug_assert!(self.bus.code_write_log_mut().is_empty());
             let ops = &block.ops[..];
             let mut idx = 0usize;
             while idx < ops.len() {
@@ -386,10 +380,7 @@ impl Machine {
                 let pc = self.hart.regs.pc;
                 // `Some(frame)` after an inline store, `Some(None)` after any other inline op,
                 // `None` when the op must go through the ordinary executor.
-                let inline: Option<Option<u64>> = if ordinary_next {
-                    ordinary_next = false;
-                    None
-                } else {
+                let inline: Option<Option<u64>> = {
                     let mut cap = caps.make();
                     if block.op_deferrable(idx) {
                         let (rd, value) = self
