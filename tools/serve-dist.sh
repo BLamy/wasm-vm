@@ -3,7 +3,10 @@
 # /releases — the local stand-in for the live site, for verifying a built page without touching the
 # working copy of web/ (tools/serve-dev.sh serves the source tree instead).
 #
-#   bash tools/serve-dist.sh [PORT]     # default 8125; the app is /app.html
+#   bash tools/serve-dist.sh [PORT] [ROOT]   # default 8125 and web/dist; the app is /app.html
+#
+# ROOT may name another web root, e.g. `web` to serve a source tree whose release artifacts live in
+# a different checkout (the app is then /).
 #
 # RELEASES (default ./releases) may point at another checkout that holds the large gitignored
 # artifacts. Nothing is copied or linked into web/dist.
@@ -11,7 +14,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 PORT="${1:-8125}"
 RELEASES="${RELEASES:-releases}"
-python3 - "$PORT" "$PWD/web/dist" "$(cd "$RELEASES" && pwd)" <<'PY'
+ROOT="${2:-web/dist}"
+python3 - "$PORT" "$(cd "$ROOT" && pwd)" "$(cd "$RELEASES" && pwd)" <<'PY'
 import functools, http.server, os, sys
 port, dist, releases = int(sys.argv[1]), sys.argv[2], sys.argv[3]
 

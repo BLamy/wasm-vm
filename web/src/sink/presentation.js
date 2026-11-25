@@ -72,6 +72,18 @@ function checkedFrame(frame) {
   });
 }
 
+/** The smallest rect covering both `a` and `b` (same resource). */
+function unionRect(a, b) {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return Object.freeze({
+    x,
+    y,
+    width: Math.max(a.x + a.width, b.x + b.width) - x,
+    height: Math.max(a.y + a.height, b.y + b.height) - y,
+  });
+}
+
 function disposeQuietly(backend, errors) {
   if (!backend || typeof backend.dispose !== "function") return;
   try {
@@ -117,6 +129,8 @@ export class PresentationController {
     this._backend = null;
     this._backendName = null;
     this._latest = null;
+    // Damage queued behind the frame scheduler but not yet painted (see `_withPendingDamage`).
+    this._pendingDamage = null;
     this._paintedResource = null;
     this._fixedViewport = false;
     this._disposed = false;
@@ -322,7 +336,31 @@ export class PresentationController {
     if (this._backendName === "canvas2d") this._contextLost = false;
   }
 
+  /**
+   * A scheduler keeps only its newest pending frame. Every frame carries the whole resource, so
+   * the newest pixels are right everywhere, but its rect covers only its own flush: painting just
+   * that rect would leave a region flushed earlier in the same animation frame (say a button
+   * repaint followed by a cursor flush) stale on the canvas until something else happened to
+   * cover it. So a frame that replaces queued damage of the same resource paints the union.
+   */
+  _withPendingDamage(checked) {
+    const pending = this._pendingDamage;
+    const frame = pending
+      && pending.resourceWidth === checked.resourceWidth
+      && pending.resourceHeight === checked.resourceHeight
+      ? Object.freeze({ ...checked, rect: unionRect(pending.rect, checked.rect) })
+      : checked;
+    this._pendingDamage = {
+      rect: frame.rect,
+      resourceWidth: frame.resourceWidth,
+      resourceHeight: frame.resourceHeight,
+    };
+    return frame;
+  }
+
   _deliver(frame, replay = false) {
+    // Whatever was queued is either in this frame's rect or superseded by a full repaint.
+    if (!replay) this._pendingDamage = null;
     if (!this._backend || this._contextLost) {
       if (!this._lossDropCounted) {
         this._droppedFrames += 1;
@@ -446,8 +484,13 @@ export class PresentationController {
     if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
       this.resize(checked.resourceWidth, checked.resourceHeight);
     }
-    this._latest = checked;
-    return this._scheduler ? this._scheduler.enqueue(checked) : this._deliver(checked);
+    if (!this._scheduler) {
+      this._latest = checked;
+      return this._deliver(checked);
+    }
+    const queued = this._withPendingDamage(checked);
+    this._latest = queued;
+    return this._scheduler.enqueue(queued);
   }
 
   /** A retained renderer frame is already paced by its host owner. Deliver on that owner's rAF. */
@@ -455,18 +498,21 @@ export class PresentationController {
     if (this._disposed) throw new Error("PresentationController is disposed");
     const checked = checkedFrame(frame);
     this._framesReceived += 1;
+    // A queued frame is dropped in favour of this one; its damage is not.
     this._scheduler?.discardPending();
+    const immediate = this._withPendingDamage(checked);
     if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
       this.resize(checked.resourceWidth, checked.resourceHeight);
     }
-    this._latest = checked;
-    return this._deliver(checked);
+    this._latest = immediate;
+    return this._deliver(immediate);
   }
 
   /** Revoke queued/recovery pixels while the displayed front buffer stays visible. */
   invalidate() {
     if (this._disposed) throw new Error("PresentationController is disposed");
     this._scheduler?.discardPending();
+    this._pendingDamage = null;
     this._latest = null;
     this._paintedResource = null;
     return true;

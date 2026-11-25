@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 576,
-    "total": 787
+    "total": 791
   },
   "epics": [
     {
@@ -16230,6 +16230,41 @@
       "commitCount": 12
     },
     {
+      "id": "E4-T40c",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Compiled tier for the turbo loop — region-sized units (planning parent)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T40b"
+      ],
+      "decomposed_into": [],
+      "estimate": "L",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-4-acceleration/E4-T40c-turbo-compiled-regions.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
+    },
+    {
       "id": "E5-T01",
       "epic": "5",
       "epicKey": "5",
@@ -23863,6 +23898,111 @@
       "firstActivity": "2026-11-24",
       "lastActivity": "2026-11-24",
       "commitCount": 7
+    },
+    {
+      "id": "E5-T35a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Paint the union of coalesced damage so an earlier flush is never left stale on the canvas",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E4-T40b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`web/src/sink/presentation.js` only (host presentation; no guest or wasm change).\n\nThe frame scheduler keeps one pending frame and presents at most once per animation frame.\nEvery frame carries the whole resource, but the presentation controller painted only the\nnewest frame's rect. When two guest flushes land inside one animation frame — a button\nrepaint, then a flush elsewhere such as the cursor — the first region was never painted and\nstayed stale until some later flush happened to cover it.\n\nTrack the damage queued behind the scheduler and paint its union with the newest rect (same\nresource size only; a resized resource already repaints in full). An immediate present that\nreplaces a queued frame keeps that frame's damage too.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`cd web && node --test tests/e5-t06d-presentation.test.mjs tests/e5-t09c-present-scheduler.test.mjs tests/e5-t09d-hidden-present.test.mjs`\npasses, including three new cases: coalesced flushes paint the union with the newest pixels\nand painted damage is not carried into the next frame; queued damage of another resource\nsize is not unioned into a resized frame; an immediate present keeps the damage of the\nqueued frame it replaces.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Low risk: inspect the direct result. The new test must fail on the previous\n`presentation.js`.",
+      "file": "tasks/epic-5-the-window/E5-T35a-present-damage-union.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T36",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Hardware cursor plane on the Replay desktop — pointer drawn by the host, instantly (planning parent)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T34g"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-5-the-window/E5-T36-replay-desktop-hardware-cursor.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T37",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Stop spinning a host core while the desktop is idle (planning parent)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T34g"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-5-the-window/E5-T37-idle-yield-and-pacing.md",
+      "activity": [
+        {
+          "date": "2026-11-24",
+          "commits": 1,
+          "labels": [
+            "E5-T35a in progress; file E4-T40c, E5-T36 and E5-T37 with today's measurements"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-24",
+      "lastActivity": "2026-11-24",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T01a",
