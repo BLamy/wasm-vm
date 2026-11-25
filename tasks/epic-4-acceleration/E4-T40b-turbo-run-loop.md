@@ -3,7 +3,7 @@ id: E4-T40b
 epic: 4
 title: Turbo run loop — whole-block interpretation with deferred accounting, bit-identical to the batched interpreter
 priority: 0.38762
-status: implemented
+status: verified
 depends_on: [E4-T40a]
 estimate: S
 risk: high
@@ -439,3 +439,167 @@ place; the system-end settle and its doc sentence deleted), `crates/core/src/dis
 (back to the parent's content), `crates/core/src/lib.rs` (one `mod` line), the new test
 file, and this task file's Boundary and acceptance 1. `crates/core/src/hart/turbo.rs`,
 the CLI, the wasm crate and `web/` sources are untouched.
+
+### 2026-11-24 — verifier (round 2) — VERDICT: verified
+
+Fresh session (neither the implementer nor the round-1 verifier). Head `48f516905`, runtime
+`a2233d307`; `crates/` untouched by me (`git status --short crates/` empty at the end). Nothing I
+ran contradicts the claim, the six coverage gaps of round 1 are closed by committed tests that
+fail when the line is broken, and the dead branch is gone. Predictions were written to
+`evidence/e4-t40b/verifier-r2/predictions.md` before any test, boot, sabotage or browser run
+(after reading the diff, the code and the worker's logs, and one no-op `cargo build`).
+Evidence: `evidence/e4-t40b/verifier-r2/` (paths below are relative to it).
+
+**What changed since round 1.** `git diff ccb7da9f5 a2233d307 -- crates/`: `turbo.rs` (two
+deletions, one `debug_assert!`, doc), `dispatch.rs` (back to the parent: `git diff 79b5c2817
+a2233d307 -- crates/core/src/dispatch.rs` is empty), `lib.rs:72-73` (the `mod` line), and the new
+test file, byte-identical to round 1's (`shasum -a 256`: `f84e6ff2…1c567f` for both). Outside
+`crates/`: only build outputs (`web/dist`, `web/gpu-checkpoint-build.js`), the task file and
+evidence; nothing under `tools/` or the `web/` sources.
+
+**Predictions.**
+
+- S1 sweeps — predicted no `#[ignore]`, no removed assert or test in the rework diff. Observed:
+  one added `debug_assert!` (`turbo.rs:365`), no removal, 14 `#[test]` and 0 `#[ignore]` in the
+  new file. HELD.
+- A1 acceptance 1 — predicted 17 pass in release and the 14 pass in debug with the new assert
+  live. Observed `17 passed` (`acceptance1-release.log`), `14 passed` in debug
+  (`equivalence-tests-debug.log`). HELD.
+- A2 acceptance 2 — predicted the six digests, with the round-1 entry counts. Observed: `diff -r`
+  reports only the baseline README; busybox-fast `entries=2360038`, alpine-fast
+  `entries=15084958`, `-jit`/`-cache` `entries=0` (`oracle.log`, `oracle-digests/`). HELD.
+- A3 acceptance 3 — predicted `EQUIVALENT` with the round-1 digest. Observed FNV
+  `0dab1ccaa237df29`, 1,999,831,660 retired, RAM `ed70e270…38701`, `entries=10927101`
+  (`equivalence-2b.log`). HELD. My own configuration, not used before (1,618,033,989
+  instructions, rng seed 271828, quantum 9,973): `EQUIVALENT`, FNV `f4d31fb4a68e088a`,
+  1,617,898,844 retired, RAM `b8d5df95…cf985e`, 8,636,025 entries, 162,145 budget exits
+  (`equivalence-own.log`). HELD. Both used a CLI I rebuilt from this tree.
+- A4 acceptance 4 — predicted exit 0, no missing sample, loop engaged, no JIT, click median
+  0.27–0.70 s, `node -e` median 3.3–7.7 s, on the committed bundle. Observed
+  (`browser-dist.json`, run with no native job of mine alive): exit 0, `missing: []`,
+  `jit.turbo.enabled: true`, `entries: 76741334`, `jit.hasExecutor: false`, one console error
+  (the favicon 404); click 464 ms median (452–1,430); sweep-then-click 369 ms; key echo 52 ms;
+  `node -e` 5.4 s median (first run 26.3 s); Node loop 11.2 s; shell loop 6.4 s; idle 150 MIPS.
+  The served wasm, the committed `web/dist/pkg/wasm_vm_wasm_bg.wasm` and a `wasm-pack` build I
+  made from this tree into a scratch directory are the same bytes (`3b26459e…e0198f`), so the
+  page is this head's build. HELD.
+- D-a deletion of `ordinary_next` — predicted the code-write log is empty at `turbo.rs:365` on
+  every block entry: `enter_block` drains it (`lib.rs:6027`) whenever the block cache is on,
+  which the loop requires (`lib.rs:1251-1253`); after the drain the bus is reached only through
+  `load64`/`load16` (`mmu.rs:223-224`, `hart/mod.rs:1191,1226`) and `&impl Bus`
+  (`hart/mod.rs:432-451`); devices never hold the bus (`mmio.rs:296-303`); the log is appended
+  only at `mmio.rs:253,273,276` and `turbo.rs:470`. Observed: a counter at the assert site ran
+  3,046,356 times in the 17 tests with 0 non-empty logs (`coverage-hit-counts.txt`); a release
+  CLI built with `debug-assertions` and `overflow-checks` on (the assert's message is in that
+  binary and not in the ordinary one) reproduced the busybox-fast and alpine-fast digests and
+  the 2,000,000,000-instruction desktop equivalence without a panic — about 676 M block entries
+  with the assert live (`oracle-dbgassert.log`, `equivalence-dbgassert.log`). HELD: the branch
+  was dead and its removal is not observable.
+- D-b deletion of the settle-on-entry — predicted a CSR or system op still reads the `time`
+  shadow of its own block's boundary however the block is entered and sliced: both
+  ordinary-executor sites settle first (`turbo.rs:353`, `:417`), and the first settle of a block
+  applies `before_block` (`turbo.rs:206-216`). A CSR op is a terminator, so before the rework
+  every block that reads `time` was settled on entry; now its first settle can be a mid-block
+  slow op, a code-filter hit or a budget exit (over all blocks of the 17 tests: 418,183 first
+  settles at a slow op, 6,580 at a code-filter hit, and 264,744 mid-block budget exits).
+  Observed:
+  1. Removing `self.sync_clint()` from `turbo_settle` (`turbo.rs:211`) fails 15 of the 17,
+     among them `counter_csrs_after_inline_ops_and_first_in_block` and
+     `sbi_timer_deadlines_future_past_and_rearmed`. Three narrower mutants — the slow-op settle
+     skipping the boundary, refreshing at the op instead of the boundary, and the code-filter
+     settle skipping the boundary — fail 14, 13 and 2 of the 17 (`sabotage-time-shadow.log`).
+  2. A scratch guest of mine (`system_end_scratch_test.rs`; blocks ending in `csrr time` whose
+     first settle is the CSR op, a stale-filter store, a store that drops another cached block,
+     a misaligned load, a CLINT `mtime` load, an FP op; timer re-armed every 53 ticks; dividers
+     1 and 3; all eight slicings, traced and untraced) agrees with the general loop after every
+     `run()` call in release and debug (`scratch-test-release.log`, `scratch-test-debug.log`)
+     and fails under each of the four mutants. Its first run stopped on a sanity bound of my own
+     (`exit_horizon > 20`; 16 at divider 3) after every comparison had passed
+     (`scratch-test-release-attempt1.log`); I lowered the bound to 5.
+  HELD: the deletion is not observable, and the tests do observe the shadow.
+- C1–C6 round-1 coverage items — predicted that at this head the named test executes each line
+  and fails under the sabotage. Hit counts per test in `coverage-hit-counts.txt`
+  (`instrument_r2.py`), failures in `sabotage-items-1-6.log`:
+
+  | Item | Line | Named test, hits | Sabotage → failing tests (of 17) |
+  |---|---|---|---|
+  | 1 | `hart/turbo.rs:122-126` | `inline_stores_clear_exactly_the_overlapping_reservation`, 7,468 | clear removed → that test, `random_programs_agree_under_every_slicing` |
+  | 2 | `turbo.rs:353-358` | `page_straddling_entries_and_the_128_op_cap`, 640 trapping of 1,920 | settle at `:353` dropped → that test |
+  | 3 | `turbo.rs:477` | `inline_store_to_a_page_whose_code_was_flushed_wholesale`, 3,558 | a hit that drops nothing leaves the block → that test (`entries: 301`, bound 50) |
+  | 4 | `hart/turbo.rs:181` | `jalr_targets_and_compressed_inline_ops`, 23,228 | `& !1` removed → that test |
+  | 5 | `turbo.rs:245` | `wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in`, 11,504 in live-unrecorded mode | accounting removed → that test |
+  | 6 | `hart/turbo.rs:152-168`, `turbo.rs:339-345` | `inline_load_store_widths_and_all_six_branches`: `Lwu` 4,688, `Lh` 10,304, `Lhu` 5,208, `Lbu` 6,528, `Sh` 4,492, `Blt` 4,348, `Bge` 8,788, `Bltu` 7,900, `Bgeu` 7,972; `self_modifying_stores_and_page_faults_under_sv39`: `enter_block` trap 5,760 | `Lh` zero-extends, `Bge` strict, `Lwu`/`Lhu`/`Lbu` sign-extend, `Sh` stores the wrong register, `Blt` as `<=` → the widths test and the random programs (`Sh` also the reservation test); `enter_block` trap without its settle → the Sv39 test |
+
+  HELD for all six, with one miss in my own prediction: `Bgeu` made strict and `Bltu` made `<=`
+  fail only `random_programs_agree_under_every_slicing`, not the widths-and-branches test I had
+  named (it runs both arms but never with equal operands). Both mutants are still caught inside
+  acceptance 1, so this is a note, not a demand.
+- C4/C5 workspace gap of round 1 — predicted the whole `cargo test --release -p wasm-vm-core
+  --lib` under the item-4 and item-5 sabotages fails the named test. Observed
+  (`sabotage-full-suite.log`): item 4 → `jalr_targets_and_compressed_inline_ops`; item 5 →
+  `wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in`; no other test notices either. In all
+  three whole-suite runs, the unsabotaged control included, the only other failure was
+  `gpu_transfer_full_frame_native_budget` (7–9 ms against its 5 ms wall-clock budget, with the
+  whole suite running in parallel). HELD.
+
+**Carried forward from round 1** (the code each rests on is outside the rework diff's hunks,
+`turbo.rs:35-51` doc and `:359-386`, and `lib.rs:72-73`):
+
+- P1 sweeps of the original diff — carried; the rework diff itself is S1 above.
+- P7 mode exclusions — `lib.rs:7264-7277`, `turbo.rs:170-176`, `hart/turbo.rs:41-51` unchanged;
+  now the committed `excluded_modes_never_enter_the_turbo_loop`, which passes.
+- P8 exit states — carried. Re-audited the returns of `turbo_loop` at this head
+  (`turbo.rs:330, 343, 357, 360, 377, 425, 430, 436, 443, 475`): each is preceded on its own
+  path by `turbo_settle` (`:323, :342, :353, :370, :417, :464`); none relied on the deleted
+  on-entry settle.
+- P9 the task's four sabotages — the horizon test (`turbo.rs:313`), the device-access stop
+  (`:317`, `:446-449`) and the code-filter test (`:458-460`) are unchanged; the `time`-shadow
+  refresh was run again (D-b).
+- P11 pre-existing failures — the five `zicsr-stub` dead-code errors are the same set in
+  `r2/clippy.log` as in round 1's log. `gpu_transfer_full_frame_native_budget` alone at this
+  head: 6 passes in 8 runs, both failures the first run of a batch (5.4 ms measured); the task
+  diff touches nothing under `crates/core/src/dev`.
+
+**Worker gates** (`r2/`, inspected, not rerun): `workspace-tests.log` is a `uniq -c` summary of
+340 result lines, all `ok`, 0 failed; `wasm-tests.log` 81, all `ok`; `clippy.log` as above. I
+reran `cargo fmt --all --check` (clean) and the workspace clippy command for `wasm-vm-core
+--all-targets` (clean), since the rework adds a test module to that crate. The cold clone was
+sparse (no `evidence/` beyond the oracle baseline, no `web/dist`): that does not weaken it for
+acceptance 1–3, none of which reads an excluded path (the test file opens no file and reads no
+environment; `oracle.sh` reads only the baseline directory; `turbo-equivalence.sh` reads
+`web/artifacts-replay-desktop.json` and `RELEASES`); it never covered acceptance 4, which the
+byte-identical wasm rebuild above stands in for.
+
+**COVERAGE of the rework diff.** `turbo.rs:365` (`debug_assert!`): executed on every cached
+block entry, live in the debug run of the 14 tests and in the assertion-enabled boots.
+`turbo.rs:383-414` (the inline block without its `ordinary_next` wrapper): executed by every
+op. `turbo.rs:35-51` doc: waived as text; both new sentences checked against the code (D-a,
+D-b). `dispatch.rs`: gone. `lib.rs:72-73`: executed (the 14 tests run under the acceptance
+command). `turbo_equivalence_tests.rs`: all 14 run. `web/dist`, `web/gpu-checkpoint-build.js`:
+build outputs; the wasm is reproduced byte-for-byte, the `.d.ts` changes are a reordering of the
+same lines. Every changed hunk is executed, waived or gone.
+
+**SUITE.** The 14 tests are committed and are the permanent artifact; nothing further promoted.
+The scratch guest stays evidence: every mutant it catches is caught by at least two committed
+tests, so it adds no detection, and a commit under `crates/core` would rebuild `web/dist` for no
+behavior change. The assertion-enabled boots and my equivalence configuration are discarded as
+recipes: the assert already runs in every debug `cargo test`, and the configuration is one more
+point on round 1's table. Optional follow-up, not a condition: give
+`inline_load_store_widths_and_all_six_branches` an equal-operand case for `bltu`/`bgeu`.
+
+Commands: the acceptance 1 command as written; `cargo test -p wasm-vm-core --lib --
+turbo_equivalence_tests`; `cargo build --release -p wasm-vm-cli` (forced rebuild) and
+`CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS=true CARGO_PROFILE_RELEASE_OVERFLOW_CHECKS=true cargo
+build --release -p wasm-vm-cli --target-dir target/verifier-r2-dbgassert`, then
+`verifier-r2/native-acceptance.sh HEAD_BIN DBGASSERT_BIN` (`tools/perf/oracle.sh` + `diff -r`,
+`tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r2-equiv`,
+`SEED=271828 QUANTUM=9973 turbo-equivalence-param.sh 1618033989 …`, and the oracle fast cases
+and the desktop run again with the assertion build); `python3 verifier-r2/instrument_r2.py . &&
+python3 verifier-r2/instrument_atexit.py .`, `cargo test --release -p wasm-vm-core --lib
+--no-run`, `verifier-r2/coverage-run.sh`; `python3 verifier-r2/sabotage_r2.py . [--scratch]
+[--full] NAME…` (each sabotage restored with `git checkout`); `wasm-pack build crates/wasm-web
+--target web --profile wasm-release --out-name wasm_vm_wasm --out-dir SCRATCH`; `node
+tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --label verifier-r2
+--n 3 --out evidence/e4-t40b/verifier-r2/browser-dist.json`; `cargo fmt --all --check`; `cargo
+clippy -p wasm-vm-core --all-targets --features
+wasm-vm-core/trace,wasm-vm-core/virgl-control-proof,wasm-vm-core/gpu-trace -- -D warnings`.

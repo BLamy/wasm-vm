@@ -1,0 +1,64 @@
+SABOTAGE item1-reservation-clear [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_stores_clear_exactly_the_overlapping_reservation
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25880422) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+    inline_stores_clear_exactly_the_overlapping_reservation: thread 'turbo_equivalence_tests::inline_stores_clear_exactly_the_overlapping_reservation' (25880418) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("lr-sc", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+SABOTAGE item2-uncached-entry-no-settle [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::page_straddling_entries_and_the_128_op_cap
+    page_straddling_entries_and_the_128_op_cap: thread 'turbo_equivalence_tests::page_straddling_entries_and_the_128_op_cap' (25881051) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("block-shapes", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: R
+SABOTAGE item3-filter-hit-that-drops-nothing-leaves-the-block [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::inline_store_to_a_page_whose_code_was_flushed_wholesale
+    inline_store_to_a_page_whose_code_was_flushed_wholesale: thread 'turbo_equivalence_tests::inline_store_to_a_page_whose_code_was_flushed_wholesale' (25881823) panicked at crates/core/src/turbo_equivalence_tests.rs:1595:17: | TurboStats { entries: 301, blocks: 602, inline_ops: 2113, slow_ops: 5, exit_horizon: 0, exit_budget: 0, exit_boundary: 301, exit_trap: 0 }
+SABOTAGE item4-jalr-keeps-bit0 [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops
+    jalr_targets_and_compressed_inline_ops: thread 'turbo_equivalence_tests::jalr_targets_and_compressed_inline_ops' (25882505) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("jalr", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Trapped(Trap 
+SABOTAGE item5-slow-op-live-work-not-counted [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in
+    wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in: thread 'turbo_equivalence_tests::wfi_idle_jumps_in_every_clock_mode_the_loop_runs_in' (25883199) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("wfi", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: R
+SABOTAGE item6-lh-zero-extends [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25883885) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25883891) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-bge-is-strict [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25884579) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25884585) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-enter-block-trap-no-settle [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::self_modifying_stores_and_page_faults_under_sv39
+    self_modifying_stores_and_page_faults_under_sv39: thread 'turbo_equivalence_tests::self_modifying_stores_and_page_faults_under_sv39' (25885267) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("smc-sv39", true, [1000000], 0, 1000000, 0) | left: Observed { outcome:
+SABOTAGE item6-lwu-sign-extends [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25886207) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25886213) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-lhu-sign-extends [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25887097) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25887103) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-lbu-sign-extends [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25887762) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25887768) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-sh-stores-the-base-register [acceptance 1]: 3 failed / 14 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::inline_stores_clear_exactly_the_overlapping_reservation
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25888542) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    inline_stores_clear_exactly_the_overlapping_reservation: thread 'turbo_equivalence_tests::inline_stores_clear_exactly_the_overlapping_reservation' (25888544) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("lr-sc", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25888548) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-bgeu-is-strict [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25889221) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-blt-is-le [acceptance 1]: 2 failed / 15 passed
+  FAILED turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    inline_load_store_widths_and_all_six_branches: thread 'turbo_equivalence_tests::inline_load_store_widths_and_all_six_branches' (25889864) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("widths-branches", true, [1000000], 0, 1000000, 0) | left: Observed { outc
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25889870) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+SABOTAGE item6-bltu-is-le [acceptance 1]: 1 failed / 16 passed
+  FAILED turbo_equivalence_tests::random_programs_agree_under_every_slicing
+    random_programs_agree_under_every_slicing: thread 'turbo_equivalence_tests::random_programs_agree_under_every_slicing' (25890511) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17: | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("random", true, [1000000], 0, 1000000, 0) | left: Observed { outcome: Reset(Po
+restored; git status --short crates/: ''

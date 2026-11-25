@@ -1,0 +1,19 @@
+== A3b own configuration: N=1618033989 seed=271828 quantum=9973 (HEAD binary) 2026-11-25T00:54:02Z
+turbo: exit 102, 19 s, turbo: enabled=true entries=8636025 blocks=184903567 inline_ops=1598910336 slow_ops=14613409 ops_per_entry=186.8 exits: horizon=619 budget=162145 boundary=8339394 trap=133867
+ordinary: exit 102, 24 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=f4d31fb4a68e088a
+trace retired=1617898844
+trace mode=retirement-records
+state sha256=b8d5df9537a46a1a00ac9e7ede0b95f3b80a9de362526bc2ff74db02cccf985e
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=f4d31fb4a68e088a
+trace retired=1617898844
+trace mode=retirement-records
+state sha256=b8d5df9537a46a1a00ac9e7ede0b95f3b80a9de362526bc2ff74db02cccf985e
+outcome=MaxInstrs
+EQUIVALENT (1618033989 instructions)
+rc=0

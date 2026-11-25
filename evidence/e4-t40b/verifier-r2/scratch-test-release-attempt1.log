@@ -1,0 +1,4 @@
+SABOTAGE none [acceptance 1, + scratch test]: 1 failed / 17 passed
+  FAILED turbo_equivalence_tests::verifier_r2_time_shadow_in_blocks_that_end_in_a_system_op
+    verifier_r2_time_shadow_in_blocks_that_end_in_a_system_op: thread 'turbo_equivalence_tests::verifier_r2_time_shadow_in_blocks_that_end_in_a_system_op' (25878274) panicked at crates/core/src/turbo_equivalence_tests.rs:1868:21: | div=3: TurboStats { entries: 1805, blocks: 2390, inline_ops: 7598, slow_ops: 2719, exit_horizon: 16, exit_budget: 0, exit_boundary: 1789, exit_trap: 0 }
+restored; git status --short crates/: ''
