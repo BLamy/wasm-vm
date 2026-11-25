@@ -3995,12 +3995,19 @@ impl WasmLinux {
     }
 
     /// E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+    /// E4-T40d: 262144 joins the list for the Replay desktop (see the core setter).
     #[wasm_bindgen(js_name = setDecodedCacheEntries)]
     pub fn set_decoded_cache_entries(&self, value: JsValue) -> Result<(), JsError> {
         let entries = value
             .as_f64()
-            .filter(|v| *v == 4096.0 || *v == 16384.0)
-            .ok_or_else(|| JsError::new("decoded cache entries must be numeric 4096 or 16384"))?;
+            .filter(|v| {
+                wasm_vm_core::DECODED_CACHE_SIZES
+                    .iter()
+                    .any(|size| *v == *size as f64)
+            })
+            .ok_or_else(|| {
+                JsError::new("decoded cache entries must be numeric 4096, 16384 or 262144")
+            })?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner
             .machine

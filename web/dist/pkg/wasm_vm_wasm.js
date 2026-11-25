@@ -2464,6 +2464,7 @@ export class WasmLinux {
     }
     /**
      * E5-T26k: select one bounded decoded-cache capacity, without coercing JavaScript values.
+     * E4-T40d: 262144 joins the list for the Replay desktop (see the core setter).
      * @param {any} value
      */
     setDecodedCacheEntries(value) {

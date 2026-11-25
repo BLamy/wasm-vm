@@ -823,6 +823,10 @@ fn chain_edge(terminator: Option<crate::decode::Instr>, code: jit::ExitCode) -> 
     }
 }
 
+/// The decoded-block cache capacities a host may select with
+/// [`Machine::set_decoded_cache_entries`] (slots; each resident block also owns its ops).
+pub const DECODED_CACHE_SIZES: [usize; 3] = [4096, 16384, 262_144];
+
 /// E4-T19: drain the JIT compile queue once it holds this many pending blocks — a batch's worth is
 /// ready to pack (mirrors the design's compile-queue depth, `docs/jit-architecture.md` §7 D10).
 #[cfg(not(feature = "zicsr-stub"))]
@@ -1259,9 +1263,14 @@ impl Machine {
 
     /// E5-T26k: bounded host selection. Invalid values and selecting the actual current size
     /// leave all state untouched, including live decoded cursors and compiled handles.
+    ///
+    /// E4-T40d added 262144: the Replay desktop's interactive paths (a click in Chrome) touch
+    /// roughly 200,000 distinct blocks, so a 16384-entry cache re-decodes several hundred
+    /// thousand blocks per click. Capacity is host tuning only: which blocks are resident never
+    /// changes what the guest executes.
     pub fn set_decoded_cache_entries(&mut self, entries: usize) -> Result<(), &'static str> {
-        if !matches!(entries, 4096 | 16384) {
-            return Err("decoded cache entries must be 4096 or 16384");
+        if !DECODED_CACHE_SIZES.contains(&entries) {
+            return Err("decoded cache entries must be 4096, 16384 or 262144");
         }
         if entries != self.decoded_cache_entries() {
             self.set_block_cache_capacity(entries);
