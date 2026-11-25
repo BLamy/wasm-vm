@@ -34,9 +34,10 @@ So one click in Chrome runs through roughly 200,000 distinct code blocks and a 1
 cache cannot hold them. E5-T26k bounded the browser selection to 4096 or 16384 for its
 experiment; this task adds 262144 to that list and makes it the Replay desktop's size. Host
 memory: the slot array grows from 0.5 MiB to 8 MiB, and resident blocks own their ops.
-Measured natively with the cache full (2 billion instructions from the warm snapshot,
-1.19 M block builds into 262144 slots), peak resident memory is 1,548.5 MB against 1,495.6 MB
-at 16384: about 53 MB more.
+Measured natively over 2 billion instructions from the warm snapshot, peak resident memory is
+1,548.5 MB against 1,495.6 MB at 16384: about 53 MB more. (Corrected after verification: this
+text first said "with the cache full". The verifier measured the cache at 53% occupancy in that
+run, about 140,000 resident blocks; with every slot filled the cost is about 100 MB.)
 
 Scratch A/B of the two sizes on otherwise identical builds (interleaved a/b,
 `tools/perf/desktop-latency.mjs`, n=5; `evidence/e4-t40d/scratch-ab/`): click result median
@@ -294,3 +295,14 @@ http://127.0.0.1:8125 --app /app.html --n 5 --scenarios idle,click,sweep,type,no
 `python3 evidence/e4-t40d/verifier/summarize.py <json…>`. Not run: fmt/clippy (worker gates;
 `gates.log` is sha256 `38a5450c…7000bb` and shows no failure), a cold clone (not a portability
 claim), a live-site check.
+
+### 2026-11-24 — worker — corrections after verification (no status change)
+
+Two descriptions the verifier found wrong are corrected: the memory figure is +53 MB at the
+occupancy that run reached (53% of slots), not "with the cache full" (about 100 MB then); and
+the roadmap entry now quotes the committed-bundle A/B over the four interleaved pairs (click
+about 16% lower pooled, 14–24% per pair) instead of the scratch A/B. Follow-ups from the
+verifier's report are filed as E4-T40e (exact-size op storage per block, cache occupancy
+counter), E5-T38 (stale E5-T26k cache test and tool lists, the latency tool's favicon filter)
+and E5-T39 (a boot failure leaves the desktop page black).
+
