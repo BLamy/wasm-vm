@@ -1,0 +1,79 @@
+# Sabotage A: crates/core/src/lib.rs DECODED_CACHE_SIZES gains 65536 (temporary; restored with git checkout)
+ crates/core/src/lib.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-pub const DECODED_CACHE_SIZES: [usize; 3] = [4096, 16384, 262_144];
++pub const DECODED_CACHE_SIZES: [usize; 4] = [4096, 16384, 65536, 262_144];
+$ cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests
+test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... FAILED
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+thread 'decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot' (26246024) panicked at crates/core/src/decoded_cache_capacity_tests.rs:77:13:
+assertion `left == right` failed
+  left: true
+ right: false
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 417 filtered out; finished in 0.05s
+exit=101
+$ cd web && node --test tests/e4-t40d-decoded-cache-sizes.test.mjs
+✖ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (1.424167ms)
+✔ numbers and exact decimal strings of the three sizes validate; nothing else does (0.696417ms)
+✔ every size pair: same size only reads, a change calls the setter once and verifies (0.228208ms)
+✔ an unsupported actual capacity or a setter that did not take effect fails closed (0.272833ms)
+✔ the Replay desktop asks for 262144 and takes an explicit query value verbatim (3.218542ms)
+ℹ pass 4
+ℹ fail 1
+✖ failing tests:
+✖ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (1.424167ms)
+  AssertionError [ERR_ASSERTION]: core DECODED_CACHE_SIZES not found
+exit=1
+$ wasm-pack test --node crates/wasm --test decoded_cache_capacity   (still under sabotage A)
+test whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compiled_state ... ok
+test strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutation ... FAIL
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... ok
+        panicked at crates/wasm/tests/decoded_cache_capacity.rs:103:9:
+        assertion failed: m.set_decoded_cache_entries(value).is_err()
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 filtered out; finished in 6.93s
+exit=1
+# restore
+git status --short -- crates: []
+828:pub const DECODED_CACHE_SIZES: [usize; 3] = [4096, 16384, 262_144];
+
+# Sabotage B: web/decoded-cache.js list loses 262144 (temporary)
+-export const DECODED_CACHE_SIZES = Object.freeze([4096, 16384, 262144]);
++export const DECODED_CACHE_SIZES = Object.freeze([4096, 16384]);
+$ cd web && node --test tests/e4-t40d-decoded-cache-sizes.test.mjs
+✖ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (0.884334ms)
+✖ numbers and exact decimal strings of the three sizes validate; nothing else does (0.082667ms)
+✖ every size pair: same size only reads, a change calls the setter once and verifies (0.283083ms)
+✖ an unsupported actual capacity or a setter that did not take effect fails closed (0.26225ms)
+✖ the Replay desktop asks for 262144 and takes an explicit query value verbatim (1.2855ms)
+ℹ pass 0
+ℹ fail 5
+✖ failing tests:
+✖ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (0.884334ms)
+✖ numbers and exact decimal strings of the three sizes validate; nothing else does (0.082667ms)
+✖ every size pair: same size only reads, a change calls the setter once and verifies (0.283083ms)
+✖ an unsupported actual capacity or a setter that did not take effect fails closed (0.26225ms)
+✖ the Replay desktop asks for 262144 and takes an explicit query value verbatim (1.2855ms)
+exit=1
+# restore: git status --short -- web/decoded-cache.js: []
+
+# Sabotage C: web/main.js Replay desktop default back to 16384 (temporary)
+-    decodedCacheEntries: new URLSearchParams(location.search).get("decodedCacheEntries") ?? 262144,
++    decodedCacheEntries: new URLSearchParams(location.search).get("decodedCacheEntries") ?? 16384,
+$ cd web && node --test tests/e4-t40d-decoded-cache-sizes.test.mjs
+✔ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (1.106417ms)
+✔ numbers and exact decimal strings of the three sizes validate; nothing else does (0.73575ms)
+✔ every size pair: same size only reads, a change calls the setter once and verifies (0.320209ms)
+✔ an unsupported actual capacity or a setter that did not take effect fails closed (0.319667ms)
+✖ the Replay desktop asks for 262144 and takes an explicit query value verbatim (1.196625ms)
+ℹ pass 4
+ℹ fail 1
+✖ failing tests:
+✖ the Replay desktop asks for 262144 and takes an explicit query value verbatim (1.196625ms)
+exit=1
+# restore: git status --short -- web/main.js web/decoded-cache.js crates: []

@@ -1,0 +1,38 @@
+# E4-T40d verifier: peak memory and decoded-cache occupancy, native, warm Replay desktop.
+# Clean binary = target/release/wasm-vm rebuilt at a6d3e2dd4 (sha256 2b34496df5281fba...), run under /usr/bin/time -l
+# through tools/perf/decoded-cache-equivalence.sh (BIN=wrapper). Instrumented = scratch copy with
+# occupancy-probe.patch (prints the 'block cache occupancy:' line; nothing else changes).
+
+## budget 2000000000, clean binary
+evidence files:    4 trace fnv64=0dab1ccaa237df29
+16384 turbo: max_rss=1496367104 peak_footprint=1485506048 | block cache: entries=16384 entry_hits=254032569 builds=4081591 
+16384 ordinary: max_rss=1495760896 peak_footprint=1484932608 | block cache: entries=16384 entry_hits=254032569 builds=4081591 
+262144 turbo: max_rss=1548206080 peak_footprint=1537394248 | block cache: entries=262144 entry_hits=256923051 builds=1191109 
+262144 ordinary: max_rss=1548500992 peak_footprint=1537705520 | block cache: entries=262144 entry_hits=256923051 builds=1191109 
+
+## budget 2000000000, instrumented binary
+evidence files:    6 trace fnv64=0dab1ccaa237df29
+4096 turbo: max_rss=1490534400 peak_footprint=1479689728 | block cache: entries=4096 entry_hits=244652746 builds=13461414 block cache occupancy: live=4096 held=4096 ops=22648 ops_capacity=42720 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+4096 ordinary: max_rss=1490665472 peak_footprint=1479853568 | block cache: entries=4096 entry_hits=244652746 builds=13461414 block cache occupancy: live=4096 held=4096 ops=22648 ops_capacity=42720 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+16384 turbo: max_rss=1494401024 peak_footprint=1483572760 | block cache: entries=16384 entry_hits=254032569 builds=4081591 block cache occupancy: live=16384 held=16384 ops=89793 ops_capacity=169208 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+16384 ordinary: max_rss=1494466560 peak_footprint=1483654656 | block cache: entries=16384 entry_hits=254032569 builds=4081591 block cache occupancy: live=16384 held=16384 ops=89793 ops_capacity=169208 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+262144 turbo: max_rss=1548451840 peak_footprint=1537639984 | block cache: entries=262144 entry_hits=256923051 builds=1191109 block cache occupancy: live=139946 held=139946 ops=794353 ops_capacity=1472128 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+262144 ordinary: max_rss=1548451840 peak_footprint=1537672752 | block cache: entries=262144 entry_hits=256923051 builds=1191109 block cache occupancy: live=139946 held=139946 ops=794353 ops_capacity=1472128 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+
+## budget 3141592653, clean binary
+evidence files:    6 trace fnv64=54d0ad2c6e9f907c
+4096 turbo: max_rss=1490862080 peak_footprint=1480001024 | block cache: entries=4096 entry_hits=451102400 builds=25952613 
+4096 ordinary: max_rss=1489862656 peak_footprint=1479034368 | block cache: entries=4096 entry_hits=451102400 builds=25952613 
+16384 turbo: max_rss=1496416256 peak_footprint=1485571608 | block cache: entries=16384 entry_hits=469724419 builds=7330594 
+16384 ordinary: max_rss=1496383488 peak_footprint=1485571608 | block cache: entries=16384 entry_hits=469724419 builds=7330594 
+262144 turbo: max_rss=1548517376 peak_footprint=1537721952 | block cache: entries=262144 entry_hits=475772714 builds=1282299 
+262144 ordinary: max_rss=1548451840 peak_footprint=1537656368 | block cache: entries=262144 entry_hits=475772714 builds=1282299 
+
+## budget 3141592653, instrumented binary
+evidence files:    6 trace fnv64=54d0ad2c6e9f907c
+4096 turbo: max_rss=1490059264 peak_footprint=1479214592 | block cache: entries=4096 entry_hits=451102400 builds=25952613 block cache occupancy: live=4096 held=4096 ops=22886 ops_capacity=42704 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+4096 ordinary: max_rss=1491288064 peak_footprint=1480492568 | block cache: entries=4096 entry_hits=451102400 builds=25952613 block cache occupancy: live=4096 held=4096 ops=22886 ops_capacity=42704 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+16384 turbo: max_rss=1496023040 peak_footprint=1485194776 | block cache: entries=16384 entry_hits=469724419 builds=7330594 block cache occupancy: live=16384 held=16384 ops=88766 ops_capacity=167984 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+16384 ordinary: max_rss=1496170496 peak_footprint=1485358592 | block cache: entries=16384 entry_hits=469724419 builds=7330594 block cache occupancy: live=16384 held=16384 ops=88766 ops_capacity=167984 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+262144 turbo: max_rss=1548353536 peak_footprint=1537541680 | block cache: entries=262144 entry_hits=475772714 builds=1282299 block cache occupancy: live=140901 held=140901 ops=799456 ops_capacity=1481680 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 
+262144 ordinary: max_rss=1548337152 peak_footprint=1537558064 | block cache: entries=262144 entry_hits=475772714 builds=1282299 block cache occupancy: live=140901 held=140901 ops=799456 ops_capacity=1481680 micro_op_bytes=24 decoded_block_bytes=96 instr_bytes=16 

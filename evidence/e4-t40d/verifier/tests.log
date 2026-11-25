@@ -1,0 +1,59 @@
+# head a6d3e2dd453d6a0850c20e17f4bcd52ffbf1a934 2026-11-25T04:11:04Z
+$ cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.85s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-5ec876b4a9905ec5)
+
+running 8 tests
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 417 filtered out; finished in 0.05s
+
+exit=0
+
+$ wasm-pack test --node crates/wasm --test decoded_cache_capacity
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.80s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/decoded_cache_capacity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-a6539fff26c3f0cb.wasm)
+running 3 tests
+test whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compiled_state ... ok
+test strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutation ... ok
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 7.08s
+
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+exit=0
+
+$ cd web && node --test tests/e4-t40d-decoded-cache-sizes.test.mjs
+✔ the selectable sizes are exactly 4096, 16384 and 262144, in core and in the loader (1.140667ms)
+✔ numbers and exact decimal strings of the three sizes validate; nothing else does (0.721542ms)
+✔ every size pair: same size only reads, a change calls the setter once and verifies (0.239083ms)
+✔ an unsupported actual capacity or a setter that did not take effect fails closed (0.285417ms)
+✔ the Replay desktop asks for 262144 and takes an explicit query value verbatim (2.914042ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.838333
+exit=0

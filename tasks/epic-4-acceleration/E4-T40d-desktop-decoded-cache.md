@@ -3,7 +3,7 @@ id: E4-T40d
 epic: 4
 title: Size the Replay desktop's decoded-block cache to its working set (262144 entries)
 priority: 0.387642
-status: implemented
+status: verified
 depends_on: [E4-T40b, E5-T26k]
 estimate: S
 risk: medium
@@ -157,3 +157,140 @@ the evidence does not support. The profile that motivated the task was taken on 
 names-kept build of the same sources and is described in the Boundary section, not archived.
 `web/tests/e5-t26k-decoded-cache.test.mjs` was already failing at the base commit (see the
 note under Adversarial verification) and is unchanged.
+
+### 2026-11-24 — verifier — VERDICT: verified
+
+Fresh session, head `a6d3e2dd4`, diff `2353157fe..a6d3e2dd4`. Predictions were written to
+`evidence/e4-t40d/verifier/predictions.txt` (sha256 `6e4d3f47…`) before any evidence file was
+opened or any acceptance command run. All four acceptance criteria were reproduced
+independently. Two descriptive statements in the diff are not what the evidence shows (the
+memory label under P6 and the roadmap's latency numbers under COVERAGE); neither is an
+acceptance criterion, both need correcting when the roadmap entry is flipped.
+
+- P1a worker equivalence log — HELD. `evidence/e4-t40d/decoded-cache-equivalence.log` is sha256
+  `5a0bc289…ec8247`; all six evidence blocks (lines 3–6, 10–13, 19–22, 26–29, 35–38, 42–45) read
+  `fnv64=0dab1ccaa237df29`, `retired=1999831660`, `sha256=ed70e270…38701`, the same values as
+  `evidence/e4-t40b/r2/equivalence-2b.log` lines 5–8 and 12–15; `block cache:` lines 16/32/48
+  report entries 4096/16384/262144 with builds 13,461,414 / 4,081,591 / 1,191,109; line 49 is
+  the `CACHE-INDEPENDENT` line.
+- P1b equivalence at budgets the worker did not use — HELD. CLI rebuilt from the head sources
+  (core and cli recompiled, 1 m 52 s). At 3,141,592,653 instructions:
+  `CACHE-INDEPENDENT (4096 16384 262144; 3141592653 instructions)`; the six evidence files are
+  byte-identical (sha256 `c52dcf34…`): `fnv64=54d0ad2c6e9f907c`, `retired=3141325718`,
+  `sha256=a7b8b311…fce324`; `block cache: entries=` 4096 / 16384 / 262144 with builds
+  25,952,613 / 7,330,594 / 1,282,299; turbo engaged only in the turbo runs
+  (`verifier/decoded-cache-equivalence-3141592653.log`). At 2,000,000,000 (sizes 16384, 262144)
+  my rebuild reproduces the E4-T40b digest and the worker's build counts exactly
+  (`verifier/decoded-cache-equivalence-2000000000.log`). At 100,000,007 all three sizes agree
+  (`fnv64=ee8a08c6509efb9e`). Harness check: a `BIN` wrapper that runs one instruction fewer at
+  16384 only makes the script print `DIVERGED: turbo at 16384 differs from 4096` and exit 1
+  (`verifier/harness-sabotage.log`), so the cross-size comparison can fail. Observation, no
+  demand: `turbo.out`/`ordinary.out` are 0 bytes in every run, so the script's console-output
+  comparison compares empty files; the criterion's evidence is the trace hash, count and RAM hash.
+- P2 capacity tests — HELD. `cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests`: 8
+  passed; `wasm-pack test --node crates/wasm --test decoded_cache_capacity`: 3 passed
+  (`verifier/tests.log`). 262144 is in every size loop (core test lines 34, 42, 95–102, 150,
+  177, 222, 267, 276; wasm test lines 124, 190) and 32768, 65536, 131072, 262143, 262145, 524288,
+  1048576 are rejected (core lines 58–76; wasm lines 90–97, plus the string `"262144"` at 68 and
+  262144.5 at 94). Sabotage A, 65536 added to `DECODED_CACHE_SIZES`: core test
+  `invalid_and_same_actual_size_…` fails at `decoded_cache_capacity_tests.rs:77`, wasm test
+  `strict_numeric_boundary_…` fails at `tests/decoded_cache_capacity.rs:103`, node test "the
+  selectable sizes are exactly…" fails. Restored; `git status` clean for `crates`.
+- P3 loader tests — HELD. `node --test tests/e4-t40d-decoded-cache-sizes.test.mjs`: 5 pass.
+  Sabotage B, 262144 dropped from `web/decoded-cache.js`: 5 of 5 fail. Sabotage C, the Replay
+  desktop default set back to 16384 in `web/main.js`: "the Replay desktop asks for 262144…"
+  fails. Both restored and clean (`verifier/sabotage.log`).
+- P4a worker browser evidence — HELD, with one correction to my own prediction. The table in
+  the claim matches the four JSON files (click medians 376.2 / 443.6 / 338.9 / 440.5, sweep 269.5
+  / 400.4 / 269.4 / 402.8, blockBuilds 3,298,132 / 49,536,328 / 3,328,190 / 49,217,861,
+  `decodedCacheEntries` 262144 / 16384 / 262144 / 16384, `missing: []`). I predicted an empty
+  `consoleErrors`; each file holds one entry, "Failed to load resource: … 404 (File not found)",
+  with no URL. `verifier/query-size-probe.json` (case `default`) names it:
+  `http://127.0.0.1:8125/favicon.ico`. So "clean apart from the favicon 404" is true.
+- P4b my own browser runs on the committed bundle — HELD on the criterion as written; my
+  three-pair pool FAILED its 15%. Port 8125 serves this checkout's committed `web/dist`
+  (served `decoded-cache.js`, `main.js`, `loader.js` hash-equal to `HEAD:web/dist/…`). Two
+  interleaved pairs, Chrome 158 headless, n=5, the second pair in the opposite order:
+
+  | | 16384 | 262144 | change |
+  |---|---:|---:|---:|
+  | `decodedCacheEntries` reported | 16384 | 262144 | |
+  | Session `blockBuilds` | 43.7 M / 44.6 M | 2.90 M / 2.91 M | 15.0x fewer |
+  | Click result median, pair 1 / pair 2 | 450.7 / 480.9 ms | 387.6 / 365.0 ms | −14.0% / −24.1% |
+  | Click result, pooled (10 samples each) | 477.5 ms | 387.2 ms | −18.9% |
+  | Move and click median, pair 1 / pair 2 | 451.4 / 451.5 ms | 285.7 / 284.2 ms | −36.7% / −37.1% |
+  | `node -e` median | 5.77 / 5.74 s | 5.13 / 4.99 s | −11% / −13% |
+  | Key echo median | 47.0 / 49.9 ms | 46.0 / 41.1 ms | unchanged |
+  | Idle | 142 / 143 MIPS | 157 / 159 MIPS | +11% |
+
+  `missing: []` and the single favicon 404 in all four (`verifier/browser-*.json` lines 252,
+  257, 287; `verifier/browser-summary.txt`). Before running I also predicted that the worker's
+  two pairs plus my first would pool to at least 15% on the click: observed −14.2% (445.6 →
+  382.2 ms, 15 samples each). All four pairs pooled: −16.2% click, −32.4% move-and-click. The
+  machine carried unrelated load during my runs (load average 10–18).
+- P4c an unsupported value fails the boot — HELD. `?decodedCacheEntries=65536`, an empty value,
+  `262144.0` and `1048576` each raise `RangeError: decodedCacheEntries must be 4096, 16384 or
+  262144 …` from `validateDecodedCacheEntries` (`loader.js:409`, in the worker, before a
+  machine exists) about 0.57 s after load. It is surfaced as the `wvm:guest-error` event and in
+  `#status` ("linux worker fatal: …"); for the next 30 s the desktop never becomes ready,
+  `isGuestUp()` is false, no stats hook exists and nothing retires. `?decodedCacheEntries=4096`
+  boots and reports 4096 (`verifier/query-size-probe.{mjs,json}`).
+- P5 shipped copies — HELD. `web/dist/{decoded-cache,main,loader,roadmap}.js` and
+  `gpu-checkpoint-build.js` are byte-identical to their sources; `web/dist/main.js` carries the
+  `?? 262144` option. `setDecodedCacheEntries` is the only wasm path to the capacity; the
+  unrestricted `set_block_cache_capacity` is reachable only from the core setter and the native
+  CLI flag.
+- P6 novel attack, memory beyond the stated ~53 MB — the measurement HELD, its label FAILED.
+  Peak resident memory under `/usr/bin/time -l`, turbo run: 1,496,367,104 bytes at 16384 and
+  1,548,206,080 at 262144 over 2e9 instructions (+51.8 MB; the worker's two figures reproduce
+  within 0.1%), and 1,496,416,256 → 1,548,517,376 over 3,141,592,653 (+52.1 MB), so it does not
+  grow with the budget. But the task's Boundary says this was "measured natively with the cache
+  full" and `web/roadmap.js:178` says "about 53 MB more host memory when full". A print-only
+  occupancy probe, built in a scratch copy of the head sources and run through the unchanged
+  script (`verifier/occupancy-probe.patch`, `verifier/occupancy.log`; same digests), shows the
+  262144-entry cache holding 139,946 blocks at the end of the 2e9 run and 140,901 at 3.14e9:
+  53% of its slots. (4096 and 16384 are 100% occupied.) Sizes: 32 bytes per slot, 96 + 16 per
+  block, 24 per op, and 1,472,128 ops of capacity for 794,353 ops held. That accounts for 59.4 MB
+  at 262144 against 6.4 MB at 16384, +53.0 MB, matching the resident-memory difference. The same
+  accounting with every slot occupied is about 104 MB, 98 MB more than 16384. Demand
+  (wording, not an acceptance criterion): state the cost as "about 53 MB more at the 53%
+  occupancy an idle desktop reaches, about 100 MB more if all slots fill". Not measured:
+  occupancy in a browser session; nothing exposes it.
+- Restated criterion 4. It is falsifiable, and because its thresholds were fixed before my runs
+  my two pairs are an out-of-sample test of it, which it passes (−18.9% click, −37.0%
+  move-and-click, 15.0x fewer builds, lower in each pair). Restating it was right: the first
+  number (20%) is not supported by any pooling of the committed-bundle data. The click
+  threshold has no margin, though: the four pairs give −15.2%, −23.1%, −14.0%, −24.1%, and the
+  two low pairs pooled give −14.2%. What the evidence supports is "about 16% lower over four
+  pairs (14–24% per pair)", with every 262144 session median below every 16384 one. The 25%
+  move-and-click and 10x build thresholds have real margin (32–37%, 15x).
+- COVERAGE: `crates/cli/src/boot.rs` counters line — executed in every native run (all 20
+  clean-binary `.err` files carry it). `crates/core/src/lib.rs` list and setter — core tests, sabotage A, and the
+  browser runs through wasm. `crates/wasm/src/lib.rs` filter — wasm tests, sabotage A, browser
+  runs at 4096, 16384, 262144. `web/decoded-cache.js` — node tests, sabotage B, browser (number,
+  exact string, and four refused values). `web/main.js` option — node test, sabotage C, browser
+  default and query runs. `tools/perf/decoded-cache-equivalence.sh` — default sizes, explicit
+  `SIZE…` arguments, and its `DIVERGED` exit all executed; `turbo-equivalence.sh`
+  `CACHE_ENTRIES` — executed (capacities in the `block cache:` lines). Test files — executed.
+  `web/gpu-checkpoint-build.js` — waived, generated build id equal to the dist copy.
+  `web/roadmap.js:178` — waived as declarative metadata, but its text must be corrected when it
+  is flipped: "click result 535 ms to 378 ms, pressed-state frame 285 ms to 190 ms, node -e 5.9 s
+  to 5.1 s" are the scratch A/B numbers that the claim itself says did not reproduce on the
+  committed bundle (there, over four pairs: about 455 → 380 ms, 225 → 215 ms, 5.3–5.8 → 4.8–5.1 s), and "when
+  full" is wrong per P6. Error-message strings — waived (not asserted, text only).
+- SUITE: discard. The worker's committed tests already fail under each of my three sabotages,
+  so nothing I verified deterministically lacks a test. The browser probe, the harness-skew
+  wrapper and the occupancy probe need the release artifacts, a server or a patched build, so
+  they stay as evidence under `evidence/e4-t40d/verifier/` rather than as suite members.
+
+Commands: `touch crates/core/src/lib.rs crates/cli/src/boot.rs && cargo build --release -p wasm-vm-cli`;
+`BIN=<time -l wrapper> bash tools/perf/decoded-cache-equivalence.sh 3141592653 target/e4-t40d-verifier/eq-3141592653`;
+the same at `2000000000 … 16384 262144` and, with and without the one-instruction-skew
+wrapper, at `100000007 … 4096 16384 262144`; the three test commands of criteria 2 and 3,
+before and under sabotages A, B, C; `node tools/perf/desktop-latency.mjs --url
+http://127.0.0.1:8125 --app /app.html --n 5 --scenarios idle,click,sweep,type,node` four times
+(default, `--query "&decodedCacheEntries=16384"`, then the reverse order), one at a time;
+`node evidence/e4-t40d/verifier/query-size-probe.mjs`;
+`python3 evidence/e4-t40d/verifier/summarize.py <json…>`. Not run: fmt/clippy (worker gates;
+`gates.log` is sha256 `38a5450c…7000bb` and shows no failure), a cold clone (not a portability
+claim), a live-site check.

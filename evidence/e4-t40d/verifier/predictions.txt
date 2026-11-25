@@ -1,0 +1,40 @@
+E4-T40d verifier predictions, written 2026-11-24 after reading the task file, the diff
+(2353157fe..a6d3e2dd4) and the scripts, and BEFORE opening any file under evidence/e4-t40d/
+or running any acceptance command.
+
+P1a  Worker log evidence/e4-t40d/decoded-cache-equivalence.log has sha256 5a0bc289...ec8247, ends
+     `CACHE-INDEPENDENT (4096 16384 262144; 2000000000 instructions)`, and all six evidence blocks
+     read fnv64=0dab1ccaa237df29 / retired=1999831660 / sha256=ed70e270...38701, the same three
+     values as evidence/e4-t40b/r2/equivalence-2b.log. `block cache:` lines report entries=4096,
+     16384, 262144 with builds 13461414 > 4081591 > 1191109.
+P1b  My own run at a budget the worker did not use, 3141592653 instructions: exit 0, final line
+     `CACHE-INDEPENDENT (4096 16384 262144; 3141592653 instructions)`; the six evidence files
+     (turbo, ordinary x 3 sizes) are byte-identical; `block cache: entries=` is 4096, 16384,
+     262144 in that order; builds strictly fall as size grows; turbo engaged only in turbo runs.
+     Sensitivity control: the fnv64 at this budget must differ from 0dab1ccaa237df29 and retired
+     must be near 3.14e9 (else the evidence is not a function of the run).
+P2   `cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests` -> 8 passed, 0 failed.
+     `wasm-pack test --node crates/wasm --test decoded_cache_capacity` -> 3 passed, 0 failed.
+     Sabotage A (add 65536 to DECODED_CACHE_SIZES in crates/core/src/lib.rs): the core test
+     invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot fails,
+     and the node test "the selectable sizes are exactly ..." fails.
+     Sabotage B (drop 262144 from web/decoded-cache.js): at least 3 of the 5 node tests fail.
+P3   `cd web && node --test tests/e4-t40d-decoded-cache-sizes.test.mjs` -> 5 pass, 0 fail.
+P4a  Worker JSONs browser-dist-{1..4}: missing=[], consoleErrors=[], jit.decodedCacheEntries =
+     262144,16384,262144,16384; blockBuilds 3.30M/49.5M/3.33M/49.2M; click medians
+     376/444/339/441; sweep medians 270/400/269/403. Pooled (10 samples per arm) click median
+     >= 15% lower and sweep median >= 25% lower at 262144.
+P4b  My own interleaved pair on http://127.0.0.1:8125 (committed web/dist): decodedCacheEntries
+     262144 by default and 16384 with the switch; missing=[] and consoleErrors=[] in both;
+     blockBuilds at least 10x lower at 262144; click-result median lower at 262144; pooled over
+     all three pairs (15 samples per arm) click median >= 15% lower, sweep median >= 25% lower.
+P4c  ?decodedCacheEntries=65536 fails the boot: an error naming the three legal sizes is surfaced,
+     the desktop never becomes ready, and no machine reports a capacity or retires instructions.
+     Falsified by a ready desktop or any jitStats capacity.
+P5   web/dist/decoded-cache.js is byte-identical to web/decoded-cache.js; the shipped main bundle
+     carries the `?? 262144` Replay-desktop option; web/gpu-checkpoint-build.js equals the dist copy.
+P6   Novel attack, memory growth beyond the stated ~53 MB. Native peak RSS under /usr/bin/time -l,
+     turbo run: at 2e9 instructions 16384 -> about 1495.6 MB and 262144 -> about 1548.5 MB (each
+     within 1%), delta between 40 and 66 MB. At 3141592653 instructions the 262144-vs-16384 delta
+     stays <= 80 MB. A delta above 80 MB, or one still growing with budget, falsifies "about 53 MB
+     more when full".
