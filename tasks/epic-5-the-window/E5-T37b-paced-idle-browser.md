@@ -3,7 +3,7 @@ id: E5-T37b
 epic: 5
 title: Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time
 priority: 0.387645
-status: in-progress
+status: implemented
 depends_on: [E5-T37a]
 estimate: S
 risk: medium
@@ -102,3 +102,76 @@ attack of the verifier's choice.
   `evidence/`.
 
 ## Verification log
+
+### 2026-11-26 — worker — claim (head `423985d3d`)
+
+Commits on `codex/paced-idle-browser`: `3214330d5` (bindings, clock policy, loader sleep, Replay
+desktop option, benchmark fields), `d0fa60058` (roadmap row; idle sampled last), `4e1adc7c8`
+(the policy is admitted only for a whole-image, non-persistent boot), the commit before
+`423985d3d` (the sleep resumes into the tick directly), and three regenerated build-id commits.
+`crates/core` is untouched.
+
+**Gates** (`bash evidence/e5-t37b/gates.sh`, log `evidence/e5-t37b/gates.log`, sha256
+`8ea5c844124f…`, at `423985d3d`): `cargo fmt --check`;
+`cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings`;
+`cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`;
+`wasm-pack test --node crates/wasm --lib -- exported_paced` (2 pass) and the whole `--lib` set
+(17 pass); `node --test tests/e5-t37b-paced-idle.test.mjs` (12 pass). All exit 0. The web unit
+suite: 611 tests, 583 pass, 28 fail — the same 28 names as at the parent of this task
+(`web-unit-failing-before.txt`, taken with this task's files stashed; stale source-pinning
+tests, E5-T38's territory), `diff` of the two lists empty. One earlier run of the full suite
+also failed `tests/audio-ring.test.mjs`'s concurrent producer/consumer test, and one run hung
+in that file; it is untouched since E5-T20b and passes 3 of 3 alone.
+
+**Browser, the committed bundle at `423985d3d`** (`bash tools/serve-dist.sh 8125`; Chrome
+158.0.8127.88 headless, M4 Max; `bash evidence/e5-t37b/run-browser.sh 1 2`: fresh page
+load per run, paced and `&pace=0` interleaved, click and type first, idle last):
+
+| | paced (default) | unpaced (`?pace=0`) |
+|---|---:|---:|
+| idle: worker inside run slices, % of wall | 9.9 / 9.9 | 99.8 / 99.8 |
+| idle: guest seconds per real second | 0.97 / 0.97 | 11.78 / 11.82 |
+| idle: instructions retired, M/s | 10.4 / 10.5 | 120.5 / 121.1 |
+| idle: sleeps / sleeps ended early by a host call, per 30 s | 601 / 599 / 108 / 108 | 0 / 0 |
+| click result, median ms (n = 8 each) | 266 / 270.4 | 371.6 / 340.6 |
+| click result, min – max ms | 252 / 261.7 – 599.8 / 530.7 | 305.8 / 312.6 – 578.9 / 611.6 |
+| key echo, median ms (n = 8 each) | 45 / 47.7 | 43.5 / 47.3 |
+
+Pooled over both loads (16 clicks a side): median 268 ms paced against 354 ms
+unpaced, 24% lower. Every criterion holds: idle at most 30% and 0.8–1.2 s/s
+paced, at least 90% and 3 s/s unpaced; paced click median not slower; key echo within 15 ms.
+The largest click on every load is the first of the session on both sides (cold code paths;
+under the paced clock Chrome's delayed start-up work is still running then).
+
+Evidence: `evidence/e5-t37b/browser-{paced,unpaced}-{1,2}.{json,log,png}`. Two earlier
+sets with the same result on earlier bundles of this task are kept in
+`evidence/e5-t37b/earlier-bundle/` (three interleaved pairs: paced click median 261 / 270 /
+265 ms, unpaced 353 / 330 / 337 ms; idle 10% against 99.8%), and the first measurement, with
+idle sampled FIRST, in `evidence/e5-t37b/early-idle/` (30% of wall time in run slices, guest
+time 0.82 s/s). That one is why the criterion samples idle last: per guest second the paced and
+unpaced guests do the same work after start-up (20 guest seconds from uptime ~6 s: 2.51 s
+against 2.48 s of guest CPU by `/proc/stat`, the same threads waking the same number of times),
+but those 20 guest seconds are 20 real seconds under the paced clock and under 2 under the
+other.
+
+**Demo page on the same bundle** (`E5_DEMO_TASK=E5-T37b E5_DEMO_OUT=evidence/e5-t37b node
+evidence/e5-t37b/demo-suite.mjs`): 127 passed, 0 failed of
+127; no page errors, no console errors, no HTTP errors (`demo-suite.json`, screenshot
+`demo-suite.png`). The roadmap row "Replay desktop keeps real time while idle and lets its worker
+sleep" is in the bundle as `partial`; it is to be flipped when this task is verified.
+
+**What the recorded runs executed.** The bindings and the clock selection (every paced load:
+`clockMode` `paced-icount`, sleeps counted, so `setPacedIdlePolicy` and `takeIdleWaitMs` ran);
+the sleep and its timer resume (about 590 sleeps per 30 s idle); a host call ending a sleep and
+voiding the ticket (about 110 per 30 s idle — the page's own status polling — and every pointer
+and key event of the click and type scenarios); the refusal branch of `sleep` for short or
+absent waits (the busy slices of the click scenario); `?pace=0` (policy not selected: no
+sleeps, clock `icount`). Not executed in a browser run, covered by the unit tests only: the
+refusals of the two validation gates and of the lifecycle (a module without the bindings, time
+moving on selection), a stale timer callback after a wake, and a delivery between the take and
+the sleep (it needs a controller call to land inside a tick's `await`; the Replay desktop's
+tick has none after its run slice).
+
+**Not claimed.** Other guests (the policy is refused for boots with persistence or without the
+whole image, and nothing else selects it); the first minute after the desktop appears, which is
+not idle under the paced clock; networking, audio and RTC-alarm sessions (E5-T37c).

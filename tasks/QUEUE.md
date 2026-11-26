@@ -73,7 +73,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Epic 5 — `epic-5-the-window`
 
 - [x] `0.387644` [E5-T37a](epic-5-the-window/E5-T37a-paced-idle-yield-core.md) — Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded *(deps: E4-T40b)*
-- [~] `0.387645` [E5-T37b](epic-5-the-window/E5-T37b-paced-idle-browser.md) — Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time *(deps: E5-T37a)*
+- [?] `0.387645` [E5-T37b](epic-5-the-window/E5-T37b-paced-idle-browser.md) — Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time *(deps: E5-T37a)*
 - [ ] `0.387646` [E5-T37c](epic-5-the-window/E5-T37c-paced-idle-device-gaps.md) — Paced idle — measure the devices that keep a wait from being reported, and file the fixes *(deps: E5-T37b)*
 - [ ] `0.38765` [E5-T36](epic-5-the-window/E5-T36-replay-desktop-hardware-cursor.md) — Hardware cursor plane on the Replay desktop — pointer drawn by the host, instantly (planning parent) *(deps: E5-T34g)*
 - [-] `0.38766` [E5-T37](epic-5-the-window/E5-T37-idle-yield-and-pacing.md) — Stop spinning a host core while the desktop is idle (planning parent) *(deps: E5-T34g)*
