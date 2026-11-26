@@ -3,7 +3,7 @@ id: E5-T41a
 epic: 5
 title: Replay desktop image — Node starts from a startup snapshot built at boot
 priority: 0.387652
-status: in-progress
+status: implemented
 depends_on: [E5-T36b]
 estimate: S
 risk: medium
@@ -80,3 +80,50 @@ with spaces); `npm`-style shebang scripts; a user deleting the blob; memory high
 READY against E5-T34b's budget. One bounded novel attack of the verifier's choice.
 
 ## Verification log
+
+### 2026-11-26 — worker — claim (head `4129b3343`)
+
+Commit `4129b3343` (rcS, the `node` wrapper, the monitor, `assemble.py`, the acceptance script).
+The image was built at that head (`bash tools/build-replay-desktop-image.sh target/e5-t41a/image`;
+`evidence/e5-t41a/image/build.json` names the head; image sha256 `20f03da7c51d…`; the build's privacy
+check passed on the staged tree, the image and the compressed image). It carries E5-T36b's
+session too (this layer is stacked on it).
+
+**Acceptance**: `node tools/verify/e5-t41a-node-snapshot.mjs --image target/e5-t41a/image/replay-desktop.ext4 --out evidence/e5-t41a/native --baseline-ready 5.29`
+passes (`result.json` sha256 `76f1937470d8…`). The baseline 5.29 s is generation 1's READY uptime as
+E5-T36b's verifier measured it.
+
+- READY at guest uptime 5.3 s (baseline 5.29), then `REPLAY_NODE_SNAPSHOT bytes=6754742` at
+  9.71 s, in that order.
+- `node -e 0`, guest seconds, three runs each: through the wrapper [0.33, 0.33, 0.33] (median
+  0.33); the real binary without the blob [0.81, 0.8, 0.8] (median 0.8); the wrapper with the blob
+  moved away [0.81, 0.81, 0.8] (median 0.81) — Node still runs then.
+- Same output through the wrapper and from the real binary without the blob for: version,
+  execArgv, execPath, a script with arguments, an ES module, `--input-type=module` on stdin, a
+  child via `process.execPath`, a worker thread, fetch/crypto/zlib/Intl, an exit code. Version
+  `v26.13.1`, execArgv `["-p","JSON.stringify(process.execArgv)"]`, execPath `/opt/replay-node-26/bin/node`.
+- `NODE_OPTIONS` carries the blob, also into a child through execPath; a caller's own
+  `--snapshot-blob` in `NODE_OPTIONS` and `--build-snapshot` are left alone; other options are
+  kept after it.
+- The monitor: 0.06 s of guest CPU in 60 guest seconds after the Node line (limit 0.15),
+  and 48 MiB written to tmpfs raised the high-water mark from 182780 to 215456 KiB.
+
+**Unchanged around it, same image:** E5-T36b's acceptance passes (five moves, 64x64 plane,
+`evidence/e5-t41a/hardware-cursor/`); the E5-T34b native acceptance passes (smoke page, sandbox,
+keyboard, `node` v26.13.1 typed into the terminal; READY at 5.28 s;
+`evidence/e5-t41a/native-boot/`).
+
+**Memory.** RAM high-water mark at READY 179732 KiB, at the end of the E5-T34b run 202920 KiB, against
+181932 KiB for the same run on E5-T36b's image: the snapshot build adds about 20 MiB of peak
+use (its own heap while it runs) and the 6.4 MiB blob stays in tmpfs. A warm RAM snapshot taken
+after it carries that tmpfs page; E5-T41b's compaction is what keeps the snapshot's size down.
+
+**Limits.**
+- The wrapper's check is a substring match on its arguments: any argument containing
+  `snapshot-blob` or `--build-snapshot` (a script named so, or an `-e` string mentioning it)
+  makes Node start without the snapshot — slower, never wrong.
+- The snapshot is built on every boot (about 4 s of guest CPU at nice 19, after READY in
+  practice); a desktop resumed from a warm snapshot that already holds it does not build again.
+- A `node` started before the blob is renamed into place starts the slow way.
+- I did not run the attack-list cases of a build that fails or is killed, or a half-written
+  blob: the rename is the only publication, and `done` is written either way.

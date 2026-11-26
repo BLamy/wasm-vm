@@ -1,0 +1,11 @@
+[native-boot +10s] REPLAY_DESKTOP_MONITOR
+[native-boot +28s] REPLAY_CHROMIUM_LAUNCH
+[native-boot +29s] REPLAY_SWAY_IPC
+[native-boot +29s] REPLAY_TERMINAL_MAPPED
+[native-boot +89s] REPLAY_CHROMIUM_TARGETS
+[native-boot +89s] REPLAY_CHROMIUM_PAGE
+[native-boot +89s] REPLAY_RENDERER_SANDBOX
+[native-boot +89s] REPLAY_CHROMIUM_READY
+[native-boot +90s] REPLAY_CHROME_MAPPED
+[native-boot +90s] REPLAY_DESKTOP_READY
+[native-boot] wrote /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t41a/native-boot
