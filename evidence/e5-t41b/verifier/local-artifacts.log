@@ -1,0 +1,6 @@
+128555 4a4b014c9f0fbe26cf16fc6bb38d3834bb33802fe8935ba096c372169be8b37f  releases/rootfs/replay-desktop-20f03da7c51d.chunks.json
+189683821 a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0  releases/rootfs/replay-desktop-20f03da7c51d.img.gz
+129712599 2d4d38924d83be49c632cbeacc05dd53637782ac8705d422ce137cd860c61a8e  releases/boot-snapshot/replay-desktop-ready-2d4d38924d83.snap.gz
+img.gz gunzip: 20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c  -
+snap gunzip: 5020fb0530f678ae424dcf8dbbf7269cf9357dd8ed655fa2e13e9c290b7271f2  -
+20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c  target/e5-t41a/image/replay-desktop.ext4

@@ -1,0 +1,19 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+wasm-vm: resumed 346123023 bytes from /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/553b8fef-a45c-471a-bc17-0c35035361f4/scratchpad/firstnode/ready.snap — continuing guest
+
+root@replay-desktop# [6nread a < /sys/block/vda/stat; /usr/local/bin/node -e 0; rea
+d b < /sys/block/vda/stat; read c < /proc/vmstat; echo "VS""A $a"; echo "VS""B $
+b"; /usr/local/bin/node -p process.version; read e < /sys/block/vda/stat; echo "
+VS""C $e"; grep -E "^(pgmajfault|pgpgin) " /proc/vmstat; head -3 /proc/meminfo; 
+echo VDO""NE
+VSA 8789        0   618498      714        0        0        0        0        0       56      714        0        0        0        0        0        0
+VSB 8789        0   618498      714        0        0        0        0        0       56      714        0        0        0        0        0        0
+v26.13.1
+VSC 8796        0   619474      714        0        0        0        0        0       56      714        0        0        0        0        0        0
+pgpgin 309737
+pgmajfault 2295
+MemTotal:         991728 kB
+MemFree:          611784 kB
+MemAvailable:     817428 kB
+VDONE
+root@replay-desktop# [6n

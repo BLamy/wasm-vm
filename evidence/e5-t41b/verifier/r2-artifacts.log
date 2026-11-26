@@ -1,0 +1,12 @@
+kernel: live manifest digests == committed manifest: True; live url https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+  R2 GET: size 24208896 sha af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce -> MATCH
+chunkManifest: live manifest digests == committed manifest: True; live url https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/4a4b014c9f0fbe26cf16fc6bb38d3834bb33802fe8935ba096c372169be8b37f/releases/rootfs/replay-desktop-20f03da7c51d.chunks.json
+  R2 GET: size 128555 sha 4a4b014c9f0fbe26cf16fc6bb38d3834bb33802fe8935ba096c372169be8b37f -> MATCH
+  chunk manifest vs target/e5-t41a image: 1784 chunks, 0 mismatched, trailing=0
+wholeImage: live manifest digests == committed manifest: True; live url https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0/releases/rootfs/replay-desktop-20f03da7c51d.img.gz
+  R2 GET: size 189683821 sha a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0 -> MATCH
+  gunzip: size 467664896 sha 20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c -> MATCH
+bootSnapshot: live manifest digests == committed manifest: True; live url https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/2d4d38924d83be49c632cbeacc05dd53637782ac8705d422ce137cd860c61a8e/releases/boot-snapshot/replay-desktop-ready-2d4d38924d83.snap.gz
+  R2 GET: size 129712599 sha 2d4d38924d83be49c632cbeacc05dd53637782ac8705d422ce137cd860c61a8e -> MATCH
+  gunzip: size 346123023 sha 5020fb0530f678ae424dcf8dbbf7269cf9357dd8ed655fa2e13e9c290b7271f2 -> MATCH
+ALL OK

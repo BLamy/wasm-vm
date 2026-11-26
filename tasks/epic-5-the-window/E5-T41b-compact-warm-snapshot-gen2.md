@@ -3,7 +3,7 @@ id: E5-T41b
 epic: 5
 title: Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot
 priority: 0.387653
-status: implemented
+status: refuted
 depends_on: [E5-T41a, E5-T36b]
 estimate: S
 risk: medium
@@ -101,3 +101,102 @@ error in every run is the favicon's 404.
 
 **Not done:** the attack list's "compaction typed while the shell is not at a prompt" and
 "memory pressure during the zeroing" were not exercised; the E5-T34c harness was not run.
+
+### 2026-11-26 — verifier — VERDICT: refuted
+
+Fresh session; did not implement. Head `e1b3aafd6`; diff `9a2677a20..HEAD`. Predictions were written
+before any run (`evidence/e5-t41b/verifier/predictions.md`). Everything I produced is in
+`evidence/e5-t41b/verifier/`.
+
+- **"The first `node` of a session reads nothing from disk" — FAILED.** I predicted it would not
+  hold (P9). I resumed the published snapshot natively (`first-node-native-console-log.sh`, same
+  flags as the capture plus `--resume-from`) and read `/sys/block/vda/stat` before and after the
+  first `node -e "console.log(6*7)"` (the latency script's first node). Reads went from 8789 to
+  8799 and sectors from 618498 to 619650: **10 requests, 576 KiB** read from the root disk
+  (`first-node-native-console-log.log:8-9`). In a second resume (`first-node-native.log:9-12`)
+  the first `node -e 0` read 0 (8789 to 8789). That is the exact command the compaction runs
+  first, so only that command's start path is cached. The `node -p process.version` after it then
+  read 7 requests (488 KiB, 8789 to 8796). This matches the browser count (31 local chunk reads
+  per session in both of my gen-2 loads). The script comment
+  (`tools/build-replay-desktop-snapshot.sh`, "the first `node` of a resumed session reads nothing
+  from disk") and the acceptance line are therefore false for an ordinary first `node`. Demand:
+  either warm the path an ordinary first run takes (for example run `node -e 'console.log(1)'` and
+  `node -p process.version` in the compaction instead of `node -e 0`), recapture, redeploy, and
+  show 0 reads across a fresh first `node -e 'console.log(6*7)'` with the native
+  `/sys/block/vda/stat` method above; or get the planner to change the acceptance line. The worker
+  cannot rewrite it to pass.
+- **Size ≤ 135 MB, disk unchanged, privacy — HELD.** Published snap.gz is 129,712,599 B. My
+  independent capture rerun (scratch dirs, about 188 s) gave 129,771,281 B, "disk unchanged
+  after capture: 20f03da7c51d…", and privacy OK on raw and gz (`rerun-run.log`,
+  `rerun-snapshot.json`). The markers come in order: NODE at 9.73, COMPACTED at 43.72,
+  zeroed_mib=554 (`rerun-native-capture.log`).
+- **Artifacts and public R2 — HELD (P1, P2).** The local files match the manifest in size and
+  SHA-256, including the gunzipped image (20f03da7c51d…) and snapshot (5020fb05…)
+  (`local-artifacts.log`). The live manifest at https://wasm-vm.pages.dev has the committed
+  digests. Each of the four R2 objects (kernel, chunk manifest, whole image, snapshot) was fetched
+  from its live URL; sizes and SHA-256 match, before and after gunzip. All 1784 chunk hashes
+  match `target/e5-t41a/image` (`r2-artifacts.log`: ALL OK).
+- **Browser warm/cold, committed bundle — HELD (P7).** 8125 hashes the same as `web/dist`. Warm
+  PASS: desktop 1789 ms after the downloads; Run again and the Node nonce answered. Cold PASS
+  (`warm.log`). Requests name only 20f03da7c51d / 2d4d38924d83, and no generation-1 name appears
+  (`warm/*/requests.json`).
+- **Latency vs generation 1 — HELD (P8).** Four loads of my own, interleaved ABBA, on 8128
+  (gen 1, the same bundle with the previous manifest; only the manifest, roadmap row, sw VERSION
+  and tasks.json differ) and 8125 (`latency/gen{1,2}-{a,b}.json`). node -e to prompt: 1603 and
+  1608 ms against 4572 and 4529 ms, about 65 % faster. Click answered: 255.7 and 259.5 against
+  278.6 and 255.0. Key echo: 45.6 and 49.9 against 41.6 and 46.1. Pooled over all 8 loads a side
+  (worker's and mine, `latency/pooled.txt`): click answered median 258.2 against 266.5 ms, key echo
+  median 44.3 against 45.3 ms, so not slower. Idle in-slice time is 1.5 % against 10.4–10.7 %.
+- **Live site — HELD (P12).** In a fresh profile, https://wasm-vm.pages.dev/app resumed warm: desktop
+  1779 ms after the downloads, Node answered `v26.13.1`. The only console error is the
+  favicon.ico 404 (`live.log`, `live/warm/`).
+- **Node line never comes — HELD (behaviour); prediction detail FAILED.** With MAX_INSTRS=4e9 the
+  boot ends after READY and before the Node line. The script exits non-zero (102), writes nothing
+  to OUT_DIR, removes WORK_DIR and leaves no feeder (`no-node-line-run.log`). The guard at
+  `tools/build-replay-desktop-snapshot.sh:111` that prints "never reported its Node startup
+  snapshot" never runs on that path: under `set -euo pipefail` the script exits with the boot's
+  code first. That is harmless but misleading. Nit.
+- **Compaction typed while the shell is not at a prompt — HELD (not driven adversarially).** In
+  both captures the root prompt appears at 0.89 s, before the monitor starts. The typed line is
+  echoed after the Node line, and only the real `REPLAY_DESKTOP_COMPACTED` line fires the trigger.
+  The `COMPACT''ED` split works (`rerun-native-capture.log`). The tty queues input whatever the
+  shell is doing. I did not build a busy-shell case.
+- **Memory pressure during zeroing — HELD.** Neither capture log has an OOM, allocation-failure or
+  segfault line. The resumed desktop is usable (warm PASS). The first `node -e 0` after resume
+  read 0 blocks, so the dd did not evict node's cached pages. MemFree after resume is 611 MB
+  (`first-node-native.log`).
+- **Stale gen-1 URLs and service-worker cache — HELD, with one observation.** No tracked file
+  under `web/` or `web/dist` (other than tasks.json) names 2af6100e9b37 or dfcf85c2c260. Bounded
+  novel attack (`sw-upgrade.mjs`, `sw-upgrade.log`): a returning visitor with the real SW
+  enabled (the e5-t34e harness blocks it) loads gen 1 twice, the server then switches to
+  `web/dist` on the same origin, and the visitor loads twice more. The first post-deploy load
+  still fetches the gen-1 snapshot and chunk manifest, because the old SW serves the
+  same-origin manifest cache-first. The second load fetches gen 2 and the old cache is purged.
+  The gen-1 R2 objects are content-addressed and still answer 200, so that one load is a
+  consistent gen-1 boot, not a broken one. This lag comes from the SW design and predates this
+  diff. Keep the gen-1 R2 objects, or make the manifest network-first (follow-up, not a demand
+  here).
+- **25 MiB — HELD (P11).** The three large artifacts are on R2. The largest file in `web/dist`
+  outside the gitignored `web/dist/releases/` staging is `tailscale-connect/main.wasm` at
+  26,043,701 B (24.84 MiB < 25 MiB, existing before this task).
+- **Feeder leak — FAILED (new defect in this diff, low severity).**
+  `tools/build-replay-desktop-snapshot.sh:85-92`: `cleanup`/line 110 kill the feeder subshell,
+  but its child `sleep 86400` is orphaned and lives for a day per capture. My rerun left one, which
+  I killed. One from an earlier capture is still running (pid 65021, reparented to 1). Demand
+  for the rework: `exec sleep 86400`, or kill the job's process group.
+- **Mock hunt — HELD (P13), one nit.** The claim's numbers match the committed JSONs. The 8128
+  clone differs from `web/dist` only in the manifest, the roadmap row, sw VERSION and
+  tasks.json. Nit: the manifest's `"generated"` text (`web/artifacts-replay-desktop.json:2`)
+  still says the snapshot was "captured at REPLAY_DESKTOP_READY" (E5-T34e wording).
+- COVERAGE: every hunk of the capture script ran in my rerun or the no-Node-line run, except the
+  `|| poweroff -f` failure branch (not exercised; it is the stated safety path). The
+  `turbo-equivalence.sh` change (image candidate by hash) was not run (waived: perf tooling,
+  outside the acceptance).
+- SUITE: none until the refutation clears. The `/sys/block/vda/stat` first-node probe is the
+  recommended acceptance command for the rework.
+
+Not checked: the E5-T34c harness; a pristine cold clone of the tooling (artifact portability was
+checked through the public R2 GETs instead); a busy-shell compaction case; the `poweroff -f`
+failure branch. HELD results above carry forward only for evidence whose digests do not change. A
+recapture changes the snapshot digest, so the size, privacy, warm/cold, latency and live checks
+must be rerun on the new artifact.

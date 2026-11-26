@@ -1,0 +1,96 @@
+{
+  "task": "E5-T34e",
+  "mode": "warm",
+  "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "budgetMs": 15000,
+  "nonce": "A9F40F8A",
+  "command": "node -e \"console.log('E5T34E_A9F40F8A', process.version)\" | tee -a /run/replay-desktop/events",
+  "times": {
+    "wholeImageFinishedMs": 42152,
+    "snapshotStartedMs": 2031,
+    "snapshotFinishedMs": 28681,
+    "wholeImageStartedMs": 9644,
+    "downloadsFinishedMs": 42152,
+    "desktopVisibleMs": 43931,
+    "downloadEndToDesktopMs": 1779,
+    "runAgainAnsweredMs": 5117,
+    "nodeAnswerAfterTypingMs": 21330
+  },
+  "states": [
+    {
+      "state": "fetching",
+      "at": 2021.6750000715256
+    },
+    {
+      "state": "instantiating",
+      "at": 42147.96000003815
+    },
+    {
+      "state": "restoring",
+      "at": 42348.080000042915
+    },
+    {
+      "state": "restored",
+      "at": 43477.889999985695
+    }
+  ],
+  "downloads": {
+    "wholeImage": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0/releases/rootfs/replay-desktop-20f03da7c51d.img.gz",
+      "bytes": 189683821,
+      "declared": 189683821
+    },
+    "snapshot": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/2d4d38924d83be49c632cbeacc05dd53637782ac8705d422ce137cd860c61a8e/releases/boot-snapshot/replay-desktop-ready-2d4d38924d83.snap.gz",
+      "bytes": 129712599,
+      "declared": 129712599
+    }
+  },
+  "counts": {
+    "total": 177,
+    "wholeImage": 1,
+    "snapshot": 1,
+    "chunkOrRange": 0,
+    "diskRelated": [
+      "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/2d4d38924d83be49c632cbeacc05dd53637782ac8705d422ce137cd860c61a8e/releases/boot-snapshot/replay-desktop-ready-2d4d38924d83.snap.gz",
+      "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0/releases/rootfs/replay-desktop-20f03da7c51d.img.gz"
+    ],
+    "chunkManifest": 1,
+    "bootDiskRelated": 2
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 31,
+    "localBytes": 8126464,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 442,
+      "misses": 31,
+      "evictions": 0,
+      "residentBytes": 8126464,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 0,
+      "used": 0,
+      "profileEntries": 0,
+      "accuracyPct": 0
+    }
+  },
+  "chrome": {
+    "runsBefore": 1,
+    "runsAfter": 2
+  },
+  "node": [
+    "root@replay-desktop# \u001b[6nE5T34E_A9F40F8A v26.13.1\r"
+  ],
+  "keyboard": {
+    "framesBefore": 0,
+    "framesAfter": 214,
+    "typedChars": 93
+  },
+  "consoleErrors": []
+}

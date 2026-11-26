@@ -1,0 +1,17 @@
+[e5-t34e 2026-11-26T21:51:18.231Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-26T21:51:19.860Z] downloads finished {"wholeImageFinishedMs":1630,"snapshotStartedMs":729,"snapshotFinishedMs":1106,"wholeImageStartedMs":744,"downloadsFinishedMs":1630}
+[e5-t34e 2026-11-26T21:51:21.649Z] desktop visible 3419 ms; 1789 ms after the downloads finished
+[e5-t34e 2026-11-26T21:51:21.822Z] Chrome runs before click 1
+[e5-t34e 2026-11-26T21:51:26.954Z] Chrome runs after click 2 (5132 ms)
+[e5-t34e 2026-11-26T21:51:45.325Z] typed node -e "console.log('E5T34E_C2B6002E', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-26T21:51:51.332Z] node answered 21336 ms after typing began
+[e5-t34e 2026-11-26T21:51:56.391Z] warm PASS {"times":{"wholeImageFinishedMs":1630,"snapshotStartedMs":729,"snapshotFinishedMs":1106,"wholeImageStartedMs":744,"downloadsFinishedMs":1630,"desktopVisibleMs":3419,"downloadEndToDesktopMs":1789,"runAgainAnsweredMs":5132,"nodeAnswerAfterTypingMs":21336},"counts":{"total":177,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
+[e5-t34e 2026-11-26T21:51:56.468Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&noSnapshot#ide
+[e5-t34e 2026-11-26T21:51:58.017Z] downloads finished {"wholeImageFinishedMs":1550,"wholeImageStartedMs":687,"downloadsFinishedMs":1550}
+[e5-t34e 2026-11-26T21:52:26.083Z] desktop visible 29616 ms; 28066 ms after the downloads finished
+[e5-t34e 2026-11-26T21:52:26.224Z] Chrome runs before click 1
+[e5-t34e 2026-11-26T21:52:31.432Z] Chrome runs after click 2 (5206 ms)
+[e5-t34e 2026-11-26T21:52:49.752Z] typed node -e "console.log('E5T34E_41FF5601', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-26T21:53:01.768Z] node answered 27309 ms after typing began
+[e5-t34e 2026-11-26T21:53:06.793Z] cold PASS {"times":{"wholeImageFinishedMs":1550,"wholeImageStartedMs":687,"downloadsFinishedMs":1550,"desktopVisibleMs":29616,"downloadEndToDesktopMs":28066,"runAgainAnsweredMs":5206,"nodeAnswerAfterTypingMs":27309},"counts":{"total":176,"wholeImage":1,"snapshot":0,"chunkOrRange":0,"diskRelated":1,"chunkManifest":1,"bootDiskRelated":1}}
+[e5-t34e 2026-11-26T21:53:06.796Z] comparison {"warm":{"wholeImageFinishedMs":1630,"snapshotStartedMs":729,"snapshotFinishedMs":1106,"wholeImageStartedMs":744,"downloadsFinishedMs":1630,"desktopVisibleMs":3419,"downloadEndToDesktopMs":1789,"runAgainAnsweredMs":5132,"nodeAnswerAfterTypingMs":21336},"cold":{"wholeImageFinishedMs":1550,"wholeImageStartedMs":687,"downloadsFinishedMs":1550,"desktopVisibleMs":29616,"downloadEndToDesktopMs":28066,"runAgainAnsweredMs":5206,"nodeAnswerAfterTypingMs":27309},"coldDesktopAfterDownloadMs":28066,"warmDesktopAfterDownloadMs":1789}

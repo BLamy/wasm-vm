@@ -1,0 +1,8 @@
+[e5-t34e 2026-11-26T22:03:33.567Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-26T22:04:15.718Z] downloads finished {"wholeImageFinishedMs":42152,"snapshotStartedMs":2031,"snapshotFinishedMs":28681,"wholeImageStartedMs":9644,"downloadsFinishedMs":42152}
+[e5-t34e 2026-11-26T22:04:17.497Z] desktop visible 43931 ms; 1779 ms after the downloads finished
+[e5-t34e 2026-11-26T22:04:17.653Z] Chrome runs before click 1
+[e5-t34e 2026-11-26T22:04:22.770Z] Chrome runs after click 2 (5117 ms)
+[e5-t34e 2026-11-26T22:04:41.124Z] typed node -e "console.log('E5T34E_A9F40F8A', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-26T22:04:47.132Z] node answered 21330 ms after typing began
+[e5-t34e 2026-11-26T22:04:52.176Z] warm PASS {"times":{"wholeImageFinishedMs":42152,"snapshotStartedMs":2031,"snapshotFinishedMs":28681,"wholeImageStartedMs":9644,"downloadsFinishedMs":42152,"desktopVisibleMs":43931,"downloadEndToDesktopMs":1779,"runAgainAnsweredMs":5117,"nodeAnswerAfterTypingMs":21330},"counts":{"total":177,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
