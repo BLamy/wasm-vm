@@ -1,0 +1,144 @@
+MAIN — the guest catches up before the rest wait
+  t=    0  S(300,200)                                                   shown=- inferred=null css=null outstanding=1 settling=true
+  t=   16    (answer changed)                                           shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   16  S(290,200); guest reports (300,200) with the arrow           shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   32  S(280,200); guest reports (290,200)                          shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   48  S(270,200); guest reports (280,200)                          shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   64    (answer changed)                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   64  S(260,200); guest reports (270,200), now the hand            shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   80  S(250,200); guest reports (260,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   96  guest reports (250,200): caught up                           shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t=  245  (149 ms of quiet)                                            shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1000  (pointer at rest)                                            shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  FAILED hand null at rest (true (9,4)); first answer for the hand at t=undefined (predicted 286); wrong answers shown: 0
+  FAILED the hand's answer arrived at t=undefined (predicted 286 = 96 + 150 + 40)
+
+E1 — the rest wait elapses while the guest is one position behind; nothing more sent
+  t=    0  S(300,200)                                                   shown=- inferred=null css=null outstanding=1 settling=true
+  t=   16    (answer changed)                                           shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   16  S(290,200); guest reports (300,200) with the arrow           shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   32  S(280,200); guest reports (290,200)                          shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   48  S(270,200); guest reports (280,200)                          shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   64    (answer changed)                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   64  S(260,200); guest reports (270,200), now the hand            shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   80  S(250,200); guest reports (260,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=  381  (rest wait elapsed at t=230; guest silent, one position behind) shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=  499  (still silent)                                               shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=  500  guest reports (250,200): caught up                           shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 2000  (pointer at rest)                                            shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  FAILED hand null (true (9,4)); wrong answers shown: 0
+  FAILED first answer for the hand at t=undefined (predicted 510, at the latest 690; never before the guest reported at 500)
+
+E2 — the same, but one more position is sent before the guest catches up (round 2's refutation)
+  t=    0  S(300,200)                                                   shown=- inferred=null css=null outstanding=1 settling=true
+  t=   16    (answer changed)                                           shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   16  S(290,200); guest reports (300,200) with the arrow           shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   32  S(280,200); guest reports (290,200)                          shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   48  S(270,200); guest reports (280,200)                          shown=arrow inferred=null css=[0,0] outstanding=1 settling=true
+  t=   64    (answer changed)                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   64  S(260,200); guest reports (270,200), now the hand            shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=   80  S(250,200); guest reports (260,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=  381  (after the rest wait: round 2 observed (0,4) here)           shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=  450  S(240,200)  [the user nudges on along the line]              shown=hand inferred=null css=[0,0] outstanding=2 settling=true
+  t=  500  guest reports (250,200)                                      shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t=  516  guest reports (240,200): caught up                           shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t=  600  a commit for another reason: same image, same place          shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  790    (answer changed)                                           shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t=10000  (pointer at rest for 9 s)                                    shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  HELD   no answer at t=381 (null) nor when the guest caught up at t=516 (null)
+  FAILED first answer for the hand at t=790 (predicted 640..710 — MY ARITHMETIC: the commit at t=600 re-arms the 150 ms wait, 600+150+40 = 790; the value is as predicted)
+  HELD   at rest after 9 s: hand [9,4], css [9,4] (true (9,4))
+  HELD   after 20 more positions along the line (guest one behind) and 5 s of rest: hand [9,4]
+  HELD   after four jumps: hand [9,4]; wrong answers shown in the whole run: 0 []
+
+§4 — restart by output size 800 -> 801 rows, the guest one position behind on an even run
+  t=   40    (answer changed)                                           shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  400  arrow settled                                                shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  590    (answer changed)                                           shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 1016  S(590,200); guest reports nothing yet                        shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1032  S(580,200); guest reports (590,200)                          shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1048  S(570,200); guest reports (580,200)                          shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1064    (answer changed)                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1064  S(560,200); guest reports (570,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1080  S(550,200); guest reports (560,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1096  S(540,200); guest reports (550,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1112  RESTART (output size 800 -> 801 rows); outstanding=1         shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1112  S(530,200); guest reports (540,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1128  S(520,200); guest reports (530,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1144  S(510,200); guest reports (520,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1160  S(500,200); guest reports (510,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1176  S(490,200); guest reports (500,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1192  S(480,200); guest reports (490,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1208  S(470,200); guest reports (480,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1224  S(460,200); guest reports (470,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 4224  (guest silent for 3 s, still one position behind)            shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 4224  guest reports the last position: caught up                   shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 9224  (pointer at rest 5 s after the guest caught up)              shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 9324  S: a nudge; guest reports it                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 9514    (answer changed)                                           shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t=10324  (rest)                                                       shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  HELD   no answer for the hand during the run (0 shown) nor in 3 s of the guest staying behind (null, settling true)
+  HELD   at rest after the guest caught up: null (predicted none: nothing known until the image moves again)
+  HELD   after one more position and rest: hand [9,4]; wrong answers shown: []
+
+§4 — restart by relative mode and back, the guest one position behind on an even run
+  t=   40    (answer changed)                                           shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  400  arrow settled                                                shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  590    (answer changed)                                           shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 1016  S(590,200); guest reports nothing yet                        shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1032  S(580,200); guest reports (590,200)                          shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1048  S(570,200); guest reports (580,200)                          shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1064    (answer changed)                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1064  S(560,200); guest reports (570,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1080  S(550,200); guest reports (560,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1096  S(540,200); guest reports (550,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1112  RESTART (relative mode and back); outstanding=1              shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1112  S(530,200); guest reports (540,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1128  S(520,200); guest reports (530,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1144  S(510,200); guest reports (520,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1160  S(500,200); guest reports (510,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1176  S(490,200); guest reports (500,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1192  S(480,200); guest reports (490,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1208  S(470,200); guest reports (480,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 1224  S(460,200); guest reports (470,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 4224  (guest silent for 3 s, still one position behind)            shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 4224  guest reports the last position: caught up                   shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 9224  (pointer at rest 5 s after the guest caught up)              shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 9324  S: a nudge; guest reports it                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 9514    (answer changed)                                           shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t=10324  (rest)                                                       shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  HELD   no answer for the hand during the run (0 shown) nor in 3 s of the guest staying behind (null, settling true)
+  HELD   at rest after the guest caught up: null (predicted none: nothing known until the image moves again)
+  HELD   after one more position and rest: hand [9,4]; wrong answers shown: []
+
+§4 — restart by resetHotspotInference(), the guest one position behind on an even run
+  t=   40    (answer changed)                                           shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  400  arrow settled                                                shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  590    (answer changed)                                           shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 1016  S(590,200); guest reports nothing yet                        shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1032  S(580,200); guest reports (590,200)                          shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1048  S(570,200); guest reports (580,200)                          shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=false
+  t= 1064    (answer changed)                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1064  S(560,200); guest reports (570,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1080  S(550,200); guest reports (560,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1096  S(540,200); guest reports (550,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1112  RESTART (resetHotspotInference()); outstanding=1             shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1112  S(530,200); guest reports (540,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1128  S(520,200); guest reports (530,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1144  S(510,200); guest reports (520,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1160  S(500,200); guest reports (510,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1176  S(490,200); guest reports (500,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1192  S(480,200); guest reports (490,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1208  S(470,200); guest reports (480,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 1224  S(460,200); guest reports (470,200)                          shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 4224  (guest silent for 3 s, still one position behind)            shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 4224  guest reports the last position: caught up                   shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 4414    (answer changed)                                           shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 9224  (pointer at rest 5 s after the guest caught up)              shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 9324  S: a nudge; guest reports it                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t=10324  (rest)                                                       shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  FAILED no answer for the hand during the run (0 shown) nor in 3 s of the guest staying behind (null, settling false)
+  FAILED at rest after the guest caught up: [9,4] (predicted none: nothing known until the image moves again)
+  HELD   after one more position and rest: hand [9,4]; wrong answers shown: []
+
+7 PREDICTION(S) FAILED

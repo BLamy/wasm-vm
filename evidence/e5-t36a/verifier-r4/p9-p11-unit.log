@@ -1,0 +1,99 @@
+P9 — the guest is idle after a position sent since the restart, and its pointer is NOT on it
+     (the kernel drops absolute-axis values equal to the device's current ones; relative motion uses another device)
+  hook, arrow — the guest's kernel drops the unchanged position
+    t=  430 S(400,640); the guest reports it; at rest                                  shown=arrow inferred=[1,1] settling=false
+    t=  430 the hook: hotspots forgotten                                               shown=arrow inferred=null settling=false
+    t=  430 relative mode                                                              shown=arrow inferred=null settling=true
+    t=  430 relative motion (-7,-5): the guest's pointer at [393,635], plane [392,634], cursor arrow shown=arrow inferred=null settling=true
+    t=  730 absolute mode                                                              shown=arrow inferred=null settling=true
+    t=  730 S(400,640) — handled by the guest (dropped by its kernel: 1); pointer at [393,635] shown=arrow inferred=null settling=true
+    t=  850 the guest has been idle since                                              shown=arrow inferred=null settling=false
+    t=  850 a commit of the guest's own: the plane reported where it stands            shown=arrow inferred=null settling=false
+    t= 1160 at rest                                                                    shown=arrow inferred=[8,6] settling=false
+    t= 6470 one more position (+6,+2), rest                                            shown=arrow inferred=[8,6] settling=false
+    t= 6486 two more positions                                                         shown=arrow inferred=null settling=false
+    t= 7106 a position elsewhere, rest                                                 shown=arrow inferred=[1,1] settling=false
+  HELD   predicted: settled (true); at rest [8,6] for a true [1,1]: observed [8,6], 5 s later [8,6]; after one more position and a rest [8,6] (drawn tip off the sent pixel by [7,5]); dropped at the third move it cannot explain (null); finally [1,1]
+  hook, arrow — CONTROL: a guest that acts on every position
+    t=  430 S(400,640); the guest reports it; at rest                                  shown=arrow inferred=[1,1] settling=false
+    t=  430 the hook: hotspots forgotten                                               shown=arrow inferred=null settling=false
+    t=  430 relative mode                                                              shown=arrow inferred=null settling=true
+    t=  430 relative motion (-7,-5): the guest's pointer at [393,635], plane [392,634], cursor arrow shown=arrow inferred=null settling=true
+    t=  730 absolute mode                                                              shown=arrow inferred=null settling=true
+    t=  730 S(400,640) — handled by the guest (dropped by its kernel: 0); pointer at [400,640] shown=arrow inferred=null settling=true
+    t=  850 the guest has been idle since                                              shown=arrow inferred=null settling=false
+    t=  850 a commit of the guest's own: the plane reported where it stands            shown=arrow inferred=null settling=false
+    t= 1160 at rest                                                                    shown=arrow inferred=[1,1] settling=false
+    t= 6470 one more position (+6,+2), rest                                            shown=arrow inferred=[1,1] settling=false
+    t= 6486 two more positions                                                         shown=arrow inferred=[1,1] settling=false
+    t= 7106 a position elsewhere, rest                                                 shown=arrow inferred=[1,1] settling=false
+  HELD   never wrong ([]); at rest after the return [1,1]; finally [1,1] (before: [1,1])
+  hook, arrow — CONTROL: the return is one pixel away
+    t=  430 S(400,640); the guest reports it; at rest                                  shown=arrow inferred=[1,1] settling=false
+    t=  430 the hook: hotspots forgotten                                               shown=arrow inferred=null settling=false
+    t=  430 relative mode                                                              shown=arrow inferred=null settling=true
+    t=  430 relative motion (-7,-5): the guest's pointer at [393,635], plane [392,634], cursor arrow shown=arrow inferred=null settling=true
+    t=  730 absolute mode                                                              shown=arrow inferred=null settling=true
+    t=  730 S(401,640) — handled by the guest (dropped by its kernel: 0); pointer at [401,640] shown=arrow inferred=null settling=true
+    t=  850 the guest has been idle since                                              shown=arrow inferred=null settling=false
+    t=  850 a commit of the guest's own: the plane reported where it stands            shown=arrow inferred=null settling=false
+    t= 1160 at rest                                                                    shown=arrow inferred=[1,1] settling=false
+    t= 6470 one more position (+6,+2), rest                                            shown=arrow inferred=[1,1] settling=false
+    t= 6486 two more positions                                                         shown=arrow inferred=[1,1] settling=false
+    t= 7106 a position elsewhere, rest                                                 shown=arrow inferred=[1,1] settling=false
+  HELD   never wrong ([]); at rest after the return [1,1]; finally [1,1] (before: [1,1])
+  no hook: a shape never met (caret) comes up under the pointer during relative motion — the guest's kernel drops the unchanged position
+    t=  430 S(400,640); the guest reports it; at rest                                  shown=arrow inferred=[1,1] settling=false
+    t=  430 relative mode                                                              shown=arrow inferred=[1,1] settling=true
+    t=  430 relative motion (-7,-5): the guest's pointer at [393,635], plane [389,627], cursor caret shown=caret inferred=null settling=true
+    t=  730 absolute mode                                                              shown=caret inferred=null settling=true
+    t=  730 S(400,640) — handled by the guest (dropped by its kernel: 1); pointer at [393,635] shown=caret inferred=null settling=true
+    t=  850 the guest has been idle since                                              shown=caret inferred=null settling=false
+    t=  850 a commit of the guest's own: the plane reported where it stands            shown=caret inferred=null settling=false
+    t= 1160 at rest                                                                    shown=caret inferred=[11,13] settling=false
+    t= 6470 one more position (+6,+2), rest                                            shown=caret inferred=[11,13] settling=false
+    t= 6486 two more positions                                                         shown=caret inferred=null settling=false
+    t= 7106 a position elsewhere, rest                                                 shown=caret inferred=[4,8] settling=false
+  HELD   predicted: settled (true); at rest [11,13] for a true [4,8]: observed [11,13], 5 s later [11,13]; after one more position and a rest [11,13] (drawn tip off the sent pixel by [7,5]); dropped at the third move it cannot explain (null); finally [4,8]
+  no hook: a shape never met (caret) comes up under the pointer during relative motion — CONTROL: a guest that acts on every position
+    t=  430 S(400,640); the guest reports it; at rest                                  shown=arrow inferred=[1,1] settling=false
+    t=  430 relative mode                                                              shown=arrow inferred=[1,1] settling=true
+    t=  430 relative motion (-7,-5): the guest's pointer at [393,635], plane [389,627], cursor caret shown=caret inferred=null settling=true
+    t=  730 absolute mode                                                              shown=caret inferred=null settling=true
+    t=  730 S(400,640) — handled by the guest (dropped by its kernel: 0); pointer at [400,640] shown=caret inferred=null settling=true
+    t=  850 the guest has been idle since                                              shown=caret inferred=null settling=false
+    t=  850 a commit of the guest's own: the plane reported where it stands            shown=caret inferred=null settling=false
+    t= 1160 at rest                                                                    shown=caret inferred=[4,8] settling=false
+    t= 6470 one more position (+6,+2), rest                                            shown=caret inferred=[4,8] settling=false
+    t= 6486 two more positions                                                         shown=caret inferred=[4,8] settling=false
+    t= 7106 a position elsewhere, rest                                                 shown=caret inferred=[4,8] settling=false
+  HELD   never wrong ([]); at rest after the return [4,8]; finally [4,8] (before: [1,1])
+  no hook: a shape never met (caret) comes up under the pointer during relative motion — CONTROL: the return is one pixel away
+    t=  430 S(400,640); the guest reports it; at rest                                  shown=arrow inferred=[1,1] settling=false
+    t=  430 relative mode                                                              shown=arrow inferred=[1,1] settling=true
+    t=  430 relative motion (-7,-5): the guest's pointer at [393,635], plane [389,627], cursor caret shown=caret inferred=null settling=true
+    t=  730 absolute mode                                                              shown=caret inferred=null settling=true
+    t=  730 S(401,640) — handled by the guest (dropped by its kernel: 0); pointer at [401,640] shown=caret inferred=null settling=true
+    t=  850 the guest has been idle since                                              shown=caret inferred=null settling=false
+    t=  850 a commit of the guest's own: the plane reported where it stands            shown=caret inferred=null settling=false
+    t= 1160 at rest                                                                    shown=caret inferred=[4,8] settling=false
+    t= 6470 one more position (+6,+2), rest                                            shown=caret inferred=[4,8] settling=false
+    t= 6486 two more positions                                                         shown=caret inferred=[4,8] settling=false
+    t= 7106 a position elsewhere, rest                                                 shown=caret inferred=[4,8] settling=false
+  HELD   never wrong ([]); at rest after the return [4,8]; finally [4,8] (before: [1,1])
+
+P11 — the claim's limits
+  1. a busy guest
+  HELD   not settling, guest never idle: after a straight approach and 10 s at rest null; after the pointer turned [4,8]
+  HELD   settling, guest never idle: five positions in five directions and 10 s: shown null, settling true; idle, not reported again: null; reported again and at rest: [9,4]
+  2. rest needs 150 ms without a cursor event
+  HELD   a guest committing every 100 ms for 10 s after a straight approach: null
+  HELD   a guest committing every 140 ms for 10 s after a straight approach: null
+  HELD   a guest committing every 200 ms for 10 s after a straight approach: [4,8]
+  HELD   a guest committing every 400 ms for 10 s after a straight approach: [4,8]
+  3. after starting over at rest, nothing is known until the image is reported again
+  HELD   before [9,4]; 30 s after the hook with no report null; after one commit of the guest's own and a rest [9,4]
+  7. output size: moves reported between the change and the next position are compared with the old positions
+  HELD   two reports at the new size against positions of the old one: hand [12,5] (true (9,4)); at the next position (restart by size) and at rest: [12,5] — settled in between, kept, as the limit says
+
+ALL PREDICTIONS HELD

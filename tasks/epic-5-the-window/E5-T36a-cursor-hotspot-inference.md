@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: implemented
+status: evidence-needed
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -1100,3 +1100,236 @@ after that. Demo page
   at 1280x800 and nothing in the page changes it.
 - Without the paced clock (`?pace=0`) nothing is inferred: the guest's cursor image is drawn
   with the device's (0,0), off by its real hotspot.
+
+### 2026-11-26 — verifier (round 4) — VERDICT: needs-evidence
+
+Fresh session; I implemented nothing here and verified none of rounds 1-3. Head `dfa9ef902` (the
+claim's `b23468add` plus one commit of claim and evidence only). My predictions were written
+before I ran anything or opened round 4's evidence (`evidence/e5-t36a/verifier-r4/predictions.txt`;
+one addendum, in the header of `make-plan-r4-nohook.mjs`, written before the two runs it
+predicts); every file named below is in that directory unless its path says otherwise. Browser
+runs: the committed bundle from `tools/serve-dist.sh` on 8125 (`main.js`, `loader.js`,
+`idle-sleep.js`, `src/input/pointer.js` and both sink files hash as `web/dist` at this head, which
+equals the sources: `orient.log`), Chrome 158.0.8127.88 headless, the session restarted on legacy
+KMS as the worker's script does it. Instrumented runs change the sink file in memory only.
+
+Round 3's refutation is fixed: its sequences and its two browser plans show no wrong hotspot, the
+stale report of the plane occurred 20 times in my runs and was right every time. All three
+acceptance commands pass for me, round 3's four demands are met, the worker's 76 mutants
+reproduce (75 noticed), and nothing I tried with what the page lets a user of the Replay desktop
+do showed a hotspot more than a pixel from the truth. What does not hold is the last step of the
+rule this round rests on, for one of the ways of starting over it names: after a change of pointer
+mode, "the guest has been idle after a position sent since" is not "its pointer stands on that
+position". The guest's kernel drops an absolute position equal to the tablet's last one, and
+relative motion (another device) leaves that last one where it was. I predicted it, and produced it
+in a browser on the committed bundle, with and without the proof's hook: the arrow drawn with
+(4,3), (3,5), (12,6), (4,3), (7,5) for its (1,1), at rest, for as long as my scripts waited.
+
+Why not `refuted`: the rule I wrote down before running (end of `predictions.txt`) asks for a
+sequence a user can reach. Relative mode cannot be entered from the Replay desktop's page: its
+toggle `#ide-pointer-toggle` is inside `#ide-term-pane`, not displayed in the desktop layout (zero
+size in all three runs: `ui` in each `result.json`), and nothing else calls `setMode`
+(`web/main.js:935`, `:941-944`). I entered it through `window.__pointer.setMode`, the call the
+proof script makes. And what the page then shows is what the claim's fifth limit says it shows when
+the guest's pointer is not where the page sent it. Why not `verified`: that limit is not true as
+written, the Boundary says the opposite for a pointer-mode change, neither the test guest nor the
+proof can see it, and four mutants that are behaviour survive the tests. Status `evidence-needed`;
+nothing promoted.
+
+**Needs evidence**
+
+- P9, my one novel attack: the premise "idle after a position sent since = the pointer stands on
+  it", after a pointer-mode change — HELD as predicted, that is, the claim does not hold there.
+  - Predicted before any run: Linux's input core ignores an absolute-axis value equal to the
+    device's current one (`input_handle_abs_event`), so a frame of two unchanged axes reaches no
+    compositor; the page settles all the same; the plane reported where it stands is then
+    compared with that one position, and "last sent - plane" is taken at rest.
+  - Unit, the real controller, a guest that does not act on a repeated absolute position
+    (`p9-p11-unit.log`): 64x64 arrow, pointer at rest on (400,640), relative motion (-7,-5), back
+    in absolute mode on (400,640): settled; (8,6) for a true (1,1) at rest, 5 s later, and after
+    one more position (tip 7,5 off the sent pixel); dropped at the third move it cannot explain.
+    The same without the hook for a shape first met during relative motion: caret (11,13) for
+    (4,8). Controls (a guest that acts on every position; a return one pixel away): right.
+  - Browser, `kernel-drop-1` (`result.json` sha256 `0adcf9483bfc…`, `kernel-drop-1-analysis.log`;
+    the kernel's plane read from debugfs before and after each step). In 8 of 8 trials the return
+    to the same page point moved the plane by (0,0) — relative motion had moved it by 3 to 12
+    pixels — and the page concluded "caught up" 44-134 ms after noting the position. With the
+    terminal printing in bursts (the worker's load) and the arrow forgotten by the hook: (4,3),
+    (3,5), (12,6) shown at the read 2.2 s later (the first two also at 0.7 s) and kept through an
+    even run of two more positions (tip off the sent pixel by (3,2), (2,4), (11,5)); gone after
+    two jumps elsewhere. `events.json` #498-#519: S(420,670) at t=115808.2 and the question; "caught up" at
+    115902.9 with the plane at (408,664); that plane reported again at 116104.7, 116217.2,
+    116372.4, now as evidence; the rest question at 116528.5; (12,6) shown at 116623.1.
+    On an idle desktop (three trials) the page settled likewise and showed nothing: no commit
+    reported the plane in 2.2 s. An offset outside the image: nothing. A settled arrow: (1,1) kept.
+    Controls (the return one guest pixel away): the plane moved, (1,1).
+  - Without the hook, `nohook-a` (sha256 `fea26e4f39dc…`) and `nohook-b` (`a794c669d0dd…`), predicted
+    in the addendum: the session's first position, relative mode, relative motion, absolute mode,
+    the same page point, bursts running: (4,3) shown for 7.2 s and (7,5) for 7.3 s, through two
+    more positions and 5 s of rest after them (tip (3,2) and (6,4) off), until the jumps.
+  - Over the three instrumented runs with a restart (`p6g-browser-order.log`): of 12 conclusions
+    "caught up" after starting over, the plane stood for the last position sent in 4 (the two
+    controls and the two plans without a mode change) and not in 8.
+  - The claim: Boundary, "after a change of pointer mode … no move is evidence until the guest
+    has been idle after a position sent SINCE: its pointer then stands on that position or a
+    later one"; fifth limit, "the Replay desktop's session does neither by itself". The session
+    holds its pointer whenever a position repeats the tablet's last; that is harmless until
+    relative motion has moved the pointer. Code: `web/src/sink/cursor-controller.js:442`
+    (any noted position starts the question) and `:502`.
+  - Reach: the page's relative mode and the mouse back on the pixel it left; no user of the
+    Replay desktop has the first. With the toggle shown it would also need the shape under the
+    guest's pointer not settled, the guest's pointer left above and to the left of the mouse by
+    less than the image's size, and a guest that commits frames.
+  Demand: say what the page knows after a pointer-mode change as it is — or make a position the
+  guest will not act on (one that repeats the last absolute position sent before relative mode)
+  not end settling; either way a controller test whose guest does not act on a repeated absolute
+  position after relative motion (`p9-p11-unit.mjs` and `harness-r4.mjs` may be taken as they are).
+- P10, mocks — the test guest is not the device in the respect this round's rule depends on.
+  `LegacyKmsGuest.pump` puts the pointer on every position it is given and `idleCount` is "the
+  queue is empty" (`web/tests/e5-t36-cursor-hotspot.test.mjs:423-434`): "idle, so it acted, so its
+  pointer is there" is the model's definition, not something a test could find false. The proof's
+  24 runs "by the hook and a pointer-mode change" enter and leave relative mode in one call with
+  no relative motion (`tools/verify/e5-t36-hardware-cursor-browser.mjs:231`). No expected value is
+  computed by the code under test (truths are constants, the fixture is a recorded log, the
+  browser's truth is the kernel's plane position). Demand: as above.
+- P13, mutants of my own, scratch copies only (`mutants-r4.py`, `mutants-r4.log`): 9 of 15
+  noticed; I predicted at least 12 of 16 (FAILED, and I ran 15). Survivors that are behaviour,
+  each told from the sources by a sequence of mine in which the sources are right
+  (`mutants-r4-vs-my-attacks.log`): M1, the position that carries an output-size change noted
+  before the restart instead of after — round 3's bug by the size door, hand (15,4) at rest
+  (the worker's size runs change size on the first position of a run that continues, so the
+  guest's pointer is on a later, remembered one by the time it is idle); M23, the hook ending the
+  page's settling — (15,4) after a mode change followed by the hook (the proof calls them in the
+  other order); M6, a count that went down taken for an idle wait; M17b, a width-only change of
+  output size not restarting. M3 (the guest asked before the position is noted, same tick) and
+  M31 (a rest wait left armed when inference starts over) change nothing shown. Demand: tests
+  that fail on M1 and M23, and one assertion each for M6 and M17b (S1-S4 of
+  `mutants-r4-vs-my-attacks.mjs` may be taken as they are).
+
+**Held**
+
+- P0: the worker's `evidence/e5-t36a/gates.log` names `b23468add` (sha256 `621410cc4a8f…`) and
+  `evidence/e5-t36a/browser/result.json` hashes `8c13d2a81667…`; `b23468add..dfa9ef902` touches nothing
+  under `web/` or `tools/`; sources, `web/dist` and the server on 8125 agree (`orient.log`). The
+  worker's 76 mutants: 75 noticed, the survivor the one named (`mutants-worker-rerun.log`).
+- P1: the four cursor test files, 44 of 44 (`unit-acceptance.log`). P2: the whole web unit suite,
+  652 tests, 624 pass, 28 fail, the same 28 names as before (`gates.log`, my run).
+- P3, round 3's refuting sequences through the new controller, the page settled first
+  (`p3-r3-sequences.log`): A by the hook, hand / arrow / caret: nothing during the run, the truth
+  at the move for the last position and at rest (round 3: (15,4), (6,4), (0,6)); M: nothing during
+  the run nor at rest, (9,4) after one more position; B: nothing after the flip, (9,4) when the
+  guest reports; C, D right. Round 3's `attacks-r3.mjs` and `p2-handworked-r3.mjs` as they stand
+  (`attacks-r3-on-r4.log`, `p2-handworked-r3-on-r4.log`): no wrong hotspot in any section; its
+  model §i 0 of 3000 runs (round 3: 86-94 % for a guest behind); 4 and 7 of their checks no
+  longer hold as checks of round 3's behaviour (the one-second fallback is gone, the page starts
+  settling, the hook no longer restarts).
+- P4, browser, round 3's two refuting plans and runner unchanged: `stale-short-r4` (sha256
+  `5e641ca576e0…`), 48 trials, the plane reported where it stood after a newer position in 12 of
+  them and taken as evidence, 0 wrong in the timeline (round 3: 3 of 48 kept for 5 s), 144 reads:
+  143 right, 1 none; `stale-r4` (`1fc7eae66a55…`), 38 trials, 8 such reports, 0 wrong (round 3: 4 of
+  32), 76 reads: 65 right, 11 none.
+- P5: the worker's browser command passes for me with the claim's 18 rows exactly; 48 runs from
+  the rest position, none wrong, known after two more positions in all (0.4 s after the stop:
+  24 of 24 by the hook, 0 of 24 by hook and pointer mode; 1.9 s after: 48 of 48); timeline 142
+  changes, 81 answers, none wrong; settling before the first position, settled 129 ms after it; no
+  errors, no diagnostics (`browser/result.json`, sha256 `b4457428714e…`).
+- P6, settling cannot end without an idle wait after a position noted in the live epoch — unit,
+  the readings of the count delivered by hand (`p6-settling.log`, 29 checks): starting over while
+  the first reading, the poll wait or the second reading is in flight (also with the stale
+  reading coming back greater after the next question was asked); three restarts back to back in
+  four delivery orders; a restart with no position after it; `reset()` in each phase; a count
+  that goes down, stays, is NaN, Infinity, a string, a BigInt, null, undefined, an object,
+  alternates with null, rejects or never answers — no conclusion, no throw, at most one wait
+  armed. In the browser every question after starting over directly follows a noted position (13
+  of 13, `p6g-browser-order.log`); `pointer.js:222-231` calls the frame hook after send and sync.
+- P7 and P8, 2000 random sessions through the real controller, an estimator wrapped to count
+  (`p7-p8-fuzz.log`): 0 of 54,261 moves reached the estimator while settling, 0 rest answers
+  taken while settling; 3062 hooks at random moments (1508 with a wait armed), 2656 mode and size
+  restarts, 513 resets, 1411 hides: 0 wrong in 8087 answers shown, known and right in the end in
+  2000 of 2000. A cursor hidden by a move with resource 0 while a rest question is in flight and
+  shown again (three ways), and the hook while one is in flight (two ways): none or the truth.
+- Carried forward, the code and evidence they rest on unchanged: the estimator-level results of
+  rounds 1-3 (`noteMove`, `_candidates`, `noteInstall`, `notePointer` are byte for byte as they
+  were; round 4's diff of `cursor-hotspot.js` is comments, `forget`, and two writes nothing read)
+  and round 3's P4 for the channel (`web/loader.js`, `web/idle-sleep.js`,
+  `web/linux-worker-protocol.js` untouched; `web/tests/e5-t37b-*.test.mjs` 22 of 22 again). Not
+  carried, the controller having changed, and re-done above: round 3's P1, P2, P5a, P6 and its run
+  without a counter. Regression, judged on the worker's files, both written after `b23468add`:
+  click 278 and 271.1 ms, key echo 45.7 and 46 ms; demo page 127 of 127, no errors.
+
+**The claim's limits**
+
+- A busy guest: true (`p9-p11-unit.log` §1; in the real page settling ended 44-134 ms after a
+  position in `kernel-drop-1` and 129 ms after the first one in the proof run).
+- Rest needs 150 ms without a cursor event: true — a guest committing every 100 or 140 ms gives
+  no rest answer in 10 s, every 200 or 400 ms it does (§2). An answer is taken although a commit
+  arrived while the guest was being asked; the plane is then the later report, which is right.
+- Nothing known after starting over at rest until reported again: true (§3) — and on an idle
+  desktop that can take seconds (`kernel-drop-1`, trials T1-T3: nothing in 2.2 s).
+- "The page assumes the guest's pointer goes where the page sends it … the session does neither
+  by itself": not true as written — P9. Read: the image's sway configuration sets no warp and
+  hides no cursor (`tools/replay-desktop/rootfs/etc/replay-desktop/sway.conf`); sway puts its
+  pointer at (100,100) when the session starts (plane (99,99) before any position, three runs).
+- Output size: true as written — two reports at a new size against positions of the old one
+  settle (12,5) for the hand's (9,4), kept at the next position (§7).
+- Without the paced clock: true — `pace0-r4` (`&pace=0`, sha256 `df060c2bbfca…`): `idleYield`
+  false, 22 reads over three shapes, settling at every one, CSS hotspot (0,0), 0 answers.
+- Missing: P9. Nothing a user of the Replay desktop would meet that I could find: buttons carry
+  no position (`pointer.js:499`), frames are noted only when sent (`:206-231`), nothing else
+  sends tablet events to this guest, and the boot overlay passes pointer events only after the
+  desktop marker (`web/ide.js:774-780`).
+
+**My predictions that failed** (besides P13)
+
+- P3, three rows: after a mode change on a hotspot settled before it I predicted nothing shown
+  until a later jump; the page keeps showing the settled, right hotspot, as the claim says.
+- P11 §2, first version of my script: 140 ms "failed" because my script's first commit came
+  156 ms after the approach (`p9-p11-unit-first-version.log`); corrected in the script, not the
+  product. My fuzz first counted the rig's missing DOM as diagnostics, and sampled answers only on
+  timer ticks; both corrected and re-run (the numbers above are the re-run).
+- P13: I named the worker's C42 (a move with resource 0) as a likely survivor; it is noticed.
+- P7: I wrote "over the worker's whole test file"; I ran my own sessions only.
+
+**Coverage of the diff** (`coverage-unit-tests.txt`; the browser runs above)
+
+- `cursor-hotspot.js`: every block executed by the tests.
+- `cursor-controller.js`, round 4's hunks, by no test: `:512` (no counter function inside a
+  question — unreachable: without one no question is asked, `:490`, and settling never ends, so
+  no rest wait is armed) — dead, delete it or keep it as a guard and say so; `:539` (a timer
+  firing after its wait ended) and `:624` (a diagnostic for an estimator that throws) waived;
+  `:111-112`, the default timers, executed in every browser run. The hook's and the restart's
+  catch arms and the move that hides the cursor (`:388-397`) are executed by the tests now.
+- `web/main.js:864-867`: both arms executed in a browser (paced: 279 readings and 103
+  conclusions "caught up" in my five instrumented runs; `&pace=0`: no counter, `idleYield` false).
+
+SUITE: n/a until the demands are met. My sequences are in the directory for the taking.
+
+Commands (repo root):
+`cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`;
+`bash evidence/e5-t36a/gates.sh`;
+`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/verifier-r4/browser`;
+in `evidence/e5-t36a/verifier-r4/`: `node p3-r3-sequences.mjs`; `node p6-settling.mjs`;
+`node p7-p8-fuzz.mjs`; `node p9-p11-unit.mjs`; `node ../verifier-r3/attacks-r3.mjs`;
+`node ../verifier-r3/p2-handworked-r3.mjs`;
+`node ../verifier-r3/premise-browser-r3.mjs --plan ../verifier-r3/plan-r3-stale-short.json --out stale-short-r4 --instrument`
+(likewise `plan-r3-stale.json` into `stale-r4`, `plan-r3-pace0.json` into `pace0-r4` with
+`--query '&pace=0'`); `node ../verifier-r3/analyze-stale.mjs DIR`; `node make-plan-r4.mjs`;
+`node browser-r4.mjs --plan plan-r4-kernel-drop.json --out kernel-drop-1 --instrument` (likewise
+`plan-r4-nohook-a.json`, `plan-r4-nohook-b.json` from `make-plan-r4-nohook.mjs`);
+`node analyze-kernel-drop.mjs DIR`; `python3 evidence/e5-t36a/mutants.py SCRATCH`;
+`python3 mutants-r4.py SCRATCH`; `node mutants-r4-vs-my-attacks.mjs` (and with `SINK_DIR`); the
+four test files with `NODE_V8_COVERAGE` and round 1's `coverage-uncovered.mjs`;
+`cd web && node --test tests/e5-t37b-paced-idle.test.mjs tests/e5-t37b-run-loop.test.mjs`.
+
+Not checked: a pristine clone (medium risk); the latency run and the demo page (taken from
+`browser-unchanged.json`, `browser-unchanged-2.json`, `demo-suite.json`); P9 through the page's own
+toggle and Pointer Lock (not in the desktop layout; `requestLock: false` as the proof does it);
+that the kernel is what drops the position (I saw the plane not move, eight times of eight and
+twice more, and read the rule from memory of `drivers/input/input.c`, not from the guest's
+source); a compositor restarted under a running page, and positions sent before a compositor
+reads the tablet (the page would settle on them: the same class as P9; the proof sends none
+before its restart and the boot overlay lets a user send none); a slowed host and a guest under
+a terminal flood (round 3's runs, not repeated on this code); what the 20 idle seconds of the
+proof hide on this code (round 3's P5b); a pointer-mode or output-size change by a real resize;
+E5-T37a's "a reported wait is always true"; a guest with more than one hart; a real mouse;
+Firefox and Safari; cursors above the CSS limit; E5-T36b's image.

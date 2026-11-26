@@ -1,0 +1,84 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.183,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 76,
+  "unknownImages": [],
+  "answersShown": 38,
+  "answersForUnknownImages": 0,
+  "shownWrong": []
+ },
+ "stats": [
+  {
+   "label": "ticks a",
+   "t": 82882.5,
+   "idleSleeps": 981,
+   "idleYield": true,
+   "idleWakes": 223,
+   "idleSleepMs": 42292.99880000002
+  },
+  {
+   "label": "ticks b (3 s later)",
+   "t": 85887.1,
+   "idleSleeps": 1029,
+   "idleYield": true,
+   "idleWakes": 226,
+   "idleSleepMs": 42877.410800000034
+  },
+  {
+   "label": "bursts a",
+   "t": 142984.6,
+   "idleSleeps": 1749,
+   "idleYield": true,
+   "idleWakes": 262,
+   "idleSleepMs": 47829.0292
+  },
+  {
+   "label": "bursts b (3 s later)",
+   "t": 145990.6,
+   "idleSleeps": 1784,
+   "idleYield": true,
+   "idleWakes": 266,
+   "idleSleepMs": 48926.18940000001
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do echo tick; sleep 0.05; done > /dev/pts/0 2>/dev/null & echo $! > /t",
+   "stdout": "0.14 0.05 0.02 1/116 708\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.41 0.14 0.05 1/116 1062\n\n"
+  },
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.41 0.14 0.05 1/117 1079\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.35 0.15 0.05 1/116 1661\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "stale-idle": {
+   "none": 0,
+   "ok": 12,
+   "WRONG": 0
+  },
+  "stale-ticks": {
+   "none": 10,
+   "ok": 22,
+   "WRONG": 0
+  },
+  "stale-bursts": {
+   "none": 1,
+   "ok": 31,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}

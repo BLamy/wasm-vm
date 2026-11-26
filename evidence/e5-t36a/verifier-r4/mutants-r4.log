@@ -1,0 +1,16 @@
+M1 the position that carries an output-size change is noted BEFORE the restart (so it is forgotten; the guest is asked all the same): SURVIVED
+M2 the hook starts settling (round 3's hook): KILLED by 4: a run from where the pointer rests after each way of starting over: the plane reported whe
+M3 the guest is asked before the position is noted: SURVIVED
+M4 a guest never idle within a question's two seconds is taken for caught up: KILLED by 3: a run from where the pointer rests after each way of starting over: the plane reported whe
+M6 a count that changed at all (also downwards) is an idle wait: SURVIVED
+M17a an output-size change restarts only when the WIDTH changed: KILLED by 3: a run from where the pointer rests after each way of starting over: the plane reported whe
+M17b an output-size change restarts only when the HEIGHT changed: SURVIVED
+M18 the output size is remembered only the first time: KILLED by 4: a change of guest output size restarts the evidence and keeps what is settled
+M23 the hook ends the page's settling: SURVIVED
+M25 a cursor move while settling has the guest asked (no position sent since): KILLED by 3: a recorded glide onto the button
+M31 starting over leaves an armed rest wait armed: SURVIVED
+M45 an image that is not inferred for keeps the hotspot of the one before: KILLED by 1: a device that reports a hotspot is never second-guessed
+M61 moves reach the estimator while settling; only showing the answer waits: KILLED by 7: a run from where the pointer rests after each way of starting over: the plane reported whe
+M63 the second reading of the count is taken at once, the poll wait after it: KILLED by 4: a contradicted hotspot is taken back from the page, and a guest reset forgets everything
+M64 a restart remembers the last position sent (round 3's V21): KILLED by 2: a report from where the plane stands is right with the position in the history and wrong w
+TOTAL killed 9, survived 6: ['M1', 'M3', 'M6', 'M17b', 'M23', 'M31']

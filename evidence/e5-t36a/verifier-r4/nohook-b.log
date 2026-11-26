@@ -1,0 +1,41 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.32,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 6,
+  "unknownImages": [],
+  "answersShown": 2,
+  "answersForUnknownImages": 0,
+  "shownWrong": [
+   {
+    "t": 65917.1,
+    "image": "arrow",
+    "shown": [
+     7,
+     5
+    ],
+    "forMs": 7263,
+    "sent": [
+     520,
+     610
+    ]
+   }
+  ]
+ },
+ "stats": [],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.20 0.06 0.02 1/118 591\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /pr",
+   "stdout": "0.31 0.09 0.03 1/117 728\n\n"
+  }
+ ],
+ "readsByPhase": {},
+ "wrongReads": []
+}

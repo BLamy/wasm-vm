@@ -1,0 +1,1112 @@
+{
+ "name": "r4 kernel drop",
+ "screenshot": true,
+ "steps": [
+  {
+   "op": "ui"
+  },
+  {
+   "op": "idle",
+   "seconds": 20
+  },
+  {
+   "op": "stats",
+   "label": "start"
+  },
+  {
+   "op": "probe",
+   "label": "0: before any position was sent",
+   "trial": "T1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    400,
+    640
+   ],
+   "note": "T1 no hook, session start: the session's first position"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    393,
+    635
+   ],
+   "note": "T1 no hook, session start: relative motion -7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T1 no hook, session start"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    400,
+    640
+   ],
+   "note": "T1 no hook, session start: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T1 no hook, session start"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T1 no hook, session start"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T1 no hook, session start"
+  },
+  {
+   "op": "jump",
+   "to": [
+    460,
+    600
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    430,
+    690
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T1 no hook, session start"
+  },
+  {
+   "op": "jump",
+   "to": [
+    430,
+    610
+   ],
+   "restMs": 1500,
+   "note": "T2 hook: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "T2 hook"
+  },
+  {
+   "op": "reset",
+   "note": "T2 hook hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    423,
+    605
+   ],
+   "note": "T2 hook: relative motion -7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T2 hook"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    430,
+    610
+   ],
+   "note": "T2 hook: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T2 hook"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T2 hook"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T2 hook"
+  },
+  {
+   "op": "jump",
+   "to": [
+    490,
+    570
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    460,
+    660
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T2 hook"
+  },
+  {
+   "op": "jump",
+   "to": [
+    370,
+    660
+   ],
+   "restMs": 1500,
+   "note": "T3 hook: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "T3 hook"
+  },
+  {
+   "op": "reset",
+   "note": "T3 hook hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    358,
+    657
+   ],
+   "note": "T3 hook: relative motion -12,-3"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T3 hook"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    370,
+    660
+   ],
+   "note": "T3 hook: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T3 hook"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T3 hook"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T3 hook"
+  },
+  {
+   "op": "jump",
+   "to": [
+    430,
+    620
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    400,
+    710
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T3 hook"
+  },
+  {
+   "op": "jump",
+   "to": [
+    410,
+    620
+   ],
+   "restMs": 1500,
+   "note": "C1 control: back one pixel away: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "C1 control: back one pixel away"
+  },
+  {
+   "op": "reset",
+   "note": "C1 control: back one pixel away hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    403,
+    615
+   ],
+   "note": "C1 control: back one pixel away: relative motion -7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "C1 control: back one pixel away"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "jump",
+   "to": [
+    411,
+    620
+   ],
+   "note": "C1 control: back one pixel away: CONTROL back to a point one guest pixel away"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "C1 control: back one pixel away"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "C1 control: back one pixel away"
+  },
+  {
+   "op": "wait",
+   "ms": 10
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "C1 control: back one pixel away"
+  },
+  {
+   "op": "jump",
+   "to": [
+    471,
+    580
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    441,
+    670
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "C1 control: back one pixel away"
+  },
+  {
+   "op": "jump",
+   "to": [
+    390,
+    650
+   ],
+   "restMs": 1500,
+   "note": "N1 no hook, arrow settled: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "N1 no hook, arrow settled"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    383,
+    645
+   ],
+   "note": "N1 no hook, arrow settled: relative motion -7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "N1 no hook, arrow settled"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    390,
+    650
+   ],
+   "note": "N1 no hook, arrow settled: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "N1 no hook, arrow settled"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "N1 no hook, arrow settled"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "N1 no hook, arrow settled"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    610
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    420,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "N1 no hook, arrow settled"
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 2000
+  },
+  {
+   "op": "jump",
+   "to": [
+    440,
+    630
+   ],
+   "restMs": 1500,
+   "note": "T4 hook, bursts: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "T4 hook, bursts"
+  },
+  {
+   "op": "reset",
+   "note": "T4 hook, bursts hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    433,
+    625
+   ],
+   "note": "T4 hook, bursts: relative motion -7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T4 hook, bursts"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    440,
+    630
+   ],
+   "note": "T4 hook, bursts: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T4 hook, bursts"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T4 hook, bursts"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T4 hook, bursts"
+  },
+  {
+   "op": "jump",
+   "to": [
+    500,
+    590
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    470,
+    680
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T4 hook, bursts"
+  },
+  {
+   "op": "jump",
+   "to": [
+    360,
+    600
+   ],
+   "restMs": 1500,
+   "note": "T5 hook, bursts: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "T5 hook, bursts"
+  },
+  {
+   "op": "reset",
+   "note": "T5 hook, bursts hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    356,
+    591
+   ],
+   "note": "T5 hook, bursts: relative motion -4,-9"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T5 hook, bursts"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    360,
+    600
+   ],
+   "note": "T5 hook, bursts: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T5 hook, bursts"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T5 hook, bursts"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T5 hook, bursts"
+  },
+  {
+   "op": "jump",
+   "to": [
+    420,
+    560
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    390,
+    650
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T5 hook, bursts"
+  },
+  {
+   "op": "jump",
+   "to": [
+    420,
+    670
+   ],
+   "restMs": 1500,
+   "note": "T6 hook, bursts: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "T6 hook, bursts"
+  },
+  {
+   "op": "reset",
+   "note": "T6 hook, bursts hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    400,
+    660
+   ],
+   "note": "T6 hook, bursts: relative motion -20,-10"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T6 hook, bursts"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    420,
+    670
+   ],
+   "note": "T6 hook, bursts: back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T6 hook, bursts"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T6 hook, bursts"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T6 hook, bursts"
+  },
+  {
+   "op": "jump",
+   "to": [
+    480,
+    630
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    720
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T6 hook, bursts"
+  },
+  {
+   "op": "jump",
+   "to": [
+    380,
+    620
+   ],
+   "restMs": 1500,
+   "note": "T7 hook, bursts, d positive (no offset inside the image): rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "T7 hook, bursts, d positive (no offset inside the image)"
+  },
+  {
+   "op": "reset",
+   "note": "T7 hook, bursts, d positive (no offset inside the image) hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    389,
+    626
+   ],
+   "note": "T7 hook, bursts, d positive (no offset inside the image): relative motion 9,6"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "T7 hook, bursts, d positive (no offset inside the image)"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    380,
+    620
+   ],
+   "note": "T7 hook, bursts, d positive (no offset inside the image): back to the same page point"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "T7 hook, bursts, d positive (no offset inside the image)"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "T7 hook, bursts, d positive (no offset inside the image)"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "T7 hook, bursts, d positive (no offset inside the image)"
+  },
+  {
+   "op": "jump",
+   "to": [
+    440,
+    580
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    410,
+    670
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "T7 hook, bursts, d positive (no offset inside the image)"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    650
+   ],
+   "restMs": 1500,
+   "note": "C2 control, bursts: back one pixel away: rest on P"
+  },
+  {
+   "op": "probe",
+   "label": "a: at rest on P",
+   "trial": "C2 control, bursts: back one pixel away"
+  },
+  {
+   "op": "reset",
+   "note": "C2 control, bursts: back one pixel away hook"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    443,
+    645
+   ],
+   "note": "C2 control, bursts: back one pixel away: relative motion -7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "C2 control, bursts: back one pixel away"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "jump",
+   "to": [
+    451,
+    650
+   ],
+   "note": "C2 control, bursts: back one pixel away: CONTROL back to a point one guest pixel away"
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "C2 control, bursts: back one pixel away"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "C2 control, bursts: back one pixel away"
+  },
+  {
+   "op": "wait",
+   "ms": 10
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "C2 control, bursts: back one pixel away"
+  },
+  {
+   "op": "jump",
+   "to": [
+    511,
+    610
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    481,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "C2 control, bursts: back one pixel away"
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "stats",
+   "label": "end"
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+H1 history never trimmed: KILLED by 1: the number of remembered images is bounded; a forgotten one is inferre
+H2 candidate upper bound off by one (x): KILLED by 1: the edges of what counts: one place twice, offsets outside the image, 
+H3 candidate lower bound ignores slack: KILLED by 1: the edges of what counts: one place twice, offsets outside the image, 
+H4 no restart when no candidate survives: KILLED by 1: a contradicted hotspot is taken back from the page, and a guest reset 
+H5 resolve without clamping: KILLED by 2: rest is the caller's knowledge: read off a plane still on its way, it 
+H6 answers with one move: KILLED by 13: a change of guest output size restarts the evidence and keeps what is 
+H7 answers although several clusters remain: KILLED by 13: a change of guest output size restarts the evidence and keeps what is 
+H8 contradiction never drops an answer: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+H9 one contradiction drops an answer: KILLED by 4: a contradicted hotspot is taken back from the page, and a guest reset 
+H10 explained move does not reset the miss count: KILLED by 1: an answer the guest contradicts three moves in a row is dropped and in
+H11 unexplainable position counts as a contradiction: KILLED by 1: an answer the guest contradicts three moves in a row is dropped and in
+H12 after a drop, inference does not start from the contradicting move: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+H13 rest ignores the candidates: KILLED by 1: a rest answer needs a move of this image since it was installed, and n
+H14 rest without a move since install: KILLED by 2: a rest answer needs a move of this image since it was installed, and n
+H15 rest with no candidates at all: KILLED by 1: rest is the caller's knowledge: read off a plane still on its way, it 
+H16 images never evicted: KILLED by 1: the number of remembered images is bounded; a forgotten one is inferre
+H17 reset keeps the sent positions: KILLED by 3: a contradicted hotspot is taken back from the page, and a guest reset 
+H18 reset keeps the images: KILLED by 3: a contradicted hotspot is taken back from the page, and a guest reset 
+H29 forget forgets the sent positions too (round 3's hole, in the estimator): KILLED by 5: a report from where the plane stands is right with the position in the
+H30 forget keeps settled images: KILLED by 2: a change of guest output size restarts the evidence and keeps what is 
+H19 duplicate sends are counted: KILLED by 1: rest is the caller's knowledge: read off a plane still on its way, it 
+H20 a repeated plane position is evidence again: KILLED by 2: a hotspot-less CSS cursor gets its inferred hotspot with one style wri
+H21 tolerance of near is doubled: KILLED by 3: random approaches across an image change, in the device's order: never
+H22 plane positions not wrapped to int32: KILLED by 1: plane positions left of the origin arrive wrapped as u32
+H23 rest reads the oldest sent position: KILLED by 12: a recorded glide onto the button
+H24 a rest answer is not clamped: KILLED by 1: rest is the caller's knowledge: read off a plane still on its way, it 
+H25 sends are not counted: KILLED by 2: rest is the caller's knowledge: read off a plane still on its way, it 
+C1 the update's position is evidence again: KILLED by 9: a recorded glide onto the button
+C2 a device-reported hotspot is second-guessed: KILLED by 1: a device that reports a hotspot is never second-guessed
+C3 positions are noted in relative mode: KILLED by 1: relative mode is not evidence; changing mode restarts the evidence and
+C4 a mode change does not restart the evidence: KILLED by 7: a run from where the pointer rests after each way of starting over: th
+C5 an output size change does not restart the evidence: KILLED by 4: a change of guest output size restarts the evidence and keeps what is 
+C4b a mode or size change forgets settled hotspots: KILLED by 4: a change of guest output size restarts the evidence and keeps what is 
+C4c the hook keeps settled hotspots (and forgets the positions): KILLED by 6: a change of guest output size restarts the evidence and keeps what is 
+C4d the hook forgets the positions too (round 3's hole): KILLED by 5: a run from where the pointer rests after each way of starting over: th
+C4e the hook leaves the old answer on the page: KILLED by 1: a change of guest output size restarts the evidence and keeps what is 
+H26 restart keeps unsettled images: KILLED by 2: a report from where the plane stands is right with the position in the
+H27 restart keeps the sent positions: KILLED by 2: a report from where the plane stands is right with the position in the
+H28 restart keeps the miss count of a settled image: KILLED by 1: restart forgets the positions sent and what is not settled, and keeps 
+C6 every install forgets the plane position (same image too): KILLED by 2: a hotspot-less CSS cursor gets its inferred hotspot with one style wri
+C7 no install note on an image change: KILLED by 2: estimator failures become diagnostics, never a broken cursor
+C8 the rest wait is never armed: KILLED by 11: a contradicted hotspot is taken back from the page, and a guest reset 
+C9 a stale rest callback acts: KILLED by 1: the pointer at rest with the guest caught up settles the hotspot after
+C10 rest is waited for although the hotspot is known: KILLED by 1: a hotspot-less CSS cursor gets its inferred hotspot with one style wri
+C10b a rest wait is armed while settling: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C11 a changed answer is not shown: KILLED by 10: a change of guest output size restarts the evidence and keeps what is 
+C12 an unchanged answer writes the style again (the setter skips it: nothing observable): SURVIVED
+C13 a guest reset keeps the estimator: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+C14 a guest reset leaves waits in flight: KILLED by 4: a contradicted hotspot is taken back from the page, and a guest reset 
+C15 sends do not restart the rest wait: KILLED by 1: the pointer at rest with the guest caught up settles the hotspot after
+C15b a position sent while settling does not have the guest asked: KILLED by 17: a change of guest output size restarts the evidence and keeps what is 
+C16 the inferred hotspot is not used in the CSS cursor: KILLED by 9: a contradicted hotspot is taken back from the page, and a guest reset 
+C17 rest answers on quiet alone (the guest is not asked): KILLED by 9: a contradicted hotspot is taken back from the page, and a guest reset 
+C18 rest answers although a position was sent while the guest was asked: KILLED by 1: the pointer at rest with the guest caught up settles the hotspot after
+C19 caught up on the first reading (no later idle wait needed): KILLED by 7: a run from where the pointer rests after each way of starting over: th
+C20 a restart does not wait for the guest to catch up: KILLED by 5: a change of guest output size restarts the evidence and keeps what is 
+C21 moves are evidence while settling: KILLED by 7: a contradicted hotspot is taken back from the page, and a guest reset 
+C22 settling ends when there is no counter to ask: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C23 a counter that says nothing is asked again after one poll, not two seconds: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C24 a guest never idle within the timeout is asked only once: KILLED by 3: a run from where the pointer rests after each way of starting over: th
+C25 without a counter function the guest is asked all the same: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C32 the page starts settled: KILLED by 4: a recorded glide onto the button
+C33 every position sent while settling starts a loop of questions: KILLED by 2: the page starts not knowing where the guest's pointer stands: no evide
+C34 a question of the epoch before ends settling: KILLED by 1: the test run did not end within 90 s
+C35 a question of the epoch before goes on polling: KILLED by 1: the page starts not knowing where the guest's pointer stands: no evide
+C36 the guest is asked at the restart, before a position was sent (round 3's rule): KILLED by 4: relative mode is not evidence; changing mode restarts the evidence and
+C37 a rest answer is given to whatever image is shown when the guest answers: KILLED by 2: the client changes the cursor while the guest is being asked: the answ
+C38 a wait that was ended counts as elapsed: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C42 a move that hides the cursor leaves the wait for the image it replaced: KILLED by 1: the pointer at rest with the guest caught up settles the hotspot after
+C41 starting over does not start a new epoch: KILLED by 9: a change of guest output size restarts the evidence and keeps what is 
+C39 a count that went away during a question counts as idle: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C27 a restart leaves the old epoch's waits running: KILLED by 8: a change of guest output size restarts the evidence and keeps what is 
+C28 a guest reset is taken for a guest whose pointer the page knows: KILLED by 3: a contradicted hotspot is taken back from the page, and a guest reset 
+C29 a known image is installed without its hotspot: KILLED by 2: a hotspot-less CSS cursor gets its inferred hotspot with one style wri
+C30 the guest is asked for one poll only: KILLED by 1: without an idle counter nothing is inferred; one that fails or says no
+C31 an update does not arm the rest wait: KILLED by 1: the pointer at rest with the guest caught up settles the hotspot after
+TOTAL killed 75, survived 1: ['C12 an unchanged answer writes the style again (the setter skips it: nothing observable)']

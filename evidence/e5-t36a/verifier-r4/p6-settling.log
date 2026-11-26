@@ -1,0 +1,37 @@
+a. start over while the question's FIRST reading is in flight
+  HELD   one reading was in flight (1); after it arrived: settling=true readings-in-flight=0 timers=0 asked=1; 10 s later: settling=true readings-in-flight=0 timers=0 asked=1 — no poll for a question that is over
+  HELD   a position sent since, the count unchanged: settling true; the count moved on: settling false
+b. start over during the poll wait
+  HELD   a poll wait was armed (1); 10 s after starting over: settling=true readings-in-flight=0 timers=0 asked=1
+c. start over while the SECOND reading is in flight, and it comes back greater
+  HELD   second reading in flight (1); it said "idle since" after the page started over: settling=true readings-in-flight=0 timers=0 asked=2
+  HELD   two readings in flight (2); the old loop's "idle since" ends nothing (true); the new loop with an unchanged count: true; with its own later idle wait: settling false
+d. start over three times back to back (mode, size, mode), a reading in flight for each
+  HELD   delivery order [0,0,0]: 3 first readings in flight; after them: settling=true readings-in-flight=0 timers=1 asked=3; exactly one loop polls on (1); it ends settling only on its own second reading (true -> false); readings asked in all: 4
+  HELD   delivery order [2,0,0]: 3 first readings in flight; after them: settling=true readings-in-flight=0 timers=1 asked=3; exactly one loop polls on (1); it ends settling only on its own second reading (true -> false); readings asked in all: 4
+  HELD   delivery order [1,1,0]: 3 first readings in flight; after them: settling=true readings-in-flight=0 timers=1 asked=3; exactly one loop polls on (1); it ends settling only on its own second reading (true -> false); readings asked in all: 4
+  HELD   delivery order [2,1,0]: 3 first readings in flight; after them: settling=true readings-in-flight=0 timers=1 asked=3; exactly one loop polls on (1); it ends settling only on its own second reading (true -> false); readings asked in all: 4
+  HELD   two questions in flight, then a restart with no position after it; both answered "1000": settling=true readings-in-flight=0 timers=0 asked=2
+e. controller.reset() (a guest reset) in the middle of a question
+  HELD   first reading in flight: settling=true readings-in-flight=0 timers=0 asked=1, shown null
+  HELD   poll wait: settling=true readings-in-flight=0 timers=0 asked=1, shown null
+  HELD   second reading in flight: settling=true readings-in-flight=0 timers=0 asked=2, shown null
+f. a counter that misbehaves
+  HELD   goes down: settling true, shown null, readings 1021 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   stays: settling true, shown null, readings 1021 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   NaN after the first: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   NaN: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   Infinity: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   a string that grows: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   a BigInt that grows: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   null: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   undefined: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   an object: settling true, shown null, readings 21 in 40 s, most timers armed at once 1, diagnostics 0
+  HELD   alternates a number and null: settling true, shown null, readings 40 in 40 s, most timers armed at once 1, diagnostics 0 (every question meets a null: never concluded)
+  HELD   rejects: settling true, shown null, readings 0 in 40 s, most timers armed at once 1, diagnostics 21
+  HELD   negative, growing towards zero: settling false, shown [9,4], readings 4 in 40 s, most timers armed at once 1, diagnostics 0 (a finite count that moves on IS an idle wait: settling ends, as it should)
+  HELD   never answers: settling=true readings-in-flight=1 timers=0 asked=1 after 120 s and a second position (one question per epoch)
+g. the first reading is asked after the position is noted
+  HELD   sends when the guest was first asked: 1 (before the position: 0)
+
+ALL PREDICTIONS HELD

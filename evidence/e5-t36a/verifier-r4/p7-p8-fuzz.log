@@ -1,0 +1,16 @@
+P7/P8 — random sessions: runs, lag, commits of the guest's own, cursor flips, hides, and every way of starting over at any moment
+  {"sessions":2000,"wrong":0,"moves":54261,"rests":2549,"movesWhileSettling":0,"restsWhileSettling":0,"restAnswersWhileSettling":0,"hooks":3062,"hooksMidQuestion":1508,"restarts":2656,"resets":513,"knownAtEnd":2000,"answers":8087,"hidden":1411,"diagnostics":1476,"reasons":{"cursor-mode-dom-error: cursor overlay DOM is unavailable":1476}}
+  HELD   never an answer more than a pixel from the truth: 0 wrong in 8087 answers shown over 2000 sessions 
+  HELD   moves given to the estimator while settling: 0 of 54261
+  HELD   rest answers taken while settling: 0 (noteRest called while settling 0 times of 2549: a question that was in flight when the page started over)
+  HELD   known and right in the end (two positions and rests, idle guest): 2000 of 2000
+  HELD   hotspot diagnostics: 0 (all diagnostics: {"cursor-mode-dom-error: cursor overlay DOM is unavailable":1476})
+P7 (i) — the cursor is hidden by a move with resource 0 while a rest question is in flight, and shown again elsewhere
+  HELD   shown again, update only seen before the answer: question in flight (1); after its answer the page shows null for the caret (true (4,8)); wrong shown: []
+  HELD   shown again with its move before the answer: question in flight (1); after its answer the page shows [4,8] for the caret (true (4,8)); wrong shown: []
+  HELD   stays hidden: question in flight (1); after its answer the page shows null for the caret (true (4,8)); wrong shown: []
+P7 (ii) — the hook while a rest question is in flight, then one re-report, then the answer
+  HELD   question in flight (1); shown after the answer: [4,8] (true (4,8))
+  HELD   guest a position behind at the hook: nothing for 3 s (null); (4,8) once it caught up: [4,8]
+
+ALL PREDICTIONS HELD

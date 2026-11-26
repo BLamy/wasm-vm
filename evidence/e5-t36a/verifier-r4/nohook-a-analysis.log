@@ -1,0 +1,17 @@
+run: 158.0.8127.88, session restart 16.204 s, ran true, errors [], cursor diagnostics []
+the page's own pointer-mode toggle: {"present":true,"disabled":false,"text":"Pointer: absolute","rect":[0,0,0,0],"display":"block","visibility":"visible","hiddenBy":"div#ide-term-pane.ide-term-pane","desktopMode":"absolute","body":""}
+timeline: {"rows":6,"unknownImages":[],"answersShown":2,"answersForUnknownImages":0,"shownWrong":[{"t":66008.8,"image":"arrow","shown":[4,3],"forMs":7200,"sent":[400,640]}]}
+
+H0 no hook, session start, bursts, P=400,640 d=-7,-5
+  0: before any position was sent              t=64957.6 mode=absolute plane=[99,99] lastSent=null image=arrow css=[0,0] inferred=null settling=true tip-sent=null idle=645
+  b: after relative motion                     t=65517.6 mode=relative plane=[396,637] lastSent=[400,640] image=auto css=null inferred=null settling=true tip-sent=null idle=649
+  c: 0.7 s after the return                    t=66347.4 mode=absolute plane=[396,637] lastSent=[400,640] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[0,0] idle=663
+  d: 2.2 s after the return                    t=67908.4 mode=absolute plane=[396,637] lastSent=[400,640] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[0,0] idle=681
+  e: two more positions (+6,+2 each), at rest  t=69048.1 mode=absolute plane=[411,643] lastSent=[412,644] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[3,2] idle=695
+  g: 5 s at rest after them                    t=73115.5 mode=absolute plane=[411,643] lastSent=[412,644] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[3,2] idle=741
+  f: after two jumps elsewhere                 t=74789.8 mode=absolute plane=[429,689] lastSent=[430,690] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=752
+  relative motion moved the plane by null; the return moved it by [0,0]; "last sent - plane" after the return = [4,3] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[65644.8,400,640,"absolute"]]; "caught up" [[65692.5,true],[66000.8,true],[66185.9,true]]; moves after it [[65799.7,396,637,false],[65982.1,396,637,false],[66152.1,396,637,false],[66338.1,396,637,false]] … 14; answers shown [[66001,[4,3]]]
+
+SUMMARY
+{"trial":"H0 no hook, session start, bursts, P=400,640 d=-7,-5","planeMovedByRelative":null,"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":[4,3],"shownAtD":[4,3],"shownAtE":[4,3],"tipErrorAtE":[3,2],"shownAtF":[1,1],"wrongAtRest":true,"wrongAtF":false}
