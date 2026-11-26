@@ -15,7 +15,7 @@
 #             tracked artifacts, so point this at a checkout that has the large gitignored ones.
 #   KERNEL    $RELEASES/kernel/6.6.63/Image
 #   SNAPSHOT  the bootSnapshot named by web/artifacts-replay-desktop.json ($RELEASES/boot-snapshot/)
-#   IMAGE     target/e5-t34b/image/replay-desktop.ext4, else the wholeImage .img.gz under $RELEASES
+#   IMAGE     a local build whose SHA-256 is the manifest's wholeImage, else that .img.gz under $RELEASES
 #   CACHE_ENTRIES  optional decoded-cache slot count for both runs (default: the CLI's 4096).
 #             The evidence must not depend on it; tools/perf/decoded-cache-equivalence.sh checks.
 #
@@ -45,13 +45,19 @@ done
 mkdir -p "$OUT"
 OUT=$(cd "$OUT" && pwd)
 gunzip -c "$SNAPSHOT" > "$OUT/ready.snap"
-if [ -n "${IMAGE:-}" ]; then :
-elif [ -f target/e5-t34b/image/replay-desktop.ext4 ]; then IMAGE=target/e5-t34b/image/replay-desktop.ext4
-else
-  IMAGE="$OUT/replay-desktop.ext4"
-  gunzip -c "$(artifact "d['wholeImage']['url']")" > "$IMAGE"
-fi
 EXPECT=$(field "d['wholeImage']['uncompressedSha256']")
+# A locally built image is used only if it is the manifest's (a build is not reproducible, and the
+# manifest moves to a new generation); otherwise the published whole image is unpacked.
+if [ -n "${IMAGE:-}" ]; then :
+else
+  for candidate in target/e5-t41a/image/replay-desktop.ext4 target/e5-t34b/image/replay-desktop.ext4; do
+    if [ -f "$candidate" ] && [ "$(shasum -a 256 "$candidate" | awk '{print $1}')" = "$EXPECT" ]; then IMAGE=$candidate; break; fi
+  done
+  if [ -z "${IMAGE:-}" ]; then
+    IMAGE="$OUT/replay-desktop.ext4"
+    gunzip -c "$(artifact "d['wholeImage']['url']")" > "$IMAGE"
+  fi
+fi
 ACTUAL=$(shasum -a 256 "$IMAGE" | awk '{print $1}')
 [ "$ACTUAL" = "$EXPECT" ] || { echo "turbo-equivalence: $IMAGE is not the manifest's image ($ACTUAL)" >&2; exit 2; }
 

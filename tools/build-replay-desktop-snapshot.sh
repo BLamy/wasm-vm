@@ -13,16 +13,39 @@ cd "$(dirname "$0")/.."
 
 BIN="${BIN:-target/release/wasm-vm}"
 KERNEL="${KERNEL:-releases/kernel/6.6.63/Image}"
-IMAGE="${REPLAY_DESKTOP_IMAGE:-target/e5-t34b/image/replay-desktop.ext4}"
-MANIFEST="${REPLAY_DESKTOP_CHUNKS:-releases/rootfs/replay-desktop-2af6100e9b37.chunks.json}"
+IMAGE="${REPLAY_DESKTOP_IMAGE:-target/e5-t41a/image/replay-desktop.ext4}"
+MANIFEST="${REPLAY_DESKTOP_CHUNKS:-releases/rootfs/replay-desktop-20f03da7c51d.chunks.json}"
 OUT_DIR="${REPLAY_DESKTOP_SNAPSHOT_DIR:-releases/boot-snapshot}"
-WORK_DIR="${REPLAY_DESKTOP_SNAPSHOT_WORK:-target/e5-t34e/work}"
-BOOTLOG="${REPLAY_DESKTOP_BOOT_LOG:-evidence/e5-t34e/capture/native-capture.log}"
-RECORD="${REPLAY_DESKTOP_SNAPSHOT_RECORD:-evidence/e5-t34e/capture/snapshot.json}"
-MAX_INSTRS="${MAX_INSTRS:-40000000000000}"
+WORK_DIR="${REPLAY_DESKTOP_SNAPSHOT_WORK:-target/e5-t41b/work}"
+BOOTLOG="${REPLAY_DESKTOP_BOOT_LOG:-evidence/e5-t41b/capture/native-capture.log}"
+RECORD="${REPLAY_DESKTOP_SNAPSHOT_RECORD:-evidence/e5-t41b/capture/snapshot.json}"
+MAX_INSTRS="${MAX_INSTRS:-100000000000}"
 # Must equal web/main.js REPLAY_DESKTOP_BOOTARGS (the browser cold boot's command line).
 APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
-TRIGGER="REPLAY_DESKTOP_READY uptime="
+# The monitor prints REPLAY_DESKTOP_READY when the desktop is up and REPLAY_NODE_SNAPSHOT (always
+# after it) once Node's startup snapshot is in tmpfs. The capture then types one command line
+# into the serial root shell and fires on the line it prints last:
+#
+#   1. `sleep 30` — Chrome schedules start-up work for its first 10-20 guest seconds (measured:
+#      1.65 s of guest CPU between uptime 11 s and 21 s, then under 0.1% for minutes). Captured
+#      after it, a resumed desktop is idle from its first second; under the paced clock that
+#      work would otherwise run in the user's first real half minute.
+#   2. Compaction. A RAM snapshot stores every page that is not zero, including pages the
+#      kernel has freed (their old contents stay) and page cache nobody maps; building Node's
+#      snapshot leaves about 75 MiB of both. So: drop the unmapped page cache (everything is
+#      re-readable from the read-only root), start node once (the part of its binary a start
+#      touches is cached again, and the first `node` of a resumed session reads nothing from
+#      disk), then hand nearly all free memory to one `dd` that only zeroes it and exits.
+#      48 MiB stay untouched so nothing else is pushed out meanwhile.
+#
+# The marker is typed as two adjacent shell words, so the console's echo of the command line
+# cannot fire the trigger. If any step fails the guest powers off: the capture ends at once
+# with no snapshot instead of running to MAX_INSTRS. A boot whose Node snapshot build failed
+# prints REPLAY_NODE_SNAPSHOT_FAILED and is never captured either.
+NODE_MARKER="REPLAY_NODE_SNAPSHOT bytes="
+SETTLE_GUEST_SECONDS="${REPLAY_DESKTOP_SETTLE_SECONDS:-30}"
+TRIGGER="REPLAY_DESKTOP_COMPACTED zeroed_mib="
+COMPACT_COMMAND="sleep $SETTLE_GUEST_SECONDS && sync && echo 1 > /proc/sys/vm/drop_caches && /usr/local/bin/node -e 0 && z=\$((\$(awk '/^MemFree:/{print int(\$2/1024)}' /proc/meminfo) - 48)) && [ \$z -gt 0 ] && dd if=/dev/zero of=/dev/null bs=\${z}M count=1 2>/dev/null && echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=\$z uptime=\$(cut -d' ' -f1 /proc/uptime) || poweroff -f"
 
 for f in "$BIN" "$KERNEL" "$IMAGE" "$MANIFEST"; do
   [ -f "$f" ] || { echo "build-replay-desktop-snapshot: missing $f" >&2; exit 1; }
@@ -48,13 +71,25 @@ echo "[replay-snapshot] core_id=$CORE_HEX (version $VER) base_id=$BASE_HEX"
 rm -rf "$WORK_DIR"; mkdir -p "$WORK_DIR" "$(dirname "$BOOTLOG")" "$(dirname "$RECORD")" "$OUT_DIR"
 WORK="$WORK_DIR/replay-desktop.ext4"
 RAW_SNAP="$WORK_DIR/replay-desktop-ready.snap"
-cleanup() { [ "${REPLAY_DESKTOP_KEEP_WORK:-0}" = 1 ] || rm -rf "$WORK_DIR"; }
+cleanup() { [ -z "${FEEDER:-}" ] || kill "$FEEDER" 2>/dev/null || true; [ "${REPLAY_DESKTOP_KEEP_WORK:-0}" = 1 ] || rm -rf "$WORK_DIR"; }
 trap cleanup EXIT
 # APFS clone: no second physical copy; the release image stays immutable.
 cp -c "$IMAGE" "$WORK" 2>/dev/null || cp "$IMAGE" "$WORK"
 
-echo "[replay-snapshot] cold-booting to REPLAY_DESKTOP_READY (browser device topology)…"
+echo "[replay-snapshot] cold-booting to $TRIGGER (browser device topology)…"
 T0=$(date +%s)
+# The guest's console input: nothing until the Node marker, then the one command.
+STDIN_FIFO="$WORK_DIR/console-in"
+mkfifo "$STDIN_FIFO"
+: > "$BOOTLOG"
+(
+  exec 3>"$STDIN_FIFO"
+  until grep -aq "$NODE_MARKER" "$BOOTLOG"; do sleep 1; done
+  sleep 2 # let the monitor's line end and the shell sit at its prompt
+  printf '%s\n' "$COMPACT_COMMAND" >&3
+  sleep 86400
+) &
+FEEDER=$!
 "$BIN" boot \
   --kernel "$KERNEL" \
   --drive "file=$WORK" \
@@ -70,8 +105,10 @@ T0=$(date +%s)
   --snapshot-trigger "$TRIGGER" \
   --snapshot-out "$RAW_SNAP" \
   --snapshot-core-id "$CORE_HEX" \
-  --snapshot-base-id "$BASE_HEX" </dev/null 2>&1 | tee "$BOOTLOG"
+  --snapshot-base-id "$BASE_HEX" <"$STDIN_FIFO" 2>&1 | tee "$BOOTLOG"
 T1=$(date +%s)
+kill "$FEEDER" 2>/dev/null || true
+grep -aq "$NODE_MARKER" "$BOOTLOG" || { echo "build-replay-desktop-snapshot: the guest never reported its Node startup snapshot" >&2; exit 1; }
 [ -s "$RAW_SNAP" ] || { echo "build-replay-desktop-snapshot: no snapshot was written" >&2; exit 1; }
 
 WORK_SHA=$(shasum -a 256 "$WORK" | awk '{print $1}')
@@ -95,7 +132,7 @@ mkdir -p "$(dirname "$RECORD")"
 python3 - "$RECORD" <<PY
 import json, sys
 json.dump({
-  "task": "E5-T34e", "url": "releases/boot-snapshot/$NAME", "sha256": "$GZ_SHA", "size": $GZ_LEN,
+  "task": "E5-T41b", "url": "releases/boot-snapshot/$NAME", "sha256": "$GZ_SHA", "size": $GZ_LEN,
   "uncompressedSize": $RAW_LEN, "uncompressedSha256": "$RAW_SHA",
   "identity": {"imageSha256": "$IMAGE_SHA", "kernelSha256": "$KERNEL_SHA", "coreId": "$CORE_HEX",
     "baseId": "$BASE_HEX", "ramMib": 1024, "bootargs": "$APPEND", "guestClock": "icount",
