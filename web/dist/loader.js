@@ -1295,11 +1295,11 @@ export async function startLinuxBoot(opts = {}) {
     };
     // E5-T37b: the guest reported that nothing can happen in it for `ms`. Sleep instead of
     // running the next slice at once. Like `schedule`, this holds the single pending tick.
-    // A sleep that outlives `finish` (at most the 50 ms cap) ends in nothing.
-    const resumeFromIdle = () => { if (!stopped) tick(); };
+    // A sleep that outlives `finish` (at most the 50 ms cap) ends in a tick that returns at
+    // its first line, like any tick scheduled before a stop.
     const sleepIdle = (ms, ticket) => {
       if (tickScheduled || stopped || paused || quotaPaused) return false;
-      if (!idleSleeper.sleep(ms, resumeFromIdle, ticket)) return false;
+      if (!idleSleeper.sleep(ms, tick, ticket)) return false;
       tickScheduled = true;
       return true;
     };
