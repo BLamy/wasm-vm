@@ -1,0 +1,69 @@
+[desktop-latency 08:34:59.446] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&pace=0#ide
+[desktop-latency 08:35:03.092] desktop ready after 3.6 s
+[desktop-latency 08:35:03.102] scenario click
+[desktop-latency 08:35:09.076] click #1: result 578.9 ms, pressed-state frame 127.7 ms, 68.5M instr @ 115.9 MIPS
+[desktop-latency 08:35:12.793] click #2: result 417.1 ms, pressed-state frame 233.7 ms, 43.5M instr @ 101.4 MIPS
+[desktop-latency 08:35:15.964] click #3: result 371.6 ms, pressed-state frame 205.6 ms, 39.5M instr @ 101.8 MIPS
+[desktop-latency 08:35:19.074] click #4: result 315.5 ms, pressed-state frame 149.2 ms, 34.5M instr @ 105.7 MIPS
+[desktop-latency 08:35:22.194] click #5: result 305.8 ms, pressed-state frame 154.4 ms, 35.5M instr @ 105.8 MIPS
+[desktop-latency 08:35:25.361] click #6: result 355.9 ms, pressed-state frame 205.9 ms, 41.5M instr @ 107.4 MIPS
+[desktop-latency 08:35:28.528] click #7: result 353 ms, pressed-state frame 186.4 ms, 40.5M instr @ 105.6 MIPS
+[desktop-latency 08:35:31.749] click #8: result 380.7 ms, pressed-state frame 197.4 ms, 46.5M instr @ 107.6 MIPS
+[desktop-latency 08:35:34.526] scenario type
+[desktop-latency 08:35:41.448] type #1: echo 93.6 ms
+[desktop-latency 08:35:43.060] type #2: echo 49.3 ms
+[desktop-latency 08:35:44.618] type #3: echo 38.9 ms
+[desktop-latency 08:35:46.182] type #4: echo 43.3 ms
+[desktop-latency 08:35:47.738] type #5: echo 33.1 ms
+[desktop-latency 08:35:49.348] type #6: echo 43.5 ms
+[desktop-latency 08:35:50.964] type #7: echo 46.4 ms
+[desktop-latency 08:35:52.522] type #8: echo 35.2 ms
+[desktop-latency 08:35:56.844] {"echoMs":{"n":8,"missing":0,"min":33.1,"median":43.5,"max":93.6}}
+[desktop-latency 08:35:56.844] scenario idle
+[desktop-latency 08:36:29.639] {"wallMs":30011,"instructionsM":3616.7,"mips":120.5,"inSlicePct":99.8,"guestSecondsPerSecond":11.78,"idleSleeps":0,"idleSleepMs":0,"idleWakes":0,"clockMode":"icount","framesReceived":0,"drawnPresents":0}
+[desktop-latency 08:36:29.652] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 305.8,
+   "median": 371.6,
+   "max": 578.9
+  },
+  "pointerArrivedMs": 48.9,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 127.7,
+    "median": 197.4,
+    "max": 233.7
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 33.1,
+   "median": 43.5,
+   "max": 93.6
+  }
+ },
+ "idle": {
+  "wallMs": 30011,
+  "instructionsM": 3616.7,
+  "mips": 120.5,
+  "inSlicePct": 99.8,
+  "guestSecondsPerSecond": 11.78,
+  "idleSleeps": 0,
+  "idleSleepMs": 0,
+  "idleWakes": 0,
+  "clockMode": "icount",
+  "framesReceived": 0,
+  "drawnPresents": 0
+ }
+}
+[desktop-latency 08:36:29.783] wrote evidence/e5-t37b/browser-unpaced-1.json

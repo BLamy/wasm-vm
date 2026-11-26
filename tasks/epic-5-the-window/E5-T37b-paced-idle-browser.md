@@ -3,7 +3,7 @@ id: E5-T37b
 epic: 5
 title: Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time
 priority: 0.387645
-status: evidence-needed
+status: implemented
 depends_on: [E5-T37a]
 estimate: S
 risk: medium
@@ -352,3 +352,60 @@ then `… run-with-cpu.sh v-sabotage-nowake '' http://127.0.0.1:8137`;
 `node evidence/e5-t37b/verifier/harness-vs-mutants.mjs .`; `node evidence/e5-t37b/verifier/gate-probe.mjs web`;
 `node evidence/e5-t37b/verifier/restore-clock-probe.mjs web`;
 `E5_DEMO_TASK=E5-T37b E5_DEMO_OUT=evidence/e5-t37b/verifier node evidence/e5-t37b/demo-suite.mjs`.
+
+### 2026-11-26 — worker — round 2, evidence only (head `8fa4ce62e`)
+
+Answer to the `needs-evidence` verdict above. Commits `d443a3837` (two tests and the follow-up
+note) and `8fa4ce62e` (the regenerated build id). No runtime source changed: `git diff 939f16b9a..8fa4ce62e -- web crates ':!web/dist' ':!web/tests' ':!web/tasks.json' ':!web/gpu-checkpoint-build.js'`
+shows `crates/wasm/src/lib.rs` only, inside the `#[cfg(target_arch = "wasm32")]` test.
+
+- **Finding 1 — the wasm test's behaviour half never ran.** Node has neither a `Window` nor a
+  `WorkerGlobalScope`, so `JsHostTimer::new()` was `None` and the test returned before
+  selecting the paced clock. The test now gives its realm a host clock for its own duration
+  (node's monotonic `performance` under the name the module looks for — the shim the verifier
+  preloaded, installed and removed by the test itself, so the neighbouring test of the refusal
+  without a host clock still runs in such a realm) and asserts that one is present instead of
+  returning. The bound was wrong, as the verifier found: the first slice retires exactly 5
+  (four argument-loading instructions and the `wfi`; the SBI call is served by the built-in
+  SBI and is not a guest retirement). It is now `assert_eq!(…, 5.0)`. Checked that the half
+  executes: with the expectation changed to 6 the test fails at that line with
+  `left: 5.0, right: 6.0`; restored, `wasm-pack test --node crates/wasm --lib -- exported_paced`
+  is 2 of 2 and the whole `--lib` set 17 of 17, with no environment variable.
+- **Finding 2 — `web/guest-clock.js:68` executed by nothing.** New unit test "after a restore
+  the paced policy is selected on top of the restored clock, or the restore is refused": a
+  retire-count checkpoint with and without a divider request (exact call sequences, restored
+  time untouched), a checkpoint taken under the paced clock (restored as paced, rebased, only
+  the idle policy set — the clause the diff added), seven refusals before the machine is
+  touched (a wall checkpoint; time, divider or timebase that is not the machine's; `null`; a
+  paced checkpoint with no policy or under `wall-on-keyboard`), and `paced-on-keyboard`
+  accepting the same paced checkpoint without setting an idle policy. The file is 13 tests.
+- **The verifier's notes.** What the gate admits beyond the measured boot (accelerated
+  graphics, `slirpNet`, the microphone) is added to E5-T37c as item 5 rather than changed
+  here: narrowing the gate is a runtime change and no caller selects such a boot. The loader
+  tests being source-text pins is accepted as stated; the browser runs carry the loader's
+  behaviour, and the verifier's `run-loop-harness.mjs` is theirs to promote.
+
+**The shipped wasm's bytes changed** although only test code did: the test sits above
+non-test code in `crates/wasm/src/lib.rs`, panic locations carry line numbers, and 14 added
+lines moved them (same size, 2,695,302 bytes). So the gates and the browser evidence were taken
+again at `8fa4ce62e` rather than carried; round 1's are kept in `evidence/e5-t37b/round-1/`.
+
+**Gates** (`bash evidence/e5-t37b/gates.sh`, log sha256 `e8054f82531e…`, at `8fa4ce62e`):
+fmt, clippy and the wasm32 build exit 0; `exported_paced` 2 pass; `--lib` 17 pass; the unit
+file 13 pass; web suite 612 tests with the same 28 failing names as before the task (`diff`
+of the lists empty).
+
+**Browser, the committed bundle at `8fa4ce62e`** (`bash evidence/e5-t37b/run-browser.sh 1 2`):
+
+| | paced (default) | unpaced (`?pace=0`) |
+|---|---:|---:|
+| idle: worker inside run slices, % of wall | 10.2 / 9.9 | 99.8 / 99.8 |
+| idle: guest seconds per real second | 0.97 / 0.97 | 11.91 / 11.92 |
+| idle: sleeps per 30 s | 595 / 592 | 0 / 0 |
+| idle: of those, ended early by a host call | 112 / 109 | 0 / 0 |
+| click result, median ms (n = 8 each) | 267.7 / 270.6 | 339.6 / 369.7 |
+| key echo, median ms (n = 8 each) | 45.4 / 48.8 | 41.1 / 46.1 |
+
+Pooled (16 clicks a side): median 266 ms paced against 347 ms unpaced,
+23% lower. Every criterion holds. Demo page: 127 passed,
+0 failed of 127; no page, console or HTTP errors.
