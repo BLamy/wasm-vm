@@ -1,0 +1,74 @@
+# E5-T37a round-4 verifier, second session — pure-ICount digest gates. head cc7dfef69; tree [?? crates/core/src/paced_idle_verifier_tests/;]; 2026-11-26T06:39Z
+
+$ cargo build --release -p wasm-vm-cli
+   Compiling wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1m 56s
+sha256(target/release/wasm-vm) = de1c45ed7deb9f87…
+
+$ bash tools/perf/oracle.sh target/release/wasm-vm target/verifier-r4b-e5t37a-oracle
+busybox-legacy   state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+exit=0
+
+$ diff -r evidence/perf-overhaul/oracle-baseline target/verifier-r4b-e5t37a-oracle/digests
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+exit=1 (1 = something differs; only the baseline README may)
+
+$ bash tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r4b-e5t37a-teq
+turbo: exit 102, 28 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 36 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+exit=0
+
+# SECOND RUN, after an interruption of this session: the release CLI was rebuilt from the tree as it is now (git diff -- crates empty: [?? crates/core/src/paced_idle_verifier_tests/;]) and both gates re-run on that binary, so that the binary's provenance does not rest on timing. (The rebuilt binary's sha256 differs from the first build's — de1c45ed… vs f62a7224… — as Mach-O debug maps carry object-file mtimes; the digests below are what counts.) 2026-11-26T06:47Z
+$ bash tools/perf/oracle.sh target/release/wasm-vm target/verifier-r4b-e5t37a-oracle
+busybox-legacy   state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+exit=0
+
+$ diff -r evidence/perf-overhaul/oracle-baseline target/verifier-r4b-e5t37a-oracle/digests
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+exit=1 (1 = something differs; only the baseline README may)
+
+$ bash tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r4b-e5t37a-teq
+turbo: exit 102, 26 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 33 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+exit=0
+git status --short crates after: [?? crates/core/src/paced_idle_verifier_tests/;]

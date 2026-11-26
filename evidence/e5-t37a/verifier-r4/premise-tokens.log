@@ -1,0 +1,23 @@
+crates/core/src/lib.rs: test-module cut at byte 383653 -> 384030; non-test tokens 15347 -> 15347: IDENTICAL
+crates/core/src/time.rs: test-module cut at byte 21327 -> 21327; non-test tokens 706 -> 706: IDENTICAL
+crates/core/src/turbo_equivalence_tests.rs: test-module cut at byte -1 -> -1; non-test tokens 9468 -> 9468: DIFFER
+   (whole file is a #[cfg(all(test, ...))] module; a difference here is test code)
+exit=0
+
+git diff --numstat 7fd2e0160 b815d68ca -- crates:
+5	0	crates/core/src/lib.rs
+50	0	crates/core/src/time.rs
+2	1	crates/core/src/turbo_equivalence_tests.rs
+
+lines added to lib.rs (all must start with ///):
++    ///
++    /// The answer speaks for the machine as the run call left it. A host that delivers
++    /// something to a device after the run call (a key, a serial byte, a resize) must take the
++    /// wait before it does so, or treat its own delivery as ending the wait: nothing the host
++    /// does between run calls is seen here until the next run call services the devices.
+
+time.rs hunk header (must be inside mod tests, which opens at line 443):
+@@ -624,0 +625,50 @@ mod tests {
+
+git diff b815d68ca cc7dfef69 -- crates web | wc -l:        0
+git diff 7fd2e0160 b815d68ca --stat -- crates/core/src/csr.rs | wc -l:        0

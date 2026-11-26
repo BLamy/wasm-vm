@@ -1,0 +1,4 @@
+# RE-CHECK of MY1 (`>=` -> `==` on fresh_mip's STIP level) against the WHOLE worker suite, clean tree (no promoted tests): 06:38Z
+running 448 tests
+test result: ok. 448 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.34s
+restored; status: [?? crates/core/src/paced_idle_verifier_tests/;]

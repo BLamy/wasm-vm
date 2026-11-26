@@ -3,7 +3,7 @@ id: E5-T37a
 epic: 5
 title: Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded
 priority: 0.387644
-status: implemented
+status: evidence-needed
 depends_on: [E4-T40b]
 estimate: S
 risk: high
@@ -1099,3 +1099,183 @@ line numbers above; nothing selects the policy). Not addressed here, because the
 them outside the verdict: the follow-ups (slirp backends never report idle; an armed RTC alarm
 suppresses every wait; virtio-snd unmeasured; a core-only `clippy --all-targets` build failure
 in three untouched targets). I will file them with E5-T37b.
+
+### 2026-11-26 — verifier (round 4) — VERDICT: needs-evidence
+
+Fresh session — not the worker and none of the three earlier verifiers; head `cc7dfef69`, whose
+code is `b815d68ca` (`git diff b815d68ca cc7dfef69 -- crates web` is empty). An earlier round-4
+verifier session was interrupted before it wrote a verdict; what I took from it is in the last
+paragraph. My predictions: `evidence/e5-t37a/verifier-r4/predictions-2.txt` — the first part
+written after the task text, the round-3 verdict and the round-4 response and before the diff, any
+test or any evidence file; the addendum for my own two mutants before either was applied. No
+implementation file was changed: every mutant was restored with `git checkout`, re-touched, and
+`git status --short crates` checked. `crates/` is exactly `HEAD` as I leave it.
+
+**Two of the three round-3 items are answered. The third (B3) was answered by moving the hole,
+not closing it:** the worker's test now holds the S-timer level at "due exactly now" and "one tick
+ahead" and no longer at "already past", so `>=` → `==` in `fresh_mip` passes all 448 tests of the
+core suite at this head, where the same test as round 3 saw it fails on it. Nothing contradicts
+the product claim (status `evidence-needed`); the response is one test line.
+
+**Incremental premise** — HELD. `git diff 7fd2e0160 b815d68ca -- crates`, read line by line:
+`lib.rs` +5, all `///` on `take_idle_wait_nanos`; `time.rs` +50 at lines 625-674, inside
+`#[cfg(test)] mod tests` (opens at 443); `turbo_equivalence_tests.rs` +2 −1, a
+`#[cfg(all(test, …))]` module; `csr.rs` untouched. Mechanically, two ways: comment lines dropped
+from the non-test part (`incremental-premise.py`, re-run: 6132 and 274 lines identical), and every
+comment stripped outside literals, token streams compared (`premise-tokens.py`, `.log`: 15,347
+and 706 tokens identical). (The response says "two doc comments"; the diff has one, and its
+other comments are in test code.)
+
+**Carried forward from round 3** — each rests on the non-test code of `lib.rs` (the run loop,
+`wfi_fast_forward`, `paced_wait_holds`, `fresh_mip`, `paced_wake`, `take_idle_wait_nanos`, the
+restore paths) and `time.rs` (`IdlePacer`), token-identical since the head round 3 verified:
+
+- SAFETY S1–S8 and COMPLETENESS C1/C2/C4; the narrowing and the predicate (`R3Vouch`).
+- The lockstep equivalence B3/K7 (2,576,871 + 3,384,888 calls), B6a/B6b/B7/B8, K1–K6.
+- The round-2 findings N5c, N5d, N5e, B4 FIXED. Not only carried: the three verifiers' files
+  (rounds 1 and 2 through round 3's adaptation tool) were built into this head and pass, 60 of 60
+  (`gates-2.log`).
+- Round 2's Q3 and NV2 (the pacer alone), as round 3 carried them.
+- The real-kernel equivalence runs (not re-run), COVERAGE 185 of 191 lines with its four waivers,
+  MOCK & ENV for the round-3 tests (those lines are unchanged; the two new hunks are read below).
+- The seven round-2 survivors and the MTIP term FIXED, and the worker's 37 mutants: the test lines
+  they rest on are unchanged (the pacer test gained 50 lines and lost none; 22 tests are
+  untouched), and the worker re-ran all of them at this head (`sabotage-r4.log`). NOT carried: the
+  one test line that changed, the S-timer case of the 32 combinations — re-checked, see below.
+
+**Needs evidence**
+
+- MY1, acceptance "no wait … while an interrupt is deliverable per any level the boundary samples
+  (`fresh_mip` equals what the level sync writes, in all 32 combinations, with and without the
+  SBI timer)" — NEEDS EVIDENCE. Prediction (written before the run): the round-4 edit REPLACED
+  the past-due case with the equality case (`turbo_equivalence_tests.rs:2838`, `999` / `u64::MAX`
+  → `1_000` / `1_001` against `mtime` 1000), so the mutant `lib.rs:5601`
+  `c.mtime >= self.sbi_state.stimecmp` → `==` (the S-timer level only AT its deadline) passes the
+  test now and failed it before. Observed (`sabotage-2.log`): 24 of 24 pass on the mutant at this
+  head; with the test file as at `7fd2e0160` it is killed at the same assertion
+  (`sbi=true case=00100`, 32 against 0); re-checked against the whole core suite, 448 of 448 pass
+  on it (`my1-recheck.log`). It is not an equivalent mutant: three verifier tests fail on it
+  (`sabotage-2-suite.log`) — the round-2 verifier's
+  `r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block` (the run call returns at the `wfi`
+  with the S-timer some 30 ticks past due and its handler not run), the round-3 verifier's
+  `r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi` ("FALSE WAIT — the S-timer interrupt
+  is due", `Some(100000200)` where `None` is right, the deadline three ticks past) and
+  `r3_k1_fresh_mip_is_the_level_sync_on_random_states`. A level `time >= stimecmp` is decided by
+  three points — one tick past, due now, one tick ahead; the worker's suite held the first and
+  third in round 3 and holds the second and third now. `>` was the rarer failure (the timer due
+  on the `wfi`'s own tick); `==` is the general case of an S-timer that came due inside the
+  `wfi`'s block, which the machine timer has a test for
+  (`paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block`) and the S-timer
+  does not. Demand: put the past-due deadline back beside the other two in
+  `paced_idle_fresh_mip_is_what_the_boundary_sync_writes` (the loop already goes round twice), or
+  carry a machine-level test of an S-timer that came due inside the `wfi`'s block (`r2_m6_*` may
+  be taken as it is); `>`, `==` and `mtime + 1 >=` must all fail the worker's tests.
+
+**Held**
+
+- P0 evidence — HELD. sha256 of `gates-r4.log`, `sabotage-r4.log`, `cold-clone-r4.log` begin
+  `80ef6e0c796b`, `b8ff31bcbb5d`, `724ecd3dc0cb` as claimed; they say 24/448, 40 killed and 0
+  surviving, and a sparse clone at `b815d68ca` with identical digests. No `#[ignore]`, disabled
+  assertion or `cfg` in the diff.
+- P2, B11 — HELD. Derived from the Boundary before reading the test: a waiting guest is entitled
+  to all 14 ms between two consultations, a deadline 1 ms ahead hands over 1, so 13 ms stay owed
+  each time — 13·n after n, wherever the anchor is — and a busy stretch after that may skip
+  what is owed plus one bound, 78 + 50 ms. The test asserts exactly that, with literals that come
+  from its own host steps (`n * ticks_ms(13)`; `now + 6 * ticks_ms(13) + ticks_ms(50)`), none
+  read back from the pacer. Re-applied by hand: killed by
+  `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not` at `time.rs:638`,
+  "after 2 capped idle passes", 400000 against 260000 (40 ms where 26 is right). It survives the
+  pacer test as round 3 saw it (`sabotage-repro.log`, B11@r3). Not fitted to the mutant: the same
+  block kills a different error (the jump taken from what was owed before this consultation's
+  time is added, M3: 14 ms against 13 at n = 1) that the round-3 form let through.
+- P3, B3 as round 3 named it — HELD. Re-applied by hand (`>=` → `>`): killed by
+  `paced_idle_fresh_mip_is_what_the_boundary_sync_writes` at `turbo_equivalence_tests.rs:2848`
+  (`assert_eq!(m.hart.csr.mip_bits(), predicted, …)`, `sbi=true case=00100`, 32 against 0);
+  survives the test as round 3 saw it. The reference is independent code: `>` in
+  `sync_sbi_timer` alone fails the same assertion the other way round, 0 against 32
+  (`p3-independence.log`), and in both at once three tests fail, one of them
+  `sbi_timer_deadlines_future_past_and_rearmed` (P3b). `mtime + 1 >=` is killed too (M2).
+- P4, `IdlePacer::waiting()` — HELD, and the getter is WAIVED rather than dead: it is now
+  executed and decided (seven reads in the pacer test; the flag never set, the getter constant
+  false or true, `<` → `<=`, judged before the jump, kept across a rebase: six mutants, six
+  killed, at `time.rs:643`, `:653` and the rebase assertion). Reason: a diagnostic of the
+  exported `time::IdlePacer` beside `owed_wait_ticks()`; nothing outside tests reads it and the
+  machine derives `limited < d` itself (`lib.rs:5782`), so it cannot touch guest state; round 3
+  offered "test it" as the alternative to deleting it, and the round-2, round-3 and round-4
+  verifier tests read it as their oracle (2, 6 and 3 reads).
+- MY2 (mine), a guest that worked may skip `max(owed, bound)` instead of `owed + bound`
+  (`time.rs:213-215`) — HELD: killed, but at `time.rs:551` ("everything the host clock ran ahead
+  while the guest waited", 20010300 against 20020000), an older block, in both forms of the test.
+  So no mutant I ran was decided by the new block's last assertion (`:648-651`).
+- P6 gates at this head — HELD (`gates-2.log`, `digest-gates-2.log`): `cargo fmt --check` 0;
+  the clippy line 0; `paced_idle` 24 of 24; the core lib suite 448 of 448 in 21 s; the release
+  build; oracle: six digests identical, `diff -r` shows only the baseline README;
+  `turbo-equivalence.sh 2000000000`: `EQUIVALENT`, FNV `0dab1ccaa237df29`, retired
+  1,999,831,660, RAM sha256 `ed70e270…38701`, turbo and ordinary. The digest gates were run
+  twice with the same values (see Mistakes).
+
+COVERAGE, the lines changed since `7fd2e0160`: `lib.rs:5535-5539` — waived, comment.
+`time.rs:625-674` — executed; `:638-642` decided by B11 and M3, `:643` and `:653-674` by the six
+flag mutants, `:648-651` reached by no mutant of mine. `turbo_equivalence_tests.rs:2837-2838` —
+executed; decides `>` and `mtime + 1 >=`, does not decide `==`, which the line it replaced did
+(above). `time.rs:166-168` and `:233`, round 3's DEAD item — executed and waived (P4).
+
+SUITE: not promoted — the verdict is not `verified`. Checked and ready for the next round:
+`python3 evidence/e5-t37a/verifier-r4/promote.py <existing scratch dir>` writes
+`crates/core/src/paced_idle_verifier_tests/round{1,2,3}.rs` from the three evidence files (re-run
+here: byte-identical to what the interrupted session left) and the `include!` lines;
+`verifier_r4_tests.rs` beside it is `round4.rs`. With all four the core suite is 510 tests, all
+passing, in 44 s against 21 s (62 added: 19 + 24 + 17 + 2; `--lib -- v37a_ r2_ r3_ r4_` alone
+39 s); the `paced_idle` filter still selects 24; `cargo fmt --check`, `rustfmt --check` on the
+four files and the clippy line pass. No file under `crates/` then reads anything under
+`evidence/`. The promotion headers name this round as the promoter; whoever promotes must
+correct them. Nothing of it is in the tree or in this commit.
+
+Outside the verdict (the incremental rule: code and tests of this line are unchanged since
+round 3, and round 3 held the pacer): M1, found by the interrupted session and reproduced here —
+the cap on owed time judged before the idle jump instead of after it (`time.rs:232`,
+`ceiling.saturating_sub(limited)` → `…sub(current)`) survives the worker's 24 tests AND the 60
+tests of the three earlier verifiers; with it a busy guest skips a debt it was already paid on
+top of its bound (1 s + 50 ms where 50 ms is right). Killed only by the two `r4_*` tests
+(`sabotage-2-suite.log`); I re-derived the directed one's numbers by hand from the Boundary. The
+worker may take `r4_nothing_is_owed_beyond_what_the_host_clock_is_ahead_after_the_jump` as it is;
+otherwise it is closed when the file is promoted.
+
+Mistakes of mine, for the record: my first run of `promote.py` failed for want of its scratch
+directory and I compared the untouched files with themselves before noticing; the comparison
+reported above is from the second, complete run. This session was interrupted while the digest
+gates ran in the background; they had finished, but I rebuilt the release CLI from the tree as
+it stood (`git diff -- crates` empty) and ran both again rather than rest the binary's
+provenance on timing — same digests (the two builds' sha256 differ; Mach-O debug maps carry
+object-file times).
+
+Not checked: the pristine clone — the rule runs it once, on the final exact head, and this head
+is not final (the worker's is `cold-clone-r4.log` at `b815d68ca`; I re-ran the lib suite and
+both digest gates in the tree); the browser run and the workspace-wide suite (carried by the
+worker; nothing selects the policy).
+
+The interrupted round-4 session left a predictions file, a premise check, a mutation script
+with its log, a promotion script and four promoted test files wired into the crate, all
+uncommitted. I read all of it as input. Reused after checking: `incremental-premise.py`
+(re-run), `sabotage.py` as machinery and its 14 rows other than B11 and B3, each reproduced with
+the same failing test and assertion (`sabotage-repro.log`; B11 and B3 I applied by hand),
+`promote.py` (re-run), and its two tests, kept as `verifier_r4_tests.rs` with a header that
+says what happened (its own claimed a `verified` verdict that was never given). Its files are
+committed unchanged beside mine; its in-tree copy and `include!` lines I removed, because
+nothing is promoted. Its second mutation pass (`sabotage-suite.log`) stops at the first row; my
+`sabotage-2-suite.log` is that pass for M1 and MY1.
+
+Commands: `python3 evidence/e5-t37a/verifier-r4/incremental-premise.py 7fd2e0160 b815d68ca`;
+`python3 evidence/e5-t37a/verifier-r4/premise-tokens.py 7fd2e0160 b815d68ca`;
+`cargo test -p wasm-vm-core --lib paced_idle` (clean, and under B11 and B3 applied by hand);
+`cargo test -p wasm-vm-core --lib` (clean ×2, under MY1, and with the 62 verifier tests ×2);
+`python3 evidence/e5-t37a/verifier-r4/sabotage-2.py MY1 MY1@r3 MY2 MY2@r3`;
+`python3 evidence/e5-t37a/verifier-r4/sabotage.py B11@r3 B3@r3 B12 W1 W2 W4 W5 W6 M1 M2 M2@r3
+M3 M3@r3 P3b`;
+`python3 evidence/e5-t37a/verifier-r4/sabotage-2.py --suite MY1 M1`;
+`cargo fmt --check`; `cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings`
+(clean tree, and with the four verifier files included);
+`cargo build --release -p wasm-vm-cli` (×2);
+`bash tools/perf/oracle.sh target/release/wasm-vm target/verifier-r4b-e5t37a-oracle` +
+`diff -r evidence/perf-overhaul/oracle-baseline target/verifier-r4b-e5t37a-oracle/digests` (×2);
+`bash tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r4b-e5t37a-teq` (×2).

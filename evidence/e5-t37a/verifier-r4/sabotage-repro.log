@@ -1,0 +1,78 @@
+# reproduction of the interrupted session's rows with ITS script (sabotage.py), by the second session; tree: [?? crates/core/src/paced_idle_verifier_tests/;] head cc7dfef69 06:32Z
+B11@r3 the same, against the pacer test as round 3 saw it
+    (crates/core/src/time.rs as at 7fd2e0160, plus the mutation)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+B3@r3 the same, against the fresh_mip test as round 3 saw it
+    (crates/core/src/turbo_equivalence_tests.rs as at 7fd2e0160, plus the mutation)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+B12 the pacer's `waiting` flag never set (round 3's form)
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29662400) panicked at crates/core/src/time.rs:653:9:
+        | short of a far deadline
+W1 waiting() always false
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29662997) panicked at crates/core/src/time.rs:654:9:
+        | short of a far deadline
+W2 waiting() always true
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29663481) panicked at crates/core/src/time.rs:644:13:
+        | each pass reached its deadline
+W4 the flag set at a reached deadline too (`<` -> `<=`)
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29664029) panicked at crates/core/src/time.rs:643:13:
+        | each pass reached its deadline
+W5 the flag judged before the jump (`limited` -> `current`)
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29664478) panicked at crates/core/src/time.rs:643:13:
+        | each pass reached its deadline
+W6 a rebase keeps the flag
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29664992) panicked at crates/core/src/time.rs:676:9:
+        | a rebase starts over
+M1 the owed-time cap judged before the jump (`ceiling - limited` -> `ceiling - current`)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+M2 fresh_mip: the S-timer level one tick early (`mtime + 1 >= stimecmp`)
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+        | thread 'turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes' (29666050) panicked at crates/core/src/turbo_equivalence_tests.rs:2848:13:
+        | assertion `left == right` failed: sbi=true case=00000 stale=0x0
+        |   left: 0
+        |  right: 32
+M2@r3 the same, against the fresh_mip test as round 3 saw it
+    (crates/core/src/turbo_equivalence_tests.rs as at 7fd2e0160, plus the mutation)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+M3 the jump is taken from what was owed BEFORE this consultation's waiting time is added
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29667183) panicked at crates/core/src/time.rs:640:13:
+        | assertion `left == right` failed: after 1 capped idle passes
+        |   left: 140000
+        |  right: 130000
+M3@r3 the same, against the pacer test as round 3 saw it
+    (crates/core/src/time.rs as at 7fd2e0160, plus the mutation)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+P3b `>` in BOTH fresh_mip and sync_sbi_timer, against the whole core suite
+    whole core lib suite: KILLED by 3 (445 passed, 3 failed)
+      turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+        | thread 'turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes' (29668716) panicked at crates/core/src/turbo_equivalence_tests.rs:2864:9:
+        | assertion `left == right` failed: STIP is a level only with the built-in SBI timer
+        |   left: [true, false]
+        |  right: [true, true]
+      turbo_equivalence_tests::paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+        | thread 'turbo_equivalence_tests::paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval' (29668730) panicked at crates/core/src/turbo_equivalence_tests.rs:3127:13:
+        | assertion `left == right` failed: turbo=false bound=Some(50000000): MSIP and STIP both pending at once
+        |   left: 8
+        |  right: 40
+      turbo_equivalence_tests::sbi_timer_deadlines_future_past_and_rearmed
+        | thread 'turbo_equivalence_tests::sbi_timer_deadlines_future_past_and_rearmed' (29668737) panicked at crates/core/src/turbo_equivalence_tests.rs:495:17:
+        | assertion `left == right` failed: (scenario, traced, slicing, run call, its budget, work before) = ("sbi-timer", true, [1000000], 0, 1000000, 0)
+        |   left: Observed { outcome: Reset(PowerOff), trace_hash: 368897563881852133, trace_retired: 9774, pc: 2147483832, hart: [184, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 85, 85, 0, 0, 0, 0, 0, 0, 0, 0,  … [4119 more characters cut by the verifier]
+        |  right: Observed { outcome: Reset(PowerOff), trace_hash: 17460096000354186944, trace_retired: 11254, pc: 2147483832, hart: [184, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 85, 85, 0, 0, 0, 0, 0, 0, 0,  … [4129 more characters cut by the verifier]
+exit=0
+git status --short crates: [?? crates/core/src/paced_idle_verifier_tests/;]

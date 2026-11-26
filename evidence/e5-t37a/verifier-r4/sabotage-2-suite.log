@@ -1,0 +1,34 @@
+# sabotage-2.py --suite — against the worker's 24 AND the 62 promoted verifier tests; tree: [ M crates/core/src/turbo_equivalence_tests.rs;?? crates/core/src/paced_idle_verifier_tests/;] head cc7dfef69 06:36Z
+MY1 fresh_mip: the S-timer level only AT its deadline (`>=` -> `==`)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+    + the promoted verifier tests (paced_idle v37a_ r2_ r3_ r4_): KILLED by 3 (83 passed, 3 failed)
+      turbo_equivalence_tests::r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block
+        | thread 'turbo_equivalence_tests::r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block' (29679424) panicked at crates/core/src/paced_idle_verifier_tests/round2.rs:2035:17:
+        | assertion `left == right` failed: General budget=1000000: handled within the call
+        |   left: 0
+        |  right: 1
+      turbo_equivalence_tests::r3_k1_fresh_mip_is_the_level_sync_on_random_states
+        | thread 'turbo_equivalence_tests::r3_k1_fresh_mip_is_the_level_sync_on_random_states' (29679438) panicked at crates/core/src/paced_idle_verifier_tests/round3.rs:1041:13:
+        | assertion `left == right` failed: clint=true plic=true sbi=true stale=0x28a
+        |   left: 674
+        |  right: 642
+      turbo_equivalence_tests::r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi
+        | thread 'turbo_equivalence_tests::r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi' (29679439) panicked at crates/core/src/paced_idle_verifier_tests/round3.rs:1887:17:
+        | assertion `left == right` failed: General stimecmp = mtime + 1: FALSE WAIT — the S-timer interrupt is due
+        |   left: Some(100000200)
+        |  right: None
+M1 the owed-time cap judged before the jump (`ceiling - limited` -> `ceiling - current`)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+    + the promoted verifier tests (paced_idle v37a_ r2_ r3_ r4_): KILLED by 2 (84 passed, 2 failed)
+      turbo_equivalence_tests::r4_nothing_is_owed_beyond_what_the_host_clock_is_ahead_after_the_jump
+        | thread 'turbo_equivalence_tests::r4_nothing_is_owed_beyond_what_the_host_clock_is_ahead_after_the_jump' (29681943) panicked at crates/core/src/paced_idle_verifier_tests/round4.rs:56:9:
+        | assertion `left == right` failed: deadline None: what the host clock is still ahead by, no more
+        |   left: 10000000
+        |  right: 0
+      turbo_equivalence_tests::r4_pacer_agrees_with_an_anchor_free_model_of_the_boundary_rules
+        | thread 'turbo_equivalence_tests::r4_pacer_agrees_with_an_anchor_free_model_of_the_boundary_rules' (29681944) panicked at crates/core/src/paced_idle_verifier_tests/round4.rs:214:13:
+        | assertion `left == right` failed: (1, 1, 1, false, 794609759273, 794609759371): waiting time owed
+        |   left: 120007
+        |  right: 119909
+exit=0
+git status --short crates: [ M crates/core/src/turbo_equivalence_tests.rs;?? crates/core/src/paced_idle_verifier_tests/;]

@@ -1,0 +1,202 @@
+E5-T37a — verifier, round 4 — predictions
+==========================================
+
+Fresh session: not the worker, not the round-1, round-2 or round-3 verifier.
+Head under test: cc7dfef69 (crates at b815d68ca).
+
+PART 1 — written 2026-11-26 01:02 EST, after reading the task file's Boundary /
+Deterministic acceptance / Adversarial verification, the round-3 verdict and the
+round-4 response, and BEFORE reading `git diff 7fd2e0160 b815d68ca`, any test
+source, any evidence log, and before building or running anything.
+
+Derivation asked for by the brief (B11), from the Boundary text alone
+---------------------------------------------------------------------
+Boundary, "Bounded busy lag":
+  (a) "host time between two consultations of a guest that did not work in
+      between passes in full";
+  (b) "the part of it an idle jump cannot hand over at once, because a deadline
+      is nearer than the ceiling, stays owed and survives later work";
+  (c) "at most max_busy_lag of the time it fell behind may be skipped by idle
+      jumps; the rest is forgotten" for a guest that worked.
+The worker's scenario as stated in the claim: six consecutive consultations of a
+guest that did not work, the host clock 14 ms later at each, a deadline 1 ms
+ahead of guest time at each, then a busy stretch with a 50 ms bound.
+  - By (a) each consultation's 14 ms pass in full to what the guest may have.
+  - The idle jump can hand over only up to the deadline: 1 ms.
+  - By (b) the other 13 ms stay owed, and owed time from an earlier consultation
+    is still owed (nothing consumed it: each jump used 1 ms of the new 14).
+  => owed after consultation k = 13 * k ms: 13, 26, 39, 52, 65, 78.
+  - Then the guest works while the host runs far ahead. By (c) it may skip at
+    most 50 ms of the time it fell behind while working; by (b) the 78 ms owed
+    survive that work. => the next unconstrained idle jump moves guest time by
+    78 + 50 = 128 ms, exactly (if the host ran at least 50 ms ahead during the
+    work and no deadline is nearer).
+  These are the numbers the claim states. They follow from the contract; I do
+  not have to take them from the code. What I must still check in the test:
+  that the busy stretch really is "work" (> 2048 retired), that the host ran
+  more than 50 ms ahead in it (else "one bound" is not what is measured), and
+  that the 78 ms are measured as a separate term (a test that only asserts the
+  sum 128 could be satisfied by 28 + 100).
+  For the mutant (owed = host time since the ANCHOR, not since the previous
+  consultation) I expect over-counting from the second consultation on, because
+  the anchor does not move by 14 ms per consultation when only 1 ms is handed
+  over. So the mutant must already fail at k = 2 (26 ms expected).
+
+Predictions
+-----------
+P1  INCREMENTAL PREMISE. `git diff 7fd2e0160 b815d68ca -- crates` touches only
+    crates/core/src/time.rs and crates/core/src/lib.rs (csr.rs and every other
+    file under crates/ untouched). In both files every changed line outside a
+    `#[cfg(test)]` module is a comment line (`//`, `///`). Falsified by one
+    changed non-comment token in non-test code. Method: read the diff line by
+    line; then mechanically: for each of the two files at both commits, cut the
+    file at its `#[cfg(test)] mod tests`, strip comment lines, and diff — the
+    result must be empty. If it is not empty, the round-3 HELD results resting on
+    that code are reopened and I say so.
+P1b `git diff b815d68ca cc7dfef69 -- crates web` is empty (the last commit is the
+    claim and evidence only).
+
+P2  B11. With `ticks_of(self.latest_host_ns - before)` replaced by
+    `ticks_of(self.latest_host_ns - self.anchor_host_ns)` in time.rs,
+    `cargo test -p wasm-vm-core --lib paced_idle` FAILS; the failing test is
+    `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not`; the
+    failing assertion is on `owed_wait_ticks()` at the second consultation
+    (26 ms expected) or an earlier line of the same test; no other of the 24
+    fails. With the original line restored: 24 pass.
+P2b The new assertions state the contract: the expected values are written as
+    13 ms * k (or literal 13, 26, … 78 ms in ticks) and the final skip as
+    78 ms + 50 ms, derived from the host clock the test sets — not read back
+    from the pacer and re-asserted. The test asserts the owed amount and the
+    final skip separately.
+
+P3  B3. With `c.mtime >= self.sbi_state.stimecmp` → `>` in `Machine::fresh_mip`
+    (lib.rs), `paced_idle_fresh_mip_is_what_the_boundary_sync_writes` FAILS, at
+    the assertion that compares `fresh_mip()` with the `mip` the real level sync
+    leaves, in a combination where `stimecmp == mtime`.
+P3b The reference side of that comparison is the real `sync_sbi_timer` (not a
+    helper shared with `fresh_mip`), so the comparison is not self-licking: if
+    the mutation is applied to `sync_sbi_timer` INSTEAD (S-timer due at equality
+    no longer raises STIP), the same test also fails, or some other existing
+    test in the core suite does. (If neither does, the equality semantics of the
+    reference itself is unpinned — that would be a pre-existing gap outside this
+    task and I will only note it.)
+
+P4  `IdlePacer::waiting()`. (i) No caller in non-test code anywhere under
+    crates/ (as round 3 found; the worker says nothing in the machine reads it).
+    (ii) The worker's pacer test now executes it and decides it: each of
+    `waiting()` → constant `false`, → constant `true`, the flag never set
+    (B12: `self.waiting = false`), and rebase no longer clearing it, makes
+    `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not` (or
+    another of the 24) fail. Classification (needs-evidence / dead / waived) is
+    decided after the mutation results and after reading who reads it.
+
+P5  Two mutations of my own, chosen after reading the code but stated (in PART 2
+    below) before running them. Prediction: both are killed by a worker test.
+
+P6  GATES at this head: `cargo fmt --check` exit 0; `cargo clippy -p
+    wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings` exit 0;
+    `cargo test -p wasm-vm-core --lib paced_idle` 24 passed, 0 failed;
+    `cargo test -p wasm-vm-core --lib` 448 passed, 0 failed, 0 ignored that the
+    diff added.
+P6b Pure-ICount digest gates: `oracle.sh` — `diff -r` against
+    evidence/perf-overhaul/oracle-baseline shows only the baseline README;
+    `turbo-equivalence.sh 2000000000` — EQUIVALENT, FNV `0dab1ccaa237df29`,
+    retired 1,999,831,660, RAM sha256 `ed70e270…38701`.
+
+P7  EVIDENCE FILES. sha256(gates-r4.log) starts `80ef6e0c796b`;
+    sha256(sabotage-r4.log) starts `b8ff31bcbb5d` and the log shows 40 mutants,
+    40 killed, B11/B12 by the pacer test and B3 by the fresh_mip test;
+    sha256(cold-clone-r4.log) starts `724ecd3dc0cb`, names `b815d68ca`, shows
+    24/24, 448/448, identical oracle digests, EQUIVALENT with RAM
+    `ed70e270…38701`. A stale or mismatching log fails the worker at once.
+    No `#[ignore]`, no disabled assertion in the diff.
+
+P8  EARLIER VERIFIERS' TESTS at this head (needed for SUITE, and a check that
+    the worker's round-4 test changes broke no shared helper): the three files,
+    the first two adapted by the round-3 tool, 60 of 60 pass; fmt and clippy
+    clean with them included. The round-3 file's two tests that killed B3 and
+    B11 (`r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi`,
+    `r3_owed_time_is_the_host_time_since_the_previous_consultation`,
+    `r3_k1_fresh_mip_is_the_level_sync_on_random_states`) still kill them.
+
+PART 2 follows below, appended after reading the diff and before running.
+
+PART 2 — written 2026-11-26, after reading `git diff 7fd2e0160 b815d68ca -- crates`,
+the pacer (`time.rs` 131-260), `fresh_mip` / the three level syncs (`lib.rs`), the
+worker's two changed tests, the two sabotage scripts and the three evidence
+hashes — and BEFORE building, running a test, or applying a mutant.
+
+Correction to P1 (already falsified in its letter, by `git diff --stat`): the
+diff touches THREE files, not two — `crates/core/src/turbo_equivalence_tests.rs`
+(a `#[cfg(test)]` module file, +2 -1) as well. P1's substance stands as a
+prediction: lib.rs +5 lines, all `///`; time.rs +50 lines, all inside
+`mod tests`; the third file is test code. The worker's "two doc comments" is one
+doc comment (5 lines on `take_idle_wait_nanos`) and one test comment.
+Seen so far, not yet mechanically checked: the three sha256 prefixes of P7 match.
+
+Hand trace of the worker's new block against the real code (my own arithmetic):
+  new(0,0); bound 50 ms; consult(host 10 000 ms, cur 100, dl 101, worked):
+    ceiling 10 000 > bounded 150 -> clamp, anchor (10 000 ms, 150 ms);
+    returns 101; owed 0.
+  k-th idle consult (host 10 000 + 14k, dl = cur + 1): ceiling 150 + 14k;
+    owed += 14 -> returns cur + 1 -> owed -= 1 -> cap (ceiling - limited =
+    49 + 13k) does not bite -> owed = 13k. k = 1..6: 13, 26, 39, 52, 65, 78.
+  B11 mutant: owed += 14k each time -> 13, 40, 81, 136 … (cap 62, 75, 88, 101
+    … bites from k = 4 on). First divergence k = 2: 40 ms where 26 is right.
+  final consult (host 900 000 ms, FAR, worked): bounded = cur + 78 + 50.
+So P2 sharpened: the panic is `assert_eq!(r.owed_wait_ticks(), n * ticks_ms(13))`
+with n = 2, left 400000 (40 ms), right 260000 (26 ms), time.rs:638.
+
+P3 sharpened: the panic is the `assert_eq!(m.hart.csr.mip_bits(), predicted, …)`
+at turbo_equivalence_tests.rs:2848 with `sbi=true` and a case whose bit 2 is set
+(first such case in iteration order: case=00100), left has bit 5 (0x20), right
+does not. `sbi=false` passes (no S-timer level without the built-in SBI).
+
+P4 mutants (time.rs), each predicted KILLED by
+`time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not`:
+  W1 `waiting()` returns `false`            -> `assert!(r.waiting(), "short of a far deadline")`
+  W2 `waiting()` returns `true`             -> `assert!(!r.waiting(), "each pass reached its deadline")`
+  W3 `self.waiting = false` (round 3's B12) -> as W1
+  W4 `limited < deadline` -> `limited <= deadline` -> as W2
+  W5 `limited < deadline` -> `current < deadline` (judged before the jump) -> as W2
+  W6 `rebase` keeps the flag                -> `assert!(!w.waiting(), "a rebase starts over")`
+Production readers: none; `Machine.idle_pacer` is a private field with no
+accessor, so no host of a `Machine` can read the flag at all. `owed_wait_ticks()`
+and `max_busy_lag_ticks()` have no production reader either; only `ticks_until`
+does (lib.rs:5553).
+
+P5, my mutations (three, one more than asked):
+  M1 the cap's operand — `.min(ceiling.saturating_sub(limited))` ->
+     `.min(ceiling.saturating_sub(current))` ("nothing more can be owed than the
+     host clock is still ahead by" judged before the jump instead of after it).
+     Behaviour: owed 2 s; the guest then works so that retire-derived time
+     closes to 1 s behind the ceiling; an idle jump to the ceiling leaves 0 owed
+     (original) or 1 s (mutant); the next busy stretch then skips 1 s + 50 ms
+     where one 50 ms bound is right. By my hand trace of all seven blocks of
+     the worker's pacer test the two forms agree everywhere (wherever the cap
+     bites there, ceiling <= current and both give 0). PREDICTION: M1 SURVIVES
+     the worker's 24 tests. (This contradicts PART 1's blanket "both killed";
+     PART 2 is the prediction of record.) If it survives I then run it against
+     the three verifiers' files; I do not predict that outcome.
+  M2 the S-timer level one tick EARLY in `fresh_mip` —
+     `c.mtime >= self.sbi_state.stimecmp` -> `c.mtime.saturating_add(1) >= …`.
+     PREDICTION: KILLED by `paced_idle_fresh_mip_is_what_the_boundary_sync_writes`
+     at the same assertion, `sbi=true`, a case with bit 2 clear (first:
+     case=00000), `predicted` has 0x20 and the synced `mip` does not. And it
+     would have SURVIVED the round-3 form of that test (`999` / `u64::MAX`):
+     checked by running the mutant against `git show
+     7fd2e0160:crates/core/src/turbo_equivalence_tests.rs`.
+  M3 the order of consuming owed time — the jump is taken from what was owed
+     BEFORE this consultation's waiting time is added
+     (`owed = (owed_before - jump) + new`, then the cap) instead of
+     `(owed_before + new) - jump`. PREDICTION: KILLED by the pacer test at
+     `n = 1` of the new block (14 ms where 13 is right, time.rs:638); and it
+     would have SURVIVED the round-3 form of the pacer test (the cap hides it in
+     the older blocks: 2 001 ms capped to 2 000): checked against
+     `git show 7fd2e0160:crates/core/src/time.rs` with the same mutation.
+
+P3b probe: `>` in BOTH `fresh_mip` and `sync_sbi_timer` (the reference moves
+with the subject). The fresh_mip test must then pass (it is a consistency
+check, which is what the acceptance line asks of it); whether anything else in
+the 448 notices is the question. No prediction of record; pre-existing E2-T05
+territory either way.

@@ -1,0 +1,8 @@
+# second pass: with the promoted verifier tests wired in (round1-4.rs); starting tree: [ M crates/core/src/turbo_equivalence_tests.rs;?? crates/core/src/paced_idle_verifier_tests/;]
+B11 owed time accumulates the whole span since the anchor at every consultation
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29618119) panicked at crates/core/src/time.rs:638:13:
+        | assertion `left == right` failed: after 2 capped idle passes
+        |   left: 400000
+        |  right: 260000
