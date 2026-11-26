@@ -484,9 +484,6 @@ export class WasmLinux {
      * whole-payload copy.
      */
     readStoredSnapshot(): Promise<any>;
-    /**
-     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
-     */
     rebaseGuestClock(): void;
     /**
      * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
@@ -662,6 +659,14 @@ export class WasmLinux {
      */
     setLocalImage(image: Uint8Array): void;
     /**
+     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+     * E5-T37b: host policy for an idle guest under the paced ICount clock (see
+     * `Machine::set_paced_idle_policy`). `yield_to_host` must be a boolean; `max_busy_lag_ms`
+     * is `undefined`/`null` (unbounded) or a finite number of milliseconds from 0 to one hour.
+     * Anything else is refused before the machine is touched. Inert in other clock modes.
+     */
+    setPacedIdlePolicy(yield_to_host: any, max_busy_lag_ms: any): void;
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -724,6 +729,11 @@ export class WasmLinux {
     takeExactGpuBatch(): any;
     takeExactSessionDeliveries(): any;
     takeFileDownloadChunk(id: number): Uint8Array;
+    /**
+     * E5-T37b: milliseconds of host time until the timer the guest went idle waiting for, if
+     * the last `runChunk` ended at such a `wfi`; 0 otherwise. Reading it clears it.
+     */
+    takeIdleWaitMs(): number;
     takeInputDeliveries(): any;
     /**
      * Actual work and capture-state diagnostics for the explicit OFF control only.
@@ -1093,6 +1103,7 @@ export interface InitOutput {
     readonly wasmlinux_setGuestClock: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setICountDivider: (a: number, b: any) => [number, number];
     readonly wasmlinux_setLocalImage: (a: number, b: any) => [number, number];
+    readonly wasmlinux_setPacedIdlePolicy: (a: number, b: any, c: any) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setTurbo: (a: number, b: number) => [number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
@@ -1102,6 +1113,7 @@ export interface InitOutput {
     readonly wasmlinux_syncTablet: (a: number) => [number, number];
     readonly wasmlinux_takeAgentOutput: (a: number) => [number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_takeIdleWaitMs: (a: number) => [number, number, number];
     readonly wasmlinux_unrecordedControlState: (a: number) => [number, number, number];
     readonly wasmlinux_virtioSndCaptureState: (a: number) => [number, number, number];
     readonly wasmlinux_virtioSndConfig: (a: number) => [number, number, number];

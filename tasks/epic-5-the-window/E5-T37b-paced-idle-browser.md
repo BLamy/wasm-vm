@@ -59,10 +59,11 @@ failure modes are a guest that is late by at most the 50 ms cap, or one that doe
   nothing; a guest that arms a timer and idles ends its slice at the `wfi` and reports the wait
   once; without the opt-in, and in pure ICount, nothing is reported.
 - `cargo fmt --check`, `cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings`,
-  `cargo build --target wasm32-unknown-unknown`.
+  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`; the web unit suite
+  (`cd web && node --test tests/*.test.mjs`) fails no test that passed before the change.
 - Browser, the committed bundle (`bash tools/serve-dist.sh 8125`), warm Replay desktop, each
   side at least two fresh page loads:
-  `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios idle,click,type --n 8`
+  `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios idle,click,type --n 8 --idle-s 30`
   and the same with `--query '&pace=0'`.
   - Idle, paced: the worker is inside run slices for at most 30% of wall time and guest time
     advances between 0.8 and 1.2 seconds per real second. Unpaced control: at least 90% and at
