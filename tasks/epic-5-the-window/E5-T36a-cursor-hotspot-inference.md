@@ -33,7 +33,7 @@ handled) and answers once exactly one candidate is left. `CursorController` uses
 a CSS cursor whose device hotspot is (0,0): one style write when the answer changes. A device
 that reports a non-zero hotspot, and overlay cursors, are untouched.
 
-What is and is not evidence (revised after three refutations):
+What is and is not evidence (revised after three refutations and one open finding):
 
 - **Only moves.** The position a cursor UPDATE carries is never evidence: a legacy-KMS commit
   sets the image at the plane's previous position — computed with the previous image's
@@ -47,11 +47,20 @@ What is and is not evidence (revised after three refutations):
   start, after a guest reset, and after a change of pointer mode or of the guest output size —
   those forget the positions sent and everything not settled (a settled hotspot is kept: it
   belongs to its image). From any of them on, no move is evidence (`hotspotSettling`) until the
-  guest has been idle after a position sent SINCE: its pointer then stands on that position or
-  a later one. (Round 2: moves for positions sent before the restart. Round 3: the restart
-  ended when the guest was idle, with no position sent since; the report of the plane where it
-  stood was then explained by the next position sent, and an even run left the truth plus one
-  pointer step.)
+  guest has been idle after a position sent SINCE that it acts on: its pointer then stands on
+  that position or a later one. (Round 2: moves for positions sent before the restart. Round 3:
+  the restart ended when the guest was idle, with no position sent since; the report of the
+  plane where it stood was then explained by the next position sent, and an even run left the
+  truth plus one pointer step.)
+- **Not every position sent is one the guest acts on.** Its kernel passes on only the axes
+  whose value changed, so an absolute position equal to the tablet's last one reaches nobody
+  and moves nothing. That is harmless while the guest's pointer stands there, and it does not
+  after relative motion, which comes from another device and leaves the tablet's values alone
+  (round 4: the mouse back on the pixel it left after pointer lock; the plane did not move in
+  10 of 10 trials, the page settled, and the arrow was drawn with (4,3), (3,5), (12,6)). So a
+  position counts as acted on only if it differs from the one sent before it. The first of a
+  page or after a guest reset (what the tablet holds is not known) and the first at another
+  output size (pixels of two sizes do not compare) never count; the next different one does.
 - `resetHotspotInference()`, the proof script's hook, forgets every hotspot and keeps the
   positions sent, so it has nothing to wait for and takes nothing from what the page knows.
 - **Caught up is something the page is told, not something it guesses.** The paced clock
@@ -85,24 +94,28 @@ What is and is not evidence (revised after three refutations):
   varying lag, random stalls during which the rest wait elapses, nudges before the guest
   reports and commits of the guest's own; round 2's two refuting sequences; round 3's — an even
   run from where the pointer rests, with the plane reported where it stands before the first
-  move — after each way inference can start over (the page's start, a guest reset, pointer mode,
-  output size, the hook), and 500 random such runs; the client changing the cursor while the
+  move — after each way inference can start over (the page's start, a guest reset, pointer mode
+  with and without relative motion, pointer mode and then the hook, output size, the hook), and
+  500 random such runs; round 4's — relative motion, then the position the mouse left, which
+  the test guest like the kernel passes on to nobody; the client changing the cursor while the
   guest is being asked. In all of them the inferred hotspot is never more than one pixel from
   the truth, and is known at rest once the guest has caught up and the image was reported since.
   The web unit suite fails no test that passed before.
 - Browser, the committed bundle, published generation-1 image with its session restarted on
   legacy KMS from the serial root shell (the one change E5-T36b makes in the image):
   `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`
-  passes. The page is settling until the guest has been idle after the first position sent.
-  Then four plans, each forgetting the hotspots first: three continuous 60 Hz glides onto the
+  passes. The page is settling until the guest has been idle after the second position sent
+  (one is not enough). Then four plans, each forgetting the hotspots first: three continuous 60 Hz glides onto the
   button from different directions (the first verifier's approaches A and C and one from the
   right) and one of jumps with rests. At every rest — 18 reads over arrow, hand and text caret —
   the hotspot is known, the canvas shows it, it is within one pixel of (1,1), (9,4) or (4,8),
   and the kernel's cursor-plane position plus that hotspot is the guest position the page
   sent, within one pixel. Then 48 even runs of 2 to 10 positions from where the pointer rests,
-  right after starting over (24 by the hook, 24 by the hook and a pointer-mode change), while
-  the terminal prints in bursts (the third verifier's runs): whatever is shown at rest is the
-  arrow's (1,1), and it is known after two more positions. A timeline of every answer the page
+  right after starting over, while the terminal prints in bursts (the third verifier's runs):
+  16 by the hook, 16 by the hook and a pointer-mode change, and 16 the fourth verifier's way —
+  relative motion in relative mode, then the mouse back on the pixel it left, where the
+  kernel's cursor plane must not have moved and the page must still be settling. Whatever is
+  shown at rest is the arrow's (1,1), and it is known after two more positions. A timeline of every answer the page
   showed in all of this (sampled every 8 ms) contains none more than a pixel from the truth.
   The guest frame has no painted pointer; no console errors and no cursor diagnostics.
 - Unchanged with the image as published (software cursor):

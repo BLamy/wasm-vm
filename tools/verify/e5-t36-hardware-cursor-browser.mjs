@@ -16,10 +16,14 @@
 // first time". (The glide plans and the plan runner are the E5-T36a verifier's, whose straight
 // approaches showed what jumps with long rests could not: a wrong hotspot kept for a session.)
 // Then 48 short even runs that start where the pointer rests, right after inference started
-// over (half of them with a pointer-mode change, which also forgets the positions sent), while
-// the terminal prints in bursts: the round-3 verifier's runs, in which the device's report of
-// the plane where it stood was taken for a move. Nothing the page shows in any of this, read
-// at rest or sampled every 8 ms, may be more than a pixel from the truth.
+// over, while the terminal prints in bursts: the round-3 verifier's runs, in which the device's
+// report of the plane where it stood was taken for a move. A third of them start over by the
+// hook alone, a third by the hook and a pointer-mode change (which also forgets the positions
+// sent), and a third the round-4 verifier's way: relative motion while the mode is relative,
+// then the mouse back on the pixel it left — an absolute position the guest's kernel passes on
+// to nobody, so its pointer is NOT where the page last sent it (the script checks that on the
+// kernel's cursor plane). Nothing the page shows in any of this, read at rest or sampled
+// every 8 ms, may be more than a pixel from the truth.
 //
 // `--legacy-kms-session` is for an image whose session still forces software cursors (the
 // published generation 1): the script first restarts the guest's session from the serial root
@@ -125,13 +129,18 @@ try {
     return { inferred: s.inferredHotX === null ? null : [s.inferredHotX, s.inferredHotY], settling: s.hotspotSettling };
   });
   // The page starts not knowing where the guest's pointer stands: no cursor move is evidence
-  // until the guest has been idle after a position the page sent. This is that position.
+  // until the guest has been idle after a position it acts on. One position is not that — the
+  // guest's kernel passes on only what changed, and the page cannot know what its tablet held —
+  // a second, different one is.
   assert.equal((await hotspotState()).settling, true, "nothing was sent yet: the page is settling");
   {
+    await moveTo([632, 396]);
+    await page.waitForTimeout(1500);
+    assert.equal((await hotspotState()).settling, true, "one position sent: still settling");
     const t0 = Date.now();
     await moveTo([640, 400]);
     await page.waitForFunction(() => window.__cursor.state().hotspotSettling === false, null, { timeout: 60_000, polling: 20 });
-    result.settledAfterFirstPositionMs = Date.now() - t0;
+    result.settledAfterSecondPositionMs = Date.now() - t0;
   }
   const jump = (to, restMs = 700) => ({ op: "jump", to, restMs });
   const glide = (to, ms, restMs = 800) => ({ op: "glide", to, ms, restMs });
@@ -219,18 +228,40 @@ try {
     const near = (hot, truth) => Math.abs(hot[0] - truth[0]) <= 1 && Math.abs(hot[1] - truth[1]) <= 1;
     const load = (await sh("(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/e5t36-load.pid); sleep 1; cat /proc/loadavg")).trim();
     result.restRuns = { load, trials: [] };
+    const WAYS = ["hook", "hook and pointer mode", "hook, relative motion, and the mouse back on the pixel it left"];
     for (let i = 0; i < 48; i += 1) {
-      const way = i % 2 ? "hook and pointer mode" : "hook";
+      const way = WAYS[i % 3];
       const from = [between(340, 480), between(590, 690)]; const step = STEPS[i % STEPS.length]; const n = [3, 2, 4, 10][i % 4];
       const trial = { way, from, step, positions: n, reads: [] };
       result.restRuns.trials.push(trial);
       await moveTo(from);
       await page.waitForTimeout(1000);
-      await page.evaluate((mode) => {
+      await page.evaluate((relative) => {
         window.__cursor.resetHotspotInference();
-        if (mode) { window.__pointer.setMode("relative", { requestLock: false }); window.__pointer.setMode("absolute"); }
-      }, way !== "hook");
-      assert.deepEqual(await hotspotState(), { inferred: null, settling: way !== "hook" }, `rest run ${i} (${way}): started over`);
+        if (relative) window.__pointer.setMode("relative", { requestLock: false });
+      }, way !== WAYS[0]);
+      if (way === WAYS[2]) {
+        // In relative mode the page sends this as relative motion (another device).
+        await moveTo([from[0] - 7, from[1] - 5]);
+        await page.waitForTimeout(400);
+        const moved = await cursorPlane();
+        await page.evaluate(() => window.__pointer.setMode("absolute"));
+        await moveTo(from);
+        trial.beforeTheRun = [];
+        for (const waitMs of [700, 1500]) { await page.waitForTimeout(waitMs); trial.beforeTheRun.push(await hotspotState()); }
+        const back = await cursorPlane();
+        trial.plane = { afterRelativeMotion: moved, afterTheReturn: back };
+        // The premise of this way: the guest did not act on the repeated position.
+        assert.ok(moved && back && moved.x === back.x && moved.y === back.y,
+          `rest run ${i}: the return to the same pixel left the kernel's plane where relative motion put it (${JSON.stringify(trial.plane)})`);
+        // ... so the page must not think the guest's pointer stands on it.
+        for (const state of trial.beforeTheRun) {
+          assert.deepEqual(state, { inferred: null, settling: true }, `rest run ${i} (${way}): no position the guest acts on was sent yet`);
+        }
+      } else {
+        if (way === WAYS[1]) await page.evaluate(() => window.__pointer.setMode("absolute"));
+        assert.deepEqual(await hotspotState(), { inferred: null, settling: way !== WAYS[0] }, `rest run ${i} (${way}): started over`);
+      }
       await page.waitForTimeout(between(0, 150));
       for (let k = 1; k <= n; k += 1) {
         const began = performance.now();
@@ -308,7 +339,7 @@ try {
 }
 console.log(JSON.stringify({ pass: result.pass, swayEnv: result.swayEnv,
   plans: (result.plans ?? []).map((p) => ({ plan: p.name, reads: p.reads.map((r) => `${r.name}: sent ${r.sent} hotspot ${r.css?.hotspot} plane ${r.plane && [r.plane.x, r.plane.y]} tip error ${r.tipError}`) })),
-  settledAfterFirstPositionMs: result.settledAfterFirstPositionMs,
+  settledAfterSecondPositionMs: result.settledAfterSecondPositionMs,
   restRuns: result.restRuns && `${result.restRuns.trials.length} runs from the rest position: known at the first read in ${result.restRuns.knownAtFirstRead}, at the second in ${result.restRuns.knownAtSecondRead}, known and right in the end in all; none wrong`,
   timeline: result.timeline && `${result.timeline.length} changes, ${result.timelineAnswers} answers shown, none wrong`,
   paintedPointer: result.paintedPointer, error: result.error }, null, 2));

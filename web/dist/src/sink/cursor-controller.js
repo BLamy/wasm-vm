@@ -148,8 +148,9 @@ export class CursorController {
     // the output size changed (the positions sent before are forgotten then). A cursor move
     // reported in that state may stand for a position the page does not have — the device
     // reports the plane's place on every commit, also where it already stood — so it is not
-    // evidence. It ends when the guest has been idle after a position sent since: its pointer
-    // is then on that position or a later one, and stays on remembered ones.
+    // evidence. It ends when the guest has been idle after a position sent since that it acts
+    // on (see `notePointer`): its pointer is then on that position or a later one, and stays
+    // on remembered ones.
     this._hotspotSettling = true;
     // The epoch whose settling question is being asked (one loop of questions per epoch).
     this._settleEpoch = -1;
@@ -157,6 +158,9 @@ export class CursorController {
     this._cssHot = null;
     // The guest output size the sent pointer positions were last computed for.
     this._pointerOutput = null;
+    // The last absolute position sent and the output size it was computed for: what the
+    // guest's tablet device holds, whatever has moved the guest's pointer since.
+    this._lastPointer = null;
     this._descriptor = null;
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
@@ -427,6 +431,14 @@ export class CursorController {
    * A guest-space pointer position the page has just sent to the guest (E5-T36), and the guest
    * output size it was computed for. Only absolute positions are sent here. A change of output
    * size makes earlier positions incomparable with what the guest reports: inference starts over.
+   *
+   * Not every position sent is one the guest acts on. Its kernel passes on only the axes whose
+   * value changed, so a position equal to the tablet's last one reaches nobody and moves
+   * nothing. That is harmless while the guest's pointer stands there — and it does not after
+   * relative motion (another device), which leaves the tablet's values where they were. So a
+   * position counts as "the guest will put its pointer here" only if it differs from the one
+   * sent before it; the first of a page or after a guest reset (the tablet's values are not
+   * known) and the first at another output size (pixels of two sizes do not compare) never do.
    */
   notePointer(x, y, outputWidth = null, outputHeight = null) {
     // Outside absolute mode nothing sent is a position the guest's plane could stand for.
@@ -438,9 +450,14 @@ export class CursorController {
         this._pointerOutput = { width: outputWidth, height: outputHeight };
       }
       this._hotspots.notePointer(x, y);
-      // A remembered position is on its way to the guest: now it can be asked to catch up.
-      if (this._hotspotSettling) this._settleHotspots();
-      else this._armHotspotRest();
+      const last = this._lastPointer;
+      const now = { x: Number(x) | 0, y: Number(y) | 0, width: outputWidth, height: outputHeight };
+      this._lastPointer = now;
+      const acted = last !== null && last.width === now.width && last.height === now.height &&
+        (last.x !== now.x || last.y !== now.y);
+      if (!this._hotspotSettling) this._armHotspotRest();
+      // A remembered position the guest acts on is on its way to it: now it can be asked.
+      else if (acted) this._settleHotspots();
     } catch (error) {
       this._diagnostic("cursor-hotspot-pointer-error", error);
     }
@@ -481,9 +498,10 @@ export class CursorController {
   }
 
   /**
-   * While settling, and with a position sent since it began: ask the guest until it has been
-   * idle after that position reached it. Every question of this loop starts after the position
-   * was sent, so "caught up" means the guest's pointer stands on it or on a later one.
+   * While settling, and with a position sent since it began that the guest acts on: ask the
+   * guest until it has been idle after that position reached it. Every question of this loop
+   * starts after the position was sent, so "caught up" means the guest's pointer stands on it
+   * or on a later one.
    */
   async _settleHotspots() {
     const epoch = this._hotspotEpoch;
@@ -509,7 +527,6 @@ export class CursorController {
    */
   async _guestCaughtUp(epoch) {
     const count = async () => {
-      if (typeof this._guestIdleCount !== "function") return null;
       try {
         const value = await this._guestIdleCount();
         return typeof value === "number" && Number.isFinite(value) ? value : null;
@@ -710,6 +727,7 @@ export class CursorController {
     this._imageKey = null;
     this._cssHot = null;
     this._pointerOutput = null;
+    this._lastPointer = null;
     try { this._hotspots.reset(); } catch (error) { this._diagnostic("cursor-hotspot-error", error); }
     this._removeOverlay();
     this._restoreHostCursor();
