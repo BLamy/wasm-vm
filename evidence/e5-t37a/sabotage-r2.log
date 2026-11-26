@@ -1,0 +1,27 @@
+# E5-T37a round 2 — mutation run against the worker's tests (cargo test -p wasm-vm-core --lib paced_idle)
+# working tree on dacc2ae14; one mutation at a time, restored (and re-touched, so cargo rebuilds) after each
+V1 idle-spin threshold 2048 -> 4096: KILLED by 1: paced_idle_spin_threshold_is_exact
+V2 threshold compare > -> >=: KILLED by 1: paced_idle_spin_threshold_is_exact
+V3 selecting the clock does not start a new worked/waited interval: KILLED by 1: paced_idle_policy_and_clock_in_either_order_and_mid_run
+V4 the policy does not hand the bound to an existing pacer: KILLED by 2: paced_idle_policy_and_clock_in_either_order_and_mid_run, paced_idle_spin_threshold_is_exact
+V5 selecting the clock does not clear a recorded wait: KILLED by 1: paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+V6 selecting the policy does not clear a recorded wait: KILLED by 1: paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+N1 no wake accounting (paced_wake does nothing): KILLED by 3: paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+N2 wake accounting although no enabled interrupt is pending: KILLED by 3: paced_idle_yield_leaves_the_retire_stream_unchanged, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_spin_threshold_is_exact
+N3 wake accounting without the level/time resync: KILLED by 1: paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+N4 waiting time is not owed (not accumulated): KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_time_a_host_overslept_is_kept
+N5 owed waiting time ignored by the bound: KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_time_a_host_overslept_is_kept
+N6 owed waiting time never consumed: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+N7 wait holds despite a fresh software-interrupt level: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+N8 wait holds despite a device access since the last boundary: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+N9 the host's take does not ask whether the wait holds: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+N10 a restore keeps a recorded wait: KILLED by 1: paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+N11 the loop top returns without asking whether the wait holds: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+N12 an untaken wait keeps its wake armed across run calls: KILLED by 1: paced_idle_wake_is_only_accounted_for_a_wait_the_host_took
+N13 a wait dropped in the same run call keeps its wake armed: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+N14 the wait is measured from guest time, not the ceiling: KILLED by 4: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting
+N15 a rebase drops the busy-lag bound: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+W1 (worker round 1) the loop top never returns: KILLED by 10: paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait, paced_idle_spin_threshold_is_exact, paced_idle_policy_and_clock_in_either_order_and_mid_run, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_time_a_host_overslept_is_kept
+W2 (worker round 1) the bound applies without `worked`: KILLED by 8: paced_idle_spin_threshold_is_exact, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_time_a_host_overslept_is_kept, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_policy_and_clock_in_either_order_and_mid_run
+W3 (worker round 1) a wait is recorded in pure ICount: KILLED by 1: paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized
+N16 the sampled boundary's fabric epoch is not recorded: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
