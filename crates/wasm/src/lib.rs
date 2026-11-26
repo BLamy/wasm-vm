@@ -1793,9 +1793,18 @@ mod guest_clock_tests {
             assert!(!m.inner.borrow().machine.paced_idle_yield());
         }
         assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0);
-        if JsHostTimer::new().is_none() {
-            return;
+        // Node has neither a Window nor a WorkerGlobalScope, so the module finds no host clock
+        // there and the paced clock cannot be selected. Give this test's realm one — node's own
+        // monotonic `performance`, under the name the module looks for — and take it away at
+        // the end, so the test of the refusal without a host clock still runs in such a realm.
+        let shimmed = JsHostTimer::new().is_none();
+        if shimmed {
+            js_sys::eval(
+                "globalThis.WorkerGlobalScope = class { static [Symbol.hasInstance](v) { return v === globalThis; } };",
+            )
+            .unwrap();
         }
+        assert!(JsHostTimer::new().is_some(), "a host clock for this test");
         m.set_guest_clock("paced-icount").unwrap();
         for lag in [
             JsValue::UNDEFINED,
@@ -1807,9 +1816,10 @@ mod guest_clock_tests {
             assert!(m.inner.borrow().machine.paced_idle_yield());
         }
         // The guest arms its timer and idles: the slice ends at the waiting wfi with almost all
-        // of its budget unused, and the wait is the rest of the 26.8 s.
-        let first = retired(&m.run_chunk(100_000, None).unwrap());
-        assert!((6.0..1_000.0).contains(&first), "retired {first}");
+        // of its budget unused — four instructions that load the call's arguments and the wfi
+        // (the SBI call is served by the built-in SBI and is not a guest retirement) — and the
+        // wait is the rest of the 26.8 s.
+        assert_eq!(retired(&m.run_chunk(100_000, None).unwrap()), 5.0);
         let wait = m.take_idle_wait_ms().unwrap();
         assert!(wait > 20_000.0 && wait <= 26_843.6, "wait {wait} ms");
         assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0, "reported once");
@@ -1827,6 +1837,10 @@ mod guest_clock_tests {
             .unwrap();
         assert_eq!(retired(&m.run_chunk(5_000, None).unwrap()), 5_000.0);
         assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0);
+        if shimmed {
+            js_sys::eval("delete globalThis.WorkerGlobalScope").unwrap();
+            assert!(JsHostTimer::new().is_none());
+        }
     }
 
     #[cfg(target_arch = "wasm32")]

@@ -176,6 +176,53 @@ test("the paced policy selects the divider, then the paced clock, then the idle 
   assert.deepEqual(g.calls, [["setGuestClock", "icount"], ["setGuestClock", "paced-icount"], ["setPacedIdlePolicy", true, PACED_BUSY_LAG_MS]]);
 });
 
+test("after a restore the paced policy is selected on top of the restored clock, or the restore is refused", () => {
+  const restored = (mode, extra = {}) => ({ mode, clockDiv: 64, timebaseHz: 10_000_000, mtime: "123456789012345678", ...extra });
+  // A retire-count checkpoint (what the warm desktop snapshot holds) with the divider request.
+  const a = machineFixture({ clockDiv: 64 });
+  const la = createGuestClockLifecycle(a.machine, "icount", 64, "paced", restored("icount"));
+  assert.deepEqual(a.calls, [["setICountDivider", 64], ["setGuestClock", "icount"],
+    ["setGuestClock", "paced-icount"], ["setPacedIdlePolicy", true, PACED_BUSY_LAG_MS]]);
+  assert.equal(la.idleYield, true);
+  assert.equal(la.state().mode, "paced-icount");
+  assert.equal(la.state().mtime, "123456789012345678", "the restored time is untouched");
+  // The same without a divider request.
+  const b = machineFixture({ clockDiv: 64 });
+  assert.equal(createGuestClockLifecycle(b.machine, "icount", undefined, "paced", restored("icount")).idleYield, true);
+  assert.deepEqual(b.calls, [["setGuestClock", "icount"], ["setGuestClock", "icount"],
+    ["setGuestClock", "paced-icount"], ["setPacedIdlePolicy", true, PACED_BUSY_LAG_MS]]);
+  // A checkpoint taken while the paced clock was selected: restored as paced (host anchor
+  // rebased, the offline interval is not charged), then only the idle policy is set.
+  const c = machineFixture({ clockDiv: 64 });
+  const lc = createGuestClockLifecycle(c.machine, "icount", 64, "paced", restored("paced-icount"));
+  assert.deepEqual(c.calls, [["setICountDivider", 64], ["setGuestClock", "paced-icount"], ["rebaseGuestClock"],
+    ["setPacedIdlePolicy", true, PACED_BUSY_LAG_MS]]);
+  assert.equal(lc.idleYield, true);
+  assert.equal(lc.state().mode, "paced-icount");
+  // Refused before the machine is touched: a checkpoint of another clock, one whose time or
+  // divider is not the machine's, and a paced checkpoint under a policy that selects another.
+  const refused = [
+    ["paced", restored("wall")],
+    ["paced", restored("icount", { mtime: "1" })],
+    ["paced", restored("icount", { clockDiv: 10 })],
+    ["paced", restored("icount", { timebaseHz: 1_000_000 })],
+    ["paced", null],
+    [undefined, restored("paced-icount")],
+    ["wall-on-keyboard", restored("paced-icount")],
+  ];
+  for (const [policy, clock] of refused) {
+    const f = machineFixture({ clockDiv: 64 });
+    assert.throws(() => createGuestClockLifecycle(f.machine, "icount", 64, policy, clock),
+      /GPU checkpoint clock differs from native state or selected policy/, `${String(policy)} ${JSON.stringify(clock)}`);
+    assert.deepEqual(f.calls, [], "nothing was selected");
+    assert.equal(f.state().mode, "icount");
+  }
+  // The keyboard-triggered paced policy accepts the same paced checkpoint and sets no idle policy.
+  const k = machineFixture({ clockDiv: 64 });
+  assert.equal(createGuestClockLifecycle(k.machine, "icount", 64, "paced-on-keyboard", restored("paced-icount")).idleYield, false);
+  assert.equal(k.calls.some(([name]) => name === "setPacedIdlePolicy"), false);
+});
+
 test("every other policy leaves the idle policy alone", () => {
   for (const policy of [undefined, "paced-on-keyboard", "wall-on-keyboard"]) {
     const f = machineFixture();
