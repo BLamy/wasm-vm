@@ -1,0 +1,9 @@
+$ bash tools/perf/oracle.sh target/release/wasm-vm target/oracle-e5t37a && diff -r evidence/perf-overhaul/oracle-baseline target/oracle-e5t37a/digests
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+diff exit=1 (1 with only the baseline README listed = identical digests)
+       6

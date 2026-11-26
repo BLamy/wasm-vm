@@ -1,0 +1,14 @@
+# sabotage 1: the run loop does not return at a waiting wfi (loop-top check removed)
+test turbo_equivalence_tests::paced_idle_yield_leaves_the_retire_stream_unchanged ... FAILED
+test turbo_equivalence_tests::paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait ... FAILED
+test turbo_equivalence_tests::paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting ... FAILED
+test result: FAILED. 4 passed; 3 failed; 0 ignored; 0 measured; 424 filtered out; finished in 0.24s
+
+# sabotage 2: the busy-lag bound also applies while the guest only waited (worked ignored)
+test time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not ... FAILED
+test turbo_equivalence_tests::paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting ... FAILED
+test result: FAILED. 5 passed; 2 failed; 0 ignored; 0 measured; 424 filtered out; finished in 6.05s
+
+# sabotage 3: the wait is reported in pure ICount too (mode check dropped: flag set whenever a deadline exists)
+test turbo_equivalence_tests::paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized ... FAILED
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.28s
