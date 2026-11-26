@@ -658,3 +658,13 @@ sleep" has the pip class `cap-pip verified`, and the bundle's `tasks.json` lists
 `verified`. The capability panel is kept hidden in `app.html` (`#legacy-roadmap`), so "shows"
 means the status the page binds to the row — what `evidence/e5-t37b/demo-suite.mjs` reads too.
 The last acceptance bullet holds.
+
+### 2026-11-26 — worker — deployed
+
+`bash tools/deploy-cloudflare.sh` at `68e138982` published the verified bundle to
+<https://wasm-vm.pages.dev> (Pages deployment `ffe968ed`). One fresh load of the live site
+(`node tools/perf/desktop-latency.mjs --url https://wasm-vm.pages.dev --app /app.html --scenarios click,type,idle --n 6 --idle-s 30`,
+`evidence/e5-t37b/live/`): clock `paced-icount`; idle 9.8% of wall time in run slices, guest
+time 0.98 s/s, 600 sleeps in 30 s; click result median 268 ms (n = 6, first click 593 ms);
+key echo median 44 ms.
+
