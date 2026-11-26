@@ -5,7 +5,8 @@
 // calls a layout API or touches the PNG/data URL; it only updates the current position and, when
 // needed, the overlay's transform.
 
-import { CursorSink } from "./cursor.js";
+import { CursorSink, cssCursorDescriptor } from "./cursor.js";
+import { CursorHotspotEstimator } from "./cursor-hotspot.js";
 
 export const CURSOR_MODES = Object.freeze({
   ABSOLUTE: "absolute",
@@ -91,6 +92,7 @@ export class CursorController {
     positionScaleY = 1,
     onDiagnostic = () => {},
     onStateChange = () => {},
+    hotspotEstimator = new CursorHotspotEstimator(),
   } = {}) {
     if (target !== null && (typeof target !== "object" || !target.style)) {
       throw new TypeError("cursor target must expose a style object");
@@ -108,6 +110,12 @@ export class CursorController {
     this._onDiagnostic = onDiagnostic;
     this._onStateChange = onStateChange;
     this._sink = new CursorSink({ cssMaxDimension });
+    // E5-T36: a device that reports no hotspot (legacy KMS places the plane at pointer minus
+    // hotspot instead) gets it inferred for the CSS cursor, which the browser draws at the
+    // real pointer. `_cssHot` is that inferred hotspot for the current image, or null.
+    this._hotspots = hotspotEstimator;
+    this._imageKey = null;
+    this._cssHot = null;
     this._descriptor = null;
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
@@ -277,7 +285,9 @@ export class CursorController {
 
     if (this._mode === CURSOR_MODES.ABSOLUTE && descriptor.kind === "css") {
       this._removeOverlay();
-      this._setHostCursor(descriptor.css);
+      this._setHostCursor(this._cssHot
+        ? cssCursorDescriptor(descriptor.dataUrl, this._cssHot.x, this._cssHot.y, descriptor.width, descriptor.height)
+        : descriptor.css);
       return;
     }
 
@@ -316,6 +326,7 @@ export class CursorController {
       this._state = state;
       this._descriptor = descriptor;
       this._updates += 1;
+      this._trackHotspot(state, descriptor);
       this._applySafely("cursor-update-dom-error");
       this._notify("cursor-update");
       return this.snapshot("cursor-update");
@@ -356,9 +367,44 @@ export class CursorController {
       this._moves += 1;
       // This is the only DOM operation on the high-frequency move path.
       this._applyPositionOnly();
+      if (this._imageKey !== null && this._cssHot === null && this._inferHotspot(state)) {
+        // One style write, once per cursor image: the CSS cursor gains its hotspot.
+        this._applySafely("cursor-hotspot-dom-error");
+      }
       return this.snapshot("cursor-move");
     } catch (error) {
       this._diagnostic("cursor-move-rejected", error);
+      return false;
+    }
+  }
+
+  /** A guest-space pointer position the page has just sent to the guest (E5-T36). */
+  notePointer(x, y) {
+    if (this._disposed) return;
+    try { this._hotspots.notePointer(x, y); } catch (error) { this._diagnostic("cursor-hotspot-pointer-error", error); }
+  }
+
+  /** Start (or resume) hotspot inference for the image a cursor update just installed. */
+  _trackHotspot(state, descriptor) {
+    this._imageKey = null;
+    this._cssHot = null;
+    // Only a CSS cursor is drawn at the host pointer, and only a device that reports no
+    // hotspot leaves one to infer. (An overlay follows the reported plane position as is.)
+    if (descriptor?.kind !== "css" || state.hotX !== 0 || state.hotY !== 0) return;
+    this._imageKey = descriptor.dataUrl;
+    this._cssHot = this._hotspots.hotspot(this._imageKey);
+    if (this._cssHot === null) this._inferHotspot(state);
+  }
+
+  _inferHotspot(state) {
+    try {
+      const hot = this._hotspots.noteMove(
+        this._imageKey, this._descriptor.width, this._descriptor.height, state.x, state.y);
+      if (hot === null || (hot.x === 0 && hot.y === 0)) return false;
+      this._cssHot = hot;
+      return true;
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
       return false;
     }
   }
@@ -440,6 +486,8 @@ export class CursorController {
       height: this._descriptor?.height ?? 0,
       hotX: this._descriptor?.hotX ?? 0,
       hotY: this._descriptor?.hotY ?? 0,
+      inferredHotX: this._cssHot?.x ?? null,
+      inferredHotY: this._cssHot?.y ?? null,
       overlayAttached: this._overlay !== null,
       hostCursorOwned: this._hostCursorOwned,
       hostCursorHidden: this._hostCursorHidden,

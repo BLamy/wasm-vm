@@ -12,13 +12,14 @@ capstone: false
 
 ## Boundary
 
-Proof and roadmap only: a browser check of the published generation-2 desktop
-(`tools/verify/e5-t36c-hardware-cursor-browser.mjs`, new) and the roadmap row. No runtime
+Proof and roadmap only: the browser check E5-T36a introduced
+(`tools/verify/e5-t36-hardware-cursor-browser.mjs`), run without its session restart on the
+published generation-2 desktop, and the roadmap row. No runtime
 change; the pieces are E5-T36a (host hotspot), E5-T36b (session) and E5-T41b (published image).
 
 ## Deterministic acceptance
 
-`node tools/verify/e5-t36c-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --out evidence/e5-t36c`
+`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --out evidence/e5-t36c`
 on the committed bundle, warm desktop:
 
 - the canvas's computed `cursor` is a `url("data:image/png…") X Y` made from the guest's image
