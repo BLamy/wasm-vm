@@ -70,16 +70,17 @@ try {
     }
     result.sessionRestartSeconds = (Date.now() - t0) / 1000;
   }
-  // Chrome schedules start-up work for its first 10-20 s. Start once the guest is idle: at
-  // least 15 idle waits in a second (an idle desktop takes about 20). The proof is about the
-  // pointer, not about a browser that is still starting.
+  // Chrome schedules start-up work 5-20 s after its window is up, and while the guest is busy
+  // nothing tells the page it has caught up (no rest answers: see cursor-controller.js). The
+  // proof is about the pointer on a desktop that has finished starting, so it begins after 20
+  // consecutive idle seconds: at least 15 idle waits in each (an idle desktop takes about 20).
   {
     const idleSleeps = async () => (await page.evaluate(() => window.__schedulerStats()))?.idleSleeps ?? 0;
     const t0 = Date.now();
-    for (;;) {
+    for (let streak = 0; streak < 20;) {
       const before = await idleSleeps();
       await page.waitForTimeout(1000);
-      if ((await idleSleeps()) - before >= 15) break;
+      streak = (await idleSleeps()) - before >= 15 ? streak + 1 : 0;
       assert.ok(Date.now() - t0 < 5 * 60_000, "the guest became idle");
     }
     result.idleAfterSeconds = (Date.now() - t0) / 1000;
