@@ -724,8 +724,11 @@ I did not edit or promote the verifiers' files.
   Makefile's `zicsr-stub` lint line (the same 5 errors as before the task);
   `cargo test -p wasm-vm-core --lib paced_idle` (24 pass);
   `cargo test -p wasm-vm-core --lib` (448 pass); the two wasm32 builds.
-- `cargo test --workspace --exclude wasm-vm-wvseccomp` → 191 `test result: ok`, no failure
-  (`workspace-tests-r3.log`). Boot oracle: only the baseline README differs
+- `cargo test --workspace --exclude wasm-vm-wvseccomp` → 340 test binaries, every one
+  `test result: ok`, no failure (`workspace-tests-r3.log`; the log is `sort | uniq -c` output,
+  189 distinct result lines whose counts sum to 340. The "191" in my round-1 and round-2 claims
+  was the number of distinct lines in those logs, not the number of suites; they also sum to
+  340). Boot oracle: only the baseline README differs
   (`oracle-r3.log`). Desktop equivalence: `EQUIVALENT (2000000000 instructions)`, FNV
   `0dab1ccaa237df29`, retired 1,999,831,660, RAM `ed70e270…38701`
   (`turbo-equivalence-r3.log`).
