@@ -12,9 +12,14 @@
 //   * the canvas's computed `cursor` (image and hotspot the browser uses), with
 //   * the kernel's cursor-plane position in the guest (/sys/kernel/debug/dri/0/state):
 //     plane position + hotspot must be the guest position the page sent, within one pixel.
-// Each plan starts hotspot inference over, so every approach meets its cursor "for the first
-// time". (The glide plans and the plan runner are the E5-T36a verifier's, whose straight
+// Each plan forgets the hotspots inferred so far, so every approach meets its cursor "for the
+// first time". (The glide plans and the plan runner are the E5-T36a verifier's, whose straight
 // approaches showed what jumps with long rests could not: a wrong hotspot kept for a session.)
+// Then 48 short even runs that start where the pointer rests, right after inference started
+// over (half of them with a pointer-mode change, which also forgets the positions sent), while
+// the terminal prints in bursts: the round-3 verifier's runs, in which the device's report of
+// the plane where it stood was taken for a move. Nothing the page shows in any of this, read
+// at rest or sampled every 8 ms, may be more than a pixel from the truth.
 //
 // `--legacy-kms-session` is for an image whose session still forces software cursors (the
 // published generation 1): the script first restarts the guest's session from the serial root
@@ -115,6 +120,19 @@ try {
   const minJerk = (t) => t * t * t * (10 - 15 * t + 6 * t * t);
   let at = null;
   const moveTo = async (g) => { const [x, y] = toPage(g); await page.mouse.move(x, y); at = g; };
+  const hotspotState = () => page.evaluate(() => {
+    const s = window.__cursor.state();
+    return { inferred: s.inferredHotX === null ? null : [s.inferredHotX, s.inferredHotY], settling: s.hotspotSettling };
+  });
+  // The page starts not knowing where the guest's pointer stands: no cursor move is evidence
+  // until the guest has been idle after a position the page sent. This is that position.
+  assert.equal((await hotspotState()).settling, true, "nothing was sent yet: the page is settling");
+  {
+    const t0 = Date.now();
+    await moveTo([640, 400]);
+    await page.waitForFunction(() => window.__cursor.state().hotspotSettling === false, null, { timeout: 60_000, polling: 20 });
+    result.settledAfterFirstPositionMs = Date.now() - t0;
+  }
   const jump = (to, restMs = 700) => ({ op: "jump", to, restMs });
   const glide = (to, ms, restMs = 800) => ({ op: "glide", to, ms, restMs });
   const read = (name, expectHotspot) => ({ op: "read", name, expectHotspot });
@@ -152,9 +170,9 @@ try {
   });
   result.plans = [];
   for (const plan of PLANS) {
-    // Forget everything; the guest's moves count again once it has been idle since.
+    // Forget every hotspot. The positions sent are kept, so there is nothing to wait for.
     await page.evaluate(() => window.__cursor.resetHotspotInference());
-    await page.waitForFunction(() => window.__cursor.state().hotspotSettling === false, null, { timeout: 30_000, polling: 50 });
+    assert.deepEqual(await hotspotState(), { inferred: null, settling: false }, `${plan.name}: started over`);
     const reads = [];
     for (const step of plan.steps) {
       if (step.op === "jump") {
@@ -192,6 +210,56 @@ try {
   }
   result.shapes = result.plans.at(-1).reads;
   assert.equal(new Set(result.shapes.map((s) => s.css.imageTail)).size, 3, "three different cursor images");
+  // Runs from the rest position, right after starting over, with the guest committing frames
+  // for reasons of its own (the round-3 verifier's load and steps; see the top of the file).
+  {
+    const STEPS = [[5, 3], [6, 0], [4, 4], [8, 2], [3, 5], [10, 0], [7, 7], [12, 4]];
+    let seed = 0x51a7e;
+    const between = (a, b) => { seed ^= seed << 13; seed >>>= 0; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0; return Math.round(a + (b - a) * (seed / 0x100000000)); };
+    const near = (hot, truth) => Math.abs(hot[0] - truth[0]) <= 1 && Math.abs(hot[1] - truth[1]) <= 1;
+    const load = (await sh("(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/e5t36-load.pid); sleep 1; cat /proc/loadavg")).trim();
+    result.restRuns = { load, trials: [] };
+    for (let i = 0; i < 48; i += 1) {
+      const way = i % 2 ? "hook and pointer mode" : "hook";
+      const from = [between(340, 480), between(590, 690)]; const step = STEPS[i % STEPS.length]; const n = [3, 2, 4, 10][i % 4];
+      const trial = { way, from, step, positions: n, reads: [] };
+      result.restRuns.trials.push(trial);
+      await moveTo(from);
+      await page.waitForTimeout(1000);
+      await page.evaluate((mode) => {
+        window.__cursor.resetHotspotInference();
+        if (mode) { window.__pointer.setMode("relative", { requestLock: false }); window.__pointer.setMode("absolute"); }
+      }, way !== "hook");
+      assert.deepEqual(await hotspotState(), { inferred: null, settling: way !== "hook" }, `rest run ${i} (${way}): started over`);
+      await page.waitForTimeout(between(0, 150));
+      for (let k = 1; k <= n; k += 1) {
+        const began = performance.now();
+        await moveTo([from[0] + k * step[0], from[1] + k * step[1]]);
+        const due = 16 - (performance.now() - began);
+        if (due > 0) await new Promise((resolve) => setTimeout(resolve, due));
+      }
+      // At rest after the run: whatever the page shows for the arrow is the arrow's hotspot.
+      for (const waitMs of [400, 1500]) {
+        await page.waitForTimeout(waitMs);
+        const css = await cssCursor(); const state = await hotspotState();
+        trial.reads.push(state.inferred);
+        assert.ok(css.hotspot, `rest run ${i}: the canvas cursor is the guest's image (${JSON.stringify(css)})`);
+        if (state.inferred !== null) {
+          assert.deepEqual(css.hotspot, state.inferred, `rest run ${i}: the canvas shows what the controller inferred`);
+          assert.ok(near(state.inferred, [1, 1]), `rest run ${i} (${way}), ${n} positions of ${step} from ${from}: arrow shown with ${state.inferred}`);
+        }
+      }
+      // Two more positions elsewhere in the page body: known by then, and right.
+      await moveTo([from[0] - 40, from[1] + 20]); await page.waitForTimeout(600);
+      await moveTo([from[0] - 20, from[1] + 45]); await page.waitForTimeout(900);
+      trial.end = await hotspotState();
+      assert.ok(trial.end.inferred && near(trial.end.inferred, [1, 1]) && trial.end.settling === false,
+        `rest run ${i} (${way}): the arrow's hotspot is known after two more positions (${JSON.stringify(trial.end)})`);
+    }
+    result.restRuns.loadAfter = (await sh("kill $(cat /tmp/e5t36-load.pid) 2>/dev/null; rm -f /tmp/e5t36-load.pid; sleep 1; cat /proc/loadavg")).trim();
+    result.restRuns.knownAtFirstRead = result.restRuns.trials.filter((t) => t.reads[0] !== null).length;
+    result.restRuns.knownAtSecondRead = result.restRuns.trials.filter((t) => t.reads[1] !== null).length;
+  }
   // The timeline: whenever the page showed a hotspot for one of the three images, it was the
   // right one, and the canvas showed what the controller had inferred.
   const truth = new Map(result.shapes.map((s) => [s.css.imageTail, s.expectHotspot]));
@@ -240,6 +308,8 @@ try {
 }
 console.log(JSON.stringify({ pass: result.pass, swayEnv: result.swayEnv,
   plans: (result.plans ?? []).map((p) => ({ plan: p.name, reads: p.reads.map((r) => `${r.name}: sent ${r.sent} hotspot ${r.css?.hotspot} plane ${r.plane && [r.plane.x, r.plane.y]} tip error ${r.tipError}`) })),
+  settledAfterFirstPositionMs: result.settledAfterFirstPositionMs,
+  restRuns: result.restRuns && `${result.restRuns.trials.length} runs from the rest position: known at the first read in ${result.restRuns.knownAtFirstRead}, at the second in ${result.restRuns.knownAtSecondRead}, known and right in the end in all; none wrong`,
   timeline: result.timeline && `${result.timeline.length} changes, ${result.timelineAnswers} answers shown, none wrong`,
   paintedPointer: result.paintedPointer, error: result.error }, null, 2));
 if (failure) process.exit(1);

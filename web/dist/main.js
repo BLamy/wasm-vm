@@ -957,7 +957,8 @@ try {
     handle: (event) => cursorController.handle(event),
     diagnostics: () => [...cursorDiagnostics],
     reset: () => cursorController.reset(),
-    // Start hotspot inference over (E5-T36a's browser proof: several "first time" approaches).
+    // Forget the hotspots inferred so far (E5-T36a's browser proof: several "first time"
+    // approaches). The positions sent are kept.
     resetHotspotInference: () => cursorController.resetHotspotInference(),
   };
 } catch { /* page-only diagnostics */ }

@@ -10,12 +10,24 @@
 // shrink how recent the matching sent position is; they never remove the true candidate while it
 // is still in history.
 //
-// What is NOT evidence, and must never be given to `noteMove`:
+// All of that rests on ONE condition, which the caller has to know holds before it gives a move
+// to `noteMove`: the guest's pointer stands on a position still in the history (or on its way
+// from one to another). The device reports the plane's place on every commit — also when the
+// plane stays where it stood — so a move says "the pointer is here now", not "the pointer just
+// arrived for the last position sent". Compared with a history that does not hold the position
+// the pointer stands on, such a report is explained by a position sent LATER, and the answer is
+// the truth plus one pointer step.
+//
+// What is therefore NOT evidence, and must never be given to `noteMove`:
 //   * the position carried by a cursor UPDATE. A legacy-KMS commit is "set image" at the
 //     plane's previous position, then "move"; the update's position was computed with the
 //     previous image's hotspot;
 //   * positions reported while the page sends no absolute pointer positions (relative mode), or
-//     for sent positions computed at another output size. The caller `reset`s on those changes.
+//     for sent positions computed at another output size. The caller `restart`s on those changes;
+//   * any move from a `restart` or `reset` (and from the very start) until the caller knows the
+//     guest has acted on a position noted since: until then its pointer stands somewhere this
+//     history does not hold. (Forgetting the IMAGES alone, `forget`, takes nothing from the
+//     history and needs no such wait.)
 //
 // Two more rules:
 //   * once the guest has caught up with everything sent, the lag is zero: the plane is where
@@ -200,7 +212,6 @@ export class CursorHotspotEstimator {
     const rest = { x: sent.x - image.last.x, y: sent.y - image.last.y };
     // (Candidates lie within the image, so a rest position near one does too.)
     if (!image.candidates.some((candidate) => near(candidate, rest, this._tolerance))) return null;
-    image.candidates = [rest];
     return this._resolve(image, rest, width, height);
   }
 
@@ -213,18 +224,28 @@ export class CursorHotspotEstimator {
    * Start over what can be learned from moves: forget the positions sent and every image not
    * yet settled. For when what was sent stops being comparable with what the guest reports —
    * the pointer left absolute mode, or the guest output the positions were computed for
-   * changed size. Settled answers stay: a hotspot belongs to its image.
+   * changed size. Settled answers stay: a hotspot belongs to its image. The guest's pointer
+   * still stands where a forgotten position put it: see the top of the file for what the
+   * caller owes before the next `noteMove`.
    */
   restart() {
     this._sent.length = 0;
     for (const [key, image] of this._images) {
       if (!image.resolved) { this._images.delete(key); continue; }
-      image.candidates = [image.resolved];
       image.misses = 0;
     }
   }
 
-  /** Forget everything: the positions sent and every image, settled or not. */
+  /**
+   * Forget every image, settled or not, and keep the positions sent: each image is inferred
+   * again as if met for the first time, from a history that still holds the position the
+   * guest's pointer stands on.
+   */
+  forget() {
+    this._images.clear();
+  }
+
+  /** Forget everything: the positions sent and every image, settled or not (a new guest). */
   reset() {
     this._images.clear();
     this._sent.length = 0;
