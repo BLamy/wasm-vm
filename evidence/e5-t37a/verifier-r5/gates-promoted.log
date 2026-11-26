@@ -1,0 +1,18 @@
+head 61c4fcb445d66e61f40a2eb08acf036973acb2d5; git status --short crates: [ M crates/core/src/turbo_equivalence_tests.rs;?? crates/core/src/paced_idle_verifier_tests/;]
+$ cargo fmt --check
+rc=0
+$ rustfmt --edition 2024 --check crates/core/src/paced_idle_verifier_tests/*.rs   (include!d files: cargo fmt does not reach them)
+rc=0
+$ cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings
+   1     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.15s
+rc=0
+$ cargo test -p wasm-vm-core --lib paced_idle
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 486 filtered out; finished in 1.34s
+rc=0
+$ cargo test -p wasm-vm-core --lib
+test result: ok. 511 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 45.01s
+rc=0
+$ cargo test -p wasm-vm-core --lib -- --list | (count by prefix)
+r4_=2 v37a_=19 other=424 r3_=17 paced_idle=25 r2_=24 
+$ cargo test -p wasm-vm-core --lib -- --ignored --list | grep -c ": test$"   (ignored tests)
+0

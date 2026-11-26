@@ -1,0 +1,29 @@
+# three mutants run after the first pass (sabotage.log); same script, worker's tests only.
+# Line numbers of time.rs in a panic are those of the MUTATED file (M1b adds four lines).
+# python3 evidence/e5-t37a/verifier-r5/sabotage.py --tree <scratch clone> M1b
+tree <scratch>/mut at 61c4fcb445d66e61f40a2eb08acf036973acb2d5
+git status --short crates before: ['M', 'crates/core/src/turbo_equivalence_tests.rs', '??', 'crates/core/src/paced_idle_verifier_tests/']
+$ cargo test -p wasm-vm-core --lib paced_idle
+M1b the cap judged before the jump only when a deadline is in the way (a far one spared): KILLED by 1: paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:718:13: assertion `left == right` failed: deadline Some(300): what the host clock is still ahead by, no more | left: 10000000 | right: 7000000
+TOTAL killed 1, survived 0; git status --short crates after: ['M', 'crates/core/src/turbo_equivalence_tests.rs', '??', 'crates/core/src/paced_idle_verifier_tests/']
+
+# python3 evidence/e5-t37a/verifier-r5/sabotage.py --tree <scratch clone> C1
+tree <scratch>/mut at 61c4fcb445d66e61f40a2eb08acf036973acb2d5
+git status --short crates before: ['M', 'crates/core/src/turbo_equivalence_tests.rs', '??', 'crates/core/src/paced_idle_verifier_tests/']
+$ cargo test -p wasm-vm-core --lib paced_idle
+C1 `ClintState::mtip` itself `>=` -> `>` (shared by fresh_mip and sync_clint: only the test's direct MTIP rule can see it; outside the task's diff, a liveness probe): KILLED by 3: paced_idle_fresh_mip_is_what_the_boundary_sync_writes, paced_idle_time_a_host_overslept_is_kept, paced_idle_yield_leaves_the_retire_stream_unchanged
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2868:13: assertion `left == right` failed: MTIP (false, false, 1000, 0, false, false) | left: false | right: true
+    paced_idle_time_a_host_overslept_is_kept @ crates/core/src/turbo_equivalence_tests.rs:2369:17: assertion `left == right` failed: turbo=false work=0 bound=Some(50000000): taken at its deadline in guest time | left: 20003 | right: 20002
+    paced_idle_yield_leaves_the_retire_stream_unchanged @ crates/core/src/turbo_equivalence_tests.rs:2116:29: assertion `left == right` failed: first=300 rearm=170 div=1 step=7 lag=None turbo=true budgets=[50000000] | left: Observed { outcome: Reset(PowerOff), trace_hash: 11829254621031701210, trace_retired: 3948, pc: 2147484740, hart: [68, 4, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 85, 85, 0, 0, 0, 0, 0, 0,
+TOTAL killed 1, survived 0; git status --short crates after: ['M', 'crates/core/src/turbo_equivalence_tests.rs', '??', 'crates/core/src/paced_idle_verifier_tests/']
+
+# python3 evidence/e5-t37a/verifier-r5/sabotage.py --tree <scratch clone> MY2
+# (time.rs line numbers in a panic are those of the MUTATED file: MY2 removes one line, so :719 is :720)
+tree <scratch>/mut at 61c4fcb445d66e61f40a2eb08acf036973acb2d5
+git status --short crates before: ['M', 'crates/core/src/turbo_equivalence_tests.rs', '??', 'crates/core/src/paced_idle_verifier_tests/']
+$ cargo test -p wasm-vm-core --lib paced_idle
+MY2 round 4's mutant, re-applied to see WHICH assertion of the new test it reaches: a guest that worked may skip max(owed, bound), not owed + bound: KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:550:9: assertion `left == right` failed: everything the host clock ran ahead while the guest waited | left: 20010300 | right: 20020000
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:719:13: assertion `left == right` failed: deadline Some(300): what is owed, and one bound | left: 32070000 | right: 32570000
+TOTAL killed 1, survived 0; git status --short crates after: ['M', 'crates/core/src/turbo_equivalence_tests.rs', '??', 'crates/core/src/paced_idle_verifier_tests/']

@@ -1,0 +1,6 @@
+ M crates/core/src/turbo_equivalence_tests.rs
+?? crates/core/src/paced_idle_verifier_tests/
+$ cargo test -p wasm-vm-core --lib -- v37a_ r2_ r3_ r4_ --test-threads=1
+test result: ok. 62 passed; 0 failed; 0 ignored; 0 measured; 449 filtered out; finished in 166.77s
+$ again, default threads, shuffled order not available on stable: plain re-run
+test result: ok. 62 passed; 0 failed; 0 ignored; 0 measured; 449 filtered out; finished in 38.52s

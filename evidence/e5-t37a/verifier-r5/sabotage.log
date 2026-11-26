@@ -1,0 +1,60 @@
+tree <scratch>/mut at 61c4fcb445d66e61f40a2eb08acf036973acb2d5
+git status --short crates before: []
+$ cargo test -p wasm-vm-core --lib paced_idle
+S1 S-timer level `>=` -> `>` (not due on the deadline's own tick): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 1000, false, false) stale=0x28 | left: 160 | right: 128
+S2 S-timer level `>=` -> `==` (due only AT the deadline; round 4's MY1): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 0, false, false) stale=0x0 | left: 160 | right: 128
+S3 S-timer level one tick early (`mtime + 1 >= stimecmp`): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 1001, false, false) stale=0x28 | left: 128 | right: 160
+P1 `>` in fresh_mip AND in sync_sbi_timer: KILLED by 2: paced_idle_fresh_mip_is_what_the_boundary_sync_writes, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2870:17: assertion `left == right` failed: STIP (true, false, 0, 1000, false, false) | left: false | right: true
+    paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval @ crates/core/src/turbo_equivalence_tests.rs:3146:13: assertion `left == right` failed: turbo=false bound=Some(50000000): MSIP and STIP both pending at once | left: 8 | right: 40
+P2 `==` in fresh_mip AND in sync_sbi_timer: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2870:17: assertion `left == right` failed: STIP (true, false, 0, 0, false, false) | left: false | right: true
+P3 one tick early in fresh_mip AND in sync_sbi_timer: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2870:17: assertion `left == right` failed: STIP (true, false, 0, 1001, false, false) | left: true | right: false
+M1 the owed-time cap judged before the jump (`ceiling - limited` -> `ceiling - current`): KILLED by 1: paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:714:13: assertion `left == right` failed: deadline None: what the host clock is still ahead by, no more | left: 10000000 | right: 0
+F1 STIP follows the MACHINE timer's compare (`c.mtime >= c.mtimecmp`): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 1001, 0, false, false) stale=0xa8 | left: 32 | right: 0
+F2 STIP set-only, a latch not a level (never cleared by fresh_mip): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 1001, false, false) stale=0x28 | left: 128 | right: 160
+F2b STIP clear-only (never set by fresh_mip): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 0, false, false) stale=0x0 | left: 160 | right: 128
+F3 a deadline of 0 treated as disarmed: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 0, false, false) stale=0x0 | left: 160 | right: 128
+F4 wrapping compare (`mtime - stimecmp < 2^63`): the far sentinel u64::MAX reads as due: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 18446744073709551615, false, false) stale=0x8 | left: 128 | right: 160
+F5 stale clock: STIP judged against the `time` CSR shadow of the LAST sync, not mtime now: SURVIVED  (test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.37s)
+F6 without the built-in SBI a stale STIP is cleared instead of left alone: SURVIVED  (test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.39s)
+F7 the S-timer level taken although the built-in SBI is off (no guard): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (false, false, 0, 0, false, false) stale=0x0 | left: 128 | right: 160
+T1 machine timer level `>`: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (false, false, 1000, 0, false, false) stale=0x88 | left: 128 | right: 0
+T2 machine timer level `==`: KILLED by 2: paced_idle_fresh_mip_is_what_the_boundary_sync_writes, paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (false, false, 0, 0, false, false) stale=0x0 | left: 128 | right: 0
+    paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block @ crates/core/src/turbo_equivalence_tests.rs:3054:13: assertion `left == right` failed: turbo=false due=true: Some(100000200) | left: true | right: false
+T3 machine timer level one tick early: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    paced_idle_fresh_mip_is_what_the_boundary_sync_writes @ crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (false, false, 1001, 0, false, false) stale=0x88 | left: 0 | right: 128
+T5 stale clock for the machine timer level: KILLED by 1: paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block
+    paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block @ crates/core/src/turbo_equivalence_tests.rs:3054:13: assertion `left == right` failed: turbo=false due=true: Some(100000200) | left: true | right: false
+G1 cap, THEN pay (`min(owed, lead after) - jump`): KILLED by 3: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump, paced_idle_time_a_host_overslept_is_kept
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:705:13: assertion `left == right` failed | left: 29980000 | right: 30000000
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:549:9: assertion `left == right` failed | left: 19990000 | right: 20000000
+    paced_idle_time_a_host_overslept_is_kept @ crates/core/src/turbo_equivalence_tests.rs:2376:17: turbo=false work=1000 bound=Some(0): guest time is 19980402 ticks past the deadline for 2 s overslept
+G2 one bound of slack in the cap (`lead after + max_busy_lag`): KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:618:9: assertion `left == right` failed: the guest is ahead of the host: nothing is owed | left: 500000 | right: 0
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:718:13: assertion `left == right` failed: deadline None: what the host clock is still ahead by, no more | left: 500000 | right: 0
+G3 the lead measured from the anchor, not from where the guest lands: KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:714:13: assertion `left == right` failed: deadline None: what the host clock is still ahead by, no more | left: 20000000 | right: 0
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:587:9: assertion `left == right` failed | left: 0 | right: 19990000
+G4 the cap applied only to a guest that waited (not after work): KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:618:9: assertion `left == right` failed: the guest is ahead of the host: nothing is owed | left: 20000000 | right: 0
+    paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump @ crates/core/src/time.rs:718:13: assertion `left == right` failed: deadline None: what the host clock is still ahead by, no more | left: 20000000 | right: 0
+G5 the cap applied only to a guest that worked (not while waiting): SURVIVED  (test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.37s)
+G6 a jump after work does not pay off owed time: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:587:9: assertion `left == right` failed | left: 20000000 | right: 19990000
+G7 a jump while waiting does not pay off owed time: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    paced_idle_busy_lag_is_bounded_and_waiting_time_is_not @ crates/core/src/time.rs:593:9: assertion `left == right` failed | left: 19990000 | right: 19890000
+TOTAL killed 23, survived 3; git status --short crates after: []
