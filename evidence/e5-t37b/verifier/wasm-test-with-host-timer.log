@@ -1,0 +1,47 @@
+head 939f16b9a632130ef8c826c36e3779930ea79e5a
+$ NODE_OPTIONS=--require=evidence/e5-t37b/verifier/fake-worker-scope.cjs wasm-pack test --node crates/wasm --lib -- exported_paced
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (<repo>/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm)
+running 2 tests
+test guest_clock_tests::exported_paced_selection_preserves_lossless_time_and_truthful_source_refusal ... ok
+test guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest ... FAIL
+failures:
+---- guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest output ----
+    warn output:
+        E2-T20 WFI with no wakeup source armed — the guest will idle forever (no timer deadline, no pending+enabled device interrupt). retired=5, wfi_count=1
+        === irq/trap stats ===
+        retired=5  wfi=1
+        exceptions (scause):
+        interrupts (scause):
+        PLIC claims (irq):
+    error output:
+        panicked at crates/wasm/src/lib.rs:1812:9:
+        retired 5
+        Stack:
+        Error
+    JS exception that was thrown:
+        RuntimeError: unreachable
+failures:
+    guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 15 filtered out; finished in 0.11s
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--lib`
+Caused by:
+  process didn't exit successfully: `~/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner <repo>/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm exported_paced` (exit status: 1)
+note: test exited abnormally; to see the full output pass --no-capture to the harness.
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="~/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--lib" "--" "exported_paced"
+rc=1

@@ -1,0 +1,82 @@
+E5-T37b — fresh verifier — predictions, written 2026-11-26 after reading the task file and the
+diff (6669dc702..939f16b9a, generated files excluded) and BEFORE opening any of the worker's
+evidence files, running any test, or loading the page. Each is falsifiable; the result is filled
+in later in the Verification log, not here.
+
+ORIENT
+ O1  evidence/e5-t37b/gates.log names head 423985d3d on its first line, and
+     `git diff 423985d3d..939f16b9a -- crates web tools` (minus web/dist, gpu-checkpoint-build.js,
+     tasks.json) is empty: the two later commits changed only the task text and evidence.
+     If any source file changed after 423985d3d, the gates and browser evidence are stale.
+ O2  web/dist/{loader,guest-clock,idle-sleep,main}.js at HEAD equal their web/ sources apart from
+     the build's deploy-path rewrite; web/dist/pkg/wasm_vm_wasm_bg.wasm exports
+     wasmlinux_setPacedIdlePolicy and wasmlinux_takeIdleWaitMs; the server on :8125 serves those
+     same bytes for /loader.js and /idle-sleep.js.
+ O3  The four browser JSON files carry a startedAt later than the author date of 423985d3d, a
+     clockMode of "paced-icount" (paced) / "icount" (unpaced), and the table in the claim is a
+     faithful copy of them.
+
+ACCEPTANCE (my own runs)
+ P1  cd web && node --test tests/e5-t37b-paced-idle.test.mjs: 12 pass, 0 fail.
+ P2  wasm-pack test --node crates/wasm --lib -- exported_paced: 2 pass, 0 fail, and one of the two
+     is the new exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest (not filtered out,
+     not ignored; JsHostTimer present under node so the test does not return at its early exit).
+ P3  cargo fmt --check, cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings,
+     cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown: all exit 0.
+ P4  Full web unit suite: the set of failing test names is a subset of
+     evidence/e5-t37b/web-unit-failing-before.txt (28 names), audio-ring flake aside.
+ P5  Browser, paced, fresh load, idle sampled last over 30 s: clockMode "paced-icount";
+     inSlicePct <= 30 (I expect 8-14); guestSecondsPerSecond in [0.8, 1.2] (I expect 0.95-1.0);
+     idleSleeps between 450 and 750 (the cap is 50 ms, so about 20 a second); idleWakes > 0.
+ P6  Browser, &pace=0, fresh load: clockMode "icount"; inSlicePct >= 90; guestSecondsPerSecond >= 3
+     (I expect about 12); idleSleeps 0; idleWakes 0.
+ P7  Click result median: paced <= unpaced (I expect 250-300 ms against 330-380 ms).
+ P8  Key echo median: |paced - unpaced| <= 15 ms.
+ P9  Demo page evidence: demo-suite.json says 127 passed, 0 failed, no console/page/HTTP errors,
+     and it was taken on the bundle of 423985d3d; the roadmap row is in the bundle as "partial".
+ P10 Independent of the loader's own counters: the OS-reported CPU time of the headless Chrome
+     renderer that owns the worker, over the 30 s idle window, is several times lower paced than
+     unpaced (unpaced: about one full core; paced: under 40% of a core). inSlicePct is computed
+     from totalSliceMs, a number the code under test reports about itself.
+
+ATTACK LIST
+ A1  A host call during a sleep (unit level, real idle-sleep.js and the loader's own
+     schedule/sleepIdle/wakeIdle text): the armed timer is cleared, exactly one tick is scheduled
+     in the same turn, and the stale timer callback does nothing. Holds.
+ A2  Two ticks: under random interleavings of ticks, sleeps, timer firings (including stale
+     ones), wrapped controller calls, pause/resume and stop, there is never more than one
+     pending tick. Holds.
+ A3  Stale timer callback after a wake does not end a later sleep. Holds (generation guard).
+ A4  Persistence / no whole image: startLinuxBoot rejects with
+     'interactiveClock "paced" requires a whole-image, non-persistent boot' for persist true,
+     persist left at its default, and wholeImageUrl null/undefined, before the first fetch.
+ A5  pause / stop / quota pause during a sleep: the sleep ends, the tick it schedules returns at
+     its first line, no slice runs while paused or after stop, resume schedules exactly one tick.
+     quotaPaused cannot be set on an admitted boot (persist === false means usePersist false).
+ A6  Warm restore: clock selected after the restore, mtime unchanged by the selection (browser
+     runs are all warm). Cold boot: same policy path with restoredClock undefined.
+ A7  A module without setPacedIdlePolicy or takeIdleWaitMs: the lifecycle throws before the
+     divider or the clock is touched, and the loader's boot fails (no silent unpaced boot).
+ A8  ?pace=0: interactiveClock undefined, no policy call, no wrapper on the controller, 0 sleeps.
+ A9  Other guests: "paced" is selected in exactly one place (replayDesktopBootOptions); with
+     idleYield false the tick calls takeIdleWaitMs never, sleepIdle(0, undefined) returns false
+     and schedule() runs as before, and the controller is not wrapped. The only observable
+     difference for another guest is three extra fields in schedulerStats().
+
+NOVEL ATTACK (one, bounded): is the evidence sensitive to the wake?
+ N1  Mutate copies (never the checkout): (a) a handful of one-line mutants of idle-sleep.js and of
+     the loader glue, run against the worker's 12 tests — I expect the idle-sleep.js mutants to be
+     killed, and the loader mutants to be killed only where a regex pins the exact text;
+     mutants of sleepIdle's body (not pinned by any regex) survive.
+     (b) Serve the committed bundle through a proxy that replaces /loader.js with a copy whose
+     controller wrap is removed (input no longer ends a sleep), and run the paced benchmark.
+     Prediction: key echo median rises by more than 15 ms over the honest paced run (a key
+     pressed during a 50 ms sleep waits about 25 ms on average), so the acceptance criterion
+     notices; idleWakes drops to 0. If the benchmark does NOT notice, the claim "anything the
+     host delivers is seen by the next slice at once" has no browser evidence behind it.
+
+PATH HUNT (reading)
+ H1  I expect one machine-touching call between the take and the sleep that is not a controller
+     call: productionGpu?.pump() (loader.js, straight after the take). It is null for the Replay
+     desktop (no virgl in its options) but the validation gate does not refuse virgl + "paced".
+     To be classified after checking whether any caller can reach it.

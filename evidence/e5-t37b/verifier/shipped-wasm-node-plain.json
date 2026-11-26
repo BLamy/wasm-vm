@@ -1,0 +1,216 @@
+{
+ "fakeWorkerScope": false,
+ "node": "v24.20.0",
+ "methods": {
+  "setPacedIdlePolicy": "function",
+  "takeIdleWaitMs": "function"
+ },
+ "refusals": [
+  {
+   "args": [
+    "1",
+    "undefined"
+   ],
+   "ok": false,
+   "error": "paced idle yield must be a boolean"
+  },
+  {
+   "args": [
+    "true",
+    "undefined"
+   ],
+   "ok": false,
+   "error": "paced idle yield must be a boolean"
+  },
+  {
+   "args": [
+    "null",
+    "50"
+   ],
+   "ok": false,
+   "error": "paced idle yield must be a boolean"
+  },
+  {
+   "args": [
+    "undefined",
+    "50"
+   ],
+   "ok": false,
+   "error": "paced idle yield must be a boolean"
+  },
+  {
+   "args": [
+    "true",
+    "-1"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "null"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "null"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "3600000.5"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "\"50\""
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "true"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "{}"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "3600001"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "-0.0001"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "50n"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "true",
+    "[50]"
+   ],
+   "ok": false,
+   "error": "paced idle busy lag must be a number of milliseconds, 0 to 3600000"
+  },
+  {
+   "args": [
+    "0",
+    "0"
+   ],
+   "ok": false,
+   "error": "paced idle yield must be a boolean"
+  },
+  {
+   "args": [
+    "obj:true",
+    "50"
+   ],
+   "ok": false,
+   "error": "paced idle yield must be a boolean"
+  }
+ ],
+ "acceptedEdges": [
+  {
+   "args": [
+    true,
+    0
+   ],
+   "ok": true
+  },
+  {
+   "args": [
+    true,
+    3600000
+   ],
+   "ok": true
+  },
+  {
+   "args": [
+    false,
+    null
+   ],
+   "ok": true
+  },
+  {
+   "args": [
+    true,
+    "undefined"
+   ],
+   "ok": true
+  },
+  {
+   "args": [
+    true,
+    1e-9
+   ],
+   "ok": true
+  },
+  {
+   "args": [
+    true,
+    0
+   ],
+   "ok": true
+  }
+ ],
+ "waitBeforeAnything": {
+  "ok": true,
+  "value": 0
+ },
+ "clockBefore": {
+  "ok": true,
+  "value": {
+   "mode": "icount",
+   "mtime": "0",
+   "timebaseHz": 10000000,
+   "clockDiv": 10
+  }
+ },
+ "selectPaced": {
+  "ok": false,
+  "error": "guest_clock_source_unavailable"
+ },
+ "clockAfter": {
+  "ok": true,
+  "value": {
+   "mode": "icount",
+   "mtime": "0",
+   "timebaseHz": 10000000,
+   "clockDiv": 10
+  }
+ }
+}

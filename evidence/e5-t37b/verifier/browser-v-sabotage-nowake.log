@@ -1,0 +1,71 @@
+load before:  3:53  up 10 days,  7:58, 4 users, load averages: 7.61 8.06 9.53
+[desktop-latency 08:53:20.384] open http://127.0.0.1:8137/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 08:53:24.044] desktop ready after 3.7 s
+[desktop-latency 08:53:24.054] scenario click
+[desktop-latency 08:53:30.022] click #1: result 576.6 ms, pressed-state frame 144.6 ms, 65M instr @ 111.8 MIPS
+[desktop-latency 08:53:34.096] click #2: result 486.3 ms, pressed-state frame 219.4 ms, 65.5M instr @ 123.5 MIPS
+[desktop-latency 08:53:37.654] click #3: result 267.5 ms, pressed-state frame 151 ms, 25.4M instr @ 94 MIPS
+[desktop-latency 08:53:41.008] click #4: result 281.1 ms, pressed-state frame 166 ms, 25.9M instr @ 80.6 MIPS
+[desktop-latency 08:53:44.361] click #5: result 279.9 ms, pressed-state frame 163.3 ms, 26.3M instr @ 81.4 MIPS
+[desktop-latency 08:53:47.719] click #6: result 275.4 ms, pressed-state frame 142.1 ms, 25.8M instr @ 79.2 MIPS
+[desktop-latency 08:53:51.070] click #7: result 303.8 ms, pressed-state frame 187.2 ms, 25.5M instr @ 78.9 MIPS
+[desktop-latency 08:53:54.433] click #8: result 275.1 ms, pressed-state frame 141.8 ms, 27.5M instr @ 84.8 MIPS
+[desktop-latency 08:53:57.461] scenario type
+[desktop-latency 08:54:04.389] type #1: echo 90.5 ms
+[desktop-latency 08:54:06.000] type #2: echo 46.4 ms
+[desktop-latency 08:54:07.557] type #3: echo 37.7 ms
+[desktop-latency 08:54:09.169] type #4: echo 94.2 ms
+[desktop-latency 08:54:10.781] type #5: echo 81.8 ms
+[desktop-latency 08:54:12.395] type #6: echo 51 ms
+[desktop-latency 08:54:13.955] type #7: echo 40.2 ms
+[desktop-latency 08:54:15.568] type #8: echo 79.9 ms
+[desktop-latency 08:54:19.896] {"echoMs":{"n":8,"missing":0,"min":37.7,"median":79.9,"max":94.2}}
+[desktop-latency 08:54:19.896] scenario idle
+[desktop-latency 08:54:52.687] {"wallMs":30003,"instructionsM":314.8,"mips":10.5,"inSlicePct":9.6,"guestSecondsPerSecond":0.98,"idleSleeps":530,"idleSleepMs":23760,"idleWakes":0,"clockMode":"paced-icount","framesReceived":0,"drawnPresents":0}
+[desktop-latency 08:54:52.689] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 267.5,
+   "median": 281.1,
+   "max": 576.6
+  },
+  "pointerArrivedMs": 50,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 141.8,
+    "median": 163.3,
+    "max": 219.4
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 37.7,
+   "median": 79.9,
+   "max": 94.2
+  }
+ },
+ "idle": {
+  "wallMs": 30003,
+  "instructionsM": 314.8,
+  "mips": 10.5,
+  "inSlicePct": 9.6,
+  "guestSecondsPerSecond": 0.98,
+  "idleSleeps": 530,
+  "idleSleepMs": 23760,
+  "idleWakes": 0,
+  "clockMode": "paced-icount",
+  "framesReceived": 0,
+  "drawnPresents": 0
+ }
+}
+[desktop-latency 08:54:52.830] wrote evidence/e5-t37b/verifier/browser-v-sabotage-nowake.json
+load after:  3:54  up 10 days,  7:59, 4 users, load averages: 6.82 7.67 9.22

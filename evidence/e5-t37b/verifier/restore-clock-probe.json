@@ -1,0 +1,97 @@
+[
+ {
+  "name": "restored icount checkpoint + paced (no divider request)",
+  "ok": true,
+  "idleYield": true,
+  "calls": [
+   [
+    "setGuestClock",
+    "icount"
+   ],
+   [
+    "setGuestClock",
+    "icount"
+   ],
+   [
+    "setGuestClock",
+    "paced-icount"
+   ],
+   [
+    "setPacedIdlePolicy",
+    true,
+    50
+   ]
+  ],
+  "finalMode": "paced-icount"
+ },
+ {
+  "name": "restored icount checkpoint + paced + divider 64",
+  "ok": true,
+  "idleYield": true,
+  "calls": [
+   [
+    "setICountDivider",
+    64
+   ],
+   [
+    "setGuestClock",
+    "icount"
+   ],
+   [
+    "setGuestClock",
+    "paced-icount"
+   ],
+   [
+    "setPacedIdlePolicy",
+    true,
+    50
+   ]
+  ],
+  "finalMode": "paced-icount"
+ },
+ {
+  "name": "restored paced-icount checkpoint + paced (the clause the diff adds at guest-clock.js:68)",
+  "ok": true,
+  "idleYield": true,
+  "calls": [
+   [
+    "setGuestClock",
+    "icount"
+   ],
+   [
+    "setGuestClock",
+    "paced-icount"
+   ],
+   [
+    "rebaseGuestClock"
+   ],
+   [
+    "setPacedIdlePolicy",
+    true,
+    50
+   ]
+  ],
+  "finalMode": "paced-icount"
+ },
+ {
+  "name": "restored wall checkpoint + paced (must be refused)",
+  "ok": false,
+  "error": "GPU checkpoint clock differs from native state or selected policy",
+  "calls": [],
+  "finalMode": "icount"
+ },
+ {
+  "name": "restored paced-icount checkpoint + no policy (must be refused)",
+  "ok": false,
+  "error": "GPU checkpoint clock differs from native state or selected policy",
+  "calls": [],
+  "finalMode": "icount"
+ },
+ {
+  "name": "restored clock whose mtime differs from the machine + paced (must be refused)",
+  "ok": false,
+  "error": "GPU checkpoint clock differs from native state or selected policy",
+  "calls": [],
+  "finalMode": "icount"
+ }
+]

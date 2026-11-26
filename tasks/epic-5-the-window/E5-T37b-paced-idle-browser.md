@@ -3,7 +3,7 @@ id: E5-T37b
 epic: 5
 title: Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time
 priority: 0.387645
-status: implemented
+status: evidence-needed
 depends_on: [E5-T37a]
 estimate: S
 risk: medium
@@ -176,3 +176,179 @@ tick has none after its run slice).
 **Not claimed.** Other guests (the policy is refused for boots with persistence or without the
 whole image, and nothing else selects it); the first minute after the desktop appears, which is
 not idle under the paced clock; networking, audio and RTC-alarm sessions (E5-T37c).
+
+### 2026-11-26 — verifier — VERDICT: needs-evidence
+
+Fresh session; I did not implement this. Head `939f16b9a` (the claim's `423985d3d` plus two commits
+that touch only this file and `evidence/`: `git diff 423985d3d..939f16b9a -- crates web tools` is
+empty). My predictions were written before I opened any evidence or ran anything
+(`evidence/e5-t37b/verifier/predictions.txt`); every file named below is in that directory.
+
+The product was not contradicted: the browser criteria hold on my own loads and every item of
+the attack list holds. Two things the acceptance says tests show are not shown, and one of those
+tests fails when its body runs. Status `evidence-needed`; nothing promoted; the roadmap row stays
+`partial`. Both demands are test-only, so the browser evidence and the items under "Held" need
+not be redone if no runtime file changes.
+
+**Needs evidence**
+
+- P2, the wasm test — FAILED as proof. Predicted: `wasm-pack test --node crates/wasm --lib -- exported_paced`
+  runs all of `exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest`. Observed: 2 pass
+  (`gates-verifier.log`), but the test returns at `crates/wasm/src/lib.rs:1796`
+  (`if JsHostTimer::new().is_none() { return; }`). Node's global is neither a `Window` nor a
+  `WorkerGlobalScope` (`lib.rs:1520-1531`), so there is no host clock: the shipped wasm in plain
+  node answers `setGuestClock("paced-icount")` with `guest_clock_source_unavailable`
+  (`shipped-wasm-node-plain.json`). Lines 1799-1829 never execute under the acceptance command;
+  it shows the refusals and nothing of "ends its slice at the `wfi` and reports the wait once;
+  without the opt-in, and in pure ICount, nothing is reported". With a host clock given to node
+  and nothing else changed (`NODE_OPTIONS=--require=…/fake-worker-scope.cjs`, same test binary,
+  same command) the test fails: `panicked at crates/wasm/src/lib.rs:1812:9: retired 5`
+  (`wasm-test-with-host-timer.log`); the assertion wants 6 to 999 and the slice retires 5.
+  The bound is wrong, not the product: the same seven-word guest through the shipped wasm's JS
+  API gives retired 5, wait 26838.5 ms, second take 0; then retired 2 and the wait again; 5000
+  retired and no wait without the opt-in; 5000 and no wait in pure ICount; and 17 of 17 malformed
+  argument pairs refused (`shipped-wasm-probe.mjs`, `shipped-wasm-node-fake-worker-scope.json`).
+  Demand: make the acceptance command execute the whole test (a host clock under node, or the
+  behaviour half as its own test run where one exists), correct the bound, re-record that gate.
+- COVERAGE `web/guest-clock.js:68` — NEVER EXECUTED. Predicted: the unit tests select the policy
+  "in a fresh boot and after a restore", as the acceptance says. Observed: no test passes a
+  `restoredClock` (the word "restor" does not occur in `web/tests/e5-t37b-paced-idle.test.mjs`);
+  the Replay desktop's warm boot passes `undefined` there (`web/loader.js:1167`: only session and
+  GPU checkpoints supply one); and the mutant that drops the clause this diff adds at line 68
+  passes all 12 tests (`mutants.json`, G5). Run by hand the path behaves correctly
+  (`restore-clock-probe.json`: a restored `icount` or `paced-icount` clock selects the paced clock
+  and the policy, a restored `wall` clock or a moved `mtime` is refused before anything is
+  touched). Demand: add those cases to the unit test, or delete the clause and reword the bullet
+  if no boot can reach it.
+
+**Notes for the worker — not refutations**
+
+- The gate admits more than the measured boot. The real `startLinuxBoot` source, driven to its
+  option checks (`gate-probe.json`), refuses "paced" with `persist` true/null/0/"false", without
+  a whole image, in initramfs mode and under the wall clock, each before any fetch
+  (`web/loader.js:422-430`; disk mode is refused by the check after it). It admits "paced" together with accelerated graphics, with `slirpNet`,
+  and with the microphone. For accelerated graphics the Boundary's sentence "nothing but a
+  controller call can deliver anything in between" does not hold by reading:
+  `productionGpu?.pump()` runs straight after the take (`web/loader.js:1388-1389`) and completes
+  guest GPU commands without voiding the ticket. No caller asks for it (`web/main.js:2312` is the
+  only place "paced" is selected, with no `virgl`, `slirpNet: false`, `enableMic: false`), so I
+  could not anchor a wrong execution and do not count it. Either refuse those combinations at
+  the gate (a runtime change, which brings the browser gates with it) or add them to E5-T37c
+  and reword the sentence to speak for the Replay desktop only.
+- What the unit tests do and do not show. 31 one-line mutants of copies of the four files
+  against the 12 tests (`mutants.mjs`, `mutants.json`): 24 killed, 7 survive. All nine
+  `idle-sleep.js` mutants are killed; the one where the timer fires and never resumes is killed
+  by the file hanging, not failing ("the defaults use the realm's timers" awaits with no
+  timeout). The loader tests match source text and evaluate the two gate expressions; they do
+  not run the tick. Survivors: `sleepIdle` leaving `tickScheduled` false, `sleepIdle` without its
+  first-line guard (both indistinguishable on any admitted boot — see Coverage), `sleepIdle`
+  dropping the ticket, the sleep resuming into `schedule` instead of `tick` (the run loop stalls
+  after the first sleep — a browser load would show it at once, no unit test does), the
+  lifecycle built without the policy, the wrap applied to every boot, and G5 above. The browser
+  runs are what carry the loader's behaviour.
+
+**Held** (carry forward while the named files and the bundle are unchanged)
+
+- O1-O3 evidence is for the claimed head. `gates.log` names `423985d3d`; `web/dist/{loader,guest-clock,idle-sleep,main,roadmap}.js`
+  are byte-identical to their sources and `web/dist` is clean against HEAD; `:8125` serves the
+  same sha256 for those files and for `pkg/wasm_vm_wasm_bg.wasm`, which exports
+  `wasmlinux_setPacedIdlePolicy` and `wasmlinux_takeIdleWaitMs`; the four result files start
+  08:33-08:38Z, after the commit (08:30Z), and the claim's table and pooled medians (267.85 ms
+  and 354.45 ms) are a faithful copy of them.
+- P1 `node --test tests/e5-t37b-paced-idle.test.mjs`: 12 pass (`unit-e5-t37b.log`). P3 fmt, clippy
+  and build: rc 0 (`gates-verifier.log`; clippy and build answered from a warm cache).
+- P4 full web unit suite: 611 tests, 583 pass, 28 fail; the names equal `web-unit-failing-before.txt`.
+  Ten of the 28 are loader and clock tests, the code this task changed, so I did not take the
+  list on trust: in a sparse shared clone the eleven test files that hold them give the same 17
+  failures at `6669dc702` and at `939f16b9a`.
+- P5-P8 browser, my own fresh loads on `:8125` (Chrome 158.0.8127.88 headless), one a side:
+
+  | | paced | `&pace=0` | paced, cold boot (`&noSnapshot`) | paced, wake removed (attack) |
+  |---|---:|---:|---:|---:|
+  | idle: worker inside run slices, % of wall | 9.5 | 99.8 | 10.9 | 9.6 |
+  | idle: guest seconds per real second | 0.98 | 11.51 | 0.96 | 0.98 |
+  | idle: sleeps / ended early by a host call, per 30 s | 584 / 109 | 0 / 0 | 668 / 212 | 530 / 0 |
+  | idle: clock | paced-icount | icount | paced-icount | paced-icount |
+  | idle: CPU time of the renderer process, OS-reported | 4.01 s in 27.3 s | 29.77 s in 28.4 s | 4.46 s in 27.3 s | 4.01 s in 27.3 s |
+  | click result, median (min - max), n = 8, ms | 272.4 (263.3 - 608.8) | 360.4 (335.9 - 623) | 327.2 (306.7 - 664.6) | 281.1 (267.5 - 576.6) |
+  | key echo, median, n = 8, ms | 49.6 | 46.5 | 42.4 | 79.9 |
+  | desktop ready after | 3.6 s | 3.7 s | 31.2 s | 3.7 s |
+
+  Every criterion holds on the first two columns: at most 30% and 0.8-1.2 s/s paced, at least 90%
+  and 3 s/s unpaced, paced click median 24% lower, key echo 3.1 ms apart. The harness's median
+  of eight is the fifth sample; the conventional one gives 270.6 / 359.9 ms and 49.2 / 46.5 ms.
+  Zero disk waits in every load (`fetchWaits` 0), which is the premise of the gate. One console
+  error a side, a 404: the server has no `/favicon.ico`, and the demo-page run, which records
+  URLs, shows that one and no other. Background load was steady and the same on both sides (about
+  4.2 of 16 cores: mediaanalysisd, a Spotify renderer, and another session's native boot; in
+  each `cpu-*.summary.json`), and the numbers agree with the worker's, so I did not re-run.
+- P10 the idle result does not rest on the loader's own counters: `ps` gives the renderer
+  process that owns the worker 14.7% of a core over the idle window paced and 105% unpaced
+  (`cpu-v-*.summary.json`).
+- P9 demo page on the bundle: 127 passed, 0 failed, no page, console or HTTP errors
+  (`demo-suite.json`, my own run); the row is in the bundle as `partial`.
+- A1-A9 the attack list, by running the loader's own text — the block from `tickScheduled` to the
+  first `schedule()`, the real `stop`/`pause`/`resume` bodies and the real controller wrap —
+  against a scripted machine, a fake task queue and fake timers (`run-loop-harness.mjs`,
+  `run-loop-harness.json`). A host call during a sleep clears the timer and posts one tick in
+  the same turn, and a status read does too; a timer end resumes into exactly one tick; a stale
+  callback does nothing; pause during a sleep runs no slice and resume, even twice, leaves one
+  tick; stop during a sleep resolves `stopped` with no slice and no error after it; without the
+  policy the wait is never taken and the controller is not wrapped; a delivery during a tick's
+  await voids the wait that tick took. 300 seeds of 120 random steps (35,661 steps, 6,109
+  sleeps, 1,239 wakes, 3,254 stale callbacks fired): never two pending ticks, never a stall,
+  never a slice while paused or stopped. The harness notices eight of ten mutants I gave it,
+  among them three the unit tests miss (`run-loop-harness-vs-mutants.json`). Quota pause cannot
+  be set on an admitted boot (`usePersist` is false when `persist === false`,
+  `web/loader.js:654`). Warm and cold boots: columns 1 and 3. A module without the bindings: the
+  lifecycle throws before the divider is touched (worker's test; mutant G3 killed) and
+  `web/loader.js:1166-1169` rethrows. `?pace=0`: column 2. Other guests: "paced" is selected in
+  one place, and with `idleYield` false the tick ends in `schedule()` as before; they gain three
+  fields in `schedulerStats()` and nothing else.
+- NOVEL ATTACK: is the evidence sensitive to the wake? I served the committed bundle through a
+  proxy that rewrites one line of `/loader.js` in memory so the controller wrap no longer calls
+  `wakeIdle()` (`sabotage-proxy.mjs`; the checkout was not touched) and ran the paced benchmark:
+  column 4. Predicted: key echo rises by more than 15 ms and no sleep ends early. Observed: 0
+  wakes; key echo 79.9 ms by the harness's median and 65.5 ms by the conventional one, four of
+  the eight samples at 80-94 ms — over the criterion's 61.5 ms either way, while the click
+  median alone (281 ms) would have passed. The key-echo criterion is what proves the wake, and
+  at n = 8 it does so with a margin of one sample.
+
+**Coverage** of the "What the recorded runs executed" paragraph against the diff: it is accurate
+for `web/` and for the two bindings. Unexecuted by any test or browser run:
+`crates/wasm/src/lib.rs:1799-1829` and `web/guest-clock.js:68` (needs-evidence, above); the
+`reentrant()`, `refuse_unrecorded_mutation` and `refuse_capture_mutation` error returns of the
+two bindings (waived: the same plumbing every other setter has); the `true` branch of
+`sleepIdle`'s first line, `web/loader.js:1301`, and the throw at `web/guest-clock.js:132`
+(waived: defensive — `stopped` and `paused` are tested at `web/loader.js:1462` on every chunked
+boot with nothing asynchronous after it, and a clock other than the two is refused by the
+validation and the restored-clock check; 120 seeds of 120 random steps without the guard showed
+no difference); the task files (waived: text).
+
+**Suite**: nothing promoted, the verdict is not `verified`. `run-loop-harness.mjs` is the
+candidate for the next round: it pins what the regex tests cannot.
+
+**Not checked**: a second pair of loads a side (the criterion asks the worker for two; I ran
+one and judged the worker's two as well); an unpaced cold boot, so I do not know what the paced
+clock costs in time to desktop; a background or throttled tab, where a worker timer may run
+later than the 50 ms cap; any browser but headless Chrome 158; the live site; the whole
+`wasm-pack test --lib` set (only `exported_paced`); a cold `cargo clippy`; the core, which is
+E5-T37a's and unchanged.
+
+Commands: `cd web && node --test tests/e5-t37b-paced-idle.test.mjs`;
+`cargo fmt --check`; `cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings`;
+`cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`;
+`wasm-pack test --node crates/wasm --lib -- exported_paced`, and the same under
+`NODE_OPTIONS=--require=evidence/e5-t37b/verifier/fake-worker-scope.cjs`;
+`node evidence/e5-t37b/verifier/shipped-wasm-probe.mjs web/dist/pkg [--fake-worker-scope]`;
+`cd web && node --test --test-timeout=120000 tests/*.test.mjs`, and eleven of its files in a
+sparse clone at `6669dc702` and at `939f16b9a`;
+`evidence/e5-t37b/verifier/run-with-cpu.sh v-paced ''`, `… v-unpaced '&pace=0'`,
+`… v-paced-cold '&noSnapshot'` (each is
+`node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios click,type,idle --n 8 --idle-s 30`
+with a `ps` sampler beside it); `node evidence/e5-t37b/verifier/sabotage-proxy.mjs 8137 /loader.js <find> <replace>`
+then `… run-with-cpu.sh v-sabotage-nowake '' http://127.0.0.1:8137`;
+`node evidence/e5-t37b/verifier/mutants.mjs .`; `node evidence/e5-t37b/verifier/run-loop-harness.mjs web 300`;
+`node evidence/e5-t37b/verifier/harness-vs-mutants.mjs .`; `node evidence/e5-t37b/verifier/gate-probe.mjs web`;
+`node evidence/e5-t37b/verifier/restore-clock-probe.mjs web`;
+`E5_DEMO_TASK=E5-T37b E5_DEMO_OUT=evidence/e5-t37b/verifier node evidence/e5-t37b/demo-suite.mjs`.

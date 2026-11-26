@@ -1,0 +1,1129 @@
+T 1795683046.723
+11256 1 1290:25.17 other: mediaanalysisd
+51816 51780 4:41.43 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 708:29.24 other: Spotify Helper (Renderer)
+T 1795683047.773
+11256 1 1290:26.63 other: mediaanalysisd
+51816 51780 4:42.47 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.38 chrome-browser(playwright headless)
+56860 56841 0:00.08 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:00.25 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.04 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.06 Google Chrome Helper (Aperitif)
+74862 74827 708:30.81 other: Spotify Helper (Renderer)
+T 1795683048.824
+11256 1 1290:28.23 other: mediaanalysisd
+51816 51780 4:43.51 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.41 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:01.32 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.05 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.06 Google Chrome Helper (Aperitif)
+74862 74827 708:32.39 other: Spotify Helper (Renderer)
+T 1795683049.867
+11256 1 1290:29.97 other: mediaanalysisd
+51816 51780 4:44.55 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.41 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:02.40 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.05 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.06 Google Chrome Helper (Aperitif)
+74862 74827 708:33.96 other: Spotify Helper (Renderer)
+T 1795683050.918
+11256 1 1290:31.76 other: mediaanalysisd
+51816 51780 4:45.60 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.46 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:03.66 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.07 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.07 Google Chrome Helper (Aperitif)
+74862 74827 708:35.54 other: Spotify Helper (Renderer)
+T 1795683051.965
+11256 1 1290:33.60 other: mediaanalysisd
+51816 51780 4:46.64 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.46 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:04.77 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.07 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.07 Google Chrome Helper (Aperitif)
+74862 74827 708:37.10 other: Spotify Helper (Renderer)
+T 1795683053.018
+11256 1 1290:35.40 other: mediaanalysisd
+51816 51780 4:47.68 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.46 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:05.87 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.08 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.08 Google Chrome Helper (Aperitif)
+74862 74827 708:38.66 other: Spotify Helper (Renderer)
+T 1795683054.070
+11256 1 1290:37.21 other: mediaanalysisd
+51816 51780 4:48.73 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.47 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:07.02 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.08 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.08 Google Chrome Helper (Aperitif)
+74862 74827 708:40.35 other: Spotify Helper (Renderer)
+T 1795683055.124
+11256 1 1290:38.93 other: mediaanalysisd
+51816 51780 4:49.78 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.47 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:08.10 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.09 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.08 Google Chrome Helper (Aperitif)
+74862 74827 708:42.05 other: Spotify Helper (Renderer)
+T 1795683056.176
+11256 1 1290:40.76 other: mediaanalysisd
+51816 51780 4:50.83 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.47 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:09.21 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.10 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.09 Google Chrome Helper (Aperitif)
+74862 74827 708:43.62 other: Spotify Helper (Renderer)
+T 1795683057.231
+11256 1 1290:42.50 other: mediaanalysisd
+51816 51780 4:51.87 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.48 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:10.34 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.10 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.09 Google Chrome Helper (Aperitif)
+74862 74827 708:45.19 other: Spotify Helper (Renderer)
+T 1795683058.286
+11256 1 1290:44.26 other: mediaanalysisd
+51816 51780 4:52.92 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.48 chrome-browser(playwright headless)
+56860 56841 0:00.14 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:11.45 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.11 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.10 Google Chrome Helper (Aperitif)
+74862 74827 708:46.76 other: Spotify Helper (Renderer)
+T 1795683059.338
+11256 1 1290:45.98 other: mediaanalysisd
+51816 51780 4:53.97 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.50 chrome-browser(playwright headless)
+56860 56841 0:00.15 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:12.55 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.11 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.10 Google Chrome Helper (Aperitif)
+74862 74827 708:48.32 other: Spotify Helper (Renderer)
+T 1795683060.382
+11256 1 1290:47.72 other: mediaanalysisd
+51816 51780 4:55.01 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.57 chrome-browser(playwright headless)
+56860 56841 0:00.18 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:13.64 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.12 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.10 Google Chrome Helper (Aperitif)
+74862 74827 708:49.89 other: Spotify Helper (Renderer)
+T 1795683061.427
+11256 1 1290:49.40 other: mediaanalysisd
+51816 51780 4:56.04 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.62 chrome-browser(playwright headless)
+56860 56841 0:00.22 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:14.76 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.12 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.11 Google Chrome Helper (Aperitif)
+74862 74827 708:51.45 other: Spotify Helper (Renderer)
+T 1795683062.473
+11256 1 1290:51.17 other: mediaanalysisd
+51816 51780 4:57.08 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.63 chrome-browser(playwright headless)
+56860 56841 0:00.26 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:15.85 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.13 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.11 Google Chrome Helper (Aperitif)
+74862 74827 708:53.01 other: Spotify Helper (Renderer)
+T 1795683063.525
+11256 1 1290:52.72 other: mediaanalysisd
+51816 51780 4:58.13 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.65 chrome-browser(playwright headless)
+56860 56841 0:00.30 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:16.96 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.13 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.12 Google Chrome Helper (Aperitif)
+74862 74827 708:54.60 other: Spotify Helper (Renderer)
+T 1795683064.582
+11256 1 1290:53.78 other: mediaanalysisd
+51816 51780 4:59.18 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.71 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:18.07 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.14 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.12 Google Chrome Helper (Aperitif)
+74862 74827 708:56.39 other: Spotify Helper (Renderer)
+T 1795683065.634
+11256 1 1290:55.45 other: mediaanalysisd
+51816 51780 5:00.23 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.72 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:19.18 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.14 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.12 Google Chrome Helper (Aperitif)
+74862 74827 708:57.96 other: Spotify Helper (Renderer)
+T 1795683066.685
+11256 1 1290:57.20 other: mediaanalysisd
+51816 51780 5:01.27 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.72 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:20.28 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.15 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.13 Google Chrome Helper (Aperitif)
+74862 74827 708:59.54 other: Spotify Helper (Renderer)
+T 1795683067.737
+11256 1 1290:58.85 other: mediaanalysisd
+51816 51780 5:02.32 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.73 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:21.40 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.15 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.13 Google Chrome Helper (Aperitif)
+74862 74827 709:01.12 other: Spotify Helper (Renderer)
+T 1795683068.787
+11256 1 1291:00.51 other: mediaanalysisd
+51816 51780 5:03.36 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.73 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:22.50 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.16 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.14 Google Chrome Helper (Aperitif)
+74862 74827 709:02.70 other: Spotify Helper (Renderer)
+T 1795683069.838
+11256 1 1291:02.29 other: mediaanalysisd
+51816 51780 5:04.40 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.73 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:23.61 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.16 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.14 Google Chrome Helper (Aperitif)
+74862 74827 709:04.26 other: Spotify Helper (Renderer)
+T 1795683070.885
+11256 1 1291:04.04 other: mediaanalysisd
+51816 51780 5:05.44 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.73 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:24.72 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.17 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.15 Google Chrome Helper (Aperitif)
+74862 74827 709:05.83 other: Spotify Helper (Renderer)
+T 1795683071.934
+11256 1 1291:05.83 other: mediaanalysisd
+51816 51780 5:06.48 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.73 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:25.82 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.18 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.15 Google Chrome Helper (Aperitif)
+74862 74827 709:07.40 other: Spotify Helper (Renderer)
+T 1795683072.986
+11256 1 1291:07.65 other: mediaanalysisd
+51816 51780 5:07.52 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.74 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:26.92 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.18 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.15 Google Chrome Helper (Aperitif)
+74862 74827 709:09.22 other: Spotify Helper (Renderer)
+T 1795683074.037
+11256 1 1291:09.43 other: mediaanalysisd
+51816 51780 5:08.57 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.74 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:28.03 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.19 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.16 Google Chrome Helper (Aperitif)
+74862 74827 709:10.80 other: Spotify Helper (Renderer)
+T 1795683075.084
+11256 1 1291:11.21 other: mediaanalysisd
+51816 51780 5:09.61 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.74 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:29.12 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.19 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.16 Google Chrome Helper (Aperitif)
+74862 74827 709:12.36 other: Spotify Helper (Renderer)
+T 1795683076.126
+11256 1 1291:12.96 other: mediaanalysisd
+51816 51780 5:10.64 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.74 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:30.23 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.20 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.17 Google Chrome Helper (Aperitif)
+74862 74827 709:13.92 other: Spotify Helper (Renderer)
+T 1795683077.177
+11256 1 1291:14.71 other: mediaanalysisd
+51816 51780 5:11.69 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.78 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.06 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:31.32 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.20 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.17 Google Chrome Helper (Aperitif)
+74862 74827 709:15.49 other: Spotify Helper (Renderer)
+T 1795683078.227
+11256 1 1291:16.49 other: mediaanalysisd
+51816 51780 5:12.74 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.78 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:32.43 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.21 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.17 Google Chrome Helper (Aperitif)
+74862 74827 709:17.06 other: Spotify Helper (Renderer)
+T 1795683079.272
+11256 1 1291:18.25 other: mediaanalysisd
+51816 51780 5:13.78 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.78 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:33.52 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.21 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.18 Google Chrome Helper (Aperitif)
+74862 74827 709:18.86 other: Spotify Helper (Renderer)
+T 1795683080.324
+11256 1 1291:20.07 other: mediaanalysisd
+51816 51780 5:14.82 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.78 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:34.64 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.22 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.18 Google Chrome Helper (Aperitif)
+74862 74827 709:20.43 other: Spotify Helper (Renderer)
+T 1795683081.369
+11256 1 1291:21.82 other: mediaanalysisd
+51816 51780 5:15.86 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.78 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:35.73 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.22 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.19 Google Chrome Helper (Aperitif)
+74862 74827 709:22.01 other: Spotify Helper (Renderer)
+T 1795683082.420
+11256 1 1291:23.64 other: mediaanalysisd
+51816 51780 5:16.90 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.78 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:36.84 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.23 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.19 Google Chrome Helper (Aperitif)
+74862 74827 709:23.58 other: Spotify Helper (Renderer)
+T 1795683083.471
+11256 1 1291:25.45 other: mediaanalysisd
+51816 51780 5:17.95 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.79 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:37.96 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.24 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.19 Google Chrome Helper (Aperitif)
+74862 74827 709:25.16 other: Spotify Helper (Renderer)
+T 1795683084.523
+11256 1 1291:27.27 other: mediaanalysisd
+51816 51780 5:19.00 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.79 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:39.05 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.24 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:26.73 other: Spotify Helper (Renderer)
+T 1795683085.570
+11256 1 1291:29.02 other: mediaanalysisd
+51816 51780 5:20.04 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.79 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:40.15 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.25 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:28.52 other: Spotify Helper (Renderer)
+T 1795683086.624
+11256 1 1291:30.84 other: mediaanalysisd
+51816 51780 5:21.08 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.79 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:41.27 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.25 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:30.10 other: Spotify Helper (Renderer)
+T 1795683087.670
+11256 1 1291:32.65 other: mediaanalysisd
+51816 51780 5:22.12 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.79 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:42.36 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.26 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:31.66 other: Spotify Helper (Renderer)
+T 1795683088.721
+11256 1 1291:33.15 other: mediaanalysisd
+51816 51780 5:23.17 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.79 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:43.48 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.26 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:33.23 other: Spotify Helper (Renderer)
+T 1795683089.767
+11256 1 1291:34.83 other: mediaanalysisd
+51816 51780 5:24.21 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.80 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:44.58 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.27 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:34.79 other: Spotify Helper (Renderer)
+T 1795683090.821
+11256 1 1291:36.68 other: mediaanalysisd
+51816 51780 5:25.25 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.80 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:45.67 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.27 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.20 Google Chrome Helper (Aperitif)
+74862 74827 709:36.36 other: Spotify Helper (Renderer)
+T 1795683091.874
+11256 1 1291:38.45 other: mediaanalysisd
+51816 51780 5:26.30 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.80 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:46.77 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.28 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:37.93 other: Spotify Helper (Renderer)
+T 1795683092.929
+11256 1 1291:40.28 other: mediaanalysisd
+51816 51780 5:27.35 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.80 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:47.89 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.28 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:39.74 other: Spotify Helper (Renderer)
+T 1795683093.975
+11256 1 1291:42.09 other: mediaanalysisd
+51816 51780 5:28.39 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.80 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:48.98 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.29 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:41.31 other: Spotify Helper (Renderer)
+T 1795683095.023
+11256 1 1291:43.86 other: mediaanalysisd
+51816 51780 5:29.43 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.81 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:50.08 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.29 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:42.90 other: Spotify Helper (Renderer)
+T 1795683096.076
+11256 1 1291:45.64 other: mediaanalysisd
+51816 51780 5:30.48 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.81 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:51.20 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.30 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:44.47 other: Spotify Helper (Renderer)
+T 1795683097.128
+11256 1 1291:47.44 other: mediaanalysisd
+51816 51780 5:31.52 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.81 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:52.30 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.30 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:46.05 other: Spotify Helper (Renderer)
+T 1795683098.174
+11256 1 1291:49.22 other: mediaanalysisd
+51816 51780 5:32.56 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.81 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:53.41 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.31 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:47.61 other: Spotify Helper (Renderer)
+T 1795683099.217
+11256 1 1291:50.99 other: mediaanalysisd
+51816 51780 5:33.60 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:54.51 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.31 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:49.17 other: Spotify Helper (Renderer)
+T 1795683100.269
+11256 1 1291:52.78 other: mediaanalysisd
+51816 51780 5:34.64 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:55.60 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.31 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:50.98 other: Spotify Helper (Renderer)
+T 1795683101.317
+11256 1 1291:54.59 other: mediaanalysisd
+51816 51780 5:35.69 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:56.71 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.32 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:52.55 other: Spotify Helper (Renderer)
+T 1795683102.359
+11256 1 1291:56.39 other: mediaanalysisd
+51816 51780 5:36.72 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:57.81 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.32 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:54.13 other: Spotify Helper (Renderer)
+T 1795683103.410
+11256 1 1291:58.20 other: mediaanalysisd
+51816 51780 5:37.77 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 0:58.92 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.33 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:55.70 other: Spotify Helper (Renderer)
+T 1795683104.454
+11256 1 1291:59.99 other: mediaanalysisd
+51816 51780 5:38.80 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:00.01 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.33 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:57.26 other: Spotify Helper (Renderer)
+T 1795683105.498
+11256 1 1292:01.71 other: mediaanalysisd
+51816 51780 5:39.84 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.82 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:01.11 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.34 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 709:58.82 other: Spotify Helper (Renderer)
+T 1795683106.544
+11256 1 1292:03.43 other: mediaanalysisd
+51816 51780 5:40.88 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:02.22 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.34 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:00.38 other: Spotify Helper (Renderer)
+T 1795683107.595
+11256 1 1292:05.19 other: mediaanalysisd
+51816 51780 5:41.92 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:03.31 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.35 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:01.95 other: Spotify Helper (Renderer)
+T 1795683108.650
+11256 1 1292:07.05 other: mediaanalysisd
+51816 51780 5:42.97 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:04.40 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.35 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:03.76 other: Spotify Helper (Renderer)
+T 1795683109.701
+11256 1 1292:08.81 other: mediaanalysisd
+51816 51780 5:44.02 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:05.52 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.36 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:05.33 other: Spotify Helper (Renderer)
+T 1795683110.750
+11256 1 1292:10.63 other: mediaanalysisd
+51816 51780 5:45.06 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.31 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:06.62 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.36 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:06.92 other: Spotify Helper (Renderer)
+T 1795683111.802
+11256 1 1292:12.45 other: mediaanalysisd
+51816 51780 5:46.11 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:07.72 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.37 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:08.49 other: Spotify Helper (Renderer)
+T 1795683112.853
+11256 1 1292:14.22 other: mediaanalysisd
+51816 51780 5:47.16 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:08.81 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.37 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:10.06 other: Spotify Helper (Renderer)
+T 1795683113.905
+11256 1 1292:16.02 other: mediaanalysisd
+51816 51780 5:48.20 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:09.93 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.38 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:11.63 other: Spotify Helper (Renderer)
+T 1795683114.959
+11256 1 1292:17.83 other: mediaanalysisd
+51816 51780 5:49.25 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.83 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:11.02 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.38 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:13.44 other: Spotify Helper (Renderer)
+T 1795683116.011
+11256 1 1292:19.61 other: mediaanalysisd
+51816 51780 5:50.30 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:12.14 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.39 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:15.01 other: Spotify Helper (Renderer)
+T 1795683117.061
+11256 1 1292:21.36 other: mediaanalysisd
+51816 51780 5:51.34 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:13.24 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.39 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:16.58 other: Spotify Helper (Renderer)
+T 1795683118.107
+11256 1 1292:23.08 other: mediaanalysisd
+51816 51780 5:52.39 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:14.33 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.40 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:18.14 other: Spotify Helper (Renderer)
+T 1795683119.161
+11256 1 1292:24.91 other: mediaanalysisd
+51816 51780 5:53.43 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:15.45 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.40 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:19.71 other: Spotify Helper (Renderer)
+T 1795683120.208
+11256 1 1292:26.59 other: mediaanalysisd
+51816 51780 5:54.48 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:16.54 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.41 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:21.28 other: Spotify Helper (Renderer)
+T 1795683121.262
+11256 1 1292:28.33 other: mediaanalysisd
+51816 51780 5:55.52 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:17.64 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.41 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:23.03 other: Spotify Helper (Renderer)
+T 1795683122.311
+11256 1 1292:30.10 other: mediaanalysisd
+51816 51780 5:56.57 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:18.74 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.42 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:24.66 other: Spotify Helper (Renderer)
+T 1795683123.358
+11256 1 1292:31.90 other: mediaanalysisd
+51816 51780 5:57.61 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:19.85 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.42 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:26.24 other: Spotify Helper (Renderer)
+T 1795683124.410
+11256 1 1292:33.71 other: mediaanalysisd
+51816 51780 5:58.66 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:20.94 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.43 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:27.82 other: Spotify Helper (Renderer)
+T 1795683125.461
+11256 1 1292:35.50 other: mediaanalysisd
+51816 51780 5:59.71 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:22.06 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.43 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:29.39 other: Spotify Helper (Renderer)
+T 1795683126.512
+11256 1 1292:37.26 other: mediaanalysisd
+51816 51780 6:00.75 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:23.16 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.43 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:30.95 other: Spotify Helper (Renderer)
+T 1795683127.563
+11256 1 1292:39.07 other: mediaanalysisd
+51816 51780 6:01.80 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:24.26 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.44 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:32.52 other: Spotify Helper (Renderer)
+T 1795683128.616
+11256 1 1292:40.93 other: mediaanalysisd
+51816 51780 6:02.85 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:25.38 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.44 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:34.08 other: Spotify Helper (Renderer)
+T 1795683129.670
+11256 1 1292:42.66 other: mediaanalysisd
+51816 51780 6:03.90 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:26.48 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.45 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:35.65 other: Spotify Helper (Renderer)
+T 1795683130.718
+11256 1 1292:44.37 other: mediaanalysisd
+51816 51780 6:04.93 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:27.57 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.45 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:37.46 other: Spotify Helper (Renderer)
+T 1795683131.769
+11256 1 1292:46.18 other: mediaanalysisd
+51816 51780 6:05.99 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:28.67 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.46 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:39.04 other: Spotify Helper (Renderer)
+T 1795683132.821
+11256 1 1292:48.02 other: mediaanalysisd
+51816 51780 6:07.03 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:29.78 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.46 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:40.60 other: Spotify Helper (Renderer)
+T 1795683133.866
+11256 1 1292:49.83 other: mediaanalysisd
+51816 51780 6:08.07 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:30.88 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.47 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:42.16 other: Spotify Helper (Renderer)
+T 1795683134.917
+11256 1 1292:51.63 other: mediaanalysisd
+51816 51780 6:09.12 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:31.99 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.47 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:43.74 other: Spotify Helper (Renderer)
+T 1795683135.959
+11256 1 1292:53.43 other: mediaanalysisd
+51816 51780 6:10.16 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:33.08 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.48 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:45.48 other: Spotify Helper (Renderer)
+T 1795683137.013
+11256 1 1292:55.14 other: mediaanalysisd
+51816 51780 6:11.21 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.84 chrome-browser(playwright headless)
+56860 56841 0:00.32 Google Chrome Helper (Aperitif)
+56861 56841 0:00.02 Google Chrome Helper (Aperitif)
+56864 56841 0:00.08 Google Chrome Helper (Aperitif Renderer)
+56865 56841 1:34.17 Google Chrome Helper (Aperitif Renderer)
+56868 56841 0:00.48 Google Chrome Helper (Aperitif)
+56869 56841 0:00.03 Google Chrome Helper (Aperitif Renderer)
+56870 56841 0:00.21 Google Chrome Helper (Aperitif)
+74862 74827 710:47.12 other: Spotify Helper (Renderer)
+T 1795683138.059
+11256 1 1292:56.82 other: mediaanalysisd
+51816 51780 6:12.25 other: native wasm-vm boot (another session)
+51885 1 0:16.44 other: mediaanalysisd
+56841 56839 0:00.90 chrome-browser(playwright headless)
+74862 74827 710:48.70 other: Spotify Helper (Renderer)
