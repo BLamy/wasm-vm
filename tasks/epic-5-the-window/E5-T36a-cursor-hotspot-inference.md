@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: evidence-needed
+status: in-progress
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
