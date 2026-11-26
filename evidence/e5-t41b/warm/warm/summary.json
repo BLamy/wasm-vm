@@ -4,35 +4,35 @@
   "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
   "browser": "158.0.8127.88",
   "budgetMs": 15000,
-  "nonce": "336E313A",
-  "command": "node -e \"console.log('E5T34E_336E313A', process.version)\" | tee -a /run/replay-desktop/events",
+  "nonce": "3D3F2A11",
+  "command": "node -e \"console.log('E5T34E_3D3F2A11', process.version)\" | tee -a /run/replay-desktop/events",
   "times": {
-    "wholeImageFinishedMs": 1731,
-    "snapshotStartedMs": 745,
-    "snapshotFinishedMs": 1199,
-    "wholeImageStartedMs": 760,
-    "downloadsFinishedMs": 1731,
-    "desktopVisibleMs": 3501,
-    "downloadEndToDesktopMs": 1770,
-    "runAgainAnsweredMs": 5115,
-    "nodeAnswerAfterTypingMs": 21361
+    "wholeImageFinishedMs": 1682,
+    "snapshotStartedMs": 757,
+    "snapshotFinishedMs": 1174,
+    "wholeImageStartedMs": 773,
+    "downloadsFinishedMs": 1682,
+    "desktopVisibleMs": 3468,
+    "downloadEndToDesktopMs": 1786,
+    "runAgainAnsweredMs": 5112,
+    "nodeAnswerAfterTypingMs": 21352
   },
   "states": [
     {
       "state": "fetching",
-      "at": 741.9450000524521
+      "at": 753.8200000524521
     },
     {
       "state": "instantiating",
-      "at": 1726.4400000572205
+      "at": 1676.4400000572205
     },
     {
       "state": "restoring",
-      "at": 1879.9950000047684
+      "at": 1818.3700000047684
     },
     {
       "state": "restored",
-      "at": 3154.054999947548
+      "at": 3050.774999976158
     }
   ],
   "downloads": {
@@ -42,9 +42,9 @@
       "declared": 189683821
     },
     "snapshot": {
-      "url": "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-2d4d38924d83.snap.gz",
-      "bytes": 129712599,
-      "declared": 129712599
+      "url": "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-f729cee9838e.snap.gz",
+      "bytes": 130233796,
+      "declared": 130233796
     }
   },
   "counts": {
@@ -53,7 +53,7 @@
     "snapshot": 1,
     "chunkOrRange": 0,
     "diskRelated": [
-      "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-2d4d38924d83.snap.gz",
+      "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-f729cee9838e.snap.gz",
       "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.img.gz"
     ],
     "chunkManifest": 1,
@@ -62,15 +62,15 @@
   "fetchStats": {
     "fetches": 0,
     "bytes": 0,
-    "localHits": 31,
-    "localBytes": 8126464,
+    "localHits": 26,
+    "localBytes": 6815744,
     "localImage": true,
     "error": null,
     "cache": {
-      "hits": 442,
-      "misses": 31,
+      "hits": 348,
+      "misses": 26,
       "evictions": 0,
-      "residentBytes": 8126464,
+      "residentBytes": 6815744,
       "budgetBytes": 268435456
     },
     "prefetch": {
@@ -85,11 +85,11 @@
     "runsAfter": 2
   },
   "node": [
-    "root@replay-desktop# \u001b[6nE5T34E_336E313A v26.13.1\r"
+    "root@replay-desktop# \u001b[6nE5T34E_3D3F2A11 v26.13.1\r"
   ],
   "keyboard": {
     "framesBefore": 0,
-    "framesAfter": 210,
+    "framesAfter": 212,
     "typedChars": 93
   },
   "consoleErrors": []

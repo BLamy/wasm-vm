@@ -3,7 +3,7 @@ id: E5-T41b
 epic: 5
 title: Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot
 priority: 0.387653
-status: in-progress
+status: implemented
 depends_on: [E5-T41a, E5-T36b]
 estimate: S
 risk: medium
@@ -200,3 +200,40 @@ checked through the public R2 GETs instead); a busy-shell compaction case; the `
 failure branch. HELD results above carry forward only for evidence whose digests do not change. A
 recapture changes the snapshot digest, so the size, privacy, warm/cold, latency and live checks
 must be rerun on the new artifact.
+
+### 2026-11-26 — worker — round 2 claim (head `dfc5da39b`)
+
+The refutation is right: `node -e 0` cached only a bare start. Commit `dfc5da39b`.
+
+**Changed** (`tools/build-replay-desktop-snapshot.sh`): before zeroing free memory the compaction
+runs node the ways a first command starts — bare, printing (`-e 'console.log(1)'`), `-p`, `-e`
+code that loads fs/os/path and starts a child through `process.execPath`, a script file and an
+ES module (files in /tmp, removed after). The feeder now `exec`s its sleep, so the cleanup's
+kill ends it (your leftover-process finding). The manifest's `generated` text is corrected.
+
+**Capture**: 130,233,796 bytes compressed (limit 135 MB), disk unchanged, privacy check passed on
+raw and compressed (`evidence/e5-t41b/capture/`; round 1's in `round-1/`). An intermediate
+capture with the first four warm-ups only (130.7 MB) still read 3 requests / 128 KiB for a
+first script file, which is why the last two were added; it was discarded, not published.
+
+**First node reads nothing** (`evidence/e5-t41b/first-node/first-node.sh SNAPSHOT.gz WORKDIR
+'command'` — your method: a native resume of the published snapshot, `/sys/block/vda/stat`
+around the session's first command, a fresh resume per command; `first-node.log`):
+`node -e "console.log(6*7)"`, `node -p process.version`, a script file, an ES module, and `-e`
+code running a child — read requests and sectors identical before and after, all five.
+
+**Committed bundle** (`dfc5da39b`, 8125; generation 1 on the same bundle at 8128):
+warm and cold pass (`warm.log`). Two interleaved loads a side, `--n 8 --idle-s 30`
+(`browser/`): node -e to prompt 1616 / 1562 ms against 4552 / 4529 ms (65 % faster); click
+271.5 / 256.1 ms against 262.2 / 258.2 (pooled 263.8 against 260.2 ms, within the spread of
+earlier rounds: 255-279 ms); key echo 47.2 / 45.2 against 47.2 / 48.9 ms; idle 1.8 / 1.6 %
+against 10.9 %; local image chunk reads over the whole run 24 against 256, none from the network.
+
+**Live**, after the redeploy (one R2 object uploaded and verified, the new snapshot): the served
+manifest names `replay-desktop-ready-f729cee9838e`; warm resume passes (`live.log`);
+`desktop-latency --url https://wasm-vm.pages.dev --app /app --n 6`: click 261 ms, key echo
+47.8 ms, node -e 1649 ms, idle 1.7 % (`live/latency.json`). The one console error is the favicon.
+
+Unchanged from round 1 and carried as you held them: the artifacts' R2 integrity method, the
+Node-line-never-comes path, memory pressure, the service-worker upgrade behaviour. The
+`node`-line nit at `:111` is not changed.

@@ -4,29 +4,29 @@
   "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&noSnapshot#ide",
   "browser": "158.0.8127.88",
   "budgetMs": 15000,
-  "nonce": "749C2FD8",
-  "command": "node -e \"console.log('E5T34E_749C2FD8', process.version)\" | tee -a /run/replay-desktop/events",
+  "nonce": "1ACC529E",
+  "command": "node -e \"console.log('E5T34E_1ACC529E', process.version)\" | tee -a /run/replay-desktop/events",
   "times": {
-    "wholeImageFinishedMs": 1553,
-    "wholeImageStartedMs": 614,
-    "downloadsFinishedMs": 1553,
-    "desktopVisibleMs": 31629,
-    "downloadEndToDesktopMs": 30076,
-    "runAgainAnsweredMs": 5223,
-    "nodeAnswerAfterTypingMs": 19337
+    "wholeImageFinishedMs": 1462,
+    "wholeImageStartedMs": 592,
+    "downloadsFinishedMs": 1462,
+    "desktopVisibleMs": 29793,
+    "downloadEndToDesktopMs": 28331,
+    "runAgainAnsweredMs": 5217,
+    "nodeAnswerAfterTypingMs": 27339
   },
   "states": [
     {
       "state": "fetching",
-      "at": 600.9500000476837
+      "at": 578.3049999475479
     },
     {
       "state": "instantiating",
-      "at": 1549.8999999761581
+      "at": 1459.7299998998642
     },
     {
       "state": "booting",
-      "at": 1660.8949999809265
+      "at": 1559.2799999713898
     }
   ],
   "downloads": {
@@ -51,14 +51,14 @@
   "fetchStats": {
     "fetches": 0,
     "bytes": 0,
-    "localHits": 1233,
-    "localBytes": 323223552,
+    "localHits": 1244,
+    "localBytes": 326107136,
     "localImage": true,
     "error": null,
     "cache": {
-      "hits": 73447,
-      "misses": 1233,
-      "evictions": 209,
+      "hits": 74568,
+      "misses": 1244,
+      "evictions": 220,
       "residentBytes": 268435456,
       "budgetBytes": 268435456
     },
@@ -74,11 +74,11 @@
     "runsAfter": 2
   },
   "node": [
-    "root@replay-desktop# \u001b[6nE5T34E_749C2FD8 v26.13.1\r"
+    "E5T34E_1ACC529E v26.13.1\r"
   ],
   "keyboard": {
     "framesBefore": 0,
-    "framesAfter": 212,
+    "framesAfter": 214,
     "typedChars": 93
   },
   "consoleErrors": []

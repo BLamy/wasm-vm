@@ -1,50 +1,50 @@
-[desktop-latency 21:23:42.298] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
-[desktop-latency 21:23:45.952] desktop ready after 3.7 s
-[desktop-latency 21:23:45.966] scenario click
-[desktop-latency 21:23:51.577] click #1: result 337.2 ms, pressed-state frame 102.5 ms, 27.7M instr @ 73.7 MIPS
-[desktop-latency 21:23:54.892] click #2: result 271.8 ms, pressed-state frame 138.1 ms, 26.3M instr @ 94.8 MIPS
-[desktop-latency 21:23:58.201] click #3: result 259.6 ms, pressed-state frame 141.7 ms, 25.3M instr @ 92.7 MIPS
-[desktop-latency 21:24:01.505] click #4: result 258.4 ms, pressed-state frame 141.7 ms, 26M instr @ 94.3 MIPS
-[desktop-latency 21:24:04.812] click #5: result 262.1 ms, pressed-state frame 128.8 ms, 25.8M instr @ 95.3 MIPS
-[desktop-latency 21:24:08.123] click #6: result 256.6 ms, pressed-state frame 139.2 ms, 26.1M instr @ 94.9 MIPS
-[desktop-latency 21:24:11.425] click #7: result 247 ms, pressed-state frame 130.3 ms, 25.6M instr @ 95.8 MIPS
-[desktop-latency 21:24:14.729] click #8: result 261.2 ms, pressed-state frame 145.6 ms, 26M instr @ 95.7 MIPS
-[desktop-latency 21:24:17.761] scenario type
-[desktop-latency 21:24:24.700] type #1: echo 82 ms
-[desktop-latency 21:24:26.265] type #2: echo 35.1 ms
-[desktop-latency 21:24:27.826] type #3: echo 37.2 ms
-[desktop-latency 21:24:29.436] type #4: echo 45.8 ms
-[desktop-latency 21:24:30.992] type #5: echo 38.2 ms
-[desktop-latency 21:24:32.555] type #6: echo 41.3 ms
-[desktop-latency 21:24:34.170] type #7: echo 47.5 ms
-[desktop-latency 21:24:35.726] type #8: echo 36.5 ms
-[desktop-latency 21:24:40.055] {"echoMs":{"n":8,"missing":0,"min":35.1,"median":41.3,"max":82}}
-[desktop-latency 21:24:40.055] scenario node
-[desktop-latency 21:24:55.553] node #1: prompt back 1835.5 ms after Enter, 238.8M instr @ 128.9 MIPS
-[desktop-latency 21:25:10.821] node #2: prompt back 1653.4 ms after Enter, 224.4M instr @ 132.7 MIPS
-[desktop-latency 21:25:26.100] node #3: prompt back 1646.9 ms after Enter, 224.7M instr @ 132.4 MIPS
-[desktop-latency 21:25:28.628] {"promptMs":{"n":3,"missing":0,"min":1646.9,"median":1653.4,"max":1835.5}}
-[desktop-latency 21:25:28.628] scenario idle
-[desktop-latency 21:26:01.174] {"wallMs":30004,"instructionsM":18.9,"mips":0.6,"inSlicePct":1.1,"guestSecondsPerSecond":1,"idleSleeps":638,"idleSleepMs":29310,"idleWakes":122,"clockMode":"paced-icount","framesReceived":0,"drawnPresents":0}
-[desktop-latency 21:26:01.177] SUMMARY {
+[desktop-latency 22:26:44.897] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 22:26:48.289] desktop ready after 3.4 s
+[desktop-latency 22:26:48.310] scenario click
+[desktop-latency 22:26:53.952] click #1: result 330 ms, pressed-state frame 112.7 ms, 28.1M instr @ 74.2 MIPS
+[desktop-latency 22:26:57.268] click #2: result 256.9 ms, pressed-state frame 139.9 ms, 26.2M instr @ 95.9 MIPS
+[desktop-latency 22:27:00.588] click #3: result 251.9 ms, pressed-state frame 151.1 ms, 25.5M instr @ 93.6 MIPS
+[desktop-latency 22:27:03.906] click #4: result 256.1 ms, pressed-state frame 155.9 ms, 25.7M instr @ 92.3 MIPS
+[desktop-latency 22:27:07.220] click #5: result 254.4 ms, pressed-state frame 154.3 ms, 25.2M instr @ 92 MIPS
+[desktop-latency 22:27:10.545] click #6: result 247.7 ms, pressed-state frame 147.5 ms, 25M instr @ 90.2 MIPS
+[desktop-latency 22:27:13.862] click #7: result 243.7 ms, pressed-state frame 145.5 ms, 26M instr @ 95.4 MIPS
+[desktop-latency 22:27:17.186] click #8: result 259.7 ms, pressed-state frame 141.3 ms, 26.1M instr @ 93.5 MIPS
+[desktop-latency 22:27:20.226] scenario type
+[desktop-latency 22:27:27.186] type #1: echo 96.4 ms
+[desktop-latency 22:27:28.801] type #2: echo 45.2 ms
+[desktop-latency 22:27:30.419] type #3: echo 45.9 ms
+[desktop-latency 22:27:31.989] type #4: echo 41.4 ms
+[desktop-latency 22:27:33.557] type #5: echo 37.7 ms
+[desktop-latency 22:27:35.123] type #6: echo 37.8 ms
+[desktop-latency 22:27:36.688] type #7: echo 40.4 ms
+[desktop-latency 22:27:38.313] type #8: echo 51.4 ms
+[desktop-latency 22:27:42.660] {"echoMs":{"n":8,"missing":0,"min":37.7,"median":45.2,"max":96.4}}
+[desktop-latency 22:27:42.661] scenario node
+[desktop-latency 22:27:58.083] node #1: prompt back 1649 ms after Enter, 223.8M instr @ 131.6 MIPS
+[desktop-latency 22:28:13.302] node #2: prompt back 1562.4 ms after Enter, 224.1M instr @ 141.6 MIPS
+[desktop-latency 22:28:28.544] node #3: prompt back 1543.6 ms after Enter, 221.8M instr @ 139.5 MIPS
+[desktop-latency 22:28:31.081] {"promptMs":{"n":3,"missing":0,"min":1543.6,"median":1562.4,"max":1649}}
+[desktop-latency 22:28:31.081] scenario idle
+[desktop-latency 22:29:03.650] {"wallMs":30005,"instructionsM":18.9,"mips":0.6,"inSlicePct":1.6,"guestSecondsPerSecond":1,"idleSleeps":629,"idleSleepMs":28902,"idleWakes":120,"clockMode":"paced-icount","framesReceived":0,"drawnPresents":0}
+[desktop-latency 22:29:03.656] SUMMARY {
  "click": {
   "resultMs": {
    "n": 8,
    "missing": 0,
-   "min": 247,
-   "median": 261.2,
-   "max": 337.2
+   "min": 243.7,
+   "median": 256.1,
+   "max": 330
   },
-  "pointerArrivedMs": 149.9,
+  "pointerArrivedMs": 150.4,
   "pressedFrame": {
    "seen": 8,
    "none": 0,
    "ms": {
     "n": 8,
     "missing": 0,
-    "min": 102.5,
-    "median": 139.2,
-    "max": 145.6
+    "min": 112.7,
+    "median": 147.5,
+    "max": 155.9
    }
   }
  },
@@ -52,32 +52,32 @@
   "echoMs": {
    "n": 8,
    "missing": 0,
-   "min": 35.1,
-   "median": 41.3,
-   "max": 82
+   "min": 37.7,
+   "median": 45.2,
+   "max": 96.4
   }
  },
  "node": {
   "promptMs": {
    "n": 3,
    "missing": 0,
-   "min": 1646.9,
-   "median": 1653.4,
-   "max": 1835.5
+   "min": 1543.6,
+   "median": 1562.4,
+   "max": 1649
   }
  },
  "idle": {
-  "wallMs": 30004,
+  "wallMs": 30005,
   "instructionsM": 18.9,
   "mips": 0.6,
-  "inSlicePct": 1.1,
+  "inSlicePct": 1.6,
   "guestSecondsPerSecond": 1,
-  "idleSleeps": 638,
-  "idleSleepMs": 29310,
-  "idleWakes": 122,
+  "idleSleeps": 629,
+  "idleSleepMs": 28902,
+  "idleWakes": 120,
   "clockMode": "paced-icount",
   "framesReceived": 0,
   "drawnPresents": 0
  }
 }
-[desktop-latency 21:26:01.355] wrote evidence/e5-t41b/browser/gen2-2.json
+[desktop-latency 22:29:03.840] wrote evidence/e5-t41b/browser/gen2-2.json

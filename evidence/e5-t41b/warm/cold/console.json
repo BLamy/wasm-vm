@@ -18,7 +18,7 @@
     "url": ""
   },
   {
-    "t": 1660,
+    "t": 1558,
     "type": "info",
     "text": "wasm-vm: browser JIT NOT enabled — forced-off",
     "url": "http://127.0.0.1:8125/loader.js"

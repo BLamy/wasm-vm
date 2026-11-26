@@ -1,8 +1,8 @@
-[e5-t34e 2026-11-26T21:36:09.925Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
-[e5-t34e 2026-11-26T21:36:50.705Z] downloads finished {"wholeImageFinishedMs":40781,"snapshotStartedMs":2263,"snapshotFinishedMs":20722,"wholeImageStartedMs":10818,"downloadsFinishedMs":40781}
-[e5-t34e 2026-11-26T21:36:52.487Z] desktop visible 42563 ms; 1782 ms after the downloads finished
-[e5-t34e 2026-11-26T21:36:52.651Z] Chrome runs before click 1
-[e5-t34e 2026-11-26T21:36:57.780Z] Chrome runs after click 2 (5129 ms)
-[e5-t34e 2026-11-26T21:37:16.154Z] typed node -e "console.log('E5T34E_E7EDC9C9', process.version)" | tee -a /run/replay-desktop/events
-[e5-t34e 2026-11-26T21:37:22.160Z] node answered 21347 ms after typing began
-[e5-t34e 2026-11-26T21:37:27.203Z] warm PASS {"times":{"wholeImageFinishedMs":40781,"snapshotStartedMs":2263,"snapshotFinishedMs":20722,"wholeImageStartedMs":10818,"downloadsFinishedMs":40781,"desktopVisibleMs":42563,"downloadEndToDesktopMs":1782,"runAgainAnsweredMs":5129,"nodeAnswerAfterTypingMs":21347},"counts":{"total":177,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
+[e5-t34e 2026-11-26T22:35:50.735Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t34e 2026-11-26T22:36:29.690Z] downloads finished {"wholeImageFinishedMs":34281,"snapshotStartedMs":2112,"snapshotFinishedMs":38943,"wholeImageStartedMs":5242,"downloadsFinishedMs":38943}
+[e5-t34e 2026-11-26T22:36:29.952Z] desktop visible 39218 ms; 275 ms after the downloads finished
+[e5-t34e 2026-11-26T22:36:30.124Z] Chrome runs before click 1
+[e5-t34e 2026-11-26T22:36:35.253Z] Chrome runs after click 2 (5129 ms)
+[e5-t34e 2026-11-26T22:36:53.604Z] typed node -e "console.log('E5T34E_D327BCE8', process.version)" | tee -a /run/replay-desktop/events
+[e5-t34e 2026-11-26T22:37:01.617Z] node answered 23331 ms after typing began
+[e5-t34e 2026-11-26T22:37:06.660Z] warm PASS {"times":{"wholeImageFinishedMs":34281,"snapshotStartedMs":2112,"snapshotFinishedMs":38943,"wholeImageStartedMs":5242,"downloadsFinishedMs":38943,"desktopVisibleMs":39218,"downloadEndToDesktopMs":275,"runAgainAnsweredMs":5129,"nodeAnswerAfterTypingMs":23331},"counts":{"total":175,"wholeImage":1,"snapshot":1,"chunkOrRange":0,"diskRelated":2,"chunkManifest":1,"bootDiskRelated":2}}
