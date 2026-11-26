@@ -24135,18 +24135,18 @@
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 8,
+          "commits": 9,
           "labels": [
+            "E5-T36a round 3: the guest tells the page when it has caught up",
             "E5-T36a refuted (round 2): verifier",
             "E5-T36a round 2 implemented: claim and evidence",
-            "E5-T36a round 2: positions are noted only in absolute mode; tests for the edges",
-            "E5-T36a round 2: only cursor moves are evidence for a hotspot"
+            "E5-T36a round 2: positions are noted only in absolute mode; tests for the edges"
           ]
         }
       ],
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
-      "commitCount": 8
+      "commitCount": 9
     },
     {
       "id": "E5-T36b",
