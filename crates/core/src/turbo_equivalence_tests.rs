@@ -2825,31 +2825,50 @@ fn paced_idle_fresh_mip_is_what_the_boundary_sync_writes() {
         let line = dev::plic::Plic::irq_line(&plic, 5);
         crate::bus::Bus::store32(&mut m.bus, PLIC + 4 * 5, 1).unwrap(); // priority[5]
         let mut seen = [[false; 2]; 12];
+        // A timer deadline against a clock at 1 000: long past, one tick past, due exactly
+        // now, one tick ahead, never. A timer level is "due at or after its deadline": the
+        // three in the middle are where `>`, `==` and an off-by-one each give a different
+        // answer.
+        const DEADLINES: [u64; 5] = [0, 999, 1_000, 1_001, u64::MAX];
+        // msip x machine timer x supervisor timer x the PLIC's two contexts.
+        const CASES: u32 = 2 * 5 * 5 * 4;
         // Twice round, so every case also starts from every other case's stale bits.
-        for case in (0..32u32).chain((0..32).rev()) {
-            let on = |bit: u32| case >> bit & 1 != 0;
+        for case in (0..CASES).chain((0..CASES).rev()) {
+            let (msip, mtimer, stimer, plic_m, plic_s) = (
+                case % 2 != 0,
+                DEADLINES[(case / 2 % 5) as usize],
+                DEADLINES[(case / 10 % 5) as usize],
+                case / 50 % 2 != 0,
+                case / 100 % 2 != 0,
+            );
             {
                 let mut c = m.clint.as_ref().unwrap().borrow_mut();
-                c.msip = on(0);
+                c.msip = msip;
                 c.mtime = 1_000;
-                c.mtimecmp = if on(1) { 1_000 } else { 1_001 };
+                c.mtimecmp = mtimer;
             }
-            // Each timer level at its boundary: due exactly now, or one tick ahead.
-            m.sbi_state.stimecmp = if on(2) { 1_000 } else { 1_001 };
-            line.set(on(3) || on(4));
-            crate::bus::Bus::store32(&mut m.bus, PLIC + 0x2000, u32::from(on(3)) << 5).unwrap();
-            crate::bus::Bus::store32(&mut m.bus, PLIC + 0x2080, u32::from(on(4)) << 5).unwrap();
+            m.sbi_state.stimecmp = stimer;
+            line.set(plic_m || plic_s);
+            crate::bus::Bus::store32(&mut m.bus, PLIC + 0x2000, u32::from(plic_m) << 5).unwrap();
+            crate::bus::Bus::store32(&mut m.bus, PLIC + 0x2080, u32::from(plic_s) << 5).unwrap();
             let stale = m.hart.csr.mip_bits();
             let predicted = m.fresh_mip();
             assert_eq!(m.hart.csr.mip_bits(), stale, "computing it changes nothing");
             m.sync_clint();
             m.sync_plic();
             m.sync_sbi_timer();
+            let at = (sbi, msip, mtimer, stimer, plic_m, plic_s);
             assert_eq!(
                 m.hart.csr.mip_bits(),
                 predicted,
-                "sbi={sbi} case={case:05b} stale={stale:#x}"
+                "(sbi, msip, mtimecmp, stimecmp, plic M, plic S) = {at:?} stale={stale:#x}"
             );
+            // And against the rule itself, not only against the boundary's code: the level of
+            // each timer is on exactly when its deadline is not ahead of the clock.
+            assert_eq!(predicted >> 7 & 1 != 0, mtimer <= 1_000, "MTIP {at:?}");
+            if sbi {
+                assert_eq!(predicted >> 5 & 1 != 0, stimer <= 1_000, "STIP {at:?}");
+            }
             for bit in [3usize, 5, 7, 9, 11] {
                 seen[bit][(predicted >> bit & 1) as usize] = true;
             }

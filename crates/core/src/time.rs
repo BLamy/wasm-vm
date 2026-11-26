@@ -682,6 +682,50 @@ mod tests {
         );
     }
 
+    /// E5-T37a: waiting time stays owed only as far as the host clock is still ahead of the
+    /// guest AFTER the idle jump. The jump hands waiting time over first, so what is left is
+    /// the smaller of "owed and not yet handed over" and "what the host clock is still ahead
+    /// by" — judged where the guest lands, not where it stood.
+    ///
+    /// The host oversleeps 3 s past a deadline 2 ms away: 3 s owed. The handler then retires
+    /// 2.2 s of guest time in 0.2 s of host time, which leaves the host clock 1 s ahead.
+    ///
+    /// * Nothing in the way: the jump takes that whole second, the guest is level with the
+    ///   host clock and is owed nothing; a later busy stretch skips one bound.
+    /// * A deadline 300 ms ahead: the jump takes 300 ms, the host clock is still 700 ms ahead
+    ///   and 700 ms stay owed; a later busy stretch skips those 700 ms and one bound.
+    #[test]
+    fn paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump() {
+        const FAR: u64 = u64::MAX - 1;
+        for (deadline_ms, jump_ms, owed_ms) in [(None, 1_000, 0), (Some(300), 300, 700)] {
+            let mut p = IdlePacer::new(ns_ms(0), 0, HZ);
+            p.set_max_busy_lag_ticks(ticks_ms(50));
+            let woke = p.limit_deadline_after(ns_ms(3_002), 0, ticks_ms(2), false);
+            assert_eq!(woke, ticks_ms(2));
+            assert_eq!(p.owed_wait_ticks(), ticks_ms(3_000));
+            let handled = woke + ticks_ms(2_200);
+            let deadline = deadline_ms.map_or(FAR, |ms| handled + ticks_ms(ms));
+            let landed = p.limit_deadline_after(ns_ms(3_202), handled, deadline, true);
+            assert_eq!(
+                landed,
+                handled + ticks_ms(jump_ms),
+                "deadline {deadline_ms:?}: as far as the host clock, or the deadline"
+            );
+            assert_eq!(
+                p.owed_wait_ticks(),
+                ticks_ms(owed_ms),
+                "deadline {deadline_ms:?}: what the host clock is still ahead by, no more"
+            );
+            let busy = landed + ticks_ms(5);
+            assert_eq!(
+                p.limit_deadline_after(ns_ms(500_000), busy, FAR, true),
+                busy + ticks_ms(owed_ms) + ticks_ms(50),
+                "deadline {deadline_ms:?}: what is owed, and one bound"
+            );
+            assert_eq!(p.owed_wait_ticks(), 0);
+        }
+    }
+
     // ── ICount determinism: mtime is a pure function of retired count ──
 
     #[test]
