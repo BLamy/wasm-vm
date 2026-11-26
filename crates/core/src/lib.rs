@@ -370,10 +370,6 @@ pub struct Machine {
     /// that only went round its idle loop from one that did work.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     idle_consult_retired: u64,
-    /// E5-T37a: the device-fabric epoch at the last sampled boundary. A fabric access since
-    /// then may have given a device work that this boundary's service turns into an interrupt.
-    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
-    idle_boundary_epoch: u64,
     /// E4-T24: the injected monotonic host clock (CLI `Instant`, browser `performance.now()`, or a
     /// test mock). Read only for wall time or opt-in idle pacing; core names no host time API.
     mono_clock: Option<alloc::boxed::Box<dyn time::MonotonicClock>>,
@@ -1130,7 +1126,6 @@ impl Machine {
             idle_wait_deadline: u64::MAX,
             idle_wake_pending: false,
             idle_consult_retired: 0,
-            idle_boundary_epoch: 0,
             mono_clock: None,
             last_time_jump: None,
             fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
@@ -5506,11 +5501,10 @@ impl Machine {
     ///   [`Self::take_idle_wait_nanos`] reports how far away the deadline is. The guest executes
     ///   the same instructions either way: after such a `wfi` it goes round its idle loop to the
     ///   next `wfi`. Without it the run call keeps spinning through that loop.
-    ///   A wait is recorded only while it holds: not when an enabled interrupt is pending, would
-    ///   be pending once this boundary's timer and software-interrupt levels are sampled, or a
-    ///   device was accessed since the last sampled boundary (its service may raise one). When
-    ///   an interrupt wakes a guest that was waiting, the time it waited is put on its clock
-    ///   before the handler runs.
+    ///   A wait is reported only while it holds: every device idle, and no enabled interrupt
+    ///   pending once this boundary's timer, software and external interrupt levels are
+    ///   sampled. When an interrupt wakes a guest out of a wait the host took, the time it
+    ///   waited is put on its clock before the handler runs.
     /// * `max_busy_lag_nanos`: a guest that was running (retire-derived time is slower than the
     ///   host clock under load) may skip at most this much idle time afterwards; `None` keeps
     ///   the original unbounded catch-up. Time that passes while the guest is only waiting is
@@ -5572,29 +5566,42 @@ impl Machine {
 
     /// E5-T37a: whether the wait recorded by the `wfi` that just retired still holds at this
     /// boundary, judged without changing anything (the boundary's own sync has not run yet). It
-    /// does not hold when the `wfi`'s wake condition is met or about to be: an enabled interrupt
-    /// is pending; the CLINT or SBI-timer levels this boundary will sample make one pending
-    /// (`mip` is refreshed at block boundaries only, so a store earlier in the `wfi`'s own
-    /// block is not in it yet); or the device fabric was accessed since the last sampled
-    /// boundary, so a device may have work whose service raises one.
+    /// holds only when the guest really has nothing to do until its timer:
+    ///
+    /// * every device is idle — the last full service pass found none with work (a queue to
+    ///   drain, a UART character timeout running, an RTC alarm armed, a paced audio stream) and
+    ///   nothing has accessed the fabric since. This is the run loop's own quiescence marker;
+    ///   a device with work can raise an interrupt on a schedule the CLINT knows nothing about;
+    /// * no enabled interrupt is pending once this boundary's levels are sampled
+    ///   ([`Self::fresh_mip`]). `mip` is refreshed at block boundaries only, so a store earlier
+    ///   in the `wfi`'s own block (a software interrupt, a PLIC enable) is not in it yet.
     #[cfg(not(feature = "zicsr-stub"))]
     fn paced_wait_holds(&self) -> bool {
-        if self.hart.csr.mip_and_mie_nonzero()
-            || self.fabric_epoch.get() != self.idle_boundary_epoch
-        {
-            return false;
-        }
-        let mie = self.hart.csr.mie_bits();
+        self.fabric_idle_epoch == Some(self.fabric_epoch.get())
+            && self.fresh_mip() & self.hart.csr.mie_bits() == 0
+    }
+
+    /// E5-T37a: `mip` as this boundary's level sync will leave it — [`Self::sync_clint`],
+    /// [`Self::sync_plic`] and [`Self::sync_sbi_timer`] applied to the current bits — computed
+    /// without changing anything.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn fresh_mip(&self) -> u64 {
+        let mut mip = self.hart.csr.mip_bits();
+        let mut level = |bit: u32, on: bool| mip = (mip & !(1 << bit)) | (u64::from(on) << bit);
         if let Some(clint) = &self.clint {
-            let c = clint.borrow();
-            if (c.msip && mie & (1 << 3) != 0) || (c.mtip() && mie & (1 << 7) != 0) {
-                return false;
-            }
-            if self.builtin_sbi && c.mtime >= self.sbi_state.stimecmp && mie & (1 << 5) != 0 {
-                return false;
+            let c = *clint.borrow();
+            level(7, c.mtip());
+            level(3, c.msip);
+            if self.builtin_sbi {
+                level(5, c.mtime >= self.sbi_state.stimecmp);
             }
         }
-        true
+        if let Some(plic) = &self.plic {
+            let p = plic.borrow();
+            level(11, p.eip(0));
+            level(9, p.eip(1));
+        }
+        mip
     }
 
     /// E5-T37a: called at the first sampled boundary of the run call after one that ended at a
@@ -5620,9 +5627,6 @@ impl Machine {
         else {
             return;
         };
-        if !pacer.waiting() {
-            return;
-        }
         let limited = pacer.limit_deadline_after(
             clock.now_nanos(),
             mtime,
@@ -7578,9 +7582,7 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
                 self.boundary_sync();
-                // E5-T37a: what the fabric looked like when this boundary serviced it, and — for
-                // a guest a `wfi` left waiting on the paced clock — what is waking it.
-                self.idle_boundary_epoch = self.fabric_epoch.get();
+                // E5-T37a: for a guest a `wfi` left waiting on the paced clock, what is waking it.
                 if self.idle_wake_pending {
                     self.paced_wake();
                 }

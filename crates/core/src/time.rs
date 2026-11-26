@@ -144,8 +144,8 @@ pub struct IdlePacer {
     /// idle jump could not yet give it because a deadline was in the way. It is never subject
     /// to the busy-lag bound. Only meaningful with a bound.
     owed_wait_ticks: u64,
-    /// E5-T37a: whether the last consultation left the guest waiting for the host clock (its
-    /// deadline was beyond the ceiling).
+    /// E5-T37a: whether the last consultation left the guest short of its deadline, waiting
+    /// for the host clock. Diagnostic only: nothing in the machine depends on it.
     waiting: bool,
 }
 
@@ -547,7 +547,6 @@ mod tests {
             ticks_ms(1)
         );
         assert_eq!(o.owed_wait_ticks(), ticks_ms(2_000));
-        assert!(!o.waiting(), "the deadline was reached");
         let after_handler = ticks_ms(1) + 300;
         assert_eq!(
             o.limit_deadline_after(ns_ms(2_002), after_handler, FAR, true),
@@ -555,7 +554,6 @@ mod tests {
             "everything the host clock ran ahead while the guest waited"
         );
         assert_eq!(o.owed_wait_ticks(), 0);
-        assert!(o.waiting());
         // What is owed is waiting time only: a run of near deadlines after work never lets a
         // busy guest collect more than one bound, however often it is consulted.
         let mut n = IdlePacer::new(ns_ms(0), 0, HZ);
@@ -601,6 +599,29 @@ mod tests {
             now + ticks_ms(1_989) + ticks_ms(50)
         );
         assert_eq!(c.owed_wait_ticks(), 0);
+        // Nothing can be owed beyond what the host clock is actually ahead by. The guest was
+        // owed 2 s, then ran for so long that its retire-derived time passed the host's: the
+        // debt is gone, and a later busy stretch gets one bound, not the old 2 s on top.
+        let mut g = IdlePacer::new(ns_ms(0), 0, HZ);
+        g.set_max_busy_lag_ticks(ticks_ms(50));
+        let at = g.limit_deadline_after(ns_ms(2_001), 0, ticks_ms(1), false);
+        assert_eq!(g.owed_wait_ticks(), ticks_ms(2_000));
+        let ahead = at + ticks_ms(10_000); // 10 s of retirement in 1 s of host time
+        assert_eq!(
+            g.limit_deadline_after(ns_ms(3_001), ahead, FAR, true),
+            ahead
+        );
+        assert_eq!(
+            g.owed_wait_ticks(),
+            0,
+            "the guest is ahead of the host: nothing is owed"
+        );
+        let later = ahead + 1_000;
+        assert_eq!(
+            g.limit_deadline_after(ns_ms(100_000), later, FAR, true),
+            later + ticks_ms(50),
+            "one bound"
+        );
         // A bound of zero pins a busy guest to its own time.
         let mut none = IdlePacer::new(0, 0, HZ);
         none.set_max_busy_lag_ticks(0);

@@ -815,6 +815,12 @@ impl Csrs {
         (self.warl.slot(W_MIP) & self.warl.slot(W_MIE)) != 0
     }
 
+    /// E5-T37a: the raw `mip` bits as last synchronised (see `Machine::fresh_mip`).
+    #[inline]
+    pub fn mip_bits(&self) -> u64 {
+        self.warl.slot(W_MIP)
+    }
+
     /// E2-T20 sweep fix: the raw `mie` bits, for gating WHICH armed wakeup sources are actually
     /// deliverable (an armed timer with MTIE=0 can never end a WFI loop).
     #[inline]
