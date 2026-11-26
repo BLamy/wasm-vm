@@ -31,7 +31,7 @@ fn default_and_legacy_pathological_sizes_report_actual_slots() {
         m.set_block_cache_capacity(requested);
         assert_eq!(m.decoded_cache_entries(), actual);
     }
-    for entries in [4096, 16384, 4096] {
+    for entries in [4096, 16384, 262_144, 4096, 262_144, 16384] {
         m.set_decoded_cache_entries(entries).unwrap();
         assert_eq!(m.block_cache.capacity(), entries);
     }
@@ -39,7 +39,7 @@ fn default_and_legacy_pathological_sizes_report_actual_slots() {
 
 #[test]
 fn invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot() {
-    for entries in [4096, 16384] {
+    for entries in DECODED_CACHE_SIZES {
         let mut m = machine(entries);
         assert_eq!(m.run(7), RunOutcome::MaxInstrs);
         assert!(m.block_cursor.is_some());
@@ -55,7 +55,25 @@ fn invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_sna
         let clint = Rc::clone(m.clint.as_ref().unwrap());
         let plic = Rc::clone(m.plic.as_ref().unwrap());
         let uart = Rc::clone(&m.uart.as_ref().unwrap().0);
-        for value in [0, 1, 3, 4095, 4097, 8192, 16383, 16385, usize::MAX, entries] {
+        for value in [
+            0,
+            1,
+            3,
+            4095,
+            4097,
+            8192,
+            16383,
+            16385,
+            32768,
+            65536,
+            131_072,
+            262_143,
+            262_145,
+            524_288,
+            1_048_576,
+            usize::MAX,
+            entries,
+        ] {
             assert_eq!(m.set_decoded_cache_entries(value).is_ok(), value == entries);
             assert_eq!(m.decoded_cache_entries(), entries);
             assert_eq!(m.save_resume().unwrap(), blob);
@@ -74,7 +92,14 @@ fn invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_sna
 
 #[test]
 fn real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles() {
-    for (old, new) in [(4096, 16384), (16384, 4096)] {
+    for (old, new) in [
+        (4096, 16384),
+        (16384, 4096),
+        (4096, 262_144),
+        (262_144, 16384),
+        (16384, 262_144),
+        (262_144, 4096),
+    ] {
         let mut m = machine(old);
         assert_eq!(m.run(7), RunOutcome::MaxInstrs);
         let requests = m.take_translation_requests();
@@ -122,7 +147,7 @@ fn real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_h
 
 #[test]
 fn restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields() {
-    for entries in [4096, 16384] {
+    for entries in DECODED_CACHE_SIZES {
         let mut source = machine(4096);
         assert_eq!(source.run(7), RunOutcome::MaxInstrs);
         let snapshot = source.save_resume().unwrap();
@@ -149,7 +174,7 @@ fn restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fie
 
 #[test]
 fn both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation() {
-    for entries in [4096, 16384] {
+    for entries in DECODED_CACHE_SIZES {
         let mut m = machine(entries);
         // Two Sv39 level-1 aliases of the same aligned 2MiB physical superpage.
         let root = DRAM_BASE + 0x3000;
@@ -194,7 +219,7 @@ fn both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation() {
 
 #[test]
 fn both_sizes_recheck_revoked_pmp_for_live_cached_interior() {
-    for entries in [4096, 16384] {
+    for entries in DECODED_CACHE_SIZES {
         let mut m = machine(entries);
         m.hart.csr.pmp.write_addr(0, (DRAM_BASE + 4) >> 2);
         m.hart.csr.pmp.write_addr(1, (DRAM_BASE + 0x1000) >> 2);
@@ -239,7 +264,7 @@ fn hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity() {
         "E5-T26k hostile SMC trace: legacy hash={:016x} retired={}",
         reference.0, reference.1
     );
-    for entries in [4096, 16384] {
+    for entries in DECODED_CACHE_SIZES {
         assert_eq!(execute(Some(entries)), reference);
         println!("E5-T26k capacity={entries}: trace/retirement/snapshot identical to legacy");
     }
@@ -248,7 +273,7 @@ fn hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity() {
 // Independent next-op oracle: execute the newly stored addi x2,x0,imm, not cached addi x2,x2,1.
 #[test]
 fn verifier_pending_code_patch_survives_same_size_and_rejected_selection() {
-    for entries in [4096, 16384] {
+    for entries in DECODED_CACHE_SIZES {
         for selection in [entries, 8192] {
             for immediate in [7u32, 127, 1021] {
                 let mut m = machine(entries);

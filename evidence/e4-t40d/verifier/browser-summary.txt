@@ -1,0 +1,85 @@
+# python3 evidence/e4-t40d/verifier/summarize.py <json...>   (true-median = statistics.median; upper-median = the tool's own stats(): v[floor(n/2)])
+
+===== A. worker's two pairs (evidence/e4-t40d/browser-dist-{1..4})
+browser-dist-1-262144.json: label=dist-262144-run1 url=...//127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+   browser=158.0.8127.88 started=2026-11-25T03:47:48.218Z finished=2026-11-25T03:50:25.945Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=262144 blockBuilds=3298132 blockEntryHits=3545403111 miss=0.09%
+   click answered=[360.9, 382.2, 376.2, 335, 415.2] median(tool)=376.2  pressed=[142.7, 216.2, 225.7, 185.7, 232.4]
+   sweep answered=[284.1, 267.4, 267.9, 302.7, 269.5] median(tool)=269.5
+   type median=48.6  node done=[5385, 4897.6, 4748.5]  idle mips=160
+browser-dist-2-16384.json: label=dist-16384-run2 url=...guest=replay-desktop&desktop=1&decodedCacheEntries=16384#ide
+   browser=158.0.8127.88 started=2026-11-25T03:50:30.895Z finished=2026-11-25T03:53:13.393Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=16384 blockBuilds=49536328 blockEntryHits=3023539550 miss=1.61%
+   click answered=[498.5, 458.3, 443.6, 429.1, 440.2] median(tool)=443.6  pressed=[215.7, 225.6, 227, 213.9, 223.6]
+   sweep answered=[401.1, 385.1, 402.5, 400.4, 400.3] median(tool)=400.4
+   type median=48.6  node done=[6259, 5494.9, 5311.5]  idle mips=146.1
+browser-dist-3-262144.json: label=dist-262144-run3 url=...//127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+   browser=158.0.8127.88 started=2026-11-25T03:53:18.621Z finished=2026-11-25T03:55:56.079Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=262144 blockBuilds=3328190 blockEntryHits=3561110861 miss=0.09%
+   click answered=[388.2, 312.4, 320.5, 379.6, 338.9] median(tool)=338.9  pressed=[171.6, 163.3, 171.2, 229.5, 190.7]
+   sweep answered=[284.7, 269.4, 250.9, 269.5, 268.4] median(tool)=269.4
+   type median=45.1  node done=[5435.5, 4835.6, 4761.9]  idle mips=161.3
+browser-dist-4-16384.json: label=dist-16384-run4 url=...guest=replay-desktop&desktop=1&decodedCacheEntries=16384#ide
+   browser=158.0.8127.88 started=2026-11-25T03:56:01.002Z finished=2026-11-25T03:58:42.630Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=16384 blockBuilds=49217861 blockEntryHits=3012441793 miss=1.61%
+   click answered=[499.5, 433.3, 389, 440.5, 463.8] median(tool)=440.5  pressed=[232.9, 200, 190.5, 222.5, 264]
+   sweep answered=[419.6, 401.7, 399.9, 418.9, 402.8] median(tool)=402.8
+   type median=44.1  node done=[6189.4, 5492.8, 5353.8]  idle mips=146.7
+pooled 16384: n=10 click true-median=442.1 upper-median=443.6 | sweep true-median=401.4 upper-median=401.7
+pooled 262144: n=10 click true-median=368.5 upper-median=376.2 | sweep true-median=269.4 upper-median=269.5
+pooled change (true-median): click -16.6%  sweep -32.9%
+pooled change (upper-median): click -15.2%  sweep -32.9%
+blockBuilds ratio min16384/max262144 = 14.8x
+
+===== B. verifier's two pairs (pair 1: 262144 then 16384; pair 2: 16384 then 262144)
+browser-262144.json: label=verifier-262144 url=...//127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+   browser=158.0.8127.88 started=2026-11-25T04:13:15.102Z finished=2026-11-25T04:15:36.360Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=262144 blockBuilds=2901601 blockEntryHits=2974080397 miss=0.10%
+   click answered=[386.8, 417.8, 400.4, 382.5, 387.6] median(tool)=387.6  pressed=[170.7, 251, 233.8, 216.5, 220.9]
+   sweep answered=[283.8, 286.1, 285.7, 269, 302.4] median(tool)=285.7
+   type median=46  node done=[5758.1, 5126.2, 4956.8]  idle mips=157.4
+browser-16384.json: label=verifier-16384 url=...guest=replay-desktop&desktop=1&decodedCacheEntries=16384#ide
+   browser=158.0.8127.88 started=2026-11-25T04:15:45.894Z finished=2026-11-25T04:18:10.673Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=16384 blockBuilds=43741284 blockEntryHits=2390669651 miss=1.80%
+   click answered=[489.3, 445.6, 450.7, 475, 443.6] median(tool)=450.7  pressed=[172.5, 213.1, 234.1, 242.1, 226.2]
+   sweep answered=[468.5, 469.1, 451.4, 402.4, 435.4] median(tool)=451.4
+   type median=47  node done=[6699.7, 5774.3, 5732.2]  idle mips=142.1
+browser-pair2-16384.json: label=verifier-16384-pair2 url=...guest=replay-desktop&desktop=1&decodedCacheEntries=16384#ide
+   browser=158.0.8127.88 started=2026-11-25T04:18:34.093Z finished=2026-11-25T04:20:59.904Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=16384 blockBuilds=44557071 blockEntryHits=2439775376 miss=1.79%
+   click answered=[480.9, 525.2, 480, 540.2, 420.4] median(tool)=480.9  pressed=[180.9, 291.9, 246.7, 324, 205]
+   sweep answered=[469.1, 436.2, 452.1, 451.5, 435.2] median(tool)=451.5
+   type median=49.9  node done=[6478.7, 5675.8, 5737.3]  idle mips=143
+browser-pair2-262144.json: label=verifier-262144-pair2 url=...//127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+   browser=158.0.8127.88 started=2026-11-25T04:21:08.634Z finished=2026-11-25T04:23:29.564Z
+   missing=[] consoleErrors=['Failed to load resource: the server responded with a status of 404 (File not found)']
+   decodedCacheEntries=262144 blockBuilds=2914468 blockEntryHits=3011331548 miss=0.10%
+   click answered=[433.3, 388.9, 338.9, 365, 363.9] median(tool)=365  pressed=[166.7, 222.7, 172.3, 215.1, 213.9]
+   sweep answered=[283.1, 301.2, 284.5, 268.5, 284.2] median(tool)=284.2
+   type median=41.1  node done=[5581.5, 4989.3, 4895.4]  idle mips=158.8
+pooled 16384: n=10 click true-median=477.5 upper-median=480 | sweep true-median=451.4 upper-median=451.5
+pooled 262144: n=10 click true-median=387.2 upper-median=387.6 | sweep true-median=284.4 upper-median=284.5
+pooled change (true-median): click -18.9%  sweep -37.0%
+pooled change (upper-median): click -19.2%  sweep -37.0%
+blockBuilds ratio min16384/max262144 = 15.0x
+
+===== C. worker's two pairs + verifier pair 1 (the three-pair pool named in predictions.txt P4b)
+pooled 16384: n=15 click true-median=445.6 upper-median=445.6 | sweep true-median=402.5 upper-median=402.5
+pooled 262144: n=15 click true-median=382.2 upper-median=382.2 | sweep true-median=269.5 upper-median=269.5
+pooled change (true-median): click -14.2%  sweep -33.0%
+pooled change (upper-median): click -14.2%  sweep -33.0%
+blockBuilds ratio min16384/max262144 = 13.1x
+
+===== D. all four pairs
+pooled 16384: n=20 click true-median=454.5 upper-median=458.3 | sweep true-median=419.2 upper-median=419.6
+pooled 262144: n=20 click true-median=380.9 upper-median=382.2 | sweep true-median=283.5 upper-median=283.8
+pooled change (true-median): click -16.2%  sweep -32.4%
+pooled change (upper-median): click -16.6%  sweep -32.4%
+blockBuilds ratio min16384/max262144 = 13.1x

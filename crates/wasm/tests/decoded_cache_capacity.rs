@@ -65,6 +65,7 @@ fn strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutati
         JsValue::FALSE,
         JsValue::from_str("4096"),
         JsValue::from_str("16384"),
+        JsValue::from_str("262144"),
         JsValue::from_str(""),
         js_sys::Array::of1(&JsValue::from_f64(16384.0)).into(),
         object.clone().into(),
@@ -86,6 +87,14 @@ fn strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutati
             16383.0,
             16_384.000_001,
             16385.0,
+            32768.0,
+            65536.0,
+            131_072.0,
+            262_143.0,
+            262_144.5,
+            262_145.0,
+            524_288.0,
+            1_048_576.0,
             u64::MAX as f64,
         ]
         .map(JsValue::from_f64),
@@ -112,7 +121,7 @@ fn resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_po
     m.enable_jit(512).unwrap();
     m.set_chaining(true).unwrap();
     m.set_dynamic_chaining(true).unwrap();
-    for entries in [16384.0, 4096.0] {
+    for entries in [16384.0, 262_144.0, 4096.0, 262_144.0, 16384.0, 4096.0] {
         warm(&m);
         let before = m.jit_stats().unwrap();
         let blob = snapshot(&m);
@@ -178,7 +187,7 @@ fn whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compile
     );
     let digest = source.state_digest().unwrap();
     let clock = json(&source.guest_clock_state().unwrap());
-    for entries in [4096.0, 16384.0] {
+    for entries in [4096.0, 16384.0, 262_144.0] {
         let restored = machine();
         restored
             .set_decoded_cache_entries(JsValue::from_f64(entries))

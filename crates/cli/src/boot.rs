@@ -1215,6 +1215,16 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 t.exit_boundary,
                 t.exit_trap,
             );
+            // Decoded-cache diagnostics: how many block entries reused a resident block and how
+            // many had to decode one (host-side counters; they vary with the cache size while
+            // every digest stays the same).
+            let (entry_hits, builds) = m.block_cache_entry_stats();
+            eprintln!(
+                "block cache: entries={} entry_hits={} builds={}",
+                m.decoded_cache_entries(),
+                entry_hits,
+                builds,
+            );
         }
         // E4-T29: JIT activity summary at exit (blocks compiled/executed, chaining, cache/eviction).
         if a.jit {

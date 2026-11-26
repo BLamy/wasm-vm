@@ -1,0 +1,68 @@
+# Verifier scratch instrumentation. NOT applied to this repo: it was applied to a copy of
+# 'git archive HEAD crates guest/agent tools/fuzz' in a scratch directory, built there with
+# 'cargo build --release -p wasm-vm-cli', and passed to the unchanged
+# tools/perf/decoded-cache-equivalence.sh through its BIN input. Print-only: the evidence
+# digests of the instrumented runs equal those of the clean binary (occupancy.log).
+--- a/crates/core/src/dispatch.rs
++++ b/crates/core/src/dispatch.rs
+@@ -742,6 +742,23 @@
+         })
+     }
+ 
++    /// VERIFIER SCRATCH (not in the repo): (live blocks, slots holding any block, total ops,
++    /// total ops capacity) so resident memory can be computed instead of inferred from RSS.
++    pub fn verifier_occupancy(&self) -> (usize, usize, usize, usize) {
++        let (mut live, mut held, mut ops, mut cap) = (0usize, 0usize, 0usize, 0usize);
++        for slot in &self.slots {
++            if let Some(block) = &slot.block {
++                held += 1;
++                ops += block.ops.len();
++                cap += block.ops.capacity();
++                if block.block_gen == self.generation {
++                    live += 1;
++                }
++            }
++        }
++        (live, held, ops, cap)
++    }
++
+     /// Insert `block` (stamped with the current generation), replacing a stale/empty slot on
+     /// its probe chain, or — if the chain is full of live entries — the head slot (simple
+     /// replacement; correctness is unaffected).
+--- a/crates/core/src/lib.rs
++++ b/crates/core/src/lib.rs
+@@ -1153,6 +1153,20 @@
+     /// observation-only and never participates in architectural state or snapshots.
+     pub fn block_cache_entry_stats(&self) -> (u64, u64) {
+         (self.block_entry_hits, self.block_builds)
++    }
++
++    /// VERIFIER SCRATCH (not in the repo).
++    pub fn verifier_block_cache_occupancy(&self) -> (usize, usize, usize, usize, usize, usize, usize) {
++        let (live, held, ops, cap) = self.block_cache.verifier_occupancy();
++        (
++            live,
++            held,
++            ops,
++            cap,
++            core::mem::size_of::<dispatch::MicroOp>(),
++            core::mem::size_of::<dispatch::DecodedBlock>(),
++            core::mem::size_of::<decode::Instr>(),
++        )
+     }
+ 
+     /// Partial-block continuations that had to re-decode their evicted decoded block from
+--- a/crates/cli/src/boot.rs
++++ b/crates/cli/src/boot.rs
+@@ -1225,6 +1225,11 @@
+                 entry_hits,
+                 builds,
+             );
++            let (live, held, ops, cap, op_bytes, block_bytes, instr_bytes) =
++                m.verifier_block_cache_occupancy();
++            eprintln!(
++                "block cache occupancy: live={live} held={held} ops={ops} ops_capacity={cap} micro_op_bytes={op_bytes} decoded_block_bytes={block_bytes} instr_bytes={instr_bytes}"
++            );
+         }
+         // E4-T29: JIT activity summary at exit (blocks compiled/executed, chaining, cache/eviction).
+         if a.jit {

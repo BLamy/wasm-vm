@@ -16,6 +16,8 @@
 #   KERNEL    $RELEASES/kernel/6.6.63/Image
 #   SNAPSHOT  the bootSnapshot named by web/artifacts-replay-desktop.json ($RELEASES/boot-snapshot/)
 #   IMAGE     target/e5-t34b/image/replay-desktop.ext4, else the wholeImage .img.gz under $RELEASES
+#   CACHE_ENTRIES  optional decoded-cache slot count for both runs (default: the CLI's 4096).
+#             The evidence must not depend on it; tools/perf/decoded-cache-equivalence.sh checks.
 #
 # The run is made reproducible by pinning its only host inputs: no stdin (`--no-input`), a fixed
 # RTC (`--fixed-rtc-ns`) and a seeded byte stream for the entropy device (`--virtio-rng-seed`; the
@@ -64,7 +66,8 @@ run() { # name, extra flags…
     --block-cache --interrupt-batching --quantum 500000 --no-input --no-reboot \
     --fixed-rtc-ns 1700000000000000000 --max-instrs "$N" \
     --resume-from "$OUT/ready.snap" --resume-core-id "$CORE_ID" --resume-base-id "$BASE_ID" \
-    --evidence "$OUT/$name.evidence.txt" --append "$APPEND" "$@" \
+    --evidence "$OUT/$name.evidence.txt" --append "$APPEND" \
+    ${CACHE_ENTRIES:+--decoded-cache-entries "$CACHE_ENTRIES"} "$@" \
     > "$OUT/$name.out" 2> "$OUT/$name.err" || rc=$?
   rm -f "$disk"
   echo "$name: exit $rc, $(( $(date +%s) - t0 )) s, $(grep -h '^turbo:' "$OUT/$name.err" || echo 'no turbo line')"

@@ -1,0 +1,49 @@
+=== decoded cache 4096
+wasm-vm boot evidence v1
+trace fnv64=54d0ad2c6e9f907c
+trace retired=3141325718
+trace mode=retirement-records
+state sha256=a7b8b31149989c5fd331edf83563651cb309f85ccd8b55419a5de22102fce324
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=54d0ad2c6e9f907c
+trace retired=3141325718
+trace mode=retirement-records
+state sha256=a7b8b31149989c5fd331edf83563651cb309f85ccd8b55419a5de22102fce324
+outcome=MaxInstrs
+EQUIVALENT (3141592653 instructions)
+block cache: entries=4096 entry_hits=451102400 builds=25952613
+=== decoded cache 16384
+wasm-vm boot evidence v1
+trace fnv64=54d0ad2c6e9f907c
+trace retired=3141325718
+trace mode=retirement-records
+state sha256=a7b8b31149989c5fd331edf83563651cb309f85ccd8b55419a5de22102fce324
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=54d0ad2c6e9f907c
+trace retired=3141325718
+trace mode=retirement-records
+state sha256=a7b8b31149989c5fd331edf83563651cb309f85ccd8b55419a5de22102fce324
+outcome=MaxInstrs
+EQUIVALENT (3141592653 instructions)
+block cache: entries=16384 entry_hits=469724419 builds=7330594
+=== decoded cache 262144
+wasm-vm boot evidence v1
+trace fnv64=54d0ad2c6e9f907c
+trace retired=3141325718
+trace mode=retirement-records
+state sha256=a7b8b31149989c5fd331edf83563651cb309f85ccd8b55419a5de22102fce324
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=54d0ad2c6e9f907c
+trace retired=3141325718
+trace mode=retirement-records
+state sha256=a7b8b31149989c5fd331edf83563651cb309f85ccd8b55419a5de22102fce324
+outcome=MaxInstrs
+EQUIVALENT (3141592653 instructions)
+block cache: entries=262144 entry_hits=475772714 builds=1282299
+CACHE-INDEPENDENT (4096 16384 262144; 3141592653 instructions)

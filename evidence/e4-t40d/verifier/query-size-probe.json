@@ -1,0 +1,285 @@
+{
+  "base": "http://127.0.0.1:8125",
+  "browser": "158.0.8127.88",
+  "startedAt": "2026-11-25T04:24:50.321Z",
+  "cases": [
+    {
+      "name": "default",
+      "query": "",
+      "expect": "boot",
+      "size": 262144,
+      "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+      "httpErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+          "url": "http://127.0.0.1:8125/favicon.ico"
+        }
+      ],
+      "pageErrors": [],
+      "first": {
+        "at": 6627,
+        "ready": 3479.429999947548,
+        "guestErrors": [],
+        "isGuestUp": true,
+        "hasJitStatsHook": true,
+        "decodedCacheEntries": 262144,
+        "blockBuilds": 379037,
+        "retiredInstructions": 472445879,
+        "status": "linux: restored",
+        "overlayHidden": true
+      },
+      "second": {
+        "at": 8638,
+        "ready": 3479.429999947548,
+        "guestErrors": [],
+        "isGuestUp": true,
+        "hasJitStatsHook": true,
+        "decodedCacheEntries": 262144,
+        "blockBuilds": 618398,
+        "retiredInstructions": 807909875,
+        "status": "linux: restored",
+        "overlayHidden": true
+      }
+    },
+    {
+      "name": "65536",
+      "query": "&decodedCacheEntries=65536",
+      "expect": "fail",
+      "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&decodedCacheEntries=65536#ide",
+      "httpErrors": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "first": {
+        "at": 30088,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 569.0400000810623,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 570.2300000190735,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      },
+      "second": {
+        "at": 32096,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 569.0400000810623,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 570.2300000190735,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      }
+    },
+    {
+      "name": "empty",
+      "query": "&decodedCacheEntries=",
+      "expect": "fail",
+      "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&decodedCacheEntries=#ide",
+      "httpErrors": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "first": {
+        "at": 30087,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 571.4449999332428,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 572.7250000238419,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      },
+      "second": {
+        "at": 32091,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 571.4449999332428,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 572.7250000238419,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      }
+    },
+    {
+      "name": "262144.0",
+      "query": "&decodedCacheEntries=262144.0",
+      "expect": "fail",
+      "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&decodedCacheEntries=262144.0#ide",
+      "httpErrors": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "first": {
+        "at": 30089,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 570.7849999666214,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 571.8999999761581,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      },
+      "second": {
+        "at": 32095,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 570.7849999666214,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 571.8999999761581,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      }
+    },
+    {
+      "name": "1048576",
+      "query": "&decodedCacheEntries=1048576",
+      "expect": "fail",
+      "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&decodedCacheEntries=1048576#ide",
+      "httpErrors": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "first": {
+        "at": 30086,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 573.4099999666214,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 574.6349999904633,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      },
+      "second": {
+        "at": 32090,
+        "ready": null,
+        "guestErrors": [
+          {
+            "at": 573.4099999666214,
+            "message": "decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)"
+          },
+          {
+            "at": 574.6349999904633,
+            "message": "RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30"
+          }
+        ],
+        "isGuestUp": false,
+        "hasJitStatsHook": false,
+        "decodedCacheEntries": null,
+        "blockBuilds": null,
+        "retiredInstructions": null,
+        "status": "linux worker fatal: RangeError: decodedCacheEntries must be 4096, 16384 or 262144 (number or exact decimal string)\n    at validateDecodedCacheEntries (http://127.0.0.1:8125/decoded-cache.js:11:9)\n    at startLinuxBoot (http://127.0.0.1:8125/loader.js:409:5)\n    at startBoot (http://127.0.0.1:8125/linux-worker.js:13:24)\n    at handleBoot (http://127.0.0.1:8125/linux-worker-protocol.js:809:24)\n    at handle (http://127.0.0.1:8125/linux-worker-protocol.js:891:27)\n    at http://127.0.0.1:8125/linux-worker-protocol.js:925:30 — reload with ?worker=0 for the main-thread fallback",
+        "overlayHidden": false
+      }
+    },
+    {
+      "name": "4096",
+      "query": "&decodedCacheEntries=4096",
+      "expect": "boot",
+      "size": 4096,
+      "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&decodedCacheEntries=4096#ide",
+      "httpErrors": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "first": {
+        "at": 6383,
+        "ready": 3314.389999985695,
+        "guestErrors": [],
+        "isGuestUp": true,
+        "hasJitStatsHook": true,
+        "decodedCacheEntries": 4096,
+        "blockBuilds": 2550621,
+        "retiredInstructions": 327465568,
+        "status": "linux: restored",
+        "overlayHidden": true
+      },
+      "second": {
+        "at": 8392,
+        "ready": 3314.389999985695,
+        "guestErrors": [],
+        "isGuestUp": true,
+        "hasJitStatsHook": true,
+        "decodedCacheEntries": 4096,
+        "blockBuilds": 3433031,
+        "retiredInstructions": 583430850,
+        "status": "linux: restored",
+        "overlayHidden": true
+      }
+    }
+  ],
+  "finishedAt": "2026-11-25T04:27:16.530Z"
+}

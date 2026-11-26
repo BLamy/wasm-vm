@@ -1,0 +1,90 @@
+# Harness sabotage (no repo file changed): BIN is a wrapper that runs ONE instruction fewer at
+# --decoded-cache-entries 16384 only. Expect: inner EQUIVALENT at each size, then DIVERGED, exit 1.
+$ BIN=<wrapper> bash tools/perf/decoded-cache-equivalence.sh 100000007 target/e4-t40d-verifier/skew 4096 16384 262144
+=== decoded cache 4096
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+EQUIVALENT (100000007 instructions)
+block cache: entries=4096 entry_hits=16853924 builds=1282678
+=== decoded cache 16384
+wasm-vm boot evidence v1
+trace fnv64=91dc334e16ccbee1
+trace retired=99992882
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=91dc334e16ccbee1
+trace retired=99992882
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+EQUIVALENT (100000007 instructions)
+block cache: entries=16384 entry_hits=17714848 builds=421754
+DIVERGED: turbo at 16384 differs from 4096
+exit=1
+
+# Control: same budget, the plain rebuilt binary.
+$ bash tools/perf/decoded-cache-equivalence.sh 100000007 target/e4-t40d-verifier/skew-control 4096 16384 262144
+=== decoded cache 4096
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+EQUIVALENT (100000007 instructions)
+block cache: entries=4096 entry_hits=16853924 builds=1282678
+=== decoded cache 16384
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+EQUIVALENT (100000007 instructions)
+block cache: entries=16384 entry_hits=17714848 builds=421754
+=== decoded cache 262144
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=ee8a08c6509efb9e
+trace retired=99992883
+trace mode=retirement-records
+state sha256=c0bf277aaca89c4dc4f968c17316a8b8dfe29051eaea60be749064723bfa336c
+outcome=MaxInstrs
+EQUIVALENT (100000007 instructions)
+block cache: entries=262144 entry_hits=18023389 builds=113213
+CACHE-INDEPENDENT (4096 16384 262144; 100000007 instructions)
+exit=0

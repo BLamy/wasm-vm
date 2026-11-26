@@ -2312,7 +2312,10 @@ function replayDesktopBootOptions(manifest) {
     // of what it installed, and was slower than the interpreter (E4-T40a). Without it the turbo
     // run loop takes over (E4-T40b). `?jit=1` restores the JIT for an A/B.
     jit: false,
-    decodedCacheEntries: 16384,
+    // A click in Chrome runs through about 200,000 distinct code blocks. With 16384 slots the
+    // interpreter re-decoded 300,000-380,000 blocks per click; with 262144 it re-decodes a few
+    // thousand (E4-T40d). `?decodedCacheEntries=16384` restores the old size for an A/B.
+    decodedCacheEntries: new URLSearchParams(location.search).get("decodedCacheEntries") ?? 262144,
     quantum: 500_000,
   };
 }
