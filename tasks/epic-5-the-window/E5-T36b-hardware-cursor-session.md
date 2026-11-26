@@ -3,7 +3,7 @@ id: E5-T36b
 epic: 5
 title: Replay desktop image — the session runs on legacy KMS with a hardware cursor
 priority: 0.3876515
-status: pending
+status: in-progress
 depends_on: [E5-T36a]
 estimate: S
 risk: medium
