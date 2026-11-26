@@ -79,7 +79,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `0.387651` [E5-T36a](epic-5-the-window/E5-T36a-cursor-hotspot-inference.md) — Infer the hotspot of a guest cursor image the device did not describe *(deps: E5-T37b)*
 - [x] `0.3876515` [E5-T36b](epic-5-the-window/E5-T36b-hardware-cursor-session.md) — Replay desktop image — the session runs on legacy KMS with a hardware cursor *(deps: E5-T36a)*
 - [x] `0.387652` [E5-T41a](epic-5-the-window/E5-T41a-node-startup-snapshot.md) — Replay desktop image — Node starts from a startup snapshot built at boot *(deps: E5-T36b)*
-- [~] `0.387653` [E5-T41b](epic-5-the-window/E5-T41b-compact-warm-snapshot-gen2.md) — Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot *(deps: E5-T41a, E5-T36b)*
+- [?] `0.387653` [E5-T41b](epic-5-the-window/E5-T41b-compact-warm-snapshot-gen2.md) — Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot *(deps: E5-T41a, E5-T36b)*
 - [ ] `0.387654` [E5-T36c](epic-5-the-window/E5-T36c-hardware-cursor-browser-proof.md) — Hardware cursor on the published Replay desktop — one pointer, drawn by the host, tip on the pixel *(deps: E5-T41b)*
 - [ ] `0.3876545` [E5-T36d](epic-5-the-window/E5-T36d-oversized-cursor-fallback.md) — Replay desktop on legacy KMS — a cursor image larger than the 64x64 plane still shows a pointer *(deps: E5-T36b)*
 - [-] `0.38766` [E5-T37](epic-5-the-window/E5-T37-idle-yield-and-pacing.md) — Stop spinning a host core while the desktop is idle (planning parent) *(deps: E5-T34g)*
