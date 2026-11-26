@@ -1,0 +1,23 @@
+head 939f16b9a632130ef8c826c36e3779930ea79e5a
+$ cargo fmt --check
+rc=0
+$ cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+rc=0
+$ cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+rc=0
+$ wasm-pack test --node crates/wasm --lib -- exported_paced
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (<repo>/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm)
+running 2 tests
+test guest_clock_tests::exported_paced_selection_preserves_lossless_time_and_truthful_source_refusal ... ok
+test guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 15 filtered out; finished in 0.12s
+
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+rc=0

@@ -2307,6 +2307,9 @@ function replayDesktopBootOptions(manifest) {
     enableMic: false,
     guestClock: "icount",
     icountDivider: 64,
+    // An idle guest keeps real time and lets the worker sleep (E5-T37b); the restored snapshot is
+    // a retire-count one either way. `?pace=0` restores the unpaced clock for an A/B.
+    interactiveClock: new URLSearchParams(location.search).get("pace") === "0" ? undefined : "paced",
     fastInterpreter: true,
     // Interpreter only: on this desktop the JIT retired 27% of instructions and recompiled most
     // of what it installed, and was slower than the interpreter (E4-T40a). Without it the turbo

@@ -1,0 +1,82 @@
+[
+ {
+  "name": "the Replay desktop's shape: paced, persist false, whole image",
+  "outcome": "admitted (went past the gates: fetchJsonAsset is not defined)",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, persist omitted (the option's default is false)",
+  "outcome": "admitted (went past the gates: fetchJsonAsset is not defined)",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, persist true",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, persist null",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, persist 0",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, persist 'false'",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, no whole image (lazy chunked)",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, wholeImageUrl null",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, initramfs mode (default), no whole image",
+  "outcome": "refused: interactiveClock \"paced\" requires a whole-image, non-persistent boot",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, disk mode with a wholeImageUrl",
+  "outcome": "refused: whole-image prefill requires a chunked boot with wholeImageUrl and wholeImageSha256",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced, guestClock wall",
+  "outcome": "refused: interactiveClock requires guestClock=icount",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced + accelerated graphics (virgl, worker, whole image, persist false)",
+  "outcome": "admitted (went past the gates: fetchJsonAsset is not defined)",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced + networking (slirpNet), whole image, persist false",
+  "outcome": "admitted (went past the gates: fetchJsonAsset is not defined)",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced + microphone, whole image, persist false",
+  "outcome": "admitted (went past the gates: fetchJsonAsset is not defined)",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "paced-on-keyboard without accelerated graphics",
+  "outcome": "refused: interactiveClock requires accelerated graphics",
+  "fetchesBeforeRefusal": 0
+ },
+ {
+  "name": "no policy, persist true (another guest)",
+  "outcome": "admitted (went past the gates: fetchJsonAsset is not defined)",
+  "fetchesBeforeRefusal": 0
+ }
+]

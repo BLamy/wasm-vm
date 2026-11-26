@@ -1,0 +1,1492 @@
+T 1795684042.324
+11256 1 1318:09.12 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:28.15 other: native wasm-vm boot (another session)
+74862 74827 733:57.44 other: Spotify Helper (Renderer)
+T 1795684043.379
+11256 1 1318:10.62 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:29.19 other: native wasm-vm boot (another session)
+74862 74827 733:59.14 other: Spotify Helper (Renderer)
+77797 77794 0:00.38 chrome-browser(playwright headless)
+77803 77797 0:00.08 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.06 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:00.25 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.03 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.06 Google Chrome Helper (Aperitif)
+T 1795684044.429
+11256 1 1318:12.23 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:30.23 other: native wasm-vm boot (another session)
+74862 74827 734:00.74 other: Spotify Helper (Renderer)
+77797 77794 0:00.41 chrome-browser(playwright headless)
+77803 77797 0:00.12 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.06 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:01.33 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.05 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.06 Google Chrome Helper (Aperitif)
+T 1795684045.475
+11256 1 1318:14.05 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:31.28 other: native wasm-vm boot (another session)
+74862 74827 734:02.30 other: Spotify Helper (Renderer)
+77797 77794 0:00.41 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.06 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:02.51 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.05 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.06 Google Chrome Helper (Aperitif)
+T 1795684046.526
+11256 1 1318:15.84 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:32.32 other: native wasm-vm boot (another session)
+74862 74827 734:03.86 other: Spotify Helper (Renderer)
+77797 77794 0:00.45 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:03.58 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.05 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.07 Google Chrome Helper (Aperitif)
+T 1795684047.573
+11256 1 1318:17.68 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:33.37 other: native wasm-vm boot (another session)
+74862 74827 734:05.44 other: Spotify Helper (Renderer)
+77797 77794 0:00.45 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:04.67 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.06 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.07 Google Chrome Helper (Aperitif)
+T 1795684048.627
+11256 1 1318:19.48 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:34.41 other: native wasm-vm boot (another session)
+74862 74827 734:07.24 other: Spotify Helper (Renderer)
+77797 77794 0:00.46 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:05.69 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.06 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.07 Google Chrome Helper (Aperitif)
+T 1795684049.678
+11256 1 1318:21.28 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:35.46 other: native wasm-vm boot (another session)
+74862 74827 734:08.82 other: Spotify Helper (Renderer)
+77797 77794 0:00.46 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:06.74 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.06 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.08 Google Chrome Helper (Aperitif)
+T 1795684050.733
+11256 1 1318:23.09 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:36.51 other: native wasm-vm boot (another session)
+74862 74827 734:10.39 other: Spotify Helper (Renderer)
+77797 77794 0:00.46 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:07.84 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.07 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.08 Google Chrome Helper (Aperitif)
+T 1795684051.785
+11256 1 1318:24.84 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:37.54 other: native wasm-vm boot (another session)
+74862 74827 734:11.96 other: Spotify Helper (Renderer)
+77797 77794 0:00.46 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:08.90 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.07 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.09 Google Chrome Helper (Aperitif)
+T 1795684052.836
+11256 1 1318:26.66 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:38.59 other: native wasm-vm boot (another session)
+74862 74827 734:13.54 other: Spotify Helper (Renderer)
+77797 77794 0:00.46 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:09.95 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.07 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.09 Google Chrome Helper (Aperitif)
+T 1795684053.887
+11256 1 1318:28.47 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:39.64 other: native wasm-vm boot (another session)
+74862 74827 734:15.10 other: Spotify Helper (Renderer)
+77797 77794 0:00.46 chrome-browser(playwright headless)
+77803 77797 0:00.13 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:11.03 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.08 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.09 Google Chrome Helper (Aperitif)
+T 1795684054.940
+11256 1 1318:30.24 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:40.69 other: native wasm-vm boot (another session)
+74862 74827 734:16.92 other: Spotify Helper (Renderer)
+77797 77794 0:00.49 chrome-browser(playwright headless)
+77803 77797 0:00.14 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:12.10 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.10 Google Chrome Helper (Aperitif)
+T 1795684055.989
+11256 1 1318:32.05 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:41.73 other: native wasm-vm boot (another session)
+74862 74827 734:18.51 other: Spotify Helper (Renderer)
+77797 77794 0:00.51 chrome-browser(playwright headless)
+77803 77797 0:00.16 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:13.16 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.10 Google Chrome Helper (Aperitif)
+T 1795684057.040
+11256 1 1318:33.76 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:42.78 other: native wasm-vm boot (another session)
+74862 74827 734:20.09 other: Spotify Helper (Renderer)
+77797 77794 0:00.59 chrome-browser(playwright headless)
+77803 77797 0:00.20 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:14.22 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.11 Google Chrome Helper (Aperitif)
+T 1795684058.092
+11256 1 1318:35.49 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:43.82 other: native wasm-vm boot (another session)
+74862 74827 734:21.66 other: Spotify Helper (Renderer)
+77797 77794 0:00.61 chrome-browser(playwright headless)
+77803 77797 0:00.24 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:15.27 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.11 Google Chrome Helper (Aperitif)
+T 1795684059.143
+11256 1 1318:37.26 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:44.87 other: native wasm-vm boot (another session)
+74862 74827 734:23.23 other: Spotify Helper (Renderer)
+77797 77794 0:00.63 chrome-browser(playwright headless)
+77803 77797 0:00.27 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:16.33 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.11 Google Chrome Helper (Aperitif)
+T 1795684060.195
+11256 1 1318:39.03 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:45.91 other: native wasm-vm boot (another session)
+74862 74827 734:24.80 other: Spotify Helper (Renderer)
+77797 77794 0:00.65 chrome-browser(playwright headless)
+77803 77797 0:00.30 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:17.38 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.12 Google Chrome Helper (Aperitif)
+T 1795684061.247
+11256 1 1318:40.83 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:46.96 other: native wasm-vm boot (another session)
+74862 74827 734:26.48 other: Spotify Helper (Renderer)
+77797 77794 0:00.71 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:18.44 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.12 Google Chrome Helper (Aperitif)
+78220 77797 0:00.01 Google Chrome Helper (Aperitif)
+T 1795684062.304
+11256 1 1318:42.63 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:48.01 other: native wasm-vm boot (another session)
+74862 74827 734:28.19 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:19.49 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.12 Google Chrome Helper (Aperitif)
+T 1795684063.352
+11256 1 1318:44.43 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:49.05 other: native wasm-vm boot (another session)
+74862 74827 734:29.76 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:20.55 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.13 Google Chrome Helper (Aperitif)
+T 1795684064.406
+11256 1 1318:46.14 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:50.10 other: native wasm-vm boot (another session)
+74862 74827 734:31.33 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:21.61 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.13 Google Chrome Helper (Aperitif)
+T 1795684065.458
+11256 1 1318:47.83 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:51.15 other: native wasm-vm boot (another session)
+74862 74827 734:32.90 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:22.67 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.14 Google Chrome Helper (Aperitif)
+T 1795684066.510
+11256 1 1318:49.66 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:52.20 other: native wasm-vm boot (another session)
+74862 74827 734:34.46 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:23.73 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.14 Google Chrome Helper (Aperitif)
+T 1795684067.563
+11256 1 1318:51.52 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:53.25 other: native wasm-vm boot (another session)
+74862 74827 734:36.03 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:24.79 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.14 Google Chrome Helper (Aperitif)
+T 1795684068.608
+11256 1 1318:53.26 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:54.29 other: native wasm-vm boot (another session)
+74862 74827 734:37.60 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:25.85 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.09 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.15 Google Chrome Helper (Aperitif)
+T 1795684069.662
+11256 1 1318:55.01 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:55.34 other: native wasm-vm boot (another session)
+74862 74827 734:39.17 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:26.93 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.10 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.15 Google Chrome Helper (Aperitif)
+T 1795684070.714
+11256 1 1318:56.85 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:56.38 other: native wasm-vm boot (another session)
+74862 74827 734:40.98 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:27.99 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.10 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.15 Google Chrome Helper (Aperitif)
+T 1795684071.765
+11256 1 1318:58.70 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:57.43 other: native wasm-vm boot (another session)
+74862 74827 734:42.55 other: Spotify Helper (Renderer)
+77797 77794 0:00.72 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:29.07 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.11 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684072.819
+11256 1 1319:00.52 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:58.48 other: native wasm-vm boot (another session)
+74862 74827 734:44.14 other: Spotify Helper (Renderer)
+77797 77794 0:00.76 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.07 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:30.14 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.11 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684073.865
+11256 1 1319:02.30 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 1:59.52 other: native wasm-vm boot (another session)
+74862 74827 734:45.70 other: Spotify Helper (Renderer)
+77797 77794 0:00.77 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:30.80 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.12 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684074.916
+11256 1 1319:04.06 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:00.57 other: native wasm-vm boot (another session)
+74862 74827 734:47.26 other: Spotify Helper (Renderer)
+77797 77794 0:00.77 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:31.04 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.13 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684075.958
+11256 1 1319:05.78 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:01.61 other: native wasm-vm boot (another session)
+74862 74827 734:48.81 other: Spotify Helper (Renderer)
+77797 77794 0:00.77 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:31.19 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.13 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684077.011
+11256 1 1319:07.59 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:02.66 other: native wasm-vm boot (another session)
+74862 74827 734:50.62 other: Spotify Helper (Renderer)
+77797 77794 0:00.77 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:31.68 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.13 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684078.063
+11256 1 1319:09.41 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:03.70 other: native wasm-vm boot (another session)
+74862 74827 734:52.19 other: Spotify Helper (Renderer)
+77797 77794 0:00.78 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:32.11 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.14 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684079.114
+11256 1 1319:11.21 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:04.75 other: native wasm-vm boot (another session)
+74862 74827 734:53.76 other: Spotify Helper (Renderer)
+77797 77794 0:00.78 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:33.20 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.14 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.16 Google Chrome Helper (Aperitif)
+T 1795684080.166
+11256 1 1319:12.97 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:05.80 other: native wasm-vm boot (another session)
+74862 74827 734:55.33 other: Spotify Helper (Renderer)
+77797 77794 0:00.78 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:34.33 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.15 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.17 Google Chrome Helper (Aperitif)
+T 1795684081.217
+11256 1 1319:14.67 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:06.84 other: native wasm-vm boot (another session)
+74862 74827 734:56.90 other: Spotify Helper (Renderer)
+77797 77794 0:00.78 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:35.44 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.16 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.17 Google Chrome Helper (Aperitif)
+T 1795684082.264
+11256 1 1319:16.43 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:07.88 other: native wasm-vm boot (another session)
+74862 74827 734:58.46 other: Spotify Helper (Renderer)
+77797 77794 0:00.78 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:36.53 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.16 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.18 Google Chrome Helper (Aperitif)
+T 1795684083.318
+11256 1 1319:18.25 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:08.93 other: native wasm-vm boot (another session)
+74862 74827 735:00.03 other: Spotify Helper (Renderer)
+77797 77794 0:00.78 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:37.65 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.17 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.18 Google Chrome Helper (Aperitif)
+T 1795684084.369
+11256 1 1319:20.02 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:09.98 other: native wasm-vm boot (another session)
+74862 74827 735:01.68 other: Spotify Helper (Renderer)
+77797 77794 0:00.79 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:38.75 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.17 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.18 Google Chrome Helper (Aperitif)
+T 1795684085.427
+11256 1 1319:21.81 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:11.02 other: native wasm-vm boot (another session)
+74862 74827 735:03.41 other: Spotify Helper (Renderer)
+77797 77794 0:00.79 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:39.87 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.18 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.19 Google Chrome Helper (Aperitif)
+T 1795684086.470
+11256 1 1319:23.62 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:12.06 other: native wasm-vm boot (another session)
+74862 74827 735:04.96 other: Spotify Helper (Renderer)
+77797 77794 0:00.79 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:40.74 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.18 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.19 Google Chrome Helper (Aperitif)
+T 1795684087.521
+11256 1 1319:25.43 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:13.11 other: native wasm-vm boot (another session)
+74862 74827 735:06.54 other: Spotify Helper (Renderer)
+77797 77794 0:00.79 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:40.91 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.18 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.19 Google Chrome Helper (Aperitif)
+T 1795684088.572
+11256 1 1319:26.31 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:14.15 other: native wasm-vm boot (another session)
+74862 74827 735:08.10 other: Spotify Helper (Renderer)
+77797 77794 0:00.79 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:41.46 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.19 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.20 Google Chrome Helper (Aperitif)
+T 1795684089.620
+11256 1 1319:27.66 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:15.19 other: native wasm-vm boot (another session)
+74862 74827 735:09.67 other: Spotify Helper (Renderer)
+77797 77794 0:00.79 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:41.80 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.19 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.20 Google Chrome Helper (Aperitif)
+T 1795684090.666
+11256 1 1319:29.44 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:16.23 other: native wasm-vm boot (another session)
+74862 74827 735:11.24 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:41.95 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.20 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.20 Google Chrome Helper (Aperitif)
+T 1795684091.721
+11256 1 1319:31.26 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:17.28 other: native wasm-vm boot (another session)
+74862 74827 735:13.05 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:42.45 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.20 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.21 Google Chrome Helper (Aperitif)
+T 1795684092.770
+11256 1 1319:33.07 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:18.33 other: native wasm-vm boot (another session)
+74862 74827 735:14.62 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:42.91 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.21 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.21 Google Chrome Helper (Aperitif)
+T 1795684093.821
+11256 1 1319:34.91 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:19.37 other: native wasm-vm boot (another session)
+74862 74827 735:16.18 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:43.10 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.21 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.22 Google Chrome Helper (Aperitif)
+T 1795684094.867
+11256 1 1319:36.66 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:20.41 other: native wasm-vm boot (another session)
+74862 74827 735:17.74 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:43.43 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.22 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.22 Google Chrome Helper (Aperitif)
+T 1795684095.916
+11256 1 1319:38.44 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:21.46 other: native wasm-vm boot (another session)
+74862 74827 735:19.51 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:44.10 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.22 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.22 Google Chrome Helper (Aperitif)
+T 1795684096.968
+11256 1 1319:40.26 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:22.50 other: native wasm-vm boot (another session)
+74862 74827 735:21.12 other: Spotify Helper (Renderer)
+77797 77794 0:00.80 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:44.26 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.22 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.23 Google Chrome Helper (Aperitif)
+T 1795684098.008
+11256 1 1319:42.04 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:23.54 other: native wasm-vm boot (another session)
+74862 74827 735:22.69 other: Spotify Helper (Renderer)
+77797 77794 0:00.81 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:44.41 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.23 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.23 Google Chrome Helper (Aperitif)
+T 1795684099.051
+11256 1 1319:43.81 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:24.57 other: native wasm-vm boot (another session)
+74862 74827 735:24.24 other: Spotify Helper (Renderer)
+77797 77794 0:00.81 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:45.22 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.23 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.23 Google Chrome Helper (Aperitif)
+T 1795684100.100
+11256 1 1319:45.57 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:25.62 other: native wasm-vm boot (another session)
+74862 74827 735:25.81 other: Spotify Helper (Renderer)
+77797 77794 0:00.81 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:45.38 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.24 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.24 Google Chrome Helper (Aperitif)
+T 1795684101.148
+11256 1 1319:47.32 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:26.66 other: native wasm-vm boot (another session)
+74862 74827 735:27.38 other: Spotify Helper (Renderer)
+77797 77794 0:00.81 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:45.54 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.24 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.24 Google Chrome Helper (Aperitif)
+T 1795684102.199
+11256 1 1319:49.15 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:27.70 other: native wasm-vm boot (another session)
+74862 74827 735:29.18 other: Spotify Helper (Renderer)
+77797 77794 0:00.81 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:46.17 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.25 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.24 Google Chrome Helper (Aperitif)
+T 1795684103.250
+11256 1 1319:50.96 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:28.74 other: native wasm-vm boot (another session)
+74862 74827 735:30.76 other: Spotify Helper (Renderer)
+77797 77794 0:00.82 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:46.43 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.25 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.25 Google Chrome Helper (Aperitif)
+T 1795684104.302
+11256 1 1319:52.82 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:29.79 other: native wasm-vm boot (another session)
+74862 74827 735:32.32 other: Spotify Helper (Renderer)
+77797 77794 0:00.82 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:46.59 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.26 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.25 Google Chrome Helper (Aperitif)
+T 1795684105.344
+11256 1 1319:54.46 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:30.83 other: native wasm-vm boot (another session)
+74862 74827 735:33.88 other: Spotify Helper (Renderer)
+77797 77794 0:00.82 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:47.06 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.26 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.26 Google Chrome Helper (Aperitif)
+T 1795684106.392
+11256 1 1319:56.30 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:31.87 other: native wasm-vm boot (another session)
+74862 74827 735:35.44 other: Spotify Helper (Renderer)
+77797 77794 0:00.82 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:47.55 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.27 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.26 Google Chrome Helper (Aperitif)
+T 1795684107.440
+11256 1 1319:58.08 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:32.91 other: native wasm-vm boot (another session)
+74862 74827 735:37.05 other: Spotify Helper (Renderer)
+77797 77794 0:00.83 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:47.70 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.27 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.26 Google Chrome Helper (Aperitif)
+T 1795684108.488
+11256 1 1319:59.90 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:33.95 other: native wasm-vm boot (another session)
+74862 74827 735:38.81 other: Spotify Helper (Renderer)
+77797 77794 0:00.83 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:48.11 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.28 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684109.536
+11256 1 1320:01.64 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:34.99 other: native wasm-vm boot (another session)
+74862 74827 735:40.38 other: Spotify Helper (Renderer)
+77797 77794 0:00.83 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:48.82 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.29 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684110.587
+11256 1 1320:03.47 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:36.04 other: native wasm-vm boot (another session)
+74862 74827 735:41.96 other: Spotify Helper (Renderer)
+77797 77794 0:00.83 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:48.97 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.29 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684111.638
+11256 1 1320:05.29 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:37.08 other: native wasm-vm boot (another session)
+74862 74827 735:43.52 other: Spotify Helper (Renderer)
+77797 77794 0:00.83 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:49.43 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.30 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684112.684
+11256 1 1320:07.03 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:38.13 other: native wasm-vm boot (another session)
+74862 74827 735:45.08 other: Spotify Helper (Renderer)
+77797 77794 0:00.84 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:50.07 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.30 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684113.734
+11256 1 1320:08.86 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:39.17 other: native wasm-vm boot (another session)
+74862 74827 735:46.65 other: Spotify Helper (Renderer)
+77797 77794 0:00.84 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:50.28 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.30 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684114.784
+11256 1 1320:10.61 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:40.21 other: native wasm-vm boot (another session)
+74862 74827 735:48.21 other: Spotify Helper (Renderer)
+77797 77794 0:00.84 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:50.49 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.31 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684115.838
+11256 1 1320:12.43 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:41.26 other: native wasm-vm boot (another session)
+74862 74827 735:50.02 other: Spotify Helper (Renderer)
+77797 77794 0:00.84 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:50.71 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.31 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684116.886
+11256 1 1320:14.28 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:42.30 other: native wasm-vm boot (another session)
+74862 74827 735:51.59 other: Spotify Helper (Renderer)
+77797 77794 0:00.84 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:50.91 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.32 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684117.936
+11256 1 1320:16.07 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:43.35 other: native wasm-vm boot (another session)
+74862 74827 735:53.15 other: Spotify Helper (Renderer)
+77797 77794 0:00.84 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:51.05 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.32 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684118.983
+11256 1 1320:17.89 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:44.39 other: native wasm-vm boot (another session)
+74862 74827 735:54.78 other: Spotify Helper (Renderer)
+77797 77794 0:00.85 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:51.27 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.32 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684120.040
+11256 1 1320:19.70 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:45.44 other: native wasm-vm boot (another session)
+74862 74827 735:56.52 other: Spotify Helper (Renderer)
+77797 77794 0:00.85 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:52.03 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.33 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684121.089
+11256 1 1320:21.50 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:46.49 other: native wasm-vm boot (another session)
+74862 74827 735:58.11 other: Spotify Helper (Renderer)
+77797 77794 0:00.85 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:52.21 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.33 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684122.141
+11256 1 1320:23.27 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:47.53 other: native wasm-vm boot (another session)
+74862 74827 735:59.68 other: Spotify Helper (Renderer)
+77797 77794 0:00.85 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:52.42 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.34 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684123.185
+11256 1 1320:25.07 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:48.57 other: native wasm-vm boot (another session)
+74862 74827 736:01.42 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:52.63 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.34 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684124.233
+11256 1 1320:26.89 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:49.61 other: native wasm-vm boot (another session)
+74862 74827 736:03.05 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:52.78 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.34 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684125.287
+11256 1 1320:28.58 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:50.66 other: native wasm-vm boot (another session)
+74862 74827 736:04.61 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:52.99 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.35 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684126.332
+11256 1 1320:30.37 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:51.70 other: native wasm-vm boot (another session)
+74862 74827 736:06.16 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:53.20 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.35 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684127.384
+11256 1 1320:32.13 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:52.75 other: native wasm-vm boot (another session)
+74862 74827 736:07.72 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:53.35 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.36 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684128.433
+11256 1 1320:33.96 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:53.80 other: native wasm-vm boot (another session)
+74862 74827 736:09.28 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:53.62 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.36 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684129.488
+11256 1 1320:35.74 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:54.84 other: native wasm-vm boot (another session)
+74862 74827 736:11.09 other: Spotify Helper (Renderer)
+77797 77794 0:00.86 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:53.77 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.36 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684130.539
+11256 1 1320:37.55 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:55.89 other: native wasm-vm boot (another session)
+74862 74827 736:12.68 other: Spotify Helper (Renderer)
+77797 77794 0:00.87 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:53.93 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.37 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684131.589
+11256 1 1320:39.39 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:56.93 other: native wasm-vm boot (another session)
+74862 74827 736:14.25 other: Spotify Helper (Renderer)
+77797 77794 0:00.87 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:54.19 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.37 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684132.634
+11256 1 1320:41.19 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:57.97 other: native wasm-vm boot (another session)
+74862 74827 736:15.80 other: Spotify Helper (Renderer)
+77797 77794 0:00.87 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:54.35 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.38 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684133.684
+11256 1 1320:43.02 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 2:59.01 other: native wasm-vm boot (another session)
+74862 74827 736:17.37 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:54.52 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.38 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684134.735
+11256 1 1320:44.85 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:00.06 other: native wasm-vm boot (another session)
+74862 74827 736:18.94 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:54.68 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.39 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684135.777
+11256 1 1320:46.56 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:01.10 other: native wasm-vm boot (another session)
+74862 74827 736:20.74 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:54.83 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.39 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684136.828
+11256 1 1320:48.40 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:02.15 other: native wasm-vm boot (another session)
+74862 74827 736:22.30 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:54.97 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.39 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684137.880
+11256 1 1320:50.16 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:03.19 other: native wasm-vm boot (another session)
+74862 74827 736:23.87 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:55.14 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.40 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684138.924
+11256 1 1320:51.98 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:04.23 other: native wasm-vm boot (another session)
+74862 74827 736:25.43 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:55.30 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.40 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684139.976
+11256 1 1320:53.80 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:05.28 other: native wasm-vm boot (another session)
+74862 74827 736:27.23 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:55.45 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.41 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684141.023
+11256 1 1320:55.55 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:06.32 other: native wasm-vm boot (another session)
+74862 74827 736:28.80 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:55.62 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.41 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684142.074
+11256 1 1320:57.34 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:07.37 other: native wasm-vm boot (another session)
+74862 74827 736:30.36 other: Spotify Helper (Renderer)
+77797 77794 0:00.88 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:55.77 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.41 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684143.125
+11256 1 1320:58.94 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:08.42 other: native wasm-vm boot (another session)
+74862 74827 736:31.91 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:55.92 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.42 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684144.176
+11256 1 1321:00.79 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:09.46 other: native wasm-vm boot (another session)
+74862 74827 736:33.48 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:56.11 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.42 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684145.225
+11256 1 1321:02.53 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:10.51 other: native wasm-vm boot (another session)
+74862 74827 736:35.20 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:56.29 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.43 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684146.277
+11256 1 1321:04.30 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:11.55 other: native wasm-vm boot (another session)
+74862 74827 736:36.85 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:56.45 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.43 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684147.323
+11256 1 1321:06.14 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:12.60 other: native wasm-vm boot (another session)
+74862 74827 736:38.43 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:56.61 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.43 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684148.367
+11256 1 1321:07.92 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+71483 71482 3:13.64 other: native wasm-vm boot (another session)
+74862 74827 736:39.98 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:56.76 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.44 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684149.419
+11256 1 1321:09.73 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:41.54 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:56.95 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.44 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684150.474
+11256 1 1321:11.50 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:43.30 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:57.14 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.45 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684151.522
+11256 1 1321:13.23 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:44.91 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:57.41 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.45 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684152.574
+11256 1 1321:14.99 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:46.47 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:57.61 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.46 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684153.626
+11256 1 1321:16.74 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:48.04 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:57.79 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.46 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684154.681
+11256 1 1321:18.54 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:49.60 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:57.96 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.47 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684155.733
+11256 1 1321:20.25 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:51.40 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:58.16 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.47 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684156.779
+11256 1 1321:22.03 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:52.98 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:58.34 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.48 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684157.826
+11256 1 1321:23.82 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:54.53 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:58.50 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.48 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+T 1795684158.877
+11256 1 1321:25.66 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:56.09 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:58.68 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.49 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+80300 80290 0:00.70 other: native wasm-vm boot (another session)
+T 1795684159.926
+11256 1 1321:27.42 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:57.89 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:58.82 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.49 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+80300 80290 0:01.75 other: native wasm-vm boot (another session)
+T 1795684160.977
+11256 1 1321:29.17 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 736:59.45 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:58.97 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.50 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+80300 80290 0:02.79 other: native wasm-vm boot (another session)
+T 1795684162.021
+11256 1 1321:30.95 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 737:01.00 other: Spotify Helper (Renderer)
+77797 77794 0:00.89 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:59.14 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.50 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+80300 80290 0:03.83 other: native wasm-vm boot (another session)
+T 1795684163.072
+11256 1 1321:32.74 other: mediaanalysisd
+51885 1 0:16.44 other: mediaanalysisd
+74862 74827 737:02.57 other: Spotify Helper (Renderer)
+77797 77794 0:01.03 chrome-browser(playwright headless)
+77803 77797 0:00.33 Google Chrome Helper (Aperitif)
+77804 77797 0:00.02 Google Chrome Helper (Aperitif)
+77807 77797 0:00.08 Google Chrome Helper (Aperitif Renderer)
+77808 77797 0:59.29 Google Chrome Helper (Aperitif Renderer)
+77820 77797 0:00.50 Google Chrome Helper (Aperitif)
+77821 77797 0:00.03 Google Chrome Helper (Aperitif Renderer)
+77823 77797 0:00.27 Google Chrome Helper (Aperitif)
+80300 80290 0:04.88 other: native wasm-vm boot (another session)

@@ -1,0 +1,7 @@
+E2-T20 WFI with no wakeup source armed — the guest will idle forever (no timer deadline, no pending+enabled device interrupt). retired=5, wfi_count=1
+=== irq/trap stats ===
+retired=5  wfi=1
+exceptions (scause):
+interrupts (scause):
+PLIC claims (irq):
+

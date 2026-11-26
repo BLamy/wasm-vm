@@ -1,0 +1,49 @@
+head 8fa4ce62e194ba3c4590fa934b843e9c9ec34e54; crates/web changes outside the commit: 0
+$ cargo fmt --check
+rc=0
+$ cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.29s
+rc=0
+$ cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+rc=0
+$ wasm-pack test --node crates/wasm --lib -- exported_paced
+test guest_clock_tests::exported_paced_selection_preserves_lossless_time_and_truthful_source_refusal ... ok
+test guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 15 filtered out; finished in 0.15s
+
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+rc=0
+$ wasm-pack test --node crates/wasm --lib
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 filtered out; finished in 4.04s
+
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+rc=0
+$ cd web && node --test tests/e5-t37b-paced-idle.test.mjs
+✔ a sleep is armed only for a wait worth a timer, is clamped, and resumes once (0.758375ms)
+✔ a wake ends the sleep, cancels its timer and suppresses its resume (0.09975ms)
+✔ a delivery voids a wait that was taken but not slept on yet (0.096792ms)
+✔ the loader takes the wait with a ticket straight after the run slice and every host call voids it (0.605292ms)
+✔ the loader admits the paced policy only for a whole-image, non-persistent boot (2.648375ms)
+✔ the defaults use the realm's timers (1.991333ms)
+✔ "paced" is an interactive clock policy of the retire-count clock with a host time source (0.306208ms)
+✔ the paced policy selects the divider, then the paced clock, then the idle policy, before any slice (0.655666ms)
+✔ after a restore the paced policy is selected on top of the restored clock, or the restore is refused (0.271458ms)
+✔ every other policy leaves the idle policy alone (0.115667ms)
+✔ a machine without the idle bindings, or one whose time moves on selection, fails closed (0.101709ms)
+✔ the Replay desktop asks for the paced policy; ?pace=0 turns it off (1.319916ms)
+✔ the loader admits the paced policy without accelerated graphics and only that one (1.3415ms)
+ℹ tests 13
+ℹ pass 13
+ℹ fail 0
+$ cd web && node --test --test-timeout=120000 tests/*.test.mjs   (names of failing tests, against the list at the parent of this task)
+ℹ tests 612
+ℹ pass 584
+ℹ fail 28
+failing now: 29 lines; failing before: 29 lines (each list has one header line)
+difference (< only before, > only now):
+diff rc=0
+GATES_DONE

@@ -1,0 +1,30 @@
+{
+  "head": "57579bfaff4d031f267c26519f50d5ccde1a256b",
+  "distCleanAgainstHead": true,
+  "at": "2026-11-26T09:51:37.325Z",
+  "url": "http://127.0.0.1:53802/app.html?noAutoBoot=1",
+  "browser": "158.0.8127.88",
+  "bundle": {
+    "pkg/wasm_vm_wasm_bg.wasm": "19cd4d2dd27c3df219d581be9f9b58fac7aab745d1448b0cc328f6bb9408a920",
+    "roadmap.js": "a6cc552c71ba1b0c303bad7974b56372170cb5c728251c171552b6701d539097",
+    "loader.js": "3520501e1d292879e967e90fbad6f23c0bee0cb2c15ba4c739f5b40103c32d33"
+  },
+  "expectedTotal": "127",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "row": {
+    "name": "Replay desktop keeps real time while idle and lets its worker sleep",
+    "matches": 1,
+    "pipClass": "cap-pip verified",
+    "visibleOnThisPage": false,
+    "text": "Replay desktop keeps real time while idle and lets its worker sleepE5-T37a/b: under the retire-count clock an idle guest's wfi jumped guest time to the next timer, so an idle desktop ran about 12 guest seconds per real second with the worker pegged in its run loop. The Replay desktop now runs the paced clock: a waiting wfi ends the run slice and reports the wait (core, E5-T37a, verified over five rounds), and the loader sleeps that long, at most 50 ms, waking at once for input (E5-T37b, two fresh verifier rounds). Committed bundle, two interleaved fresh loads a side: at idle the worker is inside run slices 10% of wall time (was 99.8%) and guest time runs at 0.97x real (was 11.9x); the first verifier's own loads agree (9.5%, 0.98x) and the browser process that owns the worker uses 15% of a core against 105%. A click's result paints in about 265 ms (was about 345 ms, 23% lower pooled over 16 clicks a side) because periodic guest work no longer runs twelve times too often; key echo about 47 ms against about 44 ms. The first minute after the desktop appears is not idle (Chrome's start-up timers now take their real time), and sessions with networking, audio or an RTC alarm are unmeasured (E5-T37c). ?pace=0 restores the old clock."
+  },
+  "tasksJsonStatus": "verified",
+  "errors": [],
+  "httpErrors": [],
+  "favicon404": 0,
+  "screenshotSha256": "6487d15e73fb7a47929be2daf1f9a1e6d7eb9b177dc4d6347f2953b295c5cef5"
+}

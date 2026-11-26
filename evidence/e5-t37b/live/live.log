@@ -1,0 +1,65 @@
+[desktop-latency 10:00:19.064] open https://wasm-vm.pages.dev/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 10:01:02.727] desktop ready after 43.7 s
+[desktop-latency 10:01:02.742] scenario click
+[desktop-latency 10:01:08.766] click #1: result 592.8 ms, pressed-state frame 125.2 ms, 74M instr @ 116.2 MIPS
+[desktop-latency 10:01:12.791] click #2: result 429.9 ms, pressed-state frame 229.9 ms, 61M instr @ 126.4 MIPS
+[desktop-latency 10:01:16.348] click #3: result 262.4 ms, pressed-state frame 144.1 ms, 25.4M instr @ 93 MIPS
+[desktop-latency 10:01:19.656] click #4: result 255.9 ms, pressed-state frame 139.3 ms, 25.5M instr @ 93.1 MIPS
+[desktop-latency 10:01:22.965] click #5: result 262.8 ms, pressed-state frame 145.5 ms, 26M instr @ 95.3 MIPS
+[desktop-latency 10:01:26.275] click #6: result 267.9 ms, pressed-state frame 151.3 ms, 25.3M instr @ 92.9 MIPS
+[desktop-latency 10:01:29.310] scenario type
+[desktop-latency 10:01:36.258] type #1: echo 91.5 ms
+[desktop-latency 10:01:37.870] type #2: echo 46.6 ms
+[desktop-latency 10:01:39.428] type #3: echo 36.2 ms
+[desktop-latency 10:01:41.038] type #4: echo 44.2 ms
+[desktop-latency 10:01:42.596] type #5: echo 36.8 ms
+[desktop-latency 10:01:44.156] type #6: echo 41.7 ms
+[desktop-latency 10:01:48.488] {"echoMs":{"n":6,"missing":0,"min":36.2,"median":44.2,"max":91.5}}
+[desktop-latency 10:01:48.493] scenario idle
+[desktop-latency 10:02:21.296] {"wallMs":30004,"instructionsM":316.5,"mips":10.5,"inSlicePct":9.8,"guestSecondsPerSecond":0.98,"idleSleeps":600,"idleSleepMs":26418,"idleWakes":108,"clockMode":"paced-icount","framesReceived":0,"drawnPresents":0}
+[desktop-latency 10:02:21.300] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 6,
+   "missing": 0,
+   "min": 255.9,
+   "median": 267.9,
+   "max": 592.8
+  },
+  "pointerArrivedMs": 48.2,
+  "pressedFrame": {
+   "seen": 6,
+   "none": 0,
+   "ms": {
+    "n": 6,
+    "missing": 0,
+    "min": 125.2,
+    "median": 145.5,
+    "max": 229.9
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 6,
+   "missing": 0,
+   "min": 36.2,
+   "median": 44.2,
+   "max": 91.5
+  }
+ },
+ "idle": {
+  "wallMs": 30004,
+  "instructionsM": 316.5,
+  "mips": 10.5,
+  "inSlicePct": 9.8,
+  "guestSecondsPerSecond": 0.98,
+  "idleSleeps": 600,
+  "idleSleepMs": 26418,
+  "idleWakes": 108,
+  "clockMode": "paced-icount",
+  "framesReceived": 0,
+  "drawnPresents": 0
+ }
+}
+[desktop-latency 10:02:21.357] wrote evidence/e5-t37b/live/live.json

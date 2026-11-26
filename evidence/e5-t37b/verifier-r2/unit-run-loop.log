@@ -1,0 +1,13 @@
+✔ a host call during a sleep ends it and one slice runs at once; the stale timer does nothing (3.334625ms)
+✔ every controller function ends a sleep, a status read included (0.546583ms)
+✔ a sleep that nothing ends resumes into exactly one slice; a wait too short for a timer is not slept on (0.708875ms)
+✔ pause during a sleep: no slice while paused; resume, even twice, schedules exactly one tick (0.8435ms)
+✔ a rapid pause then resume while asleep leaves one tick, not two (0.61275ms)
+✔ stop during a sleep: done resolves 'stopped', no slice afterwards, a late timer or tick is inert (0.602625ms)
+✔ without the policy the wait is never taken, nothing sleeps and the controller is not wrapped (0.816959ms)
+✔ a delivery during a tick's await voids the wait that tick took (0.540042ms)
+✔ random interleavings (200 seeds x 120 steps): never two pending ticks, never a stall, never a slice while paused or stopped (2125.017917ms)
+ℹ tests 9
+ℹ pass 9
+ℹ fail 0
+ℹ duration_ms 2168.501125

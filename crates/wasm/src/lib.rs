@@ -1743,6 +1743,106 @@ mod guest_clock_tests {
         );
     }
 
+    /// E5-T37b: an S-mode guest that arms the SBI timer 26.8 s out and idles:
+    /// `li a7, 0x54494D45; li a6, 0; lui a0, 0x10000; ecall; wfi; j .-4`.
+    #[cfg(target_arch = "wasm32")]
+    fn idle_linux() -> WasmLinux {
+        let program: [u32; 7] = [
+            0x5449_58b7, // lui  a7, 0x54495
+            0xd458_8893, // addi a7, a7, -699      (a7 = "TIME")
+            0x0000_0813, // addi a6, x0, 0         (set_timer)
+            0x1000_0537, // lui  a0, 0x10000       (deadline: 2^28 ticks)
+            0x0000_0073, // ecall
+            0x1050_0073, // wfi
+            0xffdf_f06f, // jal  x0, -4
+        ];
+        let bytes: Vec<u8> = program.iter().flat_map(|w| w.to_le_bytes()).collect();
+        WasmLinux::new(
+            8,
+            &bytes,
+            &[],
+            String::new(),
+            js_sys::Function::new_no_args(""),
+            false,
+        )
+        .unwrap()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest() {
+        let m = idle_linux();
+        let retired = |res: &JsValue| field(res, "retired").as_f64().unwrap();
+        // Refused before anything changes: non-boolean yield, and a lag that is not a finite
+        // number of milliseconds in range.
+        let object = js_sys::Object::new();
+        for (yield_to_host, lag) in [
+            (JsValue::from_f64(1.0), JsValue::UNDEFINED),
+            (JsValue::from_str("true"), JsValue::UNDEFINED),
+            (JsValue::NULL, JsValue::from_f64(50.0)),
+            (JsValue::UNDEFINED, JsValue::from_f64(50.0)),
+            (JsValue::TRUE, JsValue::from_f64(-1.0)),
+            (JsValue::TRUE, JsValue::from_f64(f64::NAN)),
+            (JsValue::TRUE, JsValue::from_f64(f64::INFINITY)),
+            (JsValue::TRUE, JsValue::from_f64(3_600_000.5)),
+            (JsValue::TRUE, JsValue::from_str("50")),
+            (JsValue::TRUE, JsValue::TRUE),
+            (JsValue::TRUE, object.into()),
+        ] {
+            assert!(m.set_paced_idle_policy(yield_to_host, lag).is_err());
+            assert!(!m.inner.borrow().machine.paced_idle_yield());
+        }
+        assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0);
+        // Node has neither a Window nor a WorkerGlobalScope, so the module finds no host clock
+        // there and the paced clock cannot be selected. Give this test's realm one — node's own
+        // monotonic `performance`, under the name the module looks for — and take it away at
+        // the end, so the test of the refusal without a host clock still runs in such a realm.
+        let shimmed = JsHostTimer::new().is_none();
+        if shimmed {
+            js_sys::eval(
+                "globalThis.WorkerGlobalScope = class { static [Symbol.hasInstance](v) { return v === globalThis; } };",
+            )
+            .unwrap();
+        }
+        assert!(JsHostTimer::new().is_some(), "a host clock for this test");
+        m.set_guest_clock("paced-icount").unwrap();
+        for lag in [
+            JsValue::UNDEFINED,
+            JsValue::NULL,
+            JsValue::from_f64(0.0),
+            JsValue::from_f64(50.0),
+        ] {
+            m.set_paced_idle_policy(JsValue::TRUE, lag).unwrap();
+            assert!(m.inner.borrow().machine.paced_idle_yield());
+        }
+        // The guest arms its timer and idles: the slice ends at the waiting wfi with almost all
+        // of its budget unused — four instructions that load the call's arguments and the wfi
+        // (the SBI call is served by the built-in SBI and is not a guest retirement) — and the
+        // wait is the rest of the 26.8 s.
+        assert_eq!(retired(&m.run_chunk(100_000, None).unwrap()), 5.0);
+        let wait = m.take_idle_wait_ms().unwrap();
+        assert!(wait > 20_000.0 && wait <= 26_843.6, "wait {wait} ms");
+        assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0, "reported once");
+        // Again without sleeping: one pass of the idle loop, the wait reported again.
+        assert_eq!(retired(&m.run_chunk(100_000, None).unwrap()), 2.0);
+        assert!(m.take_idle_wait_ms().unwrap() > 20_000.0);
+        // Without the opt-in the same guest spins through its whole budget and reports nothing.
+        m.set_paced_idle_policy(JsValue::FALSE, JsValue::NULL)
+            .unwrap();
+        assert_eq!(retired(&m.run_chunk(5_000, None).unwrap()), 5_000.0);
+        assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0);
+        // Back in pure ICount the policy is inert: the idle jump reaches the deadline at once.
+        m.set_guest_clock("icount").unwrap();
+        m.set_paced_idle_policy(JsValue::TRUE, JsValue::from_f64(50.0))
+            .unwrap();
+        assert_eq!(retired(&m.run_chunk(5_000, None).unwrap()), 5_000.0);
+        assert_eq!(m.take_idle_wait_ms().unwrap(), 0.0);
+        if shimmed {
+            js_sys::eval("delete globalThis.WorkerGlobalScope").unwrap();
+            assert!(JsHostTimer::new().is_none());
+        }
+    }
+
     #[cfg(target_arch = "wasm32")]
     #[wasm_bindgen_test::wasm_bindgen_test]
     fn exported_clock_selection_preserves_default_and_reports_unavailable_source() {
@@ -3956,6 +4056,50 @@ impl WasmLinux {
     }
 
     /// Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+    /// E5-T37b: host policy for an idle guest under the paced ICount clock (see
+    /// `Machine::set_paced_idle_policy`). `yield_to_host` must be a boolean; `max_busy_lag_ms`
+    /// is `undefined`/`null` (unbounded) or a finite number of milliseconds from 0 to one hour.
+    /// Anything else is refused before the machine is touched. Inert in other clock modes.
+    #[wasm_bindgen(js_name = setPacedIdlePolicy)]
+    pub fn set_paced_idle_policy(
+        &self,
+        yield_to_host: JsValue,
+        max_busy_lag_ms: JsValue,
+    ) -> Result<(), JsError> {
+        let yield_to_host = yield_to_host
+            .as_bool()
+            .ok_or_else(|| JsError::new("paced idle yield must be a boolean"))?;
+        let lag = if max_busy_lag_ms.is_undefined() || max_busy_lag_ms.is_null() {
+            None
+        } else {
+            let ms = max_busy_lag_ms
+                .as_f64()
+                .filter(|v| v.is_finite() && (0.0..=3_600_000.0).contains(v))
+                .ok_or_else(|| {
+                    JsError::new(
+                        "paced idle busy lag must be a number of milliseconds, 0 to 3600000",
+                    )
+                })?;
+            Some((ms * 1_000_000.0) as u64)
+        };
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
+        inner.machine.set_paced_idle_policy(yield_to_host, lag);
+        Ok(())
+    }
+
+    /// E5-T37b: milliseconds of host time until the timer the guest went idle waiting for, if
+    /// the last `runChunk` ended at such a `wfi`; 0 otherwise. Reading it clears it.
+    #[wasm_bindgen(js_name = takeIdleWaitMs)]
+    pub fn take_idle_wait_ms(&self) -> Result<f64, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner
+            .machine
+            .take_idle_wait_nanos()
+            .map_or(0.0, |ns| ns as f64 / 1_000_000.0))
+    }
+
     #[wasm_bindgen(js_name = rebaseGuestClock)]
     pub fn rebase_guest_clock(&self) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;

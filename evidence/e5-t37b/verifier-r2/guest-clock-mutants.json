@@ -1,0 +1,247 @@
+{
+ "node": "v24.20.0",
+ "mutants": [
+  {
+   "id": "baseline",
+   "what": "no change",
+   "tests": 13,
+   "pass": 13,
+   "fail": 0,
+   "timedOut": false,
+   "verdict": "passes",
+   "failedTests": []
+  },
+  {
+   "id": "M1",
+   "what": "68: drop `|| interactiveClock === \"paced\"` (round 1's G5)",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M2",
+   "what": "68: \"paced\" selects \"wall\" for the restored-clock check",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M3",
+   "what": "70-71: the checkpoint's mode is not compared at all",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M3b",
+   "what": "70-71: any checkpoint mode other than the boot's guestClock is refused (no selected-policy allowance)",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M3c",
+   "what": "68: drop \"paced-on-keyboard\" from the clause",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M3d",
+   "what": "69: \"wall-on-keyboard\" also accepts a paced checkpoint",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M3e",
+   "what": "69: no policy accepts a paced checkpoint (the fallback is \"paced-icount\" instead of the boot's mode)",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M4",
+   "what": "72: mtime of the checkpoint is not compared with the machine's",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M4b",
+   "what": "72: clockDiv of the checkpoint is not compared",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M4c",
+   "what": "73: timebaseHz of the checkpoint is not compared",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M4d",
+   "what": "70: a null checkpoint is not refused by the first clause",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M4e",
+   "what": "66+107: a null checkpoint is treated as no checkpoint",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M5",
+   "what": "117: no rebase after a paced (non-icount) restore",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M6",
+   "what": "122: the paced clock is selected again on top of a restored paced clock",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M7",
+   "what": "133: the idle policy is set to not yield",
+   "tests": 13,
+   "pass": 11,
+   "fail": 2,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "the paced policy selects the divider, then the paced clock, then the idle policy, before any slice",
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M8",
+   "what": "110: the restore selects the boot's guestClock, not the checkpoint's",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M9",
+   "what": "116: the lifecycle forgets the restored mode",
+   "tests": 13,
+   "pass": 12,
+   "fail": 1,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  },
+  {
+   "id": "M10",
+   "what": "112: the after-restore check ignores the mode",
+   "tests": 13,
+   "pass": 13,
+   "fail": 0,
+   "timedOut": false,
+   "verdict": "SURVIVED",
+   "failedTests": []
+  },
+  {
+   "id": "M11",
+   "what": "134: idleYield is not reported after the policy is set",
+   "tests": 13,
+   "pass": 11,
+   "fail": 2,
+   "timedOut": false,
+   "verdict": "killed",
+   "failedTests": [
+    "the paced policy selects the divider, then the paced clock, then the idle policy, before any slice",
+    "after a restore the paced policy is selected on top of the restored clock, or the restore is refused"
+   ]
+  }
+ ],
+ "killed": 18,
+ "survived": [
+  "M10"
+ ]
+}

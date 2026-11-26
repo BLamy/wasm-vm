@@ -2009,9 +2009,6 @@ export class WasmLinux {
         const ret = wasm.wasmlinux_readStoredSnapshot(this.__wbg_ptr);
         return ret;
     }
-    /**
-     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
-     */
     rebaseGuestClock() {
         const ret = wasm.wasmlinux_rebaseGuestClock(this.__wbg_ptr);
         if (ret[1]) {
@@ -2579,6 +2576,21 @@ export class WasmLinux {
         }
     }
     /**
+     * Explicit loader pause/resume only. Background gaps keep the core catch-up policy.
+     * E5-T37b: host policy for an idle guest under the paced ICount clock (see
+     * `Machine::set_paced_idle_policy`). `yield_to_host` must be a boolean; `max_busy_lag_ms`
+     * is `undefined`/`null` (unbounded) or a finite number of milliseconds from 0 to one hour.
+     * Anything else is refused before the machine is touched. Inert in other clock modes.
+     * @param {any} yield_to_host
+     * @param {any} max_busy_lag_ms
+     */
+    setPacedIdlePolicy(yield_to_host, max_busy_lag_ms) {
+        const ret = wasm.wasmlinux_setPacedIdlePolicy(this.__wbg_ptr, yield_to_host, max_busy_lag_ms);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -2771,6 +2783,18 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E5-T37b: milliseconds of host time until the timer the guest went idle waiting for, if
+     * the last `runChunk` ended at such a `wfi`; 0 otherwise. Reading it clears it.
+     * @returns {number}
+     */
+    takeIdleWaitMs() {
+        const ret = wasm.wasmlinux_takeIdleWaitMs(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0];
     }
     /**
      * @returns {any}

@@ -1,0 +1,6 @@
+$ cd web && node --test --test-timeout=120000 tests/*.test.mjs   (with web/tests/e5-t37b-run-loop.test.mjs present)
+ℹ tests 621
+ℹ pass 593
+ℹ fail 28
+failing names against evidence/e5-t37b/web-unit-failing-before.txt (sorted, one header line each): now 29 lines, before 29 lines
+diff rc=0

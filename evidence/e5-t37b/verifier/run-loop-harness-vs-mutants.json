@@ -1,0 +1,87 @@
+[
+ {
+  "name": "L1 wrap does not wake",
+  "result": "noticed",
+  "by": [
+   "A1 a host call during a sleep ends it an: delivery: timer cleared, one tick posted in the same turn: got [0,1,true], want [1,0,false]",
+   "A1b a status read during a sleep also en: woken: got [0,1], want [1,0]",
+   "A5 pause during a sleep: no slice while : sleep ended, paused: got [1,true], want [0,true]",
+   "A5b rapid pause->resume while asleep lea: Cannot read properties of undefined (reading 'fn')",
+   "A5c stop during a sleep: done resolves ': sleep ended by the stop call: got 1, want 0",
+   "TICKET a delivery during a tick's await : no sleep on the stale wait: the next slice is scheduled at once: got [1,0], want [0,1]",
+   "A2 random interleavings (120 seeds x 120: seed 1 step 7: wake: got [0,1], want [1,0]"
+  ]
+ },
+ {
+  "name": "L3 wakeIdle does not schedule",
+  "result": "noticed",
+  "by": [
+   "A1 a host call during a sleep ends it an: delivery: timer cleared, one tick posted in the same turn: got [0,0,false], want [1,0,false]",
+   "A1b a status read during a sleep also en: woken: got [0,0], want [1,0]",
+   "A2 random interleavings (120 seeds x 120: seed 1 step 11 (stats): run loop stalled (nothing pending, not paused)"
+  ]
+ },
+ {
+  "name": "L4 sleepIdle leaves tickScheduled false",
+  "result": "NOT NOTICED",
+  "by": []
+ },
+ {
+  "name": "L5 sleepIdle ignores paused/stopped/quota and a scheduled tick",
+  "result": "NOT NOTICED",
+  "by": []
+ },
+ {
+  "name": "L6 sleepIdle drops the ticket",
+  "result": "noticed",
+  "by": [
+   "TICKET a delivery during a tick's await : no sleep on the stale wait: the next slice is scheduled at once: got [1,0], want [0,1]",
+   "A2 random interleavings (120 seeds x 120: seed 1 step 110: slept on a wait taken before a delivery"
+  ]
+ },
+ {
+  "name": "L7 sleep resumes into schedule, not tick",
+  "result": "noticed",
+  "by": [
+   "A2 timer end resumes into exactly one ti: timer -> slice 2 (1 ms wait) -> posted tick, no sleep: got [0,0,1], want [1,0,2]",
+   "A2 random interleavings (120 seeds x 120: seed 1 step 8 (timer): run loop stalled (nothing pending, not paused)"
+  ]
+ },
+ {
+  "name": "L13 wrap applied to every boot",
+  "result": "noticed",
+  "by": [
+   "A8/A9 without the policy: the wait is ne: controller method is the original: got true, want false"
+  ]
+ },
+ {
+  "name": "L15 wakeIdle keeps tickScheduled set (no tick after a wake)",
+  "result": "noticed",
+  "by": [
+   "A1 a host call during a sleep ends it an: delivery: timer cleared, one tick posted in the same turn: got [0,0,false], want [1,0,false]",
+   "A1b a status read during a sleep also en: woken: got [0,0], want [1,0]",
+   "A5 pause during a sleep: no slice while : no slice, nothing pending, flag clear: got [1,0,true], want [1,0,false]",
+   "A5b rapid pause->resume while asleep lea: one pending: got 0, want 1",
+   "A2 random interleavings (120 seeds x 120: seed 1 step 4 (resume): run loop stalled (nothing pending, not paused)"
+  ]
+ },
+ {
+  "name": "S4 stale-callback guard dropped",
+  "result": "noticed",
+  "by": [
+   "A2 random interleavings (120 seeds x 120: seed 1 step 7 (stale): 1 live timers, armed false"
+  ]
+ },
+ {
+  "name": "S5 wake does not clear the timer",
+  "result": "noticed",
+  "by": [
+   "A1 a host call during a sleep ends it an: delivery: timer cleared, one tick posted in the same turn: got [1,1,false], want [1,0,false]",
+   "A1b a status read during a sleep also en: woken: got [1,1], want [1,0]",
+   "A5 pause during a sleep: no slice while : sleep ended, paused: got [1,true], want [0,true]",
+   "A5b rapid pause->resume while asleep lea: one pending: got 2, want 1",
+   "A5c stop during a sleep: done resolves ': sleep ended by the stop call: got 1, want 0",
+   "A2 random interleavings (120 seeds x 120: seed 1 step 2 (pause): 1 live timers, armed false"
+  ]
+ }
+]

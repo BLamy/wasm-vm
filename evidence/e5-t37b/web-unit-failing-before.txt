@@ -1,0 +1,29 @@
+✖ Node manifest bytes are hashed and must match the declared immutable digest
+✖ actual loader rejects malformed/non-JIT probe options before asset fetch
+✖ actual main fences retirement immediately and ignores late callbacks/retained channels
+✖ actual main publishes the winning generation during early guest-ready, never query identity
+✖ actual main supplied restore bypasses default; omitted channel activates one shared session
+✖ capacity provenance commit must be locally interrogable, not metadata-only
+✖ capacity reference bytes and immutable policy are verified before identity creation
+✖ critic: handoff pause/quota resume errors preserve each execution barrier
+✖ critic: paused first NumLock repair selects before staging, preserving a u64 clock exactly
+✖ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal
+✖ every resumability metadata boundary changes the identity hash
+✖ failing tests:
+✖ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back
+✖ identity hashes every nested generated package file
+✖ kernel, snapshot, and overlay guest digests are explicit identity inputs
+✖ loader has a default-off strict selection gate before any asset fetch
+✖ loader resume rebases before unpausing/scheduling and refuses all later mutations on error
+✖ loader validates before its first fetch and selects after restore branches but before execution
+✖ missing tracked source
+✖ only explicit evidence and Node asset roots may contain nonignored untracked files
+✖ paced critic: actual main defaults scope handoff to accelerated ephemeral Omarchy
+✖ paced critic: first paused lock repair selects native pacing before original make/SYN
+✖ paced critic: prefetch validation runs before the actual manifest call
+✖ paced-on-keyboard: actual prefetch validation rejects nonaccelerated policy before boot work
+✖ required harness sources must exist and be tracked
+✖ source removed from the index
+✖ tests/e5-t26k-decoded-cache.test.mjs
+✖ tracked changes fail closed even when they are beneath an allowed root
+✖ wall-on-keyboard: actual prefetch validation rejects nonaccelerated policy before boot work

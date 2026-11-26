@@ -31,6 +31,7 @@ import { encodeGpuCheckpointPair, decodeGpuCheckpointPair, deriveGpuCheckpointWi
 import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, validateInteractiveClock, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
+import { createIdleSleeper } from "./idle-sleep.js";
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
 import { stageGzipSnapshot } from "./snapshot-stream.js";
 import { fetchWholeImage } from "./whole-image.js";
@@ -419,7 +420,14 @@ export async function startLinuxBoot(opts = {}) {
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
     validateInteractiveClock(interactiveClock, guestClock);
-    if (interactiveClock !== undefined && virgl !== true) throw new Error("interactiveClock requires accelerated graphics");
+    // The keyboard-triggered policies belong to the accelerated desktop's checkpoint identity.
+    // "paced" (E5-T37b) is plain host scheduling and needs no accelerated graphics.
+    if (interactiveClock !== undefined && interactiveClock !== "paced" && virgl !== true) throw new Error("interactiveClock requires accelerated graphics");
+    // The paced policy sleeps on the machine's word that nothing is pending in the guest. A
+    // boot whose disk is entirely in host memory and never persisted awaits no chunk fetch and
+    // no persist between a run slice and the sleep after it; that is the only kind admitted
+    // (and the only kind measured: the Replay desktop).
+    if (interactiveClock === "paced" && (persist !== false || wholeImageUrl == null)) throw new Error('interactiveClock "paced" requires a whole-image, non-persistent boot');
     if (virgl && (!workerMode || freshDesktop || !isChunked || extraDiskUrl)) throw new Error("Accelerated graphics requires a whole-machine chunked worker boot");
     if (wholeImageUrl != null && (!isChunked || typeof wholeImageUrl !== "string" || !wholeImageSha256)) {
       throw new Error("whole-image prefill requires a chunked boot with wholeImageUrl and wholeImageSha256");
@@ -1253,6 +1261,8 @@ export async function startLinuxBoot(opts = {}) {
       doneSettled = true;
       resolveDone(pendingFinishState);
     };
+    // E5-T37b: one armed sleep stands in for the pending tick while a paced guest is idle.
+    const idleSleeper = createIdleSleeper();
     const finish = (state) => {
       if (doneSettled || pendingFinishState != null) return;
       pendingFinishState = state;
@@ -1282,6 +1292,23 @@ export async function startLinuxBoot(opts = {}) {
         mainThreadYields += 1;
         yieldToMain(tick);
       }
+    };
+    // E5-T37b: the guest reported that nothing can happen in it for `ms`. Sleep instead of
+    // running the next slice at once. Like `schedule`, this holds the single pending tick.
+    // A sleep that outlives `finish` (at most the 50 ms cap) ends in a tick that returns at
+    // its first line, like any tick scheduled before a stop.
+    const sleepIdle = (ms, ticket) => {
+      if (tickScheduled || stopped || paused || quotaPaused) return false;
+      if (!idleSleeper.sleep(ms, tick, ticket)) return false;
+      tickScheduled = true;
+      return true;
+    };
+    // A host call may deliver what the guest is waiting for. A wait already taken for the
+    // current tick is void from here on, and a sleeping guest runs its next slice now.
+    const wakeIdle = () => {
+      if (!idleSleeper.delivered()) return;
+      tickScheduled = false;
+      schedule();
     };
     // E3-T10: shared handler for a persist failure on EITHER pump site. A StorageFull is
     // RECOVERABLE — the dirty blocks stay pending (persistPending never marked them). While the
@@ -1346,7 +1373,7 @@ export async function startLinuxBoot(opts = {}) {
         }
         if (stopped || paused || quotaPaused) { tickScheduled = false; return; }
       }
-      let res;
+      let res, idleMs = 0, idleTicket;
       try {
         // Persistent boots also pass the dirty-byte ceiling into wasm. Wasm checks it between
         // short internal instruction slices and yields early, so a high-throughput guest write
@@ -1356,6 +1383,9 @@ export async function startLinuxBoot(opts = {}) {
         if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
         lastSliceStart = sliceStart;
         res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        // The wait speaks for the machine as this slice left it: take it before anything else
+        // touches the machine, with a ticket that any later host delivery voids.
+        if (guestClockLifecycle.idleYield) { idleTicket = idleSleeper.ticket(); idleMs = machine.takeIdleWaitMs(); }
         productionGpu?.pump();
         if (typeof machine.takeAgentOutput === "function") {
           const agentBytes = machine.takeAgentOutput();
@@ -1452,9 +1482,10 @@ export async function startLinuxBoot(opts = {}) {
         }
         if (stopped || paused || quotaPaused) { tickScheduled = false; return; }
       }
-      // Yield to the event loop so the page stays responsive (no main-thread freeze).
+      // Yield to the event loop so the page stays responsive (no main-thread freeze). An idle
+      // paced guest sleeps until its next timer (E5-T37b) instead of taking the next slice now.
       tickScheduled = false;
-      schedule();
+      if (!sleepIdle(idleMs, idleTicket)) schedule();
     };
     // `stop()` is a storage quiescence barrier, not merely a scheduler flag. A tick can be awaiting
     // lazy fetch or IndexedDB persistence after its synchronous runChunk. Keep that exact Promise
@@ -1806,6 +1837,7 @@ export async function startLinuxBoot(opts = {}) {
         inputCalls,
         inputBytes,
         yieldMode: workerPostTask ? "scheduler.postTask" : workerMode ? "timer" : "message-channel",
+        ...idleSleeper.stats(),
         schedulerYields,
         timerYields,
         mainThreadYields,
@@ -1963,6 +1995,15 @@ export async function startLinuxBoot(opts = {}) {
     for(const name of inputIngress){const method=controller[name];controller[name]=(...args)=>{
       try{return method(...args);}catch(error){if(inputActive){paused=true;try{if(!inputStopped&&!machine.inputPosition().paused)machine.inputLifecycle(0);}catch{}}throw error;}
     };}
+    // E5-T37b: any call from the host may deliver what a sleeping guest is waiting for (a key,
+    // a pointer event, a resize, a paste, a command), so each one ends an idle sleep before it
+    // runs. A call that delivers nothing costs one extra slice.
+    if (guestClockLifecycle.idleYield) {
+      for (const [name, method] of Object.entries(controller)) {
+        if (typeof method !== "function") continue;
+        controller[name] = (...args) => { wakeIdle(); return method.apply(controller, args); };
+      }
+    }
     return controller;
   } catch (e) {
     // E3-T09 (critic BUG-1): a granted writer lock must not outlive a failed boot.

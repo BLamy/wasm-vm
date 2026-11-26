@@ -1,0 +1,39 @@
+$ wasm-pack test --node crates/wasm --lib
+running 17 tests
+test jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits ... ok
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+test guest_clock_tests::seeded_linux_wrapper_uses_raw_resume_identity_without_snapshot_store ... ok
+test guest_clock_tests::paced_selection_refuses_missing_source_or_clint_without_replacing_policy ... ok
+test guest_clock_tests::exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success ... ok
+test guest_clock_tests::exported_paced_selection_preserves_lossless_time_and_truthful_source_refusal ... ok
+test guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest ... ok
+test guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source ... ok
+test display_tests::display_reset_guest_trace_preserves_monitor_and_releases_resources ... ok
+test display_tests::display_hotplug_strict_validation_is_atomic ... ok
+test display_tests::display_hotplug_storm_preserves_actual_old_resource ... ok
+test display_tests::display_hotplug_guest_trace_reads_event_after_request ... ok
+test display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_to_u_enters_compiled_then_clears_s_authority ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_to_s_preserves_inline_and_both_links ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_ssip_guest_clear_variant ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 filtered out; finished in 4.02s
+
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.86s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm)
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+rc=0

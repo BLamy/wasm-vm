@@ -24,11 +24,16 @@ export function validateGuestClock(mode = "icount", realm = globalThis) {
 
 export function validateInteractiveClock(policy, mode = "icount", realm = globalThis) {
   if (policy === undefined) return undefined;
-  if (policy !== "wall-on-keyboard" && policy !== "paced-on-keyboard") throw new RangeError("unsupported interactiveClock");
+  if (policy !== "wall-on-keyboard" && policy !== "paced-on-keyboard" && policy !== "paced") throw new RangeError("unsupported interactiveClock");
   if (mode !== "icount") throw new RangeError("interactiveClock requires guestClock=icount");
-  validateGuestClock(policy === "paced-on-keyboard" ? "paced-icount" : "wall", realm);
+  validateGuestClock(policy === "wall-on-keyboard" ? "wall" : "paced-icount", realm);
   return policy;
 }
+
+// E5-T37b: "paced" — the paced ICount clock from the first slice, with the idle guest yielding to
+// the host. Busy time stays retire-derived; idle time follows the host clock. A guest that fell
+// behind the host clock while it was busy may skip at most this much idle time afterwards.
+export const PACED_BUSY_LAG_MS = 50;
 
 // Query strings use exact decimal notation. The WASM boundary receives only the validated number.
 export function validateICountDivider(value, mode = "icount") {
@@ -60,7 +65,7 @@ export function createGuestClockLifecycle(machine, mode = "icount", requestedDiv
   const divider = validateICountDivider(requestedDivider, mode);
   if (restoredClock !== undefined) {
     const native = machine.guestClockState();
-    const selectedMode = interactiveClock === "paced-on-keyboard" ? "paced-icount"
+    const selectedMode = interactiveClock === "paced-on-keyboard" || interactiveClock === "paced" ? "paced-icount"
       : interactiveClock === "wall-on-keyboard" ? "wall" : mode;
     if (!restoredClock || (restoredClock.mode !== mode &&
         (mode !== "icount" || restoredClock.mode !== selectedMode)) ||
@@ -74,6 +79,13 @@ export function createGuestClockLifecycle(machine, mode = "icount", requestedDiv
     for (const method of ["setGuestClock", "rebaseGuestClock", "guestClockState"]) {
       if (typeof machine?.[method] !== "function") {
         throw new Error(`wall guestClock requires WASM ${method}`);
+      }
+    }
+  }
+  if (interactiveClock === "paced") {
+    for (const method of ["setPacedIdlePolicy", "takeIdleWaitMs"]) {
+      if (typeof machine?.[method] !== "function") {
+        throw new Error(`paced interactiveClock requires WASM ${method}`);
       }
     }
   }
@@ -104,8 +116,27 @@ export function createGuestClockLifecycle(machine, mode = "icount", requestedDiv
     mode = restoredClock.mode;
     if (mode !== "icount") machine.rebaseGuestClock();
   }
+  // E5-T37b: after the divider selection and any restore, and before the first slice.
+  let idleYield = false;
+  if (interactiveClock === "paced") {
+    if (mode === "icount") {
+      const before = readICountState(machine);
+      machine.setGuestClock("paced-icount");
+      const after = machine.guestClockState();
+      if (after?.mode !== "paced-icount" || after.mtime !== before.mtime ||
+          after.timebaseHz !== before.timebaseHz || after.clockDiv !== before.clockDiv) {
+        throw new Error("paced clock selection changed time or did not reach paced-icount mode");
+      }
+      mode = "paced-icount";
+    }
+    if (mode !== "paced-icount") throw new Error("paced interactiveClock requires the paced-icount clock");
+    machine.setPacedIdlePolicy(true, PACED_BUSY_LAG_MS);
+    idleYield = true;
+  }
   let failed = false;
   return {
+    // Whether the machine ends a run slice at a waiting `wfi` and reports the wait.
+    idleYield,
     dividerSelection() {
       return selection ? { requested: selection.requested, before: { ...selection.before }, after: { ...selection.after } } : null;
     },

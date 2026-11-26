@@ -1,0 +1,64 @@
+{
+ "label": "v-sabotage-nowake",
+ "windowS": 27.3,
+ "from": "2026-11-26T08:54:23.961Z",
+ "to": "2026-11-26T08:54:51.242Z",
+ "top": [
+  {
+   "pid": "11256",
+   "ppid": "1",
+   "cpuS": 46.58,
+   "pctOfCore": 170.7,
+   "kind": "other: mediaanalysisd"
+  },
+  {
+   "pid": "74862",
+   "ppid": "74827",
+   "cpuS": 41.9,
+   "pctOfCore": 153.6,
+   "kind": "other: Spotify Helper (Renderer)"
+  },
+  {
+   "pid": "51816",
+   "ppid": "51780",
+   "cpuS": 27.15,
+   "pctOfCore": 99.5,
+   "kind": "other: native wasm-vm boot (another session)"
+  },
+  {
+   "pid": "59720",
+   "ppid": "59695",
+   "cpuS": 4.01,
+   "pctOfCore": 14.7,
+   "kind": "Google Chrome Helper (Aperitif Renderer)"
+  },
+  {
+   "pid": "59725",
+   "ppid": "59695",
+   "cpuS": 0.11,
+   "pctOfCore": 0.4,
+   "kind": "Google Chrome Helper (Aperitif)"
+  },
+  {
+   "pid": "59695",
+   "ppid": "59693",
+   "cpuS": 0.02,
+   "pctOfCore": 0.1,
+   "kind": "chrome-browser(playwright headless)"
+  },
+  {
+   "pid": "51885",
+   "ppid": "1",
+   "cpuS": 0,
+   "pctOfCore": 0,
+   "kind": "other: mediaanalysisd"
+  },
+  {
+   "pid": "59711",
+   "ppid": "59695",
+   "cpuS": 0,
+   "pctOfCore": 0,
+   "kind": "Google Chrome Helper (Aperitif)"
+  }
+ ]
+}

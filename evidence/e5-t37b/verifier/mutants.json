@@ -1,0 +1,238 @@
+{
+ "unmutatedCopyPasses": true,
+ "mutants": [
+  {
+   "name": "S1 cap ignored",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a sleep is armed only for a wait worth a timer, is clamped, and resumes once"
+   ]
+  },
+  {
+   "name": "S2 minimum ignored",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a sleep is armed only for a wait worth a timer, is clamped, and resumes once"
+   ]
+  },
+  {
+   "name": "S3 delivery does not void the ticket",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a delivery voids a wait that was taken but not slept on yet"
+   ]
+  },
+  {
+   "name": "S4 stale-callback guard dropped",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a wake ends the sleep, cancels its timer and suppresses its resume"
+   ]
+  },
+  {
+   "name": "S5 wake does not clear the timer",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a wake ends the sleep, cancels its timer and suppresses its resume"
+   ]
+  },
+  {
+   "name": "S6 second sleep allowed while armed",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a sleep is armed only for a wait worth a timer, is clamped, and resumes once"
+   ]
+  },
+  {
+   "name": "S7 ticket ignored",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a delivery voids a wait that was taken but not slept on yet"
+   ]
+  },
+  {
+   "name": "S8 resume not called when the timer fires",
+   "file": "idle-sleep.js",
+   "result": "killed (the test file HANGS: no result within 20 s)",
+   "by": []
+  },
+  {
+   "name": "S9 armed flag left set after the timer fires",
+   "file": "idle-sleep.js",
+   "result": "killed",
+   "by": [
+    "a sleep is armed only for a wait worth a timer, is clamped, and resumes once",
+    "the defaults use the realm's timers"
+   ]
+  },
+  {
+   "name": "L1 wrap does not wake",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader takes the wait with a ticket straight after the run slice and every host call voids it"
+   ]
+  },
+  {
+   "name": "L2 wake after the method instead of before",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader takes the wait with a ticket straight after the run slice and every host call voids it"
+   ]
+  },
+  {
+   "name": "L3 wakeIdle does not schedule",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader takes the wait with a ticket straight after the run slice and every host call voids it"
+   ]
+  },
+  {
+   "name": "L4 sleepIdle leaves tickScheduled false",
+   "file": "loader.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "L5 sleepIdle ignores paused/stopped/quota and a scheduled tick",
+   "file": "loader.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "L6 sleepIdle drops the ticket",
+   "file": "loader.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "L7 sleep resumes into schedule, not tick",
+   "file": "loader.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "L8 ticket taken after the wait",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader takes the wait with a ticket straight after the run slice and every host call voids it"
+   ]
+  },
+  {
+   "name": "L9 gate admits a persistent boot",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader admits the paced policy only for a whole-image, non-persistent boot"
+   ]
+  },
+  {
+   "name": "L10 gate admits a boot without the whole image",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader admits the paced policy only for a whole-image, non-persistent boot"
+   ]
+  },
+  {
+   "name": "L11 lifecycle built without the policy",
+   "file": "loader.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "L12 wait taken for every boot",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader takes the wait with a ticket straight after the run slice and every host call voids it"
+   ]
+  },
+  {
+   "name": "L13 wrap applied to every boot",
+   "file": "loader.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "L14 tick end always schedules (never sleeps)",
+   "file": "loader.js",
+   "result": "killed",
+   "by": [
+    "the loader takes the wait with a ticket straight after the run slice and every host call voids it"
+   ]
+  },
+  {
+   "name": "G1 policy set with yield false",
+   "file": "guest-clock.js",
+   "result": "killed",
+   "by": [
+    "the paced policy selects the divider, then the paced clock, then the idle policy, before any slice"
+   ]
+  },
+  {
+   "name": "G2 time-moved check dropped",
+   "file": "guest-clock.js",
+   "result": "killed",
+   "by": [
+    "a machine without the idle bindings, or one whose time moves on selection, fails closed"
+   ]
+  },
+  {
+   "name": "G3 bindings check dropped",
+   "file": "guest-clock.js",
+   "result": "killed",
+   "by": [
+    "a machine without the idle bindings, or one whose time moves on selection, fails closed"
+   ]
+  },
+  {
+   "name": "G4 idleYield reported for every policy",
+   "file": "guest-clock.js",
+   "result": "killed",
+   "by": [
+    "every other policy leaves the idle policy alone"
+   ]
+  },
+  {
+   "name": "G5 restore path: paced not accepted as the selected mode",
+   "file": "guest-clock.js",
+   "result": "SURVIVED",
+   "by": []
+  },
+  {
+   "name": "G6 unbounded busy lag",
+   "file": "guest-clock.js",
+   "result": "killed",
+   "by": [
+    "the paced policy selects the divider, then the paced clock, then the idle policy, before any slice"
+   ]
+  },
+  {
+   "name": "M1 pace=0 ignored",
+   "file": "main.js",
+   "result": "killed",
+   "by": [
+    "the Replay desktop asks for the paced policy; ?pace=0 turns it off"
+   ]
+  },
+  {
+   "name": "M2 paced never requested",
+   "file": "main.js",
+   "result": "killed",
+   "by": [
+    "the Replay desktop asks for the paced policy; ?pace=0 turns it off"
+   ]
+  }
+ ]
+}

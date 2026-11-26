@@ -1,0 +1,50 @@
+{
+ "web": "<repo>/web",
+ "results": [
+  {
+   "name": "A1 a host call during a sleep ends it and one slice runs at once; the stale timer does nothing",
+   "ok": true
+  },
+  {
+   "name": "A1b a status read during a sleep also ends it (every controller function is wrapped)",
+   "ok": true
+  },
+  {
+   "name": "A2 timer end resumes into exactly one tick; short waits are not slept on",
+   "ok": true
+  },
+  {
+   "name": "A5 pause during a sleep: no slice while paused; resume schedules exactly one tick",
+   "ok": true
+  },
+  {
+   "name": "A5b rapid pause->resume while asleep leaves one tick, not two",
+   "ok": true
+  },
+  {
+   "name": "A5c stop during a sleep: done resolves 'stopped', no slice afterwards, a late timer or tick is inert",
+   "ok": true
+  },
+  {
+   "name": "A8/A9 without the policy: the wait is never taken, nothing sleeps, the controller is not wrapped",
+   "ok": true
+  },
+  {
+   "name": "TICKET a delivery during a tick's await voids the wait that tick took (needs an await: not reachable on an admitted boot)",
+   "ok": true
+  },
+  {
+   "name": "  (interleaving totals)",
+   "ok": true,
+   "steps": 35661,
+   "sleeps": 6109,
+   "wakes": 1239,
+   "staleFired": 3254,
+   "inTickDeliveries": 395
+  },
+  {
+   "name": "A2 random interleavings (300 seeds x 120 steps): never two pending ticks, never a stall, never a slice while paused/stopped",
+   "ok": true
+  }
+ ]
+}

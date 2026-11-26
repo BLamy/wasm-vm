@@ -13,7 +13,8 @@
 //          --headed            run a visible browser
 //
 // Scenarios (all wall-clock milliseconds, measured in the page with performance.now()):
-//   idle    guest MIPS and presents while nobody touches the desktop
+//   idle    guest MIPS and presents while nobody touches the desktop (--idle-s seconds, default 8),
+//           the share of wall time inside run slices and guest seconds per real second
 //   click   pointer resting on Chrome's "Run again" (moved there, and drawn there by the guest,
 //           beforehand); press+release; time to the "runs" line changing (result). A repaint of
 //           the button before the result is reported as an optional pressed-state frame.
@@ -35,6 +36,7 @@ const { values: opt } = parseArgs({ options: {
   out: { type: "string" }, scenarios: { type: "string", default: "idle,click,sweep,type,node,mips" },
   n: { type: "string", default: "5" }, headed: { type: "boolean", default: false },
   "ready-timeout-min": { type: "string", default: "60" }, "trial-timeout-s": { type: "string", default: "180" },
+  "idle-s": { type: "string", default: "8" },
   chrome: { type: "string", default: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
 } });
 const N = Number(opt.n);
@@ -124,12 +126,25 @@ const sleep = (ms) => page.waitForTimeout(ms);
 const sched = () => page.evaluate(async () => {
   const s = await window.__schedulerStats?.();
   const p = window.__presentation?.state?.() ?? null;
+  let clock = null;
+  try { clock = await window.__linuxCtl?.guestClockState?.() ?? null; } catch { /* not exposed */ }
   return { at: performance.now(), retired: s?.retiredInstructions ?? null, slices: s?.slices ?? null,
     maxSliceMs: s?.maxSliceMs ?? null, maxStretchGapMs: s?.maxStretchGapMs ?? null, yieldMode: s?.yieldMode ?? null,
+    sliceMs: s?.totalSliceMs ?? null, idleSleeps: s?.idleSleeps ?? null, idleSleepMs: s?.idleSleepMs ?? null,
+    idleWakes: s?.idleWakes ?? null, clockMode: clock?.mode ?? null,
+    // Guest seconds since boot: mtime is a decimal string of timebase ticks.
+    guestS: clock?.mtime === undefined || !clock?.timebaseHz ? null : Number(BigInt(clock.mtime) / 1000n) / (clock.timebaseHz / 1000),
     framesReceived: p?.gpu?.framesReceived ?? p?.framesReceived ?? null, drawnPresents: p?.gpu?.drawnPresents ?? p?.drawnPresents ?? null };
 });
+const delta = (a, b, key) => (a[key] === null || b[key] === null ? null : b[key] - a[key]);
 const rate = (a, b) => ({ wallMs: Math.round(b.at - a.at), instructionsM: +((b.retired - a.retired) / 1e6).toFixed(1),
   mips: +(((b.retired - a.retired) / 1e6) / ((b.at - a.at) / 1000)).toFixed(1),
+  // E5-T37b: how much of the wall time the worker spent inside run slices, how fast guest time
+  // ran against real time, and how often the run loop slept instead of taking the next slice.
+  inSlicePct: delta(a, b, "sliceMs") === null ? null : +(100 * delta(a, b, "sliceMs") / (b.at - a.at)).toFixed(1),
+  guestSecondsPerSecond: delta(a, b, "guestS") === null ? null : +(delta(a, b, "guestS") / ((b.at - a.at) / 1000)).toFixed(2),
+  idleSleeps: delta(a, b, "idleSleeps"), idleSleepMs: delta(a, b, "idleSleepMs") === null ? null : Math.round(delta(a, b, "idleSleepMs")),
+  idleWakes: delta(a, b, "idleWakes"), clockMode: b.clockMode,
   framesReceived: b.framesReceived === null ? null : b.framesReceived - a.framesReceived,
   drawnPresents: b.drawnPresents === null ? null : b.drawnPresents - a.drawnPresents });
 // Wait until `name` changes at or after page time `t`; returns latency in ms or null on timeout.
@@ -184,7 +199,7 @@ const result = { label: opt.label, url, browser: browser.version(), startedAt: n
 const run = {
   async idle() {
     await moveTo({ x: 640, y: 700 }); await settle();
-    const a = await sched(); await sleep(8000); const b = await sched();
+    const a = await sched(); await sleep(Number(opt["idle-s"]) * 1000); const b = await sched();
     result.scenarios.idle = rate(a, b);
     result.yieldMode = b.yieldMode; result.maxSliceMs = b.maxSliceMs; result.maxStretchGapMs = b.maxStretchGapMs;
   },

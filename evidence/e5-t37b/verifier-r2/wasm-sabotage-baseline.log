@@ -1,0 +1,24 @@
+$ wasm-pack test --node crates/wasm --lib -- exported_paced
+running 2 tests
+test guest_clock_tests::exported_paced_selection_preserves_lossless_time_and_truthful_source_refusal ... ok
+test guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 15 filtered out; finished in 0.15s
+
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.62s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm)
+[WARN]: ⚠️   There's a newer version of wasm-pack available, the new version is: 0.15.1, you are using: 0.15.0. To update, navigate to: https://wasm-bindgen.github.io/wasm-pack/installer/
+rc=0
