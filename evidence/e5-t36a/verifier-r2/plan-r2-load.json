@@ -1,0 +1,957 @@
+{
+ "about": "Round 2 verifier: the pause-and-nudge pattern (glide onto the button, stop for longer than the rest wait, nudge) with the guest idle, with its terminal flooded with output, with two busy loops, and with a click at the stop. Looks for the rest wait firing while the guest is behind.",
+ "steps": [
+  {
+   "op": "reset",
+   "note": "L0 no load.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    380,
+    640
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.1 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    120,
+    510
+   ],
+   "ms": 400,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "jump",
+   "to": [
+    123,
+    511
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.1 hand: glide, 400 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.1 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L0 no load.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    300,
+    470
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.2 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    150,
+    515
+   ],
+   "ms": 300,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 340
+  },
+  {
+   "op": "jump",
+   "to": [
+    146,
+    515
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.2 hand: glide, 340 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.2 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L0 no load.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    260,
+    600
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.3 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    90,
+    530
+   ],
+   "ms": 600,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 500
+  },
+  {
+   "op": "jump",
+   "to": [
+    92,
+    527
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.3 hand: glide, 500 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.3 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L0 no load.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    230,
+    500
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.4 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    140,
+    505
+   ],
+   "ms": 250,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 650
+  },
+  {
+   "op": "jump",
+   "to": [
+    134,
+    507
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.4 hand: glide, 650 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L0 no load.4 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L1 terminal flooded with output.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    380,
+    640
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.1 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    120,
+    510
+   ],
+   "ms": 400,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "jump",
+   "to": [
+    123,
+    511
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.1 hand: glide, 400 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.1 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L1 terminal flooded with output.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    300,
+    470
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.2 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    150,
+    515
+   ],
+   "ms": 300,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 340
+  },
+  {
+   "op": "jump",
+   "to": [
+    146,
+    515
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.2 hand: glide, 340 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.2 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L1 terminal flooded with output.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    260,
+    600
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.3 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    90,
+    530
+   ],
+   "ms": 600,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 500
+  },
+  {
+   "op": "jump",
+   "to": [
+    92,
+    527
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.3 hand: glide, 500 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.3 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L1 terminal flooded with output.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    230,
+    500
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.4 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    140,
+    505
+   ],
+   "ms": 250,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 650
+  },
+  {
+   "op": "jump",
+   "to": [
+    134,
+    507
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.4 hand: glide, 650 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L1 terminal flooded with output.4 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 2500
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do :; done & echo $! > /tmp/v-load.pid); (while :; do :; done & echo $! > /tmp/v-load2.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L2 two busy loops in the guest.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    380,
+    640
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.1 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    120,
+    510
+   ],
+   "ms": 400,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "jump",
+   "to": [
+    123,
+    511
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.1 hand: glide, 400 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.1 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L2 two busy loops in the guest.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    300,
+    470
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.2 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    150,
+    515
+   ],
+   "ms": 300,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 340
+  },
+  {
+   "op": "jump",
+   "to": [
+    146,
+    515
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.2 hand: glide, 340 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.2 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L2 two busy loops in the guest.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    260,
+    600
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.3 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    90,
+    530
+   ],
+   "ms": 600,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 500
+  },
+  {
+   "op": "jump",
+   "to": [
+    92,
+    527
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.3 hand: glide, 500 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.3 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L2 two busy loops in the guest.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    230,
+    500
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.4 arrow before the approach",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    140,
+    505
+   ],
+   "ms": 250,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 650
+  },
+  {
+   "op": "jump",
+   "to": [
+    134,
+    507
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.4 hand: glide, 650 ms pause, one nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L2 two busy loops in the guest.4 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid) $(cat /tmp/v-load2.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 2500
+  },
+  {
+   "op": "reset",
+   "note": "L3.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    380,
+    640
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "glide",
+   "to": [
+    120,
+    510
+   ],
+   "ms": 400,
+   "restMs": 0
+  },
+  {
+   "op": "click",
+   "note": "click as the pointer stops"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "jump",
+   "to": [
+    123,
+    511
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L3.1 hand: glide, click, 400 ms, nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L3.1 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L3.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    300,
+    470
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "glide",
+   "to": [
+    150,
+    515
+   ],
+   "ms": 300,
+   "restMs": 0
+  },
+  {
+   "op": "click",
+   "note": "click as the pointer stops"
+  },
+  {
+   "op": "wait",
+   "ms": 340
+  },
+  {
+   "op": "jump",
+   "to": [
+    146,
+    515
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L3.2 hand: glide, click, 340 ms, nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L3.2 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L3.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    260,
+    600
+   ],
+   "ms": 400,
+   "restMs": 700
+  },
+  {
+   "op": "glide",
+   "to": [
+    90,
+    530
+   ],
+   "ms": 600,
+   "restMs": 0
+  },
+  {
+   "op": "click",
+   "note": "click as the pointer stops"
+  },
+  {
+   "op": "wait",
+   "ms": 500
+  },
+  {
+   "op": "jump",
+   "to": [
+    92,
+    527
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "L3.3 hand: glide, click, 500 ms, nudge — early (450 ms)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "L3.3 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "L4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    620
+   ],
+   "ms": 500,
+   "restMs": 700
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    538
+   ],
+   "ms": 900,
+   "restMs": 1200
+  },
+  {
+   "op": "read",
+   "name": "L4 hand answered at rest, before the click",
+   "settleMs": 100,
+   "noPlane": true
+  },
+  {
+   "op": "click",
+   "note": "L4 click at rest",
+   "restMs": 3000
+  },
+  {
+   "op": "read",
+   "name": "L4 hand after the click",
+   "settleMs": 100
+  },
+  {
+   "op": "click",
+   "note": "L4 second click",
+   "restMs": 3000
+  },
+  {
+   "op": "read",
+   "name": "L4 hand after the second click",
+   "settleMs": 100
+  }
+ ]
+}

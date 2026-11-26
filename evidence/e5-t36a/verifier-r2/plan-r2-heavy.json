@@ -1,0 +1,1477 @@
+{
+ "about": "Round 2 verifier: the pause-and-nudge pattern under an ordinary heavy guest load (a process flooding the terminal with output, with and without two CPU-bound loops; the guest has one hart). Looks for the 300 ms rest wait firing while the plane is behind, and for a wrong hotspot shown.",
+ "steps": [
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); (while :; do :; done & echo $! > /tmp/v-load2.pid); (while :; do :; done & echo $! > /tmp/v-load3.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    363,
+    500
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.1 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    109,
+    533
+   ],
+   "ms": 589,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 454
+  },
+  {
+   "op": "jump",
+   "to": [
+    106,
+    535
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.1 hand: 589 ms glide to 109,533, 454 ms pause, nudge -3,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.1 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    376,
+    605
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.2 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    121,
+    510
+   ],
+   "ms": 646,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 358
+  },
+  {
+   "op": "jump",
+   "to": [
+    122,
+    508
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.2 hand: 646 ms glide to 121,510, 358 ms pause, nudge 1,-2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.2 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    252,
+    597
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.3 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    135,
+    528
+   ],
+   "ms": 305,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 414
+  },
+  {
+   "op": "jump",
+   "to": [
+    137,
+    527
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.3 hand: 305 ms glide to 135,528, 414 ms pause, nudge 2,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.3 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    269,
+    513
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.4 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    141,
+    529
+   ],
+   "ms": 459,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 405
+  },
+  {
+   "op": "jump",
+   "to": [
+    144,
+    527
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.4 hand: 459 ms glide to 141,529, 405 ms pause, nudge 3,-2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.4 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    239,
+    503
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.5 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    81,
+    516
+   ],
+   "ms": 736,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 413
+  },
+  {
+   "op": "jump",
+   "to": [
+    84,
+    514
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.5 hand: 736 ms glide to 81,516, 413 ms pause, nudge 3,-2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.5 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.6"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    309,
+    614
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.6 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    130,
+    509
+   ],
+   "ms": 517,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 489
+  },
+  {
+   "op": "jump",
+   "to": [
+    132,
+    507
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.6 hand: 517 ms glide to 130,509, 489 ms pause, nudge 2,-2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.6 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.7"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    347,
+    458
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.7 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    116,
+    512
+   ],
+   "ms": 599,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 370
+  },
+  {
+   "op": "jump",
+   "to": [
+    115,
+    511
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.7 hand: 599 ms glide to 116,512, 370 ms pause, nudge -1,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.7 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.8"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    304,
+    628
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.8 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    87,
+    498
+   ],
+   "ms": 375,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 346
+  },
+  {
+   "op": "jump",
+   "to": [
+    89,
+    495
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.8 hand: 375 ms glide to 87,498, 346 ms pause, nudge 2,-3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.8 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.9"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    271,
+    496
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.9 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    85,
+    505
+   ],
+   "ms": 651,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 415
+  },
+  {
+   "op": "jump",
+   "to": [
+    87,
+    507
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.9 hand: 651 ms glide to 85,505, 415 ms pause, nudge 2,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.9 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.10"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    353,
+    579
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.10 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    42,
+    517
+   ],
+   "ms": 474,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 422
+  },
+  {
+   "op": "jump",
+   "to": [
+    44,
+    516
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.10 hand: 474 ms glide to 42,517, 422 ms pause, nudge 2,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.10 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.11"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    322,
+    630
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.11 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    62,
+    516
+   ],
+   "ms": 703,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 441
+  },
+  {
+   "op": "jump",
+   "to": [
+    57,
+    517
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.11 hand: 703 ms glide to 62,516, 441 ms pause, nudge -5,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.11 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.12"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    362,
+    519
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.12 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    128,
+    522
+   ],
+   "ms": 391,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 478
+  },
+  {
+   "op": "jump",
+   "to": [
+    133,
+    522
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.12 hand: 391 ms glide to 128,522, 478 ms pause, nudge 5,0 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.12 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.13"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    247,
+    553
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.13 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    114,
+    529
+   ],
+   "ms": 536,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 458
+  },
+  {
+   "op": "jump",
+   "to": [
+    110,
+    532
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.13 hand: 536 ms glide to 114,529, 458 ms pause, nudge -4,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.13 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H1 flood + two busy loops.14"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    221,
+    488
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.14 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    89,
+    526
+   ],
+   "ms": 404,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 492
+  },
+  {
+   "op": "jump",
+   "to": [
+    86,
+    528
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.14 hand: 404 ms glide to 89,526, 492 ms pause, nudge -3,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H1 flood + two busy loops.14 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid) $(cat /tmp/v-load2.pid) $(cat /tmp/v-load3.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 2500
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    302,
+    526
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.1 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    40,
+    509
+   ],
+   "ms": 604,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 485
+  },
+  {
+   "op": "jump",
+   "to": [
+    43,
+    512
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.1 hand: 604 ms glide to 40,509, 485 ms pause, nudge 3,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.1 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    347,
+    611
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.2 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    73,
+    498
+   ],
+   "ms": 377,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 425
+  },
+  {
+   "op": "jump",
+   "to": [
+    74,
+    499
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.2 hand: 377 ms glide to 73,498, 425 ms pause, nudge 1,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.2 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    367,
+    537
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.3 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    112,
+    531
+   ],
+   "ms": 591,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 346
+  },
+  {
+   "op": "jump",
+   "to": [
+    113,
+    529
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.3 hand: 591 ms glide to 112,531, 346 ms pause, nudge 1,-2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.3 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    369,
+    528
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.4 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    75,
+    522
+   ],
+   "ms": 427,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 395
+  },
+  {
+   "op": "jump",
+   "to": [
+    72,
+    521
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.4 hand: 427 ms glide to 75,522, 395 ms pause, nudge -3,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.4 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    229,
+    548
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.5 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    146,
+    523
+   ],
+   "ms": 509,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 485
+  },
+  {
+   "op": "jump",
+   "to": [
+    149,
+    522
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.5 hand: 509 ms glide to 146,523, 485 ms pause, nudge 3,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.5 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.6"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    319,
+    535
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.6 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    54,
+    529
+   ],
+   "ms": 422,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 321
+  },
+  {
+   "op": "jump",
+   "to": [
+    55,
+    528
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.6 hand: 422 ms glide to 54,529, 321 ms pause, nudge 1,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.6 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.7"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    224,
+    466
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.7 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    53,
+    502
+   ],
+   "ms": 634,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 462
+  },
+  {
+   "op": "jump",
+   "to": [
+    55,
+    501
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.7 hand: 634 ms glide to 53,502, 462 ms pause, nudge 2,-1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.7 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.8"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    254,
+    534
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.8 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    141,
+    509
+   ],
+   "ms": 297,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 497
+  },
+  {
+   "op": "jump",
+   "to": [
+    140,
+    512
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.8 hand: 297 ms glide to 141,509, 497 ms pause, nudge -1,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.8 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.9"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    256,
+    489
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.9 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    104,
+    533
+   ],
+   "ms": 376,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 466
+  },
+  {
+   "op": "jump",
+   "to": [
+    102,
+    535
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.9 hand: 376 ms glide to 104,533, 466 ms pause, nudge -2,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.9 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "H2 flood only.10"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    271,
+    544
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.10 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    120,
+    516
+   ],
+   "ms": 597,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 456
+  },
+  {
+   "op": "jump",
+   "to": [
+    118,
+    514
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.10 hand: 597 ms glide to 120,516, 456 ms pause, nudge -2,-2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "H2 flood only.10 hand — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  }
+ ]
+}

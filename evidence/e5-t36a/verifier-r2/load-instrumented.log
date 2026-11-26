@@ -1,0 +1,78 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 79,
+  "unknownImages": [],
+  "answersShown": 40,
+  "shownWrong": []
+ },
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+   "stdout": "0.52 0.13 0.04 3/119 583\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+   "stdout": "0.48 0.12 0.04 1/118 697\n\n"
+  },
+  {
+   "cmd": "(while :; do :; done & echo $! > /tmp/v-load.pid); (while :; do :; done & echo $! > /tmp/v-load2.pid); sleep 1; cat /proc/loadavg",
+   "stdout": "0.48 0.12 0.04 3/119 723\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid) $(cat /tmp/v-load2.pid); sleep 1; cat /proc/loadavg",
+   "stdout": "0.68 0.17 0.06 2/118 776\n\n"
+  }
+ ],
+ "reads": [
+  "ok    L0 no load.1 arrow before the approach: arrow sent 380,640 answer [1,1] plane null tipError null",
+  "ok    L0 no load.1 hand: glide, 400 ms pause, one nudge — early (450 ms): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L0 no load.1 hand — late (+1.5 s): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L0 no load.2 arrow before the approach: arrow sent 300,470 answer [1,1] plane null tipError null",
+  "ok    L0 no load.2 hand: glide, 340 ms pause, one nudge — early (450 ms): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L0 no load.2 hand — late (+1.5 s): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L0 no load.3 arrow before the approach: arrow sent 260,600 answer [1,1] plane null tipError null",
+  "ok    L0 no load.3 hand: glide, 500 ms pause, one nudge — early (450 ms): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L0 no load.3 hand — late (+1.5 s): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L0 no load.4 arrow before the approach: arrow sent 230,500 answer [1,1] plane null tipError null",
+  "ok    L0 no load.4 hand: glide, 650 ms pause, one nudge — early (450 ms): hand sent 134,507 answer [9,4] plane 125,503 tipError [0,0]",
+  "ok    L0 no load.4 hand — late (+1.5 s): hand sent 134,507 answer [9,4] plane 125,503 tipError [0,0]",
+  "ok    L1 terminal flooded with output.1 arrow before the approach: arrow sent 380,640 answer [1,1] plane null tipError null",
+  "ok    L1 terminal flooded with output.1 hand: glide, 400 ms pause, one nudge — early (450 ms): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L1 terminal flooded with output.1 hand — late (+1.5 s): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L1 terminal flooded with output.2 arrow before the approach: arrow sent 300,470 answer [1,1] plane null tipError null",
+  "ok    L1 terminal flooded with output.2 hand: glide, 340 ms pause, one nudge — early (450 ms): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L1 terminal flooded with output.2 hand — late (+1.5 s): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L1 terminal flooded with output.3 arrow before the approach: arrow sent 260,600 answer [1,1] plane null tipError null",
+  "ok    L1 terminal flooded with output.3 hand: glide, 500 ms pause, one nudge — early (450 ms): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L1 terminal flooded with output.3 hand — late (+1.5 s): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L1 terminal flooded with output.4 arrow before the approach: arrow sent 230,500 answer [1,1] plane null tipError null",
+  "ok    L1 terminal flooded with output.4 hand: glide, 650 ms pause, one nudge — early (450 ms): hand sent 134,507 answer [9,4] plane 125,503 tipError [0,0]",
+  "ok    L1 terminal flooded with output.4 hand — late (+1.5 s): hand sent 134,507 answer [9,4] plane 125,503 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.1 arrow before the approach: arrow sent 380,640 answer [1,1] plane null tipError null",
+  "ok    L2 two busy loops in the guest.1 hand: glide, 400 ms pause, one nudge — early (450 ms): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.1 hand — late (+1.5 s): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.2 arrow before the approach: arrow sent 300,470 answer [1,1] plane null tipError null",
+  "ok    L2 two busy loops in the guest.2 hand: glide, 340 ms pause, one nudge — early (450 ms): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.2 hand — late (+1.5 s): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.3 arrow before the approach: arrow sent 260,600 answer [1,1] plane null tipError null",
+  "ok    L2 two busy loops in the guest.3 hand: glide, 500 ms pause, one nudge — early (450 ms): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.3 hand — late (+1.5 s): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.4 arrow before the approach: arrow sent 230,500 answer [1,1] plane null tipError null",
+  "ok    L2 two busy loops in the guest.4 hand: glide, 650 ms pause, one nudge — early (450 ms): hand sent 134,507 answer [9,4] plane 125,503 tipError [0,0]",
+  "ok    L2 two busy loops in the guest.4 hand — late (+1.5 s): hand sent 134,507 answer [9,4] plane 125,503 tipError [0,0]",
+  "ok    L3.1 hand: glide, click, 400 ms, nudge — early (450 ms): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L3.1 hand — late (+1.5 s): hand sent 123,511 answer [9,4] plane 114,507 tipError [0,0]",
+  "ok    L3.2 hand: glide, click, 340 ms, nudge — early (450 ms): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L3.2 hand — late (+1.5 s): hand sent 146,515 answer [9,4] plane 137,511 tipError [0,0]",
+  "ok    L3.3 hand: glide, click, 500 ms, nudge — early (450 ms): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L3.3 hand — late (+1.5 s): hand sent 92,527 answer [9,4] plane 83,523 tipError [0,0]",
+  "ok    L4 hand answered at rest, before the click: hand sent 100,538 answer [9,4] plane null tipError null",
+  "ok    L4 hand after the click: hand sent 100,538 answer [9,4] plane 91,534 tipError [0,0]",
+  "ok    L4 hand after the second click: hand sent 100,538 answer [9,4] plane 91,534 tipError [0,0]"
+ ]
+}
+exit 0

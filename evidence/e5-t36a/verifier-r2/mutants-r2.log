@@ -1,0 +1,21 @@
+V1 a cursor move does not restart the rest wait: KILLED by 2: a hotspot-less CSS cursor gets its inferred hotspot with one style wri
+V2 a rest answer keeps the other candidates: SURVIVED
+V3 a guest reset keeps the output size last seen: SURVIVED
+V4 a dropped answer stays marked as a rest answer: SURVIVED
+V5 after a drop, inference does not start from the contradicting move: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+V6 an update does not cancel the armed rest wait: SURVIVED
+V7 a known image is installed without its hotspot: SURVIVED
+V8 an update does not arm the rest wait: KILLED by 1: the pointer at rest settles the hotspot after a straight approach; sen
+V9 starting over leaves the shown hotspot: KILLED by 2: a change of guest output size starts inference over
+V10 starting over leaves the rest wait armed: SURVIVED
+V11 rest reads the OLDEST sent position: KILLED by 5: a recorded glide onto the button
+V12 an answer does not clear the miss count: SURVIVED
+V13 sends are not counted (every rest answer is 'still arriving'): KILLED by 1: a rest answer read off a plane that was still on its way is dropped by
+V14 the rest callback does not re-check that an answer is still wanted: SURVIVED
+V15 a guest reset keeps the image being inferred: KILLED by 1: a contradicted hotspot is taken back from the page, and a guest reset 
+V16 rest needs no move at all (candidates may be null): SURVIVED
+V17 a move in relative mode is compared (no mode check needed?): SURVIVED
+V18 the rest wait is 3 s: KILLED by 1: a recorded glide onto the button
+V19 a rest answer is not clamped into the image: SURVIVED
+V20 the size passed by the page hook is ignored unless both given (always ignored): KILLED by 1: a change of guest output size starts inference over
+TOTAL killed 9, survived 11: ['V2 a rest answer keeps the other candidates', 'V3 a guest reset keeps the output size last seen', 'V4 a dropped answer stays marked as a rest answer', 'V6 an update does not cancel the armed rest wait', 'V7 a known image is installed without its hotspot', 'V10 starting over leaves the rest wait armed', 'V12 an answer does not clear the miss count', 'V14 the rest callback does not re-check that an answer is still wanted', 'V16 rest needs no move at all (candidates may be null)', 'V17 a move in relative mode is compared (no mode check needed?)', 'V19 a rest answer is not clamped into the image']

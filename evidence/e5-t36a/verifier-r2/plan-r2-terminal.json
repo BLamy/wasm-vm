@@ -1,0 +1,1101 @@
+{
+ "about": "Round 2 verifier: the pause-and-nudge pattern onto the terminal (text caret), moving right and down, with the terminal flooded with output and two CPU-bound loops in the one-hart guest. With the pointer moving right/down a plane that is behind gives a \"last sent - plane\" offset inside the cursor image.",
+ "steps": [
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); (while :; do :; done & echo $! > /tmp/v-load2.pid); (while :; do :; done & echo $! > /tmp/v-load3.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "reset",
+   "note": "T.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    614,
+    180
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.1 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    824,
+    330
+   ],
+   "ms": 506,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 476
+  },
+  {
+   "op": "jump",
+   "to": [
+    828,
+    333
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.1 caret: 506 ms glide 614,180 -> 824,330, 476 ms pause, nudge 4,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.1 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    686,
+    298
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.2 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    857,
+    461
+   ],
+   "ms": 686,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 359
+  },
+  {
+   "op": "jump",
+   "to": [
+    863,
+    462
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.2 caret: 686 ms glide 686,298 -> 857,461, 359 ms pause, nudge 6,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.2 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    667,
+    180
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.3 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    841,
+    284
+   ],
+   "ms": 338,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 376
+  },
+  {
+   "op": "jump",
+   "to": [
+    844,
+    287
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.3 caret: 338 ms glide 667,180 -> 841,284, 376 ms pause, nudge 3,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.3 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    720,
+    153
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.4 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    857,
+    308
+   ],
+   "ms": 539,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 466
+  },
+  {
+   "op": "jump",
+   "to": [
+    861,
+    308
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.4 caret: 539 ms glide 720,153 -> 857,308, 466 ms pause, nudge 4,0 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.4 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    573,
+    281
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.5 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    823,
+    462
+   ],
+   "ms": 594,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 343
+  },
+  {
+   "op": "jump",
+   "to": [
+    827,
+    462
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.5 caret: 594 ms glide 573,281 -> 823,462, 343 ms pause, nudge 4,0 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.5 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.6"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    657,
+    190
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.6 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    858,
+    322
+   ],
+   "ms": 600,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 465
+  },
+  {
+   "op": "jump",
+   "to": [
+    863,
+    323
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.6 caret: 600 ms glide 657,190 -> 858,322, 465 ms pause, nudge 5,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.6 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "T.7"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    624,
+    223
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.7 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    831,
+    331
+   ],
+   "ms": 436,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 367
+  },
+  {
+   "op": "jump",
+   "to": [
+    833,
+    333
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.7 caret: 436 ms glide 624,223 -> 831,331, 367 ms pause, nudge 2,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.7 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.8"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    656,
+    300
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.8 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    864,
+    469
+   ],
+   "ms": 528,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 374
+  },
+  {
+   "op": "jump",
+   "to": [
+    868,
+    472
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.8 caret: 528 ms glide 656,300 -> 864,469, 374 ms pause, nudge 4,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.8 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.9"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    644,
+    260
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.9 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    816,
+    445
+   ],
+   "ms": 622,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 406
+  },
+  {
+   "op": "jump",
+   "to": [
+    818,
+    447
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.9 caret: 622 ms glide 644,260 -> 816,445, 406 ms pause, nudge 2,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.9 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.10"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    650,
+    317
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.10 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    830,
+    387
+   ],
+   "ms": 496,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 419
+  },
+  {
+   "op": "jump",
+   "to": [
+    833,
+    389
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.10 caret: 496 ms glide 650,317 -> 830,387, 419 ms pause, nudge 3,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.10 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.11"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    748,
+    162
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.11 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    863,
+    292
+   ],
+   "ms": 445,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 454
+  },
+  {
+   "op": "jump",
+   "to": [
+    867,
+    293
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.11 caret: 445 ms glide 748,162 -> 863,292, 454 ms pause, nudge 4,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.11 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.12"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    720,
+    173
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.12 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    888,
+    340
+   ],
+   "ms": 673,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 397
+  },
+  {
+   "op": "jump",
+   "to": [
+    890,
+    341
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.12 caret: 673 ms glide 720,173 -> 888,340, 397 ms pause, nudge 2,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.12 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "reset",
+   "note": "T.13"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    602,
+    210
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.13 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    817,
+    346
+   ],
+   "ms": 329,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 457
+  },
+  {
+   "op": "jump",
+   "to": [
+    820,
+    348
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.13 caret: 329 ms glide 602,210 -> 817,346, 457 ms pause, nudge 3,2 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.13 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.14"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    685,
+    237
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.14 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    847,
+    352
+   ],
+   "ms": 480,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 409
+  },
+  {
+   "op": "jump",
+   "to": [
+    853,
+    353
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.14 caret: 480 ms glide 685,237 -> 847,352, 409 ms pause, nudge 6,1 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.14 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.15"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    721,
+    321
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.15 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    891,
+    427
+   ],
+   "ms": 493,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 340
+  },
+  {
+   "op": "jump",
+   "to": [
+    896,
+    427
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.15 caret: 493 ms glide 721,321 -> 891,427, 340 ms pause, nudge 5,0 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.15 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.16"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    638,
+    222
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.16 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    894,
+    323
+   ],
+   "ms": 419,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 516
+  },
+  {
+   "op": "jump",
+   "to": [
+    896,
+    326
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.16 caret: 419 ms glide 638,222 -> 894,323, 516 ms pause, nudge 2,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.16 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.17"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    656,
+    264
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.17 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    849,
+    442
+   ],
+   "ms": 554,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 487
+  },
+  {
+   "op": "jump",
+   "to": [
+    851,
+    445
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.17 caret: 554 ms glide 656,264 -> 849,442, 487 ms pause, nudge 2,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.17 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "T.18"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "glide",
+   "to": [
+    711,
+    184
+   ],
+   "ms": 400,
+   "restMs": 600
+  },
+  {
+   "op": "read",
+   "name": "T.18 arrow before the approach",
+   "settleMs": 200,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    821,
+    249
+   ],
+   "ms": 608,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 414
+  },
+  {
+   "op": "jump",
+   "to": [
+    825,
+    252
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "T.18 caret: 608 ms glide 711,184 -> 821,249, 414 ms pause, nudge 4,3 — early (450 ms)",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "name": "T.18 caret — late (+1.5 s)",
+   "settleMs": 1500,
+   "noPlane": false
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid) $(cat /tmp/v-load2.pid) $(cat /tmp/v-load3.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  }
+ ]
+}

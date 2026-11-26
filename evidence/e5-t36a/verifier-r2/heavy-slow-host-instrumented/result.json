@@ -1,0 +1,4208 @@
+{
+  "task": "E5-T36a verifier round 2",
+  "instrumented": true,
+  "plan": "plan-r2-heavy.json",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "H1 flood + two busy loops.1 arrow before the approach",
+      "t": 157307.6,
+      "settleMs": 200,
+      "sent": [
+        363,
+        500
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 45,
+        "moves": 45,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.1 hand: 589 ms glide to 109,533, 454 ms pause, nudge -3,2 — early (450 ms)",
+      "t": 162708.7,
+      "settleMs": 450,
+      "sent": [
+        106,
+        535
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 65,
+        "moves": 65,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.1 hand — late (+1.5 s)",
+      "t": 164214.2,
+      "settleMs": 1500,
+      "sent": [
+        106,
+        535
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "updates": 67,
+        "moves": 67,
+        "styleWrites": 5,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "verdict": "none"
+    },
+    {
+      "name": "H1 flood + two busy loops.2 arrow before the approach",
+      "t": 169003.9,
+      "settleMs": 200,
+      "sent": [
+        376,
+        605
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 79,
+        "moves": 79,
+        "styleWrites": 9,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.2 hand: 646 ms glide to 121,510, 358 ms pause, nudge 1,-2 — early (450 ms)",
+      "t": 175488.7,
+      "settleMs": 450,
+      "sent": [
+        122,
+        508
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 98,
+        "moves": 98,
+        "styleWrites": 11,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.2 hand — late (+1.5 s)",
+      "t": 176994.4,
+      "settleMs": 1500,
+      "sent": [
+        122,
+        508
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 99,
+        "moves": 99,
+        "styleWrites": 11,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.3 arrow before the approach",
+      "t": 182010,
+      "settleMs": 200,
+      "sent": [
+        252,
+        597
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 112,
+        "moves": 112,
+        "styleWrites": 15,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.3 hand: 305 ms glide to 135,528, 414 ms pause, nudge 2,-1 — early (450 ms)",
+      "t": 184670.2,
+      "settleMs": 450,
+      "sent": [
+        137,
+        527
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "updates": 121,
+        "moves": 121,
+        "styleWrites": 16,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "verdict": "none"
+    },
+    {
+      "name": "H1 flood + two busy loops.3 hand — late (+1.5 s)",
+      "t": 186179.1,
+      "settleMs": 1500,
+      "sent": [
+        137,
+        527
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 124,
+        "moves": 124,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.4 arrow before the approach",
+      "t": 191212.7,
+      "settleMs": 200,
+      "sent": [
+        269,
+        513
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 137,
+        "moves": 137,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.4 hand: 459 ms glide to 141,529, 405 ms pause, nudge 3,-2 — early (450 ms)",
+      "t": 195535.5,
+      "settleMs": 450,
+      "sent": [
+        144,
+        527
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 151,
+        "moves": 151,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.4 hand — late (+1.5 s)",
+      "t": 197040.4,
+      "settleMs": 1500,
+      "sent": [
+        144,
+        527
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 135,
+        "y": 523
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 153,
+        "moves": 153,
+        "styleWrites": 23,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        144,
+        527
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.5 arrow before the approach",
+      "t": 203812.8,
+      "settleMs": 200,
+      "sent": [
+        239,
+        503
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 163,
+        "moves": 163,
+        "styleWrites": 27,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.5 hand: 736 ms glide to 81,516, 413 ms pause, nudge 3,-2 — early (450 ms)",
+      "t": 209916,
+      "settleMs": 450,
+      "sent": [
+        84,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 184,
+        "moves": 184,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.5 hand — late (+1.5 s)",
+      "t": 211422.5,
+      "settleMs": 1500,
+      "sent": [
+        84,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 185,
+        "moves": 185,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.6 arrow before the approach",
+      "t": 216726.7,
+      "settleMs": 200,
+      "sent": [
+        309,
+        614
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 203,
+        "moves": 203,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.6 hand: 517 ms glide to 130,509, 489 ms pause, nudge 2,-2 — early (450 ms)",
+      "t": 221458.9,
+      "settleMs": 450,
+      "sent": [
+        132,
+        507
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 217,
+        "moves": 217,
+        "styleWrites": 33,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.6 hand — late (+1.5 s)",
+      "t": 223038.5,
+      "settleMs": 1500,
+      "sent": [
+        132,
+        507
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 218,
+        "moves": 218,
+        "styleWrites": 33,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.7 arrow before the approach",
+      "t": 227834.9,
+      "settleMs": 200,
+      "sent": [
+        347,
+        458
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 228,
+        "moves": 228,
+        "styleWrites": 36,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.7 hand: 599 ms glide to 116,512, 370 ms pause, nudge -1,-1 — early (450 ms)",
+      "t": 232726.4,
+      "settleMs": 450,
+      "sent": [
+        115,
+        511
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 244,
+        "moves": 244,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.7 hand — late (+1.5 s)",
+      "t": 234251.3,
+      "settleMs": 1500,
+      "sent": [
+        115,
+        511
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 245,
+        "moves": 245,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.8 arrow before the approach",
+      "t": 239687.5,
+      "settleMs": 200,
+      "sent": [
+        304,
+        628
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 250,
+        "moves": 250,
+        "styleWrites": 41,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.8 hand: 375 ms glide to 87,498, 346 ms pause, nudge 2,-3 — early (450 ms)",
+      "t": 243321.1,
+      "settleMs": 450,
+      "sent": [
+        89,
+        495
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 262,
+        "moves": 262,
+        "styleWrites": 43,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.8 hand — late (+1.5 s)",
+      "t": 244864,
+      "settleMs": 1500,
+      "sent": [
+        89,
+        495
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 80,
+        "y": 491
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 263,
+        "moves": 263,
+        "styleWrites": 43,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        89,
+        495
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.9 arrow before the approach",
+      "t": 249940.7,
+      "settleMs": 200,
+      "sent": [
+        271,
+        496
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 279,
+        "moves": 279,
+        "styleWrites": 47,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.9 hand: 651 ms glide to 85,505, 415 ms pause, nudge 2,2 — early (450 ms)",
+      "t": 254738.5,
+      "settleMs": 450,
+      "sent": [
+        87,
+        507
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 299,
+        "moves": 299,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.9 hand — late (+1.5 s)",
+      "t": 256280.2,
+      "settleMs": 1500,
+      "sent": [
+        87,
+        507
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 300,
+        "moves": 300,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.10 arrow before the approach",
+      "t": 261819.1,
+      "settleMs": 200,
+      "sent": [
+        353,
+        579
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 313,
+        "moves": 313,
+        "styleWrites": 53,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.10 hand: 474 ms glide to 42,517, 422 ms pause, nudge 2,-1 — early (450 ms)",
+      "t": 266114.9,
+      "settleMs": 450,
+      "sent": [
+        44,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 326,
+        "moves": 326,
+        "styleWrites": 55,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.10 hand — late (+1.5 s)",
+      "t": 267666.3,
+      "settleMs": 1500,
+      "sent": [
+        44,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 328,
+        "moves": 328,
+        "styleWrites": 55,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.11 arrow before the approach",
+      "t": 272501.8,
+      "settleMs": 200,
+      "sent": [
+        322,
+        630
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          2
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          2
+        ],
+        "updates": 339,
+        "moves": 339,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        2
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.11 hand: 703 ms glide to 62,516, 441 ms pause, nudge -5,1 — early (450 ms)",
+      "t": 277717.3,
+      "settleMs": 450,
+      "sent": [
+        57,
+        517
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 360,
+        "moves": 360,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.11 hand — late (+1.5 s)",
+      "t": 279299.8,
+      "settleMs": 1500,
+      "sent": [
+        57,
+        517
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 362,
+        "moves": 362,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.12 arrow before the approach",
+      "t": 284006.1,
+      "settleMs": 200,
+      "sent": [
+        362,
+        519
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 376,
+        "moves": 376,
+        "styleWrites": 63,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.12 hand: 391 ms glide to 128,522, 478 ms pause, nudge 5,0 — early (450 ms)",
+      "t": 287715.1,
+      "settleMs": 450,
+      "sent": [
+        133,
+        522
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 386,
+        "moves": 386,
+        "styleWrites": 65,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.12 hand — late (+1.5 s)",
+      "t": 289221.3,
+      "settleMs": 1500,
+      "sent": [
+        133,
+        522
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 124,
+        "y": 518
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 387,
+        "moves": 387,
+        "styleWrites": 65,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        133,
+        522
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.13 arrow before the approach",
+      "t": 294927.3,
+      "settleMs": 200,
+      "sent": [
+        247,
+        553
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 401,
+        "moves": 401,
+        "styleWrites": 71,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.13 hand: 536 ms glide to 114,529, 458 ms pause, nudge -4,3 — early (450 ms)",
+      "t": 299833.9,
+      "settleMs": 450,
+      "sent": [
+        110,
+        532
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 415,
+        "moves": 415,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.13 hand — late (+1.5 s)",
+      "t": 301337.3,
+      "settleMs": 1500,
+      "sent": [
+        110,
+        532
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 417,
+        "moves": 417,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.14 arrow before the approach",
+      "t": 306410.1,
+      "settleMs": 200,
+      "sent": [
+        221,
+        488
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 435,
+        "moves": 435,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.14 hand: 404 ms glide to 89,526, 492 ms pause, nudge -3,2 — early (450 ms)",
+      "t": 310743.5,
+      "settleMs": 450,
+      "sent": [
+        86,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 451,
+        "moves": 451,
+        "styleWrites": 77,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H1 flood + two busy loops.14 hand — late (+1.5 s)",
+      "t": 312259.8,
+      "settleMs": 1500,
+      "sent": [
+        86,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 453,
+        "moves": 453,
+        "styleWrites": 77,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.1 arrow before the approach",
+      "t": 342303.4,
+      "settleMs": 200,
+      "sent": [
+        302,
+        526
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 501,
+        "moves": 501,
+        "styleWrites": 80,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.1 hand: 604 ms glide to 40,509, 485 ms pause, nudge 3,3 — early (450 ms)",
+      "t": 348016.3,
+      "settleMs": 450,
+      "sent": [
+        43,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 532,
+        "moves": 532,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.1 hand — late (+1.5 s)",
+      "t": 349523.8,
+      "settleMs": 1500,
+      "sent": [
+        43,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 535,
+        "moves": 535,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.2 arrow before the approach",
+      "t": 354377.6,
+      "settleMs": 200,
+      "sent": [
+        347,
+        611
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 556,
+        "moves": 556,
+        "styleWrites": 85,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.2 hand: 377 ms glide to 73,498, 425 ms pause, nudge 1,1 — early (450 ms)",
+      "t": 358751.1,
+      "settleMs": 450,
+      "sent": [
+        74,
+        499
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 573,
+        "moves": 573,
+        "styleWrites": 89,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.2 hand — late (+1.5 s)",
+      "t": 360265.6,
+      "settleMs": 1500,
+      "sent": [
+        74,
+        499
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 576,
+        "moves": 576,
+        "styleWrites": 89,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.3 arrow before the approach",
+      "t": 365698.1,
+      "settleMs": 200,
+      "sent": [
+        367,
+        537
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 601,
+        "moves": 601,
+        "styleWrites": 95,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.3 hand: 591 ms glide to 112,531, 346 ms pause, nudge 1,-2 — early (450 ms)",
+      "t": 371544.5,
+      "settleMs": 450,
+      "sent": [
+        113,
+        529
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 629,
+        "moves": 629,
+        "styleWrites": 97,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.3 hand — late (+1.5 s)",
+      "t": 373049.7,
+      "settleMs": 1500,
+      "sent": [
+        113,
+        529
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 631,
+        "moves": 631,
+        "styleWrites": 97,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.4 arrow before the approach",
+      "t": 377892.1,
+      "settleMs": 200,
+      "sent": [
+        369,
+        528
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 651,
+        "moves": 651,
+        "styleWrites": 104,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.4 hand: 427 ms glide to 75,522, 395 ms pause, nudge -3,-1 — early (450 ms)",
+      "t": 382521.7,
+      "settleMs": 450,
+      "sent": [
+        72,
+        521
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 671,
+        "moves": 671,
+        "styleWrites": 105,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.4 hand — late (+1.5 s)",
+      "t": 384026.3,
+      "settleMs": 1500,
+      "sent": [
+        72,
+        521
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 63,
+        "y": 517
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 674,
+        "moves": 674,
+        "styleWrites": 105,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        72,
+        521
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.5 arrow before the approach",
+      "t": 389768.7,
+      "settleMs": 200,
+      "sent": [
+        229,
+        548
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 692,
+        "moves": 692,
+        "styleWrites": 108,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.5 hand: 509 ms glide to 146,523, 485 ms pause, nudge 3,-1 — early (450 ms)",
+      "t": 394475,
+      "settleMs": 450,
+      "sent": [
+        149,
+        522
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 715,
+        "moves": 715,
+        "styleWrites": 110,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.5 hand — late (+1.5 s)",
+      "t": 395980.1,
+      "settleMs": 1500,
+      "sent": [
+        149,
+        522
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 717,
+        "moves": 717,
+        "styleWrites": 110,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.6 arrow before the approach",
+      "t": 400999,
+      "settleMs": 200,
+      "sent": [
+        319,
+        535
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 740,
+        "moves": 740,
+        "styleWrites": 113,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.6 hand: 422 ms glide to 54,529, 321 ms pause, nudge 1,-1 — early (450 ms)",
+      "t": 405231.2,
+      "settleMs": 450,
+      "sent": [
+        55,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 760,
+        "moves": 760,
+        "styleWrites": 115,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.6 hand — late (+1.5 s)",
+      "t": 406734.9,
+      "settleMs": 1500,
+      "sent": [
+        55,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 762,
+        "moves": 762,
+        "styleWrites": 115,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.7 arrow before the approach",
+      "t": 411867.5,
+      "settleMs": 200,
+      "sent": [
+        224,
+        466
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 786,
+        "moves": 786,
+        "styleWrites": 118,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.7 hand: 634 ms glide to 53,502, 462 ms pause, nudge 2,-1 — early (450 ms)",
+      "t": 418003.3,
+      "settleMs": 450,
+      "sent": [
+        55,
+        501
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 817,
+        "moves": 817,
+        "styleWrites": 120,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.7 hand — late (+1.5 s)",
+      "t": 419507,
+      "settleMs": 1500,
+      "sent": [
+        55,
+        501
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 820,
+        "moves": 820,
+        "styleWrites": 120,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.8 arrow before the approach",
+      "t": 424667.5,
+      "settleMs": 200,
+      "sent": [
+        254,
+        534
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 843,
+        "moves": 843,
+        "styleWrites": 123,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.8 hand: 297 ms glide to 141,509, 497 ms pause, nudge -1,3 — early (450 ms)",
+      "t": 428013.9,
+      "settleMs": 450,
+      "sent": [
+        140,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 858,
+        "moves": 858,
+        "styleWrites": 125,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.8 hand — late (+1.5 s)",
+      "t": 429519.6,
+      "settleMs": 1500,
+      "sent": [
+        140,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 131,
+        "y": 508
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 860,
+        "moves": 860,
+        "styleWrites": 125,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        140,
+        512
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.9 arrow before the approach",
+      "t": 434765.2,
+      "settleMs": 200,
+      "sent": [
+        256,
+        489
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 883,
+        "moves": 883,
+        "styleWrites": 130,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.9 hand: 376 ms glide to 104,533, 466 ms pause, nudge -2,2 — early (450 ms)",
+      "t": 438979.7,
+      "settleMs": 450,
+      "sent": [
+        102,
+        535
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 900,
+        "moves": 900,
+        "styleWrites": 132,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.9 hand — late (+1.5 s)",
+      "t": 440484.3,
+      "settleMs": 1500,
+      "sent": [
+        102,
+        535
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 902,
+        "moves": 902,
+        "styleWrites": 132,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.10 arrow before the approach",
+      "t": 445467.5,
+      "settleMs": 200,
+      "sent": [
+        271,
+        544
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 925,
+        "moves": 925,
+        "styleWrites": 139,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.10 hand: 597 ms glide to 120,516, 456 ms pause, nudge -2,-2 — early (450 ms)",
+      "t": 451616.2,
+      "settleMs": 450,
+      "sent": [
+        118,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 952,
+        "moves": 951,
+        "styleWrites": 140,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "H2 flood only.10 hand — late (+1.5 s)",
+      "t": 453120.2,
+      "settleMs": 1500,
+      "sent": [
+        118,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 954,
+        "moves": 954,
+        "styleWrites": 140,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "verdict": "ok"
+    }
+  ],
+  "shell": [
+    {
+      "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); (while :; do :; done & echo $! > /tmp/v-load2.pid); (while :; do :; done & echo $! > /tmp/v-load3.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.35 0.08 0.03 5/118 454\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid) $(cat /tmp/v-load2.pid) $(cat /tmp/v-load3.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "1.36 0.31 0.10 1/116 576\n\n"
+    },
+    {
+      "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "1.36 0.31 0.10 3/116 619\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "1.69 0.41 0.14 1/114 788\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "sh",
+      "t": 123323.1
+    },
+    {
+      "op": "wait",
+      "t": 151066
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.1",
+      "t": 152570
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 152572.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        363,
+        500
+      ],
+      "t": 153479.4
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.1 arrow before the approach",
+      "t": 157102.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        109,
+        533
+      ],
+      "t": 157310.7
+    },
+    {
+      "op": "wait",
+      "t": 161786.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        106,
+        535
+      ],
+      "t": 162244.8
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.1 hand: 589 ms glide to 109,533, 454 ms pause, nudge -3,2 — early (450 ms)",
+      "t": 162255.2
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.1 hand — late (+1.5 s)",
+      "t": 162710.7
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.2",
+      "t": 164218.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 164223
+    },
+    {
+      "op": "glide",
+      "to": [
+        376,
+        605
+      ],
+      "t": 165135.6
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.2 arrow before the approach",
+      "t": 168802.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        121,
+        510
+      ],
+      "t": 169007.9
+    },
+    {
+      "op": "wait",
+      "t": 174671.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        122,
+        508
+      ],
+      "t": 175033.5
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.2 hand: 646 ms glide to 121,510, 358 ms pause, nudge 1,-2 — early (450 ms)",
+      "t": 175036.7
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.2 hand — late (+1.5 s)",
+      "t": 175491.3
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.3",
+      "t": 176997.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 177002.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        252,
+        597
+      ],
+      "t": 178107.6
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.3 arrow before the approach",
+      "t": 181806
+    },
+    {
+      "op": "glide",
+      "to": [
+        135,
+        528
+      ],
+      "t": 182012.4
+    },
+    {
+      "op": "wait",
+      "t": 183630.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        137,
+        527
+      ],
+      "t": 184046.9
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.3 hand: 305 ms glide to 135,528, 414 ms pause, nudge 2,-1 — early (450 ms)",
+      "t": 184218.2
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.3 hand — late (+1.5 s)",
+      "t": 184675.2
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.4",
+      "t": 186181.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 186183.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        269,
+        513
+      ],
+      "t": 187090.8
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.4 arrow before the approach",
+      "t": 190991
+    },
+    {
+      "op": "glide",
+      "to": [
+        141,
+        529
+      ],
+      "t": 191223.3
+    },
+    {
+      "op": "wait",
+      "t": 194672.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        144,
+        527
+      ],
+      "t": 195080.1
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.4 hand: 459 ms glide to 141,529, 405 ms pause, nudge 3,-2 — early (450 ms)",
+      "t": 195082.6
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.4 hand — late (+1.5 s)",
+      "t": 195538.3
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.5",
+      "t": 198167.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 198171.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        239,
+        503
+      ],
+      "t": 199262.4
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.5 arrow before the approach",
+      "t": 203609.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        81,
+        516
+      ],
+      "t": 203814
+    },
+    {
+      "op": "wait",
+      "t": 209024.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        84,
+        514
+      ],
+      "t": 209459.1
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.5 hand: 736 ms glide to 81,516, 413 ms pause, nudge 3,-2 — early (450 ms)",
+      "t": 209462.4
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.5 hand — late (+1.5 s)",
+      "t": 209919.3
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.6",
+      "t": 211425.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 211428
+    },
+    {
+      "op": "glide",
+      "to": [
+        309,
+        614
+      ],
+      "t": 212515.3
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.6 arrow before the approach",
+      "t": 216514.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        130,
+        509
+      ],
+      "t": 216732.5
+    },
+    {
+      "op": "wait",
+      "t": 220398.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        132,
+        507
+      ],
+      "t": 220917.2
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.6 hand: 517 ms glide to 130,509, 489 ms pause, nudge 2,-2 — early (450 ms)",
+      "t": 220974.6
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.6 hand — late (+1.5 s)",
+      "t": 221506.8
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.7",
+      "t": 223084.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 223133.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        347,
+        458
+      ],
+      "t": 224099.3
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.7 arrow before the approach",
+      "t": 227613.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        116,
+        512
+      ],
+      "t": 227877.3
+    },
+    {
+      "op": "wait",
+      "t": 231860.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        115,
+        511
+      ],
+      "t": 232254.7
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.7 hand: 599 ms glide to 116,512, 370 ms pause, nudge -1,-1 — early (450 ms)",
+      "t": 232269.2
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.7 hand — late (+1.5 s)",
+      "t": 232740.8
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.8",
+      "t": 234296
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 234353.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        304,
+        628
+      ],
+      "t": 235494.3
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.8 arrow before the approach",
+      "t": 239441
+    },
+    {
+      "op": "glide",
+      "to": [
+        87,
+        498
+      ],
+      "t": 239723.5
+    },
+    {
+      "op": "wait",
+      "t": 242421.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        89,
+        495
+      ],
+      "t": 242791.8
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.8 hand: 375 ms glide to 87,498, 346 ms pause, nudge 2,-3 — early (450 ms)",
+      "t": 242856.5
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.8 hand — late (+1.5 s)",
+      "t": 243352.8
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.9",
+      "t": 245819.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 245859.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        271,
+        496
+      ],
+      "t": 247034.9
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.9 arrow before the approach",
+      "t": 249704.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        85,
+        505
+      ],
+      "t": 249982.1
+    },
+    {
+      "op": "wait",
+      "t": 253805.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        87,
+        507
+      ],
+      "t": 254237.7
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.9 hand: 651 ms glide to 85,505, 415 ms pause, nudge 2,2 — early (450 ms)",
+      "t": 254274.4
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.9 hand — late (+1.5 s)",
+      "t": 254770.8
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.10",
+      "t": 256357.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 256400.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        353,
+        579
+      ],
+      "t": 257528.8
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.10 arrow before the approach",
+      "t": 261372.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        42,
+        517
+      ],
+      "t": 261868.5
+    },
+    {
+      "op": "wait",
+      "t": 265207.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        44,
+        516
+      ],
+      "t": 265634.1
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.10 hand: 474 ms glide to 42,517, 422 ms pause, nudge 2,-1 — early (450 ms)",
+      "t": 265656
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.10 hand — late (+1.5 s)",
+      "t": 266158.4
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.11",
+      "t": 267693.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 267714.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        322,
+        630
+      ],
+      "t": 268831.5
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.11 arrow before the approach",
+      "t": 272287.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        62,
+        516
+      ],
+      "t": 272521.3
+    },
+    {
+      "op": "wait",
+      "t": 276692.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        57,
+        517
+      ],
+      "t": 277141.2
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.11 hand: 703 ms glide to 62,516, 441 ms pause, nudge -5,1 — early (450 ms)",
+      "t": 277176.1
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.11 hand — late (+1.5 s)",
+      "t": 277787.7
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.12",
+      "t": 279320.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 279339.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        362,
+        519
+      ],
+      "t": 280250.9
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.12 arrow before the approach",
+      "t": 283796.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        128,
+        522
+      ],
+      "t": 284029.1
+    },
+    {
+      "op": "wait",
+      "t": 286667.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        133,
+        522
+      ],
+      "t": 287148.8
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.12 hand: 391 ms glide to 128,522, 478 ms pause, nudge 5,0 — early (450 ms)",
+      "t": 287263.6
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.12 hand — late (+1.5 s)",
+      "t": 287718.2
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.13",
+      "t": 289922.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 289925.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        247,
+        553
+      ],
+      "t": 291072
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.13 arrow before the approach",
+      "t": 294723
+    },
+    {
+      "op": "glide",
+      "to": [
+        114,
+        529
+      ],
+      "t": 294930.3
+    },
+    {
+      "op": "wait",
+      "t": 298899.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        110,
+        532
+      ],
+      "t": 299366
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.13 hand: 536 ms glide to 114,529, 458 ms pause, nudge -4,3 — early (450 ms)",
+      "t": 299369.6
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.13 hand — late (+1.5 s)",
+      "t": 299835.9
+    },
+    {
+      "op": "reset",
+      "name": "H1 flood + two busy loops.14",
+      "t": 301338.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 301340.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        221,
+        488
+      ],
+      "t": 302439.5
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.14 arrow before the approach",
+      "t": 306205.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        89,
+        526
+      ],
+      "t": 306411.8
+    },
+    {
+      "op": "wait",
+      "t": 309794.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        86,
+        528
+      ],
+      "t": 310289
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.14 hand: 404 ms glide to 89,526, 492 ms pause, nudge -3,2 — early (450 ms)",
+      "t": 310291
+    },
+    {
+      "op": "read",
+      "name": "H1 flood + two busy loops.14 hand — late (+1.5 s)",
+      "t": 310755.4
+    },
+    {
+      "op": "sh",
+      "t": 312268.9
+    },
+    {
+      "op": "wait",
+      "t": 315690.8
+    },
+    {
+      "op": "sh",
+      "t": 318194.5
+    },
+    {
+      "op": "wait",
+      "t": 336161.2
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.1",
+      "t": 337664.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 337666.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        302,
+        526
+      ],
+      "t": 338765.6
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.1 arrow before the approach",
+      "t": 342100.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        40,
+        509
+      ],
+      "t": 342304.9
+    },
+    {
+      "op": "wait",
+      "t": 346965.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        43,
+        512
+      ],
+      "t": 347453.6
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.1 hand: 604 ms glide to 40,509, 485 ms pause, nudge 3,3 — early (450 ms)",
+      "t": 347562.1
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.1 hand — late (+1.5 s)",
+      "t": 348021.2
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.2",
+      "t": 349525.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 349526.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        347,
+        611
+      ],
+      "t": 350602.4
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.2 arrow before the approach",
+      "t": 354176.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        73,
+        498
+      ],
+      "t": 354379.2
+    },
+    {
+      "op": "wait",
+      "t": 357696.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        74,
+        499
+      ],
+      "t": 358123.6
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.2 hand: 377 ms glide to 73,498, 425 ms pause, nudge 1,1 — early (450 ms)",
+      "t": 358298.4
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.2 hand — late (+1.5 s)",
+      "t": 358764.4
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.3",
+      "t": 360267.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 360268.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        367,
+        537
+      ],
+      "t": 361201.7
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.3 arrow before the approach",
+      "t": 365494
+    },
+    {
+      "op": "glide",
+      "to": [
+        112,
+        531
+      ],
+      "t": 365699.7
+    },
+    {
+      "op": "wait",
+      "t": 370702
+    },
+    {
+      "op": "jump",
+      "to": [
+        113,
+        529
+      ],
+      "t": 371049
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.3 hand: 591 ms glide to 112,531, 346 ms pause, nudge 1,-2 — early (450 ms)",
+      "t": 371090.9
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.3 hand — late (+1.5 s)",
+      "t": 371546.4
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.4",
+      "t": 373051.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 373052.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        369,
+        528
+      ],
+      "t": 373962.8
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.4 arrow before the approach",
+      "t": 377687.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        75,
+        522
+      ],
+      "t": 377893.1
+    },
+    {
+      "op": "wait",
+      "t": 381499.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        72,
+        521
+      ],
+      "t": 381897.7
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.4 hand: 427 ms glide to 75,522, 395 ms pause, nudge -3,-1 — early (450 ms)",
+      "t": 382066.5
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.4 hand — late (+1.5 s)",
+      "t": 382523.6
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.5",
+      "t": 384634.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 384636.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        229,
+        548
+      ],
+      "t": 385750.1
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.5 arrow before the approach",
+      "t": 389566
+    },
+    {
+      "op": "glide",
+      "to": [
+        146,
+        523
+      ],
+      "t": 389770.2
+    },
+    {
+      "op": "wait",
+      "t": 393397.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        149,
+        522
+      ],
+      "t": 393885.4
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.5 hand: 509 ms glide to 146,523, 485 ms pause, nudge 3,-1 — early (450 ms)",
+      "t": 394020.3
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.5 hand — late (+1.5 s)",
+      "t": 394476.8
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.6",
+      "t": 395983.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 395986.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        319,
+        535
+      ],
+      "t": 397092
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.6 arrow before the approach",
+      "t": 400796.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        54,
+        529
+      ],
+      "t": 401000.8
+    },
+    {
+      "op": "wait",
+      "t": 404386.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        55,
+        528
+      ],
+      "t": 404710.1
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.6 hand: 422 ms glide to 54,529, 321 ms pause, nudge 1,-1 — early (450 ms)",
+      "t": 404777.7
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.6 hand — late (+1.5 s)",
+      "t": 405233.1
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.7",
+      "t": 406736.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 406738
+    },
+    {
+      "op": "glide",
+      "to": [
+        224,
+        466
+      ],
+      "t": 407751.3
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.7 arrow before the approach",
+      "t": 411664.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        53,
+        502
+      ],
+      "t": 411868.9
+    },
+    {
+      "op": "wait",
+      "t": 417084.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        55,
+        501
+      ],
+      "t": 417548.6
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.7 hand: 634 ms glide to 53,502, 462 ms pause, nudge 2,-1 — early (450 ms)",
+      "t": 417550.2
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.7 hand — late (+1.5 s)",
+      "t": 418004.9
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.8",
+      "t": 419508.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 419511.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        254,
+        534
+      ],
+      "t": 420621.7
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.8 arrow before the approach",
+      "t": 424464
+    },
+    {
+      "op": "glide",
+      "to": [
+        141,
+        509
+      ],
+      "t": 424669.3
+    },
+    {
+      "op": "wait",
+      "t": 427009.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        140,
+        512
+      ],
+      "t": 427514.3
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.8 hand: 297 ms glide to 141,509, 497 ms pause, nudge -1,3 — early (450 ms)",
+      "t": 427560.8
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.8 hand — late (+1.5 s)",
+      "t": 428016.8
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.9",
+      "t": 430067.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 430069.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        256,
+        489
+      ],
+      "t": 431177.7
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.9 arrow before the approach",
+      "t": 434563.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        104,
+        533
+      ],
+      "t": 434767.7
+    },
+    {
+      "op": "wait",
+      "t": 437982.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        102,
+        535
+      ],
+      "t": 438452.6
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.9 hand: 376 ms glide to 104,533, 466 ms pause, nudge -2,2 — early (450 ms)",
+      "t": 438526.9
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.9 hand — late (+1.5 s)",
+      "t": 438981.4
+    },
+    {
+      "op": "reset",
+      "name": "H2 flood only.10",
+      "t": 440485.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 440486.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        271,
+        544
+      ],
+      "t": 441595.2
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.10 arrow before the approach",
+      "t": 445264.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        120,
+        516
+      ],
+      "t": 445469.6
+    },
+    {
+      "op": "wait",
+      "t": 450562.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        118,
+        514
+      ],
+      "t": 451019.9
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.10 hand: 597 ms glide to 120,516, 456 ms pause, nudge -2,-2 — early (450 ms)",
+      "t": 451161.5
+    },
+    {
+      "op": "read",
+      "name": "H2 flood only.10 hand — late (+1.5 s)",
+      "t": 451617.7
+    },
+    {
+      "op": "sh",
+      "t": 453122.2
+    },
+    {
+      "op": "wait",
+      "t": 456054.7
+    }
+  ],
+  "instrumentedBytes": 22993,
+  "sessionRestartSeconds": 76.349,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 1227,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 131,
+    "unknownImages": [],
+    "answersShown": 66,
+    "shownWrong": []
+  },
+  "events": 3141,
+  "errors": [],
+  "ran": true
+}

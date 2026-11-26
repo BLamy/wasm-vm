@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: implemented
+status: in-progress
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -390,3 +390,191 @@ while the guest is still more than 300 ms behind, the answer read then can be wr
 plane's next move, which takes it back (unit-tested; not produced in the browser). The first
 time a shape is met on a straight approach its cursor is drawn with no hotspot for the 300 ms
 before the rest answer. Cursors above the CSS size limit take the overlay path, untouched.
+
+### 2026-11-26 — verifier (round 2) — VERDICT: refuted
+
+Fresh session; I implemented nothing here and was not round 1's verifier. Head `843f0a9d7` (the
+claim's `c989491f5` plus one commit of claim and evidence only). My predictions were written before
+I ran anything or opened round 2's evidence (`evidence/e5-t36a/verifier-r2/predictions.txt`); every
+file named below is in that directory unless its path says otherwise. Browser runs: the committed
+bundle from `tools/serve-dist.sh` on 8125 (the served `main.js` and both sink files hash as
+`web/dist` at this head, which equals the sources), Chrome 158.0.8127.88 headless, the session
+restarted on legacy KMS as the worker's script does it.
+
+Round 1's bug is fixed, both acceptance commands pass for me, and in six browser runs of my own
+(about 115 continuous approaches the worker's plans do not contain, idle, under guest load and on a
+slowed host) the page never showed a hotspot more than a pixel from the truth. What does not hold
+is the rest rule's safety net: the claim says an answer read while the guest was still behind is
+wrong only "until the plane's next move, which takes it back". In the device's order it is kept
+when one position was sent in between. I could not produce that in a browser; I could record its
+precondition there. Status `in-progress`; nothing promoted.
+
+**Refuted**
+
+- P2-E2, the attack list's "a guest that lags by a varying number of moves", against the rest
+  rule — FAILED, at unit level, through the real `CursorController`, in the device's order.
+  - Predicted before any run (24x24 images, arrow (1,1), hand (9,4), guest one position behind
+    on an even 10 px run, the hand appearing in the middle): rest wait fires with the plane one
+    position behind → hand (0,4); then one more position is sent and the guest reports its two
+    outstanding positions → still (0,4), at rest, indefinitely.
+  - Observed: exactly that (`p2-handworked.log`, case E2): (0,4) for a true (9,4) after 9 s of
+    rest, after 20 more positions along the same line and 5 s more, and after one jump elsewhere;
+    taken back on the second jump (the third move it cannot explain). No rest wait is armed in
+    between. Cases MAIN and E1 of the same file (guest caught up; nothing sent before the plane's
+    next move) behave as the claim says: (9,4).
+  - Why: `web/src/sink/cursor-hotspot.js:145` — a rest answer counts as "still arriving" only
+    while nothing was sent since; after one sent position it is treated like an answer two moves
+    agreed on: any sent position may explain the plane's next move (`:147-150`, here the new
+    position itself), three misses in a row are needed (`:155`), and
+    `cursor-controller.js:479` waits for no further rest once an answer is shown.
+    `web/tests/e5-t36-cursor-hotspot.test.mjs:132-148` pins the take-back only for "nothing
+    sent", `:149-151` pins that a sent position switches it off (on a right answer); the 600
+    approaches hold the lag constant (`:432`) and let the rest wait elapse only after the guest
+    has caught up (`:464-469`).
+  - The precondition, in the browser. The Boundary's "at rest the lag is zero" is the premise
+    of the 300 ms wait (`cursor-controller.js:13`). Recorded on the committed bundle (two log
+    lines injected in memory, as round 1 did), the pause-and-nudge pattern, one-hart guest:
+    - idle: a sent position was followed by the plane within 9 ms (median), 169 ms at most
+      (`lag-by-phase-load.log` L0); in round 1's logs a move never trailed the next sent
+      position by more than 38 ms (`replay-round1-logs.log`).
+    - a process printing to the guest's terminal: median 91 ms, p99 290 ms, max 306 ms; longest
+      stretch with neither a sent position nor a cursor event while the plane was behind:
+      177 ms (`lag-by-phase-load.log` L1).
+    - the same plus two CPU-bound loops: median 171 ms, p99 476 ms, max 526 ms; seven such
+      stretches of 258-311 ms. `heavy-instrumented/events.json` #871-#875: last position sent
+      at t=80323.1 (304,628); the plane goes to (365,657) at 80372.3; nothing for 311 ms; the
+      plane arrives at (303,627) at 80683.3. The pointer was at rest for 311 ms with the plane
+      62 px right of and 30 px below where it ended up (`quiet-while-behind.log`). The arrow
+      had its answer, so no wait was armed.
+    - the same on a slowed host (Chrome started with `taskpolicy -b`,
+      `chrome-background-qos.sh`; session restart 43-76 s instead of 16 s): median 359 ms, max
+      2.9 s; 52 such stretches of 300 ms and more, the longest 1.75 s; the page's rest wait fired
+      20 times while the plane was not on the last sent position
+      (`lag-by-phase-heavy-slow-host.log`, `replay-heavy-slow-host-instrumented.log`).
+    In none of them did a wrong answer follow: "last sent - plane" was outside the image (the
+    approaches onto the button move left) or not an offset the image's moves allowed, or the
+    image had been settled by its moves.
+  - How wrong and how often, by model only (`attacks-r2.log` §1, §8; a timed model of page and
+    guest, 400 approaches per row, the guest silent for 320-2000 ms from within the last 150 ms
+    of the glide): a wrong hotspot is shown in 1-4 % of such approaches; if the user then does
+    nothing it is gone with the plane's next move (as claimed); with one or two nudges it is
+    still there after 3 s of rest in up to 3.3 % (none for a 320 ms stall); after four more
+    short glides in 0 of 400. Worst kept: 6 px with an idle guest's latency, 45 px ((46,53) for
+    the caret's (4,8)) with the latency measured under load, approaching the terminal
+    rightwards. No stall: 0 of 400.
+  - Not produced in a browser: `own-1`, `load-instrumented`, `heavy-instrumented`,
+    `heavy-slow-host`, `heavy-slow-host-instrumented`, `terminal-slow-host` — 342 reads, 339
+    answered, every answer within a pixel, and no wrong answer in any page timeline (a recorder
+    samples the CSS cursor and `__cursor.state()` every 8 ms). `terminal-slow-host` is 18
+    approaches onto the terminal moving right and down, under load, on the slowed host.
+  Demand: an answer read at rest must not outlive the discovery that the plane was still on its
+  way, also when a position was sent in between — or state the limit as it is and say why it is
+  acceptable; either way a controller test in the device's order in which the rest wait elapses
+  while the guest is behind and the pointer then moves on.
+- Same class, unit level only — FAILED (and so did my own prediction "no answer from stale
+  positions"). Inference started over while the guest is one position behind on an even run —
+  by the output size changing on the next sent position (800 → 801 rows), by relative mode and
+  back, or by `resetHotspotInference()`: the hand is (0,4) from the second move after the
+  restart, through the run, 5 s of rest and one jump (`attacks-r2.log` §4). `reset()` forgets
+  the sent positions (`cursor-hotspot.js:217-220`), but the guest's next move still stands for
+  a position sent before it; its only explanations are positions sent after
+  (`:167-169`), so the truth is not among the candidates and two moves agree on truth plus one
+  step. Round 1 asked for inference "only from positions that follow a sent absolute position
+  at the current output size". Reach: a real change of output size scales the positions, so it
+  needs the pointer near the origin; relative mode and back within one frame, as I modelled it,
+  is not something a user does; the hook is the proof script's, called at rest. Not shown in a
+  browser. Demand: after a restart, a
+  move is evidence only once it can stand for a position sent after it, with a test.
+
+**Held** (carry forward while the code and evidence they rest on are unchanged)
+
+- P0: `gates.log` names `c989491f5` (sha256 `99231c6e0f61…`); `c989491f5..843f0a9d7` touches no
+  source; `web/dist` sink files and `main.js` are byte-identical to their sources; the server on
+  8125 serves them (`orient.log`).
+- P1: the four cursor test files, 35 of 35 (`unit-acceptance.log`).
+- P3: round 1's two recorded device logs replayed through the new controller, its rest timer
+  driven from the recorded timestamps (`replay-log.mjs`, `replay-round1-logs.log`): 0 of 493 and
+  0 of 1059 looks at a shown answer further than a pixel from the truth. Approach C: hand none
+  after its first move at t=42018.8, (9,4) from the rest at 42379.8, never (45,7); arrow (1,1),
+  caret (4,8). 792 of 827 moves are a sent position minus the true hotspot of the image shown
+  within a pixel (the other 35 came before the first sent position); 825 of 827 updates carry
+  the plane position of the event before.
+- P4: the worker's browser command passes for me with the claim's 18 rows exactly
+  (`browser/result.json`, sha256 `6f9831bf9d12…`). Each read requires a known hotspot, the CSS
+  cursor showing it, the tip within a pixel of the last position the page really sent
+  (`window.__pointer.frames()`), and the expected hotspot within a pixel
+  (`tools/verify/e5-t36-hardware-cursor-browser.mjs:147-156`); its three glide plans are round
+  1's approaches C, A and from the right, the same points and durations.
+- P5, approaches the worker's four plans do not contain, each starting inference over
+  (`plan-r2-own.json`, `own-1/result.json`): a slow diagonal across the window border onto the
+  terminal's caret; across the button without stopping, then a short glide back in; a slow
+  vertical approach stopping 3 px inside the button's edge; a glide and two nudges 200 ms apart;
+  a 120 ms flick from 550 px away; a 120 Hz zigzag in and out across the button's top edge; two
+  clicks at rest; a slow approach across the page's text (caret). 27 reads, early (450 ms after
+  the stop) and late: every one answered and exact; 34 answers in the timeline, none wrong.
+  645 updates, 62 style writes: the per-commit re-set of the same image writes nothing.
+- Update positions are never used: 300 random runs, every update's position replaced by noise,
+  identical timelines of shown answers (`attacks-r2.log` §3). Hotspots (0,0) and (63,63): 0
+  wrong of 200 approaches each, known at rest; 3000 images: 64 remembered, 128 positions (§6).
+- P8: click 272.8 ms and key echo 46 ms against E5-T37b's 267.7 / 270.6 / 267.9 and
+  45.4 / 48.8 / 44.2; demo page 127 of 127, no errors — judged on the worker's files.
+
+**Seen, no demand here**
+
+- The claim's "a guest more than 128 sent positions behind gives no evidence (and a
+  contradiction is not counted)" is not so while the pointer stays in a small area: 140, 200
+  and 400 positions behind, a right answer was dropped in 60 of 60 runs and a wrong one shown
+  on about 40 % of the moves; right again at rest after catching up in 60 of 60 (§5). Two
+  seconds of lag at 60 Hz. I predicted it would be kept; it is not.
+- An image that comes back while the pointer rests takes a right rest answer away for 300 ms
+  (the "plane moved, nothing sent" rule; §2). Two clicks on the button at rest did not change
+  the image in the browser (`load-instrumented` L4), so I did not see it there.
+- A MOVE with resource id 0 while a rest wait is armed leaves the wait to throw inside its
+  `try`: one `cursor-hotspot-error` diagnostic (§7). Not an order I saw the device produce.
+- The first time a shape is met its cursor has no hotspot for 310-460 ms, not 300 (`own-1`
+  timeline). The worker's script reads 2.3 s after each stop and cannot see an answer shown
+  and taken back; `continuous-path-r2.mjs` records every change and may be taken as is.
+
+**Coverage of the diff** (`coverage-unit-tests.txt`; the browser runs above)
+
+- `cursor-hotspot.js:161-162`, the `seen.length === 0` arms (a rest answer dropped by a plane
+  that moved to where nothing sent explains it) — executed by no test. Needs evidence: one
+  assertion.
+- `cursor-controller.js:483`, the second check inside the rest callback — executed by nothing
+  and unreachable as far as I can see (everything that changes the image, the answer or the
+  mode cancels or replaces the wait; mutants V6 and V14 each survive). Waived as a guard, or
+  delete it.
+- `cursor-controller.js:101-102`, the default timers — not by the tests; by every rest answer
+  in a browser run. `web/main.js:910-919` — executed in the browser (no answer without it).
+  Everything else in the two sink files' diff: executed by the tests.
+- Mutants, scratch copies only: the worker's 38 reproduce, 37 noticed
+  (`mutants-worker-rerun.log`). Twenty of mine (`mutants-r2.py`, `mutants-r2.log`): 9 noticed.
+  Survivors that are behaviour: V4 (a dropped answer stays marked as a rest answer), V7 (a
+  known image installed without its hotspot — in the device's order every commit would then
+  write the style twice), V16 (rest with no candidate at all), V19 (a rest answer not clamped
+  into the image). The code is right in each; the tests would not say so if it stopped. The
+  rest change nothing observable (V2, V3, V10, V12, V17; V6 and V14 back each other up).
+
+SUITE: n/a until the refutation clears.
+
+Commands (repo root):
+`cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`;
+`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/verifier-r2/browser`;
+`node evidence/e5-t36a/verifier-r2/continuous-path-r2.mjs --plan …/plan-r2-own.json --out …/own-1`
+(likewise `plan-r2-load.json` and `plan-r2-heavy.json` with `--instrument`; `plan-r2-heavy.json`
+and `plan-r2-terminal.json` with `--chrome …/chrome-background-qos.sh`, the former also with
+`--instrument`); `node …/p2-handworked.mjs`; `node …/attacks-r2.mjs` (and `8`, `8 loaded`);
+`node …/replay-log.mjs evidence/e5-t36a/verifier/approach-C-instrumented/events.json`, the
+`natural` log with `--label-by-truth`, my three logs with `--resets DIR/result.json`;
+`node …/lag-by-phase.mjs DIR`; `node …/quiet-while-behind.mjs DIR/events.json`;
+`python3 evidence/e5-t36a/mutants.py SCRATCH`; `python3 …/mutants-r2.py SCRATCH`; the four test
+files with `NODE_V8_COVERAGE` and round 1's `coverage-uncovered.mjs`.
+
+Not checked: a pristine clone (medium risk); the whole web unit suite, the demo page and the
+latency run (taken from `gates.log`, `demo-suite.json`, `browser-unchanged.json`); a wrong
+hotspot kept in a browser (tried as above, not seen); a real mouse; how often a guest is silent
+for 300 ms on other people's machines (one slowed host here); Firefox and Safari; relative mode
+and a change of output size in a browser; cursors above the CSS limit; E5-T36b's image. The
+replay of my own logs differs from what the page showed on 2 of 1772 and 19 of 1914 cursor
+events (in each the page had no answer yet where the replay had the right one; I take it to be
+the page's rest timer firing later than 300 ms under load, and did not check).

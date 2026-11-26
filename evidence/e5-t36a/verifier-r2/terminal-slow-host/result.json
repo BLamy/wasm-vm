@@ -1,0 +1,3148 @@
+{
+  "task": "E5-T36a verifier round 2",
+  "instrumented": false,
+  "plan": "plan-r2-terminal.json",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "T.1 arrow before the approach",
+      "t": 100883.1,
+      "settleMs": 200,
+      "sent": [
+        614,
+        180
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 45,
+        "moves": 45,
+        "styleWrites": 2,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.1 caret: 506 ms glide 614,180 -> 824,330, 476 ms pause, nudge 4,3 — early (450 ms)",
+      "t": 106315.1,
+      "settleMs": 450,
+      "sent": [
+        828,
+        333
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 62,
+        "moves": 62,
+        "styleWrites": 2,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.1 caret — late (+1.5 s)",
+      "t": 107820.2,
+      "settleMs": 1500,
+      "sent": [
+        828,
+        333
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 64,
+        "moves": 64,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.2 arrow before the approach",
+      "t": 113682.5,
+      "settleMs": 200,
+      "sent": [
+        686,
+        298
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 77,
+        "moves": 77,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.2 caret: 686 ms glide 686,298 -> 857,461, 359 ms pause, nudge 6,1 — early (450 ms)",
+      "t": 120295.9,
+      "settleMs": 450,
+      "sent": [
+        863,
+        462
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 101,
+        "moves": 101,
+        "styleWrites": 9,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.2 caret — late (+1.5 s)",
+      "t": 121799.9,
+      "settleMs": 1500,
+      "sent": [
+        863,
+        462
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 102,
+        "moves": 102,
+        "styleWrites": 9,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.3 arrow before the approach",
+      "t": 126934,
+      "settleMs": 200,
+      "sent": [
+        667,
+        180
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 119,
+        "moves": 119,
+        "styleWrites": 12,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.3 caret: 338 ms glide 667,180 -> 841,284, 376 ms pause, nudge 3,3 — early (450 ms)",
+      "t": 130674.8,
+      "settleMs": 450,
+      "sent": [
+        844,
+        287
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 131,
+        "moves": 131,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.3 caret — late (+1.5 s)",
+      "t": 132179.2,
+      "settleMs": 1500,
+      "sent": [
+        844,
+        287
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 133,
+        "moves": 133,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.4 arrow before the approach",
+      "t": 137531.5,
+      "settleMs": 200,
+      "sent": [
+        720,
+        153
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 150,
+        "moves": 150,
+        "styleWrites": 17,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.4 caret: 539 ms glide 720,153 -> 857,308, 466 ms pause, nudge 4,0 — early (450 ms)",
+      "t": 142759.2,
+      "settleMs": 450,
+      "sent": [
+        861,
+        308
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 171,
+        "moves": 171,
+        "styleWrites": 19,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.4 caret — late (+1.5 s)",
+      "t": 144264,
+      "settleMs": 1500,
+      "sent": [
+        861,
+        308
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 173,
+        "moves": 173,
+        "styleWrites": 19,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.5 arrow before the approach",
+      "t": 149185,
+      "settleMs": 200,
+      "sent": [
+        573,
+        281
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 190,
+        "moves": 190,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.5 caret: 594 ms glide 573,281 -> 823,462, 343 ms pause, nudge 4,0 — early (450 ms)",
+      "t": 154550,
+      "settleMs": 450,
+      "sent": [
+        827,
+        462
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 209,
+        "moves": 209,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.5 caret — late (+1.5 s)",
+      "t": 156053.7,
+      "settleMs": 1500,
+      "sent": [
+        827,
+        462
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 211,
+        "moves": 211,
+        "styleWrites": 24,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.6 arrow before the approach",
+      "t": 161131.4,
+      "settleMs": 200,
+      "sent": [
+        657,
+        190
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 228,
+        "moves": 228,
+        "styleWrites": 27,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.6 caret: 600 ms glide 657,190 -> 858,322, 465 ms pause, nudge 5,1 — early (450 ms)",
+      "t": 167028.3,
+      "settleMs": 450,
+      "sent": [
+        863,
+        323
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 250,
+        "moves": 250,
+        "styleWrites": 29,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.6 caret — late (+1.5 s)",
+      "t": 168539.5,
+      "settleMs": 1500,
+      "sent": [
+        863,
+        323
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 859,
+        "y": 315
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 252,
+        "moves": 252,
+        "styleWrites": 29,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        863,
+        323
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.7 arrow before the approach",
+      "t": 174508.5,
+      "settleMs": 200,
+      "sent": [
+        624,
+        223
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 269,
+        "moves": 269,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.7 caret: 436 ms glide 624,223 -> 831,331, 367 ms pause, nudge 2,2 — early (450 ms)",
+      "t": 179023.7,
+      "settleMs": 450,
+      "sent": [
+        833,
+        333
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 286,
+        "moves": 286,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.7 caret — late (+1.5 s)",
+      "t": 180528.1,
+      "settleMs": 1500,
+      "sent": [
+        833,
+        333
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 288,
+        "moves": 288,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.8 arrow before the approach",
+      "t": 185748.2,
+      "settleMs": 200,
+      "sent": [
+        656,
+        300
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 305,
+        "moves": 305,
+        "styleWrites": 37,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.8 caret: 528 ms glide 656,300 -> 864,469, 374 ms pause, nudge 4,3 — early (450 ms)",
+      "t": 190470.9,
+      "settleMs": 450,
+      "sent": [
+        868,
+        472
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 326,
+        "moves": 326,
+        "styleWrites": 39,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.8 caret — late (+1.5 s)",
+      "t": 191975,
+      "settleMs": 1500,
+      "sent": [
+        868,
+        472
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 327,
+        "moves": 327,
+        "styleWrites": 39,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.9 arrow before the approach",
+      "t": 197497.9,
+      "settleMs": 200,
+      "sent": [
+        644,
+        260
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 346,
+        "moves": 346,
+        "styleWrites": 42,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.9 caret: 622 ms glide 644,260 -> 816,445, 406 ms pause, nudge 2,2 — early (450 ms)",
+      "t": 203602.4,
+      "settleMs": 450,
+      "sent": [
+        818,
+        447
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 364,
+        "moves": 363,
+        "styleWrites": 45,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.9 caret — late (+1.5 s)",
+      "t": 205106,
+      "settleMs": 1500,
+      "sent": [
+        818,
+        447
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 365,
+        "moves": 364,
+        "styleWrites": 45,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.10 arrow before the approach",
+      "t": 210388.3,
+      "settleMs": 200,
+      "sent": [
+        650,
+        317
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 383,
+        "moves": 382,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.10 caret: 496 ms glide 650,317 -> 830,387, 419 ms pause, nudge 3,2 — early (450 ms)",
+      "t": 214952.4,
+      "settleMs": 450,
+      "sent": [
+        833,
+        389
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 403,
+        "moves": 402,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.10 caret — late (+1.5 s)",
+      "t": 216455.4,
+      "settleMs": 1500,
+      "sent": [
+        833,
+        389
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 404,
+        "moves": 403,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.11 arrow before the approach",
+      "t": 221906.1,
+      "settleMs": 200,
+      "sent": [
+        748,
+        162
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 420,
+        "moves": 419,
+        "styleWrites": 53,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.11 caret: 445 ms glide 748,162 -> 863,292, 454 ms pause, nudge 4,1 — early (450 ms)",
+      "t": 226745.2,
+      "settleMs": 450,
+      "sent": [
+        867,
+        293
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 436,
+        "moves": 434,
+        "styleWrites": 56,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.11 caret — late (+1.5 s)",
+      "t": 228250,
+      "settleMs": 1500,
+      "sent": [
+        867,
+        293
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 437,
+        "moves": 435,
+        "styleWrites": 56,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.12 arrow before the approach",
+      "t": 233227.3,
+      "settleMs": 200,
+      "sent": [
+        720,
+        173
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 448,
+        "moves": 446,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.12 caret: 673 ms glide 720,173 -> 888,340, 397 ms pause, nudge 2,1 — early (450 ms)",
+      "t": 238850.5,
+      "settleMs": 450,
+      "sent": [
+        890,
+        341
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 469,
+        "moves": 467,
+        "styleWrites": 61,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.12 caret — late (+1.5 s)",
+      "t": 240354.2,
+      "settleMs": 1500,
+      "sent": [
+        890,
+        341
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 886,
+        "y": 333
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 471,
+        "moves": 469,
+        "styleWrites": 61,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        890,
+        341
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.13 arrow before the approach",
+      "t": 245930,
+      "settleMs": 200,
+      "sent": [
+        602,
+        210
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 487,
+        "moves": 485,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.13 caret: 329 ms glide 602,210 -> 817,346, 457 ms pause, nudge 3,2 — early (450 ms)",
+      "t": 249852.2,
+      "settleMs": 450,
+      "sent": [
+        820,
+        348
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 502,
+        "moves": 500,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.13 caret — late (+1.5 s)",
+      "t": 251356.8,
+      "settleMs": 1500,
+      "sent": [
+        820,
+        348
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 504,
+        "moves": 502,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.14 arrow before the approach",
+      "t": 256880.8,
+      "settleMs": 200,
+      "sent": [
+        685,
+        237
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 521,
+        "moves": 519,
+        "styleWrites": 69,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.14 caret: 480 ms glide 685,237 -> 847,352, 409 ms pause, nudge 6,1 — early (450 ms)",
+      "t": 261310.9,
+      "settleMs": 450,
+      "sent": [
+        853,
+        353
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 541,
+        "moves": 539,
+        "styleWrites": 71,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.14 caret — late (+1.5 s)",
+      "t": 262814.3,
+      "settleMs": 1500,
+      "sent": [
+        853,
+        353
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 543,
+        "moves": 541,
+        "styleWrites": 71,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.15 arrow before the approach",
+      "t": 267796.1,
+      "settleMs": 200,
+      "sent": [
+        721,
+        321
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 561,
+        "moves": 559,
+        "styleWrites": 74,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.15 caret: 493 ms glide 721,321 -> 891,427, 340 ms pause, nudge 5,0 — early (450 ms)",
+      "t": 272526.6,
+      "settleMs": 450,
+      "sent": [
+        896,
+        427
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 579,
+        "moves": 577,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.15 caret — late (+1.5 s)",
+      "t": 274030.5,
+      "settleMs": 1500,
+      "sent": [
+        896,
+        427
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 581,
+        "moves": 579,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.16 arrow before the approach",
+      "t": 279142.6,
+      "settleMs": 200,
+      "sent": [
+        638,
+        222
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 597,
+        "moves": 595,
+        "styleWrites": 79,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.16 caret: 419 ms glide 638,222 -> 894,323, 516 ms pause, nudge 2,3 — early (450 ms)",
+      "t": 283559.6,
+      "settleMs": 450,
+      "sent": [
+        896,
+        326
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 612,
+        "moves": 610,
+        "styleWrites": 81,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.16 caret — late (+1.5 s)",
+      "t": 285076.1,
+      "settleMs": 1500,
+      "sent": [
+        896,
+        326
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 614,
+        "moves": 612,
+        "styleWrites": 81,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.17 arrow before the approach",
+      "t": 290641.1,
+      "settleMs": 200,
+      "sent": [
+        656,
+        264
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 632,
+        "moves": 630,
+        "styleWrites": 84,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.17 caret: 554 ms glide 656,264 -> 849,442, 487 ms pause, nudge 2,3 — early (450 ms)",
+      "t": 296490.1,
+      "settleMs": 450,
+      "sent": [
+        851,
+        445
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 652,
+        "moves": 650,
+        "styleWrites": 86,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.17 caret — late (+1.5 s)",
+      "t": 297995,
+      "settleMs": 1500,
+      "sent": [
+        851,
+        445
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 654,
+        "moves": 652,
+        "styleWrites": 86,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.18 arrow before the approach",
+      "t": 303417,
+      "settleMs": 200,
+      "sent": [
+        711,
+        184
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 672,
+        "moves": 670,
+        "styleWrites": 89,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.18 caret: 608 ms glide 711,184 -> 821,249, 414 ms pause, nudge 4,3 — early (450 ms)",
+      "t": 309526,
+      "settleMs": 450,
+      "sent": [
+        825,
+        252
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 691,
+        "moves": 688,
+        "styleWrites": 92,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "T.18 caret — late (+1.5 s)",
+      "t": 311029.4,
+      "settleMs": 1500,
+      "sent": [
+        825,
+        252
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 821,
+        "y": 244
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 693,
+        "moves": 690,
+        "styleWrites": 92,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        825,
+        252
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    }
+  ],
+  "shell": [
+    {
+      "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); (while :; do :; done & echo $! > /tmp/v-load2.pid); (while :; do :; done & echo $! > /tmp/v-load3.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.52 0.11 0.04 7/119 441\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid) $(cat /tmp/v-load2.pid) $(cat /tmp/v-load3.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "1.87 0.44 0.14 1/115 677\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "sh",
+      "t": 79651.6
+    },
+    {
+      "op": "wait",
+      "t": 94150.5
+    },
+    {
+      "op": "reset",
+      "name": "T.1",
+      "t": 95652.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 95654.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        614,
+        180
+      ],
+      "t": 96570.4
+    },
+    {
+      "op": "read",
+      "name": "T.1 arrow before the approach",
+      "t": 100679.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        824,
+        330
+      ],
+      "t": 100885.8
+    },
+    {
+      "op": "wait",
+      "t": 105380.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        828,
+        333
+      ],
+      "t": 105858.5
+    },
+    {
+      "op": "read",
+      "name": "T.1 caret: 506 ms glide 614,180 -> 824,330, 476 ms pause, nudge 4,3 — early (450 ms)",
+      "t": 105860.9
+    },
+    {
+      "op": "read",
+      "name": "T.1 caret — late (+1.5 s)",
+      "t": 106317.2
+    },
+    {
+      "op": "reset",
+      "name": "T.2",
+      "t": 107822.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 107823.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        686,
+        298
+      ],
+      "t": 108875.1
+    },
+    {
+      "op": "read",
+      "name": "T.2 arrow before the approach",
+      "t": 113479.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        857,
+        461
+      ],
+      "t": 113684.8
+    },
+    {
+      "op": "wait",
+      "t": 119478.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        863,
+        462
+      ],
+      "t": 119839.9
+    },
+    {
+      "op": "read",
+      "name": "T.2 caret: 686 ms glide 686,298 -> 857,461, 359 ms pause, nudge 6,1 — early (450 ms)",
+      "t": 119844.9
+    },
+    {
+      "op": "read",
+      "name": "T.2 caret — late (+1.5 s)",
+      "t": 120297
+    },
+    {
+      "op": "reset",
+      "name": "T.3",
+      "t": 121802.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 121803.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        667,
+        180
+      ],
+      "t": 122889.5
+    },
+    {
+      "op": "read",
+      "name": "T.3 arrow before the approach",
+      "t": 126731.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        841,
+        284
+      ],
+      "t": 126935.9
+    },
+    {
+      "op": "wait",
+      "t": 129797.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        844,
+        287
+      ],
+      "t": 130177
+    },
+    {
+      "op": "read",
+      "name": "T.3 caret: 338 ms glide 667,180 -> 841,284, 376 ms pause, nudge 3,3 — early (450 ms)",
+      "t": 130219.8
+    },
+    {
+      "op": "read",
+      "name": "T.3 caret — late (+1.5 s)",
+      "t": 130676.6
+    },
+    {
+      "op": "reset",
+      "name": "T.4",
+      "t": 132181.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 132182.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        720,
+        153
+      ],
+      "t": 133238.3
+    },
+    {
+      "op": "read",
+      "name": "T.4 arrow before the approach",
+      "t": 137326.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        857,
+        308
+      ],
+      "t": 137533.8
+    },
+    {
+      "op": "wait",
+      "t": 141833.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        861,
+        308
+      ],
+      "t": 142301.9
+    },
+    {
+      "op": "read",
+      "name": "T.4 caret: 539 ms glide 720,153 -> 857,308, 466 ms pause, nudge 4,0 — early (450 ms)",
+      "t": 142306.4
+    },
+    {
+      "op": "read",
+      "name": "T.4 caret — late (+1.5 s)",
+      "t": 142761
+    },
+    {
+      "op": "reset",
+      "name": "T.5",
+      "t": 144265.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 144267.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        573,
+        281
+      ],
+      "t": 145214.4
+    },
+    {
+      "op": "read",
+      "name": "T.5 arrow before the approach",
+      "t": 148983.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        823,
+        462
+      ],
+      "t": 149186.6
+    },
+    {
+      "op": "wait",
+      "t": 153749.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        827,
+        462
+      ],
+      "t": 154095.5
+    },
+    {
+      "op": "read",
+      "name": "T.5 caret: 594 ms glide 573,281 -> 823,462, 343 ms pause, nudge 4,0 — early (450 ms)",
+      "t": 154097.2
+    },
+    {
+      "op": "read",
+      "name": "T.5 caret — late (+1.5 s)",
+      "t": 154551.8
+    },
+    {
+      "op": "reset",
+      "name": "T.6",
+      "t": 156055.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 156057.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        657,
+        190
+      ],
+      "t": 157145.6
+    },
+    {
+      "op": "read",
+      "name": "T.6 arrow before the approach",
+      "t": 160927.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        858,
+        322
+      ],
+      "t": 161133.6
+    },
+    {
+      "op": "wait",
+      "t": 165626.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        863,
+        323
+      ],
+      "t": 166098.4
+    },
+    {
+      "op": "read",
+      "name": "T.6 caret: 600 ms glide 657,190 -> 858,322, 465 ms pause, nudge 5,1 — early (450 ms)",
+      "t": 166317.9
+    },
+    {
+      "op": "read",
+      "name": "T.6 caret — late (+1.5 s)",
+      "t": 167036.2
+    },
+    {
+      "op": "reset",
+      "name": "T.7",
+      "t": 169250
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 169252.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        624,
+        223
+      ],
+      "t": 170341.1
+    },
+    {
+      "op": "read",
+      "name": "T.7 arrow before the approach",
+      "t": 174304.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        831,
+        331
+      ],
+      "t": 174510.3
+    },
+    {
+      "op": "wait",
+      "t": 178195.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        833,
+        333
+      ],
+      "t": 178569.1
+    },
+    {
+      "op": "read",
+      "name": "T.7 caret: 436 ms glide 624,223 -> 831,331, 367 ms pause, nudge 2,2 — early (450 ms)",
+      "t": 178570.8
+    },
+    {
+      "op": "read",
+      "name": "T.7 caret — late (+1.5 s)",
+      "t": 179025.6
+    },
+    {
+      "op": "reset",
+      "name": "T.8",
+      "t": 180530.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 180532.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        656,
+        300
+      ],
+      "t": 181639.8
+    },
+    {
+      "op": "read",
+      "name": "T.8 arrow before the approach",
+      "t": 185544.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        864,
+        469
+      ],
+      "t": 185749.8
+    },
+    {
+      "op": "wait",
+      "t": 189605.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        868,
+        472
+      ],
+      "t": 189983
+    },
+    {
+      "op": "read",
+      "name": "T.8 caret: 528 ms glide 656,300 -> 864,469, 374 ms pause, nudge 4,3 — early (450 ms)",
+      "t": 190018.5
+    },
+    {
+      "op": "read",
+      "name": "T.8 caret — late (+1.5 s)",
+      "t": 190473.4
+    },
+    {
+      "op": "reset",
+      "name": "T.9",
+      "t": 191977.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 191980.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        644,
+        260
+      ],
+      "t": 193091.3
+    },
+    {
+      "op": "read",
+      "name": "T.9 arrow before the approach",
+      "t": 197294.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        816,
+        445
+      ],
+      "t": 197503.4
+    },
+    {
+      "op": "wait",
+      "t": 202736.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        818,
+        447
+      ],
+      "t": 203144.4
+    },
+    {
+      "op": "read",
+      "name": "T.9 caret: 622 ms glide 644,260 -> 816,445, 406 ms pause, nudge 2,2 — early (450 ms)",
+      "t": 203150.9
+    },
+    {
+      "op": "read",
+      "name": "T.9 caret — late (+1.5 s)",
+      "t": 203603.9
+    },
+    {
+      "op": "reset",
+      "name": "T.10",
+      "t": 205107.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 205109
+    },
+    {
+      "op": "glide",
+      "to": [
+        650,
+        317
+      ],
+      "t": 206220
+    },
+    {
+      "op": "read",
+      "name": "T.10 arrow before the approach",
+      "t": 210185.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        830,
+        387
+      ],
+      "t": 210390.1
+    },
+    {
+      "op": "wait",
+      "t": 213914.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        833,
+        389
+      ],
+      "t": 214336.4
+    },
+    {
+      "op": "read",
+      "name": "T.10 caret: 496 ms glide 650,317 -> 830,387, 419 ms pause, nudge 3,2 — early (450 ms)",
+      "t": 214501
+    },
+    {
+      "op": "read",
+      "name": "T.10 caret — late (+1.5 s)",
+      "t": 214954.3
+    },
+    {
+      "op": "reset",
+      "name": "T.11",
+      "t": 216456.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 216458.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        748,
+        162
+      ],
+      "t": 217541.9
+    },
+    {
+      "op": "read",
+      "name": "T.11 arrow before the approach",
+      "t": 221702.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        863,
+        292
+      ],
+      "t": 221907.2
+    },
+    {
+      "op": "wait",
+      "t": 225674.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        867,
+        293
+      ],
+      "t": 226132.8
+    },
+    {
+      "op": "read",
+      "name": "T.11 caret: 445 ms glide 748,162 -> 863,292, 454 ms pause, nudge 4,1 — early (450 ms)",
+      "t": 226292.4
+    },
+    {
+      "op": "read",
+      "name": "T.11 caret — late (+1.5 s)",
+      "t": 226747.1
+    },
+    {
+      "op": "reset",
+      "name": "T.12",
+      "t": 228251.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 228253.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        720,
+        173
+      ],
+      "t": 229362.9
+    },
+    {
+      "op": "read",
+      "name": "T.12 arrow before the approach",
+      "t": 233024.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        888,
+        340
+      ],
+      "t": 233228.5
+    },
+    {
+      "op": "wait",
+      "t": 237997
+    },
+    {
+      "op": "jump",
+      "to": [
+        890,
+        341
+      ],
+      "t": 238394.9
+    },
+    {
+      "op": "read",
+      "name": "T.12 caret: 673 ms glide 720,173 -> 888,340, 397 ms pause, nudge 2,1 — early (450 ms)",
+      "t": 238396.7
+    },
+    {
+      "op": "read",
+      "name": "T.12 caret — late (+1.5 s)",
+      "t": 238852.1
+    },
+    {
+      "op": "reset",
+      "name": "T.13",
+      "t": 241044.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 241046.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        602,
+        210
+      ],
+      "t": 242153.9
+    },
+    {
+      "op": "read",
+      "name": "T.13 arrow before the approach",
+      "t": 245726.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        817,
+        346
+      ],
+      "t": 245931.6
+    },
+    {
+      "op": "wait",
+      "t": 248860.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        820,
+        348
+      ],
+      "t": 249338.5
+    },
+    {
+      "op": "read",
+      "name": "T.13 caret: 329 ms glide 602,210 -> 817,346, 457 ms pause, nudge 3,2 — early (450 ms)",
+      "t": 249400.1
+    },
+    {
+      "op": "read",
+      "name": "T.13 caret — late (+1.5 s)",
+      "t": 249853.9
+    },
+    {
+      "op": "reset",
+      "name": "T.14",
+      "t": 251370.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 251372.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        685,
+        237
+      ],
+      "t": 252313.7
+    },
+    {
+      "op": "read",
+      "name": "T.14 arrow before the approach",
+      "t": 256679.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        847,
+        352
+      ],
+      "t": 256882.5
+    },
+    {
+      "op": "wait",
+      "t": 260431.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        853,
+        353
+      ],
+      "t": 260857.4
+    },
+    {
+      "op": "read",
+      "name": "T.14 caret: 480 ms glide 685,237 -> 847,352, 409 ms pause, nudge 6,1 — early (450 ms)",
+      "t": 260859.2
+    },
+    {
+      "op": "read",
+      "name": "T.14 caret — late (+1.5 s)",
+      "t": 261313
+    },
+    {
+      "op": "reset",
+      "name": "T.15",
+      "t": 262816.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 262817.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        721,
+        321
+      ],
+      "t": 263890
+    },
+    {
+      "op": "read",
+      "name": "T.15 arrow before the approach",
+      "t": 267594.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        891,
+        427
+      ],
+      "t": 267797.9
+    },
+    {
+      "op": "wait",
+      "t": 271727
+    },
+    {
+      "op": "jump",
+      "to": [
+        896,
+        427
+      ],
+      "t": 272069.6
+    },
+    {
+      "op": "read",
+      "name": "T.15 caret: 493 ms glide 721,321 -> 891,427, 340 ms pause, nudge 5,0 — early (450 ms)",
+      "t": 272075.3
+    },
+    {
+      "op": "read",
+      "name": "T.15 caret — late (+1.5 s)",
+      "t": 272528
+    },
+    {
+      "op": "reset",
+      "name": "T.16",
+      "t": 274032.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 274034.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        638,
+        222
+      ],
+      "t": 275125
+    },
+    {
+      "op": "read",
+      "name": "T.16 arrow before the approach",
+      "t": 278940.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        894,
+        323
+      ],
+      "t": 279144.2
+    },
+    {
+      "op": "wait",
+      "t": 282563.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        896,
+        326
+      ],
+      "t": 283089.8
+    },
+    {
+      "op": "read",
+      "name": "T.16 caret: 419 ms glide 638,222 -> 894,323, 516 ms pause, nudge 2,3 — early (450 ms)",
+      "t": 283105.2
+    },
+    {
+      "op": "read",
+      "name": "T.16 caret — late (+1.5 s)",
+      "t": 283570
+    },
+    {
+      "op": "reset",
+      "name": "T.17",
+      "t": 285077.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 285079.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        656,
+        264
+      ],
+      "t": 286177.3
+    },
+    {
+      "op": "read",
+      "name": "T.17 arrow before the approach",
+      "t": 290437.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        849,
+        442
+      ],
+      "t": 290642.9
+    },
+    {
+      "op": "wait",
+      "t": 295545.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        851,
+        445
+      ],
+      "t": 296035.6
+    },
+    {
+      "op": "read",
+      "name": "T.17 caret: 554 ms glide 656,264 -> 849,442, 487 ms pause, nudge 2,3 — early (450 ms)",
+      "t": 296037.4
+    },
+    {
+      "op": "read",
+      "name": "T.17 caret — late (+1.5 s)",
+      "t": 296491.8
+    },
+    {
+      "op": "reset",
+      "name": "T.18",
+      "t": 297996.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 297997.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        711,
+        184
+      ],
+      "t": 299102.7
+    },
+    {
+      "op": "read",
+      "name": "T.18 arrow before the approach",
+      "t": 303215.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        821,
+        249
+      ],
+      "t": 303418.7
+    },
+    {
+      "op": "wait",
+      "t": 308655.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        825,
+        252
+      ],
+      "t": 309071.1
+    },
+    {
+      "op": "read",
+      "name": "T.18 caret: 608 ms glide 711,184 -> 821,249, 414 ms pause, nudge 4,3 — early (450 ms)",
+      "t": 309072.8
+    },
+    {
+      "op": "read",
+      "name": "T.18 caret — late (+1.5 s)",
+      "t": 309527.4
+    },
+    {
+      "op": "sh",
+      "t": 311660.5
+    },
+    {
+      "op": "wait",
+      "t": 315108.9
+    }
+  ],
+  "sessionRestartSeconds": 43.061,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 926,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 92,
+    "unknownImages": [],
+    "answersShown": 38,
+    "shownWrong": []
+  },
+  "errors": [],
+  "ran": true
+}

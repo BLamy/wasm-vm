@@ -1,0 +1,45 @@
+$ node replay-log.mjs ../verifier/approach-C-instrumented/events.json
+device order: 267 updates, 266 at the plane position of the event before; 267 moves, 250 = (a sent position) - (true hotspot of the image shown) within a pixel, 0 not
+  positions the plane was behind at a move (latest match): 0:225 1:24 2:1
+  longest time a move trailed the next sent position: 26.5 ms
+replay: 785 events, 493 looks at a shown answer, 0 further than one pixel from the truth; diagnostics 0
+  arrow (true [1,1]): null@9322.4[U #0] -> [1,1]@36529.2[rest]
+  caret (true [4,8]): null@12786.7[U #8] -> [4,8]@49084.5[M #367]
+  hand (true [9,4]): null@42018.6[U #221] -> [9,4]@42379.8[rest]
+rest waits that fired with no answer yet: 15; answered 2; fired while the plane was NOT on the last sent position: 0
+  rest t=9623.1 arrow answer null planeOnLastSent=null movesSinceInstall=1
+  rest t=11887.8 arrow answer null planeOnLastSent=null movesSinceInstall=3
+  rest t=12783.6 arrow answer null planeOnLastSent=null movesSinceInstall=4
+  rest t=13087.4 caret answer null planeOnLastSent=null movesSinceInstall=1
+  rest t=22867.7 caret answer null planeOnLastSent=null movesSinceInstall=2
+  rest t=23846.4 caret answer null planeOnLastSent=null movesSinceInstall=3
+  rest t=24365 caret answer null planeOnLastSent=null movesSinceInstall=4
+  rest t=24835.6 caret answer null planeOnLastSent=null movesSinceInstall=5
+  rest t=25595.2 arrow answer null planeOnLastSent=null movesSinceInstall=2
+  rest t=25978.3 arrow answer null planeOnLastSent=null movesSinceInstall=3
+  rest t=26405.4 arrow answer null planeOnLastSent=null movesSinceInstall=4
+  rest t=27062.1 arrow answer null planeOnLastSent=null movesSinceInstall=7
+  rest t=30485 arrow answer null planeOnLastSent=null movesSinceInstall=8
+
+$ node replay-log.mjs ../verifier/natural-instrumented/events.json --label-by-truth
+labels by truth: 15 runs of one resource id; 0 ambiguous (kept the label before them)
+device order: 560 updates, 559 at the plane position of the event before; 560 moves, 542 = (a sent position) - (true hotspot of the image shown) within a pixel, 0 not
+  positions the plane was behind at a move (latest match): 0:522 1:19 3:1
+  longest time a move trailed the next sent position: 37.6 ms
+replay: 1664 events, 1059 looks at a shown answer, 0 further than one pixel from the truth; diagnostics 0
+  arrow (true [1,1]): null@9590.6[U #0] -> [1,1]@36522[rest]
+  caret (true [4,8]): null@42975.5[U #406] -> [4,8]@49984.1[M #849]
+  hand (true [9,4]): null@43359[U #475] -> [9,4]@43784.8[rest]
+rest waits that fired with no answer yet: 14; answered 2; fired while the plane was NOT on the last sent position: 0
+  rest t=9890.7 arrow answer null planeOnLastSent=null movesSinceInstall=1
+  rest t=12039.2 arrow answer null planeOnLastSent=null movesSinceInstall=3
+  rest t=12914.2 arrow answer null planeOnLastSent=null movesSinceInstall=4
+  rest t=13643.7 arrow answer null planeOnLastSent=null movesSinceInstall=5
+  rest t=23045.5 arrow answer null planeOnLastSent=null movesSinceInstall=6
+  rest t=23755.5 arrow answer null planeOnLastSent=null movesSinceInstall=7
+  rest t=24680.4 arrow answer null planeOnLastSent=null movesSinceInstall=8
+  rest t=25178.9 arrow answer null planeOnLastSent=null movesSinceInstall=9
+  rest t=25482.2 arrow answer null planeOnLastSent=null movesSinceInstall=10
+  rest t=26304.2 arrow answer null planeOnLastSent=null movesSinceInstall=15
+  rest t=27094.2 arrow answer null planeOnLastSent=null movesSinceInstall=17
+  rest t=32542.6 arrow answer null planeOnLastSent=null movesSinceInstall=18
