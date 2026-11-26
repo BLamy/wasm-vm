@@ -24588,7 +24588,7 @@
       "estimate": "S",
       "capstone": false,
       "goal": "",
-      "boundary": "## Boundary\n\n`tools/build-replay-desktop-snapshot.sh`, `rootfs/usr/local/sbin/replay-desktop-compact`\n(new), the published artifacts of the image E5-T36b and E5-T41a built (chunk manifest, whole\nimage, warm snapshot), `web/artifacts-replay-desktop.json`, the E5-T34c/E5-T34e harnesses where\nthey name the old generation, the roadmap, and the deploy.\n\nWhy: a RAM snapshot stores every page that is not zero, including pages the kernel has freed\nand page cache nobody maps. Building Node's startup snapshot at boot leaves about 75 MiB of\nboth: captured as before, the warm image grows from 124.6 MB to 154.6 MB compressed. Measured\nnatively on 2026-11-26: dropping the unmapped page cache and zeroing free memory before the\ncapture gives 120.7 MB — smaller than today's, with the Node snapshot in it.\n\nWhat changes: the capture waits for the monitor's `REPLAY_NODE_SNAPSHOT` line, then types\n`sleep 30; /usr/local/sbin/replay-desktop-compact || poweroff -f` into the serial root shell and\nfires on the line the script prints last. The 30 guest seconds let Chrome's delayed start-up\nwork pass (measured: 1.65 s of guest CPU between uptime 11 s and 21 s, then under 0.1% for\nminutes), so a resumed desktop is idle from its first second — under the paced clock that work\nwould otherwise run in the user's first real half minute. The script drops the unmapped page\ncache, starts node once so its start path is cached again, and zeroes free memory. A boot\nwhose Node snapshot failed, or whose compaction cannot run, is never captured.\n\n",
+      "boundary": "## Boundary\n\n`tools/build-replay-desktop-snapshot.sh` (the compaction is one command line it types into the\nserial root shell; revised: no script in the image), the published artifacts of the image E5-T36b and E5-T41a built (chunk manifest, whole\nimage, warm snapshot), `web/artifacts-replay-desktop.json`, the E5-T34c/E5-T34e harnesses where\nthey name the old generation, the roadmap, and the deploy.\n\nWhy: a RAM snapshot stores every page that is not zero, including pages the kernel has freed\nand page cache nobody maps. Building Node's startup snapshot at boot leaves about 75 MiB of\nboth: captured as before, the warm image grows from 124.6 MB to 154.6 MB compressed. Measured\nnatively on 2026-11-26: dropping the unmapped page cache and zeroing free memory before the\ncapture gives 120.7 MB — smaller than today's, with the Node snapshot in it.\n\nWhat changes: the capture waits for the monitor's `REPLAY_NODE_SNAPSHOT` line, then types\n`sleep 30 && sync && echo 1 > /proc/sys/vm/drop_caches && node -e 0 && <zero free memory> && echo\nREPLAY_DESKTOP_COMPACTED … || poweroff -f` into the serial root shell and fires on the line it\nprints last. The 30 guest seconds let Chrome's delayed start-up\nwork pass (measured: 1.65 s of guest CPU between uptime 11 s and 21 s, then under 0.1% for\nminutes), so a resumed desktop is idle from its first second — under the paced clock that work\nwould otherwise run in the user's first real half minute. The script drops the unmapped page\ncache, starts node once so its start path is cached again, and zeroes free memory. A boot\nwhose Node snapshot failed, or whose compaction cannot run, is never captured.\n\n",
       "acceptanceContract": "## Deterministic acceptance\n\n- `bash tools/build-replay-desktop-snapshot.sh` on the generation-2 image writes a snapshot\n  whose compressed size is at most 135 MB (generation 1: 124.6 MB without the Node snapshot;\n  the same image captured as before, without compaction: 154.6 MB); the disk is unchanged\n  after the capture; the privacy check passes on the raw and compressed snapshot.\n- Browser, committed bundle: `tools/verify/e5-t34e-replay-desktop-warm.mjs` passes on the new\n  generation (warm resume to a usable desktop, cold fallback).\n- `tools/perf/desktop-latency.mjs --scenarios click,type,node,idle --n 8`, two fresh loads,\n  against generation 1 on the same bundle: `node -e` to prompt at least 30% faster; click and\n  key echo not slower; the first `node` of a session reads nothing from disk.\n- Live site after deploy: the desktop resumes warm and `node -p process.version` answers.\n\n",
       "criteria": [],
       "criteriaTotal": 0,
@@ -24599,15 +24599,16 @@
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 1,
+          "commits": 2,
           "labels": [
-            "E5-T41b in progress"
+            "E5-T41b in progress",
+            "E5-T41b: Replay desktop generation 2 — the image with the hardware cursor and Node snapshot, and a compact warm snapshot"
           ]
         }
       ],
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5.5-T01a",

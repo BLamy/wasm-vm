@@ -12,8 +12,8 @@ capstone: false
 
 ## Boundary
 
-`tools/build-replay-desktop-snapshot.sh`, `rootfs/usr/local/sbin/replay-desktop-compact`
-(new), the published artifacts of the image E5-T36b and E5-T41a built (chunk manifest, whole
+`tools/build-replay-desktop-snapshot.sh` (the compaction is one command line it types into the
+serial root shell; revised: no script in the image), the published artifacts of the image E5-T36b and E5-T41a built (chunk manifest, whole
 image, warm snapshot), `web/artifacts-replay-desktop.json`, the E5-T34c/E5-T34e harnesses where
 they name the old generation, the roadmap, and the deploy.
 
@@ -24,8 +24,9 @@ natively on 2026-11-26: dropping the unmapped page cache and zeroing free memory
 capture gives 120.7 MB — smaller than today's, with the Node snapshot in it.
 
 What changes: the capture waits for the monitor's `REPLAY_NODE_SNAPSHOT` line, then types
-`sleep 30; /usr/local/sbin/replay-desktop-compact || poweroff -f` into the serial root shell and
-fires on the line the script prints last. The 30 guest seconds let Chrome's delayed start-up
+`sleep 30 && sync && echo 1 > /proc/sys/vm/drop_caches && node -e 0 && <zero free memory> && echo
+REPLAY_DESKTOP_COMPACTED … || poweroff -f` into the serial root shell and fires on the line it
+prints last. The 30 guest seconds let Chrome's delayed start-up
 work pass (measured: 1.65 s of guest CPU between uptime 11 s and 21 s, then under 0.1% for
 minutes), so a resumed desktop is idle from its first second — under the paced clock that work
 would otherwise run in the user's first real half minute. The script drops the unmapped page
