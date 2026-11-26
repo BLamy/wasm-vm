@@ -5532,6 +5532,11 @@ impl Machine {
     /// such a `wfi` and the paced clock is still the one selected. Taking it clears it; so do a
     /// new run call, selecting any clock or idle policy, and a restore. A rebase of the host
     /// anchor in between is reflected in the distance.
+    ///
+    /// The answer speaks for the machine as the run call left it. A host that delivers
+    /// something to a device after the run call (a key, a serial byte, a resize) must take the
+    /// wait before it does so, or treat its own delivery as ending the wait: nothing the host
+    /// does between run calls is seen here until the next run call services the devices.
     pub fn take_idle_wait_nanos(&mut self) -> Option<u64> {
         let deadline = core::mem::replace(&mut self.idle_wait_deadline, u64::MAX);
         if deadline == u64::MAX {

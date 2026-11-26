@@ -622,6 +622,56 @@ mod tests {
             later + ticks_ms(50),
             "one bound"
         );
+        // Owed time is the host time since the PREVIOUS consultation, not since the anchor: a
+        // run of consultations of a waiting guest, each capped by a deadline 1 ms ahead while
+        // the host moves 14 ms, adds 13 ms each time — however long ago the anchor last moved.
+        let mut r = IdlePacer::new(ns_ms(0), 0, HZ);
+        r.set_max_busy_lag_ticks(ticks_ms(50));
+        // Work first, so the anchor moves (a clamp) and then stays put for the idle run.
+        let mut now = r.limit_deadline_after(ns_ms(10_000), ticks_ms(100), ticks_ms(101), true);
+        assert_eq!(now, ticks_ms(101));
+        assert_eq!(r.owed_wait_ticks(), 0, "nothing was waited for yet");
+        let mut host = 10_000;
+        for n in 1..=6u64 {
+            host += 14;
+            now = r.limit_deadline_after(ns_ms(host), now, now + ticks_ms(1), false);
+            assert_eq!(
+                r.owed_wait_ticks(),
+                n * ticks_ms(13),
+                "after {n} capped idle passes"
+            );
+            assert!(!r.waiting(), "each pass reached its deadline");
+        }
+        // Then work with the host clock racing and no deadline in the way: what is owed for
+        // the six passes, plus one bound — the same after 1 or 20 such cycles.
+        now += 1_000;
+        assert_eq!(
+            r.limit_deadline_after(ns_ms(900_000), now, FAR, true),
+            now + 6 * ticks_ms(13) + ticks_ms(50)
+        );
+        assert_eq!(r.owed_wait_ticks(), 0);
+        assert!(r.waiting(), "short of a far deadline");
+        // `waiting` is a diagnostic of the last consultation: true short of the deadline,
+        // false once it is reached, and cleared by a rebase.
+        let mut w = IdlePacer::new(ns_ms(0), 0, HZ);
+        assert!(!w.waiting());
+        assert_eq!(
+            w.limit_deadline_after(ns_ms(3), 0, ticks_ms(5), false),
+            ticks_ms(3)
+        );
+        assert!(w.waiting());
+        assert_eq!(
+            w.limit_deadline_after(ns_ms(9), ticks_ms(3), ticks_ms(5), false),
+            ticks_ms(5)
+        );
+        assert!(!w.waiting());
+        assert_eq!(
+            w.limit_deadline_after(ns_ms(9), ticks_ms(5), ticks_ms(50), false),
+            ticks_ms(9)
+        );
+        assert!(w.waiting());
+        w.rebase(ns_ms(20), ticks_ms(9));
+        assert!(!w.waiting(), "a rebase starts over");
         // A bound of zero pins a busy guest to its own time.
         let mut none = IdlePacer::new(0, 0, HZ);
         none.set_max_busy_lag_ticks(0);

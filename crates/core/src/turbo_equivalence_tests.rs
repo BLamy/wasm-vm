@@ -2834,7 +2834,8 @@ fn paced_idle_fresh_mip_is_what_the_boundary_sync_writes() {
                 c.mtime = 1_000;
                 c.mtimecmp = if on(1) { 1_000 } else { 1_001 };
             }
-            m.sbi_state.stimecmp = if on(2) { 999 } else { u64::MAX };
+            // Each timer level at its boundary: due exactly now, or one tick ahead.
+            m.sbi_state.stimecmp = if on(2) { 1_000 } else { 1_001 };
             line.set(on(3) || on(4));
             crate::bus::Bus::store32(&mut m.bus, PLIC + 0x2000, u32::from(on(3)) << 5).unwrap();
             crate::bus::Bus::store32(&mut m.bus, PLIC + 0x2080, u32::from(on(4)) << 5).unwrap();
