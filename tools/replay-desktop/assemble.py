@@ -374,8 +374,9 @@ def stage_phase(args):
         dst.chmod(0o755 if os.access(src, os.X_OK) else 0o644)
     shutil.copyfile(inp / "tools/chromium/guest/smoke.html", chrome_dir / "smoke.html")
     (chrome_dir / "smoke.html").chmod(0o644)
-    (stage / "usr/local/bin").mkdir(parents=True, exist_ok=True)
-    os.symlink("/opt/replay-node-26/bin/node", stage / "usr/local/bin/node")
+    # /usr/local/bin/node is the overlay's wrapper (startup snapshot, see rcS); it must be there.
+    if not (stage / "usr/local/bin/node").is_file():
+        raise SystemExit("overlay did not supply usr/local/bin/node")
 
     # wvm-type: 1 KiB static riscv64 helper (TIOCSTI) assembled from repo source.
     asm = inp / "tools/replay-desktop/wvm-type.S"

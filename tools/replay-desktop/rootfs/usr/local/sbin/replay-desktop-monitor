@@ -1,12 +1,20 @@
 #!/bin/sh
-# E5-T34b root monitor: relays desktop events to the serial console, samples the guest RAM
-# high-water mark (MemTotal - MemAvailable, every 1 s of guest time), and prints REPLAY_DESKTOP_READY once sway
-# has mapped both the Chrome window and the terminal and Chrome reported its smoke-page result.
+# Root monitor: relays desktop events to the serial console, samples the guest RAM high-water
+# mark (MemTotal - MemAvailable), prints REPLAY_DESKTOP_READY once sway has mapped both the
+# Chrome window and the terminal and Chrome reported its smoke-page result, and after that
+# REPLAY_NODE_SNAPSHOT once the Node startup snapshot rcS builds in the background is there
+# (always after READY: the warm RAM snapshot of the desktop is captured on the second marker).
+#
+# Until READY it looks once a guest second. After that it only samples memory and relays new
+# events, every 5 guest seconds once the Node snapshot is reported: the per-second loop forks
+# awk, wc, ls, swaymsg and three greps and makes sway serialise its tree, about 2.6 M guest
+# instructions an iteration, and under the retire-count clock an idle guest runs many guest
+# seconds per real second.
 ev=/run/replay-desktop/events
 up() { cut -d' ' -f1 /proc/uptime; }
 echo "REPLAY_DESKTOP_MONITOR start uptime=$(up)"
-hwm=0 relayed=0 sway=0 term=0 chrome=0 pass=0 done=0
-while :; do
+hwm=0 relayed=0 sway=0 term=0 chrome=0 pass=0 node=0
+sample() {
   used=$(awk '/^MemTotal:/{t=$2} /^MemAvailable:/{a=$2} END{print t-a}' /proc/meminfo)
   if [ "$used" -gt "$hwm" ]; then hwm=$used; echo "$hwm" > /run/replay-desktop/mem-hwm-kib; fi
   n=$(wc -l < "$ev")
@@ -14,6 +22,9 @@ while :; do
     sed -n "$((relayed + 1)),${n}p" "$ev"
     relayed=$n
   fi
+}
+while :; do
+  sample
   grep -q '^REPLAY_CHROMIUM_TARGETS' "$ev" && pass=1
   sock=$(ls /run/user/1000/sway-ipc.*.sock 2>/dev/null | head -n 1)
   if [ -n "$sock" ]; then
@@ -26,9 +37,22 @@ while :; do
       chrome=1; echo "REPLAY_CHROME_MAPPED uptime=$(up) $(echo "$tree" | grep -io '"app_id": "[^"]*chrom[^"]*"' | head -n 1)"
     fi
   fi
-  if [ "$done" = 0 ] && [ "$term$chrome$pass" = 111 ]; then
-    done=1
+  if [ "$term$chrome$pass" = 111 ]; then
     echo "REPLAY_DESKTOP_READY uptime=$(up) mem_hwm_kib=$hwm"
+    break
   fi
   sleep 1
+done
+unset tree
+while :; do
+  if [ "$node" = 0 ] && [ -e /run/replay-node/done ]; then
+    node=1
+    if [ -r /run/replay-node/startup.blob ]; then
+      echo "REPLAY_NODE_SNAPSHOT bytes=$(wc -c < /run/replay-node/startup.blob) uptime=$(up)"
+    else
+      echo "REPLAY_NODE_SNAPSHOT_FAILED uptime=$(up)"
+    fi
+  fi
+  if [ "$node" = 0 ]; then sleep 1; else sleep 5; fi
+  sample
 done

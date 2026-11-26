@@ -22,6 +22,23 @@ chown 1000:1000 /run/replay-desktop/events
 /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
 udevadm trigger --action=add --subsystem-match=input --subsystem-match=drm
 udevadm settle --timeout=60
+# Replay Node 26 is cross-built without its built-in startup snapshot (the build cannot run a
+# riscv64 mksnapshot), so every `node` start would run the whole JavaScript bootstrap: about
+# 0.8 s of guest CPU against 0.3 s from a snapshot. Build one per boot into tmpfs, in the
+# background at the lowest priority (about 4 s of guest CPU, in the gaps of the desktop's own
+# start): it always matches the binary and the CPU it runs on, and a warm RAM snapshot of the
+# desktop carries it. The /usr/local/bin/node wrapper uses it once it is there; the monitor
+# reports it after REPLAY_DESKTOP_READY.
+mkdir -p /run/replay-node
+(
+  # busybox here has renice but no nice: the inner shell lowers itself, then becomes node.
+  sh -c 'renice 19 $$ >/dev/null 2>&1; export RECORD_REPLAY_DONT_RECORD=1
+    exec /opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tmp --build-snapshot /dev/null' \
+    >/run/replay-node/build.log 2>&1 </dev/null \
+    && mv /run/replay-node/startup.blob.tmp /run/replay-node/startup.blob
+  rm -f /run/replay-node/startup.blob.tmp
+  : > /run/replay-node/done
+) &
 seatd -g video >/run/seatd.log 2>&1 &
 i=0; while [ ! -S /run/seatd.sock ] && [ $i -lt 600 ]; do sleep 0.1; i=$((i+1)); done
 su -s /bin/sh desktop -c /usr/local/bin/replay-desktop-session </dev/null >/run/session.log 2>&1 &
