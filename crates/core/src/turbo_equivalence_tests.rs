@@ -3240,3 +3240,12 @@ fn paced_idle_a_restore_starts_a_new_interval() {
         );
     }
 }
+
+// ── E5-T37a: the 4 verifiers' tests, promoted with the `verified` verdict (round 5).
+//    Each file's header says who wrote it, in which round, and what was adapted. Their
+//    names start `v37a_`, `r2_`, `r3_`, `r4_`:
+//    none matches the worker's `paced_idle` filter. ──
+include!("paced_idle_verifier_tests/round1.rs");
+include!("paced_idle_verifier_tests/round2.rs");
+include!("paced_idle_verifier_tests/round3.rs");
+include!("paced_idle_verifier_tests/round4.rs");

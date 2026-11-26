@@ -1,0 +1,6 @@
+wrote $S/promote-main/r1.rs $S/promote-main/r2.rs
+crates/core/src/paced_idle_verifier_tests/round1.rs: 19 tests; below the header byte-identical to $S/promote-main/r1.rs: True
+crates/core/src/paced_idle_verifier_tests/round2.rs: 24 tests; below the header byte-identical to $S/promote-main/r2.rs: True
+crates/core/src/paced_idle_verifier_tests/round3.rs: 17 tests; below the header byte-identical to evidence/e5-t37a/verifier-r3/verifier_r3_tests.rs: True
+crates/core/src/paced_idle_verifier_tests/round4.rs: 2 tests; below the header byte-identical to evidence/e5-t37a/verifier-r4/verifier_r4_tests.rs: True
+crates/core/src/turbo_equivalence_tests.rs: include! lines appended for rounds (1, 2, 3, 4)
