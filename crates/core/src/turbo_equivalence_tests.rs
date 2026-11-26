@@ -1733,3 +1733,478 @@ fn random_programs_agree_under_every_slicing() {
     assert!(interrupts > 1_000, "interrupts were taken: {interrupts}");
     assert!(inline > 40_000, "the turbo loop ran the programs: {inline}");
 }
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// E5-T37a: paced idle yield (worker-written; the tests above are the E4-T40b verifier's).
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+
+/// A host clock the test sets, counting how often it is read.
+#[derive(Clone, Default)]
+struct HostClock {
+    now: alloc::rc::Rc<core::cell::Cell<u64>>,
+    reads: alloc::rc::Rc<core::cell::Cell<u64>>,
+}
+impl time::MonotonicClock for HostClock {
+    fn now_nanos(&self) -> u64 {
+        self.reads.set(self.reads.get() + 1);
+        self.now.get()
+    }
+}
+
+/// A host clock that advances `step` nanoseconds per reading (the pacer reads it once when it is
+/// selected and once per `wfi` that consults it), so two machines that execute the same guest
+/// instructions see the same host times.
+struct StepClock {
+    now: core::cell::Cell<u64>,
+    step: u64,
+}
+impl time::MonotonicClock for StepClock {
+    fn now_nanos(&self) -> u64 {
+        let now = self.now.get();
+        self.now.set(now + self.step);
+        now
+    }
+}
+
+/// M-mode: arm `mtimecmp = mtime + first`, enable the timer interrupt, then
+/// `loop: wfi; x19 += 1; j loop`. The handler counts in x31, folds `mepc` into x30 and either
+/// re-arms `mtimecmp = mtime + rearm` or (rearm == 0) disarms the timer; after `stop` interrupts
+/// it powers off. `busy` instructions of straight-line work run before the first `wfi`.
+fn paced_idle_image(first: i32, rearm: i32, stop: i32, busy: i32) -> Vec<u8> {
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.w(addi(9, 0, busy));
+    a.branch(BEQ, 9, 0, "arm");
+    a.label("work");
+    a.ws(&[addi(15, 15, 3), xor(16, 16, 15), addi(9, 9, -1)]);
+    a.branch(BNE, 9, 0, "work");
+    a.label("arm");
+    a.ws(&[ld(5, 14, 0), addi(5, 5, first), sd(5, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x80), csrrs(0, MIE, 7)]);
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    a.w(addi(10, 0, stop));
+    a.label("loop");
+    a.ws(&[WFI, addi(19, 19, 1)]);
+    a.jal(0, "loop");
+    a.org(BASE + 0x400);
+    a.label("handler");
+    a.ws(&[
+        csrrs(28, MEPC, 0),
+        slli(29, 30, 5),
+        add(30, 30, 29),
+        add(30, 30, 28),
+        addi(31, 31, 1),
+    ]);
+    a.branch(BEQ, 31, 10, "off");
+    if rearm == 0 {
+        a.ws(&[addi(5, 0, -1), sd(5, 13, 0), MRET]);
+    } else {
+        a.ws(&[ld(5, 14, 0), addi(5, 5, rearm), sd(5, 13, 0), MRET]);
+    }
+    a.label("off");
+    a.poweroff();
+    a.finish()
+}
+
+fn paced_idle_machine(image: &[u8], div: u64, turbo: bool) -> Machine {
+    machine(&Cfg::m_mode(div), image, turbo)
+}
+
+const NS_PER_TICK: u64 = 1_000_000_000 / platform::virt::TIMEBASE_FREQ_HZ as u64;
+
+/// The contract of one waiting `wfi`: the run call ends there with part of its budget unused,
+/// the wait is the distance from the pacer's ceiling to the deadline, it is reported once, a
+/// new run call re-derives it, and once the host clock passes the deadline the guest wakes and
+/// nothing more is reported. Without the opt-in the same guest uses its whole budget.
+#[test]
+fn paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait() {
+    // First deadline 2000 ticks out; the handler disarms the timer (rearm 0) and never stops.
+    let image = paced_idle_image(2000, 0, 100, 0);
+    for turbo in [false, true] {
+        for div in [1u64, 10, 64] {
+            let host = HostClock::default();
+            host.now.set(5_000_000_000);
+            let mut m = paced_idle_machine(&image, div, turbo);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            assert!(!m.paced_idle_yield());
+            m.set_paced_idle_policy(true, None);
+            assert!(m.paced_idle_yield());
+            assert_eq!(m.take_idle_wait_nanos(), None, "nothing ran yet");
+
+            // 1. The host clock has not moved since the clock was selected (guest time 0), so
+            //    the pacer's ceiling is still 0: the wait is the whole way to the deadline. The
+            //    few ticks the guest's own retirements put it ahead of the host do not count.
+            assert_eq!(m.run(100_000), RunOutcome::MaxInstrs);
+            let retired = m.irq_stats().retired;
+            assert!(
+                retired < 100,
+                "turbo={turbo} div={div}: budget unused: {retired}"
+            );
+            assert_eq!(m.irq_stats().wfi, 1);
+            assert!(!powered_off(&m));
+            let (mtime, cmp) = {
+                let c = m.clint.as_ref().unwrap().borrow();
+                (c.mtime, c.mtimecmp)
+            };
+            assert!(cmp > mtime && cmp >= 2000, "the deadline is still ahead");
+            assert_eq!(
+                mtime,
+                retired / div,
+                "guest time is its own retirements, no jump"
+            );
+            let wait = m.take_idle_wait_nanos();
+            assert_eq!(wait, Some(cmp * NS_PER_TICK), "turbo={turbo} div={div}");
+            assert_eq!(m.take_idle_wait_nanos(), None, "reported once");
+            assert_eq!(x(&m, 31), 0, "no interrupt yet");
+
+            // 2. Called again without sleeping: one pass of the idle loop (addi, jal, wfi) and
+            //    the same wait again — the host clock, not retirement, measures it.
+            assert_eq!(m.run(100_000), RunOutcome::MaxInstrs);
+            assert_eq!(m.irq_stats().retired, retired + 3);
+            assert_eq!(m.irq_stats().wfi, 2);
+            assert_eq!(m.take_idle_wait_nanos(), Some(cmp * NS_PER_TICK));
+
+            // 3. A wait the host does not take is dropped by the next run call, which sets its
+            //    own; a run with a budget of zero neither runs nor reports.
+            assert_eq!(m.run(100_000), RunOutcome::MaxInstrs);
+            assert_eq!(m.irq_stats().retired, retired + 6);
+            assert_eq!(m.run(0), RunOutcome::MaxInstrs);
+            assert_eq!(
+                m.take_idle_wait_nanos(),
+                None,
+                "a run call clears an untaken wait"
+            );
+
+            // 4. Half the wait passes on the host: guest time is carried to the host's (it was
+            //    behind it by now), and the rest of the wait is reported.
+            let half = cmp / 2;
+            host.now.set(host.now.get() + half * NS_PER_TICK);
+            assert_eq!(m.run(100_000), RunOutcome::MaxInstrs);
+            let now = m.clint.as_ref().unwrap().borrow().mtime;
+            assert_eq!(
+                now, half,
+                "turbo={turbo} div={div}: idle time follows the host clock"
+            );
+            assert_eq!(m.take_idle_wait_nanos(), Some((cmp - half) * NS_PER_TICK));
+            assert_eq!(x(&m, 31), 0);
+
+            // 5. The host clock passes the deadline: the guest takes its timer interrupt, the
+            //    handler disarms the timer, and with no deadline armed nothing is reported —
+            //    the guest spins through the rest of the budget as it always has.
+            host.now.set(host.now.get() + 10_000_000_000);
+            let at = m.irq_stats().retired;
+            assert_eq!(m.run(5_000), RunOutcome::MaxInstrs);
+            assert_eq!(
+                x(&m, 31),
+                1,
+                "turbo={turbo} div={div}: the timer interrupt was taken"
+            );
+            // (The taken interrupt used one work slot without retiring.)
+            assert_eq!(m.irq_stats().int.iter().sum::<u64>(), 1);
+            assert_eq!(
+                m.irq_stats().retired,
+                at + 5_000 - 1,
+                "no early return without a deadline"
+            );
+            assert_eq!(m.take_idle_wait_nanos(), None);
+            assert_eq!(m.clint.as_ref().unwrap().borrow().mtimecmp, u64::MAX);
+
+            // Control: the same guest and host clock without the opt-in never returns early.
+            let host = HostClock::default();
+            host.now.set(5_000_000_000);
+            let mut c = paced_idle_machine(&image, div, turbo);
+            c.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            c.set_paced_idle_policy(false, None);
+            assert_eq!(c.run(100_000), RunOutcome::MaxInstrs);
+            // Spinning retires instructions, and retirement alone moves guest time: at a small
+            // divider the deadline is reached that way and the interrupt uses one work slot.
+            let taken: u64 = c.irq_stats().int.iter().sum();
+            assert!(taken <= 1);
+            assert_eq!(c.irq_stats().retired, 100_000 - taken);
+            assert_eq!(c.take_idle_wait_nanos(), None);
+            assert!(c.irq_stats().wfi > 1_000, "it spun on wfi");
+        }
+    }
+}
+
+/// The opt-in means nothing outside the paced clock: a retire-count machine jumps straight to
+/// its deadline and a wall-clock machine never jumps, and neither reports a wait or returns
+/// early. Selecting the policy does not change the resume bytes.
+#[test]
+fn paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized() {
+    let image = paced_idle_image(2000, 0, 100, 0);
+    for turbo in [false, true] {
+        // Pure ICount.
+        let mut plain = paced_idle_machine(&image, 10, turbo);
+        let mut opted = paced_idle_machine(&image, 10, turbo);
+        let before = opted.save_resume().unwrap();
+        opted.set_paced_idle_policy(true, Some(50_000_000));
+        assert_eq!(
+            opted.save_resume().unwrap(),
+            before,
+            "host policy is not snapshot state"
+        );
+        for budget in [1u64, 7, 40, 3, 5_000] {
+            let (mut ta, mut tb) = (HashSink::new(), HashSink::new());
+            let oa = plain.run_traced(budget, &mut ta);
+            let ob = opted.run_traced(budget, &mut tb);
+            assert_eq!(
+                observe(&plain, &ta, oa),
+                observe(&opted, &tb, ob),
+                "budget {budget}"
+            );
+            assert_eq!(opted.take_idle_wait_nanos(), None);
+        }
+        assert_eq!(opted.guest_clock_mode(), time::TimeMode::ICount);
+        assert_eq!(
+            x(&opted, 31),
+            1,
+            "the idle jump reached the deadline at once"
+        );
+        assert_eq!(plain.save_resume().unwrap(), opted.save_resume().unwrap());
+
+        // Wall clock: mtime is the host's; `wfi` never jumps and never reports.
+        let host = HostClock::default();
+        host.now.set(1_000_000_000);
+        let mut wall = paced_idle_machine(&image, 10, turbo);
+        wall.set_wall_clock(
+            alloc::boxed::Box::new(host.clone()),
+            time::WallClockPolicy::DEFAULT,
+        );
+        wall.set_paced_idle_policy(true, Some(50_000_000));
+        assert_eq!(wall.run(2_000), RunOutcome::MaxInstrs);
+        assert_eq!(wall.irq_stats().retired, 2_000);
+        assert_eq!(wall.take_idle_wait_nanos(), None);
+    }
+}
+
+/// A host wake that is still outstanding (here a key the host has pressed and not released —
+/// the guard that stops a short physical press from turning into a long guest key hold) keeps
+/// the idle jump from happening at all, so no wait is reported and the run call is not cut
+/// short: sleeping on the guest's timer would be wrong while the host owes it an event.
+#[test]
+fn paced_idle_yield_stays_out_while_a_host_wake_is_outstanding() {
+    let image = paced_idle_image(2000, 0, 100, 0);
+    for turbo in [false, true] {
+        let host = HostClock::default();
+        host.now.set(5_000_000_000);
+        let mut m = paced_idle_machine(&image, 64, turbo);
+        m.enable_plic();
+        m.enable_virtio_slots(None);
+        let (_, keyboard, _) = m.enable_virtio_keyboard();
+        m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+            .unwrap();
+        m.set_paced_idle_policy(true, Some(50_000_000));
+        // EV_KEY, KEY_A, pressed; staged, never released, and no driver takes it.
+        assert!(keyboard.borrow_mut().inject_event(1, 30, 1));
+        assert!(keyboard.borrow().awaiting_host_key_release());
+        let reads = host.reads.get();
+        assert_eq!(m.run(20_000), RunOutcome::MaxInstrs);
+        assert_eq!(
+            m.irq_stats().retired,
+            20_000,
+            "turbo={turbo}: the budget was used"
+        );
+        assert!(m.irq_stats().wfi > 1_000);
+        assert_eq!(m.take_idle_wait_nanos(), None);
+        assert_eq!(host.reads.get(), reads, "the pacer was never consulted");
+        assert_eq!(x(&m, 31), 0);
+    }
+}
+
+/// "The retire stream is unchanged; only where a host call ends moves": the same guest, with
+/// timer interrupts taken out of `wfi`, run to its poweroff (a) in one call without the opt-in
+/// and (b) with it, as however many calls it takes — with every budget pattern making the budget
+/// expire around the waiting `wfi` too. Both consult the host clock once per `wfi`, so they see
+/// the same host times; everything observable must match, with the turbo loop on and off.
+#[test]
+fn paced_idle_yield_leaves_the_retire_stream_unchanged() {
+    let mut yields = 0u64;
+    for (first, rearm, stop) in [(300, 170, 40), (37, 37, 60), (5000, 1, 25)] {
+        let image = paced_idle_image(first, rearm, stop, 50);
+        for div in [1u64, 10, 64] {
+            // Host steps per reading, in ticks: slower than, about, and faster than the deadlines.
+            for step_ticks in [7u64, 90, 1_000] {
+                for lag in [None, Some(50_000u64), Some(0)] {
+                    let build = |turbo: bool, yield_to_host: bool| {
+                        let mut m = paced_idle_machine(&image, div, turbo);
+                        m.set_paced_idle_policy(yield_to_host, lag);
+                        m.set_paced_icount_clock(alloc::boxed::Box::new(StepClock {
+                            now: core::cell::Cell::new(123_456),
+                            step: step_ticks * NS_PER_TICK,
+                        }))
+                        .unwrap();
+                        m
+                    };
+                    // Control: no opt-in, ordinary loop, one call.
+                    let mut control = build(false, false);
+                    let mut tc = HashSink::new();
+                    let oc = control.run_traced(50_000_000, &mut tc);
+                    let want = observe(&control, &tc, oc);
+                    assert!(powered_off(&control), "the control runs to its poweroff");
+                    assert_eq!(x(&control, 31), stop as u64);
+                    let label = alloc::format!(
+                        "first={first} rearm={rearm} div={div} step={step_ticks} lag={lag:?}"
+                    );
+                    for turbo in [false, true] {
+                        for budgets in [&[50_000_000u64][..], &[1, 2, 3, 5], &[4, 4, 9, 1, 64]] {
+                            let mut m = build(turbo, true);
+                            let mut t = HashSink::new();
+                            let mut calls = 0usize;
+                            let outcome = loop {
+                                let budget = budgets[calls % budgets.len()];
+                                let before = m.irq_stats().retired;
+                                let ints: u64 = m.irq_stats().int.iter().sum();
+                                let o = m.run_traced(budget, &mut t);
+                                calls += 1;
+                                let ran = m.irq_stats().retired - before;
+                                if let Some(wait) = m.take_idle_wait_nanos() {
+                                    yields += 1;
+                                    assert!(
+                                        wait >= NS_PER_TICK,
+                                        "{label}: a wait is at least a tick"
+                                    );
+                                    assert!(!m.hart.last_was_wfi && ran >= 1);
+                                    assert_eq!(o, RunOutcome::MaxInstrs);
+                                } else if o == RunOutcome::MaxInstrs {
+                                    // A taken interrupt uses a work slot without retiring.
+                                    let taken: u64 = m.irq_stats().int.iter().sum::<u64>() - ints;
+                                    assert_eq!(
+                                        ran + taken,
+                                        budget,
+                                        "{label}: early return without a wait"
+                                    );
+                                }
+                                if o != RunOutcome::MaxInstrs {
+                                    break o;
+                                }
+                                assert!(calls < 2_000_000, "{label}: no progress");
+                            };
+                            assert_eq!(
+                                observe(&m, &t, outcome),
+                                want,
+                                "{label} turbo={turbo} budgets={budgets:?}"
+                            );
+                            assert_eq!(
+                                m.save_resume().unwrap(),
+                                control.save_resume().unwrap(),
+                                "{label} turbo={turbo}: resume bytes"
+                            );
+                            assert!(
+                                m.bus.ram().as_bytes() == control.bus.ram().as_bytes(),
+                                "{label} turbo={turbo}: RAM"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    assert!(yields > 5_000, "the yield path was exercised: {yields}");
+}
+
+/// Machine level: after a busy stretch during which the host ran far ahead, the next idle jump
+/// moves guest time by exactly the bound; idle-loop passes after that move it by the host's
+/// elapsed time in full; without a bound the busy guest catches up completely.
+#[test]
+fn paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting() {
+    // 2000 passes of a 4-instruction loop: 8,000 busy instructions before the first `wfi`.
+    let image = paced_idle_image(2000, 0, 100, 2000);
+    const FAR: u64 = 1 << 40;
+    const HOST_LEAD_NS: u64 = 10_000_000_000;
+    const LAG_NS: u64 = 50_000_000;
+    let ticks = |ns: u64| ns / NS_PER_TICK;
+    for turbo in [false, true] {
+        for bound in [Some(LAG_NS), Some(0), None] {
+            let label = alloc::format!("turbo={turbo} bound={bound:?}");
+            let host = HostClock::default();
+            host.now.set(1_000_000_000);
+            // Divider 1: guest time advances exactly one tick per retirement.
+            let mut m = paced_idle_machine(&image, 1, turbo);
+            m.set_paced_idle_policy(true, bound);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            // Run the busy stretch up to, not including, the first `wfi`.
+            while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+                assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+            }
+            assert!(m.irq_stats().retired > IDLE_SPIN_INSTRS, "{label}");
+            assert_eq!(m.irq_stats().wfi, 0);
+            assert_eq!(
+                host.reads.get(),
+                1,
+                "{label}: read at selection only, never while busy"
+            );
+            // Put the deadline out of reach, and let the host have run 10 s ahead meanwhile.
+            let before = m.clint.as_ref().unwrap().borrow().mtime;
+            m.clint.as_ref().unwrap().borrow_mut().mtimecmp = before + FAR;
+            host.now.set(host.now.get() + HOST_LEAD_NS);
+
+            // The `wfi` after the work: the guest fell 10 s behind and may skip only the bound.
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert_eq!(
+                m.irq_stats().wfi,
+                1,
+                "{label}: the run ended at the waiting wfi"
+            );
+            let after = m.clint.as_ref().unwrap().borrow().mtime;
+            let current = before + 1; // the wfi's own retirement
+            let wait = m.take_idle_wait_nanos().expect("still waiting");
+            match bound {
+                Some(ns) => {
+                    assert_eq!(after, current + ticks(ns), "{label}: exactly the bound");
+                    assert_eq!(wait, (before + FAR - after) * NS_PER_TICK, "{label}");
+                }
+                None => {
+                    assert_eq!(
+                        after,
+                        ticks(HOST_LEAD_NS),
+                        "{label}: the whole 10 s (anchor 0)"
+                    );
+                    assert_eq!(wait, (before + FAR - after) * NS_PER_TICK, "{label}");
+                }
+            }
+
+            // Three seconds of host time while the guest only waits: one idle pass, and guest
+            // time moves by exactly three seconds, bound or no bound.
+            host.now.set(host.now.get() + 3_000_000_000);
+            let retired = m.irq_stats().retired;
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert_eq!(
+                m.irq_stats().retired,
+                retired + 3,
+                "{label}: addi, jal, wfi"
+            );
+            let later = m.clint.as_ref().unwrap().borrow().mtime;
+            assert_eq!(
+                later,
+                after + ticks(3_000_000_000),
+                "{label}: waiting time in full"
+            );
+            assert_eq!(
+                m.take_idle_wait_nanos(),
+                Some((before + FAR - later) * NS_PER_TICK),
+                "{label}"
+            );
+
+            // A hundred more idle passes with the host stepping 80 ms each time (more than the
+            // bound): none of it is lost.
+            for _ in 0..100 {
+                host.now.set(host.now.get() + 80_000_000);
+                assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            }
+            let end = m.clint.as_ref().unwrap().borrow().mtime;
+            assert_eq!(
+                end,
+                later + 100 * ticks(80_000_000),
+                "{label}: 8 s in 80 ms sleeps"
+            );
+            assert_eq!(x(&m, 31), 0, "{label}: the far deadline was never reached");
+        }
+    }
+}

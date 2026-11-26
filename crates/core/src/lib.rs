@@ -351,6 +351,18 @@ pub struct Machine {
     wall_time: Option<time::TimeSource>,
     /// Opt-in ICount idle ceiling. Busy execution retains the deterministic retire clock.
     idle_pacer: Option<time::IdlePacer>,
+    /// E5-T37a paced idle policy (host configuration, never serialized): end the run call at a
+    /// `wfi` whose timer deadline is still in the paced future and report the wait.
+    idle_yield: bool,
+    /// E5-T37a: the busy-lag bound handed to every paced clock this machine selects
+    /// (`u64::MAX` = unbounded). See [`time::IdlePacer::limit_deadline_after`].
+    idle_max_busy_lag_ticks: u64,
+    /// E5-T37a: ticks of host time until the pacer's ceiling reaches the deadline the last
+    /// `wfi` is waiting for (0 = no wait pending). Set only with `idle_yield`; the run loop returns while it is set.
+    idle_wait_ticks: u64,
+    /// E5-T37a: retired-instruction count when the pacer was last consulted, to tell a guest
+    /// that only went round its idle loop from one that did work.
+    idle_consult_retired: u64,
     /// E4-T24: the injected monotonic host clock (CLI `Instant`, browser `performance.now()`, or a
     /// test mock). Read only for wall time or opt-in idle pacing; core names no host time API.
     mono_clock: Option<alloc::boxed::Box<dyn time::MonotonicClock>>,
@@ -823,6 +835,12 @@ fn chain_edge(terminator: Option<crate::decode::Instr>, code: jit::ExitCode) -> 
     }
 }
 
+/// E5-T37a: retirements between two consultations of the idle pacer at or below which the guest
+/// only went round its idle loop. Measured on Linux 6.6 riscv64 (Replay desktop): a spurious
+/// pass retires 257-1024 instructions, and every pass that handled an interrupt more than 4096.
+#[cfg(not(feature = "zicsr-stub"))]
+const IDLE_SPIN_INSTRS: u64 = 2048;
+
 /// The decoded-block cache capacities a host may select with
 /// [`Machine::set_decoded_cache_entries`] (slots; each resident block also owns its ops).
 pub const DECODED_CACHE_SIZES: [usize; 3] = [4096, 16384, 262_144];
@@ -1096,6 +1114,10 @@ impl Machine {
             compile_queue: compile_queue::CompileQueue::default(),
             wall_time: None,
             idle_pacer: None,
+            idle_yield: false,
+            idle_max_busy_lag_ticks: u64::MAX,
+            idle_wait_ticks: 0,
+            idle_consult_retired: 0,
             mono_clock: None,
             last_time_jump: None,
             fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
@@ -5439,16 +5461,61 @@ impl Machine {
         if self.clock_div == 0 || self.tick_accum >= self.clock_div {
             return Err("paced ICount requires a valid saved clock phase");
         }
-        let pacer = time::IdlePacer::new(
+        let mut pacer = time::IdlePacer::new(
             clock.now_nanos(),
             mtime,
             u64::from(platform::virt::TIMEBASE_FREQ_HZ),
         );
+        pacer.set_max_busy_lag_ticks(self.idle_max_busy_lag_ticks);
         self.wall_time = None;
         self.idle_pacer = Some(pacer);
         self.mono_clock = Some(clock);
         self.last_time_jump = None;
+        self.idle_wait_ticks = 0;
+        self.idle_consult_retired = self.irqstats.retired;
         Ok(())
+    }
+
+    /// E5-T37a: host policy for an idle guest under the paced ICount clock. Selecting it changes
+    /// nothing in any other clock mode, and nothing is serialized.
+    ///
+    /// * `yield_to_host`: when a `wfi` retires and the nearest timer deadline is still in the
+    ///   paced future, the current run call returns at that boundary
+    ///   ([`RunOutcome::MaxInstrs`], exactly as a smaller budget would) and
+    ///   [`Self::take_idle_wait_nanos`] reports how far away the deadline is. The guest executes
+    ///   the same instructions either way: after such a `wfi` it goes round its idle loop to the
+    ///   next `wfi`. Without it the run call keeps spinning through that loop.
+    /// * `max_busy_lag_nanos`: a guest that was running (retire-derived time is slower than the
+    ///   host clock under load) may skip at most this much idle time afterwards; `None` keeps
+    ///   the original unbounded catch-up. Time that passes while the guest is only waiting is
+    ///   never bounded.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn set_paced_idle_policy(&mut self, yield_to_host: bool, max_busy_lag_nanos: Option<u64>) {
+        self.idle_yield = yield_to_host;
+        self.idle_wait_ticks = 0;
+        self.idle_max_busy_lag_ticks = max_busy_lag_nanos.map_or(u64::MAX, |ns| {
+            (u128::from(ns) * u128::from(platform::virt::TIMEBASE_FREQ_HZ) / 1_000_000_000)
+                .min(u128::from(u64::MAX)) as u64
+        });
+        if let Some(pacer) = &mut self.idle_pacer {
+            pacer.set_max_busy_lag_ticks(self.idle_max_busy_lag_ticks);
+        }
+    }
+
+    /// E5-T37a: whether paced idle yield is selected (see [`Self::set_paced_idle_policy`]).
+    pub fn paced_idle_yield(&self) -> bool {
+        self.idle_yield
+    }
+
+    /// E5-T37a: nanoseconds from now (host clock) until the timer deadline the guest went idle
+    /// waiting for, if the last run call ended at such a `wfi`. Taking it clears it; a new run
+    /// call clears it too.
+    pub fn take_idle_wait_nanos(&mut self) -> Option<u64> {
+        let ticks = core::mem::take(&mut self.idle_wait_ticks);
+        (ticks != 0).then(|| {
+            (u128::from(ticks) * 1_000_000_000 / u128::from(platform::virt::TIMEBASE_FREQ_HZ))
+                .min(u128::from(u64::MAX)) as u64
+        })
     }
 
     /// Retirements per tick in ICount mode; retained, but inactive, in wall mode.
@@ -5565,7 +5632,20 @@ impl Machine {
         }
         if let Some(d) = deadline {
             let d = match (&mut self.idle_pacer, &self.mono_clock) {
-                (Some(pacer), Some(clock)) => pacer.limit_deadline(clock.now_nanos(), mtime, d),
+                (Some(pacer), Some(clock)) => {
+                    // E5-T37a: one pass of the guest's idle loop between two `wfi`s is a few
+                    // hundred instructions; anything that woke it and ran is thousands.
+                    let retired = self.irqstats.retired;
+                    let worked = retired.wrapping_sub(self.idle_consult_retired) > IDLE_SPIN_INSTRS;
+                    self.idle_consult_retired = retired;
+                    let limited = pacer.limit_deadline_after(clock.now_nanos(), mtime, d, worked);
+                    if self.idle_yield && limited < d {
+                        // The deadline is in the paced future: nothing can happen in the guest
+                        // until the host clock gets there or the host delivers an event.
+                        self.idle_wait_ticks = pacer.ticks_until(d).max(1);
+                    }
+                    limited
+                }
                 _ => d,
             };
             // Jump the machine clock to the deadline; next boundary re-evaluates MTIP/STIP as a
@@ -7297,7 +7377,16 @@ impl Machine {
                 },
             );
         }
+        // E5-T37a: a wait the host did not take belongs to the previous run call.
+        self.idle_wait_ticks = 0;
         while remaining_work != 0 {
+            // E5-T37a paced idle yield: the instruction just retired was a `wfi` that has to
+            // wait for the host clock (`wfi_fast_forward`). Return at this boundary — the one a
+            // smaller budget would have ended at — so the host can sleep instead of this loop
+            // spinning through the guest's idle loop.
+            if self.idle_wait_ticks != 0 {
+                return RunOutcome::MaxInstrs;
+            }
             #[cfg(not(feature = "zicsr-stub"))]
             match self.prepare_session_transition() {
                 Ok(session_clock::Preparation::Ready) => {}
