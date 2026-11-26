@@ -3,7 +3,7 @@ id: E5-T41a
 epic: 5
 title: Replay desktop image — Node starts from a startup snapshot built at boot
 priority: 0.387652
-status: pending
+status: in-progress
 depends_on: [E5-T36b]
 estimate: S
 risk: medium
