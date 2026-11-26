@@ -3,7 +3,7 @@ id: E5-T37a
 epic: 5
 title: Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded
 priority: 0.387644
-status: evidence-needed
+status: implemented
 depends_on: [E4-T40b]
 estimate: S
 risk: high
@@ -49,9 +49,12 @@ Two additions, both selected by one host call (`Machine::set_paced_idle_policy`)
    The quiescence marker is reset when a run call starts (the host may have delivered
    something between calls) and set again at the call's first sampled block boundary. So a
    run call reports a wait only after it has itself serviced the devices at a boundary: a call
-   that begins inside the `wfi`'s block, or a guest with a device that has work, goes on, and
-   the wait is picked up at a later `wfi`. That costs host CPU (the guest goes round its idle
-   loop, as it always did), never correctness. Measured on the idle Replay desktop, the devices
+   that begins inside the `wfi`'s block, or a guest with a device that has work, goes on. The
+   wait is picked up at a later `wfi` whose block some call enters and runs through to the
+   `wfi` — which never happens for a host whose budgets are all shorter than the `wfi`'s
+   position in its block (the round-3 verifier measured it: a `wfi` third in its block is never
+   reported with budgets of 1 or 2 work slots, always with 7 or more). That costs host CPU (the
+   guest goes round its idle loop, as it always did), never correctness. Measured on the idle Replay desktop, the devices
    were idle at all 1,050 of 1,050 wait checks in 30 s (`evidence/e5-t37a/quiescence-on-desktop.txt`).
 
    A recorded wait describes one guest under one clock: a new run call, selecting any clock or
@@ -1050,3 +1053,49 @@ Commands: `cargo test -p wasm-vm-core --lib paced_idle`; `cargo test -p wasm-vm-
 `bash evidence/e5-t37a/verifier-r3/cold-clone.sh 7d25929a7 full`;
 `cargo fmt --check`; `cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings`
 (clean tree, and with the three verifier files included).
+
+### 2026-11-26 — worker — round 4, evidence only (head `b815d68ca`)
+
+Answer to the `needs-evidence` verdict above. Commit `d13be10dc` adds tests and two doc
+comments; `b815d68ca` refreshes the generated build id. Nothing the machine does changed.
+(The shipped wasm's bytes did change — panic locations carry line numbers and the comments
+moved them — so the digest gates were run again in the cold clone rather than carried.)
+
+- **B11, owed time measured from the anchor instead of the previous consultation.** The pacer
+  test now runs six consecutive consultations of a waiting guest, each capped by a deadline
+  1 ms ahead while the host moves 14 ms, after work has moved the anchor: `owed_wait_ticks()`
+  is exactly 13, 26, 39, 52, 65, 78 ms, and the busy stretch that follows skips exactly
+  78 ms + one 50 ms bound. The mutant gives 13, 40, 81 … and is killed.
+- **B3, the S-timer level at equality.** `paced_idle_fresh_mip_is_what_the_boundary_sync_writes`
+  now sets `stimecmp` to `mtime` (due exactly now) or `mtime + 1`, like the machine timer.
+  `>=` → `>` is killed.
+- **`IdlePacer::waiting()`.** Kept and tested rather than deleted (the round-2 verifier's
+  fuzz tests read it): true short of the deadline, false once reached, cleared by a rebase,
+  in the pacer test. The mutant that never sets it is killed.
+- **Text.** The Boundary no longer says an unreported wait is always "picked up at a later
+  `wfi`": it is not, for a host whose budgets are all shorter than the `wfi`'s position in its
+  block (the verifier's table). `take_idle_wait_nanos`'s doc now says the answer speaks for the
+  machine as the run call left it, and what a host that delivers something afterwards must do.
+
+Commands (the touched harness only, per the incremental rule), on the tree that became
+`d13be10dc`:
+
+- `evidence/e5-t37a/gates-r4.log` (sha256 `80ef6e0c796b…`): `cargo fmt --check`;
+  `cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings`;
+  `cargo test -p wasm-vm-core --lib paced_idle` (24 pass);
+  `cargo test -p wasm-vm-core --lib` (448 pass). All exit 0.
+- Mutation matrix, 40 mutants (round 3's 37 plus B11, B3, B12), one at a time, restored and
+  re-touched after each (`evidence/e5-t37a/sabotage-r4.log`, sha256 `b8ff31bcbb5d…`; script
+  `sabotage-r4.py`): 40 killed, 0 survive. B11 and B12 by
+  `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not`, B3 by
+  `paced_idle_fresh_mip_is_what_the_boundary_sync_writes`.
+- Cold clone at `b815d68ca` (sparse; `env -i`): 24/24 and 448/448, the release build, oracle
+  digests identical, desktop equivalence `EQUIVALENT (2000000000 instructions)` with RAM
+  `ed70e270…38701` (`evidence/e5-t37a/cold-clone-r4.log`, sha256 `724ecd3dc0cb…`).
+
+Not re-run, carried from round 3 because their inputs did not change: the workspace-wide
+suite and the browser check of the committed bundle (the bundle's wasm differs only by the
+line numbers above; nothing selects the policy). Not addressed here, because the verifier put
+them outside the verdict: the follow-ups (slirp backends never report idle; an armed RTC alarm
+suppresses every wait; virtio-snd unmeasured; a core-only `clippy --all-targets` build failure
+in three untouched targets). I will file them with E5-T37b.
