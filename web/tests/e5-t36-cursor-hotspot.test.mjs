@@ -36,6 +36,34 @@ test("an arrow, a hand and a text caret each resolve to their own hotspot after 
   }
 });
 
+test("the edges of what counts: one place twice, offsets outside the image, offsets three pixels apart", () => {
+  // The same plane position reported twice is one piece of evidence, not two.
+  const once = new CursorHotspotEstimator();
+  once.notePointer(300, 200);
+  assert.equal(once.noteMove("a", 64, 64, 296, 197), null);
+  assert.equal(once.noteMove("a", 64, 64, 296, 197), null);
+  assert.equal(once.hotspot("a"), null);
+  // An offset is a candidate only inside the image, give or take the one pixel of rounding:
+  // 17 px into a 16 px image is not one, however often it repeats.
+  const outside = new CursorHotspotEstimator();
+  for (const [x, y] of [[117, 100], [317, 240], [217, 400]]) { outside.notePointer(x, y); assert.equal(outside.noteMove("b", 16, 16, x - 17, y), null); }
+  assert.equal(outside.hotspot("b"), null);
+  // 16 px (one past the last column, the rounding slack) is a candidate and is clamped into
+  // the image; so is -1.
+  const edge = new CursorHotspotEstimator();
+  for (const [x, y] of [[100, 100], [300, 200]]) { edge.notePointer(x, y); edge.noteMove("c", 16, 16, x - 16, y - 16); }
+  assert.deepEqual({ ...edge.hotspot("c") }, { x: 15, y: 15 });
+  for (const [x, y] of [[500, 100], [700, 200]]) { edge.notePointer(x, y); edge.noteMove("d", 16, 16, x + 1, y + 1); }
+  assert.deepEqual({ ...edge.hotspot("d") }, { x: 0, y: 0 });
+  // Two offsets three pixels apart are two answers, not one: no guess while both fit.
+  const apart = new CursorHotspotEstimator();
+  apart.notePointer(100, 500); apart.notePointer(103, 500);
+  assert.equal(apart.noteMove("e", 64, 64, 91, 496), null);
+  apart.notePointer(203, 520); apart.notePointer(206, 520);
+  assert.equal(apart.noteMove("e", 64, 64, 194, 516), null, "(9,4) and (12,4) both explain both moves");
+  assert.equal(apart.hotspot("e"), null);
+});
+
 test("a guest several moves behind the pointer still resolves to the true hotspot", () => {
   const estimator = new CursorHotspotEstimator();
   const hot = { x: 12, y: 20 };
@@ -82,6 +110,13 @@ test("a rest answer needs a move of this image since it was installed, and never
     "at rest the last position sent is the one the plane stands for");
   // (The hand's two moves, one before and one after its install, agree on (9,4) by themselves.)
   assert.deepEqual({ ...e.noteMove("hand", 64, 64, 511, 406) }, { x: 9, y: 4 });
+  // The plane position of an earlier showing is not where the plane is after the image came
+  // back, even when the last position sent would fit it.
+  const back = new CursorHotspotEstimator();
+  back.notePointer(300, 300); back.notePointer(310, 300);
+  assert.equal(back.noteMove("hand", 64, 64, 291, 296), null, "(9,4) and (19,4)");
+  back.noteInstall("hand");
+  assert.equal(back.noteRest("hand", 64, 64), null, "(310,300) - (291,296) = (19,4) fits, but that plane position is history");
   // A rest position no move allows is not an answer: here the guest moved the plane for an
   // older position and nothing sent since explains it within the image.
   const f = new CursorHotspotEstimator();
@@ -104,7 +139,9 @@ test("a rest answer read off a plane that was still on its way is dropped by the
   // "Rest" is declared too early: the plane still stands for the position sent two moves ago,
   // and on an even run that offset is one every move allowed.
   assert.deepEqual({ ...e.noteRest("hand", 64, 64) }, { x: 29, y: 4 }, "(150,500) - (121,496): allowed, and wrong");
-  // The plane moves again although nothing was sent: that answer was not read at rest.
+  // The same position sent again (a button press where the pointer already is) is nothing new.
+  e.notePointer(150, 500);
+  // The plane moves again although nothing new was sent: that answer was not read at rest.
   assert.equal(e.noteMove("hand", 64, 64, 140 - hot.x, 500 - hot.y), null);
   assert.equal(e.hotspot("hand"), null);
   assert.equal(e.noteMove("hand", 64, 64, 150 - hot.x, 500 - hot.y), null, "two offsets still fit");
@@ -488,6 +525,10 @@ test("the pointer at rest settles the hotspot after a straight approach; sends a
   }
   for (const x of xs.slice(-2)) r.guest.show("hand", x, 500);
   assert.equal(inferred(r.controller), null, "a straight even approach decides nothing by itself");
+  // The guest sets the same image again where the plane already is (sway does after most
+  // commits): that changes nothing about what the plane stands for.
+  assert.ok(r.controller.handle({ type: "cursor-update", state: r.guest._state(IMAGES.hand, r.guest.plane.x, r.guest.plane.y),
+    format: 1, resourceWidth: 16, resourceHeight: 16, pixels: new Uint32Array(256).fill(IMAGES.hand.fill) }));
   assert.equal(r.t.armed.size, 1, "one wait for rest is armed");
   assert.equal([...r.t.armed.values()][0].ms, HOTSPOT_REST_MS);
   const before = r.controller.snapshot().styleWrites;
@@ -496,6 +537,18 @@ test("the pointer at rest settles the hotspot after a straight approach; sends a
   assert.deepEqual(hotspotOf(r.target.style.cursor), [9, 4]);
   assert.equal(r.controller.snapshot().styleWrites, before + 1);
   assert.equal(r.t.armed.size, 0);
+
+  // An image that comes back without a move of its own (its plane position happens to be the
+  // one the image before it left) is not at the plane position of its earlier showing.
+  const b = rig();
+  b.send(300, 300); b.send(305, 300);
+  b.guest.show("hand", 300, 300); // plane (291,296): (9,4) and (14,4) both fit the 16 px image
+  b.go("arrow", 297, 297);        // the arrow's plane is (296,296)
+  b.send(305, 300);
+  b.guest.show("hand", 305, 300); // the hand's plane is (296,296) too: an update, no move
+  assert.deepEqual(b.guest.plane, { x: 296, y: 296 });
+  b.t.elapse();
+  assert.equal(inferred(b.controller), null, "(305,300) - (291,296) = (14,4) would be read off the earlier showing");
 
   // Every send and every cursor event replaces the armed wait (a debounce, one timer at most).
   const s = rig();
@@ -531,6 +584,9 @@ test("relative mode is not evidence, and changing mode starts inference over", (
   assert.equal(inferred(r.controller), null, "what was inferred in absolute mode is not carried across");
   r.guest.show("caret", 500, 500); r.guest.show("caret", 388, 351); r.guest.show("caret", 309, 311); r.guest.show("caret", 395, 356);
   assert.equal(inferred(r.controller), null, "moves in relative mode are not compared with anything");
+  // Even a caller that notes positions in relative mode gets nothing inferred from them.
+  for (const [x, y] of [[600, 300], [650, 380], [720, 330]]) { r.send(x, y); r.guest.show("caret", x, y); }
+  assert.equal(inferred(r.controller), null);
   assert.equal(r.t.armed.size, 0, "and no rest is waited for");
   // Back in absolute mode the stale positions from before the lock explain nothing.
   r.controller.setPointerState({ mode: "absolute", pointerLocked: false });

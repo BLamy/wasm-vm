@@ -399,7 +399,8 @@ export class CursorController {
    * size makes earlier positions incomparable with what the guest reports: inference starts over.
    */
   notePointer(x, y, outputWidth = null, outputHeight = null) {
-    if (this._disposed) return;
+    // Outside absolute mode nothing sent is a position the guest's plane could stand for.
+    if (this._disposed || this._mode !== CURSOR_MODES.ABSOLUTE) return;
     try {
       if (outputWidth !== null && outputHeight !== null) {
         const previous = this._pointerOutput;
@@ -446,12 +447,12 @@ export class CursorController {
   }
 
   /**
-   * Take the estimator's answer for the current image after one piece of evidence. Inference
-   * runs only in absolute mode: in relative mode the page sends no absolute positions, so
-   * nothing the guest reports can be compared with anything.
+   * Take the estimator's answer for the current image after one piece of evidence. (In
+   * relative mode there is nothing to compare a move with: inference was reset on entering it
+   * and no position is noted while it lasts.)
    */
   _inferHotspot(evidence) {
-    if (this._imageKey === null || this._mode !== CURSOR_MODES.ABSOLUTE) return;
+    if (this._imageKey === null) return;
     try {
       this._setCssHot(evidence());
     } catch (error) {

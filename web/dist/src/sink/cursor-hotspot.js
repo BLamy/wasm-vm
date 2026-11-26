@@ -196,9 +196,8 @@ export class CursorHotspotEstimator {
     if (image.resolved) return image.resolved;
     const sent = this._sent[this._sent.length - 1];
     if (!image.last || !sent || image.candidates === null) return null;
-    const slack = this._tolerance;
     const rest = { x: sent.x - image.last.x, y: sent.y - image.last.y };
-    if (rest.x < -slack || rest.y < -slack || rest.x >= width + slack || rest.y >= height + slack) return null;
+    // (Candidates lie within the image, so a rest position near one does too.)
     if (!image.candidates.some((candidate) => near(candidate, rest, this._tolerance))) return null;
     image.candidates = [rest];
     image.restSends = this._sends;

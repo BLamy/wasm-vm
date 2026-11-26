@@ -64,7 +64,7 @@ What is and is not evidence (revised after the first verifier's refutation):
   `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`
   passes. Four plans, each starting inference over: three continuous 60 Hz glides onto the
   button from different directions (the first verifier's approaches A and C and one from the
-  right) and one of jumps with rests. At every rest — 21 reads over arrow, hand and text caret —
+  right) and one of jumps with rests. At every rest — 18 reads over arrow, hand and text caret —
   the hotspot is known, the canvas shows it, it is within one pixel of (1,1), (9,4) or (4,8),
   and the kernel's cursor-plane position plus that hotspot is the guest position the page
   sent, within one pixel. The guest frame has no painted pointer; no console errors and no
