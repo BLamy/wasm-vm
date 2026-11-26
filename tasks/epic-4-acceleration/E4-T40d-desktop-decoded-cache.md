@@ -306,3 +306,13 @@ verifier's report are filed as E4-T40e (exact-size op storage per block, cache o
 counter), E5-T38 (stale E5-T26k cache test and tool lists, the latency tool's favicon filter)
 and E5-T39 (a boot failure leaves the desktop page black).
 
+
+### 2026-11-25 — worker — deployed (no status change)
+
+`bash tools/deploy-cloudflare.sh` at `d106de944` published `web/dist` to
+<https://wasm-vm.pages.dev> (`evidence/e4-t40d/live/deploy.log`); the live `/decoded-cache.js`
+has the sha256 of `web/dist/decoded-cache.js` (`8b1cd4fd…dd02a`). Live benchmark
+(`node tools/perf/desktop-latency.mjs --url https://wasm-vm.pages.dev --app /app --label live-decoded-cache --n 5 --scenarios idle,click,sweep,type,node,mips --out evidence/e4-t40d/live/live.json`):
+exit 0, no missing samples, `decodedCacheEntries` 262144, 0 disk waits; click result median
+340 ms (323–407; 475 ms on the previous live build), pressed-state frame 173 ms,
+move-and-click 269 ms, key echo 43 ms, `node -e` 4.95 s, idle 162 MIPS.
