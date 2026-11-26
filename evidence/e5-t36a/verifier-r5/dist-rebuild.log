@@ -1,0 +1,21 @@
+== bash tools/build-web-dist.sh by hand at 2d954a4d9 + the three promoted tests in web/tests (the pre-commit hook runs the same build when a commit touches web/), 2026-11-26 11:36:04
+-- git status --short -- web/dist
+ M web/dist/sw.js
+ M web/dist/tasks.json
+-- git diff --stat -- web/dist
+ web/dist/sw.js      |  2 +-
+ web/dist/tasks.json | 14 +++++++-------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+-- sw.js
+-const VERSION = "2e49103cc0e8";
++const VERSION = "a73d8a348b04";
+-- the wasm and the shipped sources, committed (HEAD) against rebuilt
+pkg/wasm_vm_wasm_bg.wasm head=19cd4d2dd27c3df2 rebuilt=19cd4d2dd27c3df2 SAME
+session-pkg/wasm_vm_session_bg.wasm head=fef12ef5280e3952 rebuilt=fef12ef5280e3952 SAME
+src/sink/cursor-controller.js head=e690f1e718339ce6 rebuilt=e690f1e718339ce6 SAME
+src/sink/cursor-hotspot.js head=27bd68f7637b56ad rebuilt=27bd68f7637b56ad SAME
+main.js head=a85c80a3fa9821d8 rebuilt=a85c80a3fa9821d8 SAME
+loader.js head=4cb3330a92db2d42 rebuilt=4cb3330a92db2d42 SAME
+src/input/pointer.js head=5bc2716d074fe160 rebuilt=5bc2716d074fe160 SAME
+-- files in web/dist that differ from HEAD, by git: web/dist/sw.js web/dist/tasks.json 
+-- web/dist ships no test: 0 entries under web/dist/tests

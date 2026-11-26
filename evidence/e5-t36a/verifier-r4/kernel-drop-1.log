@@ -1,0 +1,84 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.226,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 46,
+  "unknownImages": [],
+  "answersShown": 19,
+  "answersForUnknownImages": 1,
+  "shownWrong": [
+   {
+    "t": 101798.9,
+    "image": "arrow",
+    "shown": [
+     4,
+     3
+    ],
+    "forMs": 2945,
+    "sent": [
+     440,
+     630
+    ]
+   },
+   {
+    "t": 109191.9,
+    "image": "arrow",
+    "shown": [
+     3,
+     5
+    ],
+    "forMs": 2959,
+    "sent": [
+     360,
+     600
+    ]
+   },
+   {
+    "t": 116631.9,
+    "image": "arrow",
+    "shown": [
+     12,
+     6
+    ],
+    "forMs": 2703,
+    "sent": [
+     420,
+     670
+    ]
+   }
+  ]
+ },
+ "stats": [
+  {
+   "label": "start",
+   "t": 61495.2,
+   "idleSleeps": 657,
+   "idleYield": true,
+   "idleWakes": 153,
+   "idleSleepMs": 26368.6498
+  },
+  {
+   "label": "end",
+   "t": 136855,
+   "idleSleeps": 1878,
+   "idleYield": true,
+   "idleWakes": 491,
+   "idleSleepMs": 72598.46650000004
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.23 0.11 0.04 1/116 844\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /pr",
+   "stdout": "0.14 0.09 0.03 2/116 1270\n\n"
+  }
+ ],
+ "readsByPhase": {},
+ "wrongReads": []
+}

@@ -1,0 +1,78 @@
+# V8 block coverage of the worker's recorded run, replayed move for move (plan-worker-equivalent.json, committed bundle, --coverage): blocks never executed
+web/dist/src/sink/cursor-hotspot.js: loaded in 1 context(s)
+  L21-21: throw new RangeError(`${name} must be a finite number`);
+  L33-33: throw new RangeError("history must be an integer >= 2");
+  L34-34: throw new RangeError("tolerance must be an integer >= 0");
+  L35-37: { throw new RangeError("confirmations must be an integer >= 2"); }
+  L38-38: throw new RangeError("maxImages must be an integer >= 1");
+  L51-51: return;
+  L53-53: this._sent.shift();
+  L61-63: { throw new RangeError("cursor image size must be positive integers"); }
+  L70-70: this._images.delete(this._images.keys().next().value);
+  L72-72: return image.resolved;
+  L85-85: (other) => other.x === candidate.x && other.y === candidate.y
+  L101-101: return null;
+  L116-123: forget(key) { if (key === undefined) { this._images.clear(); this._sent.length = 0; } else { this._images.delete(key); } }
+web/dist/src/sink/cursor-controller.js: loaded in 1 context(s)
+  L25-27: { throw new RangeError(`${name} must be an unsigned 32-bit integer`); }
+  L33-35: { throw new RangeError(`${name} must be a positive finite number`); }
+  L41-41: throw new TypeError("cursor state is missing");
+  L44-46: : state.position && typeof state.position === "object" ? state.position : state
+  L48-48: ?? state.resource_id
+  L49-49: ?? state.hot_x
+  L50-50: ?? state.hot_y
+  L51-51: ?? pos.scanout_id
+  L58-58: catch { /* diagnostics never break guest execution */ }
+  L62-62: ?? event?.event
+  L62-62: ?? event?.kind
+  L62-62: ?? CURSOR_EVENTS.UPDATE
+  L93-93: () => {}
+  L97-99: { throw new TypeError("cursor target must expose a style object"); }
+  L100-102: { throw new TypeError("cursor overlay parent must support appendChild"); }
+  L103-103: throw new TypeError("cursor onDiagnostic must be a function");
+  L104-104: throw new TypeError("cursor onStateChange must be a function");
+  L138-146: _diagnostic(reason, error = undefined) { this._diagnostics += 1; safeCallback(this._onDiagnostic, { reason, mode: this._mode, resourceId: this._state?
+  L154-154: ?? ""
+  L159-159: return;
+  L168-177: _restoreHostCursor() { if (!this._hostCursorOwned || !this.target?.style) return; if (this.target.style.cursor !== this._savedHostCursor) { this.targe
+  L179-187: _captureTargetPosition() { if (this._targetPositionOwned || this.overlayParent !== this.target || !this.target?.style) return; this._savedTargetPositi
+  L190-190: || !this.target?.style
+  L190-197: if (this.target.style.position !== this._savedTargetPosition) { this.target.style.position = this._savedTargetPosition; this._styleWrites += 1; } this
+  L199-228: _ensureOverlay() { if (this._overlay) return this._overlay; if (!this.overlayParent || typeof this.documentTarget?.createElement !== "function") { thr
+  L234-238: const overlay = this._overlay; let removed = false; try { if (typeof this.overlayParent?.removeChild
+  L238-241: { this.overlayParent.removeChild(overlay); removed = true; }
+  L242-255: catch (error) { this._diagnostic("overlay-remove-error", error); } if (!removed) { try { overlay.remove?.(); removed = true; } catch (error) { this._d
+  L259-259: || !this._state
+  L259-259: || !this._descriptor
+  L259-264: const x = this._state.x * this._positionScaleX - this._descriptor.hotX; const y = this._state.y * this._positionScaleY - this._descriptor.hotY; this._
+  L266-276: _showOverlay() { const descriptor = this._descriptor; if (!descriptor || descriptor.kind === "hidden") return; const overlay = this._ensureOverlay(); 
+  L280-284: { this._removeOverlay(); this._restoreHostCursor(); return; }
+  L292-302: // Relative mode always uses the overlay. A large absolute-mode cursor also uses the overlay // because browsers reject CSS cursor images above the bo
+  L308-310: catch (error) { this._diagnostic(reason, error); }
+  L315-315: return false;
+  L318-318: ?? event?.cursorState
+  L318-318: ?? event
+  L324-324: ?? []
+  L333-336: catch (error) { this._diagnostic("cursor-update-rejected", error); return false; }
+  L344-344: return false;
+  L346-346: ?? event?.cursorState
+  L346-346: ?? event
+  L347-355: { this._state = state; this._descriptor = null; this._removeOverlay(); this._restoreHostCursor(); this._moves += 1; this._notify("cursor-move-hidden")
+  L357-359: { throw new RangeError("cursor move has no matching copied resource"); }
+  L360-362: { throw new RangeError("cursor move cannot change the active hotspot"); }
+  L363-365: { throw new RangeError("cursor move hotspot is outside the active resource"); }
+  L375-378: catch (error) { this._diagnostic("cursor-move-rejected", error); return false; }
+  L383-383: return;
+  L384-384: catch (error) { this._diagnostic("cursor-hotspot-pointer-error", error); }
+  L393-393: return;
+  L403-403: && hot.y === 0
+  L406-409: catch (error) { this._diagnostic("cursor-hotspot-error", error); return false; }
+  L417-419: default: this._diagnostic("unknown-cursor-event"); return false;
+  L425-425: ?? CURSOR_MODES.ABSOLUTE
+  L426-426: && mode !== CURSOR_MODES.RELATIVE
+  L426-428: { throw new TypeError(`unknown cursor mode: ${String(mode)}`); }
+  L433-437: { this._modeChanges += 1; this._applySafely("cursor-mode-dom-error"); this._notify("pointer-state"); }
+  L442-448: setPositionScale(scaleX, scaleY = scaleX) { this._positionScaleX = checkedScale(scaleX, "cursor x scale"); this._positionScaleY = checkedScale(scaleY,
+  L451-453: descriptor() { return Object.freeze(this._descriptor ? { ...this._descriptor } : { kind: "hidden" }); }
+  L456-471: reset() { if (this._disposed) return this.snapshot("reset"); try { this._sink.hide({ resourceId: 0, hotX: 0, hotY: 0, scanout: 0, x: 0, y: 0 }); } cat
+  L473-477: dispose() { if (!this._disposed) this.reset(); this._disposed = true; return this.snapshot("dispose"); }

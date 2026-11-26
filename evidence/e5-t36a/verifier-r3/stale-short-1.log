@@ -1,0 +1,114 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.078,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 100,
+  "unknownImages": [],
+  "answersShown": 50,
+  "answersForUnknownImages": 0,
+  "shownWrong": [
+   {
+    "t": 81186.5,
+    "image": "arrow",
+    "shown": [
+     9,
+     3
+    ],
+    "forMs": 5017,
+    "sent": [
+     457,
+     675
+    ]
+   },
+   {
+    "t": 91539,
+    "image": "arrow",
+    "shown": [
+     11,
+     1
+    ],
+    "forMs": 31,
+    "sent": [
+     397,
+     592
+    ]
+   },
+   {
+    "t": 284515.3,
+    "image": "arrow",
+    "shown": [
+     5,
+     5
+    ],
+    "forMs": 5016,
+    "sent": [
+     376,
+     643
+    ]
+   },
+   {
+    "t": 289666.1,
+    "image": "arrow",
+    "shown": [
+     9,
+     3
+    ],
+    "forMs": 5025,
+    "sent": [
+     484,
+     629
+    ]
+   }
+  ]
+ },
+ "stats": [
+  {
+   "label": "bursts a",
+   "t": 61237.6,
+   "idleSleeps": 645,
+   "idleYield": true,
+   "idleWakes": 162,
+   "idleSleepMs": 26380.550300000006
+  },
+  {
+   "label": "bursts b (3 s later)",
+   "t": 64242.6,
+   "idleSleeps": 685,
+   "idleYield": true,
+   "idleWakes": 178,
+   "idleSleepMs": 27888.780600000006
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.36 0.11 0.04 1/116 590\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.34 0.24 0.10 1/116 3257\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "short-bursts": {
+   "none": 0,
+   "ok": 135,
+   "WRONG": 9
+  }
+ },
+ "wrongReads": [
+  "short-bursts.4 arrow after 3 positions of 8,2 from 433,669 — early: arrow sent 457,675 answer [9,3]",
+  "short-bursts.4 arrow — late (1.5 s more): arrow sent 457,675 answer [9,3]",
+  "short-bursts.4 arrow — 4 s: arrow sent 457,675 answer [9,3]",
+  "short-bursts.43 arrow after 3 positions of 4,4 from 364,631 — early: arrow sent 376,643 answer [5,5]",
+  "short-bursts.43 arrow — late (1.5 s more): arrow sent 376,643 answer [5,5]",
+  "short-bursts.43 arrow — 4 s: arrow sent 376,643 answer [5,5]",
+  "short-bursts.44 arrow after 2 positions of 8,2 from 468,625 — early: arrow sent 484,629 answer [9,3]",
+  "short-bursts.44 arrow — late (1.5 s more): arrow sent 484,629 answer [9,3]",
+  "short-bursts.44 arrow — 4 s: arrow sent 484,629 answer [9,3]"
+ ]
+}
+exit 0

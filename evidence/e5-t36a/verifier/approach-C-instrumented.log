@@ -1,0 +1,132 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "reads": [
+  {
+   "name": "arrow over the page body",
+   "sent": [
+    380,
+    640
+   ],
+   "css": [
+    1,
+    1
+   ],
+   "img": "9zFk9QAA",
+   "expect": [
+    1,
+    1
+   ],
+   "plane": [
+    379,
+    639
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "hand, first time: one straight glide from the page body onto the button, then at rest",
+   "sent": [
+    146,
+    501
+   ],
+   "css": [
+    45,
+    7
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    137,
+    497
+   ],
+   "tipError": [
+    36,
+    3
+   ],
+   "wrong": true
+  },
+  {
+   "name": "hand, after the worker's four scattered points inside the button (700 ms rests)",
+   "sent": [
+    93,
+    516
+   ],
+   "css": [
+    45,
+    7
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    84,
+    512
+   ],
+   "tipError": [
+    36,
+    3
+   ],
+   "wrong": true
+  },
+  {
+   "name": "text caret over the terminal",
+   "sent": [
+    1100,
+    340
+   ],
+   "css": [
+    4,
+    8
+   ],
+   "img": "d5f44QAA",
+   "expect": [
+    4,
+    8
+   ],
+   "plane": [
+    1096,
+    332
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "hand again, later in the session",
+   "sent": [
+    100,
+    520
+   ],
+   "css": [
+    45,
+    7
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    91,
+    516
+   ],
+   "tipError": [
+    36,
+    3
+   ],
+   "wrong": true
+  }
+ ]
+}
+exit=0

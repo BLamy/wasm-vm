@@ -1,0 +1,39 @@
+head 49ef1ba615a21a000ba2386da099aa9dc48b125a; web changes outside the commit: 0
+$ cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.327666ms)
+✔ hotspot coordinates are rendered exactly in the CSS cursor descriptor (1.062ms)
+✔ 256x256 uses the bounded overlay descriptor and exposes exact allocation limits (10.315792ms)
+✔ odd dimensions, transparency, malformed inputs, and 1,000 updates stay bounded (6.258792ms)
+✔ hidden cursor updates clear the descriptor without retaining an image (0.12225ms)
+✔ source and no-bundler cursor-controller projection stay byte-identical (0.520916ms)
+✔ absolute mode owns CSS and suppresses the overlay; relative mode owns overlay and lock hiding (3.204625ms)
+✔ 500 MOVE_CURSOR callbacks update only the existing overlay transform and never measure layout (1.705042ms)
+✔ replacement, hide/unref, reset, and software-fbcon no-traffic paths leave no stale DOM (10.647042ms)
+✔ invalid mode/move state fails closed without disturbing the copied cursor (0.917292ms)
+✔ 1,000 alternating mode/resource transitions stay bounded and return to a clean host state (7270.394042ms)
+✔ cursor integration route is copied byte-for-byte into the deployable dist (2.309542ms)
+✔ integration route keeps an independent delayed-frame and 500 Hz workload contract (0.558541ms)
+✔ an arrow, a hand and a text caret each resolve to their own hotspot after two moves (0.989542ms)
+✔ a guest several moves behind the pointer still resolves to the true hotspot (0.118583ms)
+✔ a straight sweep alone does not guess (0.141334ms)
+✔ one pixel of guest rounding is tolerated; a second image is independent (0.134541ms)
+✔ plane positions left of the origin arrive wrapped as u32 (0.066459ms)
+✔ positions nothing recent explains are ignored, and forgetting an image starts it over (0.187375ms)
+✔ the number of remembered images is bounded; a forgotten one is inferred again (2.333792ms)
+✔ source and no-bundler cursor-hotspot projection stay byte-identical (0.297584ms)
+✔ a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates (1.231583ms)
+✔ a device that reports a hotspot is never second-guessed (0.170084ms)
+ℹ tests 23
+ℹ pass 23
+ℹ fail 0
+$ cmp of the shipped copies with their sources
+web/dist/src/sink/cursor-hotspot.js == web/src/sink/cursor-hotspot.js
+web/dist/src/sink/cursor-controller.js == web/src/sink/cursor-controller.js
+$ cd web && node --test --test-timeout=120000 tests/*.test.mjs   (names of failing tests, against the list before the pacing and cursor tasks)
+ℹ tests 631
+ℹ pass 603
+ℹ fail 28
+failing now: 29 lines; failing before: 29 lines (each list has one header line)
+difference (< only before, > only now):
+diff rc=0
+GATES_DONE

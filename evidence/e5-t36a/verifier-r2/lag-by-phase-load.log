@@ -1,0 +1,6 @@
+phase     sends  ms from a send to the plane standing for it: median  p90   p99   max   | longest cursor silence while behind | rest waits (300 ms quiet) that would fire while behind
+L0          177                                               9    19    55   169   |    169 ms                          | 0
+L1          177                                              91   222   290   306   |    177 ms                          | 0
+L2          177                                               9    26    55   114   |    114 ms                          | 0
+L3          140                                               9    17    49   215   |    130 ms                          | 0
+L4           71                                               8    23    54    54   |     49 ms                          | 0

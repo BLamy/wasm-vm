@@ -1,0 +1,184 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.248,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 230,
+  "unknownImages": [],
+  "answersShown": 106,
+  "answersForUnknownImages": 0,
+  "shownWrong": []
+ },
+ "stats": [
+  {
+   "label": "early (session just restarted, no idle wait) a",
+   "t": 27859.7,
+   "idleSleeps": 79,
+   "idleYield": true,
+   "idleWakes": 22,
+   "idleSleepMs": 2813.3955
+  },
+  {
+   "label": "early (session just restarted, no idle wait) b (3 s later)",
+   "t": 30867.2,
+   "idleSleeps": 114,
+   "idleYield": true,
+   "idleWakes": 28,
+   "idleSleepMs": 4114.9728
+  },
+  {
+   "label": "idle a",
+   "t": 88544.7,
+   "idleSleeps": 1187,
+   "idleYield": true,
+   "idleWakes": 297,
+   "idleSleepMs": 48867.34639999998
+  },
+  {
+   "label": "idle b (3 s later)",
+   "t": 91546.9,
+   "idleSleeps": 1248,
+   "idleYield": true,
+   "idleWakes": 308,
+   "idleSleepMs": 51576.93479999997
+  },
+  {
+   "label": "bursts a",
+   "t": 124913.4,
+   "idleSleeps": 1908,
+   "idleYield": true,
+   "idleWakes": 498,
+   "idleSleepMs": 76805.9796999999
+  },
+  {
+   "label": "bursts b (3 s later)",
+   "t": 127917.7,
+   "idleSleeps": 1945,
+   "idleYield": true,
+   "idleWakes": 502,
+   "idleSleepMs": 77980.0253999999
+  },
+  {
+   "label": "bursts end a",
+   "t": 216558.5,
+   "idleSleeps": 2831,
+   "idleYield": true,
+   "idleWakes": 703,
+   "idleSleepMs": 107047.7193999998
+  },
+  {
+   "label": "bursts end b (3 s later)",
+   "t": 219564.9,
+   "idleSleeps": 2867,
+   "idleYield": true,
+   "idleWakes": 708,
+   "idleSleepMs": 108260.04109999978
+  },
+  {
+   "label": "flood a",
+   "t": 226607.6,
+   "idleSleeps": 2891,
+   "idleYield": true,
+   "idleWakes": 713,
+   "idleSleepMs": 109190.63169999978
+  },
+  {
+   "label": "flood b (3 s later)",
+   "t": 229609.8,
+   "idleSleeps": 2891,
+   "idleYield": true,
+   "idleWakes": 713,
+   "idleSleepMs": 109190.63169999978
+  },
+  {
+   "label": "flood+cpu2 a",
+   "t": 280385.4,
+   "idleSleeps": 2891,
+   "idleYield": true,
+   "idleWakes": 713,
+   "idleSleepMs": 109190.63169999978
+  },
+  {
+   "label": "flood+cpu2 b (3 s later)",
+   "t": 283392.6,
+   "idleSleeps": 2891,
+   "idleYield": true,
+   "idleWakes": 713,
+   "idleSleepMs": 109190.63169999978
+  },
+  {
+   "label": "after a",
+   "t": 336859.3,
+   "idleSleeps": 3351,
+   "idleYield": true,
+   "idleWakes": 830,
+   "idleSleepMs": 127442.6018999998
+  },
+  {
+   "label": "after b (3 s later)",
+   "t": 339862.5,
+   "idleSleeps": 3414,
+   "idleYield": true,
+   "idleWakes": 843,
+   "idleSleepMs": 130144.4838999998
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.24 0.14 0.05 2/119 998\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.28 0.18 0.07 2/118 1885\n\n"
+  },
+  {
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.p",
+   "stdout": "0.28 0.18 0.07 3/120 1914\n\n"
+  },
+  {
+   "cmd": "(while :; do :; done & echo $! > /tmp/v-load2.pid); (while :; do :; done & echo ",
+   "stdout": "0.78 0.29 0.11 6/122 2128\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "1.11 0.37 0.14 1/118 2232\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "early": {
+   "none": 5,
+   "ok": 10,
+   "WRONG": 0
+  },
+  "idle": {
+   "none": 0,
+   "ok": 20,
+   "WRONG": 0
+  },
+  "bursts": {
+   "none": 0,
+   "ok": 60,
+   "WRONG": 0
+  },
+  "flood": {
+   "none": 30,
+   "ok": 0,
+   "WRONG": 0
+  },
+  "flood+cpu2": {
+   "none": 20,
+   "ok": 0,
+   "WRONG": 0
+  },
+  "recovering": {
+   "none": 0,
+   "ok": 15,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}
+exit 0

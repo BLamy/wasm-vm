@@ -1,0 +1,45 @@
+== orient 2026-11-26T14:27:42Z
+dfa9ef9027ace729ad8622bbb03828c97b70abed
+dfa9ef902 E5-T36a round 4 implemented: claim and evidence
+b23468add E5-T36a round 4: a cursor move is evidence only while the page knows where the guest's pointer stands
+aa0e43725 E5-T36a refuted (round 3): verifier
+-- files changed b23468add..dfa9ef902 outside evidence/tasks:
+(none)
+-- files changed aa0e43725..b23468add (non-evidence):
+tasks/epic-5-the-window/E5-T36a-cursor-hotspot-inference.md
+tools/verify/e5-t36-hardware-cursor-browser.mjs
+web/dist/main.js
+web/dist/src/sink/cursor-controller.js
+web/dist/src/sink/cursor-controller.ts
+web/dist/src/sink/cursor-hotspot.js
+web/dist/src/sink/cursor-hotspot.ts
+web/dist/sw.js
+web/dist/tasks.json
+web/main.js
+web/src/sink/cursor-controller.js
+web/src/sink/cursor-controller.ts
+web/src/sink/cursor-hotspot.js
+web/src/sink/cursor-hotspot.ts
+web/tests/e5-t36-cursor-hotspot.test.mjs
+-- source vs dist vs served (sha256):
+src/sink/cursor-hotspot.js src=27bd68f7637b56ad dist=27bd68f7637b56ad served=27bd68f7637b56ad SAME
+src/sink/cursor-controller.js src=6d6490a0b7f9ce51 dist=6d6490a0b7f9ce51 served=6d6490a0b7f9ce51 SAME
+main.js src=a85c80a3fa9821d8 dist=a85c80a3fa9821d8 served=a85c80a3fa9821d8 SAME
+loader.js src=4cb3330a92db2d42 dist=4cb3330a92db2d42 served=4cb3330a92db2d42 SAME
+idle-sleep.js src=b6757ae16a489e32 dist=b6757ae16a489e32 served=b6757ae16a489e32 SAME
+src/input/pointer.js src=5bc2716d074fe160 dist=5bc2716d074fe160 served=5bc2716d074fe160 SAME
+-- js vs ts projections tracked:
+(end status)
+-- worker evidence digests:
+621410cc4a8faa4719bbe275ed30c38665718bdd09d967b7c3871809fa1a06b3  evidence/e5-t3
+8c13d2a8166707fa8211ec3501afce7a725716bfda4e004c64b306793df809d9  evidence/e5-t3
+d00b5989fce974fc043fd36ec25f2d76d47db1f381fa4956dc5a2182efd5d1bf  evidence/e5-t3
+head b23468add87f617ff4cb2544cc26e2e1000a00e5; web changes outside the commit: 0
+$ cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.366125ms)
+-- file times:
+Nov 26 09:01:31 2026 evidence/e5-t36a/gates.log
+Nov 26 09:07:24 2026 evidence/e5-t36a/browser/result.json
+Nov 26 09:16:11 2026 evidence/e5-t36a/mutants.log
+dfa9ef902 2026-11-26T09:16:47-05:00 E5-T36a round 4 implemented: claim and evidence
+b23468add 2026-11-26T09:00:39-05:00 E5-T36a round 4: a cursor move is evidence only while the page knows where the guest's pointer stands

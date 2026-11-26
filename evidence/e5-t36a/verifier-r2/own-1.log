@@ -1,0 +1,48 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 56,
+  "unknownImages": [],
+  "answersShown": 34,
+  "shownWrong": []
+ },
+ "shell": [
+  {
+   "cmd": "nproc; ls -la /dev/pts/; ps -o pid,user,args 2>/dev/null | grep -E \"foot|sway|chrome|ash\" | grep -v grep | cut -c1-110 | head -20; cat /proc/loadavg",
+   "stdout": "1\ntotal 0\ndrwxr-xr-x    2 root     root             0 Nov 24 02:59 .\ndrwxr-xr-x    9 root     root         12620 Nov 24 02:59 ..\ncrw--w----    1 desktop  tty       136,   0 Nov 24 02:59 0\ncrw-rw-rw-    1 root     root        5,   2 Nov 24 02:59 ptmx\n  254 desktop  sway -c /etc/replay-desktop/sway.conf\n  265 desktop  {replay-chromium} /bin/bash /usr/local/bin/replay-chromium\n  267 desktop  foot --app-id=replay-terminal --title=Replay Node 26 terminal\n  273 desktop  /opt/replay-chromium/chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-\n  282 desktop  /opt/replay-chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=cra\n  284 desktop  /opt/replay-chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptyp\n  288 desktop  /opt/replay-chromium/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=0 --enable\n  289 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --\n  292 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --\n  312 desktop  /opt/replay-chromium/chrome --type=gpu-process --ozone-platform=wayland --crashpad-handler-pid=\n  314 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --la\n  323 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --la\n  346 desktop  /opt/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, \n0.14 0.06 0.02 1/116 825\n\n"
+  }
+ ],
+ "reads": [
+  "ok    V1 arrow in the page body: arrow sent 700,560 answer [1,1] plane 699,559 tipError [0,0]",
+  "ok    V1 caret, first time, slow diagonal into the terminal — early (450 ms after the stop): caret sent 950,330 answer [4,8] plane 946,322 tipError [0,0]",
+  "ok    V1 caret — late (+1.5 s): caret sent 950,330 answer [4,8] plane 946,322 tipError [0,0]",
+  "ok    V2 arrow right of the green square: arrow sent 300,516 answer [1,1] plane 299,515 tipError [0,0]",
+  "ok    V2 arrow left of the button after crossing it without stopping — early (450 ms after the stop): arrow sent 8,516 answer [1,1] plane 7,515 tipError [0,0]",
+  "ok    V2 arrow left of the button — late (+1.5 s): arrow sent 8,516 answer [1,1] plane 7,515 tipError [0,0]",
+  "ok    V2 hand, short glide in from the left — early (450 ms after the stop): hand sent 40,516 answer [9,4] plane 31,512 tipError [0,0]",
+  "ok    V2 hand — late (+1.5 s): hand sent 40,516 answer [9,4] plane 31,512 tipError [0,0]",
+  "ok    V3 arrow below the button: arrow sent 100,620 answer [1,1] plane 99,619 tipError [0,0]",
+  "ok    V3 hand, slow vertical approach stopping 3 px inside the edge — early (450 ms after the stop): hand sent 100,538 answer [9,4] plane 91,534 tipError [0,0]",
+  "ok    V3 hand — late (+1.5 s): hand sent 100,538 answer [9,4] plane 91,534 tipError [0,0]",
+  "ok    V4 arrow: arrow sent 380,640 answer [1,1] plane 379,639 tipError [0,0]",
+  "ok    V4 hand, glide + two nudges 200 ms apart — early (450 ms after the stop): hand sent 126,512 answer [9,4] plane 117,508 tipError [0,0]",
+  "ok    V4 hand — late (+1.5 s): hand sent 126,512 answer [9,4] plane 117,508 tipError [0,0]",
+  "ok    V5 arrow far from the button: arrow sent 640,330 answer [1,1] plane 639,329 tipError [0,0]",
+  "ok    V5 hand, 120 ms flick from 550 px away — early (450 ms after the stop): hand sent 90,515 answer [9,4] plane 81,511 tipError [0,0]",
+  "ok    V5 hand — late (+1.5 s): hand sent 90,515 answer [9,4] plane 81,511 tipError [0,0]",
+  "ok    V6 arrow above the button: arrow sent 30,478 answer [1,1] plane 29,477 tipError [0,0]",
+  "ok    V6 after a 120 Hz zigzag across the top edge, ending inside — early (450 ms after the stop): hand sent 150,500 answer [9,4] plane 141,496 tipError [0,0]",
+  "ok    V6 after the zigzag — late (+1.5 s): hand sent 150,500 answer [9,4] plane 141,496 tipError [0,0]",
+  "ok    V7 hand after a click at rest: hand sent 150,500 answer [9,4] plane 141,496 tipError [0,0]",
+  "ok    V7 hand after a second click: hand sent 150,500 answer [9,4] plane 141,496 tipError [0,0]",
+  "ok    V8 arrow right of the text: arrow sent 620,400 answer [1,1] plane 619,399 tipError [0,0]",
+  "ok    V8 over the page text after a slow horizontal approach — early (450 ms after the stop): caret sent 60,357 answer [4,8] plane 56,349 tipError [0,0]",
+  "ok    V8 over the page text — late (+1.5 s): caret sent 60,357 answer [4,8] plane 56,349 tipError [0,0]",
+  "ok    V8 nudged within the text — early (450 ms after the stop): caret sent 62,340 answer [4,8] plane 58,332 tipError [0,0]",
+  "ok    V8 nudged within the text — late (+1.5 s): caret sent 62,340 answer [4,8] plane 58,332 tipError [0,0]"
+ ]
+}
+exit 0

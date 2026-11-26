@@ -1,0 +1,82 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "reads": [
+  {
+   "name": "arrow over the page body",
+   "sent": [
+    450,
+    730
+   ],
+   "css": [
+    1,
+    1
+   ],
+   "img": "9zFk9QAA",
+   "expect": [
+    1,
+    1
+   ],
+   "plane": [
+    449,
+    729
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "hand over the button",
+   "sent": [
+    93,
+    516
+   ],
+   "css": [
+    9,
+    4
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    84,
+    512
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "text caret over the terminal",
+   "sent": [
+    1000,
+    420
+   ],
+   "css": [
+    4,
+    8
+   ],
+   "img": "d5f44QAA",
+   "expect": [
+    4,
+    8
+   ],
+   "plane": [
+    996,
+    412
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  }
+ ]
+}
+exit=0

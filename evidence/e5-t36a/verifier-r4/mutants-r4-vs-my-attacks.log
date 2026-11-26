@@ -1,0 +1,10 @@
+== the sources (web/src/sink)
+{"S1 size change on one position at rest, then an even run":{"settledBeforeTheRun":true,"wrongShown":[],"atRest":[9,4]},"S2 mode change, then the hook, then an even run from the rest position":{"settlingAfterHook":true,"wrongShown":[],"atRest":null},"S3 a count that goes down":{"settling":true},"S4 a width-only change of output size":{"settlingRightAfter":true}}
+== mutant M1
+{"S1 size change on one position at rest, then an even run":{"settledBeforeTheRun":true,"wrongShown":[[276,"hand",[15,4]]],"atRest":[15,4]},"S2 mode change, then the hook, then an even run from the rest position":{"settlingAfterHook":true,"wrongShown":[],"atRest":null},"S3 a count that goes down":{"settling":true},"S4 a width-only change of output size":{"settlingRightAfter":true}}
+== mutant M23
+{"S1 size change on one position at rest, then an even run":{"settledBeforeTheRun":true,"wrongShown":[],"atRest":[9,4]},"S2 mode change, then the hook, then an even run from the rest position":{"settlingAfterHook":false,"wrongShown":[[156,"hand",[15,4]]],"atRest":[15,4]},"S3 a count that goes down":{"settling":true},"S4 a width-only change of output size":{"settlingRightAfter":true}}
+== mutant M6
+{"S1 size change on one position at rest, then an even run":{"settledBeforeTheRun":true,"wrongShown":[],"atRest":[9,4]},"S2 mode change, then the hook, then an even run from the rest position":{"settlingAfterHook":true,"wrongShown":[],"atRest":null},"S3 a count that goes down":{"settling":false},"S4 a width-only change of output size":{"settlingRightAfter":true}}
+== mutant M17b
+{"S1 size change on one position at rest, then an even run":{"settledBeforeTheRun":true,"wrongShown":[],"atRest":[9,4]},"S2 mode change, then the hook, then an even run from the rest position":{"settlingAfterHook":true,"wrongShown":[],"atRest":null},"S3 a count that goes down":{"settling":true},"S4 a width-only change of output size":{"settlingRightAfter":false}}

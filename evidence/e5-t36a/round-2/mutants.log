@@ -1,0 +1,39 @@
+H1 history never trimmed: KILLED by 1: the number of remembered images is bounded; a forgotten one is inferre
+H2 candidate upper bound off by one (x): KILLED by 1: the edges of what counts: one place twice, offsets outside the image, 
+H3 candidate lower bound ignores slack: KILLED by 2: a rest answer read off a plane that was still on its way is dropped by
+H4 no restart when no candidate survives: KILLED by 1: a contradicted hotspot is taken back from the page, and a guest reset 
+H5 resolve without clamping: KILLED by 1: the edges of what counts: one place twice, offsets outside the image, 
+H6 answers with one move: KILLED by 8: a contradicted hotspot is taken back from the page, and a guest reset 
+H7 answers although several clusters remain: KILLED by 5: a rest answer read off a plane that was still on its way is dropped by
+H8 contradiction never drops an answer: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+H9 one contradiction drops an answer: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+H10 explained move does not reset the miss count: KILLED by 1: an answer the guest contradicts three moves in a row is dropped and in
+H11 unexplainable position counts as a contradiction: KILLED by 1: an answer the guest contradicts three moves in a row is dropped and in
+H12 a rest answer survives the plane moving again: KILLED by 1: a rest answer read off a plane that was still on its way is dropped by
+H13 rest ignores the candidates: KILLED by 1: a rest answer needs a move of this image since it was installed, and n
+H14 rest without a move since install: KILLED by 2: a rest answer needs a move of this image since it was installed, and n
+H16 images never evicted: KILLED by 1: the number of remembered images is bounded; a forgotten one is inferre
+H17 reset keeps the sent positions: KILLED by 1: positions nothing recent explains are ignored; reset forgets positions
+H18 reset keeps the images: KILLED by 2: a contradicted hotspot is taken back from the page, and a guest reset 
+H19 duplicate sends are recorded: KILLED by 1: a rest answer read off a plane that was still on its way is dropped by
+H20 a repeated plane position is evidence again: KILLED by 1: the edges of what counts: one place twice, offsets outside the image, 
+H21 tolerance of near is doubled: KILLED by 1: the edges of what counts: one place twice, offsets outside the image, 
+H22 plane positions not wrapped to int32: KILLED by 1: plane positions left of the origin arrive wrapped as u32
+C1 the update's position is evidence again: KILLED by 3: a recorded glide onto the button
+C2 a device-reported hotspot is second-guessed: KILLED by 1: a device that reports a hotspot is never second-guessed
+C3 positions are noted in relative mode: KILLED by 1: relative mode is not evidence, and changing mode starts inference over
+C3b rest is waited for in relative mode: KILLED by 1: relative mode is not evidence, and changing mode starts inference over
+C4 a mode change keeps what was inferred: KILLED by 1: relative mode is not evidence, and changing mode starts inference over
+C5 an output size change keeps what was inferred: KILLED by 1: a change of guest output size starts inference over
+C6 every install forgets the plane position (same image too): KILLED by 1: the pointer at rest settles the hotspot after a straight approach; sen
+C7 no install note on an image change: KILLED by 1: the pointer at rest settles the hotspot after a straight approach; sen
+C8 the rest timer is never armed: KILLED by 3: a recorded glide onto the button
+C9 a stale rest callback acts: KILLED by 1: the pointer at rest settles the hotspot after a straight approach; sen
+C10 rest is waited for although the hotspot is known: KILLED by 1: a hotspot-less CSS cursor gets its inferred hotspot with one style wri
+C11 a changed answer is not shown: KILLED by 7: a contradicted hotspot is taken back from the page, and a guest reset 
+C12 an unchanged answer writes the style again: SURVIVED
+C13 a guest reset keeps the estimator: KILLED by 1: a contradicted hotspot is taken back from the page, and a guest reset 
+C14 dispose leaves the rest timer armed: KILLED by 1: the pointer at rest settles the hotspot after a straight approach; sen
+C15 sends do not restart the rest wait: KILLED by 1: the pointer at rest settles the hotspot after a straight approach; sen
+C16 the inferred hotspot is not used in the CSS cursor: KILLED by 7: a contradicted hotspot is taken back from the page, and a guest reset 
+TOTAL killed 37, survived 1: ['C12 an unchanged answer writes the style again']

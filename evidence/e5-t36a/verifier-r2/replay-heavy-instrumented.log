@@ -1,0 +1,33 @@
+device order: 886 updates, 885 at the plane position of the event before; 886 moves, 857 = (a sent position) - (true hotspot of the image shown) within a pixel, 0 not
+  positions the plane was behind at a move (latest match): 0:664 1:72 2:20 3:11 4:16 5:8 6:8 7:13 8:9 9:6 10:11 11:8 12:7 14:2 16:1 18:1
+  longest time a move trailed the next sent position: 297.1 ms
+  page/replay differ at #1387 t=105164: page null replay [1,1]
+  page/replay differ at #1388 t=105164.1: page null replay [1,1]
+page vs replay: after 1772 cursor events the page's own inferred hotspot differs from the replay's on 2
+replay: 2999 events, 1459 looks at a shown answer, 0 further than one pixel from the truth; diagnostics 0
+  arrow (true [1,1]): null@9584[U #0] -> [1,1]@44194.2[rest] -> null@48818.7[U #152] -> [1,1]@49303.7[rest] -> null@54023.3[U #285] -> [1,1]@54568.8[rest] -> null@59069.1[U #369] -> [1,1]@59534.9[M #383] -> null@64210.7[U #475] -> [1,1]@64768.9[M #491] -> null@69177.7[U #601] -> [1,1]@69727.7[rest] -> null@74586[U #726] -> [1,1]@75100.2[M #743] -> null@79603.1[U #844] -> [1,1]@80146[M #860] -> null@84595.1[U #931] -> [1,1]@85150.3[M #948] -> null@89555.7[U #1062] -> [1,1]@90093.4[rest] -> null@94515.1[U #1164] -> [1,1]@94815.1[rest] -> null@99896.6[U #1298] -> [1,1]@100500.8[M #1316] -> null@104859.3[U #1385] -> [1,1]@105159.3[rest] -> null@110018[U #1483] -> [1,1]@110549.5[rest] -> null@126587[U #1639] -> [1,1]@127436.8[M #1660] -> null@131927.5[U #1791] -> [1,1]@132556.5[M #1805] -> null@136816.6[U #1918] -> [1,1]@137528.8[M #1937] -> null@141549.2[U #2055] -> [1,1]@142471.6[M #2073] -> null@146799.9[U #2183] -> [1,1]@147601[M #2202] -> null@151956.3[U #2318] -> [1,1]@152665.1[M #2333] -> null@156601.7[U #2437] -> [1,1]@157491.8[M #2456] -> null@161781.6[U #2599] -> [1,1]@162640[M #2616] -> null@167126.5[U #2709] -> [1,1]@167751.4[M #2722] -> null@172085.8[U #2858] -> [1,1]@172720.6[M #2874]
+  caret (true [4,8]): null@12994.3[U #8] -> [4,8]@90793.1[rest] -> null@105914.1[U #1421]
+  hand (true [9,4]): null@46767.7[U #137] -> [9,4]@47098.8[rest] -> null@48747.7[U #150] -> [9,4]@51765.8[M #269] -> null@53714.9[U #281] -> [9,4]@56148.9[M #348] -> null@58647.1[U #365] -> [9,4]@61767.8[M #461] -> null@63812[U #471] -> [9,4]@66848.8[M #584] -> null@69122.8[U #599] -> [9,4]@71914.6[M #707] -> null@74140.9[U #722] -> [9,4]@76966.4[M #825] -> null@79208.7[U #840] -> [9,4]@82025.8[M #913] -> null@84208.5[U #927] -> [9,4]@87415.1[M #1046] -> null@89285.4[U #1058] -> [9,4]@92017[M #1145] -> null@94305.2[U #1162] -> [9,4]@97340.8[M #1279] -> null@99497.8[U #1294] -> [9,4]@101981.6[M #1362] -> null@104609.7[U #1381] -> [9,4]@107463.2[M #1464] -> null@109729.5[U #1479] -> [9,4]@112294.4[M #1558] -> null@126385.2[U #1635] -> [9,4]@129185.5[M #1766] -> null@131645.3[U #1787] -> [9,4]@133972.5[M #1884] -> null@136503.8[U #1914] -> [9,4]@139309.5[M #2032] -> null@141518.4[U #2053] -> [9,4]@144031[M #2156] -> null@146633[U #2179] -> [9,4]@149307[M #2293] -> null@151687[U #2314] -> [9,4]@154105.8[M #2407] -> null@156566.2[U #2435] -> [9,4]@159286.1[M #2574] -> null@161742.8[U #2597] -> [9,4]@164481.7[M #2682] -> null@166870[U #2705] -> [9,4]@169171[M #2823] -> null@171790.1[U #2854] -> [9,4]@174515.2[M #2973]
+rest waits that fired with no answer yet: 32; answered 10; fired while the plane was NOT on the last sent position: 0
+  rest t=9884.2 arrow answer null planeOnLastSent=null movesSinceInstall=1
+  rest t=12104 arrow answer null planeOnLastSent=null movesSinceInstall=3
+  rest t=12982.4 arrow answer null planeOnLastSent=null movesSinceInstall=4
+  rest t=13294.4 caret answer null planeOnLastSent=null movesSinceInstall=1
+  rest t=22830.4 caret answer null planeOnLastSent=null movesSinceInstall=2
+  rest t=23483.2 caret answer null planeOnLastSent=null movesSinceInstall=3
+  rest t=24179 caret answer null planeOnLastSent=null movesSinceInstall=4
+  rest t=25009.5 arrow answer null planeOnLastSent=null movesSinceInstall=2
+  rest t=25833.4 arrow answer null planeOnLastSent=null movesSinceInstall=5
+  rest t=26312 arrow answer null planeOnLastSent=null movesSinceInstall=6
+  rest t=27145.9 arrow answer null planeOnLastSent=null movesSinceInstall=9
+  rest t=30634.7 arrow answer null planeOnLastSent=null movesSinceInstall=10
+  rest t=38093.9 arrow answer null planeOnLastSent=null movesSinceInstall=11
+  rest t=38612.2 arrow answer null planeOnLastSent=null movesSinceInstall=12
+  rest t=39141.3 arrow answer null planeOnLastSent=null movesSinceInstall=13
+  rest t=39726.7 arrow answer null planeOnLastSent=null movesSinceInstall=14
+  rest t=40280 arrow answer null planeOnLastSent=null movesSinceInstall=15
+  rest t=40835.1 arrow answer null planeOnLastSent=null movesSinceInstall=16
+  rest t=41336.9 arrow answer null planeOnLastSent=null movesSinceInstall=17
+  rest t=41804.3 arrow answer null planeOnLastSent=null movesSinceInstall=18
+  rest t=42422.5 arrow answer null planeOnLastSent=null movesSinceInstall=19
+  rest t=42967.3 arrow answer null planeOnLastSent=null movesSinceInstall=20

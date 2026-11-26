@@ -1,0 +1,1003 @@
+{
+ "about": "Round 2 verifier: eight approaches the worker’s four plans do not contain. Each starts inference over. Requirement at every read: no answer, or plane + hotspot within one pixel of the sent position; and no answer further than one pixel from the truth anywhere in the page timeline.",
+ "steps": [
+  {
+   "op": "reset",
+   "note": "V1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    700,
+    560
+   ],
+   "ms": 500,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V1 arrow in the page body",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    950,
+    330
+   ],
+   "ms": 1500,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V1 caret, first time, slow diagonal into the terminal — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V1 caret — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "V2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    300,
+    516
+   ],
+   "ms": 500,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V2 arrow right of the green square",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    8,
+    516
+   ],
+   "ms": 600,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V2 arrow left of the button after crossing it without stopping — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V2 arrow left of the button — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    40,
+    516
+   ],
+   "ms": 150,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V2 hand, short glide in from the left — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V2 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "V3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    620
+   ],
+   "ms": 500,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V3 arrow below the button",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    538
+   ],
+   "ms": 900,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V3 hand, slow vertical approach stopping 3 px inside the edge — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V3 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "V4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    380,
+    640
+   ],
+   "ms": 400,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V4 arrow",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    120,
+    510
+   ],
+   "ms": 400,
+   "restMs": 200
+  },
+  {
+   "op": "jump",
+   "to": [
+    123,
+    511
+   ],
+   "restMs": 200
+  },
+  {
+   "op": "jump",
+   "to": [
+    126,
+    512
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V4 hand, glide + two nudges 200 ms apart — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V4 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "V5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    600,
+    300
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    640,
+    330
+   ],
+   "ms": 300,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V5 arrow far from the button",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    90,
+    515
+   ],
+   "ms": 120,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V5 hand, 120 ms flick from 550 px away — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V5 hand — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "V6"
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    30,
+    478
+   ],
+   "ms": 600,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V6 arrow above the button",
+   "settleMs": 1500
+  },
+  {
+   "op": "path",
+   "points": [
+    [
+     30,
+     491
+    ],
+    [
+     31,
+     492
+    ],
+    [
+     32,
+     493
+    ],
+    [
+     32,
+     493
+    ],
+    [
+     33,
+     494
+    ],
+    [
+     34,
+     495
+    ],
+    [
+     35,
+     495
+    ],
+    [
+     36,
+     496
+    ],
+    [
+     36,
+     496
+    ],
+    [
+     37,
+     496
+    ],
+    [
+     38,
+     496
+    ],
+    [
+     39,
+     496
+    ],
+    [
+     40,
+     496
+    ],
+    [
+     40,
+     495
+    ],
+    [
+     41,
+     495
+    ],
+    [
+     42,
+     494
+    ],
+    [
+     43,
+     493
+    ],
+    [
+     44,
+     493
+    ],
+    [
+     44,
+     492
+    ],
+    [
+     45,
+     491
+    ],
+    [
+     46,
+     490
+    ],
+    [
+     47,
+     489
+    ],
+    [
+     48,
+     488
+    ],
+    [
+     48,
+     488
+    ],
+    [
+     49,
+     487
+    ],
+    [
+     50,
+     487
+    ],
+    [
+     51,
+     486
+    ],
+    [
+     52,
+     486
+    ],
+    [
+     52,
+     486
+    ],
+    [
+     53,
+     486
+    ],
+    [
+     54,
+     486
+    ],
+    [
+     55,
+     487
+    ],
+    [
+     56,
+     487
+    ],
+    [
+     56,
+     487
+    ],
+    [
+     57,
+     488
+    ],
+    [
+     58,
+     489
+    ],
+    [
+     59,
+     490
+    ],
+    [
+     60,
+     490
+    ],
+    [
+     60,
+     491
+    ],
+    [
+     61,
+     492
+    ],
+    [
+     62,
+     493
+    ],
+    [
+     63,
+     494
+    ],
+    [
+     64,
+     494
+    ],
+    [
+     64,
+     495
+    ],
+    [
+     65,
+     495
+    ],
+    [
+     66,
+     496
+    ],
+    [
+     67,
+     496
+    ],
+    [
+     68,
+     496
+    ],
+    [
+     68,
+     496
+    ],
+    [
+     69,
+     496
+    ],
+    [
+     70,
+     495
+    ],
+    [
+     71,
+     495
+    ],
+    [
+     72,
+     494
+    ],
+    [
+     72,
+     494
+    ],
+    [
+     73,
+     493
+    ],
+    [
+     74,
+     492
+    ],
+    [
+     75,
+     491
+    ],
+    [
+     76,
+     491
+    ],
+    [
+     76,
+     490
+    ],
+    [
+     77,
+     489
+    ],
+    [
+     78,
+     488
+    ],
+    [
+     79,
+     488
+    ],
+    [
+     80,
+     487
+    ],
+    [
+     80,
+     487
+    ],
+    [
+     81,
+     486
+    ],
+    [
+     82,
+     486
+    ],
+    [
+     83,
+     486
+    ],
+    [
+     84,
+     486
+    ],
+    [
+     84,
+     486
+    ],
+    [
+     85,
+     487
+    ],
+    [
+     86,
+     487
+    ],
+    [
+     87,
+     488
+    ],
+    [
+     88,
+     488
+    ],
+    [
+     88,
+     489
+    ],
+    [
+     89,
+     490
+    ],
+    [
+     90,
+     491
+    ],
+    [
+     91,
+     492
+    ],
+    [
+     92,
+     492
+    ],
+    [
+     92,
+     493
+    ],
+    [
+     93,
+     494
+    ],
+    [
+     94,
+     494
+    ],
+    [
+     95,
+     495
+    ],
+    [
+     96,
+     495
+    ],
+    [
+     96,
+     496
+    ],
+    [
+     97,
+     496
+    ],
+    [
+     98,
+     496
+    ],
+    [
+     99,
+     496
+    ],
+    [
+     100,
+     496
+    ],
+    [
+     100,
+     495
+    ],
+    [
+     101,
+     495
+    ],
+    [
+     102,
+     494
+    ],
+    [
+     103,
+     494
+    ],
+    [
+     104,
+     493
+    ],
+    [
+     104,
+     492
+    ],
+    [
+     105,
+     491
+    ],
+    [
+     106,
+     490
+    ],
+    [
+     107,
+     490
+    ],
+    [
+     108,
+     489
+    ],
+    [
+     108,
+     488
+    ],
+    [
+     109,
+     487
+    ],
+    [
+     110,
+     487
+    ],
+    [
+     111,
+     486
+    ],
+    [
+     112,
+     486
+    ],
+    [
+     112,
+     486
+    ],
+    [
+     113,
+     486
+    ],
+    [
+     114,
+     486
+    ],
+    [
+     115,
+     486
+    ],
+    [
+     116,
+     487
+    ],
+    [
+     116,
+     487
+    ],
+    [
+     117,
+     488
+    ],
+    [
+     118,
+     489
+    ],
+    [
+     119,
+     489
+    ],
+    [
+     120,
+     490
+    ],
+    [
+     120,
+     491
+    ],
+    [
+     121,
+     492
+    ],
+    [
+     122,
+     493
+    ],
+    [
+     123,
+     493
+    ],
+    [
+     124,
+     494
+    ],
+    [
+     124,
+     495
+    ],
+    [
+     125,
+     495
+    ],
+    [
+     126,
+     496
+    ],
+    [
+     127,
+     496
+    ],
+    [
+     128,
+     496
+    ],
+    [
+     128,
+     496
+    ],
+    [
+     129,
+     496
+    ],
+    [
+     130,
+     496
+    ],
+    [
+     131,
+     495
+    ],
+    [
+     132,
+     495
+    ],
+    [
+     132,
+     494
+    ],
+    [
+     133,
+     493
+    ],
+    [
+     134,
+     493
+    ],
+    [
+     135,
+     492
+    ],
+    [
+     136,
+     491
+    ],
+    [
+     136,
+     490
+    ],
+    [
+     137,
+     489
+    ],
+    [
+     138,
+     489
+    ],
+    [
+     139,
+     488
+    ],
+    [
+     140,
+     487
+    ],
+    [
+     140,
+     487
+    ],
+    [
+     141,
+     486
+    ],
+    [
+     142,
+     486
+    ],
+    [
+     143,
+     486
+    ],
+    [
+     144,
+     486
+    ],
+    [
+     144,
+     486
+    ],
+    [
+     145,
+     486
+    ],
+    [
+     146,
+     487
+    ],
+    [
+     147,
+     487
+    ],
+    [
+     148,
+     488
+    ],
+    [
+     148,
+     489
+    ],
+    [
+     149,
+     490
+    ],
+    [
+     150,
+     490
+    ],
+    [
+     150,
+     500
+    ]
+   ],
+   "everyMs": 8
+  },
+  {
+   "op": "read",
+   "name": "V6 after a 120 Hz zigzag across the top edge, ending inside — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V6 after the zigzag — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "click",
+   "note": "V7 click on Run again, pointer at rest",
+   "restMs": 3000
+  },
+  {
+   "op": "read",
+   "name": "V7 hand after a click at rest",
+   "settleMs": 200
+  },
+  {
+   "op": "click",
+   "note": "V7 second click",
+   "restMs": 3000
+  },
+  {
+   "op": "read",
+   "name": "V7 hand after a second click",
+   "settleMs": 200
+  },
+  {
+   "op": "reset",
+   "note": "V8"
+  },
+  {
+   "op": "jump",
+   "to": [
+    600,
+    380
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    620,
+    400
+   ],
+   "ms": 300,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "V8 arrow right of the text",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    60,
+    357
+   ],
+   "ms": 1300,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V8 over the page text after a slow horizontal approach — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V8 over the page text — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    62,
+    340
+   ],
+   "ms": 200,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "name": "V8 nudged within the text — early (450 ms after the stop)",
+   "settleMs": 450
+  },
+  {
+   "op": "read",
+   "name": "V8 nudged within the text — late (+1.5 s)",
+   "settleMs": 1500
+  },
+  {
+   "op": "sh",
+   "cmd": "nproc; ls -la /dev/pts/; ps -o pid,user,args 2>/dev/null | grep -E \"foot|sway|chrome|ash\" | grep -v grep | cut -c1-110 | head -20; cat /proc/loadavg"
+  }
+ ]
+}

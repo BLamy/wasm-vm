@@ -1,0 +1,7995 @@
+{
+  "task": "E5-T36a verifier round 3",
+  "instrumented": true,
+  "plan": "plan-r3-stale-short.json",
+  "chrome": "Google Chrome",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "short-bursts.1 arrow after 3 positions of 5,3 from 451,611 — early",
+      "phase": "short-bursts",
+      "t": 67178.3,
+      "settleMs": 400,
+      "sent": [
+        466,
+        620
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 53,
+        "moves": 53,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.1 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 68682.5,
+      "settleMs": 1500,
+      "sent": [
+        466,
+        620
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 63,
+        "moves": 63,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.1 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 70787.1,
+      "settleMs": 2100,
+      "sent": [
+        466,
+        620
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 76,
+        "moves": 76,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.2 arrow after 2 positions of 6,0 from 420,634 — early",
+      "phase": "short-bursts",
+      "t": 72284.9,
+      "settleMs": 400,
+      "sent": [
+        432,
+        634
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 86,
+        "moves": 86,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.2 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 73786.9,
+      "settleMs": 1500,
+      "sent": [
+        432,
+        634
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 94,
+        "moves": 94,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.2 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 75890.4,
+      "settleMs": 2100,
+      "sent": [
+        432,
+        634
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 106,
+        "moves": 106,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.3 arrow after 4 positions of 4,4 from 381,612 — early",
+      "phase": "short-bursts",
+      "t": 77443.8,
+      "settleMs": 400,
+      "sent": [
+        397,
+        628
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 117,
+        "moves": 117,
+        "styleWrites": 10,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.3 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 78947.7,
+      "settleMs": 1500,
+      "sent": [
+        397,
+        628
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 127,
+        "moves": 127,
+        "styleWrites": 10,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.3 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 81051.4,
+      "settleMs": 2100,
+      "sent": [
+        397,
+        628
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 141,
+        "moves": 141,
+        "styleWrites": 10,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.4 arrow after 3 positions of 8,2 from 433,669 — early",
+      "phase": "short-bursts",
+      "t": 82656.8,
+      "settleMs": 400,
+      "sent": [
+        457,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 152,
+        "moves": 152,
+        "styleWrites": 12,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.4 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 84160.8,
+      "settleMs": 1500,
+      "sent": [
+        457,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 161,
+        "moves": 161,
+        "styleWrites": 12,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.4 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 86263,
+      "settleMs": 2100,
+      "sent": [
+        457,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 174,
+        "moves": 174,
+        "styleWrites": 12,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.5 arrow after 2 positions of 3,5 from 394,623 — early",
+      "phase": "short-bursts",
+      "t": 87793.2,
+      "settleMs": 400,
+      "sent": [
+        400,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          2
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          0,
+          2
+        ],
+        "settling": false,
+        "updates": 185,
+        "moves": 185,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        0,
+        2
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.5 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 89297.3,
+      "settleMs": 1500,
+      "sent": [
+        400,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          2
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          0,
+          2
+        ],
+        "settling": false,
+        "updates": 193,
+        "moves": 193,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        0,
+        2
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.5 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 91401.2,
+      "settleMs": 2100,
+      "sent": [
+        400,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          2
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          0,
+          2
+        ],
+        "settling": false,
+        "updates": 207,
+        "moves": 207,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        0,
+        2
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.6 arrow after 4 positions of 10,0 from 377,592 — early",
+      "phase": "short-bursts",
+      "t": 92946.5,
+      "settleMs": 400,
+      "sent": [
+        417,
+        592
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 217,
+        "moves": 217,
+        "styleWrites": 16,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.6 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 94449.1,
+      "settleMs": 1500,
+      "sent": [
+        417,
+        592
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 226,
+        "moves": 226,
+        "styleWrites": 16,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.6 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 96552.6,
+      "settleMs": 2100,
+      "sent": [
+        417,
+        592
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 238,
+        "moves": 238,
+        "styleWrites": 16,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.7 arrow after 3 positions of 7,7 from 440,685 — early",
+      "phase": "short-bursts",
+      "t": 98065.6,
+      "settleMs": 400,
+      "sent": [
+        461,
+        706
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 251,
+        "moves": 251,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.7 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 99569.6,
+      "settleMs": 1500,
+      "sent": [
+        461,
+        706
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 260,
+        "moves": 260,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.7 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 101673.1,
+      "settleMs": 2100,
+      "sent": [
+        461,
+        706
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 273,
+        "moves": 273,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.8 arrow after 2 positions of 12,4 from 460,672 — early",
+      "phase": "short-bursts",
+      "t": 103148.1,
+      "settleMs": 400,
+      "sent": [
+        484,
+        680
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 282,
+        "moves": 282,
+        "styleWrites": 20,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.8 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 104651.2,
+      "settleMs": 1500,
+      "sent": [
+        484,
+        680
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 291,
+        "moves": 291,
+        "styleWrites": 20,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.8 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 106753.8,
+      "settleMs": 2100,
+      "sent": [
+        484,
+        680
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 303,
+        "moves": 303,
+        "styleWrites": 20,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.9 arrow after 4 positions of 5,3 from 369,661 — early",
+      "phase": "short-bursts",
+      "t": 108259.2,
+      "settleMs": 400,
+      "sent": [
+        389,
+        673
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 314,
+        "moves": 314,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.9 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 109762.5,
+      "settleMs": 1500,
+      "sent": [
+        389,
+        673
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 323,
+        "moves": 323,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.9 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 111865.7,
+      "settleMs": 2100,
+      "sent": [
+        389,
+        673
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 335,
+        "moves": 335,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.10 arrow after 3 positions of 6,0 from 412,669 — early",
+      "phase": "short-bursts",
+      "t": 113357.7,
+      "settleMs": 400,
+      "sent": [
+        430,
+        669
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 345,
+        "moves": 345,
+        "styleWrites": 24,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.10 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 114860.3,
+      "settleMs": 1500,
+      "sent": [
+        430,
+        669
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 355,
+        "moves": 355,
+        "styleWrites": 24,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.10 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 116964.7,
+      "settleMs": 2100,
+      "sent": [
+        430,
+        669
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 369,
+        "moves": 369,
+        "styleWrites": 24,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.11 arrow after 2 positions of 4,4 from 424,639 — early",
+      "phase": "short-bursts",
+      "t": 118448.5,
+      "settleMs": 400,
+      "sent": [
+        432,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 381,
+        "moves": 381,
+        "styleWrites": 26,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.11 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 119952.3,
+      "settleMs": 1500,
+      "sent": [
+        432,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 390,
+        "moves": 390,
+        "styleWrites": 26,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.11 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 122054.9,
+      "settleMs": 2100,
+      "sent": [
+        432,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 401,
+        "moves": 401,
+        "styleWrites": 26,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.12 arrow after 4 positions of 8,2 from 427,676 — early",
+      "phase": "short-bursts",
+      "t": 123658.4,
+      "settleMs": 400,
+      "sent": [
+        459,
+        684
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 413,
+        "moves": 413,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.12 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 125163,
+      "settleMs": 1500,
+      "sent": [
+        459,
+        684
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 421,
+        "moves": 421,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.12 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 127267,
+      "settleMs": 2100,
+      "sent": [
+        459,
+        684
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 432,
+        "moves": 432,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.13 arrow after 3 positions of 3,5 from 350,677 — early",
+      "phase": "short-bursts",
+      "t": 128869.7,
+      "settleMs": 400,
+      "sent": [
+        359,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 445,
+        "moves": 445,
+        "styleWrites": 30,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.13 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 130373.9,
+      "settleMs": 1500,
+      "sent": [
+        359,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 456,
+        "moves": 456,
+        "styleWrites": 30,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.13 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 132476.3,
+      "settleMs": 2100,
+      "sent": [
+        359,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 467,
+        "moves": 467,
+        "styleWrites": 30,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.14 arrow after 2 positions of 10,0 from 414,633 — early",
+      "phase": "short-bursts",
+      "t": 134006.1,
+      "settleMs": 400,
+      "sent": [
+        434,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 480,
+        "moves": 480,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.14 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 135507.6,
+      "settleMs": 1500,
+      "sent": [
+        434,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 489,
+        "moves": 489,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.14 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 137612,
+      "settleMs": 2100,
+      "sent": [
+        434,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 501,
+        "moves": 501,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.15 arrow after 4 positions of 7,7 from 360,599 — early",
+      "phase": "short-bursts",
+      "t": 139203.1,
+      "settleMs": 400,
+      "sent": [
+        388,
+        627
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 513,
+        "moves": 513,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.15 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 140705.9,
+      "settleMs": 1500,
+      "sent": [
+        388,
+        627
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 522,
+        "moves": 522,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.15 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 142810,
+      "settleMs": 2100,
+      "sent": [
+        388,
+        627
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 534,
+        "moves": 534,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.16 arrow after 3 positions of 12,4 from 462,663 — early",
+      "phase": "short-bursts",
+      "t": 144390.7,
+      "settleMs": 400,
+      "sent": [
+        498,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 546,
+        "moves": 546,
+        "styleWrites": 36,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.16 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 145894.4,
+      "settleMs": 1500,
+      "sent": [
+        498,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 555,
+        "moves": 555,
+        "styleWrites": 36,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.16 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 147996.4,
+      "settleMs": 2100,
+      "sent": [
+        498,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 567,
+        "moves": 567,
+        "styleWrites": 36,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.17 arrow after 2 positions of 5,3 from 457,638 — early",
+      "phase": "short-bursts",
+      "t": 149544,
+      "settleMs": 400,
+      "sent": [
+        467,
+        644
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 579,
+        "moves": 579,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.17 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 151047.4,
+      "settleMs": 1500,
+      "sent": [
+        467,
+        644
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 587,
+        "moves": 587,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.17 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 153151,
+      "settleMs": 2100,
+      "sent": [
+        467,
+        644
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 600,
+        "moves": 600,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.18 arrow after 4 positions of 6,0 from 351,600 — early",
+      "phase": "short-bursts",
+      "t": 154726.8,
+      "settleMs": 400,
+      "sent": [
+        375,
+        600
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 613,
+        "moves": 613,
+        "styleWrites": 40,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.18 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 156228.6,
+      "settleMs": 1500,
+      "sent": [
+        375,
+        600
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 622,
+        "moves": 622,
+        "styleWrites": 40,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.18 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 158333.1,
+      "settleMs": 2100,
+      "sent": [
+        375,
+        600
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 634,
+        "moves": 634,
+        "styleWrites": 40,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.19 arrow after 3 positions of 4,4 from 467,594 — early",
+      "phase": "short-bursts",
+      "t": 159881,
+      "settleMs": 400,
+      "sent": [
+        479,
+        606
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 648,
+        "moves": 648,
+        "styleWrites": 42,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.19 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 161384.2,
+      "settleMs": 1500,
+      "sent": [
+        479,
+        606
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 656,
+        "moves": 656,
+        "styleWrites": 42,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.19 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 163486.9,
+      "settleMs": 2100,
+      "sent": [
+        479,
+        606
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 669,
+        "moves": 669,
+        "styleWrites": 42,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.20 arrow after 2 positions of 8,2 from 348,625 — early",
+      "phase": "short-bursts",
+      "t": 164994.4,
+      "settleMs": 400,
+      "sent": [
+        364,
+        629
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 680,
+        "moves": 680,
+        "styleWrites": 44,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.20 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 166497.5,
+      "settleMs": 1500,
+      "sent": [
+        364,
+        629
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 688,
+        "moves": 688,
+        "styleWrites": 44,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.20 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 168601.7,
+      "settleMs": 2100,
+      "sent": [
+        364,
+        629
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 699,
+        "moves": 699,
+        "styleWrites": 44,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.21 arrow after 4 positions of 3,5 from 477,671 — early",
+      "phase": "short-bursts",
+      "t": 170183.6,
+      "settleMs": 400,
+      "sent": [
+        489,
+        691
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 712,
+        "moves": 712,
+        "styleWrites": 46,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.21 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 171685.5,
+      "settleMs": 1500,
+      "sent": [
+        489,
+        691
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 722,
+        "moves": 722,
+        "styleWrites": 46,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.21 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 173788.3,
+      "settleMs": 2100,
+      "sent": [
+        489,
+        691
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 734,
+        "moves": 734,
+        "styleWrites": 46,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.22 arrow after 3 positions of 10,0 from 442,613 — early",
+      "phase": "short-bursts",
+      "t": 175377.4,
+      "settleMs": 400,
+      "sent": [
+        472,
+        613
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 747,
+        "moves": 747,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.22 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 176881.5,
+      "settleMs": 1500,
+      "sent": [
+        472,
+        613
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 756,
+        "moves": 756,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.22 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 178985,
+      "settleMs": 2100,
+      "sent": [
+        472,
+        613
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 769,
+        "moves": 769,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.23 arrow after 2 positions of 7,7 from 382,678 — early",
+      "phase": "short-bursts",
+      "t": 180521.2,
+      "settleMs": 400,
+      "sent": [
+        396,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 780,
+        "moves": 780,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.23 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 182025.5,
+      "settleMs": 1500,
+      "sent": [
+        396,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 788,
+        "moves": 788,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.23 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 184128.5,
+      "settleMs": 2100,
+      "sent": [
+        396,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 801,
+        "moves": 801,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.24 arrow after 4 positions of 12,4 from 387,644 — early",
+      "phase": "short-bursts",
+      "t": 185710.5,
+      "settleMs": 400,
+      "sent": [
+        435,
+        660
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 812,
+        "moves": 812,
+        "styleWrites": 52,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.24 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 187213.6,
+      "settleMs": 1500,
+      "sent": [
+        435,
+        660
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 821,
+        "moves": 821,
+        "styleWrites": 52,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.24 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 189317.5,
+      "settleMs": 2100,
+      "sent": [
+        435,
+        660
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 834,
+        "moves": 834,
+        "styleWrites": 52,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.25 arrow after 3 positions of 5,3 from 379,670 — early",
+      "phase": "short-bursts",
+      "t": 190793.6,
+      "settleMs": 400,
+      "sent": [
+        394,
+        679
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 846,
+        "moves": 846,
+        "styleWrites": 54,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.25 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 192296.8,
+      "settleMs": 1500,
+      "sent": [
+        394,
+        679
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 854,
+        "moves": 854,
+        "styleWrites": 54,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.25 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 194398.9,
+      "settleMs": 2100,
+      "sent": [
+        394,
+        679
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 866,
+        "moves": 866,
+        "styleWrites": 54,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.26 arrow after 2 positions of 6,0 from 359,657 — early",
+      "phase": "short-bursts",
+      "t": 195858.7,
+      "settleMs": 400,
+      "sent": [
+        371,
+        657
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 879,
+        "moves": 879,
+        "styleWrites": 55,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "short-bursts.26 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 197363.1,
+      "settleMs": 1500,
+      "sent": [
+        371,
+        657
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 888,
+        "moves": 887,
+        "styleWrites": 56,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.26 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 199465.9,
+      "settleMs": 2100,
+      "sent": [
+        371,
+        657
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 901,
+        "moves": 901,
+        "styleWrites": 56,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.27 arrow after 4 positions of 4,4 from 395,624 — early",
+      "phase": "short-bursts",
+      "t": 201019.6,
+      "settleMs": 400,
+      "sent": [
+        411,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 912,
+        "moves": 912,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.27 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 202521.6,
+      "settleMs": 1500,
+      "sent": [
+        411,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 921,
+        "moves": 921,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.27 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 204623.3,
+      "settleMs": 2100,
+      "sent": [
+        411,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 932,
+        "moves": 932,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.28 arrow after 3 positions of 8,2 from 380,650 — early",
+      "phase": "short-bursts",
+      "t": 206220.2,
+      "settleMs": 400,
+      "sent": [
+        404,
+        656
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 943,
+        "moves": 943,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.28 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 207722.6,
+      "settleMs": 1500,
+      "sent": [
+        404,
+        656
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 951,
+        "moves": 951,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.28 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 209826.2,
+      "settleMs": 2100,
+      "sent": [
+        404,
+        656
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 963,
+        "moves": 963,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.29 arrow after 2 positions of 3,5 from 469,663 — early",
+      "phase": "short-bursts",
+      "t": 211342.7,
+      "settleMs": 400,
+      "sent": [
+        475,
+        673
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 973,
+        "moves": 973,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.29 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 212845.8,
+      "settleMs": 1500,
+      "sent": [
+        475,
+        673
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 982,
+        "moves": 982,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.29 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 214948.7,
+      "settleMs": 2100,
+      "sent": [
+        475,
+        673
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 995,
+        "moves": 995,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.30 arrow after 4 positions of 10,0 from 343,647 — early",
+      "phase": "short-bursts",
+      "t": 216575.6,
+      "settleMs": 400,
+      "sent": [
+        383,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1011,
+        "moves": 1011,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.30 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 218077.4,
+      "settleMs": 1500,
+      "sent": [
+        383,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1019,
+        "moves": 1019,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.30 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 220181.4,
+      "settleMs": 2100,
+      "sent": [
+        383,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1031,
+        "moves": 1031,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.31 arrow after 3 positions of 7,7 from 436,667 — early",
+      "phase": "short-bursts",
+      "t": 221645.2,
+      "settleMs": 400,
+      "sent": [
+        457,
+        688
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1042,
+        "moves": 1042,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.31 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 223147.4,
+      "settleMs": 1500,
+      "sent": [
+        457,
+        688
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1051,
+        "moves": 1051,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.31 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 225251.6,
+      "settleMs": 2100,
+      "sent": [
+        457,
+        688
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1064,
+        "moves": 1064,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.32 arrow after 2 positions of 12,4 from 381,678 — early",
+      "phase": "short-bursts",
+      "t": 226770.4,
+      "settleMs": 400,
+      "sent": [
+        405,
+        686
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          1
+        ],
+        "settling": false,
+        "updates": 1078,
+        "moves": 1078,
+        "styleWrites": 68,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.32 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 228274.8,
+      "settleMs": 1500,
+      "sent": [
+        405,
+        686
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          1
+        ],
+        "settling": false,
+        "updates": 1087,
+        "moves": 1087,
+        "styleWrites": 68,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.32 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 230377.5,
+      "settleMs": 2100,
+      "sent": [
+        405,
+        686
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          1
+        ],
+        "settling": false,
+        "updates": 1100,
+        "moves": 1100,
+        "styleWrites": 68,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.33 arrow after 4 positions of 5,3 from 360,678 — early",
+      "phase": "short-bursts",
+      "t": 231876.5,
+      "settleMs": 400,
+      "sent": [
+        380,
+        690
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1111,
+        "moves": 1111,
+        "styleWrites": 70,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.33 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 233380.4,
+      "settleMs": 1500,
+      "sent": [
+        380,
+        690
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1121,
+        "moves": 1121,
+        "styleWrites": 70,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.33 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 235484.8,
+      "settleMs": 2100,
+      "sent": [
+        380,
+        690
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1134,
+        "moves": 1134,
+        "styleWrites": 70,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.34 arrow after 3 positions of 6,0 from 469,638 — early",
+      "phase": "short-bursts",
+      "t": 237043.6,
+      "settleMs": 400,
+      "sent": [
+        487,
+        638
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1145,
+        "moves": 1145,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.34 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 238548,
+      "settleMs": 1500,
+      "sent": [
+        487,
+        638
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1155,
+        "moves": 1155,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.34 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 240650.3,
+      "settleMs": 2100,
+      "sent": [
+        487,
+        638
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1171,
+        "moves": 1171,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.35 arrow after 2 positions of 4,4 from 365,671 — early",
+      "phase": "short-bursts",
+      "t": 242206.8,
+      "settleMs": 400,
+      "sent": [
+        373,
+        679
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1181,
+        "moves": 1181,
+        "styleWrites": 74,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.35 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 243710.6,
+      "settleMs": 1500,
+      "sent": [
+        373,
+        679
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1190,
+        "moves": 1190,
+        "styleWrites": 74,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.35 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 245812.5,
+      "settleMs": 2100,
+      "sent": [
+        373,
+        679
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1203,
+        "moves": 1203,
+        "styleWrites": 74,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.36 arrow after 4 positions of 8,2 from 386,667 — early",
+      "phase": "short-bursts",
+      "t": 247409.9,
+      "settleMs": 400,
+      "sent": [
+        418,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1215,
+        "moves": 1215,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.36 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 248911.9,
+      "settleMs": 1500,
+      "sent": [
+        418,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1224,
+        "moves": 1224,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.36 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 251014.8,
+      "settleMs": 2100,
+      "sent": [
+        418,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1237,
+        "moves": 1237,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.37 arrow after 3 positions of 3,5 from 347,670 — early",
+      "phase": "short-bursts",
+      "t": 252526.8,
+      "settleMs": 400,
+      "sent": [
+        356,
+        685
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1247,
+        "moves": 1247,
+        "styleWrites": 78,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.37 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 254030.8,
+      "settleMs": 1500,
+      "sent": [
+        356,
+        685
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1257,
+        "moves": 1257,
+        "styleWrites": 78,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.37 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 256134.8,
+      "settleMs": 2100,
+      "sent": [
+        356,
+        685
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1269,
+        "moves": 1269,
+        "styleWrites": 78,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.38 arrow after 2 positions of 10,0 from 429,652 — early",
+      "phase": "short-bursts",
+      "t": 257649.4,
+      "settleMs": 400,
+      "sent": [
+        449,
+        652
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1280,
+        "moves": 1280,
+        "styleWrites": 80,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.38 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 259151.2,
+      "settleMs": 1500,
+      "sent": [
+        449,
+        652
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1289,
+        "moves": 1289,
+        "styleWrites": 80,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.38 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 261254.2,
+      "settleMs": 2100,
+      "sent": [
+        449,
+        652
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1300,
+        "moves": 1300,
+        "styleWrites": 80,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.39 arrow after 4 positions of 7,7 from 461,603 — early",
+      "phase": "short-bursts",
+      "t": 262742.7,
+      "settleMs": 400,
+      "sent": [
+        489,
+        631
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1310,
+        "moves": 1310,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.39 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 264246.5,
+      "settleMs": 1500,
+      "sent": [
+        489,
+        631
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1319,
+        "moves": 1319,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.39 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 266350.7,
+      "settleMs": 2100,
+      "sent": [
+        489,
+        631
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1330,
+        "moves": 1330,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.40 arrow after 3 positions of 12,4 from 441,632 — early",
+      "phase": "short-bursts",
+      "t": 267868.1,
+      "settleMs": 400,
+      "sent": [
+        477,
+        644
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1340,
+        "moves": 1340,
+        "styleWrites": 84,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.40 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 269370.2,
+      "settleMs": 1500,
+      "sent": [
+        477,
+        644
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1349,
+        "moves": 1349,
+        "styleWrites": 84,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.40 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 271473.5,
+      "settleMs": 2100,
+      "sent": [
+        477,
+        644
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1361,
+        "moves": 1361,
+        "styleWrites": 84,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.41 arrow after 2 positions of 5,3 from 475,666 — early",
+      "phase": "short-bursts",
+      "t": 272920.1,
+      "settleMs": 400,
+      "sent": [
+        485,
+        672
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1372,
+        "moves": 1372,
+        "styleWrites": 86,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.41 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 274421.9,
+      "settleMs": 1500,
+      "sent": [
+        485,
+        672
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1381,
+        "moves": 1381,
+        "styleWrites": 86,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.41 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 276525.5,
+      "settleMs": 2100,
+      "sent": [
+        485,
+        672
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1395,
+        "moves": 1395,
+        "styleWrites": 86,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.42 arrow after 4 positions of 6,0 from 407,623 — early",
+      "phase": "short-bursts",
+      "t": 278075.8,
+      "settleMs": 400,
+      "sent": [
+        431,
+        623
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1408,
+        "moves": 1408,
+        "styleWrites": 88,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.42 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 279577.8,
+      "settleMs": 1500,
+      "sent": [
+        431,
+        623
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1417,
+        "moves": 1417,
+        "styleWrites": 88,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.42 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 281680.6,
+      "settleMs": 2100,
+      "sent": [
+        431,
+        623
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1431,
+        "moves": 1431,
+        "styleWrites": 88,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.43 arrow after 3 positions of 4,4 from 364,631 — early",
+      "phase": "short-bursts",
+      "t": 283239.5,
+      "settleMs": 400,
+      "sent": [
+        376,
+        643
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1441,
+        "moves": 1441,
+        "styleWrites": 90,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.43 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 284743.2,
+      "settleMs": 1500,
+      "sent": [
+        376,
+        643
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1452,
+        "moves": 1452,
+        "styleWrites": 90,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.43 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 286846.2,
+      "settleMs": 2100,
+      "sent": [
+        376,
+        643
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1464,
+        "moves": 1464,
+        "styleWrites": 90,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.44 arrow after 2 positions of 8,2 from 468,625 — early",
+      "phase": "short-bursts",
+      "t": 288340.2,
+      "settleMs": 400,
+      "sent": [
+        484,
+        629
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1475,
+        "moves": 1475,
+        "styleWrites": 92,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.44 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 289841.7,
+      "settleMs": 1500,
+      "sent": [
+        484,
+        629
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1485,
+        "moves": 1485,
+        "styleWrites": 92,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.44 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 291945.5,
+      "settleMs": 2100,
+      "sent": [
+        484,
+        629
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1497,
+        "moves": 1497,
+        "styleWrites": 92,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.45 arrow after 4 positions of 3,5 from 341,610 — early",
+      "phase": "short-bursts",
+      "t": 293422.9,
+      "settleMs": 400,
+      "sent": [
+        353,
+        630
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1506,
+        "moves": 1506,
+        "styleWrites": 94,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.45 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 294926.8,
+      "settleMs": 1500,
+      "sent": [
+        353,
+        630
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1514,
+        "moves": 1514,
+        "styleWrites": 94,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.45 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 297030.6,
+      "settleMs": 2100,
+      "sent": [
+        353,
+        630
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1527,
+        "moves": 1527,
+        "styleWrites": 94,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.46 arrow after 3 positions of 10,0 from 390,647 — early",
+      "phase": "short-bursts",
+      "t": 298519.7,
+      "settleMs": 400,
+      "sent": [
+        420,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1539,
+        "moves": 1539,
+        "styleWrites": 96,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.46 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 300023.5,
+      "settleMs": 1500,
+      "sent": [
+        420,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1548,
+        "moves": 1548,
+        "styleWrites": 96,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.46 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 302126.5,
+      "settleMs": 2100,
+      "sent": [
+        420,
+        647
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1561,
+        "moves": 1561,
+        "styleWrites": 96,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.47 arrow after 2 positions of 7,7 from 431,639 — early",
+      "phase": "short-bursts",
+      "t": 303669.8,
+      "settleMs": 400,
+      "sent": [
+        445,
+        653
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1571,
+        "moves": 1571,
+        "styleWrites": 98,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.47 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 305173.8,
+      "settleMs": 1500,
+      "sent": [
+        445,
+        653
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1580,
+        "moves": 1580,
+        "styleWrites": 98,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.47 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 307276.1,
+      "settleMs": 2100,
+      "sent": [
+        445,
+        653
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1593,
+        "moves": 1593,
+        "styleWrites": 98,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.48 arrow after 4 positions of 12,4 from 447,682 — early",
+      "phase": "short-bursts",
+      "t": 308781,
+      "settleMs": 400,
+      "sent": [
+        495,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1606,
+        "moves": 1606,
+        "styleWrites": 100,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.48 arrow — late (1.5 s more)",
+      "phase": "short-bursts",
+      "t": 310284.1,
+      "settleMs": 1500,
+      "sent": [
+        495,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1615,
+        "moves": 1615,
+        "styleWrites": 100,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "short-bursts.48 arrow — 4 s",
+      "phase": "short-bursts",
+      "t": 312385.5,
+      "settleMs": 2100,
+      "sent": [
+        495,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1627,
+        "moves": 1627,
+        "styleWrites": 100,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    }
+  ],
+  "shell": [
+    {
+      "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.26 0.07 0.02 1/117 598\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg",
+      "stdout": "0.29 0.14 0.05 1/117 3168\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "idle",
+      "t": 28119.4,
+      "idleAfterSeconds": 33.194,
+      "reached": true
+    },
+    {
+      "op": "sh",
+      "t": 61313.6
+    },
+    {
+      "op": "stats",
+      "t": 62669.3
+    },
+    {
+      "op": "wait",
+      "t": 62671.8
+    },
+    {
+      "op": "stats",
+      "t": 65672.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        451,
+        611
+      ],
+      "t": 65674.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.1",
+      "t": 66681.9
+    },
+    {
+      "op": "settle",
+      "t": 66682.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 66683.8
+    },
+    {
+      "op": "evenrun",
+      "t": 66724.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.1 arrow after 3 positions of 5,3 from 451,611 — early",
+      "t": 66774.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.1 arrow — late (1.5 s more)",
+      "t": 67179.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.1 arrow — 4 s",
+      "t": 68683.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        420,
+        634
+      ],
+      "t": 70788.1
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.2",
+      "t": 71791.8
+    },
+    {
+      "op": "settle",
+      "t": 71793.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 71794.3
+    },
+    {
+      "op": "evenrun",
+      "t": 71849.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.2 arrow after 2 positions of 6,0 from 420,634 — early",
+      "t": 71883.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.2 arrow — late (1.5 s more)",
+      "t": 72285.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.2 arrow — 4 s",
+      "t": 73787.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        381,
+        612
+      ],
+      "t": 75891.3
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.3",
+      "t": 76894.3
+    },
+    {
+      "op": "settle",
+      "t": 76895.3,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 76896.2
+    },
+    {
+      "op": "evenrun",
+      "t": 76974.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.3 arrow after 4 positions of 4,4 from 381,612 — early",
+      "t": 77040.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.3 arrow — late (1.5 s more)",
+      "t": 77444.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.3 arrow — 4 s",
+      "t": 78948.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        433,
+        669
+      ],
+      "t": 81052.5
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.4",
+      "t": 82062.7
+    },
+    {
+      "op": "settle",
+      "t": 82063.6,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 82064.6
+    },
+    {
+      "op": "evenrun",
+      "t": 82205.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.4 arrow after 3 positions of 8,2 from 433,669 — early",
+      "t": 82254.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.4 arrow — late (1.5 s more)",
+      "t": 82657.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.4 arrow — 4 s",
+      "t": 84161.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        394,
+        623
+      ],
+      "t": 86264
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.5",
+      "t": 87266.7
+    },
+    {
+      "op": "settle",
+      "t": 87267.6,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 87268.6
+    },
+    {
+      "op": "evenrun",
+      "t": 87354.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.5 arrow after 2 positions of 3,5 from 394,623 — early",
+      "t": 87389.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.5 arrow — late (1.5 s more)",
+      "t": 87794.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.5 arrow — 4 s",
+      "t": 89298.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        377,
+        592
+      ],
+      "t": 91402.1
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.6",
+      "t": 92414.6
+    },
+    {
+      "op": "settle",
+      "t": 92415.5,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 92416.5
+    },
+    {
+      "op": "evenrun",
+      "t": 92473.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.6 arrow after 4 positions of 10,0 from 377,592 — early",
+      "t": 92543.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.6 arrow — late (1.5 s more)",
+      "t": 92947.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.6 arrow — 4 s",
+      "t": 94450
+    },
+    {
+      "op": "jump",
+      "to": [
+        440,
+        685
+      ],
+      "t": 96553.7
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.7",
+      "t": 97556.2
+    },
+    {
+      "op": "settle",
+      "t": 97557.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 97558.1
+    },
+    {
+      "op": "evenrun",
+      "t": 97613.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.7 arrow after 3 positions of 7,7 from 440,685 — early",
+      "t": 97663.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.7 arrow — late (1.5 s more)",
+      "t": 98066.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.7 arrow — 4 s",
+      "t": 99570.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        460,
+        672
+      ],
+      "t": 101673.9
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.8",
+      "t": 102677.9
+    },
+    {
+      "op": "settle",
+      "t": 102679,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 102679.9
+    },
+    {
+      "op": "evenrun",
+      "t": 102713.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.8 arrow after 2 positions of 12,4 from 460,672 — early",
+      "t": 102746.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.8 arrow — late (1.5 s more)",
+      "t": 103148.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.8 arrow — 4 s",
+      "t": 104652.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        369,
+        661
+      ],
+      "t": 106754.9
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.9",
+      "t": 107758.6
+    },
+    {
+      "op": "settle",
+      "t": 107759.5,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 107760.5
+    },
+    {
+      "op": "evenrun",
+      "t": 107790.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.9 arrow after 4 positions of 5,3 from 369,661 — early",
+      "t": 107856.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.9 arrow — late (1.5 s more)",
+      "t": 108260.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.9 arrow — 4 s",
+      "t": 109763.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        412,
+        669
+      ],
+      "t": 111866.7
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.10",
+      "t": 112869.7
+    },
+    {
+      "op": "settle",
+      "t": 112870.7,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 112871.7
+    },
+    {
+      "op": "evenrun",
+      "t": 112904.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.10 arrow after 3 positions of 6,0 from 412,669 — early",
+      "t": 112954.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.10 arrow — late (1.5 s more)",
+      "t": 113358.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.10 arrow — 4 s",
+      "t": 114861.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        424,
+        639
+      ],
+      "t": 116965.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.11",
+      "t": 117968.1
+    },
+    {
+      "op": "settle",
+      "t": 117969.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 117970.1
+    },
+    {
+      "op": "evenrun",
+      "t": 118013.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.11 arrow after 2 positions of 4,4 from 424,639 — early",
+      "t": 118045.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.11 arrow — late (1.5 s more)",
+      "t": 118449.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.11 arrow — 4 s",
+      "t": 119953.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        427,
+        676
+      ],
+      "t": 122055.7
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.12",
+      "t": 123057.5
+    },
+    {
+      "op": "settle",
+      "t": 123058.5,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 123059.6
+    },
+    {
+      "op": "evenrun",
+      "t": 123189.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.12 arrow after 4 positions of 8,2 from 427,676 — early",
+      "t": 123255.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.12 arrow — late (1.5 s more)",
+      "t": 123659.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.12 arrow — 4 s",
+      "t": 125163.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        350,
+        677
+      ],
+      "t": 127268.2
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.13",
+      "t": 128271.2
+    },
+    {
+      "op": "settle",
+      "t": 128272.5,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 128273.5
+    },
+    {
+      "op": "evenrun",
+      "t": 128417.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.13 arrow after 3 positions of 3,5 from 350,677 — early",
+      "t": 128466.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.13 arrow — late (1.5 s more)",
+      "t": 128870.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.13 arrow — 4 s",
+      "t": 130374.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        414,
+        633
+      ],
+      "t": 132477.3
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.14",
+      "t": 133480.2
+    },
+    {
+      "op": "settle",
+      "t": 133481.1,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 133482
+    },
+    {
+      "op": "evenrun",
+      "t": 133569.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.14 arrow after 2 positions of 10,0 from 414,633 — early",
+      "t": 133604.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.14 arrow — late (1.5 s more)",
+      "t": 134007.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.14 arrow — 4 s",
+      "t": 135508.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        360,
+        599
+      ],
+      "t": 137612.9
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.15",
+      "t": 138628.3
+    },
+    {
+      "op": "settle",
+      "t": 138629.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 138630.7
+    },
+    {
+      "op": "evenrun",
+      "t": 138733.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.15 arrow after 4 positions of 7,7 from 360,599 — early",
+      "t": 138799.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.15 arrow — late (1.5 s more)",
+      "t": 139204
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.15 arrow — 4 s",
+      "t": 140706.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        462,
+        663
+      ],
+      "t": 142810.9
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.16",
+      "t": 143814
+    },
+    {
+      "op": "settle",
+      "t": 143815.3,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 143816.2
+    },
+    {
+      "op": "evenrun",
+      "t": 143938.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.16 arrow after 3 positions of 12,4 from 462,663 — early",
+      "t": 143988.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.16 arrow — late (1.5 s more)",
+      "t": 144391.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.16 arrow — 4 s",
+      "t": 145895.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        457,
+        638
+      ],
+      "t": 147997.3
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.17",
+      "t": 149000.9
+    },
+    {
+      "op": "settle",
+      "t": 149001.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 149002.8
+    },
+    {
+      "op": "evenrun",
+      "t": 149108.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.17 arrow after 2 positions of 5,3 from 457,638 — early",
+      "t": 149142.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.17 arrow — late (1.5 s more)",
+      "t": 149544.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.17 arrow — 4 s",
+      "t": 151048.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        351,
+        600
+      ],
+      "t": 153152.1
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.18",
+      "t": 154153.5
+    },
+    {
+      "op": "settle",
+      "t": 154154.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 154155.5
+    },
+    {
+      "op": "evenrun",
+      "t": 154259.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.18 arrow after 4 positions of 6,0 from 351,600 — early",
+      "t": 154325.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.18 arrow — late (1.5 s more)",
+      "t": 154727.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.18 arrow — 4 s",
+      "t": 156229.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        467,
+        594
+      ],
+      "t": 158334
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.19",
+      "t": 159336.3
+    },
+    {
+      "op": "settle",
+      "t": 159337.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 159338.3
+    },
+    {
+      "op": "evenrun",
+      "t": 159431.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.19 arrow after 3 positions of 4,4 from 467,594 — early",
+      "t": 159480.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.19 arrow — late (1.5 s more)",
+      "t": 159881.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.19 arrow — 4 s",
+      "t": 161385.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        348,
+        625
+      ],
+      "t": 163487.8
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.20",
+      "t": 164489.5
+    },
+    {
+      "op": "settle",
+      "t": 164490.5,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 164491.5
+    },
+    {
+      "op": "evenrun",
+      "t": 164558.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.20 arrow after 2 positions of 8,2 from 348,625 — early",
+      "t": 164592
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.20 arrow — late (1.5 s more)",
+      "t": 164995.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.20 arrow — 4 s",
+      "t": 166498.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        477,
+        671
+      ],
+      "t": 168602.7
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.21",
+      "t": 169608.9
+    },
+    {
+      "op": "settle",
+      "t": 169610,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 169611
+    },
+    {
+      "op": "evenrun",
+      "t": 169718.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.21 arrow after 4 positions of 3,5 from 477,671 — early",
+      "t": 169782.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.21 arrow — late (1.5 s more)",
+      "t": 170184.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.21 arrow — 4 s",
+      "t": 171686.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        442,
+        613
+      ],
+      "t": 173789.2
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.22",
+      "t": 174793
+    },
+    {
+      "op": "settle",
+      "t": 174793.9,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 174794.8
+    },
+    {
+      "op": "evenrun",
+      "t": 174921
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.22 arrow after 3 positions of 10,0 from 442,613 — early",
+      "t": 174975.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.22 arrow — late (1.5 s more)",
+      "t": 175378.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.22 arrow — 4 s",
+      "t": 176882.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        382,
+        678
+      ],
+      "t": 178985.8
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.23",
+      "t": 179993.5
+    },
+    {
+      "op": "settle",
+      "t": 179994.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 179995.3
+    },
+    {
+      "op": "evenrun",
+      "t": 180084.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.23 arrow after 2 positions of 7,7 from 382,678 — early",
+      "t": 180118
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.23 arrow — late (1.5 s more)",
+      "t": 180522.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.23 arrow — 4 s",
+      "t": 182026.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        387,
+        644
+      ],
+      "t": 184129.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.24",
+      "t": 185143.4
+    },
+    {
+      "op": "settle",
+      "t": 185144.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 185145.6
+    },
+    {
+      "op": "evenrun",
+      "t": 185241.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.24 arrow after 4 positions of 12,4 from 387,644 — early",
+      "t": 185308.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.24 arrow — late (1.5 s more)",
+      "t": 185711.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.24 arrow — 4 s",
+      "t": 187214.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        379,
+        670
+      ],
+      "t": 189318.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.25",
+      "t": 190321.4
+    },
+    {
+      "op": "settle",
+      "t": 190322.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 190323.5
+    },
+    {
+      "op": "evenrun",
+      "t": 190344.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.25 arrow after 3 positions of 5,3 from 379,670 — early",
+      "t": 190392.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.25 arrow — late (1.5 s more)",
+      "t": 190794.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.25 arrow — 4 s",
+      "t": 192297.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        359,
+        657
+      ],
+      "t": 194399.9
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.26",
+      "t": 195402
+    },
+    {
+      "op": "settle",
+      "t": 195403,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 195404.3
+    },
+    {
+      "op": "evenrun",
+      "t": 195423.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.26 arrow after 2 positions of 6,0 from 359,657 — early",
+      "t": 195456.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.26 arrow — late (1.5 s more)",
+      "t": 195861.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.26 arrow — 4 s",
+      "t": 197364.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        395,
+        624
+      ],
+      "t": 199466.8
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.27",
+      "t": 200468.9
+    },
+    {
+      "op": "settle",
+      "t": 200469.8,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 200470.9
+    },
+    {
+      "op": "evenrun",
+      "t": 200551.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.27 arrow after 4 positions of 4,4 from 395,624 — early",
+      "t": 200617.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.27 arrow — late (1.5 s more)",
+      "t": 201020.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.27 arrow — 4 s",
+      "t": 202522.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        380,
+        650
+      ],
+      "t": 204624.2
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.28",
+      "t": 205627.7
+    },
+    {
+      "op": "settle",
+      "t": 205628.9,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 205630
+    },
+    {
+      "op": "evenrun",
+      "t": 205767.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.28 arrow after 3 positions of 8,2 from 380,650 — early",
+      "t": 205818.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.28 arrow — late (1.5 s more)",
+      "t": 206221.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.28 arrow — 4 s",
+      "t": 207723.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        469,
+        663
+      ],
+      "t": 209827
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.29",
+      "t": 210828.8
+    },
+    {
+      "op": "settle",
+      "t": 210829.8,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 210830.8
+    },
+    {
+      "op": "evenrun",
+      "t": 210907.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.29 arrow after 2 positions of 3,5 from 469,663 — early",
+      "t": 210941.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.29 arrow — late (1.5 s more)",
+      "t": 211343.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.29 arrow — 4 s",
+      "t": 212846.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        343,
+        647
+      ],
+      "t": 214951.3
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.30",
+      "t": 215957.9
+    },
+    {
+      "op": "settle",
+      "t": 215958.8,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 215959.8
+    },
+    {
+      "op": "evenrun",
+      "t": 216102.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.30 arrow after 4 positions of 10,0 from 343,647 — early",
+      "t": 216173.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.30 arrow — late (1.5 s more)",
+      "t": 216576.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.30 arrow — 4 s",
+      "t": 218078.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        436,
+        667
+      ],
+      "t": 220182.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.31",
+      "t": 221185.4
+    },
+    {
+      "op": "settle",
+      "t": 221186.5,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 221187.6
+    },
+    {
+      "op": "evenrun",
+      "t": 221193.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.31 arrow after 3 positions of 7,7 from 436,667 — early",
+      "t": 221242.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.31 arrow — late (1.5 s more)",
+      "t": 221646.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.31 arrow — 4 s",
+      "t": 223148.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        381,
+        678
+      ],
+      "t": 225252.5
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.32",
+      "t": 226254.5
+    },
+    {
+      "op": "settle",
+      "t": 226255.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 226256.3
+    },
+    {
+      "op": "evenrun",
+      "t": 226336.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.32 arrow after 2 positions of 12,4 from 381,678 — early",
+      "t": 226368.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.32 arrow — late (1.5 s more)",
+      "t": 226771.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.32 arrow — 4 s",
+      "t": 228275.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        360,
+        678
+      ],
+      "t": 230378.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.33",
+      "t": 231381.4
+    },
+    {
+      "op": "settle",
+      "t": 231382.5,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 231383.5
+    },
+    {
+      "op": "evenrun",
+      "t": 231407.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.33 arrow after 4 positions of 5,3 from 360,678 — early",
+      "t": 231473.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.33 arrow — late (1.5 s more)",
+      "t": 231877.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.33 arrow — 4 s",
+      "t": 233381.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        469,
+        638
+      ],
+      "t": 235485.8
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.34",
+      "t": 236489.8
+    },
+    {
+      "op": "settle",
+      "t": 236490.7,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 236491.7
+    },
+    {
+      "op": "evenrun",
+      "t": 236589.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.34 arrow after 3 positions of 6,0 from 469,638 — early",
+      "t": 236640.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.34 arrow — late (1.5 s more)",
+      "t": 237044.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.34 arrow — 4 s",
+      "t": 238549.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        365,
+        671
+      ],
+      "t": 240651.2
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.35",
+      "t": 241654.3
+    },
+    {
+      "op": "settle",
+      "t": 241655.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 241656.1
+    },
+    {
+      "op": "evenrun",
+      "t": 241771
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.35 arrow after 2 positions of 4,4 from 365,671 — early",
+      "t": 241803.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.35 arrow — late (1.5 s more)",
+      "t": 242207.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.35 arrow — 4 s",
+      "t": 243711.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        386,
+        667
+      ],
+      "t": 245813.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.36",
+      "t": 246816.1
+    },
+    {
+      "op": "settle",
+      "t": 246817,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 246818
+    },
+    {
+      "op": "evenrun",
+      "t": 246940.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.36 arrow after 4 positions of 8,2 from 386,667 — early",
+      "t": 247007.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.36 arrow — late (1.5 s more)",
+      "t": 247410.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.36 arrow — 4 s",
+      "t": 248913
+    },
+    {
+      "op": "jump",
+      "to": [
+        347,
+        670
+      ],
+      "t": 251015.8
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.37",
+      "t": 252024.9
+    },
+    {
+      "op": "settle",
+      "t": 252025.7,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 252026.6
+    },
+    {
+      "op": "evenrun",
+      "t": 252075.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.37 arrow after 3 positions of 3,5 from 347,670 — early",
+      "t": 252124
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.37 arrow — late (1.5 s more)",
+      "t": 252527.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.37 arrow — 4 s",
+      "t": 254031.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        429,
+        652
+      ],
+      "t": 256135.5
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.38",
+      "t": 257137.3
+    },
+    {
+      "op": "settle",
+      "t": 257138.3,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 257139.2
+    },
+    {
+      "op": "evenrun",
+      "t": 257212
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.38 arrow after 2 positions of 10,0 from 429,652 — early",
+      "t": 257246.4
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.38 arrow — late (1.5 s more)",
+      "t": 257650.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.38 arrow — 4 s",
+      "t": 259152.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        461,
+        603
+      ],
+      "t": 261255.1
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.39",
+      "t": 262256.8
+    },
+    {
+      "op": "settle",
+      "t": 262257.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 262258.8
+    },
+    {
+      "op": "evenrun",
+      "t": 262271.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.39 arrow after 4 positions of 7,7 from 461,603 — early",
+      "t": 262339.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.39 arrow — late (1.5 s more)",
+      "t": 262743.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.39 arrow — 4 s",
+      "t": 264247.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        441,
+        632
+      ],
+      "t": 266351.6
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.40",
+      "t": 267352.2
+    },
+    {
+      "op": "settle",
+      "t": 267353.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 267354.2
+    },
+    {
+      "op": "evenrun",
+      "t": 267415.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.40 arrow after 3 positions of 12,4 from 441,632 — early",
+      "t": 267466.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.40 arrow — late (1.5 s more)",
+      "t": 267869.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.40 arrow — 4 s",
+      "t": 269371.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        475,
+        666
+      ],
+      "t": 271474.5
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.41",
+      "t": 272476
+    },
+    {
+      "op": "settle",
+      "t": 272476.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 272477.8
+    },
+    {
+      "op": "evenrun",
+      "t": 272483.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.41 arrow after 2 positions of 5,3 from 475,666 — early",
+      "t": 272516.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.41 arrow — late (1.5 s more)",
+      "t": 272921
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.41 arrow — 4 s",
+      "t": 274422.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        407,
+        623
+      ],
+      "t": 276526.5
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.42",
+      "t": 277528.5
+    },
+    {
+      "op": "settle",
+      "t": 277529.5,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 277530.4
+    },
+    {
+      "op": "evenrun",
+      "t": 277609.3
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.42 arrow after 4 positions of 6,0 from 407,623 — early",
+      "t": 277673
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.42 arrow — late (1.5 s more)",
+      "t": 278076.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.42 arrow — 4 s",
+      "t": 279578.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        364,
+        631
+      ],
+      "t": 281681.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.43",
+      "t": 282689.6
+    },
+    {
+      "op": "settle",
+      "t": 282690.5,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 282691.6
+    },
+    {
+      "op": "evenrun",
+      "t": 282786.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.43 arrow after 3 positions of 4,4 from 364,631 — early",
+      "t": 282837.8
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.43 arrow — late (1.5 s more)",
+      "t": 283240.6
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.43 arrow — 4 s",
+      "t": 284744
+    },
+    {
+      "op": "jump",
+      "to": [
+        468,
+        625
+      ],
+      "t": 286847.3
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.44",
+      "t": 287851.8
+    },
+    {
+      "op": "settle",
+      "t": 287853,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 287853.8
+    },
+    {
+      "op": "evenrun",
+      "t": 287902.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.44 arrow after 2 positions of 8,2 from 468,625 — early",
+      "t": 287938.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.44 arrow — late (1.5 s more)",
+      "t": 288341.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.44 arrow — 4 s",
+      "t": 289842.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        341,
+        610
+      ],
+      "t": 291946.4
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.45",
+      "t": 292948
+    },
+    {
+      "op": "settle",
+      "t": 292948.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 292949.9
+    },
+    {
+      "op": "evenrun",
+      "t": 292954
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.45 arrow after 4 positions of 3,5 from 341,610 — early",
+      "t": 293019.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.45 arrow — late (1.5 s more)",
+      "t": 293423.9
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.45 arrow — 4 s",
+      "t": 294927.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        390,
+        647
+      ],
+      "t": 297031.5
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.46",
+      "t": 298033.3
+    },
+    {
+      "op": "settle",
+      "t": 298034.3,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 298035.2
+    },
+    {
+      "op": "evenrun",
+      "t": 298070
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.46 arrow after 3 positions of 10,0 from 390,647 — early",
+      "t": 298118.5
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.46 arrow — late (1.5 s more)",
+      "t": 298520.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.46 arrow — 4 s",
+      "t": 300024.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        431,
+        639
+      ],
+      "t": 302127.6
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.47",
+      "t": 303130
+    },
+    {
+      "op": "settle",
+      "t": 303131,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 303132.1
+    },
+    {
+      "op": "evenrun",
+      "t": 303236.1
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.47 arrow after 2 positions of 7,7 from 431,639 — early",
+      "t": 303268.2
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.47 arrow — late (1.5 s more)",
+      "t": 303670.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.47 arrow — 4 s",
+      "t": 305174.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        447,
+        682
+      ],
+      "t": 307277
+    },
+    {
+      "op": "reset",
+      "name": "short-bursts.48",
+      "t": 308286.1
+    },
+    {
+      "op": "settle",
+      "t": 308287,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 308288
+    },
+    {
+      "op": "evenrun",
+      "t": 308312.7
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.48 arrow after 4 positions of 12,4 from 447,682 — early",
+      "t": 308380
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.48 arrow — late (1.5 s more)",
+      "t": 308782
+    },
+    {
+      "op": "read",
+      "name": "short-bursts.48 arrow — 4 s",
+      "t": 310284.9
+    },
+    {
+      "op": "sh",
+      "t": 312386.6
+    }
+  ],
+  "stats": [
+    {
+      "label": "bursts a",
+      "t": 62671.5,
+      "idleSleeps": 654,
+      "idleYield": true,
+      "idleWakes": 152,
+      "idleSleepMs": 26812.239
+    },
+    {
+      "label": "bursts b (3 s later)",
+      "t": 65674,
+      "idleSleeps": 691,
+      "idleYield": true,
+      "idleWakes": 157,
+      "idleSleepMs": 27953.1026
+    }
+  ],
+  "instrumentedBytes": 31339,
+  "sessionRestartSeconds": 16.158,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 192,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 98,
+    "unknownImages": [],
+    "answersShown": 49,
+    "answersForUnknownImages": 0,
+    "shownWrong": []
+  },
+  "events": 3718,
+  "errors": [],
+  "ran": true
+}

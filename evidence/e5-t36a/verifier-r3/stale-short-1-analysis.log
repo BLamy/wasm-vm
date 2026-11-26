@@ -1,0 +1,68 @@
+{"name":"short-bursts.1","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.2","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.3","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.4","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":3,"answers":[[9,3]],"wrong":[[9,3]],"final":[9,3]}
+{"name":"short-bursts.5","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.6","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":2,"answers":[[11,1],[1,1]],"wrong":[[11,1]],"final":[1,1]}
+{"name":"short-bursts.7","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.8","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.9","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":4,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.10","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.11","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.12","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.13","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":1,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.14","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.15","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.16","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.17","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.18","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.19","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.20","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.21","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.22","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.23","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.24","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":4,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.25","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.26","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.27","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":4,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.28","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.29","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.30","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":2,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.31","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.32","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.33","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.34","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.35","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.36","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.37","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.38","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.39","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":4,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.40","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.41","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.42","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":1,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.43","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":3,"answers":[[5,5]],"wrong":[[5,5]],"final":[5,5]}
+{"name":"short-bursts.44","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":1,"sentBeforeGuestFirstMoved":2,"answers":[[9,3]],"wrong":[[9,3]],"final":[9,3]}
+{"name":"short-bursts.45","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":1,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.46","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":3,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.47","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{"name":"short-bursts.48","settledBeforeFirstS":true,"movesBetweenSettleAndFirstS":0,"staleAfterFirstS":0,"sentBeforeGuestFirstMoved":2,"answers":[[1,1]],"wrong":[],"final":[1,1]}
+{
+ "short-bursts": {
+  "trials": 48,
+  "staleReReportTaken": 9,
+  "wrongShown": 4,
+  "wrongAtEnd": 3,
+  "noneAtEnd": 0
+ }
+}
+timeline: {"rows":100,"unknownImages":[],"answersShown":50,"answersForUnknownImages":0,"shownWrong":[{"t":81186.5,"image":"arrow","shown":[9,3],"forMs":5017,"sent":[457,675]},{"t":91539,"image":"arrow","shown":[11,1],"forMs":31,"sent":[397,592]},{"t":284515.3,"image":"arrow","shown":[5,5],"forMs":5016,"sent":[376,643]},{"t":289666.1,"image":"arrow","shown":[9,3],"forMs":5025,"sent":[484,629]}]}
+reads: {"short-bursts ok":135,"short-bursts WRONG":9}
+WRONG READ short-bursts.4 arrow after 3 positions of 8,2 from 433,669 — early [9,3] sent [457,675]
+WRONG READ short-bursts.4 arrow — late (1.5 s more) [9,3] sent [457,675]
+WRONG READ short-bursts.4 arrow — 4 s [9,3] sent [457,675]
+WRONG READ short-bursts.43 arrow after 3 positions of 4,4 from 364,631 — early [5,5] sent [376,643]
+WRONG READ short-bursts.43 arrow — late (1.5 s more) [5,5] sent [376,643]
+WRONG READ short-bursts.43 arrow — 4 s [5,5] sent [376,643]
+WRONG READ short-bursts.44 arrow after 2 positions of 8,2 from 468,625 — early [9,3] sent [484,629]
+WRONG READ short-bursts.44 arrow — late (1.5 s more) [9,3] sent [484,629]
+WRONG READ short-bursts.44 arrow — 4 s [9,3] sent [484,629]

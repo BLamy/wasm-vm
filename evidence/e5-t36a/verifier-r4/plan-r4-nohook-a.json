@@ -1,0 +1,135 @@
+{
+ "name": "H0 no hook, session start, bursts, P=400,640 d=-7,-5",
+ "screenshot": true,
+ "steps": [
+  {
+   "op": "ui"
+  },
+  {
+   "op": "idle",
+   "seconds": 20
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "wait",
+   "ms": 2000
+  },
+  {
+   "op": "probe",
+   "label": "0: before any position was sent",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    400,
+    640
+   ],
+   "note": "the session's first position"
+  },
+  {
+   "op": "mode",
+   "mode": "relative"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    393,
+    635
+   ]
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "probe",
+   "label": "b: after relative motion",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "mode",
+   "mode": "absolute"
+  },
+  {
+   "op": "mouse",
+   "to": [
+    400,
+    640
+   ]
+  },
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "probe",
+   "label": "c: 0.7 s after the return",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 1500
+  },
+  {
+   "op": "probe",
+   "label": "d: 2.2 s after the return",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "wait",
+   "ms": 1000
+  },
+  {
+   "op": "probe",
+   "label": "e: two more positions (+6,+2 each), at rest",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "wait",
+   "ms": 4000
+  },
+  {
+   "op": "probe",
+   "label": "g: 5 s at rest after them",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    460,
+    600
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    430,
+    690
+   ],
+   "restMs": 900
+  },
+  {
+   "op": "probe",
+   "label": "f: after two jumps elsewhere",
+   "trial": "H0 no hook, session start, bursts, P=400,640 d=-7,-5"
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /proc/loadavg"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+log premise-slow-host: 7460 entries {"S":1856,"U":1889,"M":1886,"Q":71,"N":1624,"C":71,"H":63}
+conclusions "caught up": 47 (rest 30, restart 17); answered at rest right after: 10
+  of 37 with a known image and a sent position: plane stood for the last position sent in 37, BEHIND in 0
+  LATE MOVES after a conclusion (same image, nothing sent since the question): 0
+  image changed after a conclusion, then moved (limit 2): 0
+  question -> conclusion: median 531 ms, p90 3871 ms, max 7157 ms
+moves 1886; re-reports of an unchanged plane position while a newer position had been sent and not acted on: 128
+by phase:
+  start        rest questions: 18; rest -> false: 9; rest -> true: 9; conclusions unverifiable (unknown image / nothing sent): 9
+  idle         restart questions: 3; restart -> true: 3; conclusions unverifiable (unknown image / nothing sent): 1; rest questions: 3; rest -> true: 3; conclusions: plane stood for the last position: 5
+  bursts       restart questions: 10; restart -> true: 10; conclusions: plane stood for the last position: 25; rest questions: 15; rest -> true: 15; stale re-reports: 93; move after a conclusion for a position sent during the question: 3
+  flood        stale re-reports: 32; restart questions: 16; restart -> false: 15; restart -> true: 1; conclusions: plane stood for the last position: 1
+  recovering   restart questions: 3; restart -> true: 3; conclusions: plane stood for the last position: 6; move after a conclusion for a position sent during the question: 1; rest questions: 3; rest -> true: 3; stale re-reports: 3

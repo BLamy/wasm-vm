@@ -1,0 +1,22 @@
+{
+  "task": "E5-T36",
+  "legacyKmsSession": false,
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "shapes": [
+    {
+      "name": "arrow over the page body",
+      "sentGuestPosition": [
+        450,
+        730
+      ],
+      "css": {
+        "raw": "auto"
+      },
+      "plane": null
+    }
+  ],
+  "swayEnv": "WLR_NO_HARDWARE_CURSORS=1 WLR_RENDERER=pixman",
+  "pass": false,
+  "error": "AssertionError [ERR_ASSERTION]: arrow over the page body: the canvas cursor is the guest's image ({\"raw\":\"auto\"})\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t36-hardware-cursor-browser.mjs:102:12"
+}

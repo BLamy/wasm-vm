@@ -1,0 +1,156 @@
+{
+ "about": "Approach C: the pointer rests in the page body just right of the green square, then one quick straight glide (0.33 s, min-jerk, 60 Hz) leftwards onto the right part of the 'Run again' button, and rests. Chosen with the async-image-change model (scratch search2), predicted to leave the hand with hotspot (45,7) before this run.",
+ "steps": [
+  {
+   "op": "jump",
+   "to": [
+    450,
+    700
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "glide",
+   "to": [
+    380,
+    640
+   ],
+   "ms": 400,
+   "hz": 60,
+   "restMs": 800
+  },
+  {
+   "op": "read",
+   "name": "arrow over the page body",
+   "expectHotspot": [
+    1,
+    1
+   ]
+  },
+  {
+   "op": "glide",
+   "to": [
+    255,
+    515
+   ],
+   "ms": 500,
+   "hz": 60,
+   "restMs": 800
+  },
+  {
+   "op": "glide",
+   "to": [
+    146,
+    501
+   ],
+   "ms": 334,
+   "hz": 60,
+   "restMs": 300
+  },
+  {
+   "op": "read",
+   "name": "hand, first time: one straight glide from the page body onto the button, then at rest",
+   "expectHotspot": [
+    9,
+    4
+   ],
+   "screenshot": "hand-after-approach.png"
+  },
+  {
+   "op": "jump",
+   "to": [
+    60,
+    510
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    100,
+    520
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    140,
+    505
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    93,
+    516
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "hand, after the worker's four scattered points inside the button (700 ms rests)",
+   "expectHotspot": [
+    9,
+    4
+   ]
+  },
+  {
+   "op": "glide",
+   "to": [
+    1000,
+    420
+   ],
+   "ms": 1100,
+   "hz": 60,
+   "restMs": 500
+  },
+  {
+   "op": "glide",
+   "to": [
+    1100,
+    340
+   ],
+   "ms": 400,
+   "hz": 60,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "name": "text caret over the terminal",
+   "expectHotspot": [
+    4,
+    8
+   ]
+  },
+  {
+   "op": "glide",
+   "to": [
+    300,
+    650
+   ],
+   "ms": 1000,
+   "hz": 60,
+   "restMs": 500
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    520
+   ],
+   "ms": 800,
+   "hz": 60,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "name": "hand again, later in the session",
+   "expectHotspot": [
+    9,
+    4
+   ]
+  }
+ ]
+}

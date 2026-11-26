@@ -1,0 +1,45 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 15.986,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 40,
+  "unknownImages": [],
+  "answersShown": 17,
+  "answersForUnknownImages": 1,
+  "shownWrong": []
+ },
+ "stats": [
+  {
+   "label": "start",
+   "t": 60005,
+   "idleSleeps": 661,
+   "idleYield": true,
+   "idleWakes": 153,
+   "idleSleepMs": 26822.338099999994
+  },
+  {
+   "label": "end",
+   "t": 135873.1,
+   "idleSleeps": 1924,
+   "idleYield": true,
+   "idleWakes": 489,
+   "idleSleepMs": 74926.9635999999
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.14 0.06 0.02 2/117 850\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /pr",
+   "stdout": "0.08 0.06 0.02 1/116 1292\n\n"
+  }
+ ],
+ "readsByPhase": {},
+ "wrongReads": []
+}
+exit=0

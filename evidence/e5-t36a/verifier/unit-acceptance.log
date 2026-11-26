@@ -1,0 +1,31 @@
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.329458ms)
+✔ hotspot coordinates are rendered exactly in the CSS cursor descriptor (1.097625ms)
+✔ 256x256 uses the bounded overlay descriptor and exposes exact allocation limits (10.044042ms)
+✔ odd dimensions, transparency, malformed inputs, and 1,000 updates stay bounded (6.344083ms)
+✔ hidden cursor updates clear the descriptor without retaining an image (0.134708ms)
+✔ source and no-bundler cursor-controller projection stay byte-identical (0.514417ms)
+✔ absolute mode owns CSS and suppresses the overlay; relative mode owns overlay and lock hiding (3.171833ms)
+✔ 500 MOVE_CURSOR callbacks update only the existing overlay transform and never measure layout (1.748167ms)
+✔ replacement, hide/unref, reset, and software-fbcon no-traffic paths leave no stale DOM (10.467916ms)
+✔ invalid mode/move state fails closed without disturbing the copied cursor (0.901125ms)
+✔ 1,000 alternating mode/resource transitions stay bounded and return to a clean host state (7374.036833ms)
+✔ cursor integration route is copied byte-for-byte into the deployable dist (2.394416ms)
+✔ integration route keeps an independent delayed-frame and 500 Hz workload contract (0.521208ms)
+✔ an arrow, a hand and a text caret each resolve to their own hotspot after two moves (0.991792ms)
+✔ a guest several moves behind the pointer still resolves to the true hotspot (0.113583ms)
+✔ a straight sweep alone does not guess (0.132375ms)
+✔ one pixel of guest rounding is tolerated; a second image is independent (0.125042ms)
+✔ plane positions left of the origin arrive wrapped as u32 (0.071417ms)
+✔ positions nothing recent explains are ignored, and forgetting an image starts it over (0.190833ms)
+✔ the number of remembered images is bounded; a forgotten one is inferred again (2.22075ms)
+✔ source and no-bundler cursor-hotspot projection stay byte-identical (0.270459ms)
+✔ a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates (1.230125ms)
+✔ a device that reports a hotspot is never second-guessed (0.168917ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7431.953417

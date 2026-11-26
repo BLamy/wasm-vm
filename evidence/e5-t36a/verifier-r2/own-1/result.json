@@ -1,0 +1,1786 @@
+{
+  "task": "E5-T36a verifier round 2",
+  "instrumented": false,
+  "plan": "plan-r2-own.json",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "V1 arrow in the page body",
+      "t": 40440.2,
+      "settleMs": 1500,
+      "sent": [
+        700,
+        560
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 699,
+        "y": 559
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 46,
+        "moves": 46,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        700,
+        560
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V1 caret, first time, slow diagonal into the terminal — early (450 ms after the stop)",
+      "t": 42549.1,
+      "settleMs": 450,
+      "sent": [
+        950,
+        330
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 946,
+        "y": 322
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 126,
+        "moves": 125,
+        "styleWrites": 9,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        950,
+        330
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V1 caret — late (+1.5 s)",
+      "t": 44103.3,
+      "settleMs": 1500,
+      "sent": [
+        950,
+        330
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 946,
+        "y": 322
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 126,
+        "moves": 125,
+        "styleWrites": 9,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        950,
+        330
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V2 arrow right of the green square",
+      "t": 48486.6,
+      "settleMs": 1500,
+      "sent": [
+        300,
+        516
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 299,
+        "y": 515
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 154,
+        "moves": 153,
+        "styleWrites": 15,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        300,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V2 arrow left of the button after crossing it without stopping — early (450 ms after the stop)",
+      "t": 49595.8,
+      "settleMs": 450,
+      "sent": [
+        8,
+        516
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 7,
+        "y": 515
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 188,
+        "moves": 187,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        8,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V2 arrow left of the button — late (+1.5 s)",
+      "t": 51150,
+      "settleMs": 1500,
+      "sent": [
+        8,
+        516
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 7,
+        "y": 515
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 188,
+        "moves": 187,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        8,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V2 hand, short glide in from the left — early (450 ms after the stop)",
+      "t": 51806.6,
+      "settleMs": 450,
+      "sent": [
+        40,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 31,
+        "y": 512
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 196,
+        "moves": 195,
+        "styleWrites": 19,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        40,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V2 hand — late (+1.5 s)",
+      "t": 53361.6,
+      "settleMs": 1500,
+      "sent": [
+        40,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 31,
+        "y": 512
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 196,
+        "moves": 195,
+        "styleWrites": 19,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        40,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V3 arrow below the button",
+      "t": 57733.5,
+      "settleMs": 1500,
+      "sent": [
+        100,
+        620
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 99,
+        "y": 619
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 227,
+        "moves": 226,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        100,
+        620
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V3 hand, slow vertical approach stopping 3 px inside the edge — early (450 ms after the stop)",
+      "t": 59139.9,
+      "settleMs": 450,
+      "sent": [
+        100,
+        538
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 91,
+        "y": 534
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 272,
+        "moves": 271,
+        "styleWrites": 26,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        100,
+        538
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V3 hand — late (+1.5 s)",
+      "t": 60693.6,
+      "settleMs": 1500,
+      "sent": [
+        100,
+        538
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 91,
+        "y": 534
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 272,
+        "moves": 271,
+        "styleWrites": 26,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        100,
+        538
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V4 arrow",
+      "t": 64967.5,
+      "settleMs": 1500,
+      "sent": [
+        380,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 379,
+        "y": 639
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 295,
+        "moves": 294,
+        "styleWrites": 29,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        380,
+        640
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V4 hand, glide + two nudges 200 ms apart — early (450 ms after the stop)",
+      "t": 66278.6,
+      "settleMs": 450,
+      "sent": [
+        126,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 117,
+        "y": 508
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 323,
+        "moves": 322,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        126,
+        512
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V4 hand — late (+1.5 s)",
+      "t": 67831.5,
+      "settleMs": 1500,
+      "sent": [
+        126,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 117,
+        "y": 508
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 323,
+        "moves": 322,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        126,
+        512
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V5 arrow far from the button",
+      "t": 72019.6,
+      "settleMs": 1500,
+      "sent": [
+        640,
+        330
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 639,
+        "y": 329
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 340,
+        "moves": 339,
+        "styleWrites": 37,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        640,
+        330
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V5 hand, 120 ms flick from 550 px away — early (450 ms after the stop)",
+      "t": 72646.8,
+      "settleMs": 450,
+      "sent": [
+        90,
+        515
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 81,
+        "y": 511
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 349,
+        "moves": 348,
+        "styleWrites": 39,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        90,
+        515
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V5 hand — late (+1.5 s)",
+      "t": 74255,
+      "settleMs": 1500,
+      "sent": [
+        90,
+        515
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 81,
+        "y": 511
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 349,
+        "moves": 348,
+        "styleWrites": 39,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        90,
+        515
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V6 arrow above the button",
+      "t": 78733.4,
+      "settleMs": 1500,
+      "sent": [
+        30,
+        478
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 29,
+        "y": 477
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 392,
+        "moves": 391,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        30,
+        478
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V6 after a 120 Hz zigzag across the top edge, ending inside — early (450 ms after the stop)",
+      "t": 81769.1,
+      "settleMs": 450,
+      "sent": [
+        150,
+        500
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 141,
+        "y": 496
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 539,
+        "moves": 538,
+        "styleWrites": 57,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        150,
+        500
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V6 after the zigzag — late (+1.5 s)",
+      "t": 83321.8,
+      "settleMs": 1500,
+      "sent": [
+        150,
+        500
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 141,
+        "y": 496
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 539,
+        "moves": 538,
+        "styleWrites": 57,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        150,
+        500
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V7 hand after a click at rest",
+      "t": 86705.7,
+      "settleMs": 200,
+      "sent": [
+        150,
+        500
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 141,
+        "y": 496
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 543,
+        "moves": 542,
+        "styleWrites": 57,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        150,
+        500
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V7 hand after a second click",
+      "t": 90027.7,
+      "settleMs": 200,
+      "sent": [
+        150,
+        500
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 141,
+        "y": 496
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 547,
+        "moves": 546,
+        "styleWrites": 57,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "tip": [
+        150,
+        500
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V8 arrow right of the text",
+      "t": 94197.3,
+      "settleMs": 1500,
+      "sent": [
+        620,
+        400
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 619,
+        "y": 399
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 564,
+        "moves": 563,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "tip": [
+        620,
+        400
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V8 over the page text after a slow horizontal approach — early (450 ms after the stop)",
+      "t": 96006,
+      "settleMs": 450,
+      "sent": [
+        60,
+        357
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 56,
+        "y": 349
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 635,
+        "moves": 634,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        60,
+        357
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V8 over the page text — late (+1.5 s)",
+      "t": 97569.8,
+      "settleMs": 1500,
+      "sent": [
+        60,
+        357
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 56,
+        "y": 349
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 635,
+        "moves": 634,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        60,
+        357
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V8 nudged within the text — early (450 ms after the stop)",
+      "t": 98279.4,
+      "settleMs": 450,
+      "sent": [
+        62,
+        340
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 58,
+        "y": 332
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 645,
+        "moves": 644,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        62,
+        340
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "V8 nudged within the text — late (+1.5 s)",
+      "t": 99832.8,
+      "settleMs": 1500,
+      "sent": [
+        62,
+        340
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 58,
+        "y": 332
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 645,
+        "moves": 644,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "tip": [
+        62,
+        340
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    }
+  ],
+  "shell": [
+    {
+      "cmd": "nproc; ls -la /dev/pts/; ps -o pid,user,args 2>/dev/null | grep -E \"foot|sway|chrome|ash\" | grep -v grep | cut -c1-110 | head -20; cat /proc/loadavg",
+      "stdout": "1\ntotal 0\ndrwxr-xr-x    2 root     root             0 Nov 24 02:59 .\ndrwxr-xr-x    9 root     root         12620 Nov 24 02:59 ..\ncrw--w----    1 desktop  tty       136,   0 Nov 24 02:59 0\ncrw-rw-rw-    1 root     root        5,   2 Nov 24 02:59 ptmx\n  254 desktop  sway -c /etc/replay-desktop/sway.conf\n  265 desktop  {replay-chromium} /bin/bash /usr/local/bin/replay-chromium\n  267 desktop  foot --app-id=replay-terminal --title=Replay Node 26 terminal\n  273 desktop  /opt/replay-chromium/chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-\n  282 desktop  /opt/replay-chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=cra\n  284 desktop  /opt/replay-chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptyp\n  288 desktop  /opt/replay-chromium/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=0 --enable\n  289 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --\n  292 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --\n  312 desktop  /opt/replay-chromium/chrome --type=gpu-process --ozone-platform=wayland --crashpad-handler-pid=\n  314 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --la\n  323 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --la\n  346 desktop  /opt/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, \n0.14 0.06 0.02 1/116 825\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "reset",
+      "name": "V1",
+      "t": 36127.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 36127.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        700,
+        560
+      ],
+      "t": 37632.4
+    },
+    {
+      "op": "read",
+      "name": "V1 arrow in the page body",
+      "t": 38936.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        950,
+        330
+      ],
+      "t": 40595.3
+    },
+    {
+      "op": "read",
+      "name": "V1 caret, first time, slow diagonal into the terminal — early (450 ms after the stop)",
+      "t": 42096.3
+    },
+    {
+      "op": "read",
+      "name": "V1 caret — late (+1.5 s)",
+      "t": 42601.9
+    },
+    {
+      "op": "reset",
+      "name": "V2",
+      "t": 44156.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 44157.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        300,
+        516
+      ],
+      "t": 45679
+    },
+    {
+      "op": "read",
+      "name": "V2 arrow right of the green square",
+      "t": 46983.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        8,
+        516
+      ],
+      "t": 48539.9
+    },
+    {
+      "op": "read",
+      "name": "V2 arrow left of the button after crossing it without stopping — early (450 ms after the stop)",
+      "t": 49142.3
+    },
+    {
+      "op": "read",
+      "name": "V2 arrow left of the button — late (+1.5 s)",
+      "t": 49648.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        40,
+        516
+      ],
+      "t": 51202.6
+    },
+    {
+      "op": "read",
+      "name": "V2 hand, short glide in from the left — early (450 ms after the stop)",
+      "t": 51355.1
+    },
+    {
+      "op": "read",
+      "name": "V2 hand — late (+1.5 s)",
+      "t": 51858.9
+    },
+    {
+      "op": "reset",
+      "name": "V3",
+      "t": 53414.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 53415
+    },
+    {
+      "op": "glide",
+      "to": [
+        100,
+        620
+      ],
+      "t": 54927.9
+    },
+    {
+      "op": "read",
+      "name": "V3 arrow below the button",
+      "t": 56231.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        100,
+        538
+      ],
+      "t": 57786.3
+    },
+    {
+      "op": "read",
+      "name": "V3 hand, slow vertical approach stopping 3 px inside the edge — early (450 ms after the stop)",
+      "t": 58686.8
+    },
+    {
+      "op": "read",
+      "name": "V3 hand — late (+1.5 s)",
+      "t": 59191.9
+    },
+    {
+      "op": "reset",
+      "name": "V4",
+      "t": 60745.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 60746.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        380,
+        640
+      ],
+      "t": 62261.2
+    },
+    {
+      "op": "read",
+      "name": "V4 arrow",
+      "t": 63464.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        120,
+        510
+      ],
+      "t": 65019.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        123,
+        511
+      ],
+      "t": 65624
+    },
+    {
+      "op": "jump",
+      "to": [
+        126,
+        512
+      ],
+      "t": 65826
+    },
+    {
+      "op": "read",
+      "name": "V4 hand, glide + two nudges 200 ms apart — early (450 ms after the stop)",
+      "t": 65827
+    },
+    {
+      "op": "read",
+      "name": "V4 hand — late (+1.5 s)",
+      "t": 66330.7
+    },
+    {
+      "op": "reset",
+      "name": "V5",
+      "t": 67892.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        600,
+        300
+      ],
+      "t": 67893.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        640,
+        330
+      ],
+      "t": 69412.1
+    },
+    {
+      "op": "read",
+      "name": "V5 arrow far from the button",
+      "t": 70516.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        90,
+        515
+      ],
+      "t": 72076.1
+    },
+    {
+      "op": "read",
+      "name": "V5 hand, 120 ms flick from 550 px away — early (450 ms after the stop)",
+      "t": 72193.1
+    },
+    {
+      "op": "read",
+      "name": "V5 hand — late (+1.5 s)",
+      "t": 72751.5
+    },
+    {
+      "op": "reset",
+      "name": "V6",
+      "t": 74307.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        700
+      ],
+      "t": 74307.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        30,
+        478
+      ],
+      "t": 75825
+    },
+    {
+      "op": "read",
+      "name": "V6 arrow above the button",
+      "t": 77229.4
+    },
+    {
+      "op": "path",
+      "t": 78786.3
+    },
+    {
+      "op": "read",
+      "name": "V6 after a 120 Hz zigzag across the top edge, ending inside — early (450 ms after the stop)",
+      "t": 81317.7
+    },
+    {
+      "op": "read",
+      "name": "V6 after the zigzag — late (+1.5 s)",
+      "t": 81820.6
+    },
+    {
+      "op": "click",
+      "name": "V7 click on Run again, pointer at rest",
+      "t": 83437
+    },
+    {
+      "op": "read",
+      "name": "V7 hand after a click at rest",
+      "t": 86503.8
+    },
+    {
+      "op": "click",
+      "name": "V7 second click",
+      "t": 86759.4
+    },
+    {
+      "op": "read",
+      "name": "V7 hand after a second click",
+      "t": 89826
+    },
+    {
+      "op": "reset",
+      "name": "V8",
+      "t": 90083.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        600,
+        380
+      ],
+      "t": 90084
+    },
+    {
+      "op": "glide",
+      "to": [
+        620,
+        400
+      ],
+      "t": 91590.4
+    },
+    {
+      "op": "read",
+      "name": "V8 arrow right of the text",
+      "t": 92694.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        60,
+        357
+      ],
+      "t": 94251.4
+    },
+    {
+      "op": "read",
+      "name": "V8 over the page text after a slow horizontal approach — early (450 ms after the stop)",
+      "t": 95552.3
+    },
+    {
+      "op": "read",
+      "name": "V8 over the page text — late (+1.5 s)",
+      "t": 96066.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        62,
+        340
+      ],
+      "t": 97623.6
+    },
+    {
+      "op": "read",
+      "name": "V8 nudged within the text — early (450 ms after the stop)",
+      "t": 97825.7
+    },
+    {
+      "op": "read",
+      "name": "V8 nudged within the text — late (+1.5 s)",
+      "t": 98331.9
+    },
+    {
+      "op": "sh",
+      "t": 99887.2
+    }
+  ],
+  "sessionRestartSeconds": 16.086,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 593,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 56,
+    "unknownImages": [],
+    "answersShown": 34,
+    "shownWrong": []
+  },
+  "errors": [],
+  "ran": true
+}

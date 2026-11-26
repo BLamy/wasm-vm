@@ -1,0 +1,164 @@
+{
+  "task": "E5-T36a verifier",
+  "instrumented": false,
+  "plan": "plan-worker-equivalent.json",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "arrow over the page body",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        450,
+        730
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 449,
+        "y": 729
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 23,
+        "moves": 23,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "tip": [
+        450,
+        730
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "hand over the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        93,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 512
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 29,
+        "moves": 29,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "tip": [
+        93,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "text caret over the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        1000,
+        420
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 996,
+        "y": 412
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 35,
+        "moves": 35,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "tip": [
+        1000,
+        420
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    }
+  ],
+  "sessionRestartSeconds": 38.394,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 14,
+  "cursorDiagnostics": [],
+  "coverageScripts": [
+    "http://127.0.0.1:8125/main.js",
+    "http://127.0.0.1:8125/src/sink/cursor-controller.js",
+    "http://127.0.0.1:8125/src/sink/cursor-hotspot.js"
+  ],
+  "errors": [],
+  "ran": true
+}

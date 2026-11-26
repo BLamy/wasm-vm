@@ -858,6 +858,13 @@ const cursorController = new CursorController({
     cursorDiagnostics.push(entry);
     if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
   },
+  // E5-T36a: the guest's idle waits so far, asked through the same ordered channel the pointer
+  // events take, so the answer is from after everything sent before the question. Only a
+  // paced guest reports idle waits; without them the controller is told there is no counter.
+  guestIdleCount: async () => {
+    const stats = await linuxCtl?.schedulerStats?.() ?? null;
+    return stats?.idleYield === true && Number.isFinite(stats.idleSleeps) ? stats.idleSleeps : null;
+  },
 });
 const pointerControllerProxy = {
   sendTabletEvent: (...args) => linuxCtl?.sendTabletEvent?.(...args),
@@ -907,6 +914,16 @@ const pointerBridge = createPointerBridge(createWasmPointerAdapter(pointerContro
   onFrame: (frame) => {
     pointerFrames.push(frame);
     if (pointerFrames.length > 512) pointerFrames.shift();
+    // E5-T36a: the guest-space position just sent (only absolute frames carry coordinates), for
+    // inferring the hotspot of a cursor image the device did not describe. The absolute axes
+    // span the guest output; the controller starts inference over when that output changes size.
+    const sent = frame?.coordinates;
+    const guest = presentation?.snapshot?.();
+    if (sent && guest?.width > 0 && guest?.height > 0) {
+      cursorController.notePointer(
+        Math.floor((sent.x * guest.width) / 32768), Math.floor((sent.y * guest.height) / 32768),
+        guest.width, guest.height);
+    }
     updatePointerIndicator();
   },
   onStateChange: updatePointerIndicator,
@@ -940,6 +957,9 @@ try {
     handle: (event) => cursorController.handle(event),
     diagnostics: () => [...cursorDiagnostics],
     reset: () => cursorController.reset(),
+    // Forget the hotspots inferred so far (E5-T36a's browser proof: several "first time"
+    // approaches). The positions sent are kept.
+    resetHotspotInference: () => cursorController.resetHotspotInference(),
   };
 } catch { /* page-only diagnostics */ }
 updatePointerIndicator();

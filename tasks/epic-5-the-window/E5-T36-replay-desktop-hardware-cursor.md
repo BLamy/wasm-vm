@@ -3,7 +3,7 @@ id: E5-T36
 epic: 5
 title: Hardware cursor plane on the Replay desktop — pointer drawn by the host, instantly (planning parent)
 priority: 0.38765
-status: pending
+status: cancelled
 depends_on: [E5-T34g]
 estimate: M
 risk: medium
@@ -68,3 +68,16 @@ Probed live on 2026-11-24 (session restarted inside the running desktop, sway de
    without guest recomposition; the E5-T34c/E5-T34e proofs still pass.
 
 ## Verification log
+
+### 2026-11-26 — split
+
+Planning parent, split per AGENTS.md into E5-T36a (host: infer the hotspot of a cursor image
+the device did not describe), E5-T36b (guest image source: the session on legacy KMS with a
+hardware cursor) and E5-T36c (browser proof on the published image). The monitor loop of
+slice 2 moved to E5-T41a, and the image publication to E5-T41b, which publishes the next image
+generation for both this task and the Node startup snapshot. The Docker VM blocker recorded
+above is gone (restarted by its owner on 2026-11-25). Prototyped end to end on a scratch
+branch on 2026-11-26: the guest frame carries no painted pointer and the canvas cursor is the
+guest's image with inferred hotspots (1,1) arrow, (9,4) hand, (4,8) text caret, its tip within
+one pixel of the position the page sent.
+

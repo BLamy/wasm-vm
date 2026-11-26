@@ -1,0 +1,50 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.158,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 98,
+  "unknownImages": [],
+  "answersShown": 49,
+  "answersForUnknownImages": 0,
+  "shownWrong": []
+ },
+ "stats": [
+  {
+   "label": "bursts a",
+   "t": 62671.5,
+   "idleSleeps": 654,
+   "idleYield": true,
+   "idleWakes": 152,
+   "idleSleepMs": 26812.239
+  },
+  {
+   "label": "bursts b (3 s later)",
+   "t": 65674,
+   "idleSleeps": 691,
+   "idleYield": true,
+   "idleWakes": 157,
+   "idleSleepMs": 27953.1026
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.26 0.07 0.02 1/117 598\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.29 0.14 0.05 1/117 3168\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "short-bursts": {
+   "none": 1,
+   "ok": 143,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}

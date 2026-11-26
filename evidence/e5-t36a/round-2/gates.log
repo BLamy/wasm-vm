@@ -1,0 +1,51 @@
+head c989491f5b6a0a1d88a48055b1de63e53b687593; web changes outside the commit: 0
+$ cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.190625ms)
+✔ hotspot coordinates are rendered exactly in the CSS cursor descriptor (1.101084ms)
+✔ 256x256 uses the bounded overlay descriptor and exposes exact allocation limits (10.674541ms)
+✔ odd dimensions, transparency, malformed inputs, and 1,000 updates stay bounded (6.323625ms)
+✔ hidden cursor updates clear the descriptor without retaining an image (0.13225ms)
+✔ source and no-bundler cursor-controller projection stay byte-identical (0.525583ms)
+✔ absolute mode owns CSS and suppresses the overlay; relative mode owns overlay and lock hiding (3.138125ms)
+✔ 500 MOVE_CURSOR callbacks update only the existing overlay transform and never measure layout (2.270166ms)
+✔ replacement, hide/unref, reset, and software-fbcon no-traffic paths leave no stale DOM (11.698333ms)
+✔ invalid mode/move state fails closed without disturbing the copied cursor (1.098958ms)
+✔ 1,000 alternating mode/resource transitions stay bounded and return to a clean host state (7319.612917ms)
+✔ cursor integration route is copied byte-for-byte into the deployable dist (2.343ms)
+✔ integration route keeps an independent delayed-frame and 500 Hz workload contract (0.455292ms)
+✔ an arrow, a hand and a text caret each resolve to their own hotspot after two moves (0.9785ms)
+✔ the edges of what counts: one place twice, offsets outside the image, offsets three pixels apart (0.12225ms)
+✔ a guest several moves behind the pointer still resolves to the true hotspot (0.084375ms)
+✔ a straight sweep alone does not guess; the pointer at rest settles it (0.515667ms)
+✔ a rest answer needs a move of this image since it was installed, and never overrides evidence (0.224834ms)
+✔ a rest answer read off a plane that was still on its way is dropped by the plane's next move (0.094542ms)
+✔ an answer the guest contradicts three moves in a row is dropped and inferred again (0.151958ms)
+✔ one pixel of guest rounding is tolerated; a second image is independent (0.101125ms)
+✔ plane positions left of the origin arrive wrapped as u32 (0.066041ms)
+✔ positions nothing recent explains are ignored; reset forgets positions and images (0.163708ms)
+✔ the number of remembered images is bounded; a forgotten one is inferred again (1.089917ms)
+✔ source and no-bundler projections of both sink files stay byte-identical (0.383208ms)
+✔ the update that installs an image is not evidence for it: its position belongs to the image before (1.728084ms)
+✔ a recorded glide onto the button (Replay desktop, legacy KMS) ends with the hand's true hotspot (14.455ms)
+✔ random approaches across an image change, in the device's order: never a wrong hotspot, right at rest (105.796375ms)
+✔ a hotspot-less CSS cursor gets its inferred hotspot with one style write and keeps it (0.310125ms)
+✔ a device that reports a hotspot is never second-guessed (0.389083ms)
+✔ the pointer at rest settles the hotspot after a straight approach; sends and cursor events restart the wait (0.780541ms)
+✔ relative mode is not evidence, and changing mode starts inference over (0.379666ms)
+✔ a change of guest output size starts inference over (0.134792ms)
+✔ a contradicted hotspot is taken back from the page, and a guest reset forgets everything (0.280417ms)
+✔ estimator failures become diagnostics, never a broken cursor (0.238583ms)
+ℹ tests 35
+ℹ pass 35
+ℹ fail 0
+$ cmp of the shipped copies with their sources
+web/dist/src/sink/cursor-hotspot.js == web/src/sink/cursor-hotspot.js
+web/dist/src/sink/cursor-controller.js == web/src/sink/cursor-controller.js
+$ cd web && node --test --test-timeout=120000 tests/*.test.mjs   (names of failing tests, against the list before the pacing and cursor tasks)
+ℹ tests 643
+ℹ pass 615
+ℹ fail 28
+failing now: 29 lines; failing before: 29 lines (each list has one header line)
+difference (< only before, > only now):
+diff rc=0
+GATES_DONE

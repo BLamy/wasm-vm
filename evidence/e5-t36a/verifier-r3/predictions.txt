@@ -1,0 +1,137 @@
+E5-T36a — verifier, round 3 — predictions
+Written 2026-11-26 07:45-08:05 EST, after reading AGENTS.md, the task file, the diff
+b2cdf9f13..e902fffb9 (web/src/sink/cursor-{controller,hotspot}.js, web/main.js, web/loader.js,
+the test file's rig, the proof script), web/idle-sleep.js, web/linux-worker-protocol.js,
+web/src/input/pointer.js, crates/core paced_wait_holds / boundary_sync / run entry, and round 1's
+and round 2's verifier scripts. BEFORE running any test, script or browser, and before opening
+evidence/e5-t36a/{gates.log,browser/,mutants.log,browser-unchanged.json}.
+
+P0 ORIENT
+  P0a gates.log's first line names 09e327eeb (or e902fffb9's parent); 09e327eeb..HEAD touches no
+      source under web/ or tools/ other than generated files.
+  P0b web/dist/src/sink/cursor-{controller,hotspot}.js are byte-identical to web/src/sink/*.js;
+      web/dist/main.js and web/dist/loader.js differ from web/main.js and web/loader.js only by
+      the deploy-path rewrite (no line that mentions cursor, hotspot, idle or scheduler differs).
+  P0c evidence/e5-t36a/browser/result.json is newer than commit 9861abce7 (07:25:51 EST) and its
+      sha256 starts 56c61729e493; the server on 8125 serves files that hash as web/dist at HEAD.
+
+P1 UNIT
+  The four cursor test files: 39 tests, 39 pass, 0 fail.
+
+P2 ROUND 2'S REFUTING SEQUENCES, through the new CursorController, with an idle counter that
+   moves only while the guest has nothing outstanding (my rig: a number of outstanding positions
+   I set by hand at each step; a count read with outstanding > 0 returns the old value).
+   24x24 images, arrow (1,1), hand (9,4). Sent 300,290,...,250 at t=0,16,...,80 (y=200), the guest
+   one position behind, the hand appearing at t=64 (round 2's `base()`).
+  P2-MAIN (guest reports (250,200) at t=96): hand none until the rest question is answered;
+      the question goes out at t=246 (96+150), is answered at the first poll (t=286): (9,4).
+      Never anything else.
+  P2-E1 (guest silent from t=80 to t=500, nothing more sent): the question of t=230 gets no
+      answer while the guest is behind (polls 270..470 read the same count). Guest reports at
+      t=500; hand (9,4) at the next poll of the pending question (t=510), at the latest t=690.
+      Never (0,4) / (-1,4) / (19,4).
+  P2-E2 (the refuting one: S(240,200) at t=450, guest reports (250) at t=500, (240) at t=516):
+      hand none at t=381 (round 2 observed (0,4) there), none through t=516; the question that
+      started at t=230 is void (a position was sent since); hand (9,4) between t=640 and t=710
+      (question of t=600 or of t=666). (9,4) after 9 s, after 20 more positions along the line
+      with the guest one behind, and after the jumps. Never a hotspot other than none or (9,4).
+  P2-§4 (round 2's attacks-r2.mjs §4: inference started over while the guest is one position
+      behind on an even 10 px run; three ways — output 800 -> 801 rows, relative mode and back,
+      resetHotspotInference()): no answer for the hand while the run lasts (hotspotSettling stays
+      true as long as the guest has something outstanding), none wrong after. After the guest has
+      caught up and the pointer rests: STILL none (nothing is known about an image until it moves
+      again, and no rest wait finds anything) — an answer needs one more sent position and move.
+      Round 2 observed (0,4) from the second move after the restart; I predict that is gone.
+
+P3 MY OWN HAND-WORKED SEQUENCE — I predict this one FAILS (a wrong hotspot, kept at rest).
+   The restart forgets every sent position, including the one the plane is standing for. The
+   guest is NOT behind at the restart (so settling ends at once), but a commit that does not move
+   the plane re-reports the plane's place (the device reports UPDATE and MOVE on every commit;
+   round 1 log: U 137,497 / M 137,497 61 ms after the move there), and after the restart the
+   image has no remembered `last`, so that re-report is taken as a fresh move — against a history
+   that holds only positions sent AFTER the restart.
+   64x64 images, hand (9,4), nothing settled. Device order, honest idle counter.
+     t=0     S(300,400); guest acts: U(hand@0,0) M(hand,291,396). Rest. (hand becomes (9,4) by rest.)
+     t=1000  resetHotspotInference()  [pointer at rest, guest idle, outstanding = 0]
+             -> hotspotSettling true, then false within ~45 ms (first poll). hand: none.
+     t=2000  S(306,400)   [the user starts an even run to the right, 6 px a step]
+     t=2005  the guest commits a frame for another reason before it has read (306,400):
+             U(hand@291,396) M(hand,291,396).   candidates {306-291, 400-396} = {(15,4)}; none.
+     t=2016  S(312,400)
+     t=2020  guest reports (306,400): U(hand@291,396) M(hand,297,396).
+             candidates of this move {(9,4),(15,4)}; kept {(15,4)}; two moves -> hand (15,4). WRONG.
+     t=2032  S(318,400); t=2036 guest reports (312,400): M(hand,303,396). (15,4) explained by 318.
+     ... the run goes on, guest one behind: (15,4) stays.
+     end     guest reports the last position: one miss (nothing sent explains (15,4)); (15,4) stays.
+     rest 5 s: hand (15,4), css "... 15 4", no rest wait armed. Kept until three moves in a row
+             contradict it (so: through the next two moves of an idle guest).
+   Variants I predict the same way: the restart by relative mode and back at rest (same numbers);
+   NOT by an output-size change (that restart happens on the first sent position itself, the
+   question is asked after it, so the guest has acted on it before moves count: predict right).
+   Variant B (no even run needed): after the same stale re-report, the image flips to the arrow
+   and back at the same place (noteInstall clears `last`, the same place counts as a second
+   move): hand (15,4) from that second report; one miss when the guest then reports (306,400).
+   If P3 holds at unit level I will try it in a browser (the proof script's hook at rest under
+   intermittent terminal output, then an even run from the rest position) and predict: produced
+   in at least one of the trials, hotspot = truth + step. If the browser never shows it I will
+   say so.
+
+P4 THE PREMISE ("the idle count moved on after the question" => "the guest has acted on every
+   position sent before the question and its plane is where it will stay"), in the real system.
+   Reading: pointer events and the stats call share one FIFO (worker `chain`); cursor frames and
+   RPC results share the worker->page endpoint in the order produced; every run entry forces a
+   full device sync, so a delivered tablet frame is in the guest before a wfi can be reported;
+   an input frame the guest has no buffer for keeps the device "with work"; the device drops
+   OLDEST frames on overflow. From tablet IRQ to drmModeMoveCursor nothing I know of waits on a
+   timer (libinput abs motion -> sway -> output frame -> legacy commit; virtio-gpu sends the
+   flip event at once). So I predict: 0 conclusions "caught up" after which a cursor MOVE arrives
+   for a position sent before the question — idle, under terminal flood, with intermittent
+   output, with CPU loops and on the slowed host. I expect FEW conclusions under continuous load
+   (flood + CPU loops: none, the guest is never idle) and many with intermittent load.
+   What I do expect to see after a conclusion: a cursor UPDATE that installs a different image
+   followed by its move (Chrome's cursor change 55-240 ms later) — the stated limit 2, not a
+   violation; and re-reports of an unchanged plane position.
+   Also predicted: under terminal output, MOVEs that re-report an unchanged plane position after
+   a newer position was sent are common (the precondition of P3).
+
+P5 BROWSER
+  P5a the worker's command passes for me: 18 reads, each hotspot (1,1)/(9,4)/(4,8), tip error 0
+      or within 1; timeline: no answer further than a pixel from the truth.
+  P5b the 20-idle-seconds wait hides: (i) that in the first 5-20 s after the session is up there
+      are no rest answers (stated limit 1), nothing else. I predict a run WITHOUT that wait shows
+      "none" at first-time straight approaches and never a wrong answer.
+  P5c my own continuous approaches under guest load, sampled every 8 ms: every shown answer
+      within a pixel of the truth; under continuous load most first-time straight approaches
+      show NO answer at rest (limit 1) — far fewer answers than round 2's 339 of 342.
+
+P6 UNIT ATTACKS (real controller, honest counter)
+  a. restart while a rest question is in flight: the question's answer is discarded (epoch).
+  b. two images alternating at rest (no restart): never wrong; may resolve an image from one
+     place reported twice across a re-install — right when the history holds the truth.
+  c. an image that changes at rest after the guest was asked: the old question is void (key).
+  d. settled hotspots kept across mode/size change: still right after.
+  e. contradiction rule: with the guest > 512 positions behind in a small area a right answer
+     is dropped and a wrong one may be SHOWN while behind (round 2 saw this at 128); I predict
+     the wrong one is gone once the guest has caught up and rested in >= 95 % of runs, and will
+     report the remainder as it is.
+  f. no counter: no rest answers; after a restart moves count after exactly 1000 ms; a guest
+     more than 1 s behind then gives a wrong answer (stated limit 4, wording "trusts moves").
+  g. a count that goes DOWN or is NaN/Infinity/string: no answer, no throw, no tight loop.
+
+P7 MUTANTS: the worker's 61 reproduce (60 killed). Of five or more of my own on the asynchronous
+   code I predict at least one survivor that is behaviour: dropping the `key !== this._imageKey`
+   check in _restHotspot, or the `epoch` checks after `await count()`.
+
+P8 COVERAGE: unit tests execute every changed line of the two sink files except default-timer
+   arrows and diagnostics; web/main.js's guestIdleCount and loader.js's idleYield only in the
+   browser. e5-t37b tests still pass with the extra stats field.
+
+ADDENDUM (written 08:05 EST, after stale-1 — P3's 10-step runs in a browser — and BEFORE the
+short-run plan was generated or run): stale-1 showed the predicted wrong hotspot (truth + step)
+in 4 of 32 trials under guest load, each taken back within 40-48 ms because the guest then kept
+up (three moves in a row the wrong answer could not explain) and the runs were 10 positions long.
+P3-short: with runs of only 2-4 positions (a small nudge) there are fewer than three
+contradicting moves before the pointer rests, so I predict: in plan-r3-stale-short.json (48
+trials under terminal output in bursts, even runs of 2, 3 or 4 positions from the rest position
+after resetHotspotInference()) at least one trial ends with a WRONG arrow hotspot (truth + step)
+still shown at the late read (1.5 s at rest) and at the 4 s read.

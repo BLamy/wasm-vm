@@ -1,0 +1,70 @@
+MAIN — the guest catches up before the rest wait
+  t=   0  S(300,200)                                                 shown=- inferred=null css=null
+  t=  16  S(290,200) U(arrow@500,500) M(arrow,299,199)               shown=arrow inferred=null css=[0,0]
+  t=  32  S(280,200) U(arrow@299,199) M(arrow,289,199)               shown=arrow inferred=[1,1] css=[1,1]
+  t=  48  S(270,200) U(arrow@289,199) M(arrow,279,199)               shown=arrow inferred=[1,1] css=[1,1]
+  t=  64  S(260,200) U(hand@279,199)                                 shown=hand inferred=null css=[0,0]
+  t=  64  M(hand,261,196)                                            shown=hand inferred=null css=[0,0]
+  t=  80  S(250,200) U(hand@261,196) M(hand,251,196)                 shown=hand inferred=null css=[0,0]
+  t=  96  U(hand@251,196) M(hand,241,196)                            shown=hand inferred=null css=[0,0]
+  t= 396  rest timer fired                                           shown=hand inferred=[9,4] css=[9,4]
+  t=1000  (pointer at rest)                                          shown=hand inferred=[9,4] css=[9,4]
+  => hand [9,4] (true (9,4))
+
+E1 — the rest wait fires while the guest is one position behind; nothing more sent
+  t=   0  S(300,200)                                                 shown=- inferred=null css=null
+  t=  16  S(290,200) U(arrow@500,500) M(arrow,299,199)               shown=arrow inferred=null css=[0,0]
+  t=  32  S(280,200) U(arrow@299,199) M(arrow,289,199)               shown=arrow inferred=[1,1] css=[1,1]
+  t=  48  S(270,200) U(arrow@289,199) M(arrow,279,199)               shown=arrow inferred=[1,1] css=[1,1]
+  t=  64  S(260,200) U(hand@279,199)                                 shown=hand inferred=null css=[0,0]
+  t=  64  M(hand,261,196)                                            shown=hand inferred=null css=[0,0]
+  t=  80  S(250,200) U(hand@261,196) M(hand,251,196)                 shown=hand inferred=null css=[0,0]
+  t= 379  (guest silent since t=80)                                  shown=hand inferred=null css=[0,0]
+  t= 380  rest timer fired                                           shown=hand inferred=[0,4] css=[0,4]
+  t= 381  (after the rest wait)                                      shown=hand inferred=[0,4] css=[0,4]
+  t= 500  U(hand@251,196) M(hand,241,196)  [guest catches up]        shown=hand inferred=null css=[0,0]
+  t= 800  rest timer fired                                           shown=hand inferred=[9,4] css=[9,4]
+  t=2000  (pointer at rest)                                          shown=hand inferred=[9,4] css=[9,4]
+  => hand [9,4] (true (9,4))
+
+E2 — the same, but one more position is sent before the guest catches up
+  t=   0  S(300,200)                                                 shown=- inferred=null css=null
+  t=  16  S(290,200) U(arrow@500,500) M(arrow,299,199)               shown=arrow inferred=null css=[0,0]
+  t=  32  S(280,200) U(arrow@299,199) M(arrow,289,199)               shown=arrow inferred=[1,1] css=[1,1]
+  t=  48  S(270,200) U(arrow@289,199) M(arrow,279,199)               shown=arrow inferred=[1,1] css=[1,1]
+  t=  64  S(260,200) U(hand@279,199)                                 shown=hand inferred=null css=[0,0]
+  t=  64  M(hand,261,196)                                            shown=hand inferred=null css=[0,0]
+  t=  80  S(250,200) U(hand@261,196) M(hand,251,196)                 shown=hand inferred=null css=[0,0]
+  t= 380  rest timer fired                                           shown=hand inferred=[0,4] css=[0,4]
+  t= 381  (after the rest wait)                                      shown=hand inferred=[0,4] css=[0,4]
+  t= 450  S(240,200)  [the user nudges on along the line]            shown=hand inferred=[0,4] css=[0,4]
+  t= 500  U(hand@251,196) M(hand,241,196)  [guest reports (250,200)] shown=hand inferred=[0,4] css=[0,4]
+  t= 516  U(hand@241,196) M(hand,231,196)  [guest reports (240,200)] shown=hand inferred=[0,4] css=[0,4]
+  t= 600  U(hand@231,196) M(hand,231,196)  [same image, same place]  shown=hand inferred=[0,4] css=[0,4]
+  t=10000  (pointer at rest for 9 s)                                  shown=hand inferred=[0,4] css=[0,4]
+  => hand [0,4] at rest, css [0,4] (true (9,4)); rest timers armed: 0
+  after 20 more positions along the same line and 5 s of rest: hand [0,4], css [0,4]
+  jump to (400,400): hand [0,4]
+  jump to (520,330): hand null
+  jump to (610,470): hand [9,4]
+  jump to (700,380): hand [9,4]
+  at rest: hand [9,4]
+
+E3 — 64x64 caret, decelerating approach to the right, guest stalls two positions behind, one nudge
+  t=  300  rest wait fired                                                  shown=arrow inferred=[1,1] css=[1,1]
+  t=  400  arrow known                                                      shown=arrow inferred=[1,1] css=[1,1]
+  t= 1032  S(785,300); guest reports (760,300)                              shown=arrow inferred=[1,1] css=[1,1]
+  t= 1048  S(806,300); guest reports (785,300)                              shown=arrow inferred=[1,1] css=[1,1]
+  t= 1064  S(822,300); guest reports (806,300)                              shown=arrow inferred=[1,1] css=[1,1]
+  t= 1080  S(834,300); guest reports (822,300)                              shown=caret inferred=null css=[0,0]
+  t= 1096  S(842,300); guest reports (834,300)                              shown=caret inferred=[4,8] css=[4,8]
+  t= 1112  S(847,300); guest silent                                         shown=caret inferred=[4,8] css=[4,8]
+  t= 1128  S(850,300); guest silent                                         shown=caret inferred=[4,8] css=[4,8]
+  t= 1427  299 ms after the last sent position                              shown=caret inferred=[4,8] css=[4,8]
+  t= 1429  (rest: plane stands for (834,300), last sent (850,300))          shown=caret inferred=[4,8] css=[4,8]
+  t= 1508  S(852,301): a 2 px nudge while the guest is still silent         shown=caret inferred=[4,8] css=[4,8]
+  t= 1578  guest resumes: one commit at its latest position (852,301)       shown=caret inferred=[4,8] css=[4,8]
+  t= 1578  (the same commit, exact plane (848,293))                         shown=caret inferred=[4,8] css=[4,8]
+  t= 6128  pointer at rest 4.5 s                                            shown=caret inferred=[4,8] css=[4,8]
+  => caret [4,8] at rest (true (4,8)); rest waits armed: 0
+

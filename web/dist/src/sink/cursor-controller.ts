@@ -5,7 +5,19 @@
 // calls a layout API or touches the PNG/data URL; it only updates the current position and, when
 // needed, the overlay's transform.
 
-import { CursorSink } from "./cursor.js";
+import { CursorSink, cssCursorDescriptor } from "./cursor.js";
+import { CursorHotspotEstimator } from "./cursor-hotspot.js";
+
+// E5-T36a hotspot inference timing (see cursor-hotspot.js).
+// Quiet on the page — no position sent, no cursor event — before the guest is asked whether it
+// has caught up. Quiet alone proves nothing: a busy guest leaves the plane behind for longer.
+export const HOTSPOT_REST_MS = 150;
+// "Caught up" is the guest having been idle after everything sent so far was delivered. It is
+// read off a counter of the guest's idle waits (the paced clock's): polled this often, for at
+// most this long a question. Without that counter (no paced clock) the page is never told, and
+// infers nothing; it looks for a counter again after the same time.
+export const HOTSPOT_POLL_MS = 40;
+export const HOTSPOT_CAUGHT_UP_TIMEOUT_MS = 2000;
 
 export const CURSOR_MODES = Object.freeze({
   ABSOLUTE: "absolute",
@@ -91,6 +103,13 @@ export class CursorController {
     positionScaleY = 1,
     onDiagnostic = () => {},
     onStateChange = () => {},
+    hotspotEstimator = new CursorHotspotEstimator(),
+    hotspotRestMs = HOTSPOT_REST_MS,
+    // async () => number | null: how many idle waits the guest has taken so far, read AFTER
+    // everything sent before the call was delivered to it; null when that is not known.
+    guestIdleCount = null,
+    setTimer = (fn, ms) => globalThis.setTimeout(fn, ms),
+    clearTimer = (handle) => globalThis.clearTimeout(handle),
   } = {}) {
     if (target !== null && (typeof target !== "object" || !target.style)) {
       throw new TypeError("cursor target must expose a style object");
@@ -108,6 +127,40 @@ export class CursorController {
     this._onDiagnostic = onDiagnostic;
     this._onStateChange = onStateChange;
     this._sink = new CursorSink({ cssMaxDimension });
+    // E5-T36: a device that reports no hotspot (legacy KMS places the plane at pointer minus
+    // hotspot instead) gets it inferred for the CSS cursor, which the browser draws at the
+    // real pointer. `_imageKey` names the image being inferred for (null when there is nothing
+    // to infer); `_cssHot` is its inferred hotspot, or null while it is not known.
+    if (!(hotspotRestMs > 0)) throw new RangeError("cursor hotspotRestMs must be positive");
+    if (guestIdleCount !== null && typeof guestIdleCount !== "function") throw new TypeError("cursor guestIdleCount must be a function");
+    this._hotspots = hotspotEstimator;
+    this._hotspotRestMs = hotspotRestMs;
+    this._guestIdleCount = guestIdleCount;
+    this._setTimer = setTimer;
+    this._clearTimer = clearTimer;
+    this._restTimer = null;
+    // Waits of the asynchronous parts of inference, so that a reset can end them at once.
+    this._waits = new Set();
+    // Bumped whenever inference starts over; an asynchronous step of an older epoch gives up.
+    this._hotspotEpoch = 0;
+    // True while the page does not know that the guest's pointer stands on a position it
+    // remembers sending: from the start, after a guest reset, after the pointer mode or the
+    // output size changed, and when a cursor appears where none was shown (the positions sent
+    // before are forgotten then). A cursor move reported in that state may stand for a
+    // position the page does not have — the device reports the plane's place on every commit,
+    // also where it already stood — so it is not evidence. It ends when the guest has been
+    // idle after a position sent since that it acts on (see `notePointer`): its pointer is
+    // then on that position or a later one, and stays on remembered ones.
+    this._hotspotSettling = true;
+    // The epoch whose settling question is being asked (one loop of questions per epoch).
+    this._settleEpoch = -1;
+    this._imageKey = null;
+    this._cssHot = null;
+    // The guest output size the sent pointer positions were last computed for.
+    this._pointerOutput = null;
+    // The last absolute position sent and the output size it was computed for: what the
+    // guest's tablet device holds, whatever has moved the guest's pointer since.
+    this._lastPointer = null;
     this._descriptor = null;
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
@@ -277,7 +330,9 @@ export class CursorController {
 
     if (this._mode === CURSOR_MODES.ABSOLUTE && descriptor.kind === "css") {
       this._removeOverlay();
-      this._setHostCursor(descriptor.css);
+      this._setHostCursor(this._cssHot
+        ? cssCursorDescriptor(descriptor.dataUrl, this._cssHot.x, this._cssHot.y, descriptor.width, descriptor.height)
+        : descriptor.css);
       return;
     }
 
@@ -313,9 +368,16 @@ export class CursorController {
         event?.resourceHeight,
         event?.pixels ?? [],
       );
+      const wasShown = this._descriptor !== null && this._descriptor.kind !== "hidden";
       this._state = state;
       this._descriptor = descriptor;
       this._updates += 1;
+      // A cursor appears where none was shown. A compositor that has just started puts its
+      // pointer where it likes and has read nothing of what the tablet was sent; and while a
+      // client hid the cursor the page saw nothing of where the pointer went. Either way the
+      // page no longer knows where the guest's pointer stands.
+      if (!wasShown && descriptor.kind !== "hidden") this._restartHotspotInference();
+      this._trackHotspot(state, descriptor);
       this._applySafely("cursor-update-dom-error");
       this._notify("cursor-update");
       return this.snapshot("cursor-update");
@@ -336,6 +398,7 @@ export class CursorController {
       if (state.resourceId === 0) {
         this._state = state;
         this._descriptor = null;
+        this._trackHotspot(state, null); // no image: nothing to infer for or to wait for
         this._removeOverlay();
         this._restoreHostCursor();
         this._moves += 1;
@@ -356,11 +419,252 @@ export class CursorController {
       this._moves += 1;
       // This is the only DOM operation on the high-frequency move path.
       this._applyPositionOnly();
+      // A move is the one cursor event whose position was computed with this image's hotspot:
+      // evidence, while the guest's pointer is known to stand on a remembered position.
+      // (A style write follows only when the answer changes: once per image, normally.)
+      if (!this._hotspotSettling) {
+        this._inferHotspot(() => this._hotspots.noteMove(
+          this._imageKey, this._descriptor.width, this._descriptor.height, state.x, state.y));
+      }
       return this.snapshot("cursor-move");
     } catch (error) {
       this._diagnostic("cursor-move-rejected", error);
       return false;
     }
+  }
+
+  /**
+   * A guest-space pointer position the page has just sent to the guest (E5-T36), and the guest
+   * output size it was computed for. Only absolute positions are sent here. A change of output
+   * size makes earlier positions incomparable with what the guest reports: inference starts over.
+   *
+   * Not every position sent is one the guest acts on. Its kernel passes on only the axes whose
+   * value changed, so a position equal to the tablet's last one reaches nobody and moves
+   * nothing. That is harmless while the guest's pointer stands there — and it does not after
+   * relative motion (another device), which leaves the tablet's values where they were. So a
+   * position counts as "the guest will put its pointer here" only if it differs from the one
+   * sent before it; the first of a page or after a guest reset (the tablet's values are not
+   * known) and the first at another output size (pixels of two sizes do not compare) never do.
+   */
+  notePointer(x, y, outputWidth = null, outputHeight = null) {
+    // Outside absolute mode nothing sent is a position the guest's plane could stand for.
+    if (this._disposed || this._mode !== CURSOR_MODES.ABSOLUTE) return;
+    try {
+      if (outputWidth !== null && outputHeight !== null) {
+        const previous = this._pointerOutput;
+        if (previous && (previous.width !== outputWidth || previous.height !== outputHeight)) this._restartHotspotInference();
+        this._pointerOutput = { width: outputWidth, height: outputHeight };
+      }
+      this._hotspots.notePointer(x, y);
+      const last = this._lastPointer;
+      const now = { x: Number(x) | 0, y: Number(y) | 0, width: outputWidth, height: outputHeight };
+      this._lastPointer = now;
+      const acted = last !== null && last.width === now.width && last.height === now.height &&
+        (last.x !== now.x || last.y !== now.y);
+      if (!this._hotspotSettling) this._armHotspotRest();
+      // A remembered position the guest acts on is on its way to it: now it can be asked.
+      else if (acted) this._settleHotspots();
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-pointer-error", error);
+    }
+  }
+
+  /**
+   * Forget every inferred hotspot, so that each image is inferred as if met for the first time
+   * (a proof script's hook; nothing in the page needs to forget what it has settled). The
+   * positions sent are kept — the guest's pointer still stands on one of them — so nothing has
+   * to be waited for.
+   */
+  resetHotspotInference() {
+    try {
+      this._hotspots.forget();
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
+    // (Nothing is known about the image shown until its plane is reported again.)
+    this._setCssHot(null);
+  }
+
+  /**
+   * Start inference over: what the page sent before this moment no longer compares with what
+   * the guest reports (the pointer mode or the output size changed, or a cursor appeared where
+   * none was shown). The positions sent and
+   * everything not settled are forgotten; hotspots already settled belong to their images and
+   * stay, on the page too. The guest's pointer now stands on a position the page has
+   * forgotten, so its cursor moves are not evidence again until it has acted on a position
+   * sent from here on.
+   */
+  _restartHotspotInference() {
+    this._endHotspotWaits();
+    try {
+      this._hotspots.restart();
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
+    this._hotspotSettling = true;
+  }
+
+  /**
+   * While settling, and with a position sent since it began that the guest acts on: ask the
+   * guest until it has been idle after that position reached it. Every question of this loop
+   * starts after the position was sent, so "caught up" means the guest's pointer stands on it
+   * or on a later one.
+   */
+  async _settleHotspots() {
+    const epoch = this._hotspotEpoch;
+    if (this._settleEpoch === epoch || typeof this._guestIdleCount !== "function") return;
+    this._settleEpoch = epoch;
+    for (;;) {
+      const caughtUp = await this._guestCaughtUp(epoch);
+      if (epoch !== this._hotspotEpoch) return;
+      if (caughtUp === true) break;
+      // A guest never idle within the timeout is asked again at once. No counter to ask (no
+      // paced clock, or not yet): look again later; until there is one nothing is inferred.
+      if (caughtUp === null && !(await this._hotspotWait(HOTSPOT_CAUGHT_UP_TIMEOUT_MS))) return;
+    }
+    // (No rest wait to arm: nothing is known about any image until it is reported again, and
+    // that report arms one.)
+    this._hotspotSettling = false;
+  }
+
+  /**
+   * Has the guest been idle after everything sent before this call was delivered? `true` when
+   * its idle counter moved on, `false` when it did not within the timeout (or this epoch
+   * ended), `null` when there is no counter to ask.
+   */
+  async _guestCaughtUp(epoch) {
+    const count = async () => {
+      try {
+        const value = await this._guestIdleCount();
+        return typeof value === "number" && Number.isFinite(value) ? value : null;
+      } catch (error) {
+        this._diagnostic("cursor-hotspot-idle-error", error);
+        return null;
+      }
+    };
+    const first = await count();
+    if (first === null) return null;
+    for (let waited = 0; waited < HOTSPOT_CAUGHT_UP_TIMEOUT_MS; waited += HOTSPOT_POLL_MS) {
+      // (The epoch may have ended while a reading was on its way: no wait is begun for it. One
+      // that ends during a wait ends the wait.)
+      if (epoch !== this._hotspotEpoch || !(await this._hotspotWait(HOTSPOT_POLL_MS))) return false;
+      const now = await count();
+      if (now === null) return null;
+      if (now > first) return true;
+    }
+    return false;
+  }
+
+  /** A cancellable wait; resolves `true` when it elapsed, `false` when inference was reset. */
+  _hotspotWait(ms) {
+    return new Promise((resolve) => {
+      const wait = { resolve, timer: null };
+      wait.timer = this._setTimer(() => {
+        if (!this._waits.delete(wait)) return;
+        resolve(true);
+      }, ms);
+      this._waits.add(wait);
+    });
+  }
+
+  /** End every asynchronous step of inference in flight and start a new epoch. */
+  _endHotspotWaits() {
+    this._cancelHotspotRest();
+    this._hotspotEpoch += 1;
+    for (const wait of this._waits) { this._clearTimer(wait.timer); wait.resolve(false); }
+    this._waits.clear();
+  }
+
+  /**
+   * Start (or resume) hotspot inference for the image a cursor update just installed. The
+   * update's own position is NOT evidence: a legacy-KMS commit sets the image at the plane's
+   * previous position, which was computed with the previous image's hotspot, and moves it after.
+   */
+  _trackHotspot(state, descriptor) {
+    const previousKey = this._imageKey;
+    this._imageKey = null;
+    this._cssHot = null;
+    this._cancelHotspotRest();
+    // Only a CSS cursor is drawn at the host pointer, and only a device that reports no
+    // hotspot leaves one to infer. (An overlay follows the reported plane position as is.)
+    if (descriptor?.kind !== "css" || state.hotX !== 0 || state.hotY !== 0) return;
+    this._imageKey = descriptor.dataUrl;
+    try {
+      // The guest sets its image again and again without changing it (sway does on most
+      // commits); only a CHANGE of image makes the plane position remembered for it stale.
+      if (previousKey !== this._imageKey) this._hotspots.noteInstall(this._imageKey);
+      this._cssHot = this._hotspots.hotspot(this._imageKey);
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
+    this._armHotspotRest();
+  }
+
+  /**
+   * Take the estimator's answer for the current image after one piece of evidence. (In
+   * relative mode there is nothing to compare a move with: inference was reset on entering it
+   * and no position is noted while it lasts.)
+   */
+  _inferHotspot(evidence) {
+    if (this._imageKey === null) return;
+    try {
+      this._setCssHot(evidence());
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
+    this._armHotspotRest();
+  }
+
+  /** Show `hot` (or no hotspot) for the current image; one style write, only on a change. */
+  _setCssHot(hot) {
+    const now = this._cssHot;
+    if ((hot === null && now === null) || (hot !== null && now !== null && hot.x === now.x && hot.y === now.y)) return;
+    this._cssHot = hot;
+    this._applySafely("cursor-hotspot-dom-error");
+  }
+
+  /**
+   * While the current image's hotspot is unknown, watch for the pointer coming to rest: no
+   * position sent and no cursor event for `hotspotRestMs`, and then the guest idle after the
+   * last position reached it. Only then is the plane where the guest put it for that position,
+   * which settles the hotspot without a second move. (Settling ends only in absolute mode and
+   * with an idle counter, so neither needs asking for here.)
+   */
+  _armHotspotRest() {
+    this._cancelHotspotRest();
+    if (this._imageKey === null || this._cssHot !== null || this._hotspotSettling) return;
+    const timer = this._setTimer(() => {
+      if (this._restTimer !== timer) return;
+      this._restTimer = null;
+      this._restHotspot();
+    }, this._hotspotRestMs);
+    this._restTimer = timer;
+  }
+
+  async _restHotspot() {
+    const epoch = this._hotspotEpoch;
+    const key = this._imageKey;
+    let sends;
+    try { sends = this._hotspots.sends; } catch (error) { this._diagnostic("cursor-hotspot-error", error); return; }
+    if ((await this._guestCaughtUp(epoch)) !== true) return;
+    // A different image by now (or none: a reset) has armed a wait of its own, and the answer
+    // was not about it. (Inference started over meanwhile needs no check: every image without
+    // an answer was forgotten, and the estimator has none to give.)
+    if (key !== this._imageKey) return;
+    try {
+      // A position sent meanwhile: the pointer was not at rest.
+      if (this._hotspots.sends !== sends) return;
+      this._setCssHot(this._hotspots.noteRest(key, this._descriptor.width, this._descriptor.height));
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
+  }
+
+  _cancelHotspotRest() {
+    if (this._restTimer === null) return;
+    const timer = this._restTimer;
+    this._restTimer = null;
+    this._clearTimer(timer);
   }
 
   /** Dispatch a typed callback from the direct wasm path or the whole-machine worker. */
@@ -382,7 +686,12 @@ export class CursorController {
     }
     const locked = state.pointerLocked === true;
     const changed = mode !== this._mode || locked !== this._pointerLocked;
-    this._mode = mode;
+    // Leaving or entering absolute mode: positions sent before and plane positions reported
+    // after no longer belong together.
+    if (mode !== this._mode) {
+      this._mode = mode;
+      this._restartHotspotInference();
+    }
     this._pointerLocked = locked;
     if (changed) {
       this._modeChanges += 1;
@@ -418,6 +727,15 @@ export class CursorController {
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
     this._pointerLocked = false;
+    // A reset guest has nothing of ours on its way to it, and its pointer stands where the
+    // page has never sent it.
+    this._endHotspotWaits();
+    this._hotspotSettling = true;
+    this._imageKey = null;
+    this._cssHot = null;
+    this._pointerOutput = null;
+    this._lastPointer = null;
+    try { this._hotspots.reset(); } catch (error) { this._diagnostic("cursor-hotspot-error", error); }
     this._removeOverlay();
     this._restoreHostCursor();
     this._notify("reset");
@@ -440,6 +758,9 @@ export class CursorController {
       height: this._descriptor?.height ?? 0,
       hotX: this._descriptor?.hotX ?? 0,
       hotY: this._descriptor?.hotY ?? 0,
+      inferredHotX: this._cssHot?.x ?? null,
+      inferredHotY: this._cssHot?.y ?? null,
+      hotspotSettling: this._hotspotSettling,
       overlayAttached: this._overlay !== null,
       hostCursorOwned: this._hostCursorOwned,
       hostCursorHidden: this._hostCursorHidden,

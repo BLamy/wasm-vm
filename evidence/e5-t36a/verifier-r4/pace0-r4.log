@@ -1,0 +1,62 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.195,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 22,
+  "unknownImages": [],
+  "answersShown": 0,
+  "answersForUnknownImages": 0,
+  "shownWrong": []
+ },
+ "stats": [
+  {
+   "label": "pace=0 a",
+   "t": 26876.2,
+   "idleSleeps": 0,
+   "idleYield": false,
+   "idleWakes": 0,
+   "idleSleepMs": 0
+  },
+  {
+   "label": "pace=0 b (3 s later)",
+   "t": 29882.6,
+   "idleSleeps": 0,
+   "idleYield": false,
+   "idleWakes": 0,
+   "idleSleepMs": 0
+  },
+  {
+   "label": "pace=0 end a",
+   "t": 100079.2,
+   "idleSleeps": 0,
+   "idleYield": false,
+   "idleWakes": 0,
+   "idleSleepMs": 0
+  },
+  {
+   "label": "pace=0 end b (3 s later)",
+   "t": 103085.2,
+   "idleSleeps": 0,
+   "idleYield": false,
+   "idleWakes": 0,
+   "idleSleepMs": 0
+  }
+ ],
+ "shell": [],
+ "readsByPhase": {
+  "pace0": {
+   "none": 20,
+   "ok": 0,
+   "WRONG": 0
+  },
+  "pace0-jumps": {
+   "none": 2,
+   "ok": 0,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}

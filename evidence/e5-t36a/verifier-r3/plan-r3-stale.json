@@ -1,0 +1,1682 @@
+{
+ "steps": [
+  {
+   "op": "idle",
+   "seconds": 20
+  },
+  {
+   "op": "jump",
+   "to": [
+    346,
+    665
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-idle.1"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 94
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 346,665 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.1 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    366,
+    646
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-idle.2"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 84
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 366,646 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.2 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    430,
+    658
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-idle.3"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 33
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 430,658 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.3 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    418,
+    620
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-idle.4"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 102
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 418,620 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.4 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    470,
+    687
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-idle.5"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 74
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 470,687 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.5 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    640
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-idle.6"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 42
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 450,640 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-idle",
+   "name": "stale-idle.6 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do echo tick; sleep 0.05; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "stats",
+   "label": "ticks a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "ticks b (3 s later)"
+  },
+  {
+   "op": "jump",
+   "to": [
+    371,
+    639
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.1"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 66
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 371,639 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.1 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    381,
+    662
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.2"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 50
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 381,662 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.2 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    471,
+    666
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.3"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 57
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 471,666 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.3 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    427,
+    681
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.4"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 23
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 427,681 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.4 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    470,
+    651
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.5"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 80
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 470,651 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.5 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    434,
+    602
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.6"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 99
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 434,602 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.6 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    446,
+    642
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.7"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 107
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.7 arrow after an even run of 7,7 x10 every 33 ms from the rest position 446,642 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.7 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    475,
+    658
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.8"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 20
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.8 arrow after an even run of 12,4 x10 every 24 ms from the rest position 475,658 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.8 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    386,
+    662
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.9"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 27
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.9 arrow after an even run of 5,3 x10 every 16 ms from the rest position 386,662 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.9 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    363,
+    687
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.10"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 87
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.10 arrow after an even run of 6,0 x10 every 16 ms from the rest position 363,687 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.10 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    387,
+    597
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.11"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 96
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.11 arrow after an even run of 4,4 x10 every 33 ms from the rest position 387,597 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.11 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    353,
+    600
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.12"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 112
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.12 arrow after an even run of 8,2 x10 every 24 ms from the rest position 353,600 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.12 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    356,
+    669
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.13"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 45
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.13 arrow after an even run of 3,5 x10 every 16 ms from the rest position 356,669 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.13 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    353,
+    633
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.14"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 63
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.14 arrow after an even run of 10,0 x10 every 16 ms from the rest position 353,633 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.14 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    437,
+    619
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.15"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 106
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.15 arrow after an even run of 7,7 x10 every 33 ms from the rest position 437,619 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.15 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    466,
+    602
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-ticks.16"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 104
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.16 arrow after an even run of 12,4 x10 every 24 ms from the rest position 466,602 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-ticks",
+   "name": "stale-ticks.16 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "stats",
+   "label": "bursts a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "bursts b (3 s later)"
+  },
+  {
+   "op": "jump",
+   "to": [
+    408,
+    627
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.1"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 19
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 408,627 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.1 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    343,
+    671
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.2"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 43
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 343,671 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.2 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    423,
+    593
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.3"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 13
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 423,593 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.3 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    363,
+    639
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.4"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 78
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 363,639 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.4 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    462,
+    622
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.5"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 60
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 462,622 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.5 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    416,
+    596
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.6"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 28
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 416,596 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.6 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    354,
+    678
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.7"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 74
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.7 arrow after an even run of 7,7 x10 every 33 ms from the rest position 354,678 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.7 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    414,
+    605
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.8"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 60
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.8 arrow after an even run of 12,4 x10 every 24 ms from the rest position 414,605 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.8 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    446,
+    663
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.9"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 104
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.9 arrow after an even run of 5,3 x10 every 16 ms from the rest position 446,663 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.9 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    344,
+    605
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.10"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 19
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.10 arrow after an even run of 6,0 x10 every 16 ms from the rest position 344,605 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.10 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    357,
+    602
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.11"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 13
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.11 arrow after an even run of 4,4 x10 every 33 ms from the rest position 357,602 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.11 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    397,
+    595
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.12"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 44
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.12 arrow after an even run of 8,2 x10 every 24 ms from the rest position 397,595 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.12 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    438,
+    689
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.13"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 6
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.13 arrow after an even run of 3,5 x10 every 16 ms from the rest position 438,689 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.13 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    401,
+    648
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.14"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 97
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 10,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.14 arrow after an even run of 10,0 x10 every 16 ms from the rest position 401,648 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.14 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    464,
+    634
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.15"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 96
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 10,
+   "everyMs": 33
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.15 arrow after an even run of 7,7 x10 every 33 ms from the rest position 464,634 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.15 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    622
+   ],
+   "restMs": 1200
+  },
+  {
+   "op": "reset",
+   "note": "stale-bursts.16"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 47
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 10,
+   "everyMs": 24
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.16 arrow after an even run of 12,4 x10 every 24 ms from the rest position 450,622 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "stale-bursts",
+   "name": "stale-bursts.16 arrow — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg"
+  }
+ ]
+}

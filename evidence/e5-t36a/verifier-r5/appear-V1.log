@@ -1,0 +1,105 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.081,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 16,
+  "unknownImages": [],
+  "answersShown": 6,
+  "answersForUnknownImages": 0,
+  "shownWrong": [
+   {
+    "t": 89365.5,
+    "image": "arrow",
+    "shown": [
+     21,
+     11
+    ],
+    "forMs": 40432,
+    "sent": [
+     120,
+     110
+    ]
+   },
+   {
+    "t": 139084.9,
+    "image": "arrow",
+    "shown": [
+     9,
+     7
+    ],
+    "forMs": 1001,
+    "sent": [
+     400,
+     640
+    ]
+   },
+   {
+    "t": 143340.5,
+    "image": "arrow",
+    "shown": [
+     9,
+     7
+    ],
+    "forMs": 8864,
+    "sent": [
+     400,
+     640
+    ]
+   }
+  ]
+ },
+ "stats": [],
+ "shell": [
+  {
+   "cmd": "which swaymsg; ls /run/user/1000/ | tr '\\n' ' '",
+   "stdout": "/usr/bin/swaymsg\nreplay-chromium sway-ipc.1000.625.sock sway.log wayland-1 wayland-1.lock \n"
+  },
+  {
+   "cmd": "su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1",
+   "stdout": "[   {     \"success\": true   } ] rc=0\n\n"
+  },
+  {
+   "cmd": "su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1",
+   "stdout": "[   {     \"success\": true   } ] rc=0\n\n"
+  },
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.25 0.12 0.04 1/117 1103\n\n"
+  },
+  {
+   "cmd": "su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1",
+   "stdout": "[   {     \"success\": true   } ] rc=0\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /pr",
+   "stdout": "0.37 0.15 0.05 2/116 1270\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "P12 before": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  },
+  "P12 after": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  },
+  "P13 before": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  },
+  "P13 after": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}
+exit=0

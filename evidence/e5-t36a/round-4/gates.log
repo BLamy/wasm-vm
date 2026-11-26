@@ -1,0 +1,60 @@
+head b23468add87f617ff4cb2544cc26e2e1000a00e5; web changes outside the commit: 0
+$ cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.366125ms)
+✔ hotspot coordinates are rendered exactly in the CSS cursor descriptor (1.174958ms)
+✔ 256x256 uses the bounded overlay descriptor and exposes exact allocation limits (10.537584ms)
+✔ odd dimensions, transparency, malformed inputs, and 1,000 updates stay bounded (6.373708ms)
+✔ hidden cursor updates clear the descriptor without retaining an image (0.131375ms)
+✔ source and no-bundler cursor-controller projection stay byte-identical (0.550541ms)
+✔ absolute mode owns CSS and suppresses the overlay; relative mode owns overlay and lock hiding (3.329583ms)
+✔ 500 MOVE_CURSOR callbacks update only the existing overlay transform and never measure layout (2.309875ms)
+✔ replacement, hide/unref, reset, and software-fbcon no-traffic paths leave no stale DOM (11.302333ms)
+✔ invalid mode/move state fails closed without disturbing the copied cursor (0.993208ms)
+✔ 1,000 alternating mode/resource transitions stay bounded and return to a clean host state (7542.096416ms)
+✔ cursor integration route is copied byte-for-byte into the deployable dist (2.362625ms)
+✔ integration route keeps an independent delayed-frame and 500 Hz workload contract (0.59675ms)
+✔ an arrow, a hand and a text caret each resolve to their own hotspot after two moves (1.015125ms)
+✔ the edges of what counts: one place twice, offsets outside the image, offsets three pixels apart (0.12ms)
+✔ a guest several moves behind the pointer still resolves to the true hotspot (0.4395ms)
+✔ a straight sweep alone does not guess; the pointer at rest settles it (0.135125ms)
+✔ a rest answer needs a move of this image since it was installed, and never overrides evidence (0.211084ms)
+✔ rest is the caller's knowledge: read off a plane still on its way, it is simply wrong (0.115583ms)
+✔ an answer the guest contradicts three moves in a row is dropped and inferred again (0.1575ms)
+✔ one pixel of guest rounding is tolerated; a second image is independent (0.107083ms)
+✔ plane positions left of the origin arrive wrapped as u32 (0.058333ms)
+✔ positions nothing recent explains are ignored; reset forgets positions and images (0.188208ms)
+✔ restart forgets the positions sent and what is not settled, and keeps what is (0.108917ms)
+✔ a report from where the plane stands is right with the position in the history and wrong without it (0.165208ms)
+✔ the number of remembered images is bounded; a forgotten one is inferred again (0.894791ms)
+✔ source and no-bundler projections of both sink files stay byte-identical (0.445375ms)
+✔ the update that installs an image is not evidence for it: its position belongs to the image before (5.90475ms)
+✔ a recorded glide onto the button (Replay desktop, legacy KMS) ends with the hand's true hotspot (22.806833ms)
+✔ random approaches across an image change, in the device's order: never a wrong hotspot, right at rest (1776.969209ms)
+✔ a run from where the pointer rests after each way of starting over: the plane reported where it stands is no evidence (155.242625ms)
+✔ random runs from the rest position after random ways of starting over: never a wrong hotspot, right in the end (2328.473625ms)
+✔ the page starts not knowing where the guest's pointer stands: no evidence until the guest was idle after a position sent (8.739ms)
+✔ the rest wait elapses while the guest is behind and the pointer moves on: no answer until it has caught up (8.50475ms)
+✔ a hotspot-less CSS cursor gets its inferred hotspot with one style write and keeps it (1.045125ms)
+✔ a device that reports a hotspot is never second-guessed (0.6335ms)
+✔ the pointer at rest with the guest caught up settles the hotspot after a straight approach (10.415416ms)
+✔ the client changes the cursor while the guest is being asked: the answer is not given to the new image (1.468791ms)
+✔ without an idle counter nothing is inferred; one that fails or says nothing is asked again later (10.948584ms)
+✔ relative mode is not evidence; changing mode restarts the evidence and keeps what is settled (1.836792ms)
+✔ inference started over while the guest is a position behind: its outstanding moves are not evidence (51.712458ms)
+✔ a change of guest output size restarts the evidence and keeps what is settled (1.200333ms)
+✔ a contradicted hotspot is taken back from the page, and a guest reset forgets everything (1.372166ms)
+✔ estimator failures become diagnostics, never a broken cursor (0.914ms)
+ℹ tests 44
+ℹ pass 44
+ℹ fail 0
+$ cmp of the shipped copies with their sources
+web/dist/src/sink/cursor-hotspot.js == web/src/sink/cursor-hotspot.js
+web/dist/src/sink/cursor-controller.js == web/src/sink/cursor-controller.js
+$ cd web && node --test --test-timeout=120000 tests/*.test.mjs   (names of failing tests, against the list before the pacing and cursor tasks)
+ℹ tests 652
+ℹ pass 624
+ℹ fail 28
+failing now: 29 lines; failing before: 29 lines (each list has one header line)
+difference (< only before, > only now):
+diff rc=0
+GATES_DONE

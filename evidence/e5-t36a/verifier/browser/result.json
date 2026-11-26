@@ -1,0 +1,95 @@
+{
+  "task": "E5-T36",
+  "legacyKmsSession": true,
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "shapes": [
+    {
+      "name": "arrow over the page body",
+      "sentGuestPosition": [
+        450,
+        730
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 449,
+        "y": 728
+      },
+      "tip": [
+        450,
+        729
+      ]
+    },
+    {
+      "name": "hand over the button",
+      "sentGuestPosition": [
+        93,
+        516
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 511
+      },
+      "tip": [
+        93,
+        515
+      ]
+    },
+    {
+      "name": "text caret over the terminal",
+      "sentGuestPosition": [
+        1000,
+        420
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 995,
+        "y": 411
+      },
+      "tip": [
+        999,
+        419
+      ]
+    }
+  ],
+  "sessionRestartSeconds": 16.265,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "paintedPointer": {
+    "spot": [
+      1150,
+      650
+    ],
+    "hashUnderPointer": 3836707013,
+    "hashAfterMovingAway": 3836707013
+  },
+  "errors": [],
+  "pass": true
+}

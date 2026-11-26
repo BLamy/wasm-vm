@@ -1,0 +1,167 @@
+A — hand (true [9,4]), start over by resetHotspotInference(), even run of [6,0] from rest
+  t=    0    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it                                       shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t=  900  (at rest)                                                          shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 1000    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1000  START OVER by resetHotspotInference() — pointer at rest, guest idle shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1900  (0.9 s later)                                                      shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 2000  S(306,400)  [first position after starting over]                   shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2005  guest commits for another reason: plane re-reported where it is    shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2020  S(312,400); guest reports (306,400)                                shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2036  S(318,400); guest reports (312,400)                                shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2196    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 2196  guest reports the last position (372,400): caught up               shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 7176  (pointer at rest for 5 s)                                          shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  before [9,4]; 0.9 s after null, settling false; after the re-report null; during the run null; at catch-up [9,4]
+  AT REST 5 s: inferred [9,4], css [9,4]; after each later jump: [9,4] [9,4] [9,4] [9,4]; finally [9,4]
+  HELD   never a wrong hotspot (round 3 showed [15,4]): wrong answers shown []
+  HELD   predicted: the hook starts no settling; nothing during the run; the truth at the move for the last position and at rest
+
+A — arrow (true [1,1]), start over by resetHotspotInference(), even run of [5,3] from rest
+  t=    0    (answer changed)                                                 shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it                                       shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t=  900  (at rest)                                                          shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 1000    (answer changed)                                                 shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1000  START OVER by resetHotspotInference() — pointer at rest, guest idle shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1900  (0.9 s later)                                                      shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t= 2000  S(305,403)  [first position after starting over]                   shown=arrow inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2005  guest commits for another reason: plane re-reported where it is    shown=arrow inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2020  S(310,406); guest reports (305,403)                                shown=arrow inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2036  S(315,409); guest reports (310,406)                                shown=arrow inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2196    (answer changed)                                                 shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 2196  guest reports the last position (360,436): caught up               shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 7176  (pointer at rest for 5 s)                                          shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  before [1,1]; 0.9 s after null, settling false; after the re-report null; during the run null; at catch-up [1,1]
+  AT REST 5 s: inferred [1,1], css [1,1]; after each later jump: [1,1] [1,1] [1,1] [1,1]; finally [1,1]
+  HELD   never a wrong hotspot (round 3 showed [6,4]): wrong answers shown []
+  HELD   predicted: the hook starts no settling; nothing during the run; the truth at the move for the last position and at rest
+
+A — caret (true [4,8]), start over by resetHotspotInference(), even run of [-4,-2] from rest
+  t=    0    (answer changed)                                                 shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it                                       shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t=  900  (at rest)                                                          shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t= 1000    (answer changed)                                                 shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1000  START OVER by resetHotspotInference() — pointer at rest, guest idle shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1900  (0.9 s later)                                                      shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t= 2000  S(296,398)  [first position after starting over]                   shown=caret inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2005  guest commits for another reason: plane re-reported where it is    shown=caret inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2020  S(292,396); guest reports (296,398)                                shown=caret inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2036  S(288,394); guest reports (292,396)                                shown=caret inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2196    (answer changed)                                                 shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t= 2196  guest reports the last position (252,376): caught up               shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t= 7176  (pointer at rest for 5 s)                                          shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  before [4,8]; 0.9 s after null, settling false; after the re-report null; during the run null; at catch-up [4,8]
+  AT REST 5 s: inferred [4,8], css [4,8]; after each later jump: [4,8] [4,8] [4,8] [4,8]; finally [4,8]
+  HELD   never a wrong hotspot (round 3 showed [0,6]): wrong answers shown []
+  HELD   predicted: the hook starts no settling; nothing during the run; the truth at the move for the last position and at rest
+
+A — hand (true [9,4]), start over by relative mode and back, even run of [6,0] from rest
+  t=    0    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it                                       shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t=  900  (at rest)                                                          shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 1000  START OVER by relative mode and back — pointer at rest, guest idle shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=true
+  t= 1900  (0.9 s later)                                                      shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=true
+  t= 2000  S(306,400)  [first position after starting over]                   shown=hand inferred=[9,4] css=[9,4] outstanding=1 settling=true
+  t= 2005  guest commits for another reason: plane re-reported where it is    shown=hand inferred=[9,4] css=[9,4] outstanding=1 settling=true
+  t= 2020  S(312,400); guest reports (306,400)                                shown=hand inferred=[9,4] css=[9,4] outstanding=1 settling=true
+  t= 2036  S(318,400); guest reports (312,400)                                shown=hand inferred=[9,4] css=[9,4] outstanding=1 settling=true
+  t= 2196  guest reports the last position (372,400): caught up               shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=true
+  t= 7176  (pointer at rest for 5 s)                                          shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  before [9,4]; 0.9 s after [9,4], settling true; after the re-report [9,4]; during the run [9,4]; at catch-up [9,4]
+  AT REST 5 s: inferred [9,4], css [9,4]; after each later jump: [9,4] [9,4] [9,4] [9,4]; finally [9,4]
+  HELD   never a wrong hotspot (round 3 showed [15,4]): wrong answers shown []
+  FAILED predicted: settling from the mode change; nothing during the run, nothing at rest for 5 s, the truth after a later jump and rest: observed after-restart [9,4], during [9,4], at rest [9,4], finally [9,4]
+
+A — arrow (true [1,1]), start over by relative mode and back, even run of [5,3] from rest
+  t=    0    (answer changed)                                                 shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it                                       shown=arrow inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t=  900  (at rest)                                                          shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  t= 1000  START OVER by relative mode and back — pointer at rest, guest idle shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=true
+  t= 1900  (0.9 s later)                                                      shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=true
+  t= 2000  S(305,403)  [first position after starting over]                   shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=true
+  t= 2005  guest commits for another reason: plane re-reported where it is    shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=true
+  t= 2020  S(310,406); guest reports (305,403)                                shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=true
+  t= 2036  S(315,409); guest reports (310,406)                                shown=arrow inferred=[1,1] css=[1,1] outstanding=1 settling=true
+  t= 2196  guest reports the last position (360,436): caught up               shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=true
+  t= 7176  (pointer at rest for 5 s)                                          shown=arrow inferred=[1,1] css=[1,1] outstanding=0 settling=false
+  before [1,1]; 0.9 s after [1,1], settling true; after the re-report [1,1]; during the run [1,1]; at catch-up [1,1]
+  AT REST 5 s: inferred [1,1], css [1,1]; after each later jump: [1,1] [1,1] [1,1] [1,1]; finally [1,1]
+  HELD   never a wrong hotspot (round 3 showed [6,4]): wrong answers shown []
+  FAILED predicted: settling from the mode change; nothing during the run, nothing at rest for 5 s, the truth after a later jump and rest: observed after-restart [1,1], during [1,1], at rest [1,1], finally [1,1]
+
+A — caret (true [4,8]), start over by relative mode and back, even run of [-4,-2] from rest
+  t=    0    (answer changed)                                                 shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it                                       shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t=  900  (at rest)                                                          shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t= 1000  START OVER by relative mode and back — pointer at rest, guest idle shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=true
+  t= 1900  (0.9 s later)                                                      shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=true
+  t= 2000  S(296,398)  [first position after starting over]                   shown=caret inferred=[4,8] css=[4,8] outstanding=1 settling=true
+  t= 2005  guest commits for another reason: plane re-reported where it is    shown=caret inferred=[4,8] css=[4,8] outstanding=1 settling=true
+  t= 2020  S(292,396); guest reports (296,398)                                shown=caret inferred=[4,8] css=[4,8] outstanding=1 settling=true
+  t= 2036  S(288,394); guest reports (292,396)                                shown=caret inferred=[4,8] css=[4,8] outstanding=1 settling=true
+  t= 2196  guest reports the last position (252,376): caught up               shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=true
+  t= 7176  (pointer at rest for 5 s)                                          shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  before [4,8]; 0.9 s after [4,8], settling true; after the re-report [4,8]; during the run [4,8]; at catch-up [4,8]
+  AT REST 5 s: inferred [4,8], css [4,8]; after each later jump: [4,8] [4,8] [4,8] [4,8]; finally [4,8]
+  HELD   never a wrong hotspot (round 3 showed [0,6]): wrong answers shown []
+  FAILED predicted: settling from the mode change; nothing during the run, nothing at rest for 5 s, the truth after a later jump and rest: observed after-restart [4,8], during [4,8], at rest [4,8], finally [4,8]
+
+M — relative mode and back at rest on an unsettled image, then an even run
+  t=    0    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it — and stays busy with other work      shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  800  (0.8 s at rest, guest busy: no rest answer)                        shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  800  START OVER: relative mode and back, no relative motion             shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 1000  (the guest goes idle)                                              shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 1900  (0.9 s later)                                                      shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 2005  S(306,400); guest commits for another reason: plane re-reported    shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 2196  guest caught up                                                    shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 7176  (pointer at rest for 5 s)                                          shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 7466    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 8276  one more position, rest                                            shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  HELD   predicted: none before (null), still settling 0.9 s after the mode change (true); never wrong ([]); nothing at rest (null), settled by then (true); (9,4) after one more position: [9,4] (round 3: (15,4))
+
+B — the image flips away and back at the stale place
+  t=    0    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it (hand)                                shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 1000    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 1000  HOOK — pointer at rest, guest idle                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 2000  S(306,400)                                                         shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2003  guest commits for another reason (hand re-reported)                shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2006    (answer changed)                                                 shown=arrow inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2006  the image flips to the arrow at the same pointer position          shown=arrow inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2009    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2009  ... and back to the hand                                           shown=hand inferred=null css=[0,0] outstanding=1 settling=false
+  t= 2020    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 2020  guest reports (306,400): caught up                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 7000  (rest 5 s)                                                         shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  HELD   predicted nothing after the flip (null), (9,4) when the guest reports (306,400) ([9,4]) and at rest ([9,4]); round 3: (15,4)
+
+C — control: restart by output size on the first position of the same run
+  t=    0    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=    0  S(300,400); guest reports it (hand)                                shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t=  190    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 2000    (answer changed)                                                 shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 2000  S(306,400) at 801 rows: the restart by size, on this position      shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 2005  guest commits for another reason: plane re-reported                shown=hand inferred=null css=[0,0] outstanding=1 settling=true
+  t= 2196  guest caught up                                                    shown=hand inferred=null css=[0,0] outstanding=0 settling=true
+  t= 7176  (rest 5 s)                                                         shown=hand inferred=null css=[0,0] outstanding=0 settling=false
+  t= 7466    (answer changed)                                                 shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  t= 8276  one more position, rest                                            shown=hand inferred=[9,4] css=[9,4] outstanding=0 settling=false
+  HELD   predicted never wrong: answers shown [[190,"hand",[9,4]],[7466,"hand",[9,4]]]; at rest after the run null; finally [9,4]
+
+D — control: the same re-report with the history intact (no restart)
+  t=   50    (answer changed)                                                 shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t=   50  caret installed at rest (first move of the caret)                  shown=caret inferred=null css=[0,0] outstanding=0 settling=false
+  t=  240    (answer changed)                                                 shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  t= 2005  S(306,400); re-report of the caret's place                         shown=caret inferred=[4,8] css=[4,8] outstanding=1 settling=false
+  t= 7176  (rest 5 s)                                                         shown=caret inferred=[4,8] css=[4,8] outstanding=0 settling=false
+  HELD   predicted right: answers [[240,"caret",[4,8]]], at rest [4,8] (true (4,8))
+
+3 PREDICTION(S) FAILED

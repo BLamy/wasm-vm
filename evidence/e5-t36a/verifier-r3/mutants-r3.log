@@ -1,0 +1,18 @@
+V1 a rest answer is given to whatever image is shown when the guest answers (no key check): SURVIVED
+V2 a rest answer survives a restart (no epoch check in _restHotspot): SURVIVED
+V3 a rest answer overrides an answer the moves gave meanwhile: SURVIVED
+V4 a question of an ended epoch goes on polling (no epoch check after the wait): SURVIVED
+V5 settling of an older epoch ends a newer one (no epoch check after the question): SURVIVED
+V6 settling of an older epoch ends a newer one (no epoch check before settling ends): SURVIVED
+V7 a count that goes DOWN counts as caught up: SURVIVED
+V8 a non-finite count is a count: SURVIVED
+V10 ending the waits does not start a new epoch: SURVIVED
+V12 a restart settles under the epoch it has just ended: KILLED by 3: a change of guest output size restarts the evidence and keeps what is 
+V16 a rest wait is armed while settling: SURVIVED
+V17 the rest question compares sends read AFTER the guest answered: KILLED by 1: the pointer at rest with the guest caught up settles the hotspot after
+V18 a guest never idle within the timeout counts as caught up: KILLED by 3: inference started over while the guest is a position behind: its outst
+V19 the first reading of the count is taken after the first poll wait (the question is asked late): KILLED by 2: inference started over while the guest is a position behind: its outst
+V20 a restart keeps the candidates of a settled image as they were: SURVIVED
+V21 a restart remembers the last sent position (so a re-report of the plane's place has its truth): KILLED by 1: restart forgets the positions sent and what is not settled, and keeps 
+V22 the explicit reset remembers the last sent position: KILLED by 1: positions nothing recent explains are ignored; reset forgets positions
+TOTAL killed 6, survived 11: ['V1 a rest answer is given to whatever image is shown when the guest answers (no key check)', 'V2 a rest answer survives a restart (no epoch check in _restHotspot)', 'V3 a rest answer overrides an answer the moves gave meanwhile', 'V4 a question of an ended epoch goes on polling (no epoch check after the wait)', 'V5 settling of an older epoch ends a newer one (no epoch check after the question)', 'V6 settling of an older epoch ends a newer one (no epoch check before settling ends)', 'V7 a count that goes DOWN counts as caught up', 'V8 a non-finite count is a count', 'V10 ending the waits does not start a new epoch', 'V16 a rest wait is armed while settling', 'V20 a restart keeps the candidates of a settled image as they were']

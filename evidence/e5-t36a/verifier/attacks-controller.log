@@ -1,0 +1,8 @@
+HELD     inferred image -> image with a device-reported hotspot -> back
+         inferred 3,5; with the device's (2,6): 2,6 (inferred field null); after two moves that would infer (20,20): 2,6; first image again: 3,5
+HELD     the same pixels with and without a device-reported hotspot
+         reported 4,4; unreported (plane says 9,8) 9,8; reported again 4,4
+INFO     reset() does not clear the estimator
+         the same image after reset(): 3,5 at once (a wrong answer therefore also survives a guest reboot in the same page)
+FAILED   an image first shown while the pointer is in relative mode
+         inferred while locked: (17,6); CSS cursor back in absolute mode: 17,6; truth 9,4

@@ -1,0 +1,56 @@
+== 2026-11-26 11:02:44 head 2d954a4d9
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.177125ms)
+✔ hotspot coordinates are rendered exactly in the CSS cursor descriptor (1.145875ms)
+✔ 256x256 uses the bounded overlay descriptor and exposes exact allocation limits (10.3685ms)
+✔ odd dimensions, transparency, malformed inputs, and 1,000 updates stay bounded (6.346125ms)
+✔ hidden cursor updates clear the descriptor without retaining an image (0.12275ms)
+✔ source and no-bundler cursor-controller projection stay byte-identical (0.515834ms)
+✔ absolute mode owns CSS and suppresses the overlay; relative mode owns overlay and lock hiding (2.919125ms)
+✔ 500 MOVE_CURSOR callbacks update only the existing overlay transform and never measure layout (1.907834ms)
+✔ replacement, hide/unref, reset, and software-fbcon no-traffic paths leave no stale DOM (10.507916ms)
+✔ invalid mode/move state fails closed without disturbing the copied cursor (0.91275ms)
+✔ 1,000 alternating mode/resource transitions stay bounded and return to a clean host state (7417.303875ms)
+✔ cursor integration route is copied byte-for-byte into the deployable dist (2.339792ms)
+✔ integration route keeps an independent delayed-frame and 500 Hz workload contract (0.481584ms)
+✔ an arrow, a hand and a text caret each resolve to their own hotspot after two moves (1.1625ms)
+✔ the edges of what counts: one place twice, offsets outside the image, offsets three pixels apart (0.480917ms)
+✔ a guest several moves behind the pointer still resolves to the true hotspot (0.096583ms)
+✔ a straight sweep alone does not guess; the pointer at rest settles it (0.139542ms)
+✔ a rest answer needs a move of this image since it was installed, and never overrides evidence (0.221ms)
+✔ rest is the caller's knowledge: read off a plane still on its way, it is simply wrong (0.112041ms)
+✔ an answer the guest contradicts three moves in a row is dropped and inferred again (0.161334ms)
+✔ one pixel of guest rounding is tolerated; a second image is independent (0.109709ms)
+✔ plane positions left of the origin arrive wrapped as u32 (0.0575ms)
+✔ positions nothing recent explains are ignored; reset forgets positions and images (0.189625ms)
+✔ restart forgets the positions sent and what is not settled, and keeps what is (0.107625ms)
+✔ a report from where the plane stands is right with the position in the history and wrong without it (0.16275ms)
+✔ the number of remembered images is bounded; a forgotten one is inferred again (0.887375ms)
+✔ source and no-bundler projections of both sink files stay byte-identical (0.405458ms)
+✔ the update that installs an image is not evidence for it: its position belongs to the image before (6.316916ms)
+✔ a recorded glide onto the button (Replay desktop, legacy KMS) ends with the hand's true hotspot (22.35ms)
+✔ random approaches across an image change, in the device's order: never a wrong hotspot, right at rest (1802.420417ms)
+✔ a run from where the pointer rests after each way of starting over: the plane reported where it stands is no evidence (272.757292ms)
+✔ random runs from the rest position after random ways of starting over: never a wrong hotspot, right in the end (2614.598ms)
+✔ the page starts not knowing where the guest's pointer stands: no evidence until the guest was idle after a position it acts on (9.501083ms)
+✔ a position that repeats the tablet's last one moves nothing in the guest: it does not end settling (22.946875ms)
+✔ a cursor that appears where none was shown starts over: the page does not know where that pointer stands (14.73175ms)
+✔ the rest wait elapses while the guest is behind and the pointer moves on: no answer until it has caught up (7.672083ms)
+✔ a hotspot-less CSS cursor gets its inferred hotspot with one style write and keeps it (1.169042ms)
+✔ a device that reports a hotspot is never second-guessed (0.698208ms)
+✔ the pointer at rest with the guest caught up settles the hotspot after a straight approach (12.1115ms)
+✔ the client changes the cursor while the guest is being asked: the answer is not given to the new image (1.603291ms)
+✔ without an idle counter nothing is inferred; one that fails or says nothing is asked again later (10.841208ms)
+✔ relative mode is not evidence; changing mode restarts the evidence and keeps what is settled (1.729583ms)
+✔ inference started over while the guest is a position behind: its outstanding moves are not evidence (47.711583ms)
+✔ a change of guest output size restarts the evidence and keeps what is settled (1.586125ms)
+✔ a contradicted hotspot is taken back from the page, and a guest reset forgets everything (1.456709ms)
+✔ estimator failures become diagnostics, never a broken cursor (0.902542ms)
+ℹ tests 46
+ℹ suites 0
+ℹ pass 46
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7475.797083
+exit=0

@@ -1,0 +1,117 @@
+run: 158.0.8127.88, session restart 16.226 s, ran true, errors [], cursor diagnostics []
+the page's own pointer-mode toggle: {"present":true,"disabled":false,"text":"Pointer: absolute","rect":[0,0,0,0],"display":"block","visibility":"visible","hiddenBy":"div#ide-term-pane.ide-term-pane","desktopMode":"absolute","body":""}
+timeline: {"rows":46,"unknownImages":[],"answersShown":19,"answersForUnknownImages":1,"shownWrong":[{"t":101798.9,"image":"arrow","shown":[4,3],"forMs":2945,"sent":[440,630]},{"t":109191.9,"image":"arrow","shown":[3,5],"forMs":2959,"sent":[360,600]},{"t":116631.9,"image":"arrow","shown":[12,6],"forMs":2703,"sent":[420,670]}]}
+
+T1
+  0: before any position was sent              t=61496.1 mode=absolute plane=[99,99] lastSent=null image=arrow css=[0,0] inferred=null settling=true tip-sent=null idle=660
+
+T1 no hook, session start
+  b: after relative motion                     t=62015.6 mode=relative plane=[396,637] lastSent=[400,640] image=auto css=null inferred=null settling=true tip-sent=null idle=670
+  c: 0.7 s after the return                    t=62778.5 mode=absolute plane=[396,637] lastSent=[400,640] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-4,-3] idle=689
+  d: 2.2 s after the return                    t=64336.1 mode=absolute plane=[396,637] lastSent=[400,640] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-4,-3] idle=726
+  e: two more positions (+6,+2 each), at rest  t=65470.7 mode=absolute plane=[411,643] lastSent=[412,644] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=750
+  f: after two jumps elsewhere                 t=67134 mode=absolute plane=[429,689] lastSent=[430,690] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=787
+  relative motion moved the plane by null; the return moved it by [0,0]; "last sent - plane" after the return = [4,3] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[62075.8,400,640,"absolute"]]; "caught up" [[62120.5,true]]; moves after it []; answers shown []
+
+T2 hook
+  a: at rest on P                              t=68692.8 mode=absolute plane=[429,609] lastSent=[430,610] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=822
+  b: after relative motion                     t=69162.3 mode=relative plane=[426,607] lastSent=[430,610] image=auto css=null inferred=null settling=true tip-sent=null idle=835
+  c: 0.7 s after the return                    t=69927.7 mode=absolute plane=[426,607] lastSent=[430,610] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-4,-3] idle=855
+  d: 2.2 s after the return                    t=71483.7 mode=absolute plane=[426,607] lastSent=[430,610] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-4,-3] idle=879
+  e: two more positions (+6,+2 each), at rest  t=72682.5 mode=absolute plane=[441,613] lastSent=[442,614] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=901
+  f: after two jumps elsewhere                 t=74343.5 mode=absolute plane=[459,659] lastSent=[460,660] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=935
+  relative motion moved the plane by [-3,-2]; the return moved it by [0,0]; "last sent - plane" after the return = [4,3] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[69225.3,430,610,"absolute"]]; "caught up" [[69271.5,true]]; moves after it []; answers shown []
+
+T3 hook
+  a: at rest on P                              t=75905.5 mode=absolute plane=[369,659] lastSent=[370,660] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=968
+  b: after relative motion                     t=76378.1 mode=relative plane=[364,657] lastSent=[370,660] image=auto css=null inferred=null settling=true tip-sent=null idle=978
+  c: 0.7 s after the return                    t=77245 mode=absolute plane=[364,657] lastSent=[370,660] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-6,-3] idle=997
+  d: 2.2 s after the return                    t=78802.6 mode=absolute plane=[364,657] lastSent=[370,660] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-6,-3] idle=1030
+  e: two more positions (+6,+2 each), at rest  t=79895.7 mode=absolute plane=[381,663] lastSent=[382,664] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1053
+  f: after two jumps elsewhere                 t=81555.6 mode=absolute plane=[399,709] lastSent=[400,710] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1090
+  relative motion moved the plane by [-5,-2]; the return moved it by [0,0]; "last sent - plane" after the return = [6,3] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[76542.2,370,660,"absolute"]]; "caught up" [[76586.3,true]]; moves after it []; answers shown []
+
+C1 control: back one pixel away
+  a: at rest on P                              t=83111.8 mode=absolute plane=[409,619] lastSent=[410,620] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1122
+  b: after relative motion                     t=83578.4 mode=relative plane=[406,616] lastSent=[410,620] image=auto css=null inferred=null settling=true tip-sent=null idle=1135
+  c: 0.7 s after the return                    t=84344.2 mode=absolute plane=[410,619] lastSent=[411,620] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-1,-1] idle=1152
+  d: 2.2 s after the return                    t=85900.6 mode=absolute plane=[410,619] lastSent=[411,620] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-1,-1] idle=1187
+  e: two more positions (+6,+2 each), at rest  t=87003.4 mode=absolute plane=[422,623] lastSent=[423,624] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1211
+  f: after two jumps elsewhere                 t=88666.5 mode=absolute plane=[440,669] lastSent=[441,670] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1244
+  relative motion moved the plane by [-3,-3]; the return moved it by [4,3]; "last sent - plane" after the return = [1,1] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[83642,411,620,"absolute"]]; "caught up" [[83688.1,true]]; moves after it []; answers shown []
+
+N1 no hook, arrow settled
+  a: at rest on P                              t=90223.9 mode=absolute plane=[389,649] lastSent=[390,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1279
+  b: after relative motion                     t=90695.2 mode=relative plane=[386,647] lastSent=[390,650] image=auto css=null inferred=[1,1] settling=true tip-sent=null idle=1288
+  c: 0.7 s after the return                    t=91459.7 mode=absolute plane=[386,647] lastSent=[390,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[-3,-2] idle=1306
+  d: 2.2 s after the return                    t=93042.1 mode=absolute plane=[386,647] lastSent=[390,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[-3,-2] idle=1339
+  e: two more positions (+6,+2 each), at rest  t=94133.1 mode=absolute plane=[401,653] lastSent=[402,654] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1363
+  f: after two jumps elsewhere                 t=95791.7 mode=absolute plane=[419,699] lastSent=[420,700] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1399
+  relative motion moved the plane by [-3,-2]; the return moved it by [0,0]; "last sent - plane" after the return = [4,3] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[90757.7,390,650,"absolute"]]; "caught up" [[90801.3,true]]; moves after it []; answers shown []
+
+T4 hook, bursts
+  a: at rest on P                              t=100660.5 mode=absolute plane=[439,629] lastSent=[440,630] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1456
+  b: after relative motion                     t=101210.2 mode=relative plane=[436,627] lastSent=[440,630] image=auto css=null inferred=null settling=true tip-sent=null idle=1460
+  c: 0.7 s after the return                    t=101977.9 mode=absolute plane=[436,627] lastSent=[440,630] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[0,0] idle=1471
+  d: 2.2 s after the return                    t=103535.9 mode=absolute plane=[436,627] lastSent=[440,630] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[0,0] idle=1490
+  e: two more positions (+6,+2 each), at rest  t=104637.6 mode=absolute plane=[451,633] lastSent=[452,634] image=arrow css=[4,3] inferred=[4,3] settling=false tip-sent=[3,2] idle=1501
+  f: after two jumps elsewhere                 t=106313.2 mode=absolute plane=[469,679] lastSent=[470,680] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1522
+  relative motion moved the plane by [-3,-2]; the return moved it by [0,0]; "last sent - plane" after the return = [4,3] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[101274.1,440,630,"absolute"]]; "caught up" [[101407.7,true],[101794.5,true],[102009,true]]; moves after it [[101551.4,436,627,false],[101587,436,627,false],[101757.9,436,627,false],[101932,436,627,false]] … 14; answers shown [[101794.6,[4,3]]]
+
+T5 hook, bursts
+  a: at rest on P                              t=107882.4 mode=absolute plane=[359,599] lastSent=[360,600] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1539
+  b: after relative motion                     t=108445.3 mode=relative plane=[357,595] lastSent=[360,600] image=auto css=null inferred=null settling=true tip-sent=null idle=1545
+  c: 0.7 s after the return                    t=109229 mode=absolute plane=[357,595] lastSent=[360,600] image=arrow css=[3,5] inferred=[3,5] settling=false tip-sent=[0,0] idle=1554
+  d: 2.2 s after the return                    t=110832.6 mode=absolute plane=[357,595] lastSent=[360,600] image=arrow css=[3,5] inferred=[3,5] settling=false tip-sent=[0,0] idle=1573
+  e: two more positions (+6,+2 each), at rest  t=111999.7 mode=absolute plane=[371,603] lastSent=[372,604] image=arrow css=[3,5] inferred=[3,5] settling=false tip-sent=[2,4] idle=1586
+  f: after two jumps elsewhere                 t=113670.2 mode=absolute plane=[389,649] lastSent=[390,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1603
+  relative motion moved the plane by [-2,-4]; the return moved it by [0,0]; "last sent - plane" after the return = [3,5] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[108525,360,600,"absolute"]]; "caught up" [[108622.9,true],[109187.6,true],[109456.4,true]]; moves after it [[108770.4,357,595,false],[108906,357,595,false],[108978.4,357,595,false],[109159.1,357,595,false]] … 12; answers shown [[109187.7,[3,5]]]
+
+T6 hook, bursts
+  a: at rest on P                              t=115237.3 mode=absolute plane=[419,669] lastSent=[420,670] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1620
+  b: after relative motion                     t=115745 mode=relative plane=[408,664] lastSent=[420,670] image=auto css=null inferred=null settling=true tip-sent=null idle=1626
+  c: 0.7 s after the return                    t=116511.5 mode=absolute plane=[408,664] lastSent=[420,670] image=arrow css=[0,0] inferred=null settling=false tip-sent=[-12,-6] idle=1633
+  d: 2.2 s after the return                    t=118095.6 mode=absolute plane=[408,664] lastSent=[420,670] image=arrow css=[12,6] inferred=[12,6] settling=false tip-sent=[0,0] idle=1652
+  e: two more positions (+6,+2 each), at rest  t=119199.4 mode=absolute plane=[431,673] lastSent=[432,674] image=arrow css=[12,6] inferred=[12,6] settling=false tip-sent=[11,5] idle=1666
+  f: after two jumps elsewhere                 t=120865.1 mode=absolute plane=[449,719] lastSent=[450,720] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1687
+  relative motion moved the plane by [-11,-5]; the return moved it by [0,0]; "last sent - plane" after the return = [12,6] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[115808.2,420,670,"absolute"]]; "caught up" [[115902.9,true],[116622.9,true],[116807.6,true]]; moves after it [[116104.7,408,664,false],[116217.2,408,664,false],[116372.4,408,664,false],[116602.7,408,664,false]] … 12; answers shown [[116623.1,[12,6]]]
+
+T7 hook, bursts, d positive (no offset inside the image)
+  a: at rest on P                              t=122470 mode=absolute plane=[379,619] lastSent=[380,620] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1706
+  b: after relative motion                     t=122948.3 mode=relative plane=[384,622] lastSent=[380,620] image=auto css=null inferred=null settling=true tip-sent=null idle=1710
+  c: 0.7 s after the return                    t=123778 mode=absolute plane=[384,622] lastSent=[380,620] image=arrow css=[0,0] inferred=null settling=false tip-sent=[4,2] idle=1721
+  d: 2.2 s after the return                    t=125413.3 mode=absolute plane=[384,622] lastSent=[380,620] image=arrow css=[0,0] inferred=null settling=false tip-sent=[4,2] idle=1748
+  e: two more positions (+6,+2 each), at rest  t=126545.7 mode=absolute plane=[391,623] lastSent=[392,624] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1761
+  f: after two jumps elsewhere                 t=128211.5 mode=absolute plane=[409,669] lastSent=[410,670] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1777
+  relative motion moved the plane by [5,3]; the return moved it by [0,0]; "last sent - plane" after the return = [-4,-2] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[123073.4,380,620,"absolute"]]; "caught up" [[123169,true],[123539.2,true],[123714.1,true],[123928.4,true],[124128,true],[124415.4,true],[124575.2,true],[124767.9,true],[124947.5,true],[125126.9,true],[125307,true]]; moves after it [[123329.7,384,622,false],[123510.8,384,622,false],[123685.8,384,622,false],[123877.1,384,622,false]] … 12; answers shown []
+
+C2 control, bursts: back one pixel away
+  a: at rest on P                              t=129826.9 mode=absolute plane=[449,649] lastSent=[450,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1794
+  b: after relative motion                     t=130359.6 mode=relative plane=[446,647] lastSent=[450,650] image=auto css=null inferred=null settling=true tip-sent=null idle=1800
+  c: 0.7 s after the return                    t=131144 mode=absolute plane=[450,649] lastSent=[451,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1810
+  d: 2.2 s after the return                    t=132800.2 mode=absolute plane=[450,649] lastSent=[451,650] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1826
+  e: two more positions (+6,+2 each), at rest  t=133911.4 mode=absolute plane=[462,653] lastSent=[463,654] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1839
+  f: after two jumps elsewhere                 t=135662.4 mode=absolute plane=[480,699] lastSent=[481,700] image=arrow css=[1,1] inferred=[1,1] settling=false tip-sent=[0,0] idle=1857
+  relative motion moved the plane by [-3,-2]; the return moved it by [4,2]; "last sent - plane" after the return = [1,1] (arrow's hotspot: [1,1])
+  events b..d: positions noted [[130441,451,650,"absolute"]]; "caught up" [[130635.2,true],[130979,true],[131158,true]]; moves after it [[130774.3,450,649,false],[130949.2,450,649,false],[131127.8,450,649,false],[131374.6,450,649,false]] … 13; answers shown [[130979.1,[1,1]]]
+
+SUMMARY
+{"trial":"T1 no hook, session start","planeMovedByRelative":null,"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":null,"shownAtD":null,"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}
+{"trial":"T2 hook","planeMovedByRelative":[-3,-2],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":null,"shownAtD":null,"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}
+{"trial":"T3 hook","planeMovedByRelative":[-5,-2],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":null,"shownAtD":null,"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}
+{"trial":"C1 control: back one pixel away","planeMovedByRelative":[-3,-3],"planeMovedByReturn":[4,3],"settlingAtC":false,"shownAtC":null,"shownAtD":null,"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}
+{"trial":"N1 no hook, arrow settled","planeMovedByRelative":[-3,-2],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":[1,1],"shownAtD":[1,1],"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}
+{"trial":"T4 hook, bursts","planeMovedByRelative":[-3,-2],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":[4,3],"shownAtD":[4,3],"shownAtE":[4,3],"tipErrorAtE":[3,2],"shownAtF":[1,1],"wrongAtRest":true,"wrongAtF":false}
+{"trial":"T5 hook, bursts","planeMovedByRelative":[-2,-4],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":[3,5],"shownAtD":[3,5],"shownAtE":[3,5],"tipErrorAtE":[2,4],"shownAtF":[1,1],"wrongAtRest":true,"wrongAtF":false}
+{"trial":"T6 hook, bursts","planeMovedByRelative":[-11,-5],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":null,"shownAtD":[12,6],"shownAtE":[12,6],"tipErrorAtE":[11,5],"shownAtF":[1,1],"wrongAtRest":true,"wrongAtF":false}
+{"trial":"T7 hook, bursts, d positive (no offset inside the image)","planeMovedByRelative":[5,3],"planeMovedByReturn":[0,0],"settlingAtC":false,"shownAtC":null,"shownAtD":null,"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}
+{"trial":"C2 control, bursts: back one pixel away","planeMovedByRelative":[-3,-2],"planeMovedByReturn":[4,2],"settlingAtC":false,"shownAtC":[1,1],"shownAtD":[1,1],"shownAtE":[1,1],"tipErrorAtE":[0,0],"shownAtF":[1,1],"wrongAtRest":false,"wrongAtF":false}

@@ -1,0 +1,33 @@
+== head
+843f0a9d7ad4d8ed3f6be179b1be7bc2e2e9e3f9
+c989491f5b6a0a1d88a48055b1de63e53b687593 2026-11-26T05:58:10-05:00 E5-T36a round 2: positions are noted only in absolute mode; tests for the edges
+843f0a9d7ad4d8ed3f6be179b1be7bc2e2e9e3f9 2026-11-26T06:02:35-05:00 E5-T36a round 2 implemented: claim and evidence
+== gates.log first lines
+head c989491f5b6a0a1d88a48055b1de63e53b687593; web changes outside the commit: 0
+$ cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.190625ms)
+✔ hotspot coordinates are rendered exactly in the CSS cursor descriptor (1.101084ms)
+✔ 256x256 uses the bounded overlay descriptor and exposes exact allocation limits (10.674541ms)
+99231c6e0f614d50fc15e85e0b322e8d3b2cc5389e2ec9e07f25a24184a582a2  evidence/e5-t36a/gates.log
+46b0079615e03a8e9d525a884d578ec4ae7615ba885b7de570e619a24cef9731  evidence/e5-t36a/browser/result.json
+== diff c989491f5..HEAD outside evidence/tasks
+== dist vs src
+same cursor-hotspot.js
+same cursor-controller.js
+same cursor-hotspot.ts
+same cursor-controller.ts
+main.js diff lines:        0
+== worktree vs HEAD
+?? tools/verify/e5-t26f-quiet-probe-scratch.mjs
+?? tools/verify/omarchy-input-diagnostic-cap1024-scratch.mjs
+== served
+main.js served=2447016b7691451d dist=2447016b7691451d
+src/sink/cursor-hotspot.js served=9a6d1165ad33831d dist=9a6d1165ad33831d
+src/sink/cursor-controller.js served=6843fccc54b23029 dist=6843fccc54b23029
+== evidence dates
+Nov 26 06:00:44 2026 evidence/e5-t36a/browser/desktop.png
+Nov 26 06:00:44 2026 evidence/e5-t36a/browser/result.json
+Nov 26 06:02:00 2026 evidence/e5-t36a/browser-unchanged.json
+Nov 26 06:02:08 2026 evidence/e5-t36a/demo-suite.json
+Nov 26 06:01:00 2026 evidence/e5-t36a/gates.log
+Nov 26 05:58:42 2026 evidence/e5-t36a/mutants.log

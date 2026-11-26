@@ -1,0 +1,122 @@
+E5-T36a — verifier, round 2 — predictions
+Written 2026-11-26 06:10 EST. Read so far: AGENTS.md, the task file (incl. round 1's verdict and the
+round-2 claim, whose table was unavoidably read with it), the diff b2cdf9f13..843f0a9d7 of
+web/src/sink/cursor-{hotspot,controller}.js and web/main.js, tools/verify/e5-t36-hardware-cursor-browser.mjs,
+round 1's plan-*.json, continuous-path-browser.mjs, round 1's predictions, the first rows of
+approach-C-instrumented/events.json (format only) and one round-1 screenshot (layout only).
+NOT yet opened: evidence/e5-t36a/{gates.log,mutants.log,mutants.py,browser/result.json,browser.log,
+browser-unchanged.json,demo-suite.json}, web/tests/e5-t36-cursor-hotspot.test.mjs. Nothing run yet.
+
+Model. plane = (guest pointer) - H(image); guest pointer = a position the page sent (+-1 rounding).
+An answer further than one pixel from H is a wrong answer. "Device order" = every commit is
+UPDATE(image, at the plane's PREVIOUS position) then MOVE(new position).
+
+P0 ORIENT
+  a  evidence/e5-t36a/gates.log names c989491f5 on its first line; git diff c989491f5..843f0a9d7
+     touches no file under web/src, web/main.js, web/tests or tools/.
+  b  web/dist/src/sink/cursor-{hotspot,controller}.js at HEAD are byte-identical to web/src/sink/;
+     web/dist/main.js differs from web/main.js only by the deploy-path rewrite and contains the
+     four-argument notePointer hook. The server on 8125 serves those bytes.
+  c  evidence/e5-t36a/browser/result.json and browser-unchanged.json are dated after c989491f5.
+
+P1 UNIT (acceptance 1): the four files -> 35 tests, 35 pass, 0 fail.
+
+P2 HAND-WORKED, device order, through the real CursorController (24x24 images, arrow H=(1,1),
+   hand H=(9,4), rest wait 300 ms, guest one position behind, straight evenly spaced approach,
+   image changes in the middle). S = position sent, U = update, M = move. Answer after each event:
+     t=0    S(300,200)
+     t=16   S(290,200); U(arrow@(500,500)); M(arrow,(299,199))  arrow: {(1,1)}                    -> arrow none
+     t=32   S(280,200); U(arrow@(299,199)); M(arrow,(289,199))  seen {(11,1),(1,1)}, kept {(1,1)}  -> arrow (1,1)
+     t=48   S(270,200); U(arrow@(289,199)); M(arrow,(279,199))                                     -> arrow (1,1)
+     t=64   S(260,200); U(hand @(279,199)); M(hand ,(261,196))  hand: {(19,4),(9,4),(-1,4)}        -> hand none
+            (the update's (279,199) must NOT be evidence for the hand; shown with no hotspot)
+     t=80   S(250,200); U(hand @(261,196)); M(hand ,(251,196))  seen {(19,4),(9,4),(-1,4)}: 3 fit   -> hand none
+     t=96                U(hand @(251,196)); M(hand ,(241,196))  seen {(19,4),(9,4)}: 2 fit          -> hand none
+     t=396  rest: (250,200)-(241,196) = (9,4), an allowed offset                                  -> hand (9,4)
+   Variant E (the rest wait fires while the guest is one position behind: no event after t=80):
+     t=380  rest: (250,200)-(251,196) = (-1,4), allowed, clamped                                  -> hand (0,4)  WRONG, 9 px
+     E1  nothing more sent; t=500 U(hand@(251,196)); M(hand,(241,196)) -> answer taken back (none);
+         t=800 rest -> (9,4).   [what the claim says]
+     E2  t=450 S(240,200) (the user nudges on along the line); t=500 U(hand@(251,196));
+         M(hand,(241,196)): a position WAS sent since the rest, so not "still arriving";
+         seen {(19,4),(9,4),(-1,4)}; (-1,4) is within a pixel of the answer (0,4) -> explained ->
+         hand stays (0,4). t=516 U; M(hand,(231,196)): seen {(19,4),(9,4)} -> miss 1 of 3 -> stays.
+         Pointer at rest; no rest timer is armed while an answer exists.
+         I PREDICT hand = (0,4) at rest, indefinitely, for a true (9,4): a wrong answer that the
+         plane's next move does NOT take back (the claim says it does). If the controller shows
+         none or (9,4) at the end of E2 my reading is wrong and this is no finding.
+         Whether a guest is ever silent >= 300 ms while behind is a separate question (P3c, P5).
+
+P3 REPLAY of round 1's recorded device logs through the NEW controller (my own script, timers
+   driven from the recorded timestamps):
+  a  approach-C-instrumented/events.json: the hand is never (45,7); after its first move at
+     t=42018.8 no answer; (9,4) from the rest at about t=42380 (last cursor event 42079.8 + 300);
+     arrow (1,1), caret (4,8); no shown hotspot ever further than one pixel from the truth.
+  b  natural-instrumented/events.json (image identity must be reconstructed; img column constant):
+     no shown hotspot further than one pixel from the truth; at every rest >= 300 ms with a move
+     since the image changed, an answer.
+  c  In both logs every MOVE position is (some sent position) - (true hotspot of the image last
+     installed) within one pixel, and the guest is never silent for 300 ms while the plane is
+     not on the last sent position (if it is, P2-E is reachable from recorded data — say so).
+
+P4 BROWSER, the worker's command (acceptance 2): pass; 18 reads, each with a known hotspot equal
+   to the CSS one, arrow (1,1), hand (9,4), caret (4,8) within a pixel, plane + hotspot within a
+   pixel of the sent position; plan "approach C" read 2: sent (146,501), plane (137,497), hotspot
+   (9,4) (round 1: (45,7)); plan "approach A" read 2: sent (142,515), plane (133,511), (9,4)
+   (round 1: (12,3)). sway env has WLR_DRM_NO_ATOMIC=1 and no WLR_NO_HARDWARE_CURSORS.
+   The script's reads wait 1.5 s after an 0.8 s rest, so it can only see what is true >= 2 s
+   after the pointer stopped; it cannot see a wrong answer shown and corrected within that time.
+
+P5 BROWSER, my own approaches (round 1's runner adapted: `reset` op = window.__cursor
+   .resetHotspotInference(); reads report "answer" = state.inferred). Guest layout from round 1's
+   screenshot: button x 22..163, y 491..541; green square x 184..234, y 473..523; terminal x > 795.
+   Requirement at every read: no answer, or plane + hotspot within one pixel of the sent position.
+   My expectation per read (falsifiable): an answer, exact, EXCEPT where noted.
+   V1 slow diagonal onto the text caret: (700,560) -> (950,330) in 1500 ms; read early (400 ms)
+      and late. Crosses the border between the two windows. Expect caret (4,8); early read: none
+      or (4,8).
+   V2 crossing the button without stopping: (300,516) -> (8,516) in 600 ms, rest; expect arrow
+      (1,1) at rest (hand seen in passing: no answer needed). Then (8,516) -> (40,516) in 150 ms:
+      expect hand (9,4).
+   V3 slow vertical approach from below stopping 3 px inside the edge: (100,620) -> (100,538) in
+      900 ms. The image changes at or after the stop (55-240 ms late per round 1): one hand move,
+      then rest -> (9,4).
+   V4 pause shorter than the rest wait, then nudges: onto the button, 200 ms, +3 px, 200 ms,
+      +3 px, rest. Expect (9,4).
+   V5 fast flick: (600,300) -> (90,515) in 120 ms. Expect (9,4).
+   V6 along the button's top edge at 120 Hz (in and out): (30,489)->(150,493) in 1200 ms. Expect
+      none or right for whichever image is shown.
+   If the guest answers 300 ms+ late anywhere in these, an early read may show a wrong hotspot;
+   the late read (1.5 s) must not.
+
+P6 UNIT ATTACKS (device order). Where I expect the rules to give a wrong answer and keep it:
+  a  P2-E2 (above), and its generalisation: after an early rest answer H+v, any further motion
+     whose reports are explained by H+v (same line, or a small area the sent history covers
+     densely) keeps it; it survives until three consecutive unexplained moves.
+  b  the same with a guest lagging beyond the 128-position history while the pointer circles in
+     a small area: moves are "explained" by unrelated sent positions; a correct answer can be
+     dropped after three such moves and a wrong one adopted from two.
+  Where I expect only a transient:
+  c  an image that comes back while the pointer rests (U at the other image's plane, then M with
+     nothing sent): a correct REST answer is taken back by the "moves after a rest answer" rule
+     and returns 300 ms later — the cursor shown without its hotspot for 300 ms.
+  d  early rest without further sends (E1).
+  Where I expect it to hold: update positions never used; relative mode and output-size change
+  start over (no answer from stale positions); (0,0) hotspot answered as (0,0); far-edge hotspot
+  (23,23) answered; 5,000 images -> at most 64 remembered.
+  e  a MOVE with resource id 0 (hidden) leaves _imageKey set and _descriptor null: the armed rest
+     timer then throws inside the try and emits a `cursor-hotspot-error` diagnostic (not device
+     order as far as I know; a note).
+
+P7 MUTANTS: the worker's script reproduces 37 of 38 killed. Mine (>= 5; decided now):
+   m1 controller.notePointer does not re-arm the rest timer        -> expect KILLED
+   m2 controller._inferHotspot does not re-arm the rest timer      -> expect KILLED
+   m3 estimator.noteMove: `image.misses = 0` on an explained move removed -> expect SURVIVES?
+   m4 estimator.noteRest: `image.candidates = [rest]` removed      -> unsure
+   m5 controller.reset(): `_pointerOutput = null` removed          -> expect SURVIVES?
+   m6 estimator.reset(): `_sent.length = 0` removed                -> expect KILLED
+   m7 controller._trackHotspot: noteInstall on every update (also the same image) -> expect KILLED
+   m8 estimator.noteMove: the "nothing recent explains it" early return counted as a miss -> KILLED
+
+P8 REGRESSION: browser-unchanged.json click median within E5-T37b's 267.7/270.6/267.9 spread
+   (+-10 ms), key echo within 44-49 ms; demo-suite 127/127, no errors.

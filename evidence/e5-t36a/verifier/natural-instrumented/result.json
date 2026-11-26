@@ -1,0 +1,353 @@
+{
+  "task": "E5-T36a verifier",
+  "instrumented": true,
+  "plan": "plan-natural.json",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "arrow over the page body, after two glides",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        500,
+        690
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 499,
+        "y": 689
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 93,
+        "moves": 93,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "tip": [
+        500,
+        690
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "hand, first time, straight glide from the page body onto the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        93,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 512
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          null,
+          null
+        ],
+        "updates": 170,
+        "moves": 170,
+        "styleWrites": 7,
+        "diagnostics": 0
+      },
+      "tip": [
+        84,
+        512
+      ],
+      "tipError": [
+        -9,
+        -4
+      ],
+      "hotspotError": [
+        -9,
+        -4
+      ],
+      "wrong": true
+    },
+    {
+      "name": "hand, after moving about inside the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        60,
+        505
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          8,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 51,
+        "y": 501
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          8,
+          4
+        ],
+        "updates": 221,
+        "moves": 221,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "tip": [
+        59,
+        505
+      ],
+      "tipError": [
+        -1,
+        0
+      ],
+      "hotspotError": [
+        -1,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "text caret, first time, glide from the button to the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        1000,
+        420
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 996,
+        "y": 412
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 319,
+        "moves": 319,
+        "styleWrites": 13,
+        "diagnostics": 0
+      },
+      "tip": [
+        1000,
+        420
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "text caret, after moving about inside the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        950,
+        380
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 946,
+        "y": 372
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 387,
+        "moves": 387,
+        "styleWrites": 13,
+        "diagnostics": 0
+      },
+      "tip": [
+        950,
+        380
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "arrow again over the page body",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        450,
+        730
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 449,
+        "y": 729
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 479,
+        "moves": 479,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "tip": [
+        450,
+        730
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "hand again over the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        100,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          8,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 91,
+        "y": 516
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          8,
+          4
+        ],
+        "updates": 560,
+        "moves": 560,
+        "styleWrites": 17,
+        "diagnostics": 0
+      },
+      "tip": [
+        99,
+        520
+      ],
+      "tipError": [
+        -1,
+        0
+      ],
+      "hotspotError": [
+        -1,
+        0
+      ],
+      "wrong": false
+    }
+  ],
+  "instrumentedBytes": 18458,
+  "sessionRestartSeconds": 16.091,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 544,
+  "cursorDiagnostics": [],
+  "events": 1664,
+  "errors": [],
+  "ran": true
+}

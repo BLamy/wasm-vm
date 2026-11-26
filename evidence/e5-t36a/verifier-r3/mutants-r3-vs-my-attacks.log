@@ -1,0 +1,44 @@
+== mutant V1 (scratch copy) against attacks-r3.mjs §a §c §h
+  HELD   reset: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   control without the restart: the question in flight is answered once the guest is idle: [4,8]
+  HELD   mode: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   size: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+ALL CHECKS HELD
+  FAILED caret undecided (true), its question out (3 readings); hand [4,8] (true (9,4)); answers shown for the hand [[358,"hand",[4,8]]]; the caret's (4,8) was never put on the hand
+  FAILED caret afterwards [4,8]; wrong shown [[358,"hand",[4,8]]]
+2 CHECK(S) FAILED
+  HELD   three restarts back to back with answers in flight: settling while behind true; shown during the run null; wrong 0; settling at the end false; questions still polling: timers 0, unanswered 0
+ALL CHECKS HELD
+== mutant V10 (scratch copy) against attacks-r3.mjs §a §c §h
+  HELD   reset: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   control without the restart: the question in flight is answered once the guest is idle: [4,8]
+  HELD   mode: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   size: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+ALL CHECKS HELD
+  HELD   caret undecided (true), its question out (3 readings); hand [9,4] (true (9,4)); answers shown for the hand [[490,"hand",[9,4]]]; the caret's (4,8) was never put on the hand
+  HELD   caret afterwards [4,8]; wrong shown []
+ALL CHECKS HELD
+  HELD   three restarts back to back with answers in flight: settling while behind true; shown during the run null; wrong 0; settling at the end false; questions still polling: timers 0, unanswered 0
+ALL CHECKS HELD
+== mutant V5 (scratch copy) against attacks-r3.mjs §a §c §h
+  HELD   reset: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   control without the restart: the question in flight is answered once the guest is idle: [4,8]
+  HELD   mode: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 1
+  HELD   size: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+ALL CHECKS HELD
+  HELD   caret undecided (true), its question out (3 readings); hand [9,4] (true (9,4)); answers shown for the hand [[490,"hand",[9,4]]]; the caret's (4,8) was never put on the hand
+  HELD   caret afterwards [4,8]; wrong shown []
+ALL CHECKS HELD
+  HELD   three restarts back to back with answers in flight: settling while behind true; shown during the run null; wrong 0; settling at the end false; questions still polling: timers 2, unanswered 0
+ALL CHECKS HELD
+== mutant V6 (scratch copy) against attacks-r3.mjs §a §c §h
+  HELD   reset: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   control without the restart: the question in flight is answered once the guest is idle: [4,8]
+  HELD   mode: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   size: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+ALL CHECKS HELD
+  HELD   caret undecided (true), its question out (3 readings); hand [9,4] (true (9,4)); answers shown for the hand [[490,"hand",[9,4]]]; the caret's (4,8) was never put on the hand
+  HELD   caret afterwards [4,8]; wrong shown []
+ALL CHECKS HELD
+  HELD   three restarts back to back with answers in flight: settling while behind true; shown during the run null; wrong 0; settling at the end false; questions still polling: timers 0, unanswered 0
+ALL CHECKS HELD

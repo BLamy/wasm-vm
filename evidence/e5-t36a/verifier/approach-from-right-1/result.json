@@ -1,0 +1,255 @@
+{
+  "task": "E5-T36a verifier",
+  "instrumented": false,
+  "plan": "plan-approach-from-right.json",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "arrow over the page body",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        380,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 379,
+        "y": 639
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "updates": 38,
+        "moves": 38,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "tip": [
+        380,
+        640
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "hand, first time: straight glide from the right onto the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        72,
+        532
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 63,
+        "y": 528
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          null,
+          null
+        ],
+        "updates": 94,
+        "moves": 94,
+        "styleWrites": 7,
+        "diagnostics": 0
+      },
+      "tip": [
+        63,
+        528
+      ],
+      "tipError": [
+        -9,
+        -4
+      ],
+      "hotspotError": [
+        -9,
+        -4
+      ],
+      "wrong": true
+    },
+    {
+      "name": "hand, after the worker's four scattered points inside the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        93,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 512
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 98,
+        "moves": 98,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "tip": [
+        93,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "text caret over the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        1100,
+        340
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 1096,
+        "y": 332
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "updates": 184,
+        "moves": 184,
+        "styleWrites": 11,
+        "diagnostics": 0
+      },
+      "tip": [
+        1100,
+        340
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    },
+    {
+      "name": "hand again, later in the session",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        100,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 91,
+        "y": 516
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "updates": 286,
+        "moves": 286,
+        "styleWrites": 15,
+        "diagnostics": 0
+      },
+      "tip": [
+        100,
+        520
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "hotspotError": [
+        0,
+        0
+      ],
+      "wrong": false
+    }
+  ],
+  "sessionRestartSeconds": 16.249,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 265,
+  "cursorDiagnostics": [],
+  "errors": [],
+  "ran": true
+}

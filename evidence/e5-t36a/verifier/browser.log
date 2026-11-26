@@ -1,0 +1,72 @@
+{
+  "pass": true,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "shapes": [
+    {
+      "name": "arrow over the page body",
+      "sent": [
+        450,
+        730
+      ],
+      "hotspot": [
+        1,
+        1
+      ],
+      "plane": [
+        449,
+        728
+      ],
+      "tip": [
+        450,
+        729
+      ]
+    },
+    {
+      "name": "hand over the button",
+      "sent": [
+        93,
+        516
+      ],
+      "hotspot": [
+        9,
+        4
+      ],
+      "plane": [
+        84,
+        511
+      ],
+      "tip": [
+        93,
+        515
+      ]
+    },
+    {
+      "name": "text caret over the terminal",
+      "sent": [
+        1000,
+        420
+      ],
+      "hotspot": [
+        4,
+        8
+      ],
+      "plane": [
+        995,
+        411
+      ],
+      "tip": [
+        999,
+        419
+      ]
+    }
+  ],
+  "paintedPointer": {
+    "spot": [
+      1150,
+      650
+    ],
+    "hashUnderPointer": 3836707013,
+    "hashAfterMovingAway": 3836707013
+  }
+}
+exit=0

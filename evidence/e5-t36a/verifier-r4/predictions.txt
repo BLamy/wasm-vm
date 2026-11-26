@@ -1,0 +1,182 @@
+E5-T36a — verifier, round 4 — predictions
+==========================================
+Written 2026-11-26 after reading AGENTS.md, the task file (all of it), the round-4 diff
+(aa0e43725..dfa9ef902: the two sink files, main.js, the tests, the proof script, mutants.py),
+web/src/input/pointer.js, web/idle-sleep.js, the loader's idle ticket and stats, and the
+round-3 verifier's harnesses. BEFORE running anything and BEFORE opening any round-4 evidence
+(evidence/e5-t36a/{browser,gates.log,mutants.log,browser-unchanged*,demo-suite.json}).
+Fresh session: I implemented nothing here and verified none of rounds 1-3.
+
+Carried forward or not (round 3's "Held" list)
+----------------------------------------------
+cursor-controller.js: the whole settling / question / rest machinery was rewritten -> nothing
+that rests on it is carried; re-checked below (P1, P3, P5-P8).
+cursor-hotspot.js: noteMove/_candidates/noteInstall/notePointer are byte-for-byte as in round 3
+(the diff is comments, `forget`, and two dead writes removed) -> round 1/2/3's estimator-level
+results (two images alternating, hotspot larger than the image, wrapped positions, lag up to
+400 moves, 64 images / history bound, >512 positions behind) are CARRIED, not re-run.
+web/loader.js, web/idle-sleep.js, web/linux-worker-protocol.js: untouched in round 4 -> round 3's
+P4 (the premise "a count that moved on = the guest was idle after everything sent before the
+question", 195 of 195 in the real system; one FIFO for pointer events and the stats call) is
+CARRIED for the channel. What is NOT carried is the step from "idle after it was delivered" to
+"its pointer stands on it" — that is this round's rule, attacked in P9.
+Latency (click / key echo) and demo page: judged on the worker's files, as before.
+
+P0  orient. HEAD dfa9ef902; b23468add..dfa9ef902 touches no file under web/ or tools/.
+    web/dist copies of cursor-hotspot.js, cursor-controller.js, main.js, loader.js are
+    byte-identical to their sources, and 127.0.0.1:8125 serves exactly those bytes.
+    gates.log names b23468add and hashes 621410cc4a8f…; browser/result.json hashes
+    8c13d2a81667….                                                  -> stale evidence fails at once.
+
+P1  unit acceptance: the four cursor test files, 44 tests, 44 pass.
+P2  whole web unit suite: 652 tests, 28 fail, the same 28 names as web-unit-failing-before.txt.
+
+P3  round 3's refuting sequences against the new controller (harness adapted, product not:
+    the rig first sends one position far away and lets the guest be idle, so that the page is
+    settled the way a running page is; the hook is the hook as it now is).
+    Worked by hand before running:
+    A/hook, hand (9,4), 6 px even run from the rest position, plane re-reported before the
+      first move, guest one position behind: candidates stay {(9,4),(15,4)} through the run
+      -> NOTHING shown during the run; (9,4) at the move for the LAST position (only it
+      explains that move); (9,4) at rest. Never (15,4). Same shape for arrow/(5,3) -> never
+      (6,4); caret/(-4,-2) -> never (0,6).
+    A/mode (relative and back at rest): settling from the mode change to the first idle
+      after the run -> nothing shown during the run, nothing at rest for the 5 s (no report
+      since settling ended), the truth after the first later jump and its rest.
+    M (mode change on an unsettled image, guest busy, then the run): nothing during the run
+      and at rest; never (15,4).
+    B (hook; the image flips to the arrow and back where the plane stands): nothing after
+      the flip (round 3 saw (15,4)); (9,4) when the guest reports (306,400).
+    C, D (controls): right, as in round 3.
+    attacks-r3.mjs as it stands (22 checks written for round 3's code): no section shows a
+      hotspot more than a pixel from the truth; the checks that pinned the one-second
+      fallback (no counter) now show nothing instead of an answer — they "fail" as checks of
+      round 3's behaviour, and I will say which.
+
+P4  browser, committed bundle, round 3's two refuting plans UNCHANGED (plan-r3-stale.json:
+    32 trials of 10 even steps; plan-r3-stale-short.json: 48 trials of 2-4 steps; each: rest,
+    hook, even run from the rest position; terminal printing in bursts), my runner adapted
+    from premise-browser-r3.mjs only where the page's interface changed:
+    0 wrong answers in either timeline (round 3: 4 of 32 shown for 40-48 ms; 3 of 48 kept for
+    5 s). Every read at rest: none or the arrow's (1,1) within a pixel.
+
+P5  the worker's acceptance command passes for me: 18 reads exactly as the claim's table;
+    48 rest runs, none wrong, known after two more positions in all; timeline none wrong;
+    `settling` true before the first position; no console errors, no diagnostics.
+
+P6  settling cannot end without the guest idle after a position sent since it began (unit,
+    real controller, readings of the count delivered by hand so that events fall between them):
+    a. start over while the question's FIRST reading is in flight; the reading arrives -> no
+       poll is begun, settling stays true, however the count moves, until a position is sent.
+    b. start over during the poll wait -> the same.
+    c. start over while the SECOND reading is in flight and it comes back greater -> settling
+       stays true.
+    d. start over twice back to back (mode, size, mode) with one reading in flight for each
+       -> at most one loop is alive; only a loop whose first reading was ASKED after a position
+       noted in the live epoch ends settling.
+    e. controller.reset() in the middle of a question -> settling true, nothing shown, the old
+       question never concludes.
+    f. a count that goes down, stays, is NaN / Infinity / a string / null / rejects / never
+       answers -> settling never ends, no throw, and no busy loop (timers bounded: at most one
+       armed wait per epoch).
+    g. the first reading is requested inside notePointer after the estimator noted the
+       position, and in the page onFrame runs after send+sync (pointer.js:222-231), so the
+       stats call is queued behind the position. Browser: every "restart" question (Q) in my
+       instrumented log has an S at the same timestamp or earlier in the same epoch, none
+       before it.
+    All predicted to HOLD.
+
+P7  nothing reaches the estimator while settling, and no rest wait is armed while settling:
+    an estimator wrapped to count calls shows 0 noteMove and 0 noteRest while
+    snapshot().hotspotSettling is true, over the worker's whole test file and my sequences.
+    A rest answer is never read off a plane position that is not the pointer's:
+    (i) cursor hidden by a move with resource 0 while a rest question is in flight, shown
+    again elsewhere -> no answer from the old question unless a move of the image arrived
+    since, and then the right one; (ii) hook while a rest question is in flight, then one
+    re-report, then the answer -> the right hotspot. Predicted to HOLD.
+
+P8  the hook keeping the sent positions: 2000 random sequences (hook at a random moment of a
+    run, guest 0-3 positions behind, commits of its own, cursor flips, hooks back to back,
+    hook while a question is in flight): never an answer more than a pixel off. HOLD.
+
+P9  NOVEL ATTACK — "idle after a position sent since" is not "its pointer stands on it".
+    The guest's kernel (Linux input core, input_handle_abs_event) drops an absolute-axis event
+    whose value equals the device's current one; a frame of two unchanged axes delivers
+    nothing to the compositor. The tablet's values are untouched by relative motion (another
+    device). So: pointer at rest on P; relative mode; the guest's pointer is moved by relative
+    motion to G; absolute mode; the next absolute position is P again. The guest handles the
+    interrupt, moves nothing, goes idle. The page: a position sent since the restart, the
+    guest idle after it -> settled, with the guest's pointer on G, a position it never had.
+    The next report of the plane (G - h) is compared with P alone; at rest "last sent - plane"
+    = h + (P - G) is the only candidate and is taken.
+    Unit (real controller; my guest model = the worker's plus two rules: relative deltas move
+      the pointer, an absolute position equal to the tablet's last is not acted on), 64x64
+      arrow (1,1), P = (400,640), relative motion (-7,-5):
+      predicted settling ends; after one commit and the rest wait the page shows (8,6) for a
+      true (1,1), for as long as the pointer rests; one more position and a rest: still (8,6)
+      (one miss); dropped on the third move it cannot explain.
+    Browser (committed bundle; __pointer.setMode("relative",{requestLock:false}), the mouse
+      moved a few CSS px (relative frames), __pointer.setMode("absolute"), the mouse moved back
+      to the SAME page point), arrow over the page body, terminal printing in bursts:
+      predicted for trials where relative motion moved the kernel's plane by d != 0 (|d| small):
+      settling ends within 1 s of the return; the kernel's plane does NOT move for the
+      returned position; at the reads 0.6 s and 2 s later the page shows (1,1) - d, more than
+      a pixel from (1,1); and after two more even steps and a rest the drawn tip is off the
+      sent pixel by d. Control in the same run: the return to a point ONE guest pixel away
+      from P -> the plane moves, (1,1) or nothing shown.
+      What would make this prediction FAIL: the kernel or the device model not dropping the
+      repeated axis values; sway not moving its pointer for relative frames of this device;
+      Playwright's moves carrying no movementX/Y. Each is checked in the run (plane read
+      from /sys/kernel/debug/dri/0/state before and after each step).
+    Reach, to be established and stated either way: whether a user of the Replay desktop can
+    get into relative mode at all (#ide-pointer-toggle in the desktop layout), and what else
+    leaves the guest's pointer off the tablet's last position (session start: the compositor
+    places its pointer itself; the boot overlay lets pointer events through only after the
+    desktop marker — so not during a normal boot).
+
+P10 mocks. The test guest (LegacyKmsGuest) cannot refuse a position and its idle count is
+    "queue empty": the rule under test (idle => acted => pointer on it) is the model's own
+    definition. No expected hotspot is computed by the code under test (truths are constants;
+    the recorded fixture is a real log; the browser's truth is the kernel's plane position).
+    If P9 holds, the first sentence is a finding (the model is not the device in the respect
+    this round's rule depends on); if P9 fails, it is a remark.
+
+P11 the claim's limits.
+    1 busy guest: true (unit: a guest never idle -> no rest answer, settling never ends,
+      moves alone settle a shape when not settling).
+    2 rest needs 150 ms without a cursor event: true; a guest committing every 100 ms gives
+      no rest answer ever, one committing every 400 ms does. (unit)
+    3 nothing known after starting over at rest until reported again: true.
+    4 "idle" does not prove the client finished changing the image: true (carried, round 3 §c
+      + the worker's new test).
+    5 "the pointer goes where the page sends it … the session does neither by itself":
+      incomplete if P9 holds (the page's own relative mode, no compositor warp involved).
+    6 >512 behind: carried (estimator unchanged).
+    7 output size: true as written by reading; unit: a wrong answer settled between the size
+      change and the next position sent is KEPT (as the limit says) — predicted reproducible.
+    8 pace=0: nothing inferred. Browser, `&pace=0`: settling true at every read, 0 answers in
+      the timeline, CSS hotspot "0 0", idleYield false.
+
+P12 coverage of the round-4 hunks (V8 block coverage, the four test files): every block of
+    cursor-hotspot.js executed. cursor-controller.js unexecuted: only the default timers
+    (:111-112, run by every browser run) and catch arms that need a throwing estimator
+    (:458-460 hook, :477-479 restart, :624 sends, :713 reset) unless the "estimator failures"
+    test covers them. Anything else unexecuted is a finding to classify.
+    main.js:864-867 executed in the browser (both arms: paced, and pace=0).
+
+P13 mutants of my own (scratch copy, process timeout), 16 on round-4 lines. Predicted: at
+    least 12 noticed. Named in advance as likely survivors:
+    M15 "the position that carries an output-size change is noted BEFORE the restart" (so it
+        is forgotten, and the page settles on a position it does not remember) — if it
+        survives it is behaviour: round 3's bug by another door;
+    M3  "a move with resource 0 no longer ends the wait for the image it replaced" (the
+        worker's own late fix, found by re-reading, 'not by a test');
+    M6  "the guest is asked before the position is noted" (same tick: unobservable in unit).
+    The worker's 76: reproduce, 75 noticed.
+
+Verdict rule I hold myself to: `refuted` needs a wrong hotspot shown on the committed bundle
+at a point anyone can reopen, by a sequence the task's own text or acceptance says cannot do
+that, and reachable without tools a user does not have — or an acceptance command that does
+not pass. A wrong answer I can only build through a debug hook, or a gap in the stated limits
+with no user reach, is a finding with a demand but not by itself a refutation; a hole in the
+tests around correct code is `needs-evidence` at most.

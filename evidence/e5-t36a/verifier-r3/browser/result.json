@@ -1,0 +1,1313 @@
+{
+  "task": "E5-T36",
+  "legacyKmsSession": true,
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "shapes": [
+    {
+      "name": "arrow over the page body",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        450,
+        730
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 449,
+        "y": 729
+      },
+      "inferred": [
+        1,
+        1
+      ],
+      "tip": [
+        450,
+        730
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hand over the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        93,
+        516
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 512
+      },
+      "inferred": [
+        9,
+        4
+      ],
+      "tip": [
+        93,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "text caret over the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        1000,
+        420
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 996,
+        "y": 412
+      },
+      "inferred": [
+        4,
+        8
+      ],
+      "tip": [
+        1000,
+        420
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    }
+  ],
+  "plans": [
+    {
+      "name": "approach C: from just right of the button, one 0.33 s glide onto it",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            146,
+            501
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 137,
+            "y": 497
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            146,
+            501
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "approach A: from the page body, one 0.46 s glide onto the button",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            142,
+            515
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 133,
+            "y": 511
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            142,
+            515
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "approach from the right, across the button's edge at a slant",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            72,
+            532
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 63,
+            "y": 528
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            72,
+            532
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jumps with rests: each shape from scattered points",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            450,
+            730
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 449,
+            "y": 729
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            450,
+            730
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand over the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1000,
+            420
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 996,
+            "y": 412
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1000,
+            420
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "sessionRestartSeconds": 16.113,
+  "idleAfterSeconds": 32.193,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "timeline": [
+    [
+      60165,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      60477,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      64837,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      64885,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      64902,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      66198,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      66437,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      73244,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      73645,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      78021,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      79837,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      80133,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      82516,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      82621,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      82853,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      87172,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      87196,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      87285,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      88549,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      95693,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      96085,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      100485,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      102269,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      102357,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      102421,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      104957,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      105053,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      105294,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      109549,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      109597,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      110837,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      118260,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      118700,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      123061,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      124868,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      124942,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      125092,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      127565,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      127660,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      127901,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      132037,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      132044,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      136373,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      136628,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ]
+  ],
+  "timelineAnswers": 31,
+  "cursorDiagnostics": [],
+  "paintedPointer": {
+    "spot": [
+      1150,
+      650
+    ],
+    "hashUnderPointer": 3836707013,
+    "hashAfterMovingAway": 3836707013
+  },
+  "errors": [],
+  "pass": true
+}

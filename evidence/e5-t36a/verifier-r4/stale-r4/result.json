@@ -1,0 +1,4581 @@
+{
+  "task": "E5-T36a verifier round 3",
+  "instrumented": true,
+  "plan": "plan-r3-stale.json",
+  "chrome": "Google Chrome",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "stale-idle.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 346,665 — early",
+      "phase": "stale-idle",
+      "t": 63295.8,
+      "settleMs": 400,
+      "sent": [
+        396,
+        695
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 29,
+        "moves": 29,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.1 arrow — late",
+      "phase": "stale-idle",
+      "t": 64799.5,
+      "settleMs": 1500,
+      "sent": [
+        396,
+        695
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 29,
+        "moves": 29,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 366,646 — early",
+      "phase": "stale-idle",
+      "t": 66660.7,
+      "settleMs": 400,
+      "sent": [
+        426,
+        646
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 40,
+        "moves": 40,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.2 arrow — late",
+      "phase": "stale-idle",
+      "t": 68164.9,
+      "settleMs": 1500,
+      "sent": [
+        426,
+        646
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 40,
+        "moves": 40,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 430,658 — early",
+      "phase": "stale-idle",
+      "t": 70143,
+      "settleMs": 400,
+      "sent": [
+        470,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 51,
+        "moves": 51,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.3 arrow — late",
+      "phase": "stale-idle",
+      "t": 71647.1,
+      "settleMs": 1500,
+      "sent": [
+        470,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 51,
+        "moves": 51,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 418,620 — early",
+      "phase": "stale-idle",
+      "t": 73602.9,
+      "settleMs": 400,
+      "sent": [
+        498,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 62,
+        "moves": 62,
+        "styleWrites": 10,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.4 arrow — late",
+      "phase": "stale-idle",
+      "t": 75105.8,
+      "settleMs": 1500,
+      "sent": [
+        498,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 62,
+        "moves": 62,
+        "styleWrites": 10,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 470,687 — early",
+      "phase": "stale-idle",
+      "t": 76957.4,
+      "settleMs": 400,
+      "sent": [
+        500,
+        737
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 73,
+        "moves": 73,
+        "styleWrites": 12,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.5 arrow — late",
+      "phase": "stale-idle",
+      "t": 78461.5,
+      "settleMs": 1500,
+      "sent": [
+        500,
+        737
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 73,
+        "moves": 73,
+        "styleWrites": 12,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 450,640 — early",
+      "phase": "stale-idle",
+      "t": 80277,
+      "settleMs": 400,
+      "sent": [
+        550,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 84,
+        "moves": 84,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-idle.6 arrow — late",
+      "phase": "stale-idle",
+      "t": 81780.5,
+      "settleMs": 1500,
+      "sent": [
+        550,
+        640
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 84,
+        "moves": 84,
+        "styleWrites": 14,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 371,639 — early",
+      "phase": "stale-ticks",
+      "t": 87743.5,
+      "settleMs": 400,
+      "sent": [
+        421,
+        669
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 197,
+        "moves": 197,
+        "styleWrites": 16,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.1 arrow — late",
+      "phase": "stale-ticks",
+      "t": 89245.6,
+      "settleMs": 1500,
+      "sent": [
+        421,
+        669
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 226,
+        "moves": 226,
+        "styleWrites": 16,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 381,662 — early",
+      "phase": "stale-ticks",
+      "t": 91077.8,
+      "settleMs": 400,
+      "sent": [
+        441,
+        662
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 262,
+        "moves": 262,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.2 arrow — late",
+      "phase": "stale-ticks",
+      "t": 92579.8,
+      "settleMs": 1500,
+      "sent": [
+        441,
+        662
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 288,
+        "moves": 288,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 471,666 — early",
+      "phase": "stale-ticks",
+      "t": 94578.2,
+      "settleMs": 400,
+      "sent": [
+        511,
+        706
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 331,
+        "moves": 331,
+        "styleWrites": 20,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.3 arrow — late",
+      "phase": "stale-ticks",
+      "t": 96082.2,
+      "settleMs": 1500,
+      "sent": [
+        511,
+        706
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 357,
+        "moves": 357,
+        "styleWrites": 20,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 427,681 — early",
+      "phase": "stale-ticks",
+      "t": 97959.7,
+      "settleMs": 400,
+      "sent": [
+        507,
+        701
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 398,
+        "moves": 398,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.4 arrow — late",
+      "phase": "stale-ticks",
+      "t": 99462.2,
+      "settleMs": 1500,
+      "sent": [
+        507,
+        701
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 425,
+        "moves": 425,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 470,651 — early",
+      "phase": "stale-ticks",
+      "t": 101325.6,
+      "settleMs": 400,
+      "sent": [
+        500,
+        701
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 466,
+        "moves": 466,
+        "styleWrites": 23,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.5 arrow — late",
+      "phase": "stale-ticks",
+      "t": 102828.2,
+      "settleMs": 1500,
+      "sent": [
+        500,
+        701
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 494,
+        "moves": 494,
+        "styleWrites": 23,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 434,602 — early",
+      "phase": "stale-ticks",
+      "t": 104709.6,
+      "settleMs": 400,
+      "sent": [
+        534,
+        602
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 534,
+        "moves": 534,
+        "styleWrites": 25,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.6 arrow — late",
+      "phase": "stale-ticks",
+      "t": 106216,
+      "settleMs": 1500,
+      "sent": [
+        534,
+        602
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 560,
+        "moves": 560,
+        "styleWrites": 25,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.7 arrow after an even run of 7,7 x10 every 33 ms from the rest position 446,642 — early",
+      "phase": "stale-ticks",
+      "t": 108266.7,
+      "settleMs": 400,
+      "sent": [
+        516,
+        712
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 601,
+        "moves": 601,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.7 arrow — late",
+      "phase": "stale-ticks",
+      "t": 109770.9,
+      "settleMs": 1500,
+      "sent": [
+        516,
+        712
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 629,
+        "moves": 629,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.8 arrow after an even run of 12,4 x10 every 24 ms from the rest position 475,658 — early",
+      "phase": "stale-ticks",
+      "t": 111645.8,
+      "settleMs": 400,
+      "sent": [
+        595,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 667,
+        "moves": 667,
+        "styleWrites": 30,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.8 arrow — late",
+      "phase": "stale-ticks",
+      "t": 113150.2,
+      "settleMs": 1500,
+      "sent": [
+        595,
+        698
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 695,
+        "moves": 695,
+        "styleWrites": 30,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.9 arrow after an even run of 5,3 x10 every 16 ms from the rest position 386,662 — early",
+      "phase": "stale-ticks",
+      "t": 114956.8,
+      "settleMs": 400,
+      "sent": [
+        436,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          1
+        ],
+        "settling": false,
+        "updates": 736,
+        "moves": 736,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.9 arrow — late",
+      "phase": "stale-ticks",
+      "t": 116461.1,
+      "settleMs": 1500,
+      "sent": [
+        436,
+        692
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          1
+        ],
+        "settling": false,
+        "updates": 763,
+        "moves": 763,
+        "styleWrites": 32,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.10 arrow after an even run of 6,0 x10 every 16 ms from the rest position 363,687 — early",
+      "phase": "stale-ticks",
+      "t": 118325.5,
+      "settleMs": 400,
+      "sent": [
+        423,
+        687
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 805,
+        "moves": 805,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.10 arrow — late",
+      "phase": "stale-ticks",
+      "t": 119827.1,
+      "settleMs": 1500,
+      "sent": [
+        423,
+        687
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 832,
+        "moves": 832,
+        "styleWrites": 34,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.11 arrow after an even run of 4,4 x10 every 33 ms from the rest position 387,597 — early",
+      "phase": "stale-ticks",
+      "t": 121874,
+      "settleMs": 400,
+      "sent": [
+        427,
+        637
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 874,
+        "moves": 874,
+        "styleWrites": 35,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.11 arrow — late",
+      "phase": "stale-ticks",
+      "t": 123376,
+      "settleMs": 1500,
+      "sent": [
+        427,
+        637
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 901,
+        "moves": 901,
+        "styleWrites": 35,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.12 arrow after an even run of 8,2 x10 every 24 ms from the rest position 353,600 — early",
+      "phase": "stale-ticks",
+      "t": 125343,
+      "settleMs": 400,
+      "sent": [
+        433,
+        620
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 941,
+        "moves": 941,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.12 arrow — late",
+      "phase": "stale-ticks",
+      "t": 126846.9,
+      "settleMs": 1500,
+      "sent": [
+        433,
+        620
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 969,
+        "moves": 969,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.13 arrow after an even run of 3,5 x10 every 16 ms from the rest position 356,669 — early",
+      "phase": "stale-ticks",
+      "t": 128674.7,
+      "settleMs": 400,
+      "sent": [
+        386,
+        719
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1006,
+        "moves": 1006,
+        "styleWrites": 40,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.13 arrow — late",
+      "phase": "stale-ticks",
+      "t": 130178.8,
+      "settleMs": 1500,
+      "sent": [
+        386,
+        719
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1035,
+        "moves": 1035,
+        "styleWrites": 40,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.14 arrow after an even run of 10,0 x10 every 16 ms from the rest position 353,633 — early",
+      "phase": "stale-ticks",
+      "t": 132024.1,
+      "settleMs": 400,
+      "sent": [
+        453,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1070,
+        "moves": 1070,
+        "styleWrites": 42,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.14 arrow — late",
+      "phase": "stale-ticks",
+      "t": 133526.9,
+      "settleMs": 1500,
+      "sent": [
+        453,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1099,
+        "moves": 1099,
+        "styleWrites": 42,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-ticks.15 arrow after an even run of 7,7 x10 every 33 ms from the rest position 437,619 — early",
+      "phase": "stale-ticks",
+      "t": 135583.6,
+      "settleMs": 400,
+      "sent": [
+        507,
+        689
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 1139,
+        "moves": 1139,
+        "styleWrites": 43,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.15 arrow — late",
+      "phase": "stale-ticks",
+      "t": 137086.2,
+      "settleMs": 1500,
+      "sent": [
+        507,
+        689
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 1167,
+        "moves": 1167,
+        "styleWrites": 43,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.16 arrow after an even run of 12,4 x10 every 24 ms from the rest position 466,602 — early",
+      "phase": "stale-ticks",
+      "t": 139044.6,
+      "settleMs": 400,
+      "sent": [
+        586,
+        642
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 1206,
+        "moves": 1206,
+        "styleWrites": 45,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-ticks.16 arrow — late",
+      "phase": "stale-ticks",
+      "t": 140549.2,
+      "settleMs": 1500,
+      "sent": [
+        586,
+        642
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 1234,
+        "moves": 1234,
+        "styleWrites": 45,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-bursts.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 408,627 — early",
+      "phase": "stale-bursts",
+      "t": 147781.4,
+      "settleMs": 400,
+      "sent": [
+        458,
+        657
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1280,
+        "moves": 1280,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.1 arrow — late",
+      "phase": "stale-bursts",
+      "t": 149284.6,
+      "settleMs": 1500,
+      "sent": [
+        458,
+        657
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1291,
+        "moves": 1291,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 343,671 — early",
+      "phase": "stale-bursts",
+      "t": 151108.6,
+      "settleMs": 400,
+      "sent": [
+        403,
+        671
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1307,
+        "moves": 1307,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.2 arrow — late",
+      "phase": "stale-bursts",
+      "t": 152612.4,
+      "settleMs": 1500,
+      "sent": [
+        403,
+        671
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1317,
+        "moves": 1317,
+        "styleWrites": 50,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 423,593 — early",
+      "phase": "stale-bursts",
+      "t": 154565.3,
+      "settleMs": 400,
+      "sent": [
+        463,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1337,
+        "moves": 1337,
+        "styleWrites": 52,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.3 arrow — late",
+      "phase": "stale-bursts",
+      "t": 156067.9,
+      "settleMs": 1500,
+      "sent": [
+        463,
+        633
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1344,
+        "moves": 1344,
+        "styleWrites": 52,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 363,639 — early",
+      "phase": "stale-bursts",
+      "t": 157998.1,
+      "settleMs": 400,
+      "sent": [
+        443,
+        659
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1364,
+        "moves": 1364,
+        "styleWrites": 54,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.4 arrow — late",
+      "phase": "stale-bursts",
+      "t": 159501.4,
+      "settleMs": 1500,
+      "sent": [
+        443,
+        659
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1374,
+        "moves": 1374,
+        "styleWrites": 54,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 462,622 — early",
+      "phase": "stale-bursts",
+      "t": 161330.6,
+      "settleMs": 400,
+      "sent": [
+        492,
+        672
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1388,
+        "moves": 1388,
+        "styleWrites": 56,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.5 arrow — late",
+      "phase": "stale-bursts",
+      "t": 162835.1,
+      "settleMs": 1500,
+      "sent": [
+        492,
+        672
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1398,
+        "moves": 1398,
+        "styleWrites": 56,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 416,596 — early",
+      "phase": "stale-bursts",
+      "t": 164639.4,
+      "settleMs": 400,
+      "sent": [
+        516,
+        596
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1416,
+        "moves": 1416,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.6 arrow — late",
+      "phase": "stale-bursts",
+      "t": 166142.7,
+      "settleMs": 1500,
+      "sent": [
+        516,
+        596
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1425,
+        "moves": 1425,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.7 arrow after an even run of 7,7 x10 every 33 ms from the rest position 354,678 — early",
+      "phase": "stale-bursts",
+      "t": 168160.3,
+      "settleMs": 400,
+      "sent": [
+        424,
+        748
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1444,
+        "moves": 1444,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.7 arrow — late",
+      "phase": "stale-bursts",
+      "t": 169663.3,
+      "settleMs": 1500,
+      "sent": [
+        424,
+        748
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1452,
+        "moves": 1452,
+        "styleWrites": 60,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.8 arrow after an even run of 12,4 x10 every 24 ms from the rest position 414,605 — early",
+      "phase": "stale-bursts",
+      "t": 171579.9,
+      "settleMs": 400,
+      "sent": [
+        534,
+        645
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 1473,
+        "moves": 1473,
+        "styleWrites": 61,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "stale-bursts.8 arrow — late",
+      "phase": "stale-bursts",
+      "t": 173082.7,
+      "settleMs": 1500,
+      "sent": [
+        534,
+        645
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1481,
+        "moves": 1481,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.9 arrow after an even run of 5,3 x10 every 16 ms from the rest position 446,663 — early",
+      "phase": "stale-bursts",
+      "t": 174957.8,
+      "settleMs": 400,
+      "sent": [
+        496,
+        693
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1502,
+        "moves": 1502,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.9 arrow — late",
+      "phase": "stale-bursts",
+      "t": 176461.4,
+      "settleMs": 1500,
+      "sent": [
+        496,
+        693
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1511,
+        "moves": 1511,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.10 arrow after an even run of 6,0 x10 every 16 ms from the rest position 344,605 — early",
+      "phase": "stale-bursts",
+      "t": 178254.7,
+      "settleMs": 400,
+      "sent": [
+        404,
+        605
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1531,
+        "moves": 1531,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.10 arrow — late",
+      "phase": "stale-bursts",
+      "t": 179758.8,
+      "settleMs": 1500,
+      "sent": [
+        404,
+        605
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1540,
+        "moves": 1540,
+        "styleWrites": 66,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.11 arrow after an even run of 4,4 x10 every 33 ms from the rest position 357,602 — early",
+      "phase": "stale-bursts",
+      "t": 181713.9,
+      "settleMs": 400,
+      "sent": [
+        397,
+        642
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          0
+        ],
+        "settling": false,
+        "updates": 1557,
+        "moves": 1557,
+        "styleWrites": 68,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        0
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.11 arrow — late",
+      "phase": "stale-bursts",
+      "t": 183217.3,
+      "settleMs": 1500,
+      "sent": [
+        397,
+        642
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          0
+        ],
+        "settling": false,
+        "updates": 1566,
+        "moves": 1566,
+        "styleWrites": 68,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        0
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.12 arrow after an even run of 8,2 x10 every 24 ms from the rest position 397,595 — early",
+      "phase": "stale-bursts",
+      "t": 185113.6,
+      "settleMs": 400,
+      "sent": [
+        477,
+        615
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1587,
+        "moves": 1587,
+        "styleWrites": 70,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.12 arrow — late",
+      "phase": "stale-bursts",
+      "t": 186616,
+      "settleMs": 1500,
+      "sent": [
+        477,
+        615
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1597,
+        "moves": 1597,
+        "styleWrites": 70,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.13 arrow after an even run of 3,5 x10 every 16 ms from the rest position 438,689 — early",
+      "phase": "stale-bursts",
+      "t": 188394.4,
+      "settleMs": 400,
+      "sent": [
+        468,
+        739
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1618,
+        "moves": 1618,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.13 arrow — late",
+      "phase": "stale-bursts",
+      "t": 189898.7,
+      "settleMs": 1500,
+      "sent": [
+        468,
+        739
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1627,
+        "moves": 1627,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.14 arrow after an even run of 10,0 x10 every 16 ms from the rest position 401,648 — early",
+      "phase": "stale-bursts",
+      "t": 191772,
+      "settleMs": 400,
+      "sent": [
+        501,
+        648
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1649,
+        "moves": 1649,
+        "styleWrites": 74,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.14 arrow — late",
+      "phase": "stale-bursts",
+      "t": 193274.5,
+      "settleMs": 1500,
+      "sent": [
+        501,
+        648
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1658,
+        "moves": 1658,
+        "styleWrites": 74,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.15 arrow after an even run of 7,7 x10 every 33 ms from the rest position 464,634 — early",
+      "phase": "stale-bursts",
+      "t": 195312.4,
+      "settleMs": 400,
+      "sent": [
+        534,
+        704
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          0,
+          0
+        ],
+        "settling": false,
+        "updates": 1678,
+        "moves": 1678,
+        "styleWrites": 75,
+        "diagnostics": 0
+      },
+      "answer": [
+        0,
+        0
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.15 arrow — late",
+      "phase": "stale-bursts",
+      "t": 196815.9,
+      "settleMs": 1500,
+      "sent": [
+        534,
+        704
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          0,
+          0
+        ],
+        "settling": false,
+        "updates": 1686,
+        "moves": 1686,
+        "styleWrites": 75,
+        "diagnostics": 0
+      },
+      "answer": [
+        0,
+        0
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.16 arrow after an even run of 12,4 x10 every 24 ms from the rest position 450,622 — early",
+      "phase": "stale-bursts",
+      "t": 198716.8,
+      "settleMs": 400,
+      "sent": [
+        570,
+        662
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1708,
+        "moves": 1708,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "stale-bursts.16 arrow — late",
+      "phase": "stale-bursts",
+      "t": 200220.5,
+      "settleMs": 1500,
+      "sent": [
+        570,
+        662
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1716,
+        "moves": 1716,
+        "styleWrites": 76,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    }
+  ],
+  "shell": [
+    {
+      "cmd": "(while :; do echo tick; sleep 0.05; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.14 0.05 0.02 1/116 708\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg",
+      "stdout": "0.41 0.14 0.05 1/116 1062\n\n"
+    },
+    {
+      "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.41 0.14 0.05 1/117 1079\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg",
+      "stdout": "0.35 0.15 0.05 1/116 1661\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "idle",
+      "t": 28222,
+      "idleAfterSeconds": 33.208,
+      "reached": true
+    },
+    {
+      "op": "jump",
+      "to": [
+        346,
+        665
+      ],
+      "t": 61430.1
+    },
+    {
+      "op": "reset",
+      "name": "stale-idle.1",
+      "t": 62635.2
+    },
+    {
+      "op": "settle",
+      "t": 62636.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 62637.3
+    },
+    {
+      "op": "evenrun",
+      "t": 62733.2
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 346,665 — early",
+      "t": 62894.8
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.1 arrow — late",
+      "t": 63297.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        366,
+        646
+      ],
+      "t": 64800.5
+    },
+    {
+      "op": "reset",
+      "name": "stale-idle.2",
+      "t": 66003.2
+    },
+    {
+      "op": "settle",
+      "t": 66004.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 66006
+    },
+    {
+      "op": "evenrun",
+      "t": 66090.4
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 366,646 — early",
+      "t": 66257.7
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.2 arrow — late",
+      "t": 66661.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        430,
+        658
+      ],
+      "t": 68165.7
+    },
+    {
+      "op": "reset",
+      "name": "stale-idle.3",
+      "t": 69369.3
+    },
+    {
+      "op": "settle",
+      "t": 69370.2,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 69371.2
+    },
+    {
+      "op": "evenrun",
+      "t": 69406.9
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 430,658 — early",
+      "t": 69739.4
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.3 arrow — late",
+      "t": 70143.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        418,
+        620
+      ],
+      "t": 71648
+    },
+    {
+      "op": "reset",
+      "name": "stale-idle.4",
+      "t": 72852.1
+    },
+    {
+      "op": "settle",
+      "t": 72853.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 72854.3
+    },
+    {
+      "op": "evenrun",
+      "t": 72957.2
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 418,620 — early",
+      "t": 73199.3
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.4 arrow — late",
+      "t": 73603.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        470,
+        687
+      ],
+      "t": 75107
+    },
+    {
+      "op": "reset",
+      "name": "stale-idle.5",
+      "t": 76308.8
+    },
+    {
+      "op": "settle",
+      "t": 76309.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 76310.8
+    },
+    {
+      "op": "evenrun",
+      "t": 76387
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 470,687 — early",
+      "t": 76554.9
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.5 arrow — late",
+      "t": 76958.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        640
+      ],
+      "t": 78462.6
+    },
+    {
+      "op": "reset",
+      "name": "stale-idle.6",
+      "t": 79665.8
+    },
+    {
+      "op": "settle",
+      "t": 79666.7,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 79667.6
+    },
+    {
+      "op": "evenrun",
+      "t": 79711.9
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 450,640 — early",
+      "t": 79873.5
+    },
+    {
+      "op": "read",
+      "name": "stale-idle.6 arrow — late",
+      "t": 80278
+    },
+    {
+      "op": "sh",
+      "t": 81781.3
+    },
+    {
+      "op": "stats",
+      "t": 82874
+    },
+    {
+      "op": "wait",
+      "t": 82882.8
+    },
+    {
+      "op": "stats",
+      "t": 85884
+    },
+    {
+      "op": "jump",
+      "to": [
+        371,
+        639
+      ],
+      "t": 85887.6
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.1",
+      "t": 87108.4
+    },
+    {
+      "op": "settle",
+      "t": 87109.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 87111.2
+    },
+    {
+      "op": "evenrun",
+      "t": 87178.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 371,639 — early",
+      "t": 87341.2
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.1 arrow — late",
+      "t": 87744.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        381,
+        662
+      ],
+      "t": 89246.4
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.2",
+      "t": 90459
+    },
+    {
+      "op": "settle",
+      "t": 90459.9,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 90461.5
+    },
+    {
+      "op": "evenrun",
+      "t": 90513.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 381,662 — early",
+      "t": 90674.5
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.2 arrow — late",
+      "t": 91078.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        471,
+        666
+      ],
+      "t": 92580.8
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.3",
+      "t": 93784
+    },
+    {
+      "op": "settle",
+      "t": 93784.9,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 93785.8
+    },
+    {
+      "op": "evenrun",
+      "t": 93845.3
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 471,666 — early",
+      "t": 94176.7
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.3 arrow — late",
+      "t": 94579
+    },
+    {
+      "op": "jump",
+      "to": [
+        427,
+        681
+      ],
+      "t": 96083
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.4",
+      "t": 97291.4
+    },
+    {
+      "op": "settle",
+      "t": 97292.1,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 97292.9
+    },
+    {
+      "op": "evenrun",
+      "t": 97317.1
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 427,681 — early",
+      "t": 97558.1
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.4 arrow — late",
+      "t": 97960.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        470,
+        651
+      ],
+      "t": 99464.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.5",
+      "t": 100674.4
+    },
+    {
+      "op": "settle",
+      "t": 100675.3,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 100676.4
+    },
+    {
+      "op": "evenrun",
+      "t": 100758.1
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 470,651 — early",
+      "t": 100922.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.5 arrow — late",
+      "t": 101326.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        434,
+        602
+      ],
+      "t": 102829.1
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.6",
+      "t": 104039.9
+    },
+    {
+      "op": "settle",
+      "t": 104040.8,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 104041.8
+    },
+    {
+      "op": "evenrun",
+      "t": 104143.9
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 434,602 — early",
+      "t": 104306.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.6 arrow — late",
+      "t": 104712.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        446,
+        642
+      ],
+      "t": 106217
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.7",
+      "t": 107421.7
+    },
+    {
+      "op": "settle",
+      "t": 107422.7,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 107423.8
+    },
+    {
+      "op": "evenrun",
+      "t": 107533.3
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.7 arrow after an even run of 7,7 x10 every 33 ms from the rest position 446,642 — early",
+      "t": 107864.5
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.7 arrow — late",
+      "t": 108267.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        475,
+        658
+      ],
+      "t": 109771.8
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.8",
+      "t": 110974.8
+    },
+    {
+      "op": "settle",
+      "t": 110976.3,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 110977.9
+    },
+    {
+      "op": "evenrun",
+      "t": 111000.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.8 arrow after an even run of 12,4 x10 every 24 ms from the rest position 475,658 — early",
+      "t": 111242.7
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.8 arrow — late",
+      "t": 111646.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        386,
+        662
+      ],
+      "t": 113151.1
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.9",
+      "t": 114356.1
+    },
+    {
+      "op": "settle",
+      "t": 114357.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 114358.1
+    },
+    {
+      "op": "evenrun",
+      "t": 114386.5
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.9 arrow after an even run of 5,3 x10 every 16 ms from the rest position 386,662 — early",
+      "t": 114555
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.9 arrow — late",
+      "t": 114957.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        363,
+        687
+      ],
+      "t": 116462.1
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.10",
+      "t": 117671.9
+    },
+    {
+      "op": "settle",
+      "t": 117673,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 117673.9
+    },
+    {
+      "op": "evenrun",
+      "t": 117763.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.10 arrow after an even run of 6,0 x10 every 16 ms from the rest position 363,687 — early",
+      "t": 117924.3
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.10 arrow — late",
+      "t": 118326.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        387,
+        597
+      ],
+      "t": 119827.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.11",
+      "t": 121039.4
+    },
+    {
+      "op": "settle",
+      "t": 121040.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 121041.1
+    },
+    {
+      "op": "evenrun",
+      "t": 121139.4
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.11 arrow after an even run of 4,4 x10 every 33 ms from the rest position 387,597 — early",
+      "t": 121470.4
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.11 arrow — late",
+      "t": 121874.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        353,
+        600
+      ],
+      "t": 123376.8
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.12",
+      "t": 124579.7
+    },
+    {
+      "op": "settle",
+      "t": 124580.6,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 124581.7
+    },
+    {
+      "op": "evenrun",
+      "t": 124696.7
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.12 arrow after an even run of 8,2 x10 every 24 ms from the rest position 353,600 — early",
+      "t": 124939.7
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.12 arrow — late",
+      "t": 125343.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        356,
+        669
+      ],
+      "t": 126847.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.13",
+      "t": 128055.3
+    },
+    {
+      "op": "settle",
+      "t": 128056.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 128057.2
+    },
+    {
+      "op": "evenrun",
+      "t": 128104.6
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.13 arrow after an even run of 3,5 x10 every 16 ms from the rest position 356,669 — early",
+      "t": 128272.9
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.13 arrow — late",
+      "t": 128675.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        353,
+        633
+      ],
+      "t": 130179.7
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.14",
+      "t": 131389.2
+    },
+    {
+      "op": "settle",
+      "t": 131390.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 131391
+    },
+    {
+      "op": "evenrun",
+      "t": 131456
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.14 arrow after an even run of 10,0 x10 every 16 ms from the rest position 353,633 — early",
+      "t": 131620.8
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.14 arrow — late",
+      "t": 132025.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        437,
+        619
+      ],
+      "t": 133527.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.15",
+      "t": 134740
+    },
+    {
+      "op": "settle",
+      "t": 134740.9,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 134741.8
+    },
+    {
+      "op": "evenrun",
+      "t": 134850.9
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.15 arrow after an even run of 7,7 x10 every 33 ms from the rest position 437,619 — early",
+      "t": 135182.3
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.15 arrow — late",
+      "t": 135584.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        466,
+        602
+      ],
+      "t": 137087.2
+    },
+    {
+      "op": "reset",
+      "name": "stale-ticks.16",
+      "t": 138290.4
+    },
+    {
+      "op": "settle",
+      "t": 138291.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 138292.2
+    },
+    {
+      "op": "evenrun",
+      "t": 138399.4
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.16 arrow after an even run of 12,4 x10 every 24 ms from the rest position 466,602 — early",
+      "t": 138642.2
+    },
+    {
+      "op": "read",
+      "name": "stale-ticks.16 arrow — late",
+      "t": 139045.5
+    },
+    {
+      "op": "sh",
+      "t": 140550.1
+    },
+    {
+      "op": "sh",
+      "t": 141626.8
+    },
+    {
+      "op": "stats",
+      "t": 142983.5
+    },
+    {
+      "op": "wait",
+      "t": 142984.8
+    },
+    {
+      "op": "stats",
+      "t": 145986.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        408,
+        627
+      ],
+      "t": 145990.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.1",
+      "t": 147194.6
+    },
+    {
+      "op": "settle",
+      "t": 147195.5,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 147196.5
+    },
+    {
+      "op": "evenrun",
+      "t": 147218.2
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.1 arrow after an even run of 5,3 x10 every 16 ms from the rest position 408,627 — early",
+      "t": 147379
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.1 arrow — late",
+      "t": 147782.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        343,
+        671
+      ],
+      "t": 149285.7
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.2",
+      "t": 150489.4
+    },
+    {
+      "op": "settle",
+      "t": 150490.6,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 150491.7
+    },
+    {
+      "op": "evenrun",
+      "t": 150536.8
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.2 arrow after an even run of 6,0 x10 every 16 ms from the rest position 343,671 — early",
+      "t": 150705.7
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.2 arrow — late",
+      "t": 151109.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        423,
+        593
+      ],
+      "t": 152613.3
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.3",
+      "t": 153816.2
+    },
+    {
+      "op": "settle",
+      "t": 153817.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 153818.2
+    },
+    {
+      "op": "evenrun",
+      "t": 153832.8
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.3 arrow after an even run of 4,4 x10 every 33 ms from the rest position 423,593 — early",
+      "t": 154163.6
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.3 arrow — late",
+      "t": 154566.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        363,
+        639
+      ],
+      "t": 156069
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.4",
+      "t": 157271.5
+    },
+    {
+      "op": "settle",
+      "t": 157272.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 157273.3
+    },
+    {
+      "op": "evenrun",
+      "t": 157354
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.4 arrow after an even run of 8,2 x10 every 24 ms from the rest position 363,639 — early",
+      "t": 157594.5
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.4 arrow — late",
+      "t": 157999.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        462,
+        622
+      ],
+      "t": 159502.4
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.5",
+      "t": 160705.3
+    },
+    {
+      "op": "settle",
+      "t": 160706.4,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 160707.3
+    },
+    {
+      "op": "evenrun",
+      "t": 160768.2
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.5 arrow after an even run of 3,5 x10 every 16 ms from the rest position 462,622 — early",
+      "t": 160930.3
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.5 arrow — late",
+      "t": 161331.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        416,
+        596
+      ],
+      "t": 162836
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.6",
+      "t": 164039.9
+    },
+    {
+      "op": "settle",
+      "t": 164040.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 164041.8
+    },
+    {
+      "op": "evenrun",
+      "t": 164072.5
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.6 arrow after an even run of 10,0 x10 every 16 ms from the rest position 416,596 — early",
+      "t": 164236.3
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.6 arrow — late",
+      "t": 164640.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        354,
+        678
+      ],
+      "t": 166143.6
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.7",
+      "t": 167346.3
+    },
+    {
+      "op": "settle",
+      "t": 167347.2,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 167348.1
+    },
+    {
+      "op": "evenrun",
+      "t": 167425
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.7 arrow after an even run of 7,7 x10 every 33 ms from the rest position 354,678 — early",
+      "t": 167757
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.7 arrow — late",
+      "t": 168161.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        414,
+        605
+      ],
+      "t": 169664.7
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.8",
+      "t": 170867.9
+    },
+    {
+      "op": "settle",
+      "t": 170868.6,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 170869.6
+    },
+    {
+      "op": "evenrun",
+      "t": 170932.2
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.8 arrow after an even run of 12,4 x10 every 24 ms from the rest position 414,605 — early",
+      "t": 171176.4
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.8 arrow — late",
+      "t": 171580.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        446,
+        663
+      ],
+      "t": 173083.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.9",
+      "t": 174285.3
+    },
+    {
+      "op": "settle",
+      "t": 174286.5,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 174287.7
+    },
+    {
+      "op": "evenrun",
+      "t": 174394.3
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.9 arrow after an even run of 5,3 x10 every 16 ms from the rest position 446,663 — early",
+      "t": 174554.4
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.9 arrow — late",
+      "t": 174958.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        344,
+        605
+      ],
+      "t": 176462.4
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.10",
+      "t": 177663.9
+    },
+    {
+      "op": "settle",
+      "t": 177664.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 177665.8
+    },
+    {
+      "op": "evenrun",
+      "t": 177687.4
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.10 arrow after an even run of 6,0 x10 every 16 ms from the rest position 344,605 — early",
+      "t": 177852.2
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.10 arrow — late",
+      "t": 178255.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        357,
+        602
+      ],
+      "t": 179760
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.11",
+      "t": 180961.5
+    },
+    {
+      "op": "settle",
+      "t": 180962.6,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 180963.6
+    },
+    {
+      "op": "evenrun",
+      "t": 180979.4
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.11 arrow after an even run of 4,4 x10 every 33 ms from the rest position 357,602 — early",
+      "t": 181311.3
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.11 arrow — late",
+      "t": 181715
+    },
+    {
+      "op": "jump",
+      "to": [
+        397,
+        595
+      ],
+      "t": 183218.3
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.12",
+      "t": 184421.6
+    },
+    {
+      "op": "settle",
+      "t": 184422.6,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 184424.2
+    },
+    {
+      "op": "evenrun",
+      "t": 184469.1
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.12 arrow after an even run of 8,2 x10 every 24 ms from the rest position 397,595 — early",
+      "t": 184710.9
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.12 arrow — late",
+      "t": 185114.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        438,
+        689
+      ],
+      "t": 186616.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.13",
+      "t": 187821
+    },
+    {
+      "op": "settle",
+      "t": 187821.8,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 187822.7
+    },
+    {
+      "op": "evenrun",
+      "t": 187830.9
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.13 arrow after an even run of 3,5 x10 every 16 ms from the rest position 438,689 — early",
+      "t": 187991.5
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.13 arrow — late",
+      "t": 188395.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        401,
+        648
+      ],
+      "t": 189899.5
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.14",
+      "t": 191102.6
+    },
+    {
+      "op": "settle",
+      "t": 191103.6,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 191104.6
+    },
+    {
+      "op": "evenrun",
+      "t": 191204.2
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.14 arrow after an even run of 10,0 x10 every 16 ms from the rest position 401,648 — early",
+      "t": 191369
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.14 arrow — late",
+      "t": 191773
+    },
+    {
+      "op": "jump",
+      "to": [
+        464,
+        634
+      ],
+      "t": 193275.6
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.15",
+      "t": 194478.4
+    },
+    {
+      "op": "settle",
+      "t": 194479.2,
+      "settled": true,
+      "settleMs": 0
+    },
+    {
+      "op": "wait",
+      "t": 194480.2
+    },
+    {
+      "op": "evenrun",
+      "t": 194578.3
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.15 arrow after an even run of 7,7 x10 every 33 ms from the rest position 464,634 — early",
+      "t": 194909.7
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.15 arrow — late",
+      "t": 195313.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        450,
+        622
+      ],
+      "t": 196816.9
+    },
+    {
+      "op": "reset",
+      "name": "stale-bursts.16",
+      "t": 198020.3
+    },
+    {
+      "op": "settle",
+      "t": 198021.1,
+      "settled": true,
+      "settleMs": 1
+    },
+    {
+      "op": "wait",
+      "t": 198021.9
+    },
+    {
+      "op": "evenrun",
+      "t": 198071.7
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.16 arrow after an even run of 12,4 x10 every 24 ms from the rest position 450,622 — early",
+      "t": 198313.7
+    },
+    {
+      "op": "read",
+      "name": "stale-bursts.16 arrow — late",
+      "t": 198717.6
+    },
+    {
+      "op": "sh",
+      "t": 200221.5
+    }
+  ],
+  "stats": [
+    {
+      "label": "ticks a",
+      "t": 82882.5,
+      "idleSleeps": 981,
+      "idleYield": true,
+      "idleWakes": 223,
+      "idleSleepMs": 42292.99880000002
+    },
+    {
+      "label": "ticks b (3 s later)",
+      "t": 85887.1,
+      "idleSleeps": 1029,
+      "idleYield": true,
+      "idleWakes": 226,
+      "idleSleepMs": 42877.410800000034
+    },
+    {
+      "label": "bursts a",
+      "t": 142984.6,
+      "idleSleeps": 1749,
+      "idleYield": true,
+      "idleWakes": 262,
+      "idleSleepMs": 47829.0292
+    },
+    {
+      "label": "bursts b (3 s later)",
+      "t": 145990.6,
+      "idleSleeps": 1784,
+      "idleYield": true,
+      "idleWakes": 266,
+      "idleSleepMs": 48926.18940000001
+    }
+  ],
+  "instrumentedBytes": 31339,
+  "sessionRestartSeconds": 16.183,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 418,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 76,
+    "unknownImages": [],
+    "answersShown": 38,
+    "answersForUnknownImages": 0,
+    "shownWrong": []
+  },
+  "events": 4017,
+  "errors": [],
+  "ran": true
+}

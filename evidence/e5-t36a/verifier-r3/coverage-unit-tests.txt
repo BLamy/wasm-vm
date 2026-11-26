@@ -1,0 +1,53 @@
+/Users/blamy/Documents/Codex/wasm-vm/web/src/sink/cursor-hotspot.js: loaded in 2 context(s)
+  every block executed
+/Users/blamy/Documents/Codex/wasm-vm/web/src/sink/cursor-controller.js: loaded in 2 context(s)
+  L38-40: { throw new RangeError(`${name} must be an unsigned 32-bit integer`); }
+  L46-48: { throw new RangeError(`${name} must be a positive finite number`); }
+  L54-54: throw new TypeError("cursor state is missing");
+  L57-59: : state.position && typeof state.position === "object" ? state.position : state
+  L61-61: ?? state.resource_id
+  L62-62: ?? state.hot_x
+  L63-63: ?? state.hot_y
+  L64-64: ?? pos.scanout_id
+  L71-71: catch { /* diagnostics never break guest execution */ }
+  L75-75: ?? event?.event
+  L75-75: ?? event?.kind
+  L75-75: ?? CURSOR_EVENTS.UPDATE
+  L114-114: (handle) => globalThis.clearTimeout(handle)
+  L116-118: { throw new TypeError("cursor target must expose a style object"); }
+  L119-121: { throw new TypeError("cursor overlay parent must support appendChild"); }
+  L122-122: throw new TypeError("cursor onDiagnostic must be a function");
+  L123-123: throw new TypeError("cursor onStateChange must be a function");
+  L180-180: || error
+  L180-180: : undefined
+  L190-190: ?? ""
+  L195-195: return;
+  L216-216: return;
+  L217-217: ?? ""
+  L241-241: throw new TypeError("cursor overlay element is invalid");
+  L258-261: catch (error) { this._restoreTargetPosition(); throw error; }
+  L278-280: catch (error) { this._diagnostic("overlay-remove-error", error); }
+  L281-288: { try { overlay.remove?.(); removed = true; } catch (error) { this._diagnostic("overlay-remove-error", error); } }
+  L304-304: return;
+  L351-351: return false;
+  L354-354: ?? event?.cursorState
+  L354-354: ?? event
+  L360-360: ?? []
+  L369-372: catch (error) { this._diagnostic("cursor-update-rejected", error); return false; }
+  L380-380: return false;
+  L382-382: ?? event?.cursorState
+  L382-382: ?? event
+  L383-391: { this._state = state; this._descriptor = null; this._removeOverlay(); this._restoreHostCursor(); this._moves += 1; this._notify("cursor-move-hidden")
+  L396-398: { throw new RangeError("cursor move cannot change the active hotspot"); }
+  L399-401: { throw new RangeError("cursor move hotspot is outside the active resource"); }
+  L476-476: return;
+  L479-479: return;
+  L506-506: return null;
+  L517-517: return;
+  L602-602: catch (error) { this._diagnostic("cursor-hotspot-error", error); return; }
+  L627-629: default: this._diagnostic("unknown-cursor-event"); return false;
+  L635-635: ?? CURSOR_MODES.ABSOLUTE
+  L657-663: setPositionScale(scaleX, scaleY = scaleX) { this._positionScaleX = checkedScale(scaleX, "cursor x scale"); this._positionScaleY = checkedScale(scaleY,
+  L667-667: : { kind: "hidden" }
+  L672-672: return this.snapshot("reset");
+  L675-677: catch (error) { this._diagnostic("cursor-reset-sink-error", error); }

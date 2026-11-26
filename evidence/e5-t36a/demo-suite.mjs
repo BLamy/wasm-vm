@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+// One built-demo load: actual in-browser ISA suite plus the visible task-roadmap entry.
+import assert from "node:assert/strict";
+import { createServer } from "node:http";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
+
+const repo = "/Users/blamy/Documents/Codex/wasm-vm";
+const root = path.join(repo, "web/dist");
+// Read the built inventory, not a stale count or a transient intermediate metric.
+const { RISCV_TESTS } = await import(pathToFileURL(path.join(root, "riscv-tests.js")));
+assert.ok(RISCV_TESTS.length > 0);
+const expectedTotal = String(RISCV_TESTS.length);
+const task = process.env.E5_DEMO_TASK || "E5-T18e";
+const out = path.resolve(process.env.E5_DEMO_OUT || process.env.E5_T18E_EVIDENCE_DIR || path.join(repo, "evidence/e5-t18e"));
+let server;
+let base = process.env.E5_T18E_DEMO_URL;
+if (!base) {
+  server = createServer(async (request, response) => {
+    const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
+    const file = path.resolve(root, `.${pathname}`);
+    if (!file.startsWith(`${root}/`)) { response.writeHead(404).end(); return; }
+    try {
+      // Deployment stages this committed manifest after assembling web/dist.
+      const data = await readFile(pathname === "/artifacts-alpine.json" ? path.join(repo, "web/artifacts-alpine.json") : file);
+      const types = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".json": "application/json", ".css": "text/css" };
+      response.writeHead(200, { "Content-Type": types[path.extname(file)] || "application/octet-stream",
+        "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" });
+      response.end(data);
+    } catch { response.writeHead(404).end(); }
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  base = `http://127.0.0.1:${server.address().port}`;
+}
+const { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
+const launchArgs = process.env.E5_DEMO_SOFTWARE_GL === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : [];
+const browser = await chromium.launch({ args: launchArgs, executablePath: process.env.E5_T18E_CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: true });
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1050 }, serviceWorkers: "block" });
+  const errors = [], consoleLog = [], httpErrors = [];
+  page.on("pageerror", (failure) => errors.push(String(failure)));
+  page.on("response", (response) => { if (response.status() >= 400 && !response.url().endsWith("/favicon.ico")) httpErrors.push({ url: response.url(), status: response.status() }); });
+  page.on("console", (message) => {
+    const entry = { type: message.type(), text: message.text(), url: message.location().url };
+    consoleLog.push(entry);
+    if (entry.type === "error" && !entry.url?.endsWith("/favicon.ico")) errors.push(entry);
+  });
+  await page.goto(`${base}/app.html?noAutoBoot=1`);
+  await page.waitForFunction(() => document.getElementById("suite-run")?.disabled === false, null, { timeout: 60_000 });
+  await page.locator("#suite-run").evaluate((element) => element.click());
+  await page.waitForFunction((total) => document.querySelector("#metric-done")?.textContent.trim() === total
+    && document.getElementById("suite-run")?.disabled === false, expectedTotal, { timeout: 120_000 });
+  const metrics = await page.evaluate(() => Object.fromEntries(["metric-pass", "metric-fail", "metric-done"].map((id) => [id, document.getElementById(id)?.textContent.trim()])));
+  assert.deepEqual(metrics, { "metric-pass": expectedTotal, "metric-fail": "0", "metric-done": expectedTotal });
+  let capability = null;
+  if (process.env.E5_DEMO_CAPABILITY) {
+    const row = page.locator(".cap").filter({ has: page.locator(".cap-name", { hasText: process.env.E5_DEMO_CAPABILITY }) });
+    assert.equal(await row.count(), 1, "requested capability must be unique");
+    assert.equal(await row.locator(".cap-pip").getAttribute("class"), "cap-pip live");
+    capability = await row.innerText();
+  }
+  const detail = null;
+  assert.deepEqual(errors, []);
+  assert.deepEqual(httpErrors, []);
+  await mkdir(out, { recursive: true });
+  const screenshot = await page.screenshot({ path: path.join(out, "demo-suite.png") });
+  const result = { url: `${base}/app.html?noAutoBoot=1`, browser: browser.version(), launchArgs, metrics, detail, capability, errors, httpErrors, consoleLog,
+    screenshotSha256: createHash("sha256").update(screenshot).digest("hex") };
+  await writeFile(path.join(out, "demo-suite.json"), `${JSON.stringify(result, null, 2)}\n`);
+  console.log(JSON.stringify({ metrics, errors, httpErrors, detail }));
+} finally { await browser.close(); server?.close(); }
