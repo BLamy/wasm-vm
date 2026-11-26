@@ -8,6 +8,10 @@
 import { CursorSink, cssCursorDescriptor } from "./cursor.js";
 import { CursorHotspotEstimator } from "./cursor-hotspot.js";
 
+// How long the pointer and the guest's cursor must both be quiet before the plane is taken to
+// be at rest on the last position sent (see cursor-hotspot.js).
+export const HOTSPOT_REST_MS = 300;
+
 export const CURSOR_MODES = Object.freeze({
   ABSOLUTE: "absolute",
   RELATIVE: "relative",
@@ -93,6 +97,9 @@ export class CursorController {
     onDiagnostic = () => {},
     onStateChange = () => {},
     hotspotEstimator = new CursorHotspotEstimator(),
+    hotspotRestMs = HOTSPOT_REST_MS,
+    setTimer = (fn, ms) => globalThis.setTimeout(fn, ms),
+    clearTimer = (handle) => globalThis.clearTimeout(handle),
   } = {}) {
     if (target !== null && (typeof target !== "object" || !target.style)) {
       throw new TypeError("cursor target must expose a style object");
@@ -112,10 +119,18 @@ export class CursorController {
     this._sink = new CursorSink({ cssMaxDimension });
     // E5-T36: a device that reports no hotspot (legacy KMS places the plane at pointer minus
     // hotspot instead) gets it inferred for the CSS cursor, which the browser draws at the
-    // real pointer. `_cssHot` is that inferred hotspot for the current image, or null.
+    // real pointer. `_imageKey` names the image being inferred for (null when there is nothing
+    // to infer); `_cssHot` is its inferred hotspot, or null while it is not known.
+    if (!(hotspotRestMs > 0)) throw new RangeError("cursor hotspotRestMs must be positive");
     this._hotspots = hotspotEstimator;
+    this._hotspotRestMs = hotspotRestMs;
+    this._setTimer = setTimer;
+    this._clearTimer = clearTimer;
+    this._restTimer = null;
     this._imageKey = null;
     this._cssHot = null;
+    // The guest output size the sent pointer positions were last computed for.
+    this._pointerOutput = null;
     this._descriptor = null;
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
@@ -367,10 +382,10 @@ export class CursorController {
       this._moves += 1;
       // This is the only DOM operation on the high-frequency move path.
       this._applyPositionOnly();
-      if (this._imageKey !== null && this._cssHot === null && this._inferHotspot(state)) {
-        // One style write, once per cursor image: the CSS cursor gains its hotspot.
-        this._applySafely("cursor-hotspot-dom-error");
-      }
+      // A move is the one cursor event whose position was computed with this image's hotspot.
+      // (A style write follows only when the answer changes: once per image, normally.)
+      this._inferHotspot(() => this._hotspots.noteMove(
+        this._imageKey, this._descriptor.width, this._descriptor.height, state.x, state.y));
       return this.snapshot("cursor-move");
     } catch (error) {
       this._diagnostic("cursor-move-rejected", error);
@@ -378,35 +393,107 @@ export class CursorController {
     }
   }
 
-  /** A guest-space pointer position the page has just sent to the guest (E5-T36). */
-  notePointer(x, y) {
+  /**
+   * A guest-space pointer position the page has just sent to the guest (E5-T36), and the guest
+   * output size it was computed for. Only absolute positions are sent here. A change of output
+   * size makes earlier positions incomparable with what the guest reports: inference starts over.
+   */
+  notePointer(x, y, outputWidth = null, outputHeight = null) {
     if (this._disposed) return;
-    try { this._hotspots.notePointer(x, y); } catch (error) { this._diagnostic("cursor-hotspot-pointer-error", error); }
+    try {
+      if (outputWidth !== null && outputHeight !== null) {
+        const previous = this._pointerOutput;
+        if (previous && (previous.width !== outputWidth || previous.height !== outputHeight)) this.resetHotspotInference();
+        this._pointerOutput = { width: outputWidth, height: outputHeight };
+      }
+      this._hotspots.notePointer(x, y);
+      this._armHotspotRest();
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-pointer-error", error);
+    }
   }
 
-  /** Start (or resume) hotspot inference for the image a cursor update just installed. */
+  /** Drop every inferred hotspot and all evidence; the current image is inferred again. */
+  resetHotspotInference() {
+    this._cancelHotspotRest();
+    this._hotspots.reset();
+    this._setCssHot(null);
+  }
+
+  /**
+   * Start (or resume) hotspot inference for the image a cursor update just installed. The
+   * update's own position is NOT evidence: a legacy-KMS commit sets the image at the plane's
+   * previous position, which was computed with the previous image's hotspot, and moves it after.
+   */
   _trackHotspot(state, descriptor) {
+    const previousKey = this._imageKey;
     this._imageKey = null;
     this._cssHot = null;
+    this._cancelHotspotRest();
     // Only a CSS cursor is drawn at the host pointer, and only a device that reports no
     // hotspot leaves one to infer. (An overlay follows the reported plane position as is.)
     if (descriptor?.kind !== "css" || state.hotX !== 0 || state.hotY !== 0) return;
     this._imageKey = descriptor.dataUrl;
-    this._cssHot = this._hotspots.hotspot(this._imageKey);
-    if (this._cssHot === null) this._inferHotspot(state);
-  }
-
-  _inferHotspot(state) {
     try {
-      const hot = this._hotspots.noteMove(
-        this._imageKey, this._descriptor.width, this._descriptor.height, state.x, state.y);
-      if (hot === null || (hot.x === 0 && hot.y === 0)) return false;
-      this._cssHot = hot;
-      return true;
+      // The guest sets its image again and again without changing it (sway does on most
+      // commits); only a CHANGE of image makes the plane position remembered for it stale.
+      if (previousKey !== this._imageKey) this._hotspots.noteInstall(this._imageKey);
+      this._cssHot = this._hotspots.hotspot(this._imageKey);
     } catch (error) {
       this._diagnostic("cursor-hotspot-error", error);
-      return false;
     }
+    this._armHotspotRest();
+  }
+
+  /**
+   * Take the estimator's answer for the current image after one piece of evidence. Inference
+   * runs only in absolute mode: in relative mode the page sends no absolute positions, so
+   * nothing the guest reports can be compared with anything.
+   */
+  _inferHotspot(evidence) {
+    if (this._imageKey === null || this._mode !== CURSOR_MODES.ABSOLUTE) return;
+    try {
+      this._setCssHot(evidence());
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
+    this._armHotspotRest();
+  }
+
+  /** Show `hot` (or no hotspot) for the current image; one style write, only on a change. */
+  _setCssHot(hot) {
+    const now = this._cssHot;
+    if ((hot === null && now === null) || (hot !== null && now !== null && hot.x === now.x && hot.y === now.y)) return;
+    this._cssHot = hot;
+    this._applySafely("cursor-hotspot-dom-error");
+  }
+
+  /**
+   * While the current image's hotspot is unknown, watch for the pointer coming to rest: no
+   * position sent and no cursor event for `hotspotRestMs`. At rest the plane is where the
+   * guest put it for the last position sent, which settles the hotspot without a second move.
+   */
+  _armHotspotRest() {
+    this._cancelHotspotRest();
+    if (this._imageKey === null || this._cssHot !== null || this._mode !== CURSOR_MODES.ABSOLUTE) return;
+    const timer = this._setTimer(() => {
+      if (this._restTimer !== timer || this._disposed) return;
+      this._restTimer = null;
+      if (this._imageKey === null || this._cssHot !== null || this._mode !== CURSOR_MODES.ABSOLUTE) return;
+      try {
+        this._setCssHot(this._hotspots.noteRest(this._imageKey, this._descriptor.width, this._descriptor.height));
+      } catch (error) {
+        this._diagnostic("cursor-hotspot-error", error);
+      }
+    }, this._hotspotRestMs);
+    this._restTimer = timer;
+  }
+
+  _cancelHotspotRest() {
+    if (this._restTimer === null) return;
+    const timer = this._restTimer;
+    this._restTimer = null;
+    this._clearTimer(timer);
   }
 
   /** Dispatch a typed callback from the direct wasm path or the whole-machine worker. */
@@ -428,7 +515,12 @@ export class CursorController {
     }
     const locked = state.pointerLocked === true;
     const changed = mode !== this._mode || locked !== this._pointerLocked;
-    this._mode = mode;
+    // Leaving or entering absolute mode: positions sent before and plane positions reported
+    // after no longer belong together.
+    if (mode !== this._mode) {
+      this._mode = mode;
+      this.resetHotspotInference();
+    }
     this._pointerLocked = locked;
     if (changed) {
       this._modeChanges += 1;
@@ -464,6 +556,12 @@ export class CursorController {
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
     this._pointerLocked = false;
+    // A reset guest starts with no cursor history; nothing inferred before applies to it.
+    this._cancelHotspotRest();
+    this._imageKey = null;
+    this._cssHot = null;
+    this._pointerOutput = null;
+    try { this._hotspots.reset(); } catch (error) { this._diagnostic("cursor-hotspot-error", error); }
     this._removeOverlay();
     this._restoreHostCursor();
     this._notify("reset");

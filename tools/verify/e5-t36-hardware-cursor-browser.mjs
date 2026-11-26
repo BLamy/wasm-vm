@@ -6,11 +6,15 @@
 //   node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --out DIR
 //        [--legacy-kms-session]
 //
-// For three cursor shapes (arrow over the page body, hand over the button, text caret over the
-// terminal) it moves the real pointer to a few guest positions and then compares
+// It moves the real pointer the way a hand does — continuous straight glides at 60 Hz onto the
+// button and the terminal from several directions, and single jumps — and at every rest
+// compares
 //   * the canvas's computed `cursor` (image and hotspot the browser uses), with
 //   * the kernel's cursor-plane position in the guest (/sys/kernel/debug/dri/0/state):
 //     plane position + hotspot must be the guest position the page sent, within one pixel.
+// Each plan starts hotspot inference over, so every approach meets its cursor "for the first
+// time". (The glide plans and the plan runner are the E5-T36a verifier's, whose straight
+// approaches showed what jumps with long rests could not: a wrong hotspot kept for a session.)
 //
 // `--legacy-kms-session` is for an image whose session still forces software cursors (the
 // published generation 1): the script first restarts the guest's session from the serial root
@@ -35,7 +39,7 @@ const out = path.resolve(opt.out);
 await mkdir(out, { recursive: true });
 const { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
 const browser = await chromium.launch({ executablePath: opt.chrome, headless: true });
-const result = { task: "E5-T36", legacyKmsSession: opt["legacy-kms-session"], url: `${opt.url}${opt.app}?guest=replay-desktop&desktop=1${opt.query}#ide`, browser: browser.version(), shapes: [] };
+const result = { task: "E5-T36", legacyKmsSession: opt["legacy-kms-session"], url: `${opt.url}${opt.app}?guest=replay-desktop&desktop=1${opt.query}#ide`, browser: browser.version(), shapes: [], plans: [] };
 let failure = null;
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, serviceWorkers: "block" });
@@ -50,7 +54,8 @@ try {
   const canvas = page.locator("#ide-display-canvas");
   const box = await canvas.boundingBox();
   const GUEST = { w: 1280, h: 800 };
-  const toPage = ([x, y]) => [box.x + (x / GUEST.w) * box.width, box.y + (y / GUEST.h) * box.height];
+  // Centre of the guest pixel, so the page's own rounding notes exactly that pixel.
+  const toPage = ([x, y]) => [box.x + ((x + 0.5) / GUEST.w) * box.width, box.y + ((y + 0.5) / GUEST.h) * box.height];
   if (opt["legacy-kms-session"]) {
     // The image's own session script with the one variable changed, started the way rcS does.
     assert.equal((await sh("sed -e 's/ WLR_NO_HARDWARE_CURSORS=1/ WLR_DRM_NO_ATOMIC=1/' /usr/local/bin/replay-desktop-session > /tmp/session && chmod 755 /tmp/session && grep -c WLR_DRM_NO_ATOMIC=1 /tmp/session")).trim(), "1",
@@ -84,29 +89,80 @@ try {
     }
     return null;
   };
-  // Each shape: visit a few scattered points (the hotspot is inferred from moves to different
-  // places), ending on `rest`; then read both sides.
-  const SHAPES = [
-    { name: "arrow over the page body", expectHotspot: [1, 1], points: [[300, 620], [380, 700], [520, 650], [450, 730]] },
-    { name: "hand over the button", expectHotspot: [9, 4], points: [[60, 510], [100, 520], [140, 505], [93, 516]] },
-    { name: "text caret over the terminal", expectHotspot: [4, 8], points: [[900, 300], [950, 380], [1100, 340], [1000, 420]] },
+  // The guest pixel of the last absolute position the page really sent.
+  const lastSent = () => page.evaluate(([w, h]) => {
+    const frames = window.__pointer.frames();
+    for (let i = frames.length - 1; i >= 0; i -= 1) {
+      const c = frames[i]?.coordinates;
+      if (c) return [Math.floor((c.x * w) / 32768), Math.floor((c.y * h) / 32768)];
+    }
+    return null;
+  }, [GUEST.w, GUEST.h]);
+  const minJerk = (t) => t * t * t * (10 - 15 * t + 6 * t * t);
+  let at = null;
+  const moveTo = async (g) => { const [x, y] = toPage(g); await page.mouse.move(x, y); at = g; };
+  const jump = (to, restMs = 700) => ({ op: "jump", to, restMs });
+  const glide = (to, ms, restMs = 800) => ({ op: "glide", to, ms, restMs });
+  const read = (name, expectHotspot) => ({ op: "read", name, expectHotspot });
+  const scattered = [jump([60, 510]), jump([100, 520]), jump([140, 505]), jump([93, 516])];
+  const onward = [read("hand, after four scattered points inside the button", [9, 4]),
+    glide([1000, 420], 1100), glide([1100, 340], 400), read("text caret over the terminal, after two glides", [4, 8]),
+    glide([300, 650], 1000), glide([100, 520], 800), read("hand again, later in the plan", [9, 4])];
+  const start = [jump([450, 700], 1500), glide([380, 640], 400), read("arrow over the page body", [1, 1])];
+  const PLANS = [
+    { name: "approach C: from just right of the button, one 0.33 s glide onto it",
+      steps: [...start, glide([255, 515], 500), glide([146, 501], 334), read("hand, first time: one straight glide onto the button, at rest", [9, 4]), ...scattered, ...onward] },
+    { name: "approach A: from the page body, one 0.46 s glide onto the button",
+      steps: [...start, glide([431, 552], 500), glide([142, 515], 463), read("hand, first time: one straight glide onto the button, at rest", [9, 4]), ...scattered, ...onward] },
+    { name: "approach from the right, across the button's edge at a slant",
+      steps: [...start, glide([179, 495], 500), glide([72, 532], 604), read("hand, first time: one straight glide onto the button, at rest", [9, 4]), ...scattered, ...onward] },
+    { name: "jumps with rests: each shape from scattered points",
+      steps: [jump([300, 620]), jump([380, 700]), jump([520, 650]), jump([450, 730]), read("arrow over the page body", [1, 1]),
+        ...scattered, read("hand over the button", [9, 4]),
+        jump([900, 300]), jump([950, 380]), jump([1100, 340]), jump([1000, 420]), read("text caret over the terminal", [4, 8])] },
   ];
-  for (const shape of SHAPES) {
-    for (const p of shape.points) { const [x, y] = toPage(p); await page.mouse.move(x, y); await page.waitForTimeout(700); }
-    await page.waitForTimeout(1500);
-    const rest = shape.points.at(-1);
-    const css = await cssCursor();
-    const plane = await cursorPlane();
-    const entry = { name: shape.name, sentGuestPosition: rest, css, plane };
-    result.shapes.push(entry);
-    assert.ok(css.hotspot, `${shape.name}: the canvas cursor is the guest's image (${JSON.stringify(css)})`);
-    assert.deepEqual(css.hotspot, shape.expectHotspot, `${shape.name}: hotspot`);
-    assert.ok(plane, `${shape.name}: the guest has a cursor plane on the CRTC`);
-    entry.tip = [plane.x + css.hotspot[0], plane.y + css.hotspot[1]];
-    assert.ok(Math.abs(entry.tip[0] - rest[0]) <= 1 && Math.abs(entry.tip[1] - rest[1]) <= 1,
-      `${shape.name}: plane ${plane.x},${plane.y} + hotspot ${css.hotspot} is the sent position ${rest}`);
+  result.plans = [];
+  for (const plan of PLANS) {
+    await page.evaluate(() => window.__cursor.resetHotspotInference());
+    const reads = [];
+    for (const step of plan.steps) {
+      if (step.op === "jump") {
+        await moveTo(step.to);
+      } else if (step.op === "glide") {
+        const from = at; const hz = 60; const n = Math.max(1, Math.round((step.ms * hz) / 1000));
+        const began = performance.now();
+        for (let i = 1; i <= n; i += 1) {
+          const f = minJerk(i / n);
+          const g = [Math.round(from[0] + (step.to[0] - from[0]) * f), Math.round(from[1] + (step.to[1] - from[1]) * f)];
+          if (g[0] !== at[0] || g[1] !== at[1]) await moveTo(g);
+          const due = began + (i * 1000) / hz - performance.now();
+          if (due > 0) await new Promise((resolve) => setTimeout(resolve, due));
+        }
+      } else {
+        await page.waitForTimeout(1500);
+        const css = await cssCursor(); const plane = await cursorPlane(); const sent = await lastSent();
+        const state = await page.evaluate(() => { const s = window.__cursor.state(); return { inferred: s.inferredHotX === null ? null : [s.inferredHotX, s.inferredHotY], styleWrites: s.styleWrites }; });
+        const entry = { name: step.name, expectHotspot: step.expectHotspot, sent, css, plane, inferred: state.inferred };
+        reads.push(entry);
+        assert.ok(css.hotspot, `${plan.name} / ${step.name}: the canvas cursor is the guest's image (${JSON.stringify(css)})`);
+        assert.ok(plane, `${plan.name} / ${step.name}: the guest has a cursor plane on the CRTC`);
+        assert.ok(state.inferred, `${plan.name} / ${step.name}: at rest the hotspot is known`);
+        assert.deepEqual(css.hotspot, state.inferred, "the canvas shows what the controller inferred");
+        entry.tip = [plane.x + css.hotspot[0], plane.y + css.hotspot[1]];
+        entry.tipError = [entry.tip[0] - sent[0], entry.tip[1] - sent[1]];
+        assert.ok(Math.abs(entry.tipError[0]) <= 1 && Math.abs(entry.tipError[1]) <= 1,
+          `${plan.name} / ${step.name}: plane ${plane.x},${plane.y} + hotspot ${css.hotspot} is the sent position ${sent}`);
+        assert.ok(Math.abs(css.hotspot[0] - step.expectHotspot[0]) <= 1 && Math.abs(css.hotspot[1] - step.expectHotspot[1]) <= 1,
+          `${plan.name} / ${step.name}: hotspot ${css.hotspot}, expected ${step.expectHotspot} within one pixel`);
+      }
+      if (step.restMs) await page.waitForTimeout(step.restMs);
+    }
+    result.plans.push({ name: plan.name, reads });
   }
+  result.shapes = result.plans.at(-1).reads;
   assert.equal(new Set(result.shapes.map((s) => s.css.imageTail)).size, 3, "three different cursor images");
+  result.cursorDiagnostics = await page.evaluate(() => window.__cursor.diagnostics());
+  assert.deepEqual(result.cursorDiagnostics, [], "no cursor diagnostics");
   // No painted pointer in the guest frame: the pixels around a resting pointer are the same as
   // after it has moved elsewhere (the terminal background does not change under a pointer).
   const region = async ([gx, gy]) => page.evaluate(([x, y]) => {
@@ -138,6 +194,6 @@ try {
   await browser.close();
 }
 console.log(JSON.stringify({ pass: result.pass, swayEnv: result.swayEnv,
-  shapes: result.shapes.map((s) => ({ name: s.name, sent: s.sentGuestPosition, hotspot: s.css?.hotspot, plane: s.plane && [s.plane.x, s.plane.y], tip: s.tip })),
+  plans: (result.plans ?? []).map((p) => ({ plan: p.name, reads: p.reads.map((r) => `${r.name}: sent ${r.sent} hotspot ${r.css?.hotspot} plane ${r.plane && [r.plane.x, r.plane.y]} tip error ${r.tipError}`) })),
   paintedPointer: result.paintedPointer, error: result.error }, null, 2));
 if (failure) process.exit(1);

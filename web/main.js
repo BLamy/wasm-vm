@@ -907,13 +907,15 @@ const pointerBridge = createPointerBridge(createWasmPointerAdapter(pointerContro
   onFrame: (frame) => {
     pointerFrames.push(frame);
     if (pointerFrames.length > 512) pointerFrames.shift();
-    // E5-T36a: the guest-space position just sent, for inferring the hotspot of a cursor image
-    // the device did not describe. The absolute axes span the guest output.
+    // E5-T36a: the guest-space position just sent (only absolute frames carry coordinates), for
+    // inferring the hotspot of a cursor image the device did not describe. The absolute axes
+    // span the guest output; the controller starts inference over when that output changes size.
     const sent = frame?.coordinates;
     const guest = presentation?.snapshot?.();
     if (sent && guest?.width > 0 && guest?.height > 0) {
       cursorController.notePointer(
-        Math.floor((sent.x * guest.width) / 32768), Math.floor((sent.y * guest.height) / 32768));
+        Math.floor((sent.x * guest.width) / 32768), Math.floor((sent.y * guest.height) / 32768),
+        guest.width, guest.height);
     }
     updatePointerIndicator();
   },
@@ -948,6 +950,8 @@ try {
     handle: (event) => cursorController.handle(event),
     diagnostics: () => [...cursorDiagnostics],
     reset: () => cursorController.reset(),
+    // Start hotspot inference over (E5-T36a's browser proof: several "first time" approaches).
+    resetHotspotInference: () => cursorController.resetHotspotInference(),
   };
 } catch { /* page-only diagnostics */ }
 updatePointerIndicator();

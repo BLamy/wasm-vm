@@ -24,31 +24,51 @@ places the plane at pointer minus hotspot instead. The host draws the guest's cu
 CSS cursor at the real pointer, so without the hotspot the image sits offset by it: a pixel
 for the arrow, (9,4) for the hand, (4,8) for the text caret.
 
-What changes: the page knows the guest-space positions it sent; each `MOVE_CURSOR` the device
-reports is one of them minus the hotspot. `CursorHotspotEstimator` keeps, per cursor image, the
-candidate hotspots consistent with every reported plane position seen so far (against the
-recently sent positions, one pixel of rounding tolerated, u32-wrapped negatives handled) and
-answers once exactly one candidate is left after moves to different places. It never answers
-from a straight evenly spaced sweep, where a lag of whole steps is indistinguishable from a
-hotspot. It remembers at most 64 images (oldest out; a forgotten one is inferred again). `CursorController` uses the answer for a CSS cursor whose device hotspot is (0,0):
-one style write per cursor image. A device that reports a non-zero hotspot, and overlay
-cursors, are untouched.
+What changes: the page knows the guest-space positions it sent; each position the guest MOVES
+the cursor plane to is one of them minus the hotspot of the image shown. `CursorHotspotEstimator`
+keeps, per cursor image, the candidate hotspots consistent with every such move seen so far
+(against the recently sent positions, one pixel of rounding tolerated, u32-wrapped negatives
+handled) and answers once exactly one candidate is left. `CursorController` uses the answer for
+a CSS cursor whose device hotspot is (0,0): one style write when the answer changes. A device
+that reports a non-zero hotspot, and overlay cursors, are untouched.
+
+What is and is not evidence (revised after the first verifier's refutation):
+
+- **Only moves.** The position a cursor UPDATE carries is never evidence: a legacy-KMS commit
+  sets the image at the plane's previous position — computed with the previous image's
+  hotspot — and moves it afterwards. (Fed that position, one straight glide onto the button
+  left the hand at (45,7) for a true (9,4).)
+- **Only in absolute mode, at one output size.** Changing pointer mode, a change of the guest
+  output size the sent positions are computed for, and a guest reset start inference over.
+- **At rest the lag is zero.** When no position was sent and the guest reported nothing for
+  300 ms, the plane stands for the last position sent, which settles the hotspot without a
+  second move in another direction — needed after a straight approach, where every lag fits.
+  The rest position must be one the moves so far allow, and needs a move since the image
+  changed.
+- **An answer can be taken back.** Three moves in a row that the answer cannot explain although
+  other sent positions could, or a plane that moves again after a rest answer while nothing new
+  was sent, drop it; inference continues from that move.
+- The estimator remembers at most 64 images (oldest out; a forgotten one is inferred again).
 
 ## Deterministic acceptance
 
 - `cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`
-  passes: the estimator converges on the right hotspot with a lagging guest, coalesced and
-  dropped moves, rounding and wrapped positions; stays silent on a collinear sweep and on
-  positions nothing explains; remembers per image, bounded; the controller writes the style
-  once per image and leaves reported hotspots alone. The web unit suite fails no test that
-  passed before.
+  passes. The controller tests drive the device's real order (update at the previous plane
+  position, then move), including a log recorded on the Replay desktop and 600 random approaches
+  across an image change with lag: the inferred hotspot is never more than one pixel from the
+  truth, and is known at rest. The estimator tests cover lag, rounding, wrapped positions, even
+  sweeps (no guess), rest, a rest answer taken too early, contradiction, reset and the bound on
+  images. The web unit suite fails no test that passed before.
 - Browser, the committed bundle, published generation-1 image with its session restarted on
   legacy KMS from the serial root shell (the one change E5-T36b makes in the image):
   `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`
-  passes — the canvas cursor is the guest's image with hotspots (1,1) over the page body,
-  (9,4) over the button and (4,8) over the terminal; the kernel's cursor-plane position plus
-  that hotspot is the guest position the page sent, within one pixel; the guest frame has no
-  painted pointer; no console errors.
+  passes. Four plans, each starting inference over: three continuous 60 Hz glides onto the
+  button from different directions (the first verifier's approaches A and C and one from the
+  right) and one of jumps with rests. At every rest — 21 reads over arrow, hand and text caret —
+  the hotspot is known, the canvas shows it, it is within one pixel of (1,1), (9,4) or (4,8),
+  and the kernel's cursor-plane position plus that hotspot is the guest position the page
+  sent, within one pixel. The guest frame has no painted pointer; no console errors and no
+  cursor diagnostics.
 - Unchanged with the image as published (software cursor):
   `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios click,type --n 8`
   — click and key-echo medians within the run-to-run spread of E5-T37b's (about 266 ms and
