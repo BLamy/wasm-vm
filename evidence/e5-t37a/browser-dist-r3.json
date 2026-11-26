@@ -1,0 +1,292 @@
+{
+  "label": "e5-t37a-r3-dist",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "startedAt": "2026-11-26T04:36:38.979Z",
+  "trials": 5,
+  "scenarios": {
+    "idle": {
+      "wallMs": 8005,
+      "instructionsM": 1266.9,
+      "mips": 158.3,
+      "framesReceived": 0,
+      "drawnPresents": 0
+    },
+    "click": {
+      "resultMs": {
+        "n": 5,
+        "missing": 0,
+        "min": 332.8,
+        "median": 341.4,
+        "max": 378.1
+      },
+      "pointerArrivedMs": 33.5,
+      "pressedFrame": {
+        "seen": 5,
+        "none": 0,
+        "ms": {
+          "n": 5,
+          "missing": 0,
+          "min": 127.4,
+          "median": 182.4,
+          "max": 210.9
+        }
+      },
+      "raw": {
+        "pressed": [
+          127.4,
+          210.9,
+          182.4,
+          191.5,
+          170.2
+        ],
+        "answered": [
+          361.6,
+          378.1,
+          332.8,
+          341.4,
+          336.9
+        ],
+        "rates": [
+          {
+            "wallMs": 381,
+            "instructionsM": 31.5,
+            "mips": 82.7,
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 434,
+            "instructionsM": 43.5,
+            "mips": 100.2,
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 377,
+            "instructionsM": 38,
+            "mips": 100.9,
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 375,
+            "instructionsM": 37.5,
+            "mips": 100.1,
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 375,
+            "instructionsM": 38,
+            "mips": 101.3,
+            "framesReceived": 2,
+            "drawnPresents": 2
+          }
+        ]
+      }
+    },
+    "sweep": {
+      "resultMs": {
+        "n": 5,
+        "missing": 0,
+        "min": 284.3,
+        "median": 284.8,
+        "max": 286.1
+      },
+      "cursorArriveMs": {
+        "n": 5,
+        "missing": 0,
+        "min": 0.1,
+        "median": 0.2,
+        "max": 16.7
+      },
+      "raw": {
+        "answered": [
+          285.6,
+          284.3,
+          284.8,
+          286.1,
+          284.3
+        ],
+        "cursor": [
+          16.6,
+          0.2,
+          16.7,
+          0.1,
+          0.1
+        ]
+      }
+    },
+    "type": {
+      "echoMs": {
+        "n": 5,
+        "missing": 0,
+        "min": 38.5,
+        "median": 43.7,
+        "max": 53.2
+      },
+      "raw": {
+        "echo": [
+          50,
+          38.5,
+          42.8,
+          53.2,
+          43.7
+        ]
+      }
+    },
+    "node": {
+      "promptMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 5202.9,
+        "median": 5283.8,
+        "max": 5739.3
+      },
+      "raw": {
+        "done": [
+          5739.3,
+          5202.9,
+          5283.8
+        ],
+        "rates": [
+          {
+            "wallMs": 5746,
+            "instructionsM": 628,
+            "mips": 109.3,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 5241,
+            "instructionsM": 589,
+            "mips": 112.4,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 5307,
+            "instructionsM": 573,
+            "mips": 108,
+            "framesReceived": 3,
+            "drawnPresents": 3
+          }
+        ]
+      }
+    }
+  },
+  "yieldMode": "scheduler.postTask",
+  "maxSliceMs": 15.289999961853027,
+  "maxStretchGapMs": 15.669999957084656,
+  "jit": {
+    "hasExecutor": false,
+    "compiledBlocks": 0,
+    "executedBlocks": 0,
+    "retiredViaJit": 0,
+    "directChainEntries": 0,
+    "directChainLinks": 0,
+    "dynamicLinkAttempts": 0,
+    "dynamicLinkHits": 0,
+    "dynamicLinkRefusals": 0,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 0,
+    "dynamicLinkInstalls": 0,
+    "entryCost": {
+      "timingEnabled": false,
+      "timerReads": 0,
+      "hostEntries": 0,
+      "stateCopyCalls": 0,
+      "stateCopyBytes": 0,
+      "stateCopyNs": 0,
+      "engineEntryNs": 0,
+      "indirectTableDispatches": 0,
+      "authorityChecks": 0,
+      "memorySplitExits": 0,
+      "deviceBoundaries": 0,
+      "deviceBoundaryNs": 0
+    },
+    "jitRegionChaining": false,
+    "jitDynamicChaining": false,
+    "guestRetired": 16400773197,
+    "jitEngineCalls": 0,
+    "jitLogicalBlocksPerEngineCall": 0,
+    "jitRetiredShare": 0,
+    "chainLinksMade": 0,
+    "chainLinksCut": 0,
+    "chainDispatchEntries": 0,
+    "chainMaxDepth": 0,
+    "chainLinksFollowed": 0,
+    "jitResidencyPolicy": "disabled",
+    "jitResidencyCap": 0,
+    "jitSubmittedMembers": 0,
+    "jitCompilePauseNs": 0,
+    "jitCompilePauseMaxNs": 0,
+    "jitCompilePauseSamples": 0,
+    "jitCacheInstalls": 0,
+    "jitCacheRetranslations": 0,
+    "jitCacheEvictions": 0,
+    "jitCacheBatches": 0,
+    "jitCacheCodeBytes": 0,
+    "compileQueue": {
+      "admitted": 0,
+      "droppedBackpressure": 0,
+      "cancelledStale": 0,
+      "popped": 0,
+      "queueHighWater": 0,
+      "queueDepth": 0,
+      "capacity": 256
+    },
+    "discovery": {
+      "nominated": 4096,
+      "deduped": 2875567545,
+      "droppedStale": 0,
+      "droppedOverflow": 490287,
+      "countsDropped": 33025649,
+      "excluded": 1049,
+      "queueDepth": 4096,
+      "queueHighWater": 4096,
+      "candidates": 57023,
+      "generation": 68
+    },
+    "decodedCacheEntries": 262144,
+    "decodedBlocksDiscarded": 2043,
+    "decodedCacheFlushes": 0,
+    "discoveryGeneration": 68,
+    "blockEntryHits": 2954336008,
+    "blockBuilds": 2922659,
+    "admissionProbe": false,
+    "coldCounterRecycling": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 64,
+      "capacity": 65536
+    },
+    "turbo": {
+      "enabled": true,
+      "entries": 93693550,
+      "blocks": 2957223641,
+      "inlineOps": 16199479702,
+      "slowOps": 200723872,
+      "exitHorizon": 6333,
+      "exitBudget": 32803,
+      "exitBoundary": 92447848,
+      "exitTrap": 1206566
+    }
+  },
+  "disk": {
+    "fetchWaits": 0,
+    "fetchRequestedChunks": 0,
+    "fetchWaitTotalMs": 0,
+    "localImage": true,
+    "localHits": 256,
+    "localBytes": 67108864,
+    "networkFetches": 0
+  },
+  "missing": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "finishedAt": "2026-11-26T04:39:00.608Z"
+}

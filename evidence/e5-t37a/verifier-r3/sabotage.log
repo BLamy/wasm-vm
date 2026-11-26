@@ -1,0 +1,61 @@
+A1 a wait recorded at a reached deadline (`limited < d` -> `<=`)
+    worker's 24 tests: KILLED by 1: paced_idle_a_reached_deadline_that_wakes_nothing_does_not_end_the_run
+A2 paced_wake without the deadline cap
+    worker's 24 tests: KILLED by 1: paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+A3 paced_wake without sync_sbi_timer
+    worker's 24 tests: KILLED by 1: paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+A4 no STIP level in the wait decision
+    worker's 24 tests: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+A5 msip ends the wait although MSIE is clear
+    worker's 24 tests: KILLED by 1: paced_idle_a_disabled_interrupt_does_not_end_the_wait
+A6 owed waiting time not capped by what the host clock is ahead by
+    worker's 24 tests: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+A7 load_resume does not start a new worked/waited interval
+    worker's 24 tests: KILLED by 1: paced_idle_a_restore_starts_a_new_interval
+B1 fresh_mip with the PLIC contexts swapped
+    worker's 24 tests: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+B2 fresh_mip without the builtin_sbi guard
+    worker's 24 tests: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+B3 fresh_mip: STIP level with `>`
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: KILLED by 1: r3_k1_fresh_mip_is_the_level_sync_on_random_states
+B3b fresh_mip: MTIP level with `>`
+    worker's 24 tests: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+B4 paced_wait_holds accepts an unset marker
+    worker's 24 tests: KILLED by 2: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_while_a_device_has_work
+B5 paced_wait_holds: marker set is enough (no epoch equality)
+    worker's 24 tests: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+B7 the run-entry clear of an untaken wait removed
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: SURVIVED
+B8 the run-entry reset of the quiescence marker removed (pre-existing line the contract leans on)
+    worker's 24 tests: KILLED by 1: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later
+B9 paced_wake writes mtime and resyncs unconditionally (`limited != mtime` guard)
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: SURVIVED
+B11 owed time accumulates the whole span since the anchor at every consultation
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: SURVIVED
+B12 the pacer's `waiting` flag never set
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: KILLED by 2: r2_q3_unbounded_pacer_is_the_pre_task_pacer, r3_pacer_waiting_flag_says_whether_the_last_consultation_fell_short
+B13 paced_wake looks at mip BEFORE this boundary's sync
+    worker's 24 tests: KILLED by 5: paced_idle_time_slept_after_a_rebase_is_kept, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+B16 fresh_mip starts from zero instead of the stale bits
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: KILLED by 1: r3_k1_fresh_mip_is_the_level_sync_on_random_states
+B18 a wait is recorded without the opt-in
+    worker's 24 tests: KILLED by 3: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait, paced_idle_yield_leaves_the_retire_stream_unchanged
+T1 (worker R1) a wait holds without the devices being idle
+    worker's 24 tests: KILLED by 3: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+    + the three verifiers' files: KILLED by 14: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES, r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES, r2_n5fg_device_rule_in_every_loop_flavour_and_the_never_yielding_idle_loop, r3_c3_which_slicings_never_see_a_wait, r3_c4_reports_with_every_ordinary_device_attached_and_never_with_a_polled_net_backend, r3_s1_lockstep_timer_woken_guests_and_a_self_firing_alarm, r3_s1_lockstep_with_device_work_and_a_host, r3_s2_no_wait_while_a_pushed_uart_byte_is_unserved, r3_s3_no_wait_while_the_uart_transmit_interrupt_is_deliverable, r3_s4_no_wait_while_an_rtc_alarm_is_armed, r3_s7_a_host_push_after_the_run_is_seen_before_the_next_report
+T2 (worker R2) fresh levels without the PLIC
+    worker's 24 tests: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    + the three verifiers' files: KILLED by 2: paced_idle_fresh_mip_is_what_the_boundary_sync_writes, r3_k1_fresh_mip_is_the_level_sync_on_random_states
+T3 (worker N9) the host's take does not ask whether the wait holds
+    worker's 24 tests: KILLED by 4: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block, paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+    + the three verifiers' files: KILLED by 14: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block, paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block, r2_n5ab_clint_levels_raised_in_the_wfi_block, r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES, r3_c3_which_slicings_never_see_a_wait, r3_s1_lockstep_timer_woken_guests_and_a_self_firing_alarm, r3_s1_lockstep_with_device_work_and_a_host, r3_s2_no_wait_while_a_pushed_uart_byte_is_unserved, r3_s3_no_wait_while_the_uart_transmit_interrupt_is_deliverable, r3_s4_no_wait_while_an_rtc_alarm_is_armed, r3_s5_no_wait_after_any_plic_store_in_the_wfi_block
+T4 (worker N11) the loop top returns without asking whether the wait holds
+    worker's 24 tests: KILLED by 3: paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_yield_leaves_the_retire_stream_unchanged
+    + the three verifiers' files: KILLED by 13: paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_yield_leaves_the_retire_stream_unchanged, r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block, r2_n5fg_device_rule_in_every_loop_flavour_and_the_never_yielding_idle_loop, r3_c3_which_slicings_never_see_a_wait, r3_c4_reports_with_every_ordinary_device_attached_and_never_with_a_polled_net_backend, r3_s1_lockstep_timer_woken_guests_and_a_self_firing_alarm, r3_s1_lockstep_with_device_work_and_a_host, r3_s3_no_wait_while_the_uart_transmit_interrupt_is_deliverable, r3_s5_no_wait_after_any_plic_store_in_the_wfi_block, r3_s7_a_host_push_after_the_run_is_seen_before_the_next_report, v37a_clock_selected_mid_run_and_bound_selected_after_the_clock
+exit=0

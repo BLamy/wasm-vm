@@ -1,0 +1,8 @@
+test tests::turbo_loop_takes_timer_interrupts_at_the_same_boundaries ... ok
+test session_devices::tests::cache_eviction_is_deterministic_and_keeps_in_flight_reads_pinned ... ok
+test tests::deferred_retire_accounting_is_unobservable ... ok
+test turbo_equivalence_tests::random_programs_agree_under_every_slicing ... ok
+test tests::replay_block_tail_is_unobservable ... ok
+
+test result: ok. 448 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.00s
+

@@ -1,0 +1,3 @@
+$ cargo clippy --workspace --exclude wasm-vm-wvseccomp --all-targets --features wasm-vm-core/trace,wasm-vm-core/virgl-control-proof,wasm-vm-core/gpu-trace -- -D warnings   (the Makefile clippy line on macOS), head c05039db9
+   1     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 15s
+rc=0

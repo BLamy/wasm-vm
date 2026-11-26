@@ -1,0 +1,57 @@
+== my own check: premise.py cc7dfef69 61c4fcb44
+files under crates/ that differ cc7dfef69..61c4fcb44: 2
+44	0	crates/core/src/time.rs
+29	10	crates/core/src/turbo_equivalence_tests.rs
+
+crates/core/src/time.rs
+  blob 0ec71f2db826 -> 7b986ca68850
+  lines naming `time.rs` at 61c4fcb44: 0, of which include!/#[path]/Cargo: 0
+  other references to `time.rs` at 61c4fcb44 (include!/#[path]/Cargo): none
+  `#[cfg(test)] mod tests {` opens at line 442 -> 442; bytes before it 21327 -> 21327: BYTE-IDENTICAL
+  the test module is one balanced item that ends the file: True -> True
+    hunk old 684,0  new 685,44
+  every hunk starts after the test module's opening line: True
+
+crates/core/src/turbo_equivalence_tests.rs
+  blob 5e0386cef48e -> 12182d688886
+  cc7dfef69: declared once in lib.rs, under `#[cfg(all(test, not(feature = "zicsr-stub")))]`
+  61c4fcb44: declared once in lib.rs, under `#[cfg(all(test, not(feature = "zicsr-stub")))]`
+  lines naming `turbo_equivalence_tests.rs` at 61c4fcb44: 1, of which include!/#[path]/Cargo: 0
+  other references to `turbo_equivalence_tests.rs` at 61c4fcb44 (include!/#[path]/Cargo): none
+  => the whole file is a test-only module: any change in it is test code
+
+build inputs of the crate that differ (must be none):
+  none
+
+everything that differs outside crates/ and evidence/ (names only):
+  tasks/epic-5-the-window/E5-T37a-paced-idle-yield-core.md
+  web/dist/sw.js
+  web/dist/tasks.json
+
+shipped wasm (web/dist/**/*.wasm) blobs that differ:
+  none
+
+PREMISE HOLDS
+exit=0
+
+== round 4's first script: incremental-premise.py cc7dfef69 61c4fcb44
+files under crates/ that differ cc7dfef69..61c4fcb44: 2
+  crates/core/src/time.rs: non-test non-comment lines 274 -> 274: IDENTICAL (test module cut: True)
+  crates/core/src/turbo_equivalence_tests.rs: test code — `#[cfg(all(test, not(feature = "zicsr-stub")))]` on its `mod turbo_equivalence_tests;`
+numstat:
+44	0	crates/core/src/time.rs
+29	10	crates/core/src/turbo_equivalence_tests.rs
+PREMISE HOLDS
+exit=0
+
+== round 4's second script: premise-tokens.py cc7dfef69 61c4fcb44
+crates/core/src/time.rs: test-module cut at byte 21327 -> 21327; non-test tokens 706 -> 706: IDENTICAL
+crates/core/src/turbo_equivalence_tests.rs: test-module cut at byte -1 -> -1; non-test tokens 9468 -> 9548: DIFFER
+   (whole file is a #[cfg(all(test, ...))] module; a difference here is test code)
+exit=0
+
+== d36452f5a..61c4fcb44 under crates/ and web/ (must be 0 files)
+       0
+== 61c4fcb44..worktree under crates/ (must be 0 lines)
+       0
+61c4fcb445d66e61f40a2eb08acf036973acb2d5

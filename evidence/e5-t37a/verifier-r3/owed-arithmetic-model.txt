@@ -1,0 +1,12 @@
+model == real code on the test's sequence: (guest ms, owed ms) = [(11, 0.0), (12, 0.0), (13, 0.0), (14, 0.0), (15, 6.0)] final skip 56.0 ms
+mutant B11 on the same sequence:          (guest ms, owed ms) = [(11, 0.0), (12, 18.0), (13, 17.0), (14, 16.0), (15, 22.0)] final skip 72.0 ms
+
+bound 50 ms; idle jump after a long busy stretch that follows k work/idle cycles:
+  k   original   mutant B11
+  0     50.0 ms    50.0 ms
+  1     50.0 ms    64.0 ms
+  2     50.0 ms    78.0 ms
+  3     50.0 ms    92.0 ms
+  5     50.0 ms   120.0 ms
+ 10     50.0 ms   190.0 ms
+ 20     50.0 ms   330.0 ms

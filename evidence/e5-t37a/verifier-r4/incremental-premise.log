@@ -1,0 +1,18 @@
+files under crates/ that differ 7fd2e0160..b815d68ca: 3
+  crates/core/src/lib.rs: non-test non-comment lines 6132 -> 6132: IDENTICAL (test module cut: True)
+  crates/core/src/time.rs: non-test non-comment lines 274 -> 274: IDENTICAL (test module cut: True)
+  crates/core/src/turbo_equivalence_tests.rs: test code — `#[cfg(all(test, not(feature = "zicsr-stub")))]` on its `mod turbo_equivalence_tests;`
+numstat:
+5	0	crates/core/src/lib.rs
+50	0	crates/core/src/time.rs
+2	1	crates/core/src/turbo_equivalence_tests.rs
+PREMISE HOLDS
+exit=0
+
+files under crates/ that differ 7fd2e0160..7d25929a7: 0
+numstat:
+PREMISE HOLDS
+exit=0
+
+git diff b815d68ca cc7dfef69 -- crates web | wc -l:        0
+git status --short crates: []

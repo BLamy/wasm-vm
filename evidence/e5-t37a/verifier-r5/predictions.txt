@@ -1,0 +1,321 @@
+E5-T37a — round-5 verifier — predictions
+========================================
+
+Written 2026-11-26, head 61c4fcb44, BEFORE reading either changed test
+(crates/core/src/time.rs `mod tests`, crates/core/src/turbo_equivalence_tests.rs), before
+opening gates-r5.log, sabotage-r5.py, sabotage-r5.log or cold-clone-r5.log, and before building
+or running anything except the premise check (premise.log beside this file: PREMISE HOLDS).
+
+What I had read when I wrote this: AGENTS.md; the task file in full (Boundary, acceptance,
+attack list, the four verifier entries and all five worker entries — so I know what the worker
+SAYS the two tests do); the non-test code `time.rs:131-260` (`IdlePacer`) and
+`lib.rs:5280-5338` (`sync_clint`, `sync_plic`, `sync_sbi_timer`), `lib.rs:5505-5800`
+(`take_idle_wait_nanos`, `paced_wait_holds`, `fresh_mip`, `paced_wake`, `idle_deadline`,
+`wfi_fast_forward`); round 4's two premise scripts and their logs. Nothing else.
+
+A prediction that turns out wrong is reported as wrong in the verdict, not edited here.
+Anything added after this point goes under "ADDENDUM" with what I had seen by then.
+
+
+P0  The incremental premise (already checked; recorded for completeness)
+-------------------------------------------------------------------------
+cc7dfef69..61c4fcb44 under crates/: two files. `time.rs`: the 21,327 bytes before
+`#[cfg(test)] mod tests {` are byte-identical and the one hunk (+44) starts at line 685, inside
+the test module, which is one balanced item ending the file. `turbo_equivalence_tests.rs`
+(+29 −10) is declared once, under `#[cfg(all(test, not(feature = "zicsr-stub")))]`. `lib.rs`
+does not differ at all. No Cargo/toolchain input differs; no `.wasm` under web/ differs.
+=> HELD results of rounds 3 and 4 about non-test code are carried, not re-litigated.
+
+
+A.  The S-timer level in `Machine::fresh_mip`  (lib.rs:5601)
+============================================================
+The rule (Boundary: "the levels this boundary samples … the SBI timer"; `sync_sbi_timer`,
+lib.rs:5336, is the reference and is independent code): with the built-in SBI and a CLINT,
+
+      STIP (mip bit 5, value 32)  <=>  mtime >= stimecmp        — a LEVEL, set AND cleared;
+      without the built-in SBI the bit is left as it was.
+
+A `>=` is decided by three points. What a test must contain to kill each mutant, with the
+clock at T:
+
+  A1  `>=` -> `>`            differs only at stimecmp == T.   Needs a case stimecmp = T, SBI on,
+                              and an assertion that bit 5 is ON there.
+  A2  `>=` -> `==`           differs at every stimecmp < T.   Needs a case stimecmp < T (one tick
+                              past, T-1, is the sharp one; 0 is the far one), SBI on, bit 5 ON.
+  A3  `mtime + 1 >=`         differs only at stimecmp == T+1. Needs EXACTLY T+1 (not "far
+                              ahead"), SBI on, and an assertion that bit 5 is OFF there.
+
+  So the minimum is {T-1, T, T+1} under SBI-on, each with an assertion that would see bit 5.
+  "Far ahead" (u64::MAX, the cancelled sentinel) and 0 add the two ends but replace none of
+  the three.
+
+  A4  What the assertion must compare against. Two things, and both matter:
+      (a) `fresh_mip()` taken BEFORE the sync == `mip` AFTER the machine's own level sync
+          (the acceptance sentence). This alone is blind to the same error made in
+          `sync_sbi_timer` (round 4's probe P3b).
+      (b) the rule itself, with the expected bit computed from the test's own literals
+          (`stimecmp <= T`), not from `Clint::mtip()`, `fresh_mip()` or the synced `mip`.
+      If only (a) exists the test is "equal to the sync", not "right". If (b) is computed
+      from a machine accessor it is self-licking. I expect both, per the worker's entry; I
+      will check where the right-hand side of (b) comes from.
+
+  A5  Independence of the two timers. If `mtimecmp` and `stimecmp` are always on the same side
+      of T, a `fresh_mip` that derives STIP from the machine timer (`c.mtip()` / `mtimecmp`)
+      passes. The two positions must vary independently (5 x 5 per the worker's entry).
+
+  A6  Level, not latch. Some case must enter with STIP stale-ON and require OFF, and some
+      with stale-OFF and require ON, both under SBI-on; and under SBI-off the stale bit must
+      be required to SURVIVE in both polarities (otherwise "no `builtin_sbi` guard" and
+      "set-only / clear-only" mutants pass).
+
+  Predicted outcome of the mutants against `cargo test -p wasm-vm-core --lib paced_idle`
+  (25 tests), each applied alone at lib.rs:5601:
+
+      A1 `>`           1 test fails: paced_idle_fresh_mip_is_what_the_boundary_sync_writes,
+                       at a case with sbi on and stimecmp == 1000; fresh lacks 32.
+      A2 `==`          the same test, at stimecmp in {0, 999}; fresh lacks 32.
+      A3 `mtime+1 >=`  the same test, at stimecmp == 1001; fresh has 32, must not.
+      No OTHER worker test fails on any of the three (the worker has no machine-level test
+      of an S-timer that came due inside the wfi's block; round 4 said so). So the kill
+      rests on this one test and its case table.
+      P3b for each (the same change ALSO made in `sync_sbi_timer`, lib.rs:5336): the same
+      test must still fail, now on assertion (b). If it passes for any of the three, the
+      direct rule is not asserted where it matters.
+
+  New mutants of mine on this line, decided now (before seeing the test):
+      F1  wrong comparand: `c.mtime >= c.mtimecmp` for bit 5 (STIP follows the machine timer).
+          Killed iff A5 holds.                                         prediction: KILLED
+      F2  set-only: `if c.mtime >= self.sbi_state.stimecmp { level(5, true); }`.
+          Killed iff a stale-ON / required-OFF case exists under SBI.   prediction: KILLED
+          (the walk goes "twice round"; a u64::MAX or 1001 case follows a due one)
+      F3  zero is "disarmed": `… >= stimecmp && stimecmp != 0`.
+          Killed only by position 0 under SBI.                          prediction: KILLED
+      F4  wrapping compare: `c.mtime.wrapping_sub(stimecmp) < (1 << 63)`.
+          Agrees at 0, 999, 1000, 1001; differs only far ahead (u64::MAX: 1001 < 2^63 says
+          "due"). Killed only by the far position with bit 5 required OFF.
+                                                                        prediction: KILLED
+      F5  stale clock: the level read from the `time` CSR shadow (what the PREVIOUS boundary
+          sync left) instead of the CLINT's `mtime` now. This is the real failure mode the
+          function exists for (the timer comes due inside the wfi's own block; `mip` and the
+          shadow are a block old). A test that holds the clock at one value for every case
+          cannot see it unless its very first evaluation happens before any sync.
+                                                                        prediction: SURVIVES
+          the worker's 25 tests (if the shadow has a getter I can use without touching
+          non-test code other than this one line). If it survives, check whether the four
+          verifier files to be promoted kill it (r2_m6 / r3_no_wait_when_the_s_timer…
+          should); that decides whether it is closed by promotion.
+
+
+B.  The cap on owed waiting time after an idle jump  (time.rs:229-232; mutant M1)
+=================================================================================
+What the Boundary says, in my words. Two quantities bound what an idle jump may give a guest:
+the host clock (an idle jump never passes it) and, after work, `owed + max_busy_lag`.
+"Owed" is waiting time the host clock has seen and the guest clock has not been given because
+a deadline stood in the way; it "stays owed and survives later work". It follows that owed
+time can never exceed what the host clock is ahead of the guest by — there is nothing else for
+it to be made of — and the moment to judge that is AFTER this consultation's jump, because
+the jump is the handing over. With L = (host ceiling − guest time before the jump) and
+j = the jump:
+
+      owed' = min(owed − j, L − j)          (code: `.saturating_sub(limited − current)`
+                                                    `.min(ceiling.saturating_sub(limited))`)
+      M1:     min(owed − j, L)              — the lead as it was BEFORE the jump.
+
+They differ iff owed > L and j > 0: the guest's own (retire-derived) clock gained on the host
+clock since the time became owed, and then an idle jump happened. Then M1 leaves min(owed, L)
+− … too much, up to j, on the books: a debt that has just been paid, which the next busy
+stretch skips ON TOP of its bound — against "at most `max_busy_lag` of the time it fell
+behind may be skipped".
+
+The scenario of the worker's entry, with my numbers derived from the Boundary before seeing
+the test (time in ms; at the machine's 10 MHz timebase 1 ms = 10,000 ticks; guest time G,
+host ceiling H, both starting at 0; bound 50 ms):
+
+  step 1  wfi, deadline G+2. Host has not moved: jump 0, guest waits.           owed 0
+  step 2  host oversleeps: H = 3002. Consult, not worked: owed += 3002; ceiling 3002;
+          deadline 2 -> jump 2 (G = 2); owed = 3002 − 2 = 3000; lead after = 3000.
+                                                                    owed 3000   (== lead)
+  step 3  the handler runs 2200 ms of guest time in 200 ms of host time:
+          G = 2202, H = 3202, lead L = 1000.  (owed 3000 > L: the M1 condition.)
+  step 4a consult, worked, NOTHING in the way (deadline = u64::MAX or beyond H):
+          bounded = 2202 + 3000 + 50 = 5252 > ceiling 3202, so no clamp, the anchor does
+          not move; jump = 1000 (G = 3202 = H).
+              right:  owed = min(3000 − 1000, 3202 − 3202) = 0
+              M1:     owed = min(2000, 3202 − 2202)        = 1000
+  step 4b the same state, a deadline 300 ms ahead (2502): jump = 300 (G = 2502).
+              right:  owed = min(2700, 3202 − 2502) = 700
+              M1:     owed = min(2700, 1000)        = 1000
+  step 5  a busy stretch during which the host runs far ahead (say +10 s) and no deadline is
+          in the way; consult, worked:  jump = owed + 50 exactly.
+              after 4a:  right   50 ms      M1  1050 ms
+              after 4b:  right  750 ms      M1  1050 ms
+
+  What the test must assert to pin the RULE and not just this mutant:
+  B1  the returned guest time at step 4 (the jump itself: 1000 / 300) — M1 does not change
+      it, but it proves the scenario is the one described;
+  B2  `owed_wait_ticks()` after step 4: exactly 0 (4a) and exactly 700 ms (4b), as literals
+      derived from the host steps the test sets, not read back and compared with itself;
+  B3  the BEHAVIOUR: the step-5 jump is exactly owed + 50 ms (the getter is read by tests
+      only; what the guest experiences is the return value of `limit_deadline_after`);
+  B4  both 4a and 4b. They are not redundant: 4a alone cannot tell "pay, then cap" from
+      "cap, then pay" (min(3000, 0) − 1000 = 0 too); 4b can (min(3000, 700) − 300 = 400,
+      not 700). 4b alone cannot tell the cap from "owed − j with no cap" …no: 2700 vs 700,
+      it can; 4a also can (2000 vs 0). So the pair pins: cap present, cap after the jump,
+      payment before the cap.
+  B5  the precondition actually holds in the test: owed (3000) > lead (1000) with j > 0. If
+      the test's guest never gains on the host clock, M1 is invisible and the test is about
+      something else.
+
+  Predicted outcome of M1 against `--lib paced_idle`: exactly ONE test fails, the new
+  `time::tests::paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump`, first at the
+  no-deadline case's owed assertion (10,000,000 ticks = 1 s against 0 at 10 MHz; the pacer
+  test may use another timebase — then 1 s in its ticks).
+  `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not` still passes on M1
+  (round 4: M1 survived everything that existed then).
+
+  New mutants of mine on these lines, decided now:
+      G1  "cap, then pay": owed' = min(owed, ceiling − limited) − j
+          (`.min(ceiling.saturating_sub(limited)).saturating_sub(limited − current)`).
+          4a: 0 (same), 4b: 400 (≠ 700).  Killed only if 4b's owed, or the step-5 jump after
+          4b, is asserted exactly.                                  prediction: KILLED
+      G2  slack of one bound in the cap:
+          `.min(ceiling.saturating_sub(limited).saturating_add(self.max_busy_lag_ticks))`.
+          4a: 50 instead of 0; 4b: 750 instead of 700. Killed only by EXACT assertions
+          (an inequality such as "owed <= lead before" lets it through).
+                                                                    prediction: KILLED
+      G3  the lead measured from the anchor: `.min(ceiling.saturating_sub(self.anchor_mtime))`.
+          4a: min(2000, 3202) = 2000.                               prediction: KILLED
+      G4  cap on the wrong side of a work/wait distinction: the cap applied only when
+          `!worked` (a "waiting guests only" cap). Step 4 is a worked consultation, so 4a
+          gives 2000, 4b 2700.                                      prediction: KILLED by
+          the new test — and this tells me whether the new test or only the OLD pacer test
+          pins the cap on a worked consultation: I predict the old test passes on G4? No —
+          I do not know the old test well enough to say; recorded as "killed by at least the
+          new test".
+      G5  the converse: cap applied only when `worked`. The old pacer test (round 2's m10 /
+          R11 "owed not capped") is what should catch this.         prediction: KILLED by
+          the OLD pacer test (`…busy_lag_is_bounded_and_waiting_time_is_not`), possibly not
+          by the new one. If G5 survives everything, the cap on a waiting consultation is
+          pinned by nobody among the worker's tests.
+
+
+C.  Fitted, or self-licking?  What would make me say so
+========================================================
+  C1  Expected values that come out of the code under test (a first call's result stored
+      and compared with a second call's; `owed_wait_ticks()` compared with an expression
+      that itself calls the pacer). Predicted: none — literals and host-step arithmetic.
+  C2  A table that contains exactly the three points the round-4 report named and nothing
+      else, with assertions only where the named mutants bite. Predicted: not so — five
+      positions, both timers, both SBI settings.
+  C3  An M1 test whose only assertion is the one line M1 breaks. The neighbours G1–G4 are
+      my measure: if M1 dies and G1/G2 live, the test was shaped around the mutant.
+  C4  Tests that pass with the assertion bodies skipped (vacuity): the loops must actually
+      run the SBI-on branch and the 4b branch. I will count cases by instrumenting a scratch
+      copy of the TEST (never the implementation), or by the mutants' failure messages.
+
+
+D.  Gates and logs
+==================
+  D1  At this head: `cargo fmt --check` 0; the clippy line 0; `--lib paced_idle` 25 passed,
+      0 failed; `--lib` 449 passed, 0 failed, 0 ignored among paced_idle.
+  D2  gates-r5.log / sabotage-r5.log / cold-clone-r5.log sha256 begin 9d02b03a15cc /
+      e4db45f50dfe / 1c7d22e706b5, as claimed. sabotage-r5.log: 45 rows, every one killed,
+      and each row's failing test is one that the mutated line can affect.
+  D3  cold-clone-r5.log, read for the digests themselves, not its summary line: the clone is
+      at d36452f5a; the six oracle digests equal evidence/perf-overhaul/oracle-baseline
+      (a `diff -r` whose only difference is the baseline's README); desktop equivalence at
+      2,000,000,000: trace fnv64 0dab1ccaa237df29, retired 1999831660, state sha256
+      ed70e270…38701, for both the turbo and the ordinary run — the values rounds 1–4
+      recorded. The env line shows only HOME, PATH, TERM.
+  D4  Cold clone "once, on the final exact head": 61c4fcb44 differs from d36452f5a only in
+      the task file, tasks/QUEUE.md(?), and files under evidence/ — none of which the sparse
+      clone's acceptance commands read (evidence/ is excluded except the oracle baseline;
+      I will check that the baseline did not change and that QUEUE/task files are not build
+      inputs). If so the worker's clone at d36452f5a is a clone of the final CODE and I
+      will say whether I accept it; my own promotion commit changes crates/, so if I
+      promote, the final exact head is MINE and the cold clone has to be run on it by me.
+
+
+E.  Carried, not re-run (incremental rule), if P0 holds
+========================================================
+SAFETY S1–S8, COMPLETENESS C1/C2/C4, the lockstep equivalences, N5c/N5d/N5e/B4 FIXED, Q3/NV2,
+the real-kernel equivalence, COVERAGE 185/191 with its waivers, round 4's P2 (B11), P4
+(`waiting()`), MY2, the workspace-wide suite and the browser check. Re-checked by me because
+the test lines they rest on changed in this round: P3 (`>` on the S-timer), M2
+(`mtime + 1 >=`), MY1 (`==`), and M1.
+
+
+ADDENDUM 1 — mutants added after reading the tests. WRITTEN AFTER THE RUNS: captions, not
+predictions
+==========================================================================================
+(sha256 of this file as it stood before this addendum:
+ 1725f3b2f1de8786a5ad66d49242be13d58da5fa49610c84c71e462dcc8218ea — everything above this line
+ was written before either test was read and has not been edited since.)
+
+After reading the tests (and gates-r5.log, cold-clone-r5.log, sabotage-r5.py and the result rows
+of sabotage-r5.log) I added mutants to my list that are NOT in the blind part above: F6 (without
+the built-in SBI a stale STIP is cleared), F7 (no `builtin_sbi` guard), F2b (clear-only),
+T1/T2/T3/T5 (the machine timer at the same positions, and its stale-clock twin), G6/G7 (a jump
+does not pay owed time, after work / while waiting), and M1b (M1 with the test's first table row
+spared — is the second row live?). I did not write down what I expected of them before running
+them, so nothing about them counts as a prediction. Why each was chosen:
+
+  F6  the worker's test never has STIP stale-ON without the SBI (`seen[5] == [true, sbi]`).
+      It cannot matter to the machine: a stale STIP that is enabled keeps `wfi_fast_forward`
+      from recording a wait at all (lib.rs:5768), and one that is not enabled is masked by
+      `& mie` — the argument of round 3's equivalent mutant B16.
+  M1b M1 dies in the first table row; nothing blind above shows the second row is live.
+  T5  the machine timer has a machine-level "came due inside the wfi's block" test and the
+      S-timer has none among the worker's tests (round 4 said so): the twin of F5.
+
+
+OUTCOMES — filled in after the runs (sabotage.log, sabotage-suite.log, gates*.log)
+=================================================================================
+P0  HELD (premise.log).
+A1  `>`            as predicted: 1 test, `…fresh_mip_is_what_the_boundary_sync_writes`,
+                   (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 1000, …),
+                   synced mip 160 against fresh 128, turbo_equivalence_tests.rs:2861.
+A2  `==`           as predicted: the same test at stimecmp = 0, 160 against 128.
+A3  `mtime+1 >=`   as predicted: the same test at stimecmp = 1001, 128 against 160.
+    "No other worker test fails on any of the three": as predicted.
+    P3b: as predicted, each fails on assertion (b), turbo_equivalence_tests.rs:2870, "STIP …"
+    (P1 also fails `…wake_stops_at_a_deadline_inside_the_slept_interval`).
+A4  both (a) and (b) are there; (b)'s right-hand side is `stimer <= 1_000` on the test's own
+    table value. As predicted.
+A5  5 x 5 independent positions. F1 KILLED, as predicted.
+A6  PARTLY WRONG. Under SBI both stale polarities occur (F2, F2b KILLED). Under SBI-off the
+    worker's test has only stale-OFF; F7 (no guard) is KILLED, F6 SURVIVES the worker's 25
+    tests (equivalent for the machine, see Addendum 1) and is KILLED by r3_k1 in the promoted
+    suite.
+F3, F4  KILLED, as predicted (stimecmp = 0; stimecmp = u64::MAX).
+F5  SURVIVES the worker's 25 tests, as predicted. KILLED in the promoted suite by r2_m6_…,
+    r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi and r3_k1_….
+T1–T3 KILLED by the 200-case test; T5 KILLED by the machine-level test only (no prediction).
+
+B   The test is the scenario I derived, with the same numbers (3002/2; 2200 in 200; 1000 or
+    300; 0 or 700; +50). B1–B5 all present; expected values are table literals.
+M1  as predicted: exactly 1 test, the new one, "deadline None …", 10000000 against 0
+    (time.rs:714). M1b KILLED at "deadline Some(300)", 10000000 against 7000000.
+G1  KILLED — but my reasoning about WHERE was WRONG: it dies at the test's precondition
+    (owed after the oversleep 29,980,000 against 30,000,000; "cap, then pay" already differs
+    at step 2) and two older tests kill it as well. It is not the neighbour that tells the
+    two table rows apart; M1b is.
+G2, G3, G4  KILLED, as predicted — by the new test AND the old pacer test's "the guest is
+    ahead of the host" block, so the cap after WORK was pinned before this round; only its
+    being judged after the jump is new.
+G5  WRONG. Predicted "KILLED by the old pacer test"; it SURVIVES all 25 worker tests. No
+    worker test consults a WAITING guest whose own clock has moved, or is ahead of the host
+    clock, since the last consultation. KILLED in the promoted suite by
+    r2_m10_waiting_while_ahead_of_the_host_clock_earns_no_credit and the round-4 model test.
+G6, G7  KILLED by the old pacer test.
+
+C1  no self-licking value found. C2 not fitted: five positions, both timers. C3: M1's
+    neighbours die, though G1/G2/G3/G4 die to older tests too — see G1. C4: the SBI-on rule
+    assertion fires (P1–P3), both table rows fire (M1, M1b), the step-5 assertion fires in
+    the second row (the worker's MY2 row names the new test; reproduced).
+D1  HELD: fmt 0, clippy 0, 25 / 449. D2 HELD: the three sha256 prefixes match; 45 rows, all
+    killed; my re-run in a pristine clone gives the same set of failing tests in every row
+    (worker-matrix-repro.log). D3 HELD: six state digests equal the committed baseline's,
+    desktop equivalence 0dab1ccaa237df29 / 1999831660 / ed70e270…38701 twice; env HOME PATH
+    TERM. D4: see the verdict — the worker's clone covers the worker's head; my promotion
+    commit needed its own.

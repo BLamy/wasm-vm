@@ -1,0 +1,81 @@
+/dev/disk3s3s1   1.8Ti    15Gi   469Gi     4%    459k  4.3G    0%   /
+cold clone (sparse) at 7d25929a7eac22bfdb0b7e17e7b486cbdaa62885, tracked changes=0
+non-test crates sources identical to 7fd2e0160: yes
+env passed to every command: HOME PATH TERM 
+$ cargo test -p wasm-vm-core --lib paced_idle
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.34s
+rc=0
+$ cargo test -p wasm-vm-core --lib
+test result: ok. 448 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.26s
+rc=0
+$ cargo clippy -p wasm-vm-core --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings   (the Makefile line)
+   1 error: could not compile `wasm-vm-core` (lib) due to 5 previous errors
+   1 error: enum `Preparation` is never used
+   1 error: method `sync_session_devices` is never used
+   1 error: methods `begin_source_scope` and `commit_source_scope` are never used
+   1 error: methods `begin`, `end`, and `commit` are never used
+   1 error: methods `next_transition`, `reserve_transition`, and `advance` are never used
+errors naming an idle_* item, IDLE_SPIN_INSTRS, fresh_mip, paced_* or mip_bits: 0
+$ cargo build --release -p wasm-vm-cli
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 41s
+rc=0
+$ RELEASES=… bash tools/perf/oracle.sh target/release/wasm-vm target/cold-oracle && diff -r evidence/perf-overhaul/oracle-baseline target/cold-oracle/digests
+busybox-legacy   state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+diff rc=1 (1 with only the README line = identical digests)
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 2000000000 target/cold-turbo-2000000000
+turbo: exit 102, 28 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 36 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+rc=0
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 555555555 target/cold-turbo-555555555
+turbo: exit 102, 9 s, turbo: enabled=true entries=3566561 blocks=67183588 inline_ops=549536710 slow_ops=5926449 ops_per_entry=155.7 exits: horizon=208 budget=1111 boundary=3500190 trap=65052
+ordinary: exit 102, 11 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=219809c2bc11411e
+trace retired=555490133
+trace mode=retirement-records
+state sha256=b4223f052f380d169c58489503624ba2ac14029e8ef9d87ecb0309480cfd2282
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=219809c2bc11411e
+trace retired=555490133
+trace mode=retirement-records
+state sha256=b4223f052f380d169c58489503624ba2ac14029e8ef9d87ecb0309480cfd2282
+outcome=MaxInstrs
+EQUIVALENT (555555555 instructions)
+rc=0
+--- pre-task commit ee5582ac63c4a65ab0f1828786cd1251ab09e928
+$ cargo build --release -p wasm-vm-cli
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 08s
+rc=0
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 555555555 target/cold-pre-555555555
+EQUIVALENT (555555555 instructions)
+state sha256=b4223f052f380d169c58489503624ba2ac14029e8ef9d87ecb0309480cfd2282
+trace fnv64=219809c2bc11411e
+trace retired=555490133
+pre-task == head at 555555555: byte-identical evidence
+clone deleted: yes
+/dev/disk3s3s1   1.8Ti    15Gi   463Gi     4%    459k  4.3G    0%   /
+COLD_DONE

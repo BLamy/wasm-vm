@@ -1,0 +1,136 @@
+# E5-T37a round 3 — both verifiers' test files against the round-3 implementation.
+# (a) exactly as the verifiers committed them (evidence/e5-t37a/verifier/verifier_tests.rs, evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs):
+test turbo_equivalence_tests::r2_m3_masked_s_mode_wake_at_the_deadline_shows_stip ... ok
+test turbo_equivalence_tests::r2_c5c6_wake_with_interrupts_globally_masked ... ok
+test turbo_equivalence_tests::r2_k2_a_reached_deadline_that_wakes_nothing_does_not_end_the_run ... ok
+test turbo_equivalence_tests::r2_m13_a_restore_starts_a_new_worked_or_waited_interval ... ok
+test turbo_equivalence_tests::r2_c5c5_s_mode_sbi_timer_host_wake_and_oversleep ... ok
+test turbo_equivalence_tests::r2_c5c1_several_sleeps_before_the_wake ... ok
+test turbo_equivalence_tests::r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_c5c3_wake_accounting_only_for_a_taken_wait_and_an_enabled_interrupt ... ok
+test turbo_equivalence_tests::r2_c5d_a_busy_guest_skips_exactly_one_bound_per_busy_stretch ... ok
+test turbo_equivalence_tests::r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::r2_b4_time_slept_after_a_rebase_is_kept_REFUTES ... ok
+test turbo_equivalence_tests::r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES ... ok
+test turbo_equivalence_tests::r2_c5c4_deadline_inside_the_slept_interval_with_a_host_event ... ok
+test turbo_equivalence_tests::r2_c5b_time_a_host_overslept_is_kept_exactly ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... ok
+test turbo_equivalence_tests::r2_m10_waiting_while_ahead_of_the_host_clock_earns_no_credit ... ok
+test turbo_equivalence_tests::r2_n5ab_clint_levels_raised_in_the_wfi_block ... ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... FAILED
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::r2_q3_unbounded_pacer_is_the_pre_task_pacer ... ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... FAILED
+test turbo_equivalence_tests::r2_c5c2_a_wake_while_the_guest_is_ahead_of_the_host_clock ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... FAILED
+test turbo_equivalence_tests::r2_nv2_bounded_pacer_closed_loop_invariants ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::r2_c5a_time_slept_before_a_host_wake_is_kept_exactly ... ok
+test turbo_equivalence_tests::r2_b_a_wait_is_dropped_by_clock_policy_and_restore_and_follows_a_rebase ... ok
+test turbo_equivalence_tests::r2_n5fg_device_rule_in_every_loop_flavour_and_the_never_yielding_idle_loop ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test turbo_equivalence_tests::r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES ... ok
+test turbo_equivalence_tests::r2_q1_lockstep_with_an_independent_predicate ... FAILED
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... ok
+test result: FAILED. 39 passed; 4 failed; 0 ignored; 0 measured; 448 filtered out; finished in 31.72s
+thread 'turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full' (29140859) panicked at crates/core/src/../../../evidence/e5-t37a/verifier/verifier_tests.rs:692:9:
+assertion `left == right` failed
+  left: 2
+--
+thread 'turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle' (29140863) panicked at crates/core/src/../../../evidence/e5-t37a/verifier/verifier_tests.rs:409:25:
+m straddle=false first=600 rearm=190 handler=0 pad=0 div=2 step=1 lag=Some(0) loop=General budgets=[1] call 166: MISSED RETURN on the last budget slot (retired=166)
+
+--
+thread 'turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi' (29140864) panicked at crates/core/src/../../../evidence/e5-t37a/verifier/verifier_tests.rs:409:25:
+random seed=7001 div=7 step=1 lag=None loop=General budgets=[1] call 50: MISSED RETURN on the last budget slot (retired=50)
+
+--
+thread 'turbo_equivalence_tests::r2_q1_lockstep_with_an_independent_predicate' (29140849) panicked at crates/core/src/../../../evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs:1337:25:
+m straddle=false first=450 rearm=130 handler=2 pad=0 div=41 step=350 lag=Some(1700) loop=General budgets=[1] call 115: MISSED RETURN on the last budget slot (retired=115)
+
+
+# (b) scratch copies in which ONLY the two lockstep harnesses change: a waiting wfi must be reported only when the subject's run call has itself sampled a block boundary before it (round-3 contract), and the round-1 predicate reads the CLINT levels (the round-2 verifier's own minimal change). Diffs:
+316a317,321
+>     // (round 2) the levels the next boundary samples.
+>     let mie = m.hart.csr.mie_bits();
+>     if (c.msip && mie & 8 != 0) || (c.mtime >= c.mtimecmp && mie & 0x80 != 0) {
+>         return false;
+>     }
+369a375,377
+>             // (worker's scratch patch, round 3) a run call reports a wait only after it has
+>             // itself sampled a block boundary: the subject's call starts where this replay starts.
+>             let mut sampled = false;
+383a392,394
+>                 if resume_point(&control).is_none() {
+>                     sampled = true;
+>                 }
+392c403
+<                 last_waits = control.irq_stats().wfi != wfis && {
+---
+>                 last_waits = control.irq_stats().wfi != wfis && sampled && {
+1293a1294
+>             let mut sampled = false; // (worker's scratch patch, round 3) per subject call
+1310a1312
+>                     sampled = true; // (worker's scratch patch, round 3)
+1320c1322
+<                 last_waits = control.irq_stats().wfi != wfis && {
+---
+>                 last_waits = control.irq_stats().wfi != wfis && sampled && {
+test turbo_equivalence_tests::r2_c5c6_wake_with_interrupts_globally_masked ... ok
+test turbo_equivalence_tests::r2_m3_masked_s_mode_wake_at_the_deadline_shows_stip ... ok
+test turbo_equivalence_tests::r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_k2_a_reached_deadline_that_wakes_nothing_does_not_end_the_run ... ok
+test turbo_equivalence_tests::r2_c5c3_wake_accounting_only_for_a_taken_wait_and_an_enabled_interrupt ... ok
+test turbo_equivalence_tests::r2_m13_a_restore_starts_a_new_worked_or_waited_interval ... ok
+test turbo_equivalence_tests::r2_c5d_a_busy_guest_skips_exactly_one_bound_per_busy_stretch ... ok
+test turbo_equivalence_tests::r2_c5c1_several_sleeps_before_the_wake ... ok
+test turbo_equivalence_tests::r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::r2_b4_time_slept_after_a_rebase_is_kept_REFUTES ... ok
+test turbo_equivalence_tests::r2_c5b_time_a_host_overslept_is_kept_exactly ... ok
+test turbo_equivalence_tests::r2_c5c4_deadline_inside_the_slept_interval_with_a_host_event ... ok
+test turbo_equivalence_tests::r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES ... ok
+test turbo_equivalence_tests::r2_c5c5_s_mode_sbi_timer_host_wake_and_oversleep ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... ok
+test turbo_equivalence_tests::r2_m10_waiting_while_ahead_of_the_host_clock_earns_no_credit ... ok
+test turbo_equivalence_tests::r2_n5ab_clint_levels_raised_in_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_c5c2_a_wake_while_the_guest_is_ahead_of_the_host_clock ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... FAILED
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::r2_nv2_bounded_pacer_closed_loop_invariants ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::r2_q3_unbounded_pacer_is_the_pre_task_pacer ... ok
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::r2_b_a_wait_is_dropped_by_clock_policy_and_restore_and_follows_a_rebase ... ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::r2_n5fg_device_rule_in_every_loop_flavour_and_the_never_yielding_idle_loop ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::r2_c5a_time_slept_before_a_host_wake_is_kept_exactly ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test turbo_equivalence_tests::r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES ... ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... ok
+test turbo_equivalence_tests::r2_q1_lockstep_with_an_independent_predicate ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... ok
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... ok
+test result: FAILED. 42 passed; 1 failed; 0 ignored; 0 measured; 448 filtered out; finished in 32.65s
+thread 'turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full' (29144231) panicked at /tmp/v1_r3.rs:703:9:
+assertion `left == right` failed
+  left: 2

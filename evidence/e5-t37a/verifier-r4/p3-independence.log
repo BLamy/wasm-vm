@@ -1,0 +1,16 @@
+# P3 independence probe (not a mutant of the task's code): `>` in sync_sbi_timer ONLY — the REFERENCE side of the fresh_mip test — worker's 24 tests, clean tree. 06:43Z
+-                .set_mip_bit(5, mtime >= self.sbi_state.stimecmp); // STIP
++                .set_mip_bit(5, mtime > self.sbi_state.stimecmp); // STIP
+running 24 tests
+test turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes ... FAILED
+test turbo_equivalence_tests::paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval ... FAILED
+thread 'turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes' (29699346) panicked at crates/core/src/turbo_equivalence_tests.rs:2848:13:
+assertion `left == right` failed: sbi=true case=00100 stale=0x88
+  left: 0
+ right: 32
+thread 'turbo_equivalence_tests::paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval' (29699358) panicked at crates/core/src/turbo_equivalence_tests.rs:3127:13:
+assertion `left == right` failed: turbo=false bound=Some(50000000): MSIP and STIP both pending at once
+  left: 8
+ right: 40
+test result: FAILED. 22 passed; 2 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.55s
+restored; status: [?? crates/core/src/paced_idle_verifier_tests/;]

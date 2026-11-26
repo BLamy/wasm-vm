@@ -1,0 +1,205 @@
+E5-T37a — round-3 verifier — predictions
+=========================================
+Written 2026-11-25 after reading the task file (Boundary, acceptance, the five log entries)
+and both diffs (`git diff ee5582ac6 7fd2e0160 -- crates`, `git diff 215cbd1f9 7fd2e0160 -- crates`)
+plus the pre-existing run loop (`run_capture_inner`, `boundary_sync`, `boundary_sync_full`,
+`turbo.rs`). Nothing under evidence/ had been opened and nothing had been built or run when this
+file was written (only `ls` of the evidence directory, and two greps of crates/ for
+`idle_boundary_epoch` and `.waiting()`).
+
+Each line: what the claim needs, as a concrete observable. FAIL of any S* line refutes.
+
+ORIENT (cheap sweeps)
+E1  sha256 of gates-r3.log starts c89e48fe7619, sabotage-r3.log e56eaf52f6bc,
+    verifier-tests-r3.log 57ebc84f9b98.
+E2  No `#[ignore]`, no commented-out/disabled assertion and no new `cfg(test)` branch in the
+    non-test hunks of `git diff ee5582ac6 7fd2e0160 -- crates`.
+E3  gates-r3.log: 24 paced_idle tests pass, 448 lib tests pass. workspace-tests-r3.log: counts sum
+    to 340, no line with `failed` > 0. sabotage-r3.log: 37 mutants, 37 killed. cold-clone-r3.log
+    names 7fd2e0160.
+E4  `idle_boundary_epoch` appears nowhere under crates/ (claim: "is gone").
+E5  `IdlePacer::waiting()` has no caller in the machine (claim). Prediction made after the grep:
+    it has no caller at all, tests included, so the field is write-only: a mutant of
+    `self.waiting = limited < deadline` survives every test. To be classified under COVERAGE.
+
+ACCEPTANCE (re-run by me)
+A1  `cargo test -p wasm-vm-core --lib paced_idle` -> 24 passed, 0 failed.
+A2  `cargo test -p wasm-vm-core --lib` -> 448 passed, 0 failed.
+A3  `cargo build --release -p wasm-vm-cli` succeeds.
+A4  boot oracle: `diff -r` against evidence/perf-overhaul/oracle-baseline reports only the
+    baseline README.
+A5  desktop equivalence at 2,000,000,000: EQUIVALENT, FNV 0dab1ccaa237df29, retired
+    1,999,831,660, RAM sha256 ed70e270...38701.
+A6  desktop equivalence at a budget of my own, 555,555,555: EQUIVALENT (turbo = ordinary), and
+    the digest equals the one a CLI built from the pre-task commit ee5582ac6 prints (pure ICount
+    must be untouched by the task).
+A7  the Makefile's zicsr-stub lint line fails with five errors, none naming an `idle_*` item or
+    anything added by this task.
+
+ACCEPTANCE BULLETS (tests of my own, own guests/parameters, three loop flavours:
+general per-op = batching off; batched = set_turbo(false); turbo)
+B1  yield off (never selected, and selected `false`): a paced guest spinning on `wfi` retires
+    exactly its budget; take_idle_wait_nanos() is None.
+B2  yield on, large budget, call starting at a block boundary: returns MaxInstrs with the `wfi`
+    the last retirement; take = (deadline - ceiling) * 100 ns exactly; second take None; after
+    the host clock passes the deadline the next call takes the timer interrupt and take is None.
+B3  lockstep (subject yield-on vs. yield-off control stepped one work slot at a time; own seeds):
+    observe()/RAM equal after every call, resume bytes at samples, and the number of host-clock
+    readings equal, in all three loops.
+B6a a `wfi` reached by a call that began inside its block is not reported (run returns with the
+    budget used or goes on; take None), and the SAME guest is reported one idle pass later when
+    the call has budget left.
+B6b pending-but-disabled interrupt (msip set, MSIE clear; PLIC source pending, MEIE clear): the
+    wait IS reported.
+B7  after set_icount_clock / set_wall_clock / set_paced_icount_clock / set_paced_idle_policy /
+    load_resume: take is None and no wake is accounted (host clock not read at the next boundary).
+    After rebase_guest_clock the distance is measured from the rebased ceiling.
+B8  pure ICount and wall clock with the policy selected: never an early return, take always None,
+    state equal to a machine without the policy.
+
+ROUND-2 FINDINGS
+F1  N5c (PLIC): `r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES` passes unchanged,
+    6 of 6 configurations: no Some(_) from take while plic.eip(0) is true and MEIE is set.
+F2  N5d (UART character timeout): `r2_n5d_..._REFUTES` passes unchanged: 0 run calls report a
+    wait between the host's byte and the character-timeout interrupt (was 341).
+F3  N5e (RTC alarm): no wait reported while the alarm is armed (r2_n5e_* passes unchanged).
+F4  B4: `r2_b4_time_slept_after_a_rebase_is_kept_REFUTES` passes unchanged, 12 of 12: mtime at
+    the handler's first instruction = (mtime at rebase) + 50,000,000 ticks for 5,000 ms slept,
+    remaining wait 4,000 ms.
+F5  The seven round-2 survivors, re-applied to the new code, are each killed by a WORKER test
+    (`paced_idle*`): `limited < d` -> `<=`; paced_wake without the deadline cap; paced_wake
+    without sync_sbi_timer; no STIP level; msip level not gated by mie; owed time not capped by
+    what the host clock is ahead by; load_resume not starting a new interval.
+F6  MTIP: dropping `level(7, c.mtip())` from fresh_mip is killed by
+    `paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block` (and by the
+    32-combination test).
+
+CLAIM SENTENCES ("findings, and what changed", "narrowing", verifier-tests paragraph)
+K1  "fresh_mip computes mip as this boundary's level sync will leave it ... without changing
+    anything": on >= 20,000 random machine states of my own (CLINT msip/mtime/mtimecmp, stimecmp,
+    PLIC pending/enable/priority/threshold in both contexts, arbitrary stale mip bits incl. the
+    software bits SSIP/STIP/SEIP, with and without PLIC, with and without the built-in SBI),
+    fresh_mip() == mip_bits() after sync_clint(); sync_plic(); sync_sbi_timer(), and mip_bits()
+    and the `time` shadow are unchanged by the fresh_mip() call itself.
+K2  "The rule is now the run loop's own quiescence marker": paced_wait_holds has exactly two
+    terms (marker == epoch; fresh_mip & mie == 0). No other reader of device state.
+K3  "paced_wake no longer consults a pacer flag that rebase resets": no `waiting` read in lib.rs.
+K4  narrowing, as stated: "The quiescence marker is reset when a run call starts and set again
+    at the call's first sampled block boundary". Prediction: fabric_idle_epoch is None right
+    after every run entry and is Some at the first sampled boundary only if the full pass found
+    every device idle.
+K5  "as committed, 39 of 43 pass, including all eight _REFUTES tests": reproduced exactly — the
+    four failures are v37a_lockstep_m_mode_*, v37a_lockstep_random_*, r2_q1_lockstep_* (all at
+    "MISSED RETURN") and v37a_busy_lag_is_exactly_the_bound_once_*.
+K6  "MISSED RETURN for one-slot calls that begin inside the wfi's block": at every MISSED RETURN
+    in the as-committed lockstep files the subject's call began at a pc that is NOT a block
+    boundary of the block holding the `wfi` (i.e. the call sampled no boundary before the `wfi`).
+    If one MISSED RETURN occurs in a call that DID sample a boundary with every device idle and
+    untouched since, the narrowing does not explain it -> refuted.
+K7  "With the lockstep harnesses changed ... all three lockstep tests pass": with a predicate of
+    MY OWN (below) the three lockstep tests pass with state/RAM/resume bytes/host-reading counts
+    equal after every call.
+
+SAFETY (the central question; any counterexample refutes)
+Definition used: a reported wait (take_idle_wait_nanos() == Some, or run returned early) is FALSE
+if, with the host clock frozen at its value at the report and no host call other than run(),
+the guest takes an interrupt (or the machine raises one that is enabled) before guest time
+reaches the reported deadline.
+S1  Behavioural probe: at reported waits in my lockstep runs (guests with CLINT only; with a UART
+    that really has RX work, FIFO trigger 8 and 1, IER on/off; with an RTC alarm; with PLIC
+    enable/complete stores placed in the wfi's block), a yield-off machine in the identical state
+    run for >= 30,000 further work slots with the host clock frozen takes ZERO interrupts.
+S2  UART RX byte pushed by the host BETWEEN run calls, receive interrupt enabled: the next run
+    call does not report a wait until the character-timeout or trigger interrupt has been taken
+    (0 reports while `uart.tick()` would return true).
+S3  UART THRE (IER.ETBEI set, THR written in the wfi's block and in an earlier block): no wait is
+    reported while the THRE interrupt is deliverable.
+S4  RTC alarm armed in an earlier block of the same call (marker must be dropped by the fabric
+    touch and stay None while armed): no report until the alarm has fired and been cleared.
+S5  virtio: a queue with work and a host config-change request latched by
+    sync_backend_config_irq (set between run calls): the first boundary of the next call computes
+    idle = false, so a `wfi` in that first block is not reported; the interrupt is taken first.
+S6  Every interrupt level the boundary writes is in fresh_mip: K1 above, plus no other writer of
+    `mip` exists at a boundary (grep set_mip_bit / write of W_MIP: only sync_clint, sync_plic,
+    sync_sbi_timer, CSR instructions and trap entry).
+S7  Stale marker across a host push: marker Some at the early return; the host then pushes a UART
+    byte / injects a key and calls run() -> marker is None at entry, so the new call cannot report
+    a wait before a full pass has seen the device. (take_idle_wait_nanos() called AFTER such a
+    push and BEFORE the run is the round-2 follow-up; I will measure and report it, and judge it
+    against the task's text.)
+S8  Restore paths: every public restore entry point (load_resume, load_accelerated_resume,
+    restore_desktop_snapshot, restore_recording_branch) leaves take == None and accounts no wake.
+    A path that restores guest state without clearing idle_wake_pending trips the
+    debug_assert in paced_wake or moves the restored guest's mtime -> refuted (Boundary: "a
+    restore drop[s] it").
+
+COMPLETENESS (may be imperfect; must not be vacuous)
+C1  Call starting at the post-wfi boundary (the realistic flow: run returns early, host sleeps,
+    run again with a large budget), idle loop of several blocks: EVERY such call returns early at
+    the next waiting `wfi` and reports, in all three loops. Yield count == number of calls.
+C2  Call starting at an arbitrary block boundary: reports at the first waiting `wfi`.
+C3  Characterisation: the only unreported true waits are (i) the call sampled no block boundary
+    before the `wfi`, (ii) a device had work at the last full pass, (iii) a fabric access since.
+    Prediction about (i): a host that always runs ONE work slot per call never gets a report from
+    a guest whose `wfi` is not the first op of its block (the Boundary's "picked up at a later
+    wfi" does not happen for that host); with batching off it always does.
+C4  Not vacuous with ordinary devices attached and idle: a machine with PLIC, UART (driver-style
+    setup: FIFO on, IER RX on), RTC (no alarm), and the virtio slots (blk, rng, net with an idle
+    backend, input, console as far as they can be attached in a unit test), all idle, reaches
+    marker == Some at the first boundary and reports the wait. If some ordinary attached-and-idle
+    device keeps the marker None forever, that is a finding to quote against "Measured on the
+    idle Replay desktop, the devices were idle at all 1,050 of 1,050 wait checks".
+
+LOCKSTEP PREDICATE I will use (written before reading either harness's scratch patch)
+  must_yield(wfi just retired by the subject's call) :=
+       stale mip & mie == 0 at the wfi                       (pre-existing guard)
+    && nearest future deadline exists and the pacer's ceiling is below it
+    && the levels msip, mtime>=mtimecmp, (SBI) mtime>=stimecmp, PLIC eip(0)/eip(1), each gated
+       by mie, are clear on the CONTROL machine after the same wfi
+    && the subject's call has passed at least one sampled block boundary before this wfi
+       (tracked by the harness from the control: a slot of the current call began with the
+       control at a block boundary — pre-existing `at_block_boundary()` — or batching is off)
+    && at the last such boundary no device had work and no fabric access happened since
+       (harness-side: the pre-existing fabric_epoch counter sampled by the harness at the
+       control's block boundaries; device work decided from device state: UART rx pending /
+       timeout running / irq level, RTC alarm armed).
+  The harness asserts BOTH directions: yield => must_yield (no early return otherwise) and
+  must_yield => yield (no missed return).
+
+MUTATIONS
+M-old  the seven round-2 survivors: killed by worker tests (F5).
+M-new  at least five mutants not in sabotage-r3.log, each predicted KILLED by a worker test:
+       fresh_mip with the PLIC contexts swapped; fresh_mip without the builtin_sbi guard
+       (predicted EQUIVALENT: stimecmp is u64::MAX without the SBI — to be argued, as round 2
+       did); fresh_mip STIP with `>`; paced_wait_holds with `!=`/None accepted (a wait while the
+       marker is None); take_idle_wait_nanos skipping `holds`; the run-entry clear removed;
+       paced_wake's `limited != mtime` guard (predicted EQUIVALENT, as round 2 argued);
+       limit_deadline_after owed-time arithmetic (`- before` -> `- anchor_host_ns`).
+
+NOVEL ATTACK (none of the three logs names it)
+NV  A real kernel instead of hand-written guests, if the repo's boot artifacts allow it in a unit
+    test: the oracle's Linux boot under the paced clock with the yield selected and a virtual host
+    clock that advances only by honoured waits. Predictions: (a) waits ARE reported once the
+    kernel idles (completeness on a real idle loop); (b) at sampled reported waits the frozen-clock
+    probe of S1 takes zero interrupts; (c) a console byte pushed while the guest waits is consumed
+    without the host skipping any reported wait being necessary — i.e. no run call that follows
+    the push reports a wait before the UART interrupt is taken.
+    Fallback if a kernel boot cannot be driven from a test in bounded time: S8 (restore paths)
+    and the JIT-on yield, which no log has exercised.
+
+ADDENDUM (written after my unit-level tests ran, BEFORE the real-kernel runs were started)
+NV, as actually built (evidence/e5-t37a/verifier-r3/real-kernel-equivalence.sh, on a CLI carrying
+the scratch patch cli-paced-yield-probe.py): Linux 6.6 natively under the paced clock on a host
+clock that advances a fixed amount per READING; busybox initramfs, Alpine on virtio-blk, and the
+warm Replay desktop snapshot in the browser device topology; yield off/on x turbo/batched; every
+run stopped after the same number of retirements. Predictions:
+NV-a  Within each group the four evidence files (trace FNV, retired count, RAM SHA-256) and the
+      console outputs are byte-identical. A divergence means either the equivalence claim is
+      false on a real kernel or a wait was reported while a device owed an interrupt (the next
+      call's paced_wake would then read the host clock once more than the yield-off run).
+NV-b  The number of host-clock readings is equal with the yield on and off (same reason).
+NV-c  Completeness on a real idle loop: with the yield on, the number of reported waits is
+      > 0 in every group and of the same order as the number of wfis retired while idle (I
+      expect more than half of the wfis of the idle desktop to end a run call).
+The frozen-clock probe and the pushed console byte of the original NV were done at unit level
+instead (r3_s1_*, r3_s2_*, r3_s7_*).

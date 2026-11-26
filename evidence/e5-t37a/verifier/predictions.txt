@@ -1,0 +1,152 @@
+E5-T37a verifier predictions
+Written 2026-11-26T01:05Z at head e4599fe73 (crates identical to the claimed d28394aff),
+after reading the task file and the diff (ee5582ac6..d28394aff -- crates) and the code around it
+(lib.rs wfi_fast_forward / after_wfi_retire / run_capture_inner, turbo.rs, time.rs), and BEFORE
+opening any file in evidence/e5-t37a/, running any test, or building anything.
+
+Each prediction is stated the way the CLAIM needs it to come out. Where reading the diff makes
+me expect the claim to fail, that expectation is recorded as "attack hypothesis" so the result
+cannot be re-captioned afterwards.
+
+TIMEBASE is 10 MHz: 1 tick = 100 ns.
+
+--- Evidence integrity ---
+E1  sha256(evidence/e5-t37a/gates.log) starts 79b23824cbb8.
+E2  gates.log: `paced_idle` filter -> 7 passed, 0 failed; --lib -> 431 passed, 0 failed.
+    turbo-equivalence.log: EQUIVALENT (2000000000), fnv64 0dab1ccaa237df29, retired 1999831660,
+    state sha256 ed70e270...38701 on BOTH runs. oracle.log: the only diff line is the baseline
+    README. cold-clone.log names d28394aff.
+E3  The diff has no #[ignore], no commented-out/disabled assertion, and no cfg(test) branch in
+    non-test code (the only cfg in the hunks is not(feature = "zicsr-stub")).
+
+--- Acceptance re-run (my machine, this head) ---
+A1  cargo test -p wasm-vm-core --lib paced_idle        -> 7 passed, 0 failed.
+A2  cargo test -p wasm-vm-core --lib                   -> 431 passed, 0 failed.
+A3  oracle.sh digests vs evidence/perf-overhaul/oracle-baseline: diff -r reports only README.
+A4  turbo-equivalence.sh 2000000000 -> EQUIVALENT, fnv 0dab1ccaa237df29, retired 1999831660,
+    sha256 ed70e270...38701. At my own budget 777777777 -> EQUIVALENT (turbo on == off), and the
+    digest equals the one a CLI built from the pre-task commit ee5582ac6 produces at that budget.
+
+--- Acceptance bullets, my own inputs ---
+B1  Yield off (policy never selected; and selected with yield=false): paced M-mode guest,
+    divider 7, first deadline 5000 ticks, constant host clock: run(33333) uses the whole budget
+    (retired + interrupts taken == 33333), wfi count > 1000, take_idle_wait_nanos() == None.
+B2  Yield on, same guest: run(33333) returns MaxInstrs with pc == wfi_pc + 4, irq wfi == 1,
+    retired < 100; wait == (mtimecmp - ceiling) * 100 ns where ceiling = anchor mtime (0) +
+    host ticks elapsed since selection; a second take is None; after the host clock is moved to
+    exactly `wait` later, the next run's first wfi jumps mtime to mtimecmp exactly, the handler
+    runs (x31 == 1) and, with no further deadline, nothing is reported.
+B3  Equivalence, lockstep: guests = (i) S-mode guest on the built-in SBI timer (sbi set_timer
+    from the handler, STIP out of wfi), (ii) seeded random M-mode programs containing wfi, msip
+    and mtimecmp rewrites; dividers 2/7/33; host steps per reading 1/13/400/25000 ticks; lag
+    None / 0 / 3 ticks / 1 s; budget patterns [1], [2,3], [7,1,1,50], [100000].
+    For subject = yield on (turbo on and off) and control = yield off, ordinary loop: after EVERY
+    subject call the control, advanced to the same retirement count, has identical observe()
+    (trace hash/count, hart snapshot, CLINT, tick residue, stimecmp, counters, resume point),
+    identical save_resume() bytes and identical RAM. At least 1000 yields occur in total.
+B4  Bounded lag, my numbers: divider 3, 5000 busy instructions, host 7.3 s ahead, bound 12.5 ms
+    (125000 ticks): the first wfi moves mtime by exactly 125000 ticks from its own value; then a
+    1.7 s host step and 250 steps of 3 ms with only idle-loop passes move it by exactly
+    17000000 and 250*30000 ticks.
+B5  Pure ICount and wall-clock machines never report: (a) policy selected on a never-paced
+    machine: None after every call [expect HELD]; (b) a paced machine ends a run at a waiting
+    wfi, the host does NOT take the wait and selects set_icount_clock() (and, separately,
+    set_wall_clock()): take_idle_wait_nanos() must be None, because the machine is now a pure
+    ICount / wall-clock machine.
+    Attack hypothesis: (b) returns Some(stale) — neither setter clears idle_wait_ticks
+    (lib.rs set_icount_clock / set_wall_clock are untouched by the diff).
+
+--- Claim sentences / attack list ---
+C1  No early return when nothing waits: every subject call in B3 that reports no wait used its
+    whole budget (control.run(budget) lands on the same state).
+C2  No missed return: in B3 every subject call that retires a wfi whose deadline is in the paced
+    future (mtime < nearest deadline after the call) reports a wait and stopped with the wfi as
+    the last retired instruction (pc - 4 holds WFI, or the trace's last record is the wfi).
+C3  No stale wait: (a) wait recorded and not taken, then run(1) that retires one non-wfi
+    instruction -> take is None; (b) wait recorded exactly on the last budget slot -> reported
+    (it is current); (c) wait recorded, then load_resume() of an earlier blob, then take ->
+    None (the restored guest is not at that wfi).
+    Attack hypothesis: (c) returns Some — load_resume only rebases the pacer.
+C4  Modes that cannot honour a wait never report one, with the policy selected (yield on,
+    bound 20 ms): pure ICount; wall clock; exact session (start_session_clock) ; live
+    unrecorded; a paced machine with a key pressed and not released (my key code/divider), and
+    after the release reaches the host side the yield comes back.
+C5  "Time that passed while the guest was only waiting (the host may have slept) still passes in
+    full" / "never bounded" (set_paced_idle_policy doc), yield on, bound 50 ms:
+    (a) guest reports a wait of ~10 s; the host clock moves 5 s; the host raises a machine
+        software interrupt (CLINT msip, enabled) and runs; the handler retires 3000 instructions
+        and returns to the idle loop, whose next wfi reports a wait. Claim needs: mtime at that
+        wfi >= mtime before + 5 s of ticks (50,000,000).
+    (b) guest reports a wait W; the host oversleeps to W + 2 s; the timer handler retires 3000
+        instructions, re-arms far, next wfi. Claim needs: mtime there >= deadline + 2 s of ticks
+        (minus nothing) — the guest only waited for those 2 s.
+    Controls: the same two runs with a 500-instruction handler, and with the bound None, do
+    advance by the full host time.
+    Attack hypothesis: (a) and (b) FAIL — `worked` covers the whole interval since the last
+    consultation, so 5 s (2 s) of pure waiting followed by >2048 instructions of handler is
+    clamped to current + 50 ms and the rest is discarded (anchor moved). Expected observed
+    advance: about 500,000 ticks + the handler's own retirements / divider.
+C6  A busy guest never skips more than the bound: after the B4 busy stretch, over the following
+    20 waiting wfis with the host clock standing still, total mtime advance == bound exactly
+    (125000 ticks), not 20 x bound; and with a deadline nearer than the bound (bound/4 away,
+    re-armed by a short handler) the total over consecutive deadlines never exceeds
+    bound + host time elapsed since the busy consult.
+C7  Idle-spin threshold: the boundary is exactly 2048 retirements between two consultations:
+    2048 -> treated as waiting (full host elapsed), 2049 -> treated as work (bounded).
+    (Whether a >2048-instruction wakeup after a sleep loses the sleep is C5.)
+C8  Snapshot/resume: save_resume() of a paced machine stopped at a waiting wfi with the policy
+    selected (yield on, bound) is byte-identical to one that ran the same instructions with no
+    policy; load_resume() of that blob into a machine with the policy keeps paced_idle_yield()
+    true and the bound, and the guest then runs on identically to a never-saved twin.
+C9  Turbo and ordinary loops stop at the same instruction: in B3 the turbo-on and turbo-off
+    subjects, given identical budgets, agree after every call on retired count, pc, mtime and
+    the reported wait. Also for a wfi that is (i) the first op of its block, (ii) the last op
+    after inline ops, (iii) a block entry straddling a page boundary (uncached entry op).
+
+--- Novel attack (mine, not on the list) ---
+N1  Host calls that move the pacer's anchor while a wait is recorded: rebase_guest_clock() and
+    re-selecting set_paced_icount_clock() between the run and the take. Prediction the contract
+    needs: after rebase the reported wait still equals the true distance (deadline - new
+    ceiling) in ns; re-selection reports None.
+    Attack hypothesis: after rebase with the guest AHEAD of the host clock (divider 1, host
+    clock still) the stale wait overstates the distance by (mtime - old ceiling).
+N2  Conversion extremes: bound Some(u64::MAX) ns, deadline u64::MAX - 1, host clock jumping to
+    u64::MAX and then backwards to 0: no panic (debug overflow checks are on in tests), wait is
+    saturating, mtime never rewinds, and a later forward reading behaves as if the backward one
+    never happened.
+N3  No zero-progress call: with the host clock constant, 1000 consecutive run(1_000_000) calls
+    each retire >= 1 instruction and each report the same wait.
+N4  cargo build -p wasm-vm-core --features zicsr-stub still compiles.
+
+--- Coverage / sabotage plan (decided now) ---
+Mutations of mine (none is one of the worker's three):
+ S1 IDLE_SPIN_INSTRS 2048 -> 4096.                         Expect: SURVIVES the worker's 7 tests.
+ S2 drop `self.idle_consult_retired = self.irqstats.retired` in set_paced_icount_clock.
+                                                           Expect: SURVIVES (every worker test
+                                                           selects the clock at retired == 0).
+ S3 drop the `if let Some(pacer) ... set_max_busy_lag_ticks` in set_paced_idle_policy.
+                                                           Expect: SURVIVES (no worker test sets
+                                                           a finite bound after the clock AND
+                                                           then consults the pacer).
+ S4 limit_deadline_after: do not move the anchor when clamping.          Expect: killed.
+ S5 wfi_fast_forward: `limited < d` -> `limited <= d`.                   Expect: killed.
+ S6 run_capture_inner: drop the run-start `self.idle_wait_ticks = 0`.    Expect: killed.
+ S7 wait measured from guest time (`d - limited`) instead of ticks_until. Expect: killed.
+ S8 drop `.max(1)`.   Expect: survives, and is an EQUIVALENT mutant (limited < d implies the
+    recomputed ceiling < d), i.e. not a finding.
+
+--- Added 2026-11-26T01:2xZ, still before any test of mine was written or run (only E1-E3 and
+    A1/A2 had been checked; their results are recorded separately) ---
+N5  lib.rs:5643-5644 (this diff) justifies the early return with "nothing can happen in the
+    guest until the host clock gets there or the host delivers an event". Prediction the claim
+    needs: after ANY run call that reported a wait, a further run call with the host clock
+    unchanged and no host event delivered takes no interrupt (the int counters do not move) and
+    reports the same wait.
+    Attack hypothesis: with interrupt batching, `mip` is refreshed only at a block boundary, so
+    a block `sw <1>, msip ; wfi` (a store that raises an enabled interrupt in the same block as
+    the wfi) retires the wfi with a stale mip: mip_and_mie_nonzero() is false, the far timer
+    deadline is "in the paced future", a wait of the whole distance is reported — and the very
+    next run call, host clock unchanged, takes the software interrupt at once. A host honouring
+    the wait would sleep on a guest that has a deliverable interrupt.
+S9  (sabotage, added) set_paced_icount_clock: drop `self.idle_wait_ticks = 0`.  Expect: SURVIVES.
+S10 (sabotage, added) set_paced_idle_policy: drop `self.idle_wait_ticks = 0`.   Expect: SURVIVES.

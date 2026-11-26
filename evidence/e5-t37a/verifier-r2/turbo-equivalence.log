@@ -1,0 +1,65 @@
+# verifier r2 — desktop turbo equivalence at d8db32db8 (crates == 215cbd1f9: yes); release CLI rebuilt after touching crates/core/src/{lib,time}.rs
+$ cargo build --release -p wasm-vm-cli
+   Compiling wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 01s
+exit=0
+
+$ bash tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r2-e5t37a-teq-2000000000
+turbo: exit 102, 27 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 34 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+exit=0
+
+$ bash tools/perf/turbo-equivalence.sh 777777777 target/verifier-r2-e5t37a-teq-777777777
+turbo: exit 102, 11 s, turbo: enabled=true entries=4698657 blocks=89681443 inline_ops=770096930 slow_ops=7553244 ops_per_entry=165.5 exits: horizon=293 budget=1554 boundary=4610770 trap=86040
+ordinary: exit 102, 14 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=d97496f20e00e7ac
+trace retired=777691269
+trace mode=retirement-records
+state sha256=e87de723492830b9acbf369ba104156eeefe43cc2d628e4ecba4de27c96a3df6
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=d97496f20e00e7ac
+trace retired=777691269
+trace mode=retirement-records
+state sha256=e87de723492830b9acbf369ba104156eeefe43cc2d628e4ecba4de27c96a3df6
+outcome=MaxInstrs
+EQUIVALENT (777777777 instructions)
+exit=0
+
+$ bash tools/perf/turbo-equivalence.sh 333333333 target/verifier-r2-e5t37a-teq-333333333
+turbo: exit 102, 7 s, turbo: enabled=true entries=2043323 blocks=44306957 inline_ops=329567563 slow_ops=3717260 ops_per_entry=163.1 exits: horizon=124 budget=667 boundary=2007560 trap=34972
+ordinary: exit 102, 8 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=873b6d4b8b9928eb
+trace retired=333298090
+trace mode=retirement-records
+state sha256=6170e85deb64d0a8e5be33ada9f8ccdc68cfacc84bd48df47e79292bab0bdd33
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=873b6d4b8b9928eb
+trace retired=333298090
+trace mode=retirement-records
+state sha256=6170e85deb64d0a8e5be33ada9f8ccdc68cfacc84bd48df47e79292bab0bdd33
+outcome=MaxInstrs
+EQUIVALENT (333333333 instructions)
+exit=0

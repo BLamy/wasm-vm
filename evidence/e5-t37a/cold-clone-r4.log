@@ -1,0 +1,35 @@
+round 4 cold clone (sparse: no evidence/ except the oracle baseline, no web/dist) at b815d68ca514e7db016401fc4e0c7476780d8b9b, tracked changes=0
+test time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not ... ok
+test paced_idle_clock_tests::paced_selection_refuses_invalid_private_phase_before_sampling_or_replacing_policy ... ok
+test turbo_equivalence_tests::paced_idle_a_disabled_interrupt_does_not_end_the_wait ... ok
+test turbo_equivalence_tests::paced_idle_no_wait_while_a_device_has_work ... ok
+test turbo_equivalence_tests::paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block ... ok
+test turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes ... ok
+test turbo_equivalence_tests::paced_idle_a_reached_deadline_that_wakes_nothing_does_not_end_the_run ... ok
+test turbo_equivalence_tests::paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later ... ok
+test turbo_equivalence_tests::paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched ... ok
+test turbo_equivalence_tests::paced_idle_a_restore_starts_a_new_interval ... ok
+test turbo_equivalence_tests::paced_idle_time_slept_after_a_rebase_is_kept ... ok
+test turbo_equivalence_tests::paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval ... ok
+test turbo_equivalence_tests::paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads ... ok
+test turbo_equivalence_tests::paced_idle_spin_threshold_is_exact ... ok
+test turbo_equivalence_tests::paced_idle_wake_is_only_accounted_for_a_wait_the_host_took ... ok
+test turbo_equivalence_tests::paced_idle_yield_stays_out_while_a_host_wake_is_outstanding ... ok
+test turbo_equivalence_tests::paced_idle_policy_and_clock_in_either_order_and_mid_run ... ok
+test turbo_equivalence_tests::paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized ... ok
+test turbo_equivalence_tests::paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting ... ok
+test turbo_equivalence_tests::paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore ... ok
+test turbo_equivalence_tests::paced_idle_time_a_host_overslept_is_kept ... ok
+test turbo_equivalence_tests::paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock ... ok
+test turbo_equivalence_tests::paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait ... ok
+test turbo_equivalence_tests::paced_idle_yield_leaves_the_retire_stream_unchanged ... ok
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.37s
+test result: ok. 448 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.17s
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 26s
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+oracle: the only difference above must be the baseline README
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+COLD_DONE rc=0

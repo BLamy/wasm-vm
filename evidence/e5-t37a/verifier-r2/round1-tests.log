@@ -1,0 +1,102 @@
+# verifier r2 — the round-1 verifier's 19 tests at d8db32db8, reproduced
+# (a) evidence/e5-t37a/verifier/verifier_tests.rs exactly as committed (dacc2ae14), included with one line appended to crates/core/src/turbo_equivalence_tests.rs
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... ok
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... FAILED
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... ok
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... ok
+thread 'turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi' (28974525) panicked at crates/core/src/../../../evidence/e5-t37a/verifier/verifier_tests.rs:409:25:
+random seed=7001 div=7 step=1 lag=None loop=General budgets=[1] call 189: MISSED RETURN on the last budget slot (retired=185)
+test result: FAILED. 18 passed; 1 failed; 0 ignored; 0 measured; 439 filtered out; finished in 33.14s
+
+# (b) the worker's scratch copy evidence/e5-t37a/verifier-tests-r2-predicate.rs.txt (differs only in v_wfi_waits: diff below)
+316a317,328
+>     // (worker's scratch patch) round-2 condition: the levels this boundary will sample, and a
+>     // device access since the last sampled boundary.
+>     let mie = m.hart.csr.mie_bits();
+>     if (c.msip && mie & 8 != 0) || (c.mtime >= c.mtimecmp && mie & 0x80 != 0) {
+>         return false;
+>     }
+>     if m.builtin_sbi && c.mtime >= m.sbi_state.stimecmp && mie & 0x20 != 0 {
+>         return false;
+>     }
+>     if m.fabric_epoch.get() != m.idle_boundary_epoch {
+>         return false;
+>     }
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... V37A host-wake General handler_iters=150 bound=Some(50000000): retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=150 bound=Some(50000000): retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=150 bound=Some(50000000): retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake General handler_iters=1000 bound=None: retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=1000 bound=None: retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=1000 bound=None: retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake General handler_iters=150 bound=None: retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=150 bound=None: retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=150 bound=None: retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... V37A oversleep General handler_iters=1000 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Batched handler_iters=1000 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Turbo handler_iters=1000 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... V37A host-wake General handler_iters=1000 bound=Some(50000000): retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=1000 bound=Some(50000000): retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=1000 bound=Some(50000000): retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... V37A oversleep General handler_iters=150 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Batched handler_iters=150 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Turbo handler_iters=150 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep General handler_iters=1000 bound=None: host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Batched handler_iters=1000 bound=None: host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Turbo handler_iters=1000 bound=None: host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... V37A lockstep m-mode: configs=216 calls=1097925 yields=146685 control_steps=2080134
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... V37A lockstep random: configs=144 calls=102000 yields=7872 control_steps=266679
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... V37A lockstep sbi: configs=432 calls=1351083 yields=436308 control_steps=2732340
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... V37A stale-mip General: first call ended with wfi=3 msip=false handled=1 wait=Some(10000000100); second call, host clock unchanged: interrupts taken=0 handled=1
+V37A stale-mip Batched: first call ended with wfi=3 msip=false handled=1 wait=Some(10000000100); second call, host clock unchanged: interrupts taken=0 handled=1
+V37A stale-mip Turbo: first call ended with wfi=3 msip=false handled=1 wait=Some(10000000100); second call, host clock unchanged: interrupts taken=0 handled=1
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 57.85s
+
+# git status crates after restore:
+
+# (c) verifier r2 experiment: a scratch copy of the round-1 file whose v_wfi_waits gets ONLY the fresh msip level (`if c.msip && mie & 8 != 0 { return false; }`) — no MTIP, STIP or device term:
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... ok
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... ok
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... ok
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 31.94s

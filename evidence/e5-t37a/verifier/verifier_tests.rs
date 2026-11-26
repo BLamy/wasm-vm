@@ -1,0 +1,1437 @@
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// E5-T37a VERIFIER tests (fresh critic session, 2026-11-26). Not the worker's: own guests, own
+// host clocks, own parameters. Every test name starts `v37a_`.
+//
+// To build: append `include!("../../../evidence/e5-t37a/verifier/verifier_tests.rs");` to
+// `crates/core/src/turbo_equivalence_tests.rs` (it uses that module's assembler and helpers),
+// then `cargo test -p wasm-vm-core --lib v37a_`.
+//
+// Tests whose name ends `_REFUTES` assert what the task's claim needs and FAIL at head
+// e4599fe73; each prints the observed numbers. The others pass at that head.
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+
+/// A host clock the test owns: a reading returns `now` and then advances it by `step`.
+#[derive(Clone, Default)]
+struct VClock {
+    now: alloc::rc::Rc<core::cell::Cell<u64>>,
+    step: alloc::rc::Rc<core::cell::Cell<u64>>,
+    reads: alloc::rc::Rc<core::cell::Cell<u64>>,
+}
+impl time::MonotonicClock for VClock {
+    fn now_nanos(&self) -> u64 {
+        self.reads.set(self.reads.get() + 1);
+        let now = self.now.get();
+        self.now.set(now.saturating_add(self.step.get()));
+        now
+    }
+}
+impl VClock {
+    fn at(now: u64, step: u64) -> Self {
+        let c = Self::default();
+        c.now.set(now);
+        c.step.set(step);
+        c
+    }
+    fn advance(&self, ns: u64) {
+        self.now.set(self.now.get() + ns);
+    }
+    fn boxed(&self) -> alloc::boxed::Box<dyn time::MonotonicClock> {
+        alloc::boxed::Box::new(self.clone())
+    }
+}
+
+const V_TICK_NS: u64 = 100;
+const V_SEC: u64 = 1_000_000_000;
+fn v_ticks(ns: u64) -> u64 {
+    ns / V_TICK_NS
+}
+
+/// The three ways the run loop executes a block.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum VLoop {
+    /// One op per loop iteration (turbo off, replay tail off).
+    General,
+    /// The batched loop of `--no-turbo`: entry op, then `replay_block_tail`.
+    Batched,
+    Turbo,
+}
+const V_LOOPS: [VLoop; 3] = [VLoop::General, VLoop::Batched, VLoop::Turbo];
+fn v_set_loop(m: &mut Machine, l: VLoop) {
+    m.set_turbo(l == VLoop::Turbo);
+    m.replay_tail_off = l == VLoop::General;
+}
+
+/// An M-mode guest that idles on `wfi` with the machine timer and the machine software
+/// interrupt enabled.
+#[derive(Clone, Copy)]
+struct VGuest {
+    /// Ticks from arming to the first deadline.
+    first: u32,
+    /// Ticks from the timer handler to the next deadline; 0 disarms the timer.
+    rearm: u32,
+    /// Power off at this many timer interrupts.
+    stop: i32,
+    /// Iterations (4 instructions each) of work before the timer is armed.
+    busy: u32,
+    /// Iterations (3 instructions each) of work in the interrupt handler.
+    handler: u32,
+    /// Iterations (2 instructions each) of bookkeeping in every idle pass.
+    pad: u32,
+    /// One more instruction in every idle pass.
+    extra: bool,
+    /// Put the `wfi` across a page boundary (an uncached block-entry op).
+    straddle: bool,
+}
+impl VGuest {
+    const IDLE: Self = Self {
+        first: 5_000,
+        rearm: 0,
+        stop: 100,
+        busy: 0,
+        handler: 0,
+        pad: 0,
+        extra: false,
+        straddle: false,
+    };
+}
+
+/// x19 counts idle passes, x31 timer interrupts, x26 software interrupts, x30 folds every
+/// `mcause`, x24 counts handler work. The idle pass is
+/// `addi; [addi]; add; beq; (addi; bne) x pad; sd; ld; wfi; jal` = 7 + 2*pad (+1) instructions,
+/// with the `wfi` the LAST op of a block that starts with inline ops (`sd; ld; wfi`).
+fn v_idle_image(g: &VGuest) -> Vec<u8> {
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(8, DATA);
+    a.la(12, CLINT);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&li32(20, g.first));
+    a.ws(&li32(21, g.rearm));
+    a.ws(&li32(22, g.handler));
+    a.ws(&li32(18, g.pad));
+    a.ws(&li32(9, g.busy));
+    a.branch(BEQ, 9, 0, "arm");
+    a.label("work");
+    a.ws(&[addi(15, 15, 3), xor(16, 16, 15), addi(9, 9, -1)]);
+    a.branch(BNE, 9, 0, "work");
+    a.label("arm");
+    a.ws(&[ld(5, 14, 0), add(5, 5, 20), sd(5, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x88), csrrs(0, MIE, 7)]); // MTIE | MSIE
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    a.w(addi(10, 0, g.stop));
+    a.label("loop");
+    a.w(addi(19, 19, 1));
+    if g.extra {
+        a.w(addi(11, 11, 1));
+    }
+    a.w(add(25, 18, 0));
+    a.branch(BEQ, 25, 0, "back");
+    a.label("padl");
+    a.w(addi(25, 25, -1));
+    a.branch(BNE, 25, 0, "padl");
+    a.label("back");
+    a.ws(&[sd(19, 8, 0), ld(17, 8, 0)]);
+    if g.straddle {
+        a.jal(0, "edge");
+        a.org(BASE + 0xFFC);
+        a.label("edge");
+        a.h(C_NOP);
+        a.w(WFI); // bytes 0xFFE..0x1002
+        a.h(C_NOP);
+    } else {
+        a.w(WFI);
+    }
+    a.jal(0, "loop");
+    a.org(BASE + 0x1400);
+    a.label("handler");
+    a.ws(&[
+        csrrs(28, MCAUSE, 0),
+        slli(29, 30, 5),
+        add(30, 30, 29),
+        add(30, 30, 28),
+        add(23, 22, 0),
+    ]);
+    a.branch(BEQ, 23, 0, "hdone");
+    a.label("hwork");
+    a.ws(&[addi(24, 24, 1), addi(23, 23, -1)]);
+    a.branch(BNE, 23, 0, "hwork");
+    a.label("hdone");
+    a.ws(&[slli(29, 28, 1), srli(29, 29, 1), addi(27, 0, 3)]);
+    a.branch(BEQ, 29, 27, "soft");
+    a.w(addi(31, 31, 1));
+    a.branch(BEQ, 31, 10, "off");
+    a.branch(BEQ, 21, 0, "disarm");
+    a.ws(&[ld(5, 14, 0), add(5, 5, 21), sd(5, 13, 0), MRET]);
+    a.label("disarm");
+    a.ws(&[addi(5, 0, -1), sd(5, 13, 0), MRET]);
+    a.label("soft");
+    a.ws(&[sw(0, 12, 0), addi(26, 26, 1), MRET]);
+    a.label("off");
+    a.poweroff();
+    a.finish()
+}
+
+/// An S-mode guest on the built-in SBI timer: `set_timer` before the loop and from the handler,
+/// STIP taken out of `wfi`, the `wfi` the FIRST op of its block.
+fn v_sbi_image(first: u32, rearm: u32, stop: i32) -> Vec<u8> {
+    const EID_TIME: u64 = 0x5449_4D45;
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, STVEC, 6));
+    a.la(8, DATA);
+    a.ws(&li32(20, first));
+    a.ws(&li32(21, rearm));
+    a.w(addi(9, 0, stop));
+    a.la(17, EID_TIME);
+    a.w(addi(16, 0, 0));
+    a.ws(&[csrrs(10, TIME, 0), add(10, 10, 20), ECALL]);
+    a.ws(&[addi(7, 0, 0x20), csrrs(0, SIE, 7)]); // STIE
+    a.ws(&[addi(7, 0, 0x2), csrrs(0, SSTATUS, 7)]); // SIE
+    a.label("loop");
+    a.ws(&[
+        WFI,
+        addi(19, 19, 1),
+        sd(19, 8, 0),
+        ld(18, 8, 0),
+        add(24, 24, 18),
+    ]);
+    a.jal(0, "loop");
+    a.org(BASE + 0x400);
+    a.label("handler");
+    a.ws(&[
+        csrrs(28, SEPC, 0),
+        slli(29, 30, 5),
+        add(30, 30, 29),
+        add(30, 30, 28),
+        addi(31, 31, 1),
+    ]);
+    a.branch(BEQ, 31, 9, "off");
+    a.ws(&[csrrs(10, TIME, 0), add(10, 10, 21), ECALL, SRET]);
+    a.label("off");
+    a.poweroff();
+    a.finish()
+}
+
+/// A seeded M-mode program: integer ops, loads and stores, forward branches, `mtimecmp`
+/// rewrites (near, far and past), `msip` writes, CLINT reads and a lot of `wfi`, eight passes,
+/// under a handler that folds `mepc`/`mcause` and re-arms the timer.
+fn v_random_image(seed: u64) -> Vec<u8> {
+    let mut s = seed.wrapping_mul(0xD6E8_FEB8_6659_FD93) | 1;
+    let mut next = move || {
+        s ^= s << 13;
+        s ^= s >> 7;
+        s ^= s << 17;
+        s
+    };
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(8, DATA + 0x800);
+    a.la(12, CLINT);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&[ld(10, 14, 0), addi(10, 10, 90), sd(10, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x88), csrrs(0, MIE, 7)]);
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    for reg in 16..26 {
+        a.ws(&li32(reg, next() as u32));
+    }
+    a.w(addi(9, 0, 8));
+    a.label("loop");
+    for _ in 0..40 + next() % 90 {
+        let reg = |v: u64| 16 + (v % 10) as u32;
+        let (rd, rs1, rs2) = (reg(next()), reg(next()), reg(next()));
+        let off = (next() % 64) as i32 * 8 - 256;
+        match next() % 24 {
+            0..=5 => a.w(match next() % 3 {
+                0 => addi(rd, rs1, (next() % 4096) as i32 - 2048),
+                1 => add(rd, rs1, rs2),
+                _ => xor(rd, rs1, rs2),
+            }),
+            6..=8 => a.w([lbu, lh, lw, ld][(next() % 4) as usize](rd, 8, off)),
+            9..=11 => a.w([sb, sh, sw, sd][(next() % 4) as usize](rs2, 8, off)),
+            12..=13 => {
+                let f3 = [BEQ, BNE, BLT, BGEU][(next() % 4) as usize];
+                a.w(b_type(4 * (2 + (next() % 3) as i32), rs2, rs1, f3));
+            }
+            14 => a.w(csrrs(rd, [TIME, CYCLE, MINSTRET][(next() % 3) as usize], 0)),
+            15 => a.w(ld(rd, 14, 0)),
+            16..=17 => {
+                // Move the deadline: a few ticks back, a few ahead, or far ahead.
+                let ahead = [-6, 3, 40, 700, 2000][(next() % 5) as usize];
+                a.ws(&[ld(10, 14, 0), addi(10, 10, ahead), sd(10, 13, 0)]);
+            }
+            18 => a.w(sw(rs2, 12, 0)), // msip = bit 0 of a register
+            _ => a.w(WFI),
+        }
+    }
+    a.ws(&[addi(0, 0, 0); 4]);
+    a.w(addi(9, 9, -1));
+    a.branch(BNE, 9, 0, "loop");
+    a.poweroff();
+    a.label("handler");
+    a.ws(&[
+        csrrs(28, MEPC, 0),
+        slli(29, 30, 5),
+        add(30, 30, 29),
+        add(30, 30, 28),
+        csrrs(28, MCAUSE, 0),
+        add(30, 30, 28),
+        addi(31, 31, 1),
+        sw(0, 12, 0),
+        ld(27, 14, 0),
+        addi(27, 27, 61),
+        sd(27, 13, 0),
+        MRET,
+    ]);
+    a.finish()
+}
+
+fn v_machine(cfg: &Cfg, image: &[u8], l: VLoop) -> Machine {
+    let mut m = machine(cfg, image, true);
+    v_set_loop(&mut m, l);
+    m
+}
+
+fn v_mtime(m: &Machine) -> u64 {
+    m.clint.as_ref().unwrap().borrow().mtime
+}
+fn v_mtimecmp(m: &Machine) -> u64 {
+    m.clint.as_ref().unwrap().borrow().mtimecmp
+}
+fn v_ints(m: &Machine) -> u64 {
+    m.irq_stats().int.iter().sum()
+}
+
+/// My own statement of the task's condition, from architectural state only: the `wfi` that
+/// just retired on `m` "has to wait" iff no enabled interrupt is pending and the nearest timer
+/// deadline that was still ahead when the `wfi` retired (`mtime_at_wfi`: `mtime` after the
+/// `wfi`'s own retirement tick, before any idle jump) is still ahead now.
+fn v_wfi_waits(m: &Machine, mtime_at_wfi: u64) -> bool {
+    if m.hart.csr.mip_and_mie_nonzero() {
+        return false;
+    }
+    let c = *m.clint.as_ref().unwrap().borrow();
+    let mut nearest: Option<u64> = None;
+    for cmp in [c.mtimecmp, m.sbi_state.stimecmp] {
+        if cmp != u64::MAX && cmp > mtime_at_wfi {
+            nearest = Some(nearest.map_or(cmp, |d| d.min(cmp)));
+        }
+    }
+    nearest.is_some_and(|d| c.mtime < d)
+}
+
+#[derive(Default)]
+struct VTally {
+    yields: u64,
+    calls: u64,
+    configs: u64,
+    control_steps: u64,
+}
+
+/// Lockstep: the subject (paced, yield ON, each run-loop flavour) is given `budgets` one call
+/// at a time; the control (paced, yield OFF, the general loop) replays every subject call ONE
+/// work slot at a time. Checked on every call:
+///
+/// * a call that reports a wait ended exactly on a `wfi` that `v_wfi_waits` (no early return
+///   for anything else), within its budget, and the control did not pass an earlier waiting
+///   `wfi` on the way (no missed return);
+/// * a call that reports no wait used its whole budget and never retired a waiting `wfi`;
+/// * `observe()` (trace hash and count, hart snapshot, CLINT, tick residue, `stimecmp`,
+///   counters, resume point) and all of RAM are equal; every 512th call, every 97th yield and
+///   at the end the resume bytes are equal too.
+fn v_lockstep(
+    label: &str,
+    build: &dyn Fn(VLoop, bool) -> Machine,
+    budgets: &[u64],
+    tally: &mut VTally,
+) {
+    for subject_loop in V_LOOPS {
+        let at = alloc::format!("{label} loop={subject_loop:?} budgets={budgets:?}");
+        let mut control = build(VLoop::General, false);
+        let mut subject = build(subject_loop, true);
+        assert!(subject.paced_idle_yield() && !control.paced_idle_yield());
+        let (mut tc, mut ts) = (HashSink::new(), HashSink::new());
+        let mut call = 0usize;
+        tally.configs += 1;
+        loop {
+            let budget = budgets[call % budgets.len()];
+            call += 1;
+            tally.calls += 1;
+            let os = subject.run_traced(budget, &mut ts);
+            let wait = subject.take_idle_wait_nanos();
+            assert_eq!(subject.take_idle_wait_nanos(), None, "{at}: reported twice");
+            let target = subject.irq_stats().retired;
+            let mut oc = RunOutcome::MaxInstrs;
+            let mut slots = 0u64;
+            let mut last_waits = false;
+            loop {
+                let done = match wait {
+                    Some(_) => control.irq_stats().retired >= target,
+                    None => slots == budget || oc != RunOutcome::MaxInstrs,
+                };
+                if done {
+                    break;
+                }
+                assert!(
+                    !last_waits,
+                    "{at} call {call}: MISSED RETURN — the control retired a waiting wfi at \
+                     retired={} and the subject ran on to {target}",
+                    control.irq_stats().retired
+                );
+                let (wfis, mtime, accum) = (
+                    control.irq_stats().wfi,
+                    v_mtime(&control),
+                    control.tick_accum,
+                );
+                oc = control.run_traced(1, &mut tc);
+                slots += 1;
+                tally.control_steps += 1;
+                last_waits = control.irq_stats().wfi != wfis && {
+                    let tick = u64::from(accum + 1 >= control.clock_div);
+                    v_wfi_waits(&control, mtime + tick)
+                };
+            }
+            match wait {
+                Some(ns) => {
+                    tally.yields += 1;
+                    assert!(
+                        last_waits,
+                        "{at} call {call}: EARLY RETURN — wait {ns} ns reported at retired={target} \
+                         but the last retirement was not a waiting wfi"
+                    );
+                    assert!(slots <= budget, "{at} call {call}: over budget");
+                    assert_eq!(os, RunOutcome::MaxInstrs, "{at}");
+                    assert!(ns >= V_TICK_NS, "{at}: a wait is at least one tick");
+                }
+                None => assert!(
+                    !last_waits,
+                    "{at} call {call}: MISSED RETURN on the last budget slot (retired={target})"
+                ),
+            }
+            assert_eq!(
+                observe(&subject, &ts, os),
+                observe(&control, &tc, oc),
+                "{at} call {call} budget {budget} wait {wait:?}"
+            );
+            assert!(
+                subject.bus.ram().as_bytes() == control.bus.ram().as_bytes(),
+                "{at} call {call}: RAM"
+            );
+            let sampled = wait.is_some() && tally.yields.is_multiple_of(97);
+            if call.is_multiple_of(512) || sampled || os != RunOutcome::MaxInstrs {
+                assert_eq!(
+                    subject.save_resume().unwrap(),
+                    control.save_resume().unwrap(),
+                    "{at} call {call}: resume bytes"
+                );
+            }
+            if os != RunOutcome::MaxInstrs {
+                assert!(powered_off(&subject), "{at}: ended by poweroff, got {os:?}");
+                break;
+            }
+            assert!(call < 3_000_000, "{at}: no progress");
+        }
+    }
+}
+
+const V_BUDGETS: [&[u64]; 4] = [&[1], &[2, 3], &[7, 1, 1, 50], &[100_000]];
+const V_LAGS: [Option<u64>; 4] = [None, Some(0), Some(300), Some(V_SEC)];
+const V_STEPS: [u64; 4] = [1, 13, 400, 25_000];
+
+/// Paced machine for the lockstep matrix. The policy and the clock are selected in either
+/// order (`policy_first`), which must not matter.
+fn v_paced(
+    cfg: &Cfg,
+    image: &[u8],
+    l: VLoop,
+    yield_to_host: bool,
+    lag: Option<u64>,
+    step_ticks: u64,
+    policy_first: bool,
+) -> Machine {
+    let mut m = v_machine(cfg, image, l);
+    let clock = VClock::at(987_654_321, step_ticks * V_TICK_NS);
+    if policy_first {
+        m.set_paced_idle_policy(yield_to_host, lag);
+        m.set_paced_icount_clock(clock.boxed()).unwrap();
+    } else {
+        m.set_paced_icount_clock(clock.boxed()).unwrap();
+        m.set_paced_idle_policy(yield_to_host, lag);
+    }
+    m
+}
+
+/// B3 / C1 / C2 / C9 on the S-mode SBI-timer guest (the `wfi` is the first op of its block).
+#[test]
+fn v37a_lockstep_sbi_timer_guest() {
+    let mut tally = VTally::default();
+    let mut n = 0usize;
+    for (first, rearm, stop) in [(900u32, 260u32, 14), (41, 41, 22), (9_000, 3, 9)] {
+        let image = v_sbi_image(first, rearm, stop);
+        for div in [2u64, 7, 33] {
+            for step in V_STEPS {
+                for lag in V_LAGS {
+                    n += 1;
+                    let budgets = V_BUDGETS[n % V_BUDGETS.len()];
+                    let policy_first = n.is_multiple_of(2);
+                    let label = alloc::format!(
+                        "sbi first={first} rearm={rearm} div={div} step={step} lag={lag:?}"
+                    );
+                    v_lockstep(
+                        &label,
+                        &|l, y| v_paced(&Cfg::s_mode(div), &image, l, y, lag, step, policy_first),
+                        budgets,
+                        &mut tally,
+                    );
+                }
+            }
+        }
+    }
+    std::eprintln!(
+        "V37A lockstep sbi: configs={} calls={} yields={} control_steps={}",
+        tally.configs,
+        tally.calls,
+        tally.yields,
+        tally.control_steps
+    );
+    assert!(tally.yields > 1_000, "yields: {}", tally.yields);
+}
+
+/// B3 / C1 / C2 / C9 on the M-mode guest: `wfi` as the last op of a block of inline ops, and
+/// `wfi` straddling a page boundary (uncached entry op), with handler work and busy prologue.
+#[test]
+fn v37a_lockstep_m_mode_guest_inline_block_and_page_straddle() {
+    let mut tally = VTally::default();
+    let mut n = 0usize;
+    for straddle in [false, true] {
+        for (first, rearm, stop, handler, pad) in [
+            (600u32, 190u32, 12, 0u32, 0u32),
+            (23, 23, 30, 4, 1),
+            (9_000, 2, 8, 40, 3),
+        ] {
+            let image = v_idle_image(&VGuest {
+                first,
+                rearm,
+                stop,
+                busy: 30,
+                handler,
+                pad,
+                extra: false,
+                straddle,
+            });
+            for div in [2u64, 7, 33] {
+                for step in V_STEPS {
+                    n += 1;
+                    let lag = V_LAGS[n % V_LAGS.len()];
+                    let budgets = V_BUDGETS[(n / 4) % V_BUDGETS.len()];
+                    let policy_first = n % 2 == 1;
+                    let label = alloc::format!(
+                        "m straddle={straddle} first={first} rearm={rearm} handler={handler} \
+                         pad={pad} div={div} step={step} lag={lag:?}"
+                    );
+                    v_lockstep(
+                        &label,
+                        &|l, y| v_paced(&Cfg::m_mode(div), &image, l, y, lag, step, policy_first),
+                        budgets,
+                        &mut tally,
+                    );
+                }
+            }
+        }
+    }
+    std::eprintln!(
+        "V37A lockstep m-mode: configs={} calls={} yields={} control_steps={}",
+        tally.configs,
+        tally.calls,
+        tally.yields,
+        tally.control_steps
+    );
+    assert!(tally.yields > 1_000, "yields: {}", tally.yields);
+}
+
+/// B3 / C1 / C2 / C9 on seeded random programs with `wfi`, `msip` writes and deadline rewrites.
+#[test]
+fn v37a_lockstep_random_programs_with_wfi() {
+    let mut tally = VTally::default();
+    let mut n = 0usize;
+    for seed in 7001..=7012u64 {
+        let image = v_random_image(seed);
+        for step in V_STEPS {
+            n += 1;
+            let div = [2u64, 7, 33][n % 3];
+            let lag = V_LAGS[(n / 3) % V_LAGS.len()];
+            let budgets = V_BUDGETS[(n / 2) % V_BUDGETS.len()];
+            let label = alloc::format!("random seed={seed} div={div} step={step} lag={lag:?}");
+            v_lockstep(
+                &label,
+                &|l, y| {
+                    v_paced(
+                        &Cfg::m_mode(div),
+                        &image,
+                        l,
+                        y,
+                        lag,
+                        step,
+                        n.is_multiple_of(2),
+                    )
+                },
+                budgets,
+                &mut tally,
+            );
+        }
+    }
+    std::eprintln!(
+        "V37A lockstep random: configs={} calls={} yields={} control_steps={}",
+        tally.configs,
+        tally.calls,
+        tally.yields,
+        tally.control_steps
+    );
+    assert!(tally.yields > 300, "yields: {}", tally.yields);
+}
+
+/// B1 + B2 with my numbers: divider 7, first deadline 5 s away, the host 1.2345678 s past the
+/// clock's selection when the guest first idles.
+#[test]
+fn v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline() {
+    const FIRST: u32 = 50_000_000;
+    const HOST_LEAD: u64 = 1_234_567_800;
+    let image = v_idle_image(&VGuest {
+        first: FIRST,
+        ..VGuest::IDLE
+    });
+    for l in V_LOOPS {
+        // B1: never selected, and selected with yield = false.
+        for select in [false, true] {
+            let host = VClock::at(77 * V_SEC, 0);
+            let mut m = v_machine(&Cfg::m_mode(7), &image, l);
+            m.set_paced_icount_clock(host.boxed()).unwrap();
+            if select {
+                m.set_paced_idle_policy(false, Some(20_000_000));
+            }
+            assert!(!m.paced_idle_yield());
+            host.advance(HOST_LEAD);
+            assert_eq!(m.run(33_333), RunOutcome::MaxInstrs);
+            assert_eq!(m.irq_stats().retired + v_ints(&m), 33_333, "{l:?}");
+            assert!(m.irq_stats().wfi > 1_000, "{l:?}: {}", m.irq_stats().wfi);
+            assert_eq!(m.take_idle_wait_nanos(), None, "{l:?} select={select}");
+        }
+        // B2.
+        let host = VClock::at(77 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(7), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, None);
+        host.advance(HOST_LEAD);
+        assert_eq!(m.run(33_333), RunOutcome::MaxInstrs);
+        let retired = m.irq_stats().retired;
+        assert!(retired < 100, "{l:?}: {retired}");
+        assert_eq!(m.irq_stats().wfi, 1);
+        let pc = m.hart.regs.pc;
+        assert_eq!(
+            crate::bus::Bus::load32(&mut m.bus, pc - 4).unwrap(),
+            WFI,
+            "{l:?}: stopped right after the wfi"
+        );
+        let cmp = v_mtimecmp(&m);
+        let ceiling = v_ticks(HOST_LEAD); // anchor mtime 0 + host ticks since selection
+        assert_eq!(v_mtime(&m), ceiling, "{l:?}: guest time follows the host");
+        let wait = m.take_idle_wait_nanos().expect("waiting");
+        assert_eq!(wait, (cmp - ceiling) * V_TICK_NS, "{l:?}");
+        assert_eq!(m.take_idle_wait_nanos(), None);
+        // The host sleeps exactly the wait: the next wfi reaches the deadline exactly.
+        host.advance(wait);
+        assert_eq!(m.run(33_333), RunOutcome::MaxInstrs);
+        assert_eq!(x(&m, 31), 1, "{l:?}: the timer interrupt was taken");
+        assert_eq!(v_mtimecmp(&m), u64::MAX, "the handler disarmed the timer");
+        assert_eq!(m.irq_stats().retired + v_ints(&m), retired + 33_333);
+        assert_eq!(m.take_idle_wait_nanos(), None, "{l:?}: nothing armed");
+        // One tick short of the wait is not enough (a twin machine).
+        let host = VClock::at(77 * V_SEC, 0);
+        let mut t = v_machine(&Cfg::m_mode(7), &image, l);
+        t.set_paced_icount_clock(host.boxed()).unwrap();
+        t.set_paced_idle_policy(true, None);
+        host.advance(HOST_LEAD);
+        assert_eq!(t.run(33_333), RunOutcome::MaxInstrs);
+        let wait = t.take_idle_wait_nanos().unwrap();
+        host.advance(wait - V_TICK_NS);
+        assert_eq!(t.run(33_333), RunOutcome::MaxInstrs);
+        assert_eq!(x(&t, 31), 0);
+        assert_eq!(
+            t.take_idle_wait_nanos(),
+            Some(V_TICK_NS),
+            "{l:?}: one tick left"
+        );
+    }
+}
+
+/// B4 + C6: divider 3, 5000 busy instructions, the host 7.3 s ahead, bound 12.5 ms.
+#[test]
+fn v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full() {
+    const BOUND_NS: u64 = 12_500_000;
+    let image = v_idle_image(&VGuest {
+        first: 1_000_000_000,
+        busy: 1_250,
+        ..VGuest::IDLE
+    });
+    for l in V_LOOPS {
+        let host = VClock::at(3 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(3), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, Some(BOUND_NS));
+        while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+            assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        }
+        assert!(m.irq_stats().retired > 5_000 && m.irq_stats().wfi == 0);
+        assert_eq!(host.reads.get(), 1, "{l:?}: never consulted while busy");
+        host.advance(7_300_000_000);
+        let (before, accum) = (v_mtime(&m), m.tick_accum);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        assert_eq!(m.irq_stats().wfi, 1);
+        let at_wfi = before + u64::from(accum + 1 >= 3);
+        let after = v_mtime(&m);
+        assert_eq!(
+            after,
+            at_wfi + v_ticks(BOUND_NS),
+            "{l:?}: exactly the bound"
+        );
+        assert!(m.take_idle_wait_nanos().is_some());
+
+        // C6: twenty more waiting wfis with the host standing still add nothing but the
+        // guest's own retirements (7 per idle pass at divider 3): the bound is granted once.
+        let retired = m.irq_stats().retired;
+        for _ in 0..20 {
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert!(m.take_idle_wait_nanos().is_some());
+        }
+        let spun = m.irq_stats().retired - retired;
+        assert_eq!(spun, 20 * 7);
+        let own = v_mtime(&m) - after;
+        assert!(
+            own <= spun / 3 + 1,
+            "{l:?}: skipped {own} ticks beyond the bound"
+        );
+
+        // B4: waiting time passes in full — one 1.7 s step, then 250 steps of 3 ms.
+        // (Guest time is at or behind the ceiling here except for its own retirements, so
+        // measure against the pacer's ceiling: anchor + host elapsed.)
+        let base = v_mtime(&m);
+        host.advance(1_700_000_000);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        let stepped = v_mtime(&m);
+        assert!(
+            stepped >= after + 17_000_000 && stepped <= base + 17_000_000 + 3,
+            "{l:?}: 1.7 s of waiting moved guest time {} ticks",
+            stepped - base
+        );
+        for _ in 0..250 {
+            host.advance(3_000_000);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        }
+        assert_eq!(
+            v_mtime(&m),
+            after + 17_000_000 + 250 * 30_000,
+            "{l:?}: the ceiling is anchor + host elapsed"
+        );
+        assert_eq!(x(&m, 31), 0);
+    }
+}
+
+/// C6, second half: a deadline nearer than the bound, re-armed by a short handler, cannot be
+/// used to collect the bound more than once.
+#[test]
+fn v37a_near_deadlines_after_work_do_not_stack_the_bound() {
+    const BOUND_NS: u64 = 12_500_000;
+    let quarter = v_ticks(BOUND_NS) as u32 / 4;
+    let image = v_idle_image(&VGuest {
+        first: quarter,
+        rearm: quarter,
+        stop: 2_000,
+        busy: 1_250,
+        ..VGuest::IDLE
+    });
+    for l in V_LOOPS {
+        let host = VClock::at(3 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(3), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, Some(BOUND_NS));
+        while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+            assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        }
+        host.advance(7_300_000_000);
+        let (start, retired) = (v_mtime(&m), m.irq_stats().retired);
+        // Run until the guest reports a wait: it took every deadline the bound reaches.
+        assert_eq!(m.run(10_000_000), RunOutcome::MaxInstrs);
+        assert!(m.take_idle_wait_nanos().is_some(), "{l:?}");
+        let own = (m.irq_stats().retired - retired) / 3 + 1;
+        let skipped = v_mtime(&m) - start;
+        assert!(x(&m, 31) >= 3, "{l:?}: deadlines taken: {}", x(&m, 31));
+        assert!(
+            skipped <= v_ticks(BOUND_NS) + own,
+            "{l:?}: a busy guest skipped {skipped} ticks, bound {} + own {own}",
+            v_ticks(BOUND_NS)
+        );
+    }
+}
+
+/// C7: the idle-spin threshold is exactly 2048 retirements between two consultations.
+#[test]
+fn v37a_idle_spin_threshold_is_exactly_2048_retirements() {
+    const BOUND_NS: u64 = 10_000_000;
+    for (pad, extra, delta, worked) in [(1020u32, true, 2048u64, false), (1021, false, 2049, true)]
+    {
+        let image = v_idle_image(&VGuest {
+            first: 1_000_000_000,
+            pad,
+            extra,
+            ..VGuest::IDLE
+        });
+        for l in V_LOOPS {
+            let host = VClock::at(V_SEC, 0);
+            let mut m = v_machine(&Cfg::m_mode(64), &image, l);
+            m.set_paced_icount_clock(host.boxed()).unwrap();
+            m.set_paced_idle_policy(true, Some(BOUND_NS));
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert!(m.take_idle_wait_nanos().is_some());
+            let (r1, t1) = (m.irq_stats().retired, v_mtime(&m));
+            host.advance(V_SEC);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert!(m.take_idle_wait_nanos().is_some());
+            let (r2, t2) = (m.irq_stats().retired, v_mtime(&m));
+            assert_eq!(
+                r2 - r1,
+                delta,
+                "{l:?}: retirements between the consultations"
+            );
+            let moved = t2 - t1;
+            if worked {
+                // Its own 2049/64 = 32 ticks, then the 10 ms bound.
+                assert!(
+                    (v_ticks(BOUND_NS)..=v_ticks(BOUND_NS) + 33).contains(&moved),
+                    "{l:?}: {delta} retirements is work: moved {moved}"
+                );
+            } else {
+                assert!(
+                    (v_ticks(V_SEC) - 33..=v_ticks(V_SEC)).contains(&moved),
+                    "{l:?}: {delta} retirements is waiting: moved {moved}"
+                );
+            }
+        }
+    }
+}
+
+/// Kills S2/S3 of my sabotage plan: the consultation counter starts at the clock's selection,
+/// and a bound selected AFTER the clock reaches the existing pacer.
+#[test]
+fn v37a_clock_selected_mid_run_and_bound_selected_after_the_clock() {
+    const BOUND_NS: u64 = 10_000_000;
+    let image = v_idle_image(&VGuest {
+        first: 1_000_000_000,
+        busy: 1_250,
+        ..VGuest::IDLE
+    });
+    for l in V_LOOPS {
+        // 5000 instructions under pure ICount, THEN the paced clock: those are not "work since
+        // the pacer was last consulted".
+        let host = VClock::at(V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(64), &image, l);
+        m.set_paced_idle_policy(true, Some(BOUND_NS));
+        while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+            assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        }
+        assert!(m.irq_stats().retired > 5_000);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        let t0 = v_mtime(&m);
+        host.advance(V_SEC);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        assert!(m.take_idle_wait_nanos().is_some());
+        let moved = v_mtime(&m) - t0;
+        assert!(
+            (v_ticks(V_SEC)..=v_ticks(V_SEC) + 1).contains(&moved),
+            "{l:?}: a guest that only waited since selection moved {moved} ticks"
+        );
+
+        // The clock first, then a finite bound, then work: the bound applies.
+        let host = VClock::at(V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(64), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, Some(BOUND_NS));
+        while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+            assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        }
+        let t0 = v_mtime(&m);
+        host.advance(V_SEC);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        let moved = v_mtime(&m) - t0;
+        assert!(
+            (v_ticks(BOUND_NS)..=v_ticks(BOUND_NS) + 1).contains(&moved),
+            "{l:?}: a bound selected after the clock: moved {moved} ticks"
+        );
+    }
+}
+
+/// C3 (a)(b): a wait is dropped by a run call that retires anything else, and a wait recorded
+/// on the last budget slot is reported. N3: no zero-progress call.
+#[test]
+fn v37a_wait_is_current_or_absent_and_every_call_makes_progress() {
+    let image = v_idle_image(&VGuest::IDLE);
+    for l in V_LOOPS {
+        let build = || {
+            let host = VClock::at(9 * V_SEC, 0);
+            let mut m = v_machine(&Cfg::m_mode(5), &image, l);
+            m.set_paced_icount_clock(host.boxed()).unwrap();
+            m.set_paced_idle_policy(true, Some(1_000_000));
+            m
+        };
+        let mut probe = build();
+        assert_eq!(probe.run(1_000_000), RunOutcome::MaxInstrs);
+        let first = probe.irq_stats().retired;
+        let wait = probe.take_idle_wait_nanos().expect("waiting");
+        // (a) not taken; the next call retires one instruction of the idle pass.
+        let mut m = build();
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        assert_eq!(m.irq_stats().retired, first + 1);
+        assert_eq!(m.take_idle_wait_nanos(), None, "{l:?}: stale wait");
+        // (b) the budget ends exactly on the wfi.
+        let mut m = build();
+        assert_eq!(m.run(first), RunOutcome::MaxInstrs);
+        assert_eq!(m.irq_stats().retired, first);
+        assert_eq!(m.take_idle_wait_nanos(), Some(wait), "{l:?}");
+        // ... and one slot earlier there is none.
+        let mut m = build();
+        assert_eq!(m.run(first - 1), RunOutcome::MaxInstrs);
+        assert_eq!(m.take_idle_wait_nanos(), None);
+        // Turning the yield off, or selecting a new paced clock (a new anchor), drops a wait
+        // that was recorded and not taken.
+        let mut m = build();
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        m.set_paced_idle_policy(false, Some(1_000_000));
+        assert_eq!(m.take_idle_wait_nanos(), None, "{l:?}: yield turned off");
+        let mut m = build();
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        m.set_paced_icount_clock(VClock::at(V_SEC, 0).boxed())
+            .unwrap();
+        assert_eq!(m.take_idle_wait_nanos(), None, "{l:?}: clock re-selected");
+        // N3: a host that never sleeps still makes progress on every call.
+        let mut at = probe.irq_stats().retired;
+        for _ in 0..1_000 {
+            assert_eq!(probe.run(1_000_000), RunOutcome::MaxInstrs);
+            let now = probe.irq_stats().retired;
+            assert_eq!(now - at, 7, "{l:?}: one idle pass per call");
+            at = now;
+            assert_eq!(probe.take_idle_wait_nanos(), Some(wait));
+        }
+    }
+}
+
+/// C4: the modes that cannot honour a wait, with the policy selected on machines that were
+/// never paced: pure ICount, wall clock, an exact session, live unrecorded.
+#[test]
+fn v37a_policy_is_inert_in_icount_wall_session_and_live_modes() {
+    let image = v_idle_image(&VGuest {
+        first: 700,
+        rearm: 333,
+        stop: 9,
+        handler: 5,
+        ..VGuest::IDLE
+    });
+    type Setup<'a> = &'a dyn Fn(&mut Machine);
+    let modes: [(&str, Setup); 3] = [
+        ("icount", &|_| {}),
+        ("session", &|m| m.start_session_clock(1).unwrap()),
+        ("live", &|m| m.start_live_unrecorded().unwrap()),
+    ];
+    for l in V_LOOPS {
+        for (name, setup) in modes {
+            let mut plain = v_machine(&Cfg::m_mode(7), &image, l);
+            let mut opted = v_machine(&Cfg::m_mode(7), &image, l);
+            opted.set_paced_idle_policy(true, Some(20_000_000));
+            setup(&mut plain);
+            setup(&mut opted);
+            let (mut tp, mut to) = (HashSink::new(), HashSink::new());
+            let mut call = 0usize;
+            loop {
+                let budget = [1u64, 9, 2, 300, 4][call % 5];
+                call += 1;
+                let op = plain.run_traced(budget, &mut tp);
+                let oo = opted.run_traced(budget, &mut to);
+                assert_eq!(
+                    observe(&opted, &to, oo),
+                    observe(&plain, &tp, op),
+                    "{name} {l:?} call {call}"
+                );
+                assert_eq!(opted.take_idle_wait_nanos(), None, "{name} {l:?}");
+                if op != RunOutcome::MaxInstrs {
+                    break;
+                }
+                assert!(call < 100_000);
+            }
+            assert!(powered_off(&opted), "{name} {l:?}");
+            assert_eq!(x(&opted, 31), 9);
+            assert_eq!(opted.guest_clock_mode(), time::TimeMode::ICount);
+        }
+        // Wall clock.
+        let host = VClock::at(V_SEC, 250);
+        let mut wall = v_machine(&Cfg::m_mode(7), &image, l);
+        wall.set_paced_idle_policy(true, Some(20_000_000));
+        wall.set_wall_clock(host.boxed(), time::WallClockPolicy::DEFAULT);
+        for budget in [1u64, 50, 3_000] {
+            let before = wall.irq_stats().retired + v_ints(&wall);
+            assert_eq!(wall.run(budget), RunOutcome::MaxInstrs);
+            assert_eq!(wall.irq_stats().retired + v_ints(&wall), before + budget);
+            assert_eq!(wall.take_idle_wait_nanos(), None, "wall {l:?}");
+        }
+        // A paced clock cannot be combined with an exact session at all.
+        let host = VClock::at(V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(7), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, None);
+        assert!(m.start_session_clock(1).is_err());
+        assert!(m.start_live_unrecorded().is_err());
+    }
+}
+
+/// C4, host wake outstanding: a key pressed and not released keeps the pacer out — also when
+/// the key arrives AFTER a wait had been reported.
+#[test]
+fn v37a_a_key_staged_after_a_reported_wait_stops_the_yield() {
+    let image = v_idle_image(&VGuest::IDLE);
+    for l in V_LOOPS {
+        let host = VClock::at(4 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(33), &image, l);
+        m.enable_plic();
+        m.enable_virtio_slots(None);
+        let (_, keyboard, _) = m.enable_virtio_keyboard();
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, Some(5_000_000));
+        assert_eq!(m.run(50_000), RunOutcome::MaxInstrs);
+        assert!(
+            m.take_idle_wait_nanos().is_some(),
+            "{l:?}: idle before the key"
+        );
+        let (retired, reads) = (m.irq_stats().retired, host.reads.get());
+        // EV_KEY, KEY_Z (44), pressed; no driver takes it and it is never released.
+        assert!(keyboard.borrow_mut().inject_event(1, 44, 1));
+        assert!(keyboard.borrow().awaiting_host_key_release());
+        host.advance(V_SEC);
+        assert_eq!(m.run(50_000), RunOutcome::MaxInstrs);
+        assert_eq!(
+            m.irq_stats().retired,
+            retired + 50_000,
+            "{l:?}: budget used"
+        );
+        assert_eq!(m.take_idle_wait_nanos(), None, "{l:?}");
+        assert_eq!(
+            host.reads.get(),
+            reads,
+            "{l:?}: the pacer was not consulted"
+        );
+    }
+}
+
+/// C8: the resume blob of a machine stopped at a waiting `wfi` with the policy selected is the
+/// blob of a policy-free machine at the same retirement, and restoring keeps the host policy.
+#[test]
+fn v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy() {
+    let image = v_idle_image(&VGuest {
+        first: 40_000,
+        rearm: 9_000,
+        stop: 6,
+        handler: 3,
+        ..VGuest::IDLE
+    });
+    for l in V_LOOPS {
+        let build = |yield_to_host: bool, lag: Option<u64>| {
+            let host = VClock::at(6 * V_SEC, 1_300);
+            let mut m = v_machine(&Cfg::m_mode(7), &image, l);
+            m.set_paced_icount_clock(host.boxed()).unwrap();
+            if yield_to_host {
+                m.set_paced_idle_policy(true, lag);
+            }
+            m
+        };
+        let mut opted = build(true, Some(30_000_000));
+        let mut plain = build(false, None);
+        for _ in 0..5 {
+            assert_eq!(opted.run(1_000_000), RunOutcome::MaxInstrs);
+        }
+        // (wait recorded, deliberately not taken)
+        let target = opted.irq_stats().retired;
+        while plain.irq_stats().retired < target {
+            assert_eq!(plain.run(1), RunOutcome::MaxInstrs);
+        }
+        let blob = opted.save_resume().unwrap();
+        assert_eq!(blob, plain.save_resume().unwrap(), "{l:?}: resume bytes");
+        // Restore into a third machine that has the policy: host policy survives a restore.
+        let mut restored = build(true, Some(30_000_000));
+        restored.load_resume(&blob).unwrap();
+        assert!(restored.paced_idle_yield());
+        assert_eq!(
+            restored.idle_pacer.as_ref().unwrap().max_busy_lag_ticks(),
+            300_000
+        );
+        assert_eq!(restored.take_idle_wait_nanos(), None, "nothing ran since");
+        assert_eq!(restored.save_resume().unwrap(), blob);
+        // It runs on to the guest's poweroff, yielding on the way.
+        let mut yields = 0;
+        let mut calls = 0;
+        loop {
+            let o = restored.run(1_000_000);
+            yields += u64::from(restored.take_idle_wait_nanos().is_some());
+            calls += 1;
+            if o != RunOutcome::MaxInstrs {
+                break;
+            }
+            assert!(calls < 1_000_000);
+        }
+        assert!(powered_off(&restored) && yields > 0);
+        assert_eq!(x(&restored, 31), 6);
+    }
+}
+
+/// N2: conversion extremes and a host clock that runs backwards. Debug overflow checks are on.
+#[test]
+fn v37a_extreme_bounds_deadlines_and_a_backward_host_clock() {
+    const HZ: u64 = platform::virt::TIMEBASE_FREQ_HZ as u64;
+    // Pacer level.
+    let mut p = time::IdlePacer::new(u64::MAX - 5, u64::MAX - 10, HZ);
+    p.set_max_busy_lag_ticks(u64::MAX - 1);
+    assert_eq!(
+        p.limit_deadline_after(u64::MAX, u64::MAX - 10, u64::MAX - 1, true),
+        u64::MAX - 10,
+        "5 ns is less than a tick"
+    );
+    assert_eq!(p.ticks_until(u64::MAX - 1), 9);
+    let mut p = time::IdlePacer::new(0, u64::MAX - 10, HZ);
+    for worked in [false, true] {
+        assert_eq!(
+            p.limit_deadline_after(u64::MAX, u64::MAX - 10, u64::MAX - 1, worked),
+            u64::MAX - 1,
+            "a saturated ceiling reaches any deadline"
+        );
+        assert_eq!(p.ticks_until(u64::MAX - 1), 0);
+    }
+    // A backward reading keeps the last ceiling; a later forward one counts from the anchor.
+    let mut p = time::IdlePacer::new(1_000, 500, HZ);
+    p.set_max_busy_lag_ticks(7);
+    assert_eq!(p.limit_deadline_after(1_000 + 900, 500, 600, false), 509);
+    assert_eq!(p.limit_deadline_after(0, 509, 600, false), 509);
+    assert_eq!(p.ticks_until(600), 91);
+    assert_eq!(p.limit_deadline_after(1_000 + 1_000, 509, 600, false), 510);
+    // Work with a backward reading: the bound still counts from the guest's own time.
+    assert_eq!(p.limit_deadline_after(3, 510, 600, true), 510);
+    assert_eq!(p.limit_deadline_after(1_000 + 9_000, 520, 600, true), 527);
+    assert_eq!(p.ticks_until(600), 73);
+    // Rebase to an EARLIER host instant (a host that restarted its clock).
+    p.rebase(10, 527);
+    assert_eq!(p.max_busy_lag_ticks(), 7);
+    assert_eq!(p.limit_deadline_after(5, 527, 600, false), 527);
+    assert_eq!(p.limit_deadline_after(10 + 300, 527, 600, false), 530);
+
+    // Machine level: the largest bound, the farthest deadline, the host clock at its maximum.
+    let image = v_idle_image(&VGuest {
+        first: 1_000,
+        ..VGuest::IDLE
+    });
+    for l in V_LOOPS {
+        let host = VClock::at(0, 0);
+        let mut m = v_machine(&Cfg::m_mode(7), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, Some(u64::MAX));
+        assert_eq!(
+            m.idle_pacer.as_ref().unwrap().max_busy_lag_ticks(),
+            u64::MAX / 100
+        );
+        assert_eq!(m.run(10_000), RunOutcome::MaxInstrs);
+        let near = m.take_idle_wait_nanos().expect("waiting");
+        assert_eq!(near, v_mtimecmp(&m) * V_TICK_NS);
+        // The farthest deadline there is: the wait saturates instead of wrapping.
+        m.clint.as_ref().unwrap().borrow_mut().mtimecmp = u64::MAX - 1;
+        assert_eq!(m.run(10_000), RunOutcome::MaxInstrs);
+        assert_eq!(m.take_idle_wait_nanos(), Some(u64::MAX), "{l:?}: saturates");
+        // The host clock jumps to its maximum, then runs backwards.
+        host.now.set(u64::MAX);
+        assert_eq!(m.run(10_000), RunOutcome::MaxInstrs);
+        let far = v_mtime(&m);
+        assert_eq!(far, u64::MAX / 100, "{l:?}: the whole host span in ticks");
+        let wait = m
+            .take_idle_wait_nanos()
+            .expect("still short of the deadline");
+        assert_eq!(wait, u64::MAX, "{l:?}");
+        host.now.set(0);
+        assert_eq!(m.run(10_000), RunOutcome::MaxInstrs);
+        assert!(v_mtime(&m) >= far, "{l:?}: guest time never rewinds");
+        assert_eq!(m.take_idle_wait_nanos(), Some(wait));
+        assert_eq!(x(&m, 31), 0);
+    }
+}
+
+// ───────────────────────── Predictions that FAIL at head e4599fe73 ─────────────────────────
+
+/// C5 (a): "Time that passed while the guest was only waiting (the host may have slept) still
+/// passes in full" (task, Boundary) / "Time that passes while the guest is only waiting is
+/// never bounded" (`set_paced_idle_policy` doc).
+///
+/// The guest reports a wait of ~10 s. The host sleeps 5 s and is woken by an event for the
+/// guest (a machine software interrupt). The handler retires ~3000 instructions and the guest
+/// idles again. For those 5 s the guest did nothing but wait, so its clock must show them.
+#[test]
+#[allow(non_snake_case)]
+fn v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES() {
+    v_sleep_then_host_wake(1_000, Some(50_000_000), true);
+}
+/// Controls for the above: a handler under the idle-spin threshold, and no bound.
+#[test]
+fn v37a_bounded_lag_host_wake_controls() {
+    v_sleep_then_host_wake(150, Some(50_000_000), true);
+    v_sleep_then_host_wake(1_000, None, true);
+    v_sleep_then_host_wake(150, None, true);
+}
+
+/// Returns nothing; asserts (when `assert_full`) that the 5 s slept are on the guest clock.
+fn v_sleep_then_host_wake(handler: u32, bound: Option<u64>, assert_full: bool) {
+    const SLEPT_NS: u64 = 5 * V_SEC;
+    let image = v_idle_image(&VGuest {
+        first: 100_000_000,
+        handler,
+        ..VGuest::IDLE
+    });
+    let mut failures = alloc::vec::Vec::new();
+    for l in V_LOOPS {
+        let host = VClock::at(40 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(10), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, bound);
+        host.advance(V_SEC);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        let wait = m.take_idle_wait_nanos().expect("idle");
+        assert!(wait > 8 * V_SEC, "about 9 s to the deadline: {wait}");
+        let (t0, r0) = (v_mtime(&m), m.irq_stats().retired);
+        // The host sleeps 5 s of the wait, then an event for the guest arrives.
+        host.advance(SLEPT_NS);
+        m.clint.as_ref().unwrap().borrow_mut().msip = true;
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        assert_eq!(x(&m, 26), 1, "{l:?}: the software interrupt was handled");
+        assert_eq!(x(&m, 31), 0);
+        let rest = m.take_idle_wait_nanos().expect("idle again");
+        let (t1, r1) = (v_mtime(&m), m.irq_stats().retired);
+        let moved = t1 - t0;
+        std::eprintln!(
+            "V37A host-wake {l:?} handler_iters={handler} bound={bound:?}: retired {} between \
+             the two waits; guest time moved {moved} ticks ({} ms) for {} ms of host sleep; \
+             remaining wait {} ms (was {} ms)",
+            r1 - r0,
+            moved / 10_000,
+            SLEPT_NS / 1_000_000,
+            rest / 1_000_000,
+            wait / 1_000_000
+        );
+        if assert_full && moved < v_ticks(SLEPT_NS) {
+            failures.push(alloc::format!(
+                "{l:?} handler_iters={handler} bound={bound:?}: the guest only waited for {} \
+                 ticks of host time but its clock moved {moved}; {} ticks were discarded",
+                v_ticks(SLEPT_NS),
+                v_ticks(SLEPT_NS) - moved
+            ));
+        }
+    }
+    assert!(failures.is_empty(), "\n{}", failures.join("\n"));
+}
+
+/// C5 (b): the same loss with no host event at all — the host merely oversleeps the wait by
+/// 2 s (a throttled timer, a suspended laptop) and the guest's own timer handler is longer
+/// than the idle-spin threshold.
+#[test]
+#[allow(non_snake_case)]
+fn v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES() {
+    v_host_oversleeps(1_000, Some(50_000_000));
+}
+#[test]
+fn v37a_bounded_lag_oversleep_controls() {
+    v_host_oversleeps(150, Some(50_000_000));
+    v_host_oversleeps(1_000, None);
+}
+
+fn v_host_oversleeps(handler: u32, bound: Option<u64>) {
+    const OVER_NS: u64 = 2 * V_SEC;
+    let image = v_idle_image(&VGuest {
+        first: 20_000,
+        rearm: 1_000_000_000,
+        handler,
+        ..VGuest::IDLE
+    });
+    let mut failures = alloc::vec::Vec::new();
+    for l in V_LOOPS {
+        let host = VClock::at(40 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(10), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, bound);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        let wait = m.take_idle_wait_nanos().expect("idle");
+        let deadline = v_mtimecmp(&m);
+        // The host sleeps the wait and 2 s more.
+        host.advance(wait + OVER_NS);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        assert_eq!(x(&m, 31), 1, "{l:?}: the timer interrupt was handled");
+        assert!(m.take_idle_wait_nanos().is_some(), "idle again");
+        let now = v_mtime(&m);
+        let past = now - deadline;
+        std::eprintln!(
+            "V37A oversleep {l:?} handler_iters={handler} bound={bound:?}: host overslept {} ms; \
+             guest time is {past} ticks ({} ms) past the deadline",
+            OVER_NS / 1_000_000,
+            past / 10_000
+        );
+        if past < v_ticks(OVER_NS) {
+            failures.push(alloc::format!(
+                "{l:?} handler_iters={handler} bound={bound:?}: the host overslept {} ticks \
+                 while the guest only waited; guest time is {past} past its deadline; {} ticks \
+                 discarded",
+                v_ticks(OVER_NS),
+                v_ticks(OVER_NS) - past
+            ));
+        }
+    }
+    assert!(failures.is_empty(), "\n{}", failures.join("\n"));
+}
+
+/// B5 (b) / C3 (c) / N1: "pure ICount and wall-clock machines never report an idle wait". A
+/// wait recorded under the paced clock outlives the host calls that change what it means.
+#[test]
+#[allow(non_snake_case)]
+fn v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES() {
+    let image = v_idle_image(&VGuest {
+        busy: 500,
+        ..VGuest::IDLE
+    });
+    let mut failures = alloc::vec::Vec::new();
+    for l in V_LOOPS {
+        let build = || {
+            let host = VClock::at(2 * V_SEC, 0);
+            // Divider 1: the guest's retire-derived time runs ahead of the standing host clock.
+            let mut m = v_machine(&Cfg::m_mode(1), &image, l);
+            let blob = m.save_resume().unwrap();
+            m.set_paced_icount_clock(host.boxed()).unwrap();
+            m.set_paced_idle_policy(true, None);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            (m, host, blob)
+        };
+        // Control: the wait is there, and a re-selected paced clock drops it.
+        let (mut m, host, _) = build();
+        let wait = m.take_idle_wait_nanos().expect("waiting");
+        let (mut m2, _, _) = build();
+        m2.set_paced_icount_clock(host.boxed()).unwrap();
+        assert_eq!(m2.take_idle_wait_nanos(), None, "re-selection drops it");
+
+        let (mut m, _, _) = build();
+        m.set_icount_clock();
+        assert_eq!(m.guest_clock_mode(), time::TimeMode::ICount);
+        if let Some(stale) = m.take_idle_wait_nanos() {
+            failures.push(alloc::format!(
+                "{l:?}: a pure ICount machine reports an idle wait of {stale} ns"
+            ));
+        }
+        let (mut m, host, _) = build();
+        m.set_wall_clock(host.boxed(), time::WallClockPolicy::DEFAULT);
+        assert_eq!(m.guest_clock_mode(), time::TimeMode::WallClock);
+        if let Some(stale) = m.take_idle_wait_nanos() {
+            failures.push(alloc::format!(
+                "{l:?}: a wall-clock machine reports an idle wait of {stale} ns"
+            ));
+        }
+        let (mut m, _, blob) = build();
+        m.load_resume(&blob).unwrap();
+        assert_eq!(
+            m.hart.regs.pc, BASE,
+            "the restored guest is at its first instruction"
+        );
+        if let Some(stale) = m.take_idle_wait_nanos() {
+            failures.push(alloc::format!(
+                "{l:?}: after load_resume to the reset state the machine reports a wait of \
+                 {stale} ns for a wfi the restored guest never executed"
+            ));
+        }
+        // N1: rebase while the guest is ahead of the host clock. The pacer's ceiling is now the
+        // guest's own time, so the distance to the deadline is deadline - mtime.
+        let (mut m, _, _) = build();
+        let (mtime, cmp) = (v_mtime(&m), v_mtimecmp(&m));
+        assert!(
+            mtime > 2_000,
+            "the guest ran ahead of the host clock: {mtime}"
+        );
+        m.rebase_guest_clock();
+        let truth = (cmp - mtime) * V_TICK_NS;
+        match m.take_idle_wait_nanos() {
+            Some(ns) if ns == truth => {}
+            other => failures.push(alloc::format!(
+                "{l:?}: after rebase_guest_clock the distance from the pacer's ceiling to the \
+                 deadline is {truth} ns; reported {other:?} (recorded before the rebase: {wait})"
+            )),
+        }
+    }
+    assert!(failures.is_empty(), "\n{}", failures.join("\n"));
+}
+
+/// N5: lib.rs (this diff): "The deadline is in the paced future: nothing can happen in the
+/// guest until the host clock gets there or the host delivers an event."
+///
+/// With interrupt batching `mip` is refreshed at block boundaries only, so a store that raises
+/// an enabled interrupt in the same block as the `wfi` is not seen by the `wfi`. The yield then
+/// reports the whole distance to the timer deadline while an interrupt is deliverable at once.
+#[test]
+#[allow(non_snake_case)]
+fn v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES() {
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(12, CLINT);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&li32(20, 100_000_000)); // 10 s
+    a.ws(&[ld(5, 14, 0), add(5, 5, 20), sd(5, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x88), csrrs(0, MIE, 7)]);
+    a.w(addi(4, 0, 1));
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    // One block: raise the machine software interrupt, then wait.
+    a.ws(&[sw(4, 12, 0), WFI]);
+    a.label("loop");
+    a.ws(&[addi(19, 19, 1), WFI]);
+    a.jal(0, "loop");
+    a.org(BASE + 0x400);
+    a.label("handler");
+    a.ws(&[sw(0, 12, 0), addi(26, 26, 1), MRET]);
+    let image = a.finish();
+    let mut failures = alloc::vec::Vec::new();
+    for l in V_LOOPS {
+        let host = VClock::at(5 * V_SEC, 0);
+        let mut m = v_machine(&Cfg::m_mode(10), &image, l);
+        m.set_paced_icount_clock(host.boxed()).unwrap();
+        m.set_paced_idle_policy(true, None);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        let msip = m.clint.as_ref().unwrap().borrow().msip;
+        let wait = m.take_idle_wait_nanos();
+        let (ints, handled) = (v_ints(&m), x(&m, 26));
+        // The host clock does not move and the host delivers nothing.
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        let taken = v_ints(&m) - ints;
+        std::eprintln!(
+            "V37A stale-mip {l:?}: first call ended with wfi={} msip={msip} handled={handled} \
+             wait={wait:?}; second call, host clock unchanged: interrupts taken={taken} handled={}",
+            m.irq_stats().wfi,
+            x(&m, 26)
+        );
+        if let Some(ns) = wait
+            && taken != 0
+        {
+            failures.push(alloc::format!(
+                "{l:?}: a wait of {ns} ns ({} s) was reported with msip={msip}; the next run \
+                 call, host clock unchanged and nothing delivered, took {taken} interrupt(s)",
+                ns / V_SEC
+            ));
+        }
+    }
+    assert!(failures.is_empty(), "\n{}", failures.join("\n"));
+}

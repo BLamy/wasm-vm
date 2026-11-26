@@ -1,0 +1,38 @@
+$ bash tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r3-e5t37a-teq-2000000000
+turbo: exit 102, 24 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 31 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+exit=0
+$ bash tools/perf/turbo-equivalence.sh 555555555 target/verifier-r3-e5t37a-teq-555555555
+turbo: exit 102, 8 s, turbo: enabled=true entries=3566561 blocks=67183588 inline_ops=549536710 slow_ops=5926449 ops_per_entry=155.7 exits: horizon=208 budget=1111 boundary=3500190 trap=65052
+ordinary: exit 102, 10 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=219809c2bc11411e
+trace retired=555490133
+trace mode=retirement-records
+state sha256=b4223f052f380d169c58489503624ba2ac14029e8ef9d87ecb0309480cfd2282
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=219809c2bc11411e
+trace retired=555490133
+trace mode=retirement-records
+state sha256=b4223f052f380d169c58489503624ba2ac14029e8ef9d87ecb0309480cfd2282
+outcome=MaxInstrs
+EQUIVALENT (555555555 instructions)
+exit=0

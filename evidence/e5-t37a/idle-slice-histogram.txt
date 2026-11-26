@@ -1,0 +1,30 @@
+E5-T37a — the measurement behind IDLE_SPIN_INSTRS = 2048 (cited in crates/core/src/lib.rs).
+
+What: the number of guest instructions retired by run slices that ended at a waiting `wfi`
+(the machine reported an idle wait), on the warm Replay desktop left idle.
+When / how: 2026-11-25, a prototype of the paced idle yield on the scratch branch
+`scratch/pacing` (base d106de944; core change equivalent to this task's round 1, loader with the
+idle sleep), Chrome 158 headless on the M4 Max, served by tools/serve-dev.sh; the loader counted
+`res.retired` of each `runChunk` whose `takeIdleWaitMs()` was non-zero into buckets and exposed
+them through schedulerStats; a Playwright probe sampled it three times, 10 s apart, starting
+5 s after the desktop was ready. The prototype and probe are not in the repository (scratch
+only); this file is the record of their console output.
+
+Buckets: instructions retired in the slice, [<=64, <=256, <=1024, <=4096, <=16384, <=65536, more]
+
+  interval 1 (first 10 s after restore, guest still busy 65% of the time): 0,0,131,0,5,10,11
+  interval 2 (idle, worker in slices 13.4% of wall time):                  0,0,62,0,11,24,13
+  interval 3 (idle, 12.9%):                                               0,0,74,0,12,13,15
+
+Reading: every slice that ended at a waiting `wfi` retired either 257-1024 instructions (267 of
+them over the three intervals: one pass of the kernel's idle loop with nothing to do) or more
+than 4096 (114 of them: a pass that handled an interrupt). None retired 1025-4096, and none
+256 or fewer. 2048 sits in the middle of the empty band. A slice here is "everything since
+the previous wait", which is what the pacer measures between two consultations when the host
+took the wait in between.
+
+Limits: one guest (Linux 6.6.63 riscv64, this desktop image), one session, 381 slices; the
+threshold is a heuristic. Misjudging a short real wakeup as waiting only means its (tiny) busy
+lag is not forgiven; misjudging a long idle pass as work means the host time since the last
+consultation is treated as busy lag — bounded, so up to one sleep interval could be dropped.
+E5-T37b's browser evidence measures the guest-time rate at idle directly.

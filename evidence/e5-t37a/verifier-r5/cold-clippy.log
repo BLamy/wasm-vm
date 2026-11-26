@@ -1,0 +1,8 @@
+cold clone (sparse) at c05039db961779c4979300edcce293b9ff96893b, tracked changes=0
+what of evidence/ is checked out: evidence/e5-t11c/keyboard-evdev-serial.txt evidence/perf-overhaul/oracle-baseline/README.md evidence/perf-overhaul/oracle-baseline/alpine-fast.txt evidence/perf-overhaul/oracle-baseline/alpine-jit.txt evidence/perf-overhaul/oracle-baseline/busybox-cache.txt evidence/perf-overhaul/oracle-baseline/busybox-fast.txt evidence/perf-overhaul/oracle-baseline/busybox-jit.txt evidence/perf-overhaul/oracle-baseline/busybox-legacy.txt 
+env passed to every command: HOME PATH TERM 
+$ cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings
+   1     Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.58s
+rc=0
+clone deleted: yes
+COLD_CLIPPY_DONE

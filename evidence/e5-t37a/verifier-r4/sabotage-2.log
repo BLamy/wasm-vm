@@ -1,0 +1,30 @@
+# sabotage-2.py — my own mutants against the WORKER's tests; tree: [?? crates/core/src/paced_idle_verifier_tests/;] head cc7dfef69 06:31Z
+MY1 fresh_mip: the S-timer level only AT its deadline (`>=` -> `==`)
+    worker's tests (paced_idle): SURVIVED (24 passed, 0 failed)
+MY1@r3 the same, against the fresh_mip test as round 3 saw it (999 / MAX)
+    (crates/core/src/turbo_equivalence_tests.rs as at 7fd2e0160, plus the mutation)
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+        | thread 'turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes' (29656681) panicked at crates/core/src/turbo_equivalence_tests.rs:2847:13:
+        | assertion `left == right` failed: sbi=true case=00100 stale=0x88
+        |   left: 32
+        |  right: 0
+MY2 a guest that worked may skip max(owed, bound), not owed + bound
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29657240) panicked at crates/core/src/time.rs:550:9:
+        | assertion `left == right` failed: everything the host clock ran ahead while the guest waited
+        |   left: 20010300
+        |  right: 20020000
+MY2@r3 the same, against the pacer test as round 3 saw it
+    (crates/core/src/time.rs as at 7fd2e0160, plus the mutation)
+    worker's tests (paced_idle): KILLED by 1 (23 passed, 1 failed)
+      time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+        | thread 'time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not' (29657740) panicked at crates/core/src/time.rs:550:9:
+        | assertion `left == right` failed: everything the host clock ran ahead while the guest waited
+        |   left: 20010300
+        |  right: 20020000
+exit=0
+git status --short crates: [?? crates/core/src/paced_idle_verifier_tests/;]
+# note: MY2 replaces three lines of time.rs by two, so the panic line it prints (550) is line 551
+# of the unmutated file: `assert_eq!(o.limit_deadline_after(ns_ms(2_002), after_handler, FAR, true), …)`.

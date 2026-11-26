@@ -1,0 +1,130 @@
+# diff evidence/e5-t37a/verifier/verifier_tests.rs -> adapted r1.rs
+2,3c2,6
+< // E5-T37a VERIFIER tests (fresh critic session, 2026-11-26). Not the worker's: own guests, own
+< // host clocks, own parameters. Every test name starts `v37a_`.
+---
+> // E5-T37a ROUND 1 VERIFIER tests (a fresh critic session; not the worker's): own guests, own
+> // host clocks, own parameters. Every test name starts `v37a_`. Promoted by the round-3 verifier
+> // from evidence/e5-t37a/verifier/verifier_tests.rs; this file is `include!`d by
+> // `turbo_equivalence_tests.rs` (it uses that module's assembler and helpers), followed by the
+> // round-2 and round-3 verifiers' files.
+5,7c8,9
+< // To build: append `include!("../../../evidence/e5-t37a/verifier/verifier_tests.rs");` to
+< // `crates/core/src/turbo_equivalence_tests.rs` (it uses that module's assembler and helpers),
+< // then `cargo test -p wasm-vm-core --lib v37a_`.
+---
+> // A name ending `_REFUTES` marks a test that refuted the round-1 submission (it failed at head
+> // e4599fe73). They pass since round 2 and stay as regressions.
+9,10c11,15
+< // Tests whose name ends `_REFUTES` assert what the task's claim needs and FAIL at head
+< // e4599fe73; each prints the observed numbers. The others pass at that head.
+---
+> // Two things differ from the evidence copy, both because round 3 narrowed the contract to "a
+> // reported wait is always true; a true wait is not always reported" (see
+> // evidence/e5-t37a/verifier-r3/adapt-earlier-verifier-files.py): the lockstep predicate also
+> // requires the levels the boundary samples to be clear and the subject's call to vouch for the
+> // devices, and the busy-lag test starts its long call at a block boundary.
+340c345,347
+< ///   `wfi` on the way (no missed return);
+---
+> ///   `wfi` on the way (no missed return). Round 3: a waiting `wfi` has to be reported only if,
+> ///   in addition, no enabled interrupt is pending per the levels the boundary samples
+> ///   (`r3_levels`) and the subject's call can vouch for the devices (`R3Vouch`);
+369a377
+>             let mut vouch = R3Vouch::default();
+383a392
+>                 vouch.before_slot(&control, false);
+391a401
+>                 vouch.after_slot(&control);
+394a405,406
+>                         && r3_levels(&control) & control.hart.csr.mie_bits() == 0
+>                         && vouch.vouches(&control)
+684c696,698
+<         while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+---
+>         // Round 3: up to the ENTRY of the wfi's block (`sd; ld; wfi`), so that the long call
+>         // below begins at a block boundary and can report its first wfi.
+>         while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc + 8).unwrap() != WFI {
+686a701
+>         assert!(resume_point(&m).is_none(), "{l:?}: at a block boundary");
+693c708
+<         let at_wfi = before + u64::from(accum + 1 >= 3);
+---
+>         let at_wfi = before + (accum + 3) / 3;
+
+# diff evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs -> adapted r2.rs
+2c2
+< // E5-T37a ROUND 2 VERIFIER tests (fresh critic session; not the worker, not the round-1
+---
+> // E5-T37a ROUND 2 VERIFIER tests (a fresh critic session; not the worker, not the round-1
+3a4,6
+> // Promoted by the round-3 verifier from evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs;
+> // `include!`d by `turbo_equivalence_tests.rs` after the round-1 verifier's file (whose clock and
+> // loop-flavour helpers it uses) and before the round-3 verifier's.
+5,6c8,9
+< // To build: append BOTH lines to `crates/core/src/turbo_equivalence_tests.rs` (this file uses
+< // that module's assembler and the round-1 verifier's clock / loop-flavour helpers):
+---
+> // A name ending `_REFUTES` marks a test that refuted the round-2 submission (it failed at head
+> // d8db32db8). They pass since round 3 and stay as regressions.
+8,14c11,15
+< //   include!("../../../evidence/e5-t37a/verifier/verifier_tests.rs");
+< //   include!("../../../evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs");
+< //
+< // then `cargo test -p wasm-vm-core --lib r2_ -- --nocapture --test-threads=1`.
+< //
+< // Tests whose name ends `_REFUTES` assert what the round-2 claim needs and FAIL at head
+< // d8db32db8 (crates == 215cbd1f9); each prints the observed numbers first. The others pass.
+---
+> // One thing differs from the evidence copy (see
+> // evidence/e5-t37a/verifier-r3/adapt-earlier-verifier-files.py): the lockstep predicate. Round 3
+> // reports a wait only when the run call can vouch for the devices, so the harness's own device
+> // term ("no fabric access since the last sampled boundary") is replaced by `R3Vouch`, and the
+> // PLIC's levels are counted (`r3_levels`), as this file's author said they would have to be.
+1231,1233c1232,1233
+< /// The round-2 contract's "has to wait", from architectural state of a yield-off control and
+< /// one number the harness tracks itself — never from the implementation's own bookkeeping
+< /// (`idle_wait_deadline`, `idle_boundary_epoch`):
+---
+> /// The round-2 contract's "has to wait", from architectural state of a yield-off control —
+> /// never from the implementation's own bookkeeping:
+1238,1240d1237
+< /// * no fabric device access since the last sampled boundary: `epoch_at_boundary` is the
+< ///   pre-existing fabric access counter as the HARNESS read it the last time the control
+< ///   stood at a block boundary;
+1242c1239,1241
+< fn r2_wfi_waits(m: &Machine, mtime_at_wfi: u64, epoch_at_boundary: u64) -> bool {
+---
+> ///
+> /// (The device term lives in the harness since round 3: `R3Vouch`.)
+> fn r2_wfi_waits(m: &Machine, mtime_at_wfi: u64) -> bool {
+1254,1256d1252
+<     if m.fabric_epoch.get() != epoch_at_boundary {
+<         return false;
+<     }
+1266,1267c1262,1264
+< /// The round-1 verifier's lockstep (`v_lockstep`), with `r2_wfi_waits`, the harness-tracked
+< /// fabric epoch, and the two machines' host-clock reading counts compared after every call.
+---
+> /// The round-1 verifier's lockstep (`v_lockstep`), with `r2_wfi_waits`, the round-3 device
+> /// and PLIC terms (`R3Vouch`, `r3_levels`), and the two machines' host-clock reading counts
+> /// compared after every call.
+1281d1277
+<         let mut epoch_at_boundary = control.fabric_epoch.get();
+1293a1290
+>             let mut vouch = R3Vouch::default();
+1308,1311c1305
+<                 if resume_point(&control).is_none() {
+<                     // The control's next loop iteration samples this boundary.
+<                     epoch_at_boundary = control.fabric_epoch.get();
+<                 }
+---
+>                 vouch.before_slot(&control, false);
+1319a1314
+>                 vouch.after_slot(&control);
+1322c1317,1319
+<                     r2_wfi_waits(&control, mtime + tick, epoch_at_boundary)
+---
+>                     r2_wfi_waits(&control, mtime + tick)
+>                         && r3_levels(&control) & control.hart.csr.mie_bits() == 0
+>                         && vouch.vouches(&control)

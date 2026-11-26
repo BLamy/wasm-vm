@@ -1,0 +1,59 @@
+# E5-T37a round 2 — the round-1 verifier's 19 tests (evidence/e5-t37a/verifier/verifier_tests.rs) against the reworked implementation.
+# (a) the file exactly as the verifier committed it:
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... FAILED
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... ok
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... ok
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... ok
+test result: FAILED. 18 passed; 1 failed; 0 ignored; 0 measured; 439 filtered out; finished in 31.34s
+thread 'turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi' (28804990) panicked at crates/core/src/../../../evidence/e5-t37a/verifier/verifier_tests.rs:409:25:
+random seed=7001 div=7 step=1 lag=None loop=General budgets=[1] call 189: MISSED RETURN on the last budget slot (retired=185)
+
+# (b) a scratch copy with ONE change, to the verifier's own 'must wait' predicate v_wfi_waits, which read the stale mip only. Round 2 does not yield when an enabled interrupt is pending per the CLINT/SBI levels this boundary samples, or a fabric device was accessed since the last sampled boundary (the N5 fix). Diff of the scratch copy:
+316a317,328
+>     // (worker's scratch patch) round-2 condition: the levels this boundary will sample, and a
+>     // device access since the last sampled boundary.
+>     let mie = m.hart.csr.mie_bits();
+>     if (c.msip && mie & 8 != 0) || (c.mtime >= c.mtimecmp && mie & 0x80 != 0) {
+>         return false;
+>     }
+>     if m.builtin_sbi && c.mtime >= m.sbi_state.stimecmp && mie & 0x20 != 0 {
+>         return false;
+>     }
+>     if m.fabric_epoch.get() != m.idle_boundary_epoch {
+>         return false;
+>     }
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... ok
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... ok
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... ok
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 31.34s

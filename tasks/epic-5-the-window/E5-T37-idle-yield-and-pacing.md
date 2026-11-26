@@ -3,7 +3,7 @@ id: E5-T37
 epic: 5
 title: Stop spinning a host core while the desktop is idle (planning parent)
 priority: 0.38766
-status: pending
+status: cancelled
 depends_on: [E5-T34g]
 estimate: M
 risk: high
@@ -35,3 +35,13 @@ graphics.
    key held for a short press does not repeat, and that the E4-T40a latencies do not regress.
 
 ## Verification log
+
+### 2026-11-25 — split
+
+Planning parent, split per AGENTS.md into E5-T37a (core: a paced `wfi` ends the run slice and
+reports the wait; lag built up while busy is bounded) and E5-T37b (wasm binding, loader sleep
+and wake, Replay desktop selects the paced clock). Measured on a prototype of both
+(2026-11-25): the worker is inside run slices 12% of wall time at idle instead of 99.7%, guest
+time runs at 0.95x real time instead of 9-12x, and click result latency falls about 18%
+(351 ms to 288 ms) because periodic guest work no longer runs many times per real second.
+

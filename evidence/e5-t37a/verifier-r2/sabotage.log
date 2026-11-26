@@ -1,0 +1,67 @@
+# E5-T37a round 2 — verifier mutation run
+# head d8db32db8
+# pass 1 baseline (worker tests, no mutation): 15 passed, 0 failed
+S1 [r1] IDLE_SPIN_INSTRS 2048 -> 4096: KILLED by 1 worker test(s): paced_idle_spin_threshold_is_exact
+S2 [r1] worked: `>` -> `>=` IDLE_SPIN_INSTRS: KILLED by 1 worker test(s): paced_idle_spin_threshold_is_exact
+S3 [r1] set_paced_icount_clock does not reset idle_consult_retired: KILLED by 1 worker test(s): paced_idle_policy_and_clock_in_either_order_and_mid_run
+S4 [r1] set_paced_idle_policy does not hand the bound to an existing pacer: KILLED by 2 worker test(s): paced_idle_policy_and_clock_in_either_order_and_mid_run, paced_idle_spin_threshold_is_exact
+S5 [r1] set_paced_icount_clock does not clear a recorded wait: KILLED by 1 worker test(s): paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+S6 [r1] set_paced_idle_policy does not clear a recorded wait: KILLED by 1 worker test(s): paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+K1 [r1-killed] clamp does not move the anchor: KILLED by 2 worker test(s): paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting
+K2 [r1-killed] wait recorded when `limited <= d`: SURVIVES the worker's 15 tests
+K3 [r1-killed] take does not clear the recorded wait: KILLED by 4 worker test(s): paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait
+M1 [new] paced_wake: drop `if !pacer.waiting() { return; }`: SURVIVES the worker's 15 tests
+M2 [new] paced_wake: deadline cap removed (u64::MAX): SURVIVES the worker's 15 tests
+M3 [new] paced_wake: no sync_sbi_timer() after moving mtime: SURVIVES the worker's 15 tests
+M3b [new] paced_wake: no sync_clint() after moving mtime: KILLED by 1 worker test(s): paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+M4 [new] paced_wake: `if limited != mtime` -> unconditional: SURVIVES the worker's 15 tests
+M15 [new] paced_wake: consult as worked (true) instead of waited: KILLED by 3 worker test(s): paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+M5 [new] paced_wait_holds: MTIP level term dropped: SURVIVES the worker's 15 tests
+M6 [new] paced_wait_holds: STIP level term dropped: SURVIVES the worker's 15 tests
+M7 [new] paced_wait_holds: msip not gated by mie.MSIE: SURVIVES the worker's 15 tests
+M7b [new] paced_wait_holds: STIP term without the builtin_sbi guard: SURVIVES the worker's 15 tests
+M25 [new] paced_wait_holds: stale mip&mie term dropped: SURVIVES the worker's 15 tests
+M8 [new] take: the `ticks == 0` path keeps the wake armed: KILLED by 1 worker test(s): paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+M9 [new] take: reports without asking whether the wait holds: KILLED by 1 worker test(s): paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+M10 [new] limit_deadline_after: owed not capped by `ceiling - limited`: SURVIVES the worker's 15 tests
+M11 [new] limit_deadline_after: waiting = true: KILLED by 1 worker test(s): paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+M16 [new] rebase keeps `waiting` (new pacer starts waiting): SURVIVES the worker's 15 tests
+M12a [new] set_icount_clock does not clear the wait: SURVIVES the worker's 15 tests
+M12b [new] set_wall_clock does not clear the wait: SURVIVES the worker's 15 tests
+M13 [new] load_resume does not reset idle_consult_retired: SURVIVES the worker's 15 tests
+M17 [new] run start: an untaken wait is dropped but its wake stays armed... inverse: clears only when a wake is pending: SURVIVES the worker's 15 tests
+
+
+# pass 2 — survivors against the round-1 verifier's tests (v37a_) and mine (r2_)
+# pass 2 baseline (no mutation): 33 passed, 5 failed: r2_b4_time_slept_after_a_rebase_is_kept_REFUTES, r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES, r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES, r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES, v37a_lockstep_random_programs_with_wfi
+K2 [r1-killed] wait recorded when `limited <= d`: SURVIVES these too
+M1 [new] paced_wake: drop `if !pacer.waiting() { return; }`: SURVIVES these too; and makes r2_b4_time_slept_after_a_rebase_is_kept_REFUTES PASS
+M2 [new] paced_wake: deadline cap removed (u64::MAX): killed by r2_c5c4_deadline_inside_the_slept_interval_with_a_host_event
+M3 [new] paced_wake: no sync_sbi_timer() after moving mtime: SURVIVES these too
+M4 [new] paced_wake: `if limited != mtime` -> unconditional: SURVIVES these too
+M5 [new] paced_wait_holds: MTIP level term dropped: SURVIVES these too
+M6 [new] paced_wait_holds: STIP level term dropped: SURVIVES these too
+M7 [new] paced_wait_holds: msip not gated by mie.MSIE: killed by r2_c5c3_wake_accounting_only_for_a_taken_wait_and_an_enabled_interrupt
+M7b [new] paced_wait_holds: STIP term without the builtin_sbi guard: SURVIVES these too
+M25 [new] paced_wait_holds: stale mip&mie term dropped: SURVIVES these too
+M10 [new] limit_deadline_after: owed not capped by `ceiling - limited`: SURVIVES these too
+M16 [new] rebase keeps `waiting` (new pacer starts waiting): SURVIVES these too; and makes r2_b4_time_slept_after_a_rebase_is_kept_REFUTES PASS
+M12a [new] set_icount_clock does not clear the wait: SURVIVES these too
+M12b [new] set_wall_clock does not clear the wait: SURVIVES these too
+M13 [new] load_resume does not reset idle_consult_retired: SURVIVES these too
+M17 [new] run start: an untaken wait is dropped but its wake stays armed... inverse: clears only when a wake is pending: SURVIVES these too
+
+# git status --short crates after the run: ''
+
+# pass 3 — after five tests were added to verifier_r2_tests.rs for the mutants nobody killed (r2_k2_*, r2_m10_*, r2_m13_*, r2_m6_*, r2_m3_*): the same survivors again
+
+# pass 2 baseline (no mutation): 38 passed, 5 failed: r2_b4_time_slept_after_a_rebase_is_kept_REFUTES, r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES, r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES, r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES, v37a_lockstep_random_programs_with_wfi
+K2 [r1-killed] wait recorded when `limited <= d`: killed by r2_k2_a_reached_deadline_that_wakes_nothing_does_not_end_the_run
+M3 [new] paced_wake: no sync_sbi_timer() after moving mtime: killed by r2_m3_masked_s_mode_wake_at_the_deadline_shows_stip
+M5 [new] paced_wait_holds: MTIP level term dropped: SURVIVES these too
+M6 [new] paced_wait_holds: STIP level term dropped: killed by r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block
+M7b [new] paced_wait_holds: STIP term without the builtin_sbi guard: SURVIVES these too
+M10 [new] limit_deadline_after: owed not capped by `ceiling - limited`: killed by r2_m10_waiting_while_ahead_of_the_host_clock_earns_no_credit
+M13 [new] load_resume does not reset idle_consult_retired: killed by r2_m13_a_restore_starts_a_new_worked_or_waited_interval
+
+# git status --short crates after the run: ''
