@@ -1838,6 +1838,9 @@ export async function startLinuxBoot(opts = {}) {
         inputBytes,
         yieldMode: workerPostTask ? "scheduler.postTask" : workerMode ? "timer" : "message-channel",
         ...idleSleeper.stats(),
+        // Whether those idle sleeps can happen at all (the paced policy): a reader that waits
+        // for the guest to go idle must know when it never will be reported (E5-T36a).
+        idleYield: guestClockLifecycle.idleYield,
         schedulerYields,
         timerYields,
         mainThreadYields,

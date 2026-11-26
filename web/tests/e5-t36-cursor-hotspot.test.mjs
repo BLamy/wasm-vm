@@ -6,7 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { CursorController, HOTSPOT_REST_MS } from "../src/sink/cursor-controller.js";
+import { CursorController, HOTSPOT_CAUGHT_UP_TIMEOUT_MS, HOTSPOT_POLL_MS, HOTSPOT_REST_MS, HOTSPOT_SETTLE_FALLBACK_MS } from "../src/sink/cursor-controller.js";
 import { CursorHotspotEstimator } from "../src/sink/cursor-hotspot.js";
 
 // ── The estimator, fed only what it may be fed: plane positions the guest MOVED the plane to ──
@@ -129,26 +129,36 @@ test("a rest answer needs a move of this image since it was installed, and never
   assert.throws(() => f.noteRest("caret", 0, 32), RangeError);
 });
 
-test("a rest answer read off a plane that was still on its way is dropped by the plane's next move", () => {
+test("rest is the caller's knowledge: read off a plane still on its way, it is simply wrong", () => {
+  // The estimator cannot know whether the guest has caught up; `noteRest` says so and leaves it
+  // to the caller (the controller asks the guest's idle counter). This is what the rule would
+  // answer without that knowledge — the reason it must never be called on quiet alone.
   const e = new CursorHotspotEstimator();
   const hot = { x: 9, y: 4 };
-  // An even straight run to the right; the guest is two positions behind when the pointer stops.
-  const xs = [100, 110, 120, 130, 140, 150];
+  const xs = [100, 110, 120, 130, 140, 150]; // an even run; the guest is two positions behind
   for (const x of xs) e.notePointer(x, 500);
-  for (const x of xs.slice(0, 4)) assert.equal(e.noteMove("hand", 64, 64, x - hot.x, 500 - hot.y), null);
-  // "Rest" is declared too early: the plane still stands for the position sent two moves ago,
-  // and on an even run that offset is one every move allowed.
-  assert.deepEqual({ ...e.noteRest("hand", 64, 64) }, { x: 29, y: 4 }, "(150,500) - (121,496): allowed, and wrong");
-  // The same position sent again (a button press where the pointer already is) is nothing new.
+  assert.equal(e.sends, 6);
   e.notePointer(150, 500);
-  // The plane moves again although nothing new was sent: that answer was not read at rest.
-  assert.equal(e.noteMove("hand", 64, 64, 140 - hot.x, 500 - hot.y), null);
-  assert.equal(e.hotspot("hand"), null);
-  assert.equal(e.noteMove("hand", 64, 64, 150 - hot.x, 500 - hot.y), null, "two offsets still fit");
-  assert.deepEqual({ ...e.noteRest("hand", 64, 64) }, hot, "now it is at rest");
-  // After something new is sent, an ordinary move does not disturb a rest answer.
-  e.notePointer(300, 420);
-  assert.deepEqual({ ...e.noteMove("hand", 64, 64, 291, 416) }, hot);
+  assert.equal(e.sends, 6, "the same position again is not a new one");
+  for (const x of xs.slice(0, 4)) assert.equal(e.noteMove("hand", 64, 64, x - hot.x, 500 - hot.y), null);
+  assert.deepEqual({ ...e.noteRest("hand", 64, 64) }, { x: 29, y: 4 }, "(150,500) - (121,496): an offset every move allowed");
+  // Asked when the guest HAS caught up, the same question has the right answer. (An even run
+  // to the left, the guest keeping up: the positions sent before the hand appeared keep
+  // explaining its plane with 19, 29 and 39 px, so the moves alone decide nothing.)
+  const f = new CursorHotspotEstimator();
+  for (const x of [160, 150, 140]) f.notePointer(x, 500);
+  for (const x of [130, 120, 110, 100]) { f.notePointer(x, 500); assert.equal(f.noteMove("hand", 64, 64, x - hot.x, 500 - hot.y), null, "an even run decides nothing"); }
+  assert.deepEqual({ ...f.noteRest("hand", 64, 64) }, hot);
+  // Rest never answers without a move that left candidates, and clamps like any answer.
+  const g = new CursorHotspotEstimator();
+  g.notePointer(300, 300);
+  assert.equal(g.noteMove("far", 16, 16, 100, 100), null, "nothing sent explains this plane");
+  g.notePointer(110, 108);
+  assert.equal(g.noteRest("far", 16, 16), null, "no candidates at all: (10,8) is not an answer");
+  const h = new CursorHotspotEstimator();
+  h.notePointer(200, 200); h.notePointer(216, 216);
+  assert.equal(h.noteMove("edge", 16, 16, 200, 200), null, "(0,0) and (16,16)");
+  assert.deepEqual({ ...h.noteRest("edge", 16, 16) }, { x: 15, y: 15 }, "one past the last column is the rounding slack, clamped");
 });
 
 test("an answer the guest contradicts three moves in a row is dropped and inferred again", () => {
@@ -231,7 +241,7 @@ test("positions nothing recent explains are ignored; reset forgets positions and
 });
 
 test("the number of remembered images is bounded; a forgotten one is inferred again", () => {
-  const e = new CursorHotspotEstimator({ maxImages: 3 });
+  const e = new CursorHotspotEstimator({ maxImages: 3, history: 64 });
   const resolve = (key, hot) => {
     let got = null;
     for (const [x, y] of [[200, 200], [260, 240], [310, 205], [240, 280]]) {
@@ -255,7 +265,8 @@ test("the number of remembered images is bounded; a forgotten one is inferred ag
   // at its own bound.
   for (let i = 0; i < 500; i += 1) { e.notePointer(100 + (i % 7) * 31, 100 + (i % 5) * 17); e.noteMove(`anim-${i}`, 32, 32, 90, 90); }
   assert.equal(e._images.size, 3);
-  assert.ok(e._sent.length <= 128);
+  assert.equal(e._sent.length, 64);
+  assert.equal(new CursorHotspotEstimator()._history, 512);
 });
 
 test("source and no-bundler projections of both sink files stay byte-identical", () => {
@@ -270,7 +281,8 @@ test("source and no-bundler projections of both sink files stay byte-identical",
 // A commit that changes the cursor image is "set image" at the plane's PREVIOUS position — the
 // one computed with the previous image's hotspot — followed by a move to pointer minus the new
 // hotspot. Recorded on the Replay desktop: 559 of 560 updates carried the plane position of
-// the event before them. `LegacyKmsGuest` reports exactly that.
+// the event before them. `LegacyKmsGuest` reports exactly that, and acts on the positions the
+// page sends only when the test lets it (`pump`), so it can be behind.
 
 function cursorTarget() {
   return { style: { cursor: "auto" }, appendChild() {}, removeChild() {} };
@@ -280,13 +292,26 @@ const inferred = (controller) => {
   const s = controller.snapshot();
   return s.inferredHotX === null ? null : [s.inferredHotX, s.inferredHotY];
 };
+// Timers on a clock the test moves.
 function timers() {
-  const armed = new Map(); let next = 1;
-  return { armed,
-    setTimer: (fn, ms) => { const id = next; next += 1; armed.set(id, { fn, ms }); return id; },
-    clearTimer: (id) => { armed.delete(id); },
-    // Fire every armed timer (the rest period passed with nothing happening).
-    elapse() { const due = [...armed.entries()]; armed.clear(); for (const [, timer] of due) timer.fn(); return due.length; } };
+  const armed = new Set(); const t = { now: 0, armed };
+  t.setTimer = (fn, ms) => { const timer = { fn, ms, at: t.now + ms }; armed.add(timer); return timer; };
+  t.clearTimer = (timer) => { armed.delete(timer); };
+  // Let promise continuations run.
+  t.flush = async () => { for (let i = 0; i < 6; i += 1) await new Promise((resolve) => setImmediate(resolve)); };
+  // Move the clock to `until`, firing every timer due on the way, in order.
+  t.advance = async (until) => {
+    await t.flush();
+    for (;;) {
+      const due = [...armed].filter((timer) => timer.at <= until).sort((x, y) => x.at - y.at)[0];
+      if (!due) break;
+      armed.delete(due); t.now = due.at; due.fn();
+      await t.flush();
+    }
+    t.now = until;
+  };
+  t.pass = (ms) => t.advance(t.now + ms);
+  return t;
 }
 const IMAGES = { arrow: { hot: [1, 1], fill: 0xff0000ff, id: 11 }, hand: { hot: [9, 4], fill: 0xff00ff00, id: 12 },
   caret: { hot: [4, 8], fill: 0xffff0000, id: 13 }, cross: { hot: [0, 0], fill: 0xff00ffff, id: 14 },
@@ -294,36 +319,65 @@ const IMAGES = { arrow: { hot: [1, 1], fill: 0xff0000ff, id: 11 }, hand: { hot: 
 class LegacyKmsGuest {
   constructor(controller, { size = 16 } = {}) {
     this.controller = controller; this.size = size; this.image = null; this.plane = { x: 0, y: 0 }; this.pointer = { x: 0, y: 0 };
+    this.queue = [];   // positions sent to the guest that it has not acted on yet
+    this.idleWaits = 0;
   }
   _state(image, x, y) {
     const [hotX, hotY] = image.reports ? image.hot : [0, 0];
     return { resourceId: image.id, hotX, hotY, pos: { scanoutId: 0, x, y } };
   }
+  update(image = this.image) {
+    assert.ok(this.controller.handle({ type: "cursor-update", state: this._state(image, this.plane.x, this.plane.y),
+      format: 1, resourceWidth: this.size, resourceHeight: this.size, pixels: new Uint32Array(this.size * this.size).fill(image.fill) }));
+  }
   // The guest's pointer is at (x, y) and its cursor is `name`: one commit.
   show(name, x = this.pointer.x, y = this.pointer.y) {
     const image = IMAGES[name];
     this.pointer = { x, y };
-    if (this.image !== image) {
-      // Set image: at the plane's previous position.
-      assert.ok(this.controller.handle({ type: "cursor-update", state: this._state(image, this.plane.x, this.plane.y),
-        format: 1, resourceWidth: this.size, resourceHeight: this.size, pixels: new Uint32Array(this.size * this.size).fill(image.fill) }));
-      this.image = image;
-    }
+    if (this.image !== image) { this.update(image); this.image = image; } // set image: at the plane's previous position
     const target = { x: x - image.hot[0], y: y - image.hot[1] };
     if (target.x !== this.plane.x || target.y !== this.plane.y) {
       this.plane = target;
       assert.ok(this.controller.handle({ type: "cursor-move", state: this._state(image, target.x, target.y) }));
     }
   }
+  // Act on up to `n` queued positions with cursor `name` (default: the one shown).
+  pump(n = Infinity, name = null) {
+    for (let i = 0; i < n && this.queue.length; i += 1) {
+      const [x, y] = this.queue.shift();
+      this.show(name ?? Object.keys(IMAGES).find((key) => IMAGES[key] === this.image), x, y);
+    }
+  }
+  // The paced clock's counter: an idle wait is taken only with nothing left to act on.
+  async idleCount() {
+    if (this.queue.length === 0) this.idleWaits += 1;
+    return this.idleWaits;
+  }
 }
-function rig(options = {}) {
+function rig({ idle = true, ...options } = {}) {
   const target = cursorTarget(); const t = timers();
-  const controller = new CursorController({ target, documentTarget: null, setTimer: t.setTimer, clearTimer: t.clearTimer, ...options });
-  const guestOs = new LegacyKmsGuest(controller);
-  const send = (x, y, w = 1280, h = 800) => controller.notePointer(x, y, w, h);
-  // Send a position and let the guest act on it at once.
-  const go = (name, x, y) => { send(x, y); guestOs.show(name, x, y); };
-  return { target, t, controller, guest: guestOs, send, go };
+  let guestOs = null;
+  const controller = new CursorController({ target, documentTarget: null, setTimer: t.setTimer, clearTimer: t.clearTimer,
+    ...(idle ? { guestIdleCount: () => guestOs.idleCount() } : {}), ...options });
+  guestOs = new LegacyKmsGuest(controller);
+  // The page sends a position; the guest has it queued.
+  const send = (x, y, w = 1280, h = 800) => { controller.notePointer(x, y, w, h); guestOs.queue.push([x, y]); };
+  // Send a position and let the guest act on everything queued at once.
+  const go = (name, x, y) => { send(x, y); guestOs.pump(Infinity, name); };
+  // The pointer rests long enough for the rest wait and the question to the guest.
+  const rest = () => t.pass(HOTSPOT_REST_MS + 3 * HOTSPOT_POLL_MS);
+  return { target, t, controller, guest: guestOs, send, go, rest };
+}
+
+// The caret appears in the middle of an even run to the left with the guest keeping up: the
+// positions sent before it keep explaining its plane (4, 10 and 16 px), so its moves decide
+// nothing, however many, until the pointer turns — or rests.
+function ambiguousCaret(r) {
+  r.go("arrow", 930, 300); r.go("arrow", 924, 300);
+  r.send(918, 300); r.guest.pump(1, "caret");
+  r.send(912, 300); r.guest.pump(1);
+  assert.equal(inferred(r.controller), null);
+  assert.equal(r.guest.queue.length, 0);
 }
 
 test("the update that installs an image is not evidence for it: its position belongs to the image before", () => {
@@ -349,7 +403,7 @@ test("the update that installs an image is not evidence for it: its position bel
   assert.deepEqual(inferred(r.controller), [1, 1]);
 });
 
-test("a recorded glide onto the button (Replay desktop, legacy KMS) ends with the hand's true hotspot", () => {
+test("a recorded glide onto the button (Replay desktop, legacy KMS) ends with the hand's true hotspot", async () => {
   // Page timestamps (ms), S = guest position the page sent, U / M = the device's cursor update
   // / move with the plane position it carried, and the image shown. Recorded by the E5-T36a
   // verifier on the committed bundle: the pointer rests in the page body, glides straight onto
@@ -382,10 +436,13 @@ test("a recorded glide onto the button (Replay desktop, legacy KMS) ends with th
   const HOT = { arrow: [1, 1], hand: [9, 4] };
   const FILL = { arrow: 0xff0000ff, hand: 0xff00ff00 };
   const ID = { arrow: 9, hand: 6 };
-  let now = LOG[0][0]; let timer = null;
+  const t = timers(); t.now = LOG[0][0];
   const target = cursorTarget();
-  const controller = new CursorController({ target, documentTarget: null,
-    setTimer: (fn, ms) => { timer = { fn, at: now + ms }; return timer; }, clearTimer: (handle) => { if (timer === handle) timer = null; } });
+  // In the recording the plane was never more than 38 ms behind a sent position: the guest is
+  // idle whenever it is asked.
+  let idleWaits = 0;
+  const controller = new CursorController({ target, documentTarget: null, setTimer: t.setTimer, clearTimer: t.clearTimer,
+    guestIdleCount: async () => { idleWaits += 1; return idleWaits; } });
   let shown = null; const answers = [];
   const record = (why) => {
     const hot = inferred(controller);
@@ -393,88 +450,123 @@ test("a recorded glide onto the button (Replay desktop, legacy KMS) ends with th
     assert.ok(Math.abs(hot[0] - HOT[shown][0]) <= 1 && Math.abs(hot[1] - HOT[shown][1]) <= 1, `${why}: ${JSON.stringify(hot)} for the ${shown}`);
     if (answers.at(-1)?.[0] !== shown) answers.push([shown, hot, why]);
   };
-  const elapse = (until) => { if (timer && until >= timer.at) { const due = timer; timer = null; now = due.at; due.fn(); record("rest"); } };
-  for (const [t, kind, x, y, image] of LOG) {
-    elapse(t);
-    now = t;
+  for (const [at, kind, x, y, image] of LOG) {
+    await t.advance(at); record(`before ${at}`);
     if (kind === "S") { controller.notePointer(x, y, 1280, 800); continue; }
     const state = { resourceId: ID[image], hotX: 0, hotY: 0, pos: { scanoutId: 0, x, y } };
     if (kind === "U") {
       shown = image;
       assert.ok(controller.handle({ type: "cursor-update", state, format: 1, resourceWidth: 64, resourceHeight: 64, pixels: new Uint32Array(4096).fill(FILL[image]) }));
     } else assert.ok(controller.handle({ type: "cursor-move", state }));
-    record(`${kind} at ${t}`);
+    record(`${kind} at ${at}`);
   }
   assert.equal(shown, "hand");
   assert.equal(inferred(controller), null, "one move of the hand: 9, 10, 12 and 15 px all explain it");
-  elapse(now + 1000);
+  await t.pass(1000); record("rest");
   assert.deepEqual(inferred(controller), [9, 4], "at rest");
   assert.deepEqual(hotspotOf(target.style.cursor), [9, 4]);
   assert.deepEqual(answers.map(([image, hot]) => [image, hot]), [["arrow", [1, 1]], ["hand", [9, 4]]]);
 });
 
-test("random approaches across an image change, in the device's order: never a wrong hotspot, right at rest", () => {
-  // The refuted behaviour: about one straight glide in eight left the hand wrong at rest.
+test("random approaches across an image change, in the device's order: never a wrong hotspot, right at rest", async () => {
+  // The first refuted behaviour: about one straight glide in eight left the hand wrong at rest.
+  // The second: a rest answer read while the guest was behind. Here the guest falls behind by a
+  // varying number of positions, stalls at random (the page's rest wait then elapses with the
+  // plane still on its way), and the image changes late.
   let state = 0x9e3779b9;
   const random = () => { state ^= state << 13; state >>>= 0; state ^= state >>> 17; state ^= state << 5; state >>>= 0; return state / 0x100000000; };
-  const minJerk = (t) => t * t * t * (10 - 15 * t + 6 * t * t);
+  const minJerk = (f) => f * f * f * (10 - 15 * f + 6 * f * f);
   const names = ["hand", "caret", "cross"];
-  let settledAtRest = 0, settledBefore = 0, trials = 0;
-  for (let trial = 0; trial < 600; trial += 1) {
+  let settledAtRest = 0, stalls = 0, restsWhileBehind = 0, trials = 0;
+  for (let trial = 0; trial < 400; trial += 1) {
     const r = rig();
     const other = names[trial % names.length];
     // Left of x = 166 the guest shows `other`, right of it the arrow (the button's edge).
     const shape = (x) => (x < 166 ? other : "arrow");
+    const shown = () => Object.keys(IMAGES).find((key) => IMAGES[key] === r.guest.image);
     r.go("arrow", 600, 300); r.go("arrow", 700 - Math.floor(random() * 300), 420 + Math.floor(random() * 200));
     const from = [200 + Math.floor(random() * 300), 430 + Math.floor(random() * 250)];
     const to = [30 + Math.floor(random() * 125), 480 + Math.floor(random() * 60)];
     const steps = 8 + Math.floor(random() * 30);
-    const lag = Math.floor(random() * 4);          // positions the guest is behind
+    const maxLag = Math.floor(random() * 5);       // positions the guest may be behind
     const imageDelay = Math.floor(random() * 4);   // positions between crossing the edge and the image change
-    const curve = random() < 0.5 ? (t) => t : minJerk;
+    const curve = random() < 0.5 ? (f) => f : minJerk;
     r.go("arrow", from[0], from[1]);
-    const sent = [];
-    const guestQueue = [];
-    let crossedAt = null;
+    let sinceCrossing = null;
     const check = (where) => {
       const now = inferred(r.controller);
       if (now === null) return;
       const truth = r.guest.image.hot;
       assert.ok(Math.abs(now[0] - truth[0]) <= 1 && Math.abs(now[1] - truth[1]) <= 1,
-        `trial ${trial} ${where}: ${JSON.stringify(now)} for a true ${JSON.stringify(truth)} (lag ${lag}, delay ${imageDelay}, ${steps} steps)`);
+        `trial ${trial} ${where}: ${JSON.stringify(now)} for a true ${JSON.stringify(truth)} (lag ${maxLag}, delay ${imageDelay}, ${steps} steps)`);
     };
+    // The guest acts on one queued position; its cursor image follows the pointer late.
     const guestStep = () => {
-      const p = guestQueue.shift();
-      if (!p) return;
-      // The guest moves its pointer; the cursor image follows `imageDelay` positions later.
-      r.guest.show(r.guest.image === IMAGES.arrow ? "arrow" : other, p[0], p[1]);
-      if (shape(p[0]) !== (r.guest.image === IMAGES.arrow ? "arrow" : other)) {
-        crossedAt ??= 0;
-        if (crossedAt >= imageDelay) { r.guest.show(shape(p[0])); crossedAt = null; } else crossedAt += 1;
+      if (!r.guest.queue.length) return;
+      r.guest.pump(1);
+      if (shape(r.guest.pointer.x) !== shown()) {
+        sinceCrossing ??= 0;
+        if (sinceCrossing >= imageDelay) { r.guest.show(shape(r.guest.pointer.x)); sinceCrossing = null; } else sinceCrossing += 1;
       }
     };
     for (let i = 1; i <= steps; i += 1) {
-      const s = curve(i / steps);
-      const p = [Math.round(from[0] + (to[0] - from[0]) * s), Math.round(from[1] + (to[1] - from[1]) * s)];
-      r.send(p[0], p[1]); sent.push(p); guestQueue.push(p);
-      if (guestQueue.length > lag) guestStep();
+      const f = curve(i / steps);
+      r.send(Math.round(from[0] + (to[0] - from[0]) * f), Math.round(from[1] + (to[1] - from[1]) * f));
+      while (r.guest.queue.length > maxLag) guestStep();
       check(`step ${i}`);
+      await r.t.pass(16);
+      check(`step ${i}, 16 ms on`);
+      // Now and then the guest stalls with positions outstanding while the pointer pauses:
+      // the page's rest wait elapses, the guest is asked, and it is not idle.
+      if (r.guest.queue.length && random() < 0.08) {
+        stalls += 1;
+        if (r.t.armed.size) restsWhileBehind += 1;
+        await r.rest(); check(`step ${i}, stalled`);
+        // The pointer nudges on before the guest reports anything (the verifier's sequence).
+        if (random() < 0.5) { r.send(r.guest.queue.at(-1)[0] - 2, r.guest.queue.at(-1)[1] + 1); check(`step ${i}, nudged`); await r.t.pass(16); }
+      }
     }
     // The pointer stops; the guest catches up and its image settles.
-    while (guestQueue.length) { guestStep(); check("catching up"); }
-    for (let i = 0; i <= imageDelay && r.guest.image.hot !== IMAGES[shape(to[0])].hot; i += 1) r.guest.show(shape(to[0]));
+    while (r.guest.queue.length) { guestStep(); check("catching up"); }
+    while (shape(r.guest.pointer.x) !== shown()) r.guest.show(shape(r.guest.pointer.x));
     check("caught up");
     trials += 1;
-    if (inferred(r.controller) !== null) settledBefore += 1;
-    r.t.elapse();
+    await r.rest();
     check("at rest");
     if (inferred(r.controller) !== null) settledAtRest += 1;
     // A few more moves inside the same shape never make it wrong either.
     for (let i = 0; i < 3; i += 1) { r.go(other, 40 + Math.floor(random() * 100), 485 + Math.floor(random() * 50)); check("after"); }
     assert.notEqual(inferred(r.controller), null, `trial ${trial}: known after moving about inside the shape`);
+    r.controller.dispose();
   }
-  // At rest the hotspot is known whenever the image was moved at all after its install.
-  assert.ok(settledAtRest >= trials * 0.9, `${settledAtRest} of ${trials} settled at rest (${settledBefore} before it)`);
+  assert.ok(settledAtRest >= trials * 0.9, `${settledAtRest} of ${trials} settled at rest`);
+  assert.ok(stalls >= 100 && restsWhileBehind >= 20, `${stalls} stalls, ${restsWhileBehind} with a rest wait armed`);
+});
+
+test("the rest wait elapses while the guest is behind and the pointer moves on: no answer until it has caught up", async () => {
+  // Round 2's refutation, in its own numbers: 24x24 images, an even 10 px run, the guest one
+  // position behind, the hand appearing in the middle. A rest answer read then is (0,4).
+  const r = rig();
+  r.guest.size = 24;
+  r.go("arrow", 400, 300); r.go("arrow", 340, 380);
+  const xs = [300, 290, 280, 270, 260, 250];
+  r.send(xs[0], 500);
+  for (let i = 1; i < xs.length; i += 1) { r.send(xs[i], 500); r.guest.pump(1, i >= 4 ? "hand" : "arrow"); }
+  assert.equal(r.guest.queue.length, 1, "one position behind");
+  assert.equal(inferred(r.controller), null);
+  // Quiet on the page for as long as it likes: the guest has not been idle since.
+  await r.t.pass(HOTSPOT_REST_MS + HOTSPOT_CAUGHT_UP_TIMEOUT_MS + 500);
+  assert.equal(inferred(r.controller), null, "no rest answer off a plane still on its way");
+  assert.deepEqual(hotspotOf(r.target.style.cursor), [0, 0]);
+  // One more position is sent, then the guest reports its two outstanding positions.
+  r.send(240, 500);
+  r.guest.pump();
+  assert.ok(inferred(r.controller) === null || inferred(r.controller).join() === "9,4");
+  // 20 more positions along the same line, the guest keeping up, then rest.
+  for (let x = 230; x > 30; x -= 10) r.go("hand", x, 500);
+  await r.rest();
+  assert.deepEqual(inferred(r.controller), [9, 4]);
+  assert.deepEqual(hotspotOf(r.target.style.cursor), [9, 4]);
 });
 
 test("a hotspot-less CSS cursor gets its inferred hotspot with one style write and keeps it", () => {
@@ -487,8 +579,11 @@ test("a hotspot-less CSS cursor gets its inferred hotspot with one style write a
   assert.equal(r.controller.snapshot().styleWrites, before + 1, "one style write for the hotspot");
   assert.deepEqual([r.controller.snapshot().hotX, r.controller.snapshot().hotY], [0, 0], "the device's own report is unchanged");
   for (const [x, y] of [[200, 200], [230, 180], [90, 300]]) r.go("hand", x, y);
-  assert.equal(r.controller.snapshot().styleWrites, before + 1, "later moves write no style");
-  assert.equal(r.t.armed.size, 0, "no rest timer once the hotspot is known");
+  // The guest sets the same image again on most commits: a known image comes back with its
+  // hotspot at once, and nothing is written.
+  for (let i = 0; i < 5; i += 1) { r.guest.update(); assert.deepEqual(hotspotOf(r.target.style.cursor), [9, 4]); }
+  assert.equal(r.controller.snapshot().styleWrites, before + 1, "later moves and re-sets write no style");
+  assert.equal(r.t.armed.size, 0, "no rest wait once the hotspot is known");
   // An image whose hotspot really is (0,0) is an answer like any other.
   r.go("cross", 300, 300); r.go("cross", 420, 350);
   assert.deepEqual(inferred(r.controller), [0, 0]);
@@ -512,27 +607,25 @@ test("a device that reports a hotspot is never second-guessed", () => {
   assert.deepEqual(hotspotOf(r.target.style.cursor), [9, 4]);
 });
 
-test("the pointer at rest settles the hotspot after a straight approach; sends and cursor events restart the wait", () => {
+test("the pointer at rest with the guest caught up settles the hotspot after a straight approach", async () => {
   const r = rig();
   r.go("arrow", 600, 400); r.go("arrow", 232, 500);
   // A straight, evenly spaced approach (3 px a step, leftwards onto the button at x < 166) with
   // the guest two positions behind; its cursor becomes the hand when its pointer crosses.
-  const xs = [];
-  for (let x = 229; x >= 100; x -= 3) xs.push(x);
-  for (let i = 0; i < xs.length; i += 1) {
-    r.send(xs[i], 500);
-    if (i >= 2) r.guest.show(xs[i - 2] < 166 ? "hand" : "arrow", xs[i - 2], 500);
+  for (let x = 229; x >= 100; x -= 3) {
+    r.send(x, 500);
+    while (r.guest.queue.length > 2) r.guest.pump(1, r.guest.queue[0][0] < 166 ? "hand" : "arrow");
   }
-  for (const x of xs.slice(-2)) r.guest.show("hand", x, 500);
+  r.guest.pump();
   assert.equal(inferred(r.controller), null, "a straight even approach decides nothing by itself");
-  // The guest sets the same image again where the plane already is (sway does after most
-  // commits): that changes nothing about what the plane stands for.
-  assert.ok(r.controller.handle({ type: "cursor-update", state: r.guest._state(IMAGES.hand, r.guest.plane.x, r.guest.plane.y),
-    format: 1, resourceWidth: 16, resourceHeight: 16, pixels: new Uint32Array(256).fill(IMAGES.hand.fill) }));
-  assert.equal(r.t.armed.size, 1, "one wait for rest is armed");
-  assert.equal([...r.t.armed.values()][0].ms, HOTSPOT_REST_MS);
+  // The guest sets the same image again where the plane already is: that changes nothing
+  // about what the plane stands for.
+  r.guest.update();
+  assert.equal([...r.t.armed].filter((timer) => timer.ms === HOTSPOT_REST_MS).length, 1, "one rest wait is armed");
   const before = r.controller.snapshot().styleWrites;
-  assert.equal(r.t.elapse(), 1);
+  await r.t.pass(HOTSPOT_REST_MS - 1);
+  assert.equal(inferred(r.controller), null, "not before the pointer has been quiet for the rest time");
+  await r.t.pass(1 + 2 * HOTSPOT_POLL_MS);
   assert.deepEqual(inferred(r.controller), [9, 4]);
   assert.deepEqual(hotspotOf(r.target.style.cursor), [9, 4]);
   assert.equal(r.controller.snapshot().styleWrites, before + 1);
@@ -542,62 +635,184 @@ test("the pointer at rest settles the hotspot after a straight approach; sends a
   // one the image before it left) is not at the plane position of its earlier showing.
   const b = rig();
   b.send(300, 300); b.send(305, 300);
+  b.guest.queue.length = 0;
   b.guest.show("hand", 300, 300); // plane (291,296): (9,4) and (14,4) both fit the 16 px image
   b.go("arrow", 297, 297);        // the arrow's plane is (296,296)
-  b.send(305, 300);
+  b.send(305, 300); b.guest.queue.length = 0;
   b.guest.show("hand", 305, 300); // the hand's plane is (296,296) too: an update, no move
   assert.deepEqual(b.guest.plane, { x: 296, y: 296 });
-  b.t.elapse();
+  await b.rest();
   assert.equal(inferred(b.controller), null, "(305,300) - (291,296) = (14,4) would be read off the earlier showing");
 
-  // Every send and every cursor event replaces the armed wait (a debounce, one timer at most).
+  // Every send and every cursor event replaces the armed rest wait (one at most); a position
+  // sent while the guest is being asked means the pointer was not at rest.
   const s = rig();
+  const restWaits = () => [...s.t.armed].filter((timer) => timer.ms === HOTSPOT_REST_MS);
   assert.equal(s.t.armed.size, 0, "nothing to wait for before a cursor exists");
-  s.send(900, 300); s.send(906, 300);
-  s.guest.show("caret", 900, 300); // (4,8) and (10,8) both explain the plane
-  assert.equal(inferred(s.controller), null);
-  assert.equal(s.t.armed.size, 1);
-  const first = [...s.t.armed.keys()][0];
-  s.send(912, 300);
-  assert.equal(s.t.armed.size, 1); assert.notEqual([...s.t.armed.keys()][0], first);
-  const second = [...s.t.armed.keys()][0];
-  s.guest.show("caret", 906, 300);
-  assert.equal(inferred(s.controller), null, "an even run: both offsets still fit");
-  assert.equal(s.t.armed.size, 1); assert.notEqual([...s.t.armed.keys()][0], second);
+  ambiguousCaret(s);
+  assert.equal(restWaits().length, 1);
+  const first = restWaits()[0];
+  s.send(906, 300);
+  assert.equal(restWaits().length, 1); assert.notEqual(restWaits()[0], first);
+  const second = restWaits()[0];
+  s.guest.pump(1);
+  assert.equal(inferred(s.controller), null, "an even run: three offsets still fit");
+  assert.equal(restWaits().length, 1); assert.notEqual(restWaits()[0], second);
   // A stale callback (one that fires although it was replaced) does nothing.
-  const stale = { ...[...s.t.armed.values()][0] };
-  s.send(918, 300);
+  const stale = restWaits()[0];
+  s.send(900, 300); s.guest.pump(1);
   stale.fn();
+  await s.t.flush();
   assert.equal(inferred(s.controller), null);
-  // Dispose cancels it.
-  s.controller.dispose();
-  assert.equal(s.t.armed.size, 0);
+  // The rest wait elapses and the guest is asked — and a position is sent, and acted on,
+  // before it answers: the pointer was not at rest, so this question gets no answer.
+  await s.t.pass(HOTSPOT_REST_MS);
+  s.send(894, 300); s.guest.pump(1);
+  await s.t.pass(2 * HOTSPOT_POLL_MS);
+  assert.equal(inferred(s.controller), null);
+  await s.rest();
+  assert.deepEqual(inferred(s.controller), [4, 8], "the wait that position armed gets the answer");
+  // Starting inference over ends a question in flight at once; so does dispose.
+  const o = rig();
+  ambiguousCaret(o);
+  await o.t.pass(HOTSPOT_REST_MS + HOTSPOT_POLL_MS / 2);
+  assert.ok(o.t.armed.size > 0, "asking the guest");
+  o.controller.resetHotspotInference();
+  assert.equal(o.t.armed.size, 0, "nothing of the old question is left waiting");
+  const d = rig();
+  ambiguousCaret(d);
+  await d.t.pass(HOTSPOT_REST_MS + HOTSPOT_POLL_MS / 2);
+  assert.ok(d.t.armed.size > 0, "asking the guest");
+  d.controller.dispose();
+  assert.equal(d.t.armed.size, 0);
+  await d.t.pass(5000);
+  assert.equal(inferred(d.controller), null);
   assert.throws(() => new CursorController({ target: cursorTarget(), documentTarget: null, hotspotRestMs: 0 }), RangeError);
+  assert.throws(() => new CursorController({ target: cursorTarget(), documentTarget: null, guestIdleCount: 5 }), TypeError);
 });
 
-test("relative mode is not evidence, and changing mode starts inference over", () => {
+test("without an idle counter there is no rest answer; a counter that fails or says nothing gives none either", async () => {
+  // No paced clock: nothing tells the page the guest has caught up, so rest decides nothing.
+  const u = rig({ idle: false });
+  ambiguousCaret(u);
+  assert.equal(u.t.armed.size, 0, "no rest wait is even armed");
+  await u.t.pass(5000);
+  assert.equal(inferred(u.controller), null);
+  u.go("caret", 700, 420);
+  assert.deepEqual(inferred(u.controller), [4, 8], "moves still settle it");
+  // A counter that reports no number, and one that throws.
+  for (const [counter, diagnostic] of [[async () => null, null], [async () => "7", null], [async () => { throw new Error("rpc"); }, "cursor-hotspot-idle-error"]]) {
+    const diagnostics = [];
+    const r = rig({ guestIdleCount: counter, onDiagnostic: (d) => diagnostics.push(d.reason ?? d) });
+    ambiguousCaret(r);
+    await r.t.pass(5000);
+    assert.equal(inferred(r.controller), null);
+    assert.equal(diagnostics.includes("cursor-hotspot-idle-error"), diagnostic !== null);
+    assert.equal(r.t.armed.size, 0);
+  }
+  // A guest that takes ten polls to go idle (busy with something else, no cursor events): the
+  // same question still gets its answer.
+  const slow = rig();
+  ambiguousCaret(slow);
+  slow.guest.queue.push([912, 300]); // outstanding work that moves nothing (its pointer is there already)
+  await slow.t.pass(HOTSPOT_REST_MS + 10 * HOTSPOT_POLL_MS);
+  assert.equal(inferred(slow.controller), null);
+  slow.guest.queue.length = 0;
+  await slow.t.pass(2 * HOTSPOT_POLL_MS);
+  assert.deepEqual(inferred(slow.controller), [4, 8]);
+  // A guest that is never idle within the timeout: asked for two seconds, then left alone.
+  const busy = rig();
+  ambiguousCaret(busy);
+  busy.guest.queue.push([1, 1]); // something it never gets to
+  await busy.t.pass(HOTSPOT_REST_MS + HOTSPOT_CAUGHT_UP_TIMEOUT_MS + 5 * HOTSPOT_POLL_MS);
+  assert.equal(inferred(busy.controller), null);
+  assert.equal(busy.t.armed.size, 0, "it stops asking");
+  // ... and the answer comes with the next rest once it is idle again.
+  busy.guest.queue.length = 0;
+  busy.send(906, 300); busy.guest.pump(1);
+  await busy.rest();
+  assert.deepEqual(inferred(busy.controller), [4, 8]);
+});
+
+test("relative mode is not evidence, and changing mode starts inference over once the guest has caught up", async () => {
   const r = rig();
   r.go("hand", 300, 300); r.go("hand", 380, 340);
   assert.deepEqual(inferred(r.controller), [9, 4]);
   // Pointer lock: the page sends no absolute positions; the guest's pointer wanders by deltas.
   r.controller.setPointerState({ mode: "relative", pointerLocked: true });
   assert.equal(inferred(r.controller), null, "what was inferred in absolute mode is not carried across");
+  await r.rest();
   r.guest.show("caret", 500, 500); r.guest.show("caret", 388, 351); r.guest.show("caret", 309, 311); r.guest.show("caret", 395, 356);
   assert.equal(inferred(r.controller), null, "moves in relative mode are not compared with anything");
   // Even a caller that notes positions in relative mode gets nothing inferred from them.
-  for (const [x, y] of [[600, 300], [650, 380], [720, 330]]) { r.send(x, y); r.guest.show("caret", x, y); }
+  for (const [x, y] of [[600, 300], [650, 380], [720, 330]]) { r.controller.notePointer(x, y, 1280, 800); r.guest.show("caret", x, y); }
   assert.equal(inferred(r.controller), null);
-  assert.equal(r.t.armed.size, 0, "and no rest is waited for");
-  // Back in absolute mode the stale positions from before the lock explain nothing.
+  await r.t.pass(1000);
+  assert.equal([...r.t.armed].filter((timer) => timer.ms === HOTSPOT_REST_MS).length, 0, "and no rest is waited for");
+  // Back in absolute mode the guest is still acting on relative motion: until it has been
+  // idle, its moves are not evidence — not even ones a newly sent position would explain.
   r.controller.setPointerState({ mode: "absolute", pointerLocked: false });
-  r.guest.show("caret", 392, 352);
-  assert.equal(inferred(r.controller), null);
+  r.guest.queue.push([0, 0]); // outstanding work
+  r.controller.notePointer(700, 200, 1280, 800); r.guest.show("caret", 690, 200);
+  r.controller.notePointer(640, 260, 1280, 800); r.guest.show("caret", 630, 260);
+  assert.equal(inferred(r.controller), null, "(10,8) twice — but the guest has not caught up since the restart");
+  r.guest.queue.length = 0;
+  await r.rest();
   r.go("caret", 700, 200); r.go("caret", 640, 260);
   assert.deepEqual(inferred(r.controller), [4, 8]);
   assert.deepEqual(hotspotOf(r.target.style.cursor), [4, 8]);
 });
 
-test("a change of guest output size starts inference over", () => {
+test("inference started over while the guest is a position behind: its outstanding moves are not evidence", async () => {
+  // Round 2's second sequence: an even run, the guest one position behind, the output size
+  // changing on the next sent position. The guest's next move stands for a position sent
+  // BEFORE the restart; explained by positions sent after it, two such moves agreed on (0,4).
+  for (const restart of ["size", "mode", "explicit"]) {
+    const r = rig();
+    r.guest.size = 24;
+    r.go("arrow", 400, 300); r.go("arrow", 340, 380);
+    const xs = [300, 290, 280, 270, 260, 250, 240, 230, 220, 210];
+    r.send(xs[0], 500);
+    for (let i = 1; i < 5; i += 1) { r.send(xs[i], 500); r.guest.pump(1, i >= 3 ? "hand" : "arrow"); }
+    assert.equal(r.guest.queue.length, 1, restart);
+    if (restart === "mode") { r.controller.setPointerState({ mode: "relative", pointerLocked: true }); r.controller.setPointerState({ mode: "absolute", pointerLocked: false }); }
+    if (restart === "explicit") r.controller.resetHotspotInference();
+    const rows = restart === "size" ? 801 : 800;
+    for (let i = 5; i < xs.length; i += 1) {
+      r.send(xs[i], 500, 1280, rows); r.guest.pump(1, "hand");
+      assert.equal(inferred(r.controller), null, `${restart}: after the move for position ${i - 1}`);
+      await r.t.pass(16);
+    }
+    await r.t.pass(5000); // at rest, one position still outstanding: the guest is never idle
+    assert.equal(inferred(r.controller), null, `${restart}: nothing while the guest is behind`);
+    // Still a position behind long after the question timed out: it is asked again, and its
+    // moves stay out of the evidence however long that takes.
+    // (These two moves stand for positions sent after the restart and would settle (9,4) — a
+    // guest that is behind cannot be told from one whose moves are older than the restart.)
+    for (const [x, y] of [[150, 520], [90, 505]]) { r.send(x, y, 1280, rows); r.guest.pump(1, "hand"); }
+    assert.equal(inferred(r.controller), null, `${restart}: still behind after the first question gave up`);
+    await r.t.pass(3000);
+    r.guest.pump();
+    await r.rest();       // caught up: its moves count again
+    for (const [x, y] of [[160, 530], [70, 500]]) { r.send(x, y, 1280, rows); r.guest.pump(Infinity, "hand"); }
+    assert.deepEqual(inferred(r.controller), [9, 4], restart);
+  }
+  // Without an idle counter the restart waits a fixed time instead.
+  const u = rig({ idle: false });
+  u.go("hand", 300, 300); u.go("hand", 380, 340);
+  assert.deepEqual(inferred(u.controller), [9, 4]);
+  u.controller.resetHotspotInference();
+  u.go("hand", 420, 300); u.go("hand", 500, 360);
+  assert.equal(inferred(u.controller), null, "moves within the wait are not evidence");
+  await u.t.pass(HOTSPOT_SETTLE_FALLBACK_MS - 1);
+  u.go("hand", 440, 310); u.go("hand", 530, 350);
+  assert.equal(inferred(u.controller), null, "one millisecond short of the wait: still not");
+  await u.t.pass(1);
+  u.go("hand", 520, 380); u.go("hand", 600, 330);
+  assert.deepEqual(inferred(u.controller), [9, 4]);
+});
+
+test("a change of guest output size starts inference over", async () => {
   const r = rig();
   r.go("hand", 300, 300); r.go("hand", 380, 340);
   assert.deepEqual(inferred(r.controller), [9, 4]);
@@ -605,8 +820,9 @@ test("a change of guest output size starts inference over", () => {
   r.send(600, 500, 1920, 1200);
   assert.equal(inferred(r.controller), null);
   assert.deepEqual(hotspotOf(r.target.style.cursor), [0, 0]);
-  r.guest.show("hand", 600, 500);
-  r.send(900, 640, 1920, 1200); r.guest.show("hand", 900, 640);
+  r.guest.pump();
+  await r.rest();
+  for (const [x, y] of [[900, 640], [820, 700]]) { r.send(x, y, 1920, 1200); r.guest.pump(); }
   assert.deepEqual(inferred(r.controller), [9, 4]);
   // The same size again changes nothing; positions without a size are taken as they are.
   r.send(910, 650, 1920, 1200);
@@ -633,25 +849,35 @@ test("a contradicted hotspot is taken back from the page, and a guest reset forg
   assert.equal(r.controller.snapshot().styleWrites, before + 1);
   r.go("hand", 760, 300);
   assert.deepEqual(inferred(r.controller), [9, 4]);
-  // A guest reset: no cursor, no history.
+  // A guest reset: no cursor, no history, nothing in flight.
+  assert.deepEqual({ ...estimator.hotspot(key) }, { x: 9, y: 4 });
   r.controller.reset();
   assert.equal(inferred(r.controller), null);
   assert.equal(estimator.hotspot(key), null);
   assert.equal(r.t.armed.size, 0);
+  // ... and no settling to wait for, even when inference had just been started over: the
+  // reset guest's moves are evidence at once.
+  r.controller.resetHotspotInference();
+  r.controller.reset();
   const fresh = new LegacyKmsGuest(r.controller);
-  r.send(100, 100); fresh.show("hand", 100, 100);
+  r.controller.notePointer(100, 100, 1280, 800); fresh.show("hand", 100, 100);
   assert.equal(inferred(r.controller), null);
+  r.controller.notePointer(180, 150, 1280, 800); fresh.show("hand", 180, 150);
+  assert.deepEqual(inferred(r.controller), [9, 4], "the reset guest's moves are evidence at once");
 });
 
-test("estimator failures become diagnostics, never a broken cursor", () => {
+test("estimator failures become diagnostics, never a broken cursor", async () => {
   const diagnostics = [];
   const broken = { notePointer() { throw new Error("np"); }, noteInstall() { throw new Error("ni"); }, hotspot: () => null,
-    noteMove() { throw new Error("nm"); }, noteRest() { throw new Error("nr"); }, reset() { throw new Error("rs"); } };
+    noteMove() { throw new Error("nm"); }, noteRest() { throw new Error("nr"); }, reset() { throw new Error("rs"); },
+    get sends() { return 0; } };
   const r = rig({ hotspotEstimator: broken, onDiagnostic: (d) => diagnostics.push(d.reason ?? d) });
   r.go("hand", 100, 100); r.go("hand", 160, 140);
-  r.t.elapse();
+  await r.rest();
   assert.equal(inferred(r.controller), null);
   assert.deepEqual(hotspotOf(r.target.style.cursor), [0, 0], "the cursor is still the guest's image");
+  r.controller.resetHotspotInference();
   r.controller.reset();
   for (const reason of ["cursor-hotspot-pointer-error", "cursor-hotspot-error"]) assert.ok(diagnostics.includes(reason), reason);
+  assert.ok(diagnostics.filter((reason) => reason === "cursor-hotspot-error").length >= 4, "install, move, rest and reset each reported");
 });

@@ -8,9 +8,18 @@
 import { CursorSink, cssCursorDescriptor } from "./cursor.js";
 import { CursorHotspotEstimator } from "./cursor-hotspot.js";
 
-// How long the pointer and the guest's cursor must both be quiet before the plane is taken to
-// be at rest on the last position sent (see cursor-hotspot.js).
-export const HOTSPOT_REST_MS = 300;
+// E5-T36a hotspot inference timing (see cursor-hotspot.js).
+// Quiet on the page — no position sent, no cursor event — before the guest is asked whether it
+// has caught up. Quiet alone proves nothing: a busy guest leaves the plane behind for longer.
+export const HOTSPOT_REST_MS = 150;
+// "Caught up" is the guest having been idle after everything sent so far was delivered. It is
+// read off a counter of the guest's idle waits (the paced clock's): polled this often, for at
+// most this long.
+export const HOTSPOT_POLL_MS = 40;
+export const HOTSPOT_CAUGHT_UP_TIMEOUT_MS = 2000;
+// Without that counter (no paced clock), inference restarted by a mode or output-size change
+// waits this long instead before it trusts the guest's cursor moves again.
+export const HOTSPOT_SETTLE_FALLBACK_MS = 1000;
 
 export const CURSOR_MODES = Object.freeze({
   ABSOLUTE: "absolute",
@@ -98,6 +107,9 @@ export class CursorController {
     onStateChange = () => {},
     hotspotEstimator = new CursorHotspotEstimator(),
     hotspotRestMs = HOTSPOT_REST_MS,
+    // async () => number | null: how many idle waits the guest has taken so far, read AFTER
+    // everything sent before the call was delivered to it; null when that is not known.
+    guestIdleCount = null,
     setTimer = (fn, ms) => globalThis.setTimeout(fn, ms),
     clearTimer = (handle) => globalThis.clearTimeout(handle),
   } = {}) {
@@ -122,11 +134,20 @@ export class CursorController {
     // real pointer. `_imageKey` names the image being inferred for (null when there is nothing
     // to infer); `_cssHot` is its inferred hotspot, or null while it is not known.
     if (!(hotspotRestMs > 0)) throw new RangeError("cursor hotspotRestMs must be positive");
+    if (guestIdleCount !== null && typeof guestIdleCount !== "function") throw new TypeError("cursor guestIdleCount must be a function");
     this._hotspots = hotspotEstimator;
     this._hotspotRestMs = hotspotRestMs;
+    this._guestIdleCount = guestIdleCount;
     this._setTimer = setTimer;
     this._clearTimer = clearTimer;
     this._restTimer = null;
+    // Waits of the asynchronous parts of inference, so that a reset can end them at once.
+    this._waits = new Set();
+    // Bumped whenever inference starts over; an asynchronous step of an older epoch gives up.
+    this._hotspotEpoch = 0;
+    // After inference started over: the guest's cursor moves are not evidence until it has
+    // caught up, because until then they stand for positions sent before the restart.
+    this._hotspotSettling = false;
     this._imageKey = null;
     this._cssHot = null;
     // The guest output size the sent pointer positions were last computed for.
@@ -384,8 +405,10 @@ export class CursorController {
       this._applyPositionOnly();
       // A move is the one cursor event whose position was computed with this image's hotspot.
       // (A style write follows only when the answer changes: once per image, normally.)
-      this._inferHotspot(() => this._hotspots.noteMove(
-        this._imageKey, this._descriptor.width, this._descriptor.height, state.x, state.y));
+      if (!this._hotspotSettling) {
+        this._inferHotspot(() => this._hotspots.noteMove(
+          this._imageKey, this._descriptor.width, this._descriptor.height, state.x, state.y));
+      }
       return this.snapshot("cursor-move");
     } catch (error) {
       this._diagnostic("cursor-move-rejected", error);
@@ -414,11 +437,81 @@ export class CursorController {
     }
   }
 
-  /** Drop every inferred hotspot and all evidence; the current image is inferred again. */
+  /**
+   * Start inference over: drop every inferred hotspot and all evidence. The guest may still be
+   * acting on positions sent before this moment, so its cursor moves count as evidence again
+   * only once it has caught up.
+   */
   resetHotspotInference() {
-    this._cancelHotspotRest();
-    this._hotspots.reset();
+    this._endHotspotWaits();
+    const epoch = this._hotspotEpoch;
+    try { this._hotspots.reset(); } catch (error) { this._diagnostic("cursor-hotspot-error", error); }
+    this._hotspotSettling = true;
     this._setCssHot(null);
+    this._settleHotspots(epoch);
+  }
+
+  async _settleHotspots(epoch) {
+    for (;;) {
+      const caughtUp = await this._guestCaughtUp(epoch);
+      if (epoch !== this._hotspotEpoch || this._disposed) return;
+      if (caughtUp === true) break;
+      // No idle counter: time is all there is. With one, a guest that was never idle within
+      // the timeout is simply asked again.
+      if (caughtUp === null && !(await this._hotspotWait(HOTSPOT_SETTLE_FALLBACK_MS))) return;
+      if (caughtUp === null) break;
+    }
+    if (epoch !== this._hotspotEpoch || this._disposed) return;
+    // (No rest wait to arm here: nothing is known about any image until it moves again, and
+    // that move arms one.)
+    this._hotspotSettling = false;
+  }
+
+  /**
+   * Has the guest been idle after everything sent before this call was delivered? `true` when
+   * its idle counter moved on, `false` when it did not within the timeout (or this epoch
+   * ended), `null` when there is no counter to ask.
+   */
+  async _guestCaughtUp(epoch) {
+    const count = async () => {
+      if (typeof this._guestIdleCount !== "function") return null;
+      try {
+        const value = await this._guestIdleCount();
+        return typeof value === "number" && Number.isFinite(value) ? value : null;
+      } catch (error) {
+        this._diagnostic("cursor-hotspot-idle-error", error);
+        return null;
+      }
+    };
+    const first = await count();
+    if (first === null) return null;
+    for (let waited = 0; waited < HOTSPOT_CAUGHT_UP_TIMEOUT_MS; waited += HOTSPOT_POLL_MS) {
+      if (!(await this._hotspotWait(HOTSPOT_POLL_MS)) || epoch !== this._hotspotEpoch || this._disposed) return false;
+      const now = await count();
+      if (now === null) return null;
+      if (now > first) return true;
+    }
+    return false;
+  }
+
+  /** A cancellable wait; resolves `true` when it elapsed, `false` when inference was reset. */
+  _hotspotWait(ms) {
+    return new Promise((resolve) => {
+      const wait = { resolve, timer: null };
+      wait.timer = this._setTimer(() => {
+        if (!this._waits.delete(wait)) return;
+        resolve(true);
+      }, ms);
+      this._waits.add(wait);
+    });
+  }
+
+  /** End every asynchronous step of inference in flight and start a new epoch. */
+  _endHotspotWaits() {
+    this._cancelHotspotRest();
+    this._hotspotEpoch += 1;
+    for (const wait of this._waits) { this._clearTimer(wait.timer); wait.resolve(false); }
+    this._waits.clear();
   }
 
   /**
@@ -471,23 +564,37 @@ export class CursorController {
 
   /**
    * While the current image's hotspot is unknown, watch for the pointer coming to rest: no
-   * position sent and no cursor event for `hotspotRestMs`. At rest the plane is where the
-   * guest put it for the last position sent, which settles the hotspot without a second move.
+   * position sent and no cursor event for `hotspotRestMs`, and then the guest idle after the
+   * last position reached it. Only then is the plane where the guest put it for that position,
+   * which settles the hotspot without a second move. Needs the guest's idle counter.
    */
   _armHotspotRest() {
     this._cancelHotspotRest();
-    if (this._imageKey === null || this._cssHot !== null || this._mode !== CURSOR_MODES.ABSOLUTE) return;
+    if (this._imageKey === null || this._cssHot !== null || this._hotspotSettling ||
+        this._mode !== CURSOR_MODES.ABSOLUTE || typeof this._guestIdleCount !== "function") return;
     const timer = this._setTimer(() => {
       if (this._restTimer !== timer || this._disposed) return;
       this._restTimer = null;
-      if (this._imageKey === null || this._cssHot !== null || this._mode !== CURSOR_MODES.ABSOLUTE) return;
-      try {
-        this._setCssHot(this._hotspots.noteRest(this._imageKey, this._descriptor.width, this._descriptor.height));
-      } catch (error) {
-        this._diagnostic("cursor-hotspot-error", error);
-      }
+      this._restHotspot();
     }, this._hotspotRestMs);
     this._restTimer = timer;
+  }
+
+  async _restHotspot() {
+    const epoch = this._hotspotEpoch;
+    const key = this._imageKey;
+    let sends;
+    try { sends = this._hotspots.sends; } catch (error) { this._diagnostic("cursor-hotspot-error", error); return; }
+    if ((await this._guestCaughtUp(epoch)) !== true) return;
+    // Anything that happened meanwhile and matters has armed a wait of its own: a new epoch, a
+    // different image, an answer from the moves, or a position sent (the pointer is not at rest).
+    if (epoch !== this._hotspotEpoch || this._disposed || key !== this._imageKey || this._cssHot !== null) return;
+    try {
+      if (this._hotspots.sends !== sends) return;
+      this._setCssHot(this._hotspots.noteRest(key, this._descriptor.width, this._descriptor.height));
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
   }
 
   _cancelHotspotRest() {
@@ -557,8 +664,9 @@ export class CursorController {
     this._state = null;
     this._mode = CURSOR_MODES.ABSOLUTE;
     this._pointerLocked = false;
-    // A reset guest starts with no cursor history; nothing inferred before applies to it.
-    this._cancelHotspotRest();
+    // A reset guest starts with no cursor history and nothing of ours still on its way to it.
+    this._endHotspotWaits();
+    this._hotspotSettling = false;
     this._imageKey = null;
     this._cssHot = null;
     this._pointerOutput = null;

@@ -121,6 +121,21 @@ try {
         ...scattered, read("hand over the button", [9, 4]),
         jump([900, 300]), jump([950, 380]), jump([1100, 340]), jump([1000, 420]), read("text caret over the terminal", [4, 8])] },
   ];
+  // Every answer the page shows, as it changes (sampled every 8 ms): a read at rest cannot see
+  // an answer that was shown and taken back.
+  await page.evaluate(() => {
+    const canvas = document.getElementById("ide-display-canvas");
+    const timeline = []; let last = "";
+    setInterval(() => {
+      const css = getComputedStyle(canvas).cursor;
+      const m = /^url\("(data:image\/png;base64,[^"]+)"\) (\d+) (\d+)/.exec(css);
+      const s = window.__cursor.state();
+      const entry = m ? [m[1].slice(-24), s.inferredHotX === null ? null : [s.inferredHotX, s.inferredHotY], [Number(m[2]), Number(m[3])]] : [null, null, null];
+      const key = JSON.stringify(entry);
+      if (key !== last) { last = key; timeline.push([Math.round(performance.now()), ...entry]); }
+    }, 8);
+    window.__hotspotTimeline = timeline;
+  });
   result.plans = [];
   for (const plan of PLANS) {
     await page.evaluate(() => window.__cursor.resetHotspotInference());
@@ -161,6 +176,20 @@ try {
   }
   result.shapes = result.plans.at(-1).reads;
   assert.equal(new Set(result.shapes.map((s) => s.css.imageTail)).size, 3, "three different cursor images");
+  // The timeline: whenever the page showed a hotspot for one of the three images, it was the
+  // right one, and the canvas showed what the controller had inferred.
+  const truth = new Map(result.shapes.map((s) => [s.css.imageTail, s.expectHotspot]));
+  result.timeline = await page.evaluate(() => window.__hotspotTimeline);
+  result.timelineAnswers = 0;
+  for (const [at, image, hot, cssHot] of result.timeline) {
+    if (image === null || hot === null) continue;
+    result.timelineAnswers += 1;
+    assert.deepEqual(cssHot, hot, `t=${at}: the canvas shows the inferred hotspot`);
+    const expected = truth.get(image);
+    assert.ok(expected, `t=${at}: an answer for an image none of the reads saw`);
+    assert.ok(Math.abs(hot[0] - expected[0]) <= 1 && Math.abs(hot[1] - expected[1]) <= 1, `t=${at}: shown ${hot}, true ${expected}`);
+  }
+  assert.ok(result.timelineAnswers >= 12, "each plan's three shapes were answered");
   result.cursorDiagnostics = await page.evaluate(() => window.__cursor.diagnostics());
   assert.deepEqual(result.cursorDiagnostics, [], "no cursor diagnostics");
   // No painted pointer in the guest frame: the pixels around a resting pointer are the same as
@@ -195,5 +224,6 @@ try {
 }
 console.log(JSON.stringify({ pass: result.pass, swayEnv: result.swayEnv,
   plans: (result.plans ?? []).map((p) => ({ plan: p.name, reads: p.reads.map((r) => `${r.name}: sent ${r.sent} hotspot ${r.css?.hotspot} plane ${r.plane && [r.plane.x, r.plane.y]} tip error ${r.tipError}`) })),
+  timeline: result.timeline && `${result.timeline.length} changes, ${result.timelineAnswers} answers shown, none wrong`,
   paintedPointer: result.paintedPointer, error: result.error }, null, 2));
 if (failure) process.exit(1);

@@ -858,6 +858,13 @@ const cursorController = new CursorController({
     cursorDiagnostics.push(entry);
     if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
   },
+  // E5-T36a: the guest's idle waits so far, asked through the same ordered channel the pointer
+  // events take, so the answer is from after everything sent before the question. Only a
+  // paced guest reports idle waits; without them the controller is told there is no counter.
+  guestIdleCount: async () => {
+    const stats = await linuxCtl?.schedulerStats?.() ?? null;
+    return stats?.idleYield === true && Number.isFinite(stats.idleSleeps) ? stats.idleSleeps : null;
+  },
 });
 const pointerControllerProxy = {
   sendTabletEvent: (...args) => linuxCtl?.sendTabletEvent?.(...args),

@@ -17,15 +17,18 @@
 //   * positions reported while the page sends no absolute pointer positions (relative mode), or
 //     for sent positions computed at another output size. The caller `reset`s on those changes.
 //
-// Two more rules keep an answer honest:
-//   * at rest the lag is zero. When the pointer has not been moved and the guest has reported
-//     nothing for a while (`noteRest`), the plane is where the guest put it for the last
-//     position sent, so that one position is the only candidate;
-//   * an answer is dropped when the guest contradicts it: a move the answer cannot explain
-//     although other sent positions could (three in a row), or a plane that moves again after a
-//     rest answer while nothing new was sent (the guest had not caught up).
+// Two more rules:
+//   * once the guest has caught up with everything sent, the lag is zero: the plane is where
+//     the guest put it for the last position sent, so that one position is the only candidate
+//     (`noteRest`). The CALLER must know the guest has caught up — that it has been idle since
+//     the last position was delivered. Quiet on the page is not that knowledge: a busy guest
+//     can leave the plane tens of pixels behind for seconds;
+//   * an answer is dropped when the guest contradicts it: three moves in a row that it cannot
+//     explain although other sent positions could.
 
-const DEFAULT_HISTORY = 128;
+// Sent positions kept. A move the guest makes for a position older than this cannot be
+// explained truthfully; at 60 positions a second that is a guest more than 8 s behind.
+const DEFAULT_HISTORY = 512;
 const DEFAULT_TOLERANCE = 1;
 const DEFAULT_CONFIRMATIONS = 2;
 // Images remembered at once. A desktop uses a dozen cursor shapes; a page that animates a custom
@@ -60,9 +63,13 @@ export class CursorHotspotEstimator {
     this._maxImages = positiveInteger(maxImages, 1, "maxImages");
     this._contradictions = positiveInteger(contradictions, 1, "contradictions");
     this._sent = [];
-    // Positions sent so far; tells a rest answer whether anything was sent after it.
     this._sends = 0;
     this._images = new Map();
+  }
+
+  /** How many positions have been noted so far (a caller's cheap "was anything sent since?"). */
+  get sends() {
+    return this._sends;
   }
 
   /** A guest-space pointer position the host has just sent to the guest. */
@@ -78,7 +85,7 @@ export class CursorHotspotEstimator {
   _image(key) {
     let image = this._images.get(key);
     if (!image) {
-      image = { candidates: null, moves: 0, last: null, resolved: null, misses: 0, restSends: -1 };
+      image = { candidates: null, moves: 0, last: null, resolved: null, misses: 0 };
       this._images.set(key, image);
       // Oldest first out (a Map keeps insertion order); a forgotten image is inferred again.
       while (this._images.size > this._maxImages) this._images.delete(this._images.keys().next().value);
@@ -140,26 +147,20 @@ export class CursorHotspotEstimator {
     const seen = this._candidates(plane, width, height);
 
     if (image.resolved) {
-      // The plane moved although nothing was sent since the pointer came to rest: the guest had
-      // not caught up, and the rest answer was read off a plane still on its way.
-      const stillArriving = image.restSends === this._sends;
-      if (!stillArriving) {
-        if (seen.some((candidate) => near(candidate, image.resolved, this._tolerance))) {
-          image.misses = 0;
-          return image.resolved;
-        }
-        // Nothing recent explains this position at all (the guest is further behind than the
-        // history reaches): no evidence either way.
-        if (seen.length === 0) return image.resolved;
-        image.misses += 1;
-        if (image.misses < this._contradictions) return image.resolved;
+      if (seen.some((candidate) => near(candidate, image.resolved, this._tolerance))) {
+        image.misses = 0;
+        return image.resolved;
       }
+      // Nothing recent explains this position at all (the guest is further behind than the
+      // history reaches): no evidence either way.
+      if (seen.length === 0) return image.resolved;
+      image.misses += 1;
+      if (image.misses < this._contradictions) return image.resolved;
       // Contradicted. Start again from what this move allows.
       image.resolved = null;
       image.misses = 0;
-      image.restSends = -1;
-      image.candidates = seen.length === 0 ? null : seen;
-      image.moves = seen.length === 0 ? 0 : 1;
+      image.candidates = seen;
+      image.moves = 1;
       return null;
     }
 
@@ -182,11 +183,11 @@ export class CursorHotspotEstimator {
   }
 
   /**
-   * The pointer is at rest: nothing was sent and the guest reported nothing for a while, so the
-   * plane showing image `key` is where the guest put it for the LAST position sent. Returns the
-   * image's hotspot if that settles it, otherwise `null`. Needs a move of this image since it
-   * was last installed, and never overrides evidence: the rest position has to be one of the
-   * candidates the moves so far allow.
+   * The guest has caught up with everything sent (the caller knows it has been idle since the
+   * last position was delivered), so the plane showing image `key` is where the guest put it
+   * for the LAST position sent. Returns the image's hotspot if that settles it, otherwise
+   * `null`. Needs a move of this image since it was last installed, and never overrides
+   * evidence: the rest position has to be one of the candidates the moves so far allow.
    */
   noteRest(key, width, height) {
     positiveInteger(width, 1, "cursor image width");
@@ -200,7 +201,6 @@ export class CursorHotspotEstimator {
     // (Candidates lie within the image, so a rest position near one does too.)
     if (!image.candidates.some((candidate) => near(candidate, rest, this._tolerance))) return null;
     image.candidates = [rest];
-    image.restSends = this._sends;
     return this._resolve(image, rest, width, height);
   }
 

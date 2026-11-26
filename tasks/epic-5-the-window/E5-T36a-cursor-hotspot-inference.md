@@ -13,7 +13,8 @@ capstone: false
 ## Boundary
 
 Host only: `web/src/sink/cursor-hotspot.{js,ts}` (new), `web/src/sink/cursor-controller.{js,ts}`,
-the pointer bridge's frame hook in `web/main.js`, and the browser proof script
+the pointer bridge's frame hook and the controller's idle-count reader in `web/main.js`, one
+field (`idleYield`) in the loader's scheduler stats, and the browser proof script
 `tools/verify/e5-t36-hardware-cursor-browser.mjs` (shared with E5-T36c). No guest image change:
 with today's image the guest paints its own pointer and reports no cursor plane, so nothing
 visible changes until E5-T36b turns the hardware cursor on.
@@ -32,33 +33,49 @@ handled) and answers once exactly one candidate is left. `CursorController` uses
 a CSS cursor whose device hotspot is (0,0): one style write when the answer changes. A device
 that reports a non-zero hotspot, and overlay cursors, are untouched.
 
-What is and is not evidence (revised after the first verifier's refutation):
+What is and is not evidence (revised after two refutations):
 
 - **Only moves.** The position a cursor UPDATE carries is never evidence: a legacy-KMS commit
   sets the image at the plane's previous position — computed with the previous image's
   hotspot — and moves it afterwards. (Fed that position, one straight glide onto the button
-  left the hand at (45,7) for a true (9,4).)
+  left the hand at (45,7) for a true (9,4): round 1.)
 - **Only in absolute mode, at one output size.** Changing pointer mode, a change of the guest
-  output size the sent positions are computed for, and a guest reset start inference over.
-- **At rest the lag is zero.** When no position was sent and the guest reported nothing for
-  300 ms, the plane stands for the last position sent, which settles the hotspot without a
-  second move in another direction — needed after a straight approach, where every lag fits.
-  The rest position must be one the moves so far allow, and needs a move since the image
-  changed.
+  output size the sent positions are computed for, and `resetHotspotInference()` start
+  inference over — and the guest's moves count again only once it has caught up, because
+  until then they stand for positions sent before the restart (round 2).
+- **Caught up is something the page is told, not something it guesses.** The paced clock
+  (E5-T37b) counts the guest's idle waits; a wait is reported only with no interrupt deliverable
+  and every device idle. The controller asks for that count through the channel the pointer
+  events take (so the answer is from after everything sent before the question) and waits for
+  it to move on: the guest has then been idle after the last position reached it. The loader's
+  scheduler stats gain one field, `idleYield`, so a guest without the paced clock is known to
+  have no such count.
+- **At rest with the guest caught up, the lag is zero.** When no position was sent and no
+  cursor event arrived for 150 ms, and the guest has then been idle, the plane stands for the
+  last position sent, which settles the hotspot without a second move in another direction —
+  needed after a straight approach, where every lag fits. The rest position must be one the
+  moves so far allow, needs a move since the image changed, and is not taken if a position was
+  sent while the guest was being asked. Quiet on the page alone is never enough: round 2
+  recorded the plane 62 px behind a pointer that had rested for 311 ms under guest load.
+  Without the idle count (no paced clock) there is no rest rule, and a restart waits a fixed
+  second instead.
 - **An answer can be taken back.** Three moves in a row that the answer cannot explain although
-  other sent positions could, or a plane that moves again after a rest answer while nothing new
-  was sent, drop it; inference continues from that move.
-- The estimator remembers at most 64 images (oldest out; a forgotten one is inferred again).
+  other sent positions could drop it; inference continues from that move.
+- The estimator remembers at most 64 images (oldest out; a forgotten one is inferred again) and
+  the last 512 sent positions.
 
 ## Deterministic acceptance
 
 - `cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`
   passes. The controller tests drive the device's real order (update at the previous plane
-  position, then move), including a log recorded on the Replay desktop and 600 random approaches
-  across an image change with lag: the inferred hotspot is never more than one pixel from the
-  truth, and is known at rest. The estimator tests cover lag, rounding, wrapped positions, even
-  sweeps (no guess), rest, a rest answer taken too early, contradiction, reset and the bound on
-  images. The web unit suite fails no test that passed before.
+  position, then move) with a guest that can be behind and an idle counter that moves only when
+  it has nothing left to act on. They include: a log recorded on the Replay desktop; 400 random
+  approaches across an image change with varying lag, random stalls during which the rest
+  wait elapses, and nudges before the guest reports; round 2's two refuting sequences (the rest
+  wait elapsing while the guest is a position behind and the pointer moving on; inference
+  started over while the guest is a position behind, three ways). In all of them the inferred
+  hotspot is never more than one pixel from the truth, and is known at rest once the guest has
+  caught up. The web unit suite fails no test that passed before.
 - Browser, the committed bundle, published generation-1 image with its session restarted on
   legacy KMS from the serial root shell (the one change E5-T36b makes in the image):
   `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`
@@ -67,8 +84,9 @@ What is and is not evidence (revised after the first verifier's refutation):
   right) and one of jumps with rests. At every rest — 18 reads over arrow, hand and text caret —
   the hotspot is known, the canvas shows it, it is within one pixel of (1,1), (9,4) or (4,8),
   and the kernel's cursor-plane position plus that hotspot is the guest position the page
-  sent, within one pixel. The guest frame has no painted pointer; no console errors and no
-  cursor diagnostics.
+  sent, within one pixel. A timeline of every answer the page showed (sampled every 8 ms)
+  contains none more than a pixel from the truth. The guest frame has no painted pointer; no
+  console errors and no cursor diagnostics.
 - Unchanged with the image as published (software cursor):
   `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios click,type --n 8`
   — click and key-echo medians within the run-to-run spread of E5-T37b's (about 266 ms and
