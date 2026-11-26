@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: in-progress
+status: implemented
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -939,3 +939,164 @@ end to end and would see a false wait only as a conclusion with the plane behind
 more than one hart; a real mouse; how often a guest commits a frame between a position and its
 move on other people's machines (9 of 48 and 4 of 32 trials here, under light terminal output);
 Firefox and Safari; cursors above the CSS limit; E5-T36b's image.
+
+### 2026-11-26 — worker — round 4 claim (head `b23468add`)
+
+Round 3's refutation is right, and it showed the rule the first three rounds lacked rather than
+one more case of it. Commit `b23468add`.
+
+**What was wrong.** A cursor move does not say "the guest's pointer has just arrived for a
+position the page sent". The device reports the plane's place on every commit, so a move says
+"the pointer is here" — and comparing it with sent positions is sound only while the position
+the pointer stands on is one of them. Round 3 forgot the positions (and what was not settled)
+on every restart and then waited for the guest to be idle; but idle with nothing sent since
+leaves the pointer exactly where it was, on a position the page no longer has. The next report
+from that place was explained by the first position sent afterwards.
+
+**What changed.**
+
+- **Settling is the page not knowing where the guest's pointer stands**: from the page's
+  start, after a guest reset, and after a change of pointer mode or of the output size. It ends
+  when the guest has been idle after a position sent SINCE, and the guest is first asked when
+  that position is sent (`notePointer` → `_settleHotspots`), not at the restart. Until then no
+  move reaches the estimator. Round 3 took a new page and a reset guest for settled ("the
+  guest has nothing of ours on its way") — the same hole.
+- **The proof's hook keeps the positions sent** (`CursorHotspotEstimator.forget`: every image,
+  nothing else). The pointer still stands on a remembered position, so there is nothing to
+  wait for, and the hook now tests inference itself instead of the restart.
+- **Without an idle counter nothing is inferred.** The fixed one-second fallback is gone (it
+  trusted moves the page could not vouch for: your §f). A counter that says nothing is looked
+  at again every two seconds, so one that appears later is used.
+- A cursor move that hides the cursor (resource 0) ends the wait for the image it replaced; a
+  rest question answered after it used a descriptor that was gone (found re-reading the code,
+  not by a test of yours or mine).
+- Conditions that could never decide are gone, so that what is left is what the tests pin:
+  your `:479`; the `disposed` checks behind an epoch that `dispose` ends; a rest answer checked
+  against an answer it would only repeat; the hotspot re-read at a restart (it cannot change
+  there); the candidate lists written for settled images and never read (your V20, twice); the
+  counter check in `_armHotspotRest` (settling never ends without a counter). The question to
+  the guest now checks its epoch before it begins a poll wait, not after.
+
+**Your demands, one by one.**
+
+1. P3. `web/tests/e5-t36-cursor-hotspot.test.mjs`, "a run from where the pointer rests after
+   each way of starting over": your case A (64x64, hand, 6 px steps, the guest one position
+   behind, one commit that leaves the plane where it is before the first move) and your case B
+   (the image flipped to the arrow and back where the plane stands), after each of the page's
+   start, a guest reset, a pointer-mode change, an output-size change and the hook. For the four
+   that forget positions: nothing is shown during the run, at rest with the guest behind, or
+   when it has caught up; the page is settled at the next idle; one more position and a rest
+   give (9,4). For the hook: never anything but none or (9,4), and (9,4) from moves alone when
+   the guest catches up. Then 500 random such runs (steps of 1-8 px, 2-10 positions, lag 0-2,
+   commits and cursor flips in between, the shape never met / met once / settled before): never
+   more than a pixel off, known and right in the end. And at estimator level, the same run with
+   `forget`, `restart` and `reset`, showing (15,4) for the two that forget positions — the
+   reason the controller owes the estimator the wait.
+2. The guest model reports update and move on every commit (`LegacyKmsGuest.show`; `commit()`
+   is a commit for a reason of the guest's own). The one test that pinned "an update, no move"
+   keeps that order and says whose it is not; a second one in that order pins that an update
+   restarts the rest wait.
+3. "The client changes the cursor while the guest is being asked": the caret's question is in
+   flight, the hand appears, the guest answers — nothing is shown, then the hand's own wait
+   gives (9,4), and the caret is still unsettled when it comes back.
+4. Coverage. `:476` is now the look-again wait: run by "without an idle counter…" (a counter
+   that is null, non-numeric or throws; a restart during the wait). `:506` (the count going
+   away during a question): the same test, `late` and `gone`. `:479` is deleted.
+
+**Tests and mutants.** 44 tests in the four cursor files, all pass. `python3
+evidence/e5-t36a/mutants.py <scratch dir>` (`mutants.log`): 76 mutants,
+75 killed; the survivor skips nothing observable (`_setCssHot` returning early for an
+unchanged answer saves building the CSS string on the move path; `_setHostCursor` skips the
+write either way). The list now carries your V1 (C37), the old rule "ask at the restart" (C36),
+"the page starts settled" (C32), "a guest reset is settled" (C28), "the hook forgets positions"
+(C4d, H29) and what a question in flight does when inference starts over (C34, C35, C38,
+C41). C35 is killed by a counter whose readings the test delivers by hand, so that a restart
+falls between two of them; C34 by a test run that never ends (the old question spins; the
+runner gives up after 90 s) — the same hand-delivered readings would catch it by assertion,
+after the point where it spins.
+
+**Gates** (`bash evidence/e5-t36a/gates.sh`, log sha256 `621410cc4a8f…`, at `b23468add`): the four
+cursor test files pass; shipped copies of the two sink files byte-identical to their sources;
+web unit suite 652 tests, 624 pass, 28 fail — the same 28 names as before, `diff` empty.
+
+**Browser proof, the committed bundle**: `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`
+(`result.json` sha256 `8c13d2a81667…`; Chrome 158.0.8127.88 headless; session restart
+16 s, idle after 33 s). The page was settling until the first position, and
+settled 128 ms after it. The four plans start with the hook and no wait:
+
+| plan | read | sent | CSS hotspot | kernel plane | plane + hotspot − sent |
+|---|---|---|---|---|---|
+| approach C | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach C | hand, first time: one straight glide onto the button, at rest | (146, 501) | (9, 4) | (137, 497) | (0, 0) |
+| approach C | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach C | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach C | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| approach A | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach A | hand, first time: one straight glide onto the button, at rest | (142, 515) | (9, 4) | (133, 511) | (0, 0) |
+| approach A | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach A | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach A | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| approach from the right, across the button's edge at a slant | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand, first time: one straight glide onto the button, at rest | (72, 532) | (9, 4) | (63, 528) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach from the right, across the button's edge at a slant | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| jumps with rests | arrow over the page body | (450, 730) | (1, 1) | (449, 729) | (0, 0) |
+| jumps with rests | hand over the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| jumps with rests | text caret over the terminal | (1000, 420) | (4, 8) | (996, 412) | (0, 0) |
+
+18 reads, 18 with the exact hotspot and the tip on the sent pixel. Then 48 even runs from where
+the pointer rests, right after starting over, with the terminal printing in bursts (`seq 1 30;
+sleep 0.15` in a loop, as in your `stale-short-1`; steps and lengths from your plans):
+
+| started over by | runs | arrow known 0.4 s after the stop | 1.9 s after | after two more positions | wrong |
+|---|---|---|---|---|---|
+| hook | 24 | 24 | 24 | 24 | 0 |
+| hook and pointer mode | 24 | 4 | 24 | 24 | 0 |
+
+The timeline of the canvas's cursor over the whole run (sampled every 8 ms): 142 changes,
+80 answers shown, none more than a pixel from the truth. No painted pointer, no console
+errors, no cursor diagnostics.
+
+**Unchanged with the image as published** (two runs, n = 8 each; `browser-unchanged.json`,
+`browser-unchanged-2.json`): click result median 278 and 271.1 ms, key echo median
+45.7 and 46 ms — rounds 2 and 3 measured 272.8 and 265.2 ms, 46 and 44 ms; E5-T37b
+267.7 / 270.6 / 267.9 and 45.4 / 48.8 / 44.2. With that image there is no cursor image to infer
+for: the page asks the guest after the first position until it has been idle once, and nothing
+after that. Demo page
+(`E5_DEMO_TASK=E5-T36a E5_DEMO_OUT=evidence/e5-t36a node evidence/e5-t36a/demo-suite.mjs`):
+127 passed, 0 failed of 127; no errors. Round 3's evidence is kept in
+`evidence/e5-t36a/round-3/`.
+
+**Limits, as they are.**
+
+- **A busy guest.** "Caught up" takes one idle wait within the two seconds of a question
+  (asked again when it times out). While the guest takes none, there are no rest answers; and
+  while the page is settling — from its start, after a guest reset or a change of pointer mode
+  or output size — nothing is inferred at all, moves included, until the first idle wait after
+  a position sent. Hotspots settled before a mode or size change are kept, so a user loses only
+  shapes not met yet. Not settling, moves alone settle a shape as soon as the pointer turns.
+- **Rest needs 150 ms without a position sent and without a cursor event.** A guest that
+  commits frames without pause (an animation, a scrolling terminal) reports the cursor on each
+  and gives no rest answer; moves decide then. (Under the bursts above every run was answered.)
+- **After starting over at rest, nothing is known about the image shown until it is reported
+  again** — by the next commit of the guest's own or the next pointer position. (Your
+  "a delay only".)
+- "The guest has been idle" proves it has acted on the pointer positions. It does not prove a
+  client has finished changing the cursor image; that is why a rest answer needs a move of the
+  image since it was installed and is dropped if the image changed while the guest was asked.
+- **The page assumes the guest's pointer goes where the page sends it, and nowhere else.** A
+  guest that moves or holds its pointer itself — a compositor warp, a client's pointer lock
+  inside the guest — reports planes no sent position stands for; a wrong answer is then
+  possible until three moves contradict it. The Replay desktop's session does neither by
+  itself (sway's default warps only between outputs, and there is one).
+- A guest more than 512 sent positions behind makes moves that nothing truthful explains; in a
+  small area other positions may explain them, and a right answer can then be dropped after
+  three such moves. It is found again by moves or at rest.
+- **Output size.** The page learns a new output size from the frames it presents; positions
+  sent before that were computed for the old size, and moves reported between the change and
+  the next position sent are compared with them (what is not settled by then is forgotten at
+  that position; an answer settled in between is kept). The Replay desktop's output is fixed
+  at 1280x800 and nothing in the page changes it.
+- Without the paced clock (`?pace=0`) nothing is inferred: the guest's cursor image is drawn
+  with the device's (0,0), off by its real hotspot.

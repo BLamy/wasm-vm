@@ -76,7 +76,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `0.387645` [E5-T37b](epic-5-the-window/E5-T37b-paced-idle-browser.md) — Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time *(deps: E5-T37a)*
 - [ ] `0.387646` [E5-T37c](epic-5-the-window/E5-T37c-paced-idle-device-gaps.md) — Paced idle — measure the devices that keep a wait from being reported, and file the fixes *(deps: E5-T37b)*
 - [-] `0.38765` [E5-T36](epic-5-the-window/E5-T36-replay-desktop-hardware-cursor.md) — Hardware cursor plane on the Replay desktop — pointer drawn by the host, instantly (planning parent) *(deps: E5-T34g)*
-- [~] `0.387651` [E5-T36a](epic-5-the-window/E5-T36a-cursor-hotspot-inference.md) — Infer the hotspot of a guest cursor image the device did not describe *(deps: E5-T37b)*
+- [?] `0.387651` [E5-T36a](epic-5-the-window/E5-T36a-cursor-hotspot-inference.md) — Infer the hotspot of a guest cursor image the device did not describe *(deps: E5-T37b)*
 - [ ] `0.3876515` [E5-T36b](epic-5-the-window/E5-T36b-hardware-cursor-session.md) — Replay desktop image — the session runs on legacy KMS with a hardware cursor *(deps: E5-T36a)*
 - [ ] `0.387652` [E5-T41a](epic-5-the-window/E5-T41a-node-startup-snapshot.md) — Replay desktop image — Node starts from a startup snapshot built at boot *(deps: E5-T36b)*
 - [ ] `0.387653` [E5-T41b](epic-5-the-window/E5-T41b-compact-warm-snapshot-gen2.md) — Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot *(deps: E5-T41a, E5-T36b)*

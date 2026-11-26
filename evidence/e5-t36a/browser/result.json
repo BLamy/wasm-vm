@@ -1,0 +1,3683 @@
+{
+  "task": "E5-T36",
+  "legacyKmsSession": true,
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "shapes": [
+    {
+      "name": "arrow over the page body",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        450,
+        730
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 449,
+        "y": 729
+      },
+      "inferred": [
+        1,
+        1
+      ],
+      "tip": [
+        450,
+        730
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hand over the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        93,
+        516
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 512
+      },
+      "inferred": [
+        9,
+        4
+      ],
+      "tip": [
+        93,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "text caret over the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        1000,
+        420
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 996,
+        "y": 412
+      },
+      "inferred": [
+        4,
+        8
+      ],
+      "tip": [
+        1000,
+        420
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    }
+  ],
+  "plans": [
+    {
+      "name": "approach C: from just right of the button, one 0.33 s glide onto it",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            146,
+            501
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 137,
+            "y": 497
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            146,
+            501
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "approach A: from the page body, one 0.46 s glide onto the button",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            142,
+            515
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 133,
+            "y": 511
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            142,
+            515
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "approach from the right, across the button's edge at a slant",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            72,
+            532
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 63,
+            "y": 528
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            72,
+            532
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jumps with rests: each shape from scattered points",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            450,
+            730
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 449,
+            "y": 729
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            450,
+            730
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand over the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1000,
+            420
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 996,
+            "y": 412
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1000,
+            420
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "sessionRestartSeconds": 16.087,
+  "idleAfterSeconds": 33.169,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "settledAfterFirstPositionMs": 128,
+  "restRuns": {
+    "load": "0.28 0.09 0.03 1/118 1100",
+    "trials": [
+      {
+        "way": "hook",
+        "from": [
+          451,
+          611
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          420,
+          634
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          381,
+          612
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          433,
+          669
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          394,
+          623
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          377,
+          592
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          440,
+          685
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          460,
+          672
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          369,
+          661
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          412,
+          669
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          424,
+          639
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          427,
+          676
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          350,
+          677
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          414,
+          633
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          360,
+          599
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          462,
+          663
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          457,
+          638
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          351,
+          600
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          467,
+          594
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          348,
+          625
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          477,
+          671
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          442,
+          613
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          382,
+          678
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          387,
+          644
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          379,
+          670
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          359,
+          657
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          395,
+          624
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          380,
+          650
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          469,
+          663
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          343,
+          647
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          436,
+          667
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          381,
+          678
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          360,
+          678
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          469,
+          638
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          365,
+          671
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          386,
+          667
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          347,
+          670
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          429,
+          652
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          461,
+          603
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          441,
+          632
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          475,
+          666
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          407,
+          623
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          364,
+          631
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          468,
+          625
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          341,
+          610
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          390,
+          647
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          431,
+          639
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          447,
+          682
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      }
+    ],
+    "loadAfter": "0.29 0.14 0.05 1/117 3331",
+    "knownAtFirstRead": 28,
+    "knownAtSecondRead": 48
+  },
+  "timeline": [
+    [
+      61811,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      62018,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      66379,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      66450,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      66458,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      67763,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      67995,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      74770,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      75163,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      79547,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      81443,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      81627,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      84051,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      84108,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      84355,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      88666,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      88690,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      88763,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      90107,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      97130,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      97570,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      101955,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      103738,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      103827,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      103931,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      106434,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      106498,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      106723,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      112259,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      112275,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      119651,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      120091,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      120099,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      124459,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      126258,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      126339,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      126451,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      128962,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      129027,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      129266,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      133410,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      133667,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      137802,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      138075,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      143491,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      143522,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      144451,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      144522,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      148970,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      149516,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      153474,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      153698,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      158051,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      158891,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      162771,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      162891,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      167323,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      167875,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      171834,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      171922,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      176370,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      177067,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      181003,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      181059,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      185500,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      185963,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      189978,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      190099,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      194507,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      195179,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      199234,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      199411,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      203851,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      204435,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      208378,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      208603,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      212979,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      213923,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      217698,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      217843,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      222283,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      222883,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      226835,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      226930,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      231410,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      232027,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      236066,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      236194,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      240642,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      241316,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      245227,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      245363,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      249819,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      250491,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      254507,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      254627,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      258987,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      259499,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      263459,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      263610,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      268027,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      268915,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      272755,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      272858,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      277314,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      277923,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      281906,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      282003,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      286395,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      287170,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      291059,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      291243,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      295563,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      296164,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      300106,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      300290,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      304707,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      305659,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      309410,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      309587,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      313931,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      314651,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      318452,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      318530,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      322962,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      323899,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      327602,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      327651,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      332091,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      332691,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      336611,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      336843,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      341210,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      341890,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      345835,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      345931,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      350307,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      350851,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      354786,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      354907,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      359379,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      360123,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ]
+  ],
+  "timelineAnswers": 80,
+  "cursorDiagnostics": [],
+  "paintedPointer": {
+    "spot": [
+      1150,
+      650
+    ],
+    "hashUnderPointer": 3836707013,
+    "hashAfterMovingAway": 3836707013
+  },
+  "errors": [],
+  "pass": true
+}
