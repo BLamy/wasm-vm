@@ -210,10 +210,21 @@ export class CursorHotspotEstimator {
   }
 
   /**
-   * Forget everything: the positions sent and every image. For when what was sent stops being
-   * comparable with what the guest reports — the pointer left absolute mode, or the guest
-   * output the positions were computed for changed size.
+   * Start over what can be learned from moves: forget the positions sent and every image not
+   * yet settled. For when what was sent stops being comparable with what the guest reports —
+   * the pointer left absolute mode, or the guest output the positions were computed for
+   * changed size. Settled answers stay: a hotspot belongs to its image.
    */
+  restart() {
+    this._sent.length = 0;
+    for (const [key, image] of this._images) {
+      if (!image.resolved) { this._images.delete(key); continue; }
+      image.candidates = [image.resolved];
+      image.misses = 0;
+    }
+  }
+
+  /** Forget everything: the positions sent and every image, settled or not. */
   reset() {
     this._images.clear();
     this._sent.length = 0;

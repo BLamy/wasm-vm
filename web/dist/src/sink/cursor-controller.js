@@ -427,7 +427,7 @@ export class CursorController {
     try {
       if (outputWidth !== null && outputHeight !== null) {
         const previous = this._pointerOutput;
-        if (previous && (previous.width !== outputWidth || previous.height !== outputHeight)) this.resetHotspotInference();
+        if (previous && (previous.width !== outputWidth || previous.height !== outputHeight)) this._restartHotspotInference(false);
         this._pointerOutput = { width: outputWidth, height: outputHeight };
       }
       this._hotspots.notePointer(x, y);
@@ -438,16 +438,31 @@ export class CursorController {
   }
 
   /**
-   * Start inference over: drop every inferred hotspot and all evidence. The guest may still be
-   * acting on positions sent before this moment, so its cursor moves count as evidence again
-   * only once it has caught up.
+   * Forget every inferred hotspot and all evidence, and start over (a proof script meeting each
+   * shape "for the first time"; nothing in the page needs to forget what it has settled).
    */
   resetHotspotInference() {
+    this._restartHotspotInference(true);
+  }
+
+  /**
+   * Start inference over. What the page sent before this moment no longer compares with what
+   * the guest reports (the pointer mode or the output size changed), and the guest may still
+   * be acting on it: its cursor moves count as evidence again only once it has caught up.
+   * Hotspots already settled are kept unless `forget` — they belong to their images.
+   */
+  _restartHotspotInference(forget) {
     this._endHotspotWaits();
     const epoch = this._hotspotEpoch;
-    try { this._hotspots.reset(); } catch (error) { this._diagnostic("cursor-hotspot-error", error); }
+    let hot = null;
+    try {
+      if (forget) this._hotspots.reset(); else this._hotspots.restart();
+      if (this._imageKey !== null) hot = this._hotspots.hotspot(this._imageKey);
+    } catch (error) {
+      this._diagnostic("cursor-hotspot-error", error);
+    }
     this._hotspotSettling = true;
-    this._setCssHot(null);
+    this._setCssHot(hot);
     this._settleHotspots(epoch);
   }
 
@@ -627,7 +642,7 @@ export class CursorController {
     // after no longer belong together.
     if (mode !== this._mode) {
       this._mode = mode;
-      this.resetHotspotInference();
+      this._restartHotspotInference(false);
     }
     this._pointerLocked = locked;
     if (changed) {
@@ -695,6 +710,7 @@ export class CursorController {
       hotY: this._descriptor?.hotY ?? 0,
       inferredHotX: this._cssHot?.x ?? null,
       inferredHotY: this._cssHot?.y ?? null,
+      hotspotSettling: this._hotspotSettling,
       overlayAttached: this._overlay !== null,
       hostCursorOwned: this._hostCursorOwned,
       hostCursorHidden: this._hostCursorHidden,

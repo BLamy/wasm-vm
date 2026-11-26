@@ -39,10 +39,12 @@ What is and is not evidence (revised after two refutations):
   sets the image at the plane's previous position — computed with the previous image's
   hotspot — and moves it afterwards. (Fed that position, one straight glide onto the button
   left the hand at (45,7) for a true (9,4): round 1.)
-- **Only in absolute mode, at one output size.** Changing pointer mode, a change of the guest
-  output size the sent positions are computed for, and `resetHotspotInference()` start
-  inference over — and the guest's moves count again only once it has caught up, because
-  until then they stand for positions sent before the restart (round 2).
+- **Only in absolute mode, at one output size.** Changing pointer mode and a change of the
+  guest output size the sent positions are computed for restart the evidence: the positions
+  sent and everything not yet settled are forgotten (a settled hotspot is kept — it belongs to
+  its image), and the guest's moves count again only once it has caught up, because until then
+  they stand for positions sent before the restart (round 2). `resetHotspotInference()`, the
+  proof script's hook, forgets settled hotspots too.
 - **Caught up is something the page is told, not something it guesses.** The paced clock
   (E5-T37b) counts the guest's idle waits; a wait is reported only with no interrupt deliverable
   and every device idle. The controller asks for that count through the channel the pointer

@@ -240,6 +240,35 @@ test("positions nothing recent explains are ignored; reset forgets positions and
   }
 });
 
+test("restart forgets the positions sent and what is not settled, and keeps what is", () => {
+  const e = new CursorHotspotEstimator();
+  // Settled: the arrow. Not settled: the caret, with one move that allows only (10,8).
+  for (const [x, y] of [[100, 100], [300, 180]]) { e.notePointer(x, y); e.noteMove("arrow", 64, 64, x - 1, y - 1); }
+  e.notePointer(500, 300);
+  assert.equal(e.noteMove("caret", 64, 64, 490, 292), null);
+  // Two contradictions against the arrow are on the books.
+  for (const [x, y] of [[700, 100], [760, 180]]) { e.notePointer(x, y); e.noteMove("arrow", 64, 64, x - 30, y - 30); }
+  e.restart();
+  assert.deepEqual({ ...e.hotspot("arrow") }, { x: 1, y: 1 }, "a settled hotspot belongs to its image");
+  assert.equal(e.hotspot("caret"), null);
+  // A plane that only a position sent BEFORE the restart explains is explained by nothing.
+  assert.equal(e.noteMove("caret", 64, 64, 760 - 10, 180 - 8), null);
+  e.notePointer(900, 400);
+  assert.equal(e.noteMove("caret", 64, 64, 890, 392), null, "the first move that counts, not the second");
+  // What the caret's move before the restart allowed is gone: this move alone allows (10,8)
+  // and (4,8), and nothing is settled by agreeing with the past.
+  const f = new CursorHotspotEstimator();
+  f.notePointer(500, 300);
+  assert.equal(f.noteMove("caret", 64, 64, 490, 292), null);
+  f.restart();
+  f.notePointer(206, 100); f.notePointer(200, 100);
+  assert.equal(f.noteMove("caret", 64, 64, 196, 92), null);
+  assert.equal(f.hotspot("caret"), null);
+  // The miss count starts over with the evidence: two more contradictions do not drop the arrow.
+  for (const [x, y] of [[1000, 500], [1060, 580]]) { e.notePointer(x, y); e.noteMove("arrow", 64, 64, x - 30, y - 30); }
+  assert.deepEqual({ ...e.hotspot("arrow") }, { x: 1, y: 1 });
+});
+
 test("the number of remembered images is bounded; a forgotten one is inferred again", () => {
   const e = new CursorHotspotEstimator({ maxImages: 3, history: 64 });
   const resolve = (key, hot) => {
@@ -734,14 +763,16 @@ test("without an idle counter there is no rest answer; a counter that fails or s
   assert.deepEqual(inferred(busy.controller), [4, 8]);
 });
 
-test("relative mode is not evidence, and changing mode starts inference over once the guest has caught up", async () => {
+test("relative mode is not evidence; changing mode restarts the evidence and keeps what is settled", async () => {
   const r = rig();
   r.go("hand", 300, 300); r.go("hand", 380, 340);
   assert.deepEqual(inferred(r.controller), [9, 4]);
   // Pointer lock: the page sends no absolute positions; the guest's pointer wanders by deltas.
   r.controller.setPointerState({ mode: "relative", pointerLocked: true });
-  assert.equal(inferred(r.controller), null, "what was inferred in absolute mode is not carried across");
+  assert.deepEqual(inferred(r.controller), [9, 4], "a settled hotspot belongs to its image, whatever the mode");
+  assert.equal(r.controller.snapshot().hotspotSettling, true);
   await r.rest();
+  assert.equal(r.controller.snapshot().hotspotSettling, false, "the guest has been idle since");
   r.guest.show("caret", 500, 500); r.guest.show("caret", 388, 351); r.guest.show("caret", 309, 311); r.guest.show("caret", 395, 356);
   assert.equal(inferred(r.controller), null, "moves in relative mode are not compared with anything");
   // Even a caller that notes positions in relative mode gets nothing inferred from them.
@@ -761,6 +792,9 @@ test("relative mode is not evidence, and changing mode starts inference over onc
   r.go("caret", 700, 200); r.go("caret", 640, 260);
   assert.deepEqual(inferred(r.controller), [4, 8]);
   assert.deepEqual(hotspotOf(r.target.style.cursor), [4, 8]);
+  // The hand, settled before all this, comes back with its hotspot at once.
+  r.guest.show("hand");
+  assert.deepEqual(inferred(r.controller), [9, 4]);
 });
 
 test("inference started over while the guest is a position behind: its outstanding moves are not evidence", async () => {
@@ -812,22 +846,31 @@ test("inference started over while the guest is a position behind: its outstandi
   assert.deepEqual(inferred(u.controller), [9, 4]);
 });
 
-test("a change of guest output size starts inference over", async () => {
+test("a change of guest output size restarts the evidence and keeps what is settled", async () => {
   const r = rig();
   r.go("hand", 300, 300); r.go("hand", 380, 340);
   assert.deepEqual(inferred(r.controller), [9, 4]);
-  // The output becomes 1920x1200: positions computed for 1280x800 no longer compare.
-  r.send(600, 500, 1920, 1200);
-  assert.equal(inferred(r.controller), null);
-  assert.deepEqual(hotspotOf(r.target.style.cursor), [0, 0]);
+  ambiguousCaret(r); // 4, 10 and 16 px all fit its two moves
+  // The output becomes 1920x1200: positions computed for 1280x800 no longer compare. What the
+  // caret's moves allowed is forgotten; the hand's settled hotspot is not.
+  r.send(906, 300, 1920, 1200);
+  assert.equal(r.controller.snapshot().hotspotSettling, true);
   r.guest.pump();
   await r.rest();
+  assert.equal(inferred(r.controller), null, "nothing to read a rest answer off: the caret starts from nothing");
   for (const [x, y] of [[900, 640], [820, 700]]) { r.send(x, y, 1920, 1200); r.guest.pump(); }
-  assert.deepEqual(inferred(r.controller), [9, 4]);
+  assert.deepEqual(inferred(r.controller), [4, 8]);
+  r.guest.show("hand");
+  assert.deepEqual(inferred(r.controller), [9, 4], "kept across the change of size");
   // The same size again changes nothing; positions without a size are taken as they are.
   r.send(910, 650, 1920, 1200);
   r.controller.notePointer(920, 660);
+  assert.equal(r.controller.snapshot().hotspotSettling, false);
   assert.deepEqual(inferred(r.controller), [9, 4]);
+  // The explicit reset forgets settled answers too.
+  r.controller.resetHotspotInference();
+  assert.equal(inferred(r.controller), null);
+  assert.deepEqual(hotspotOf(r.target.style.cursor), [0, 0]);
 });
 
 test("a contradicted hotspot is taken back from the page, and a guest reset forgets everything", () => {

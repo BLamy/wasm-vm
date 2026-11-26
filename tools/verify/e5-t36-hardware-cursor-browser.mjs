@@ -69,7 +69,20 @@ try {
       await page.waitForTimeout(3000);
     }
     result.sessionRestartSeconds = (Date.now() - t0) / 1000;
-    await page.waitForTimeout(8000);
+  }
+  // Chrome schedules start-up work for its first 10-20 s. Start once the guest is idle: at
+  // least 15 idle waits in a second (an idle desktop takes about 20). The proof is about the
+  // pointer, not about a browser that is still starting.
+  {
+    const idleSleeps = async () => (await page.evaluate(() => window.__schedulerStats()))?.idleSleeps ?? 0;
+    const t0 = Date.now();
+    for (;;) {
+      const before = await idleSleeps();
+      await page.waitForTimeout(1000);
+      if ((await idleSleeps()) - before >= 15) break;
+      assert.ok(Date.now() - t0 < 5 * 60_000, "the guest became idle");
+    }
+    result.idleAfterSeconds = (Date.now() - t0) / 1000;
   }
   await sh("mount -t debugfs none /sys/kernel/debug 2>/dev/null; true");
   result.swayEnv = (await sh("tr '\\0' '\\n' < /proc/$(pidof sway)/environ | grep WLR_ | sort | tr '\\n' ' '")).trim();
@@ -138,7 +151,9 @@ try {
   });
   result.plans = [];
   for (const plan of PLANS) {
+    // Forget everything; the guest's moves count again once it has been idle since.
     await page.evaluate(() => window.__cursor.resetHotspotInference());
+    await page.waitForFunction(() => window.__cursor.state().hotspotSettling === false, null, { timeout: 30_000, polling: 50 });
     const reads = [];
     for (const step of plan.steps) {
       if (step.op === "jump") {
