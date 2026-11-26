@@ -1968,6 +1968,32 @@ fn paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized() {
         );
         assert_eq!(plain.save_resume().unwrap(), opted.save_resume().unwrap());
 
+        // Pure ICount again, with a timer the guest armed but never enabled: the idle jump
+        // reaches a deadline that wakes nothing, and the guest spins. Still no early return.
+        let mut a = Asm::new();
+        a.la(13, CLINT + 0x4000);
+        a.la(14, CLINT + 0xBFF8);
+        a.ws(&[ld(5, 14, 0), addi(5, 5, 2000), sd(5, 13, 0)]);
+        a.label("loop");
+        a.ws(&[WFI, addi(19, 19, 1)]);
+        a.jal(0, "loop");
+        let masked = a.finish();
+        let mut plain = paced_idle_machine(&masked, 10, turbo);
+        let mut opted = paced_idle_machine(&masked, 10, turbo);
+        opted.set_paced_idle_policy(true, Some(50_000_000));
+        for budget in [1u64, 9, 3, 500] {
+            let (mut ta, mut tb) = (HashSink::new(), HashSink::new());
+            let oa = plain.run_traced(budget, &mut ta);
+            let ob = opted.run_traced(budget, &mut tb);
+            assert_eq!(
+                observe(&plain, &ta, oa),
+                observe(&opted, &tb, ob),
+                "masked timer, budget {budget}"
+            );
+            assert_eq!(opted.take_idle_wait_nanos(), None);
+        }
+        assert!(x(&opted, 19) > 100, "it spun");
+
         // Wall clock: mtime is the host's; `wfi` never jumps and never reports.
         let host = HostClock::default();
         host.now.set(1_000_000_000);
@@ -2205,6 +2231,553 @@ fn paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting() {
                 "{label}: 8 s in 80 ms sleeps"
             );
             assert_eq!(x(&m, 31), 0, "{label}: the far deadline was never reached");
+        }
+    }
+}
+
+// ── E5-T37a round 2 (after the verifier's refutation): what wakes a waiting guest, waits that
+//    stop holding, and the cases the first seven tests left unpinned. ──
+
+/// M-mode guest for the wake tests: timer and software interrupts enabled, the timer armed
+/// `first` ticks out (a 32-bit value), then `loop: wfi; x19 += 1; j loop`. The handler records
+/// `mtime` as its very first act (x27), counts in x26 (software) or x31 (timer), clears `msip`,
+/// re-arms the timer `rearm` ticks out when it was the timer, runs `work` passes of a
+/// three-instruction loop and returns. `pad` extra `addi`s sit between the `wfi` and the jump.
+fn paced_wake_image(first: u32, rearm: u32, work: i32, pad: usize) -> Vec<u8> {
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(12, CLINT);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&li32(20, first));
+    a.ws(&li32(21, rearm));
+    a.ws(&[ld(5, 14, 0), add(5, 5, 20), sd(5, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x88), csrrs(0, MIE, 7)]);
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    a.label("loop");
+    a.w(WFI);
+    a.w(addi(19, 19, 1));
+    for _ in 0..pad {
+        a.w(addi(18, 18, 1));
+    }
+    a.jal(0, "loop");
+    a.org(BASE + 0x4000);
+    a.label("handler");
+    a.ws(&[ld(27, 14, 0), csrrs(28, MCAUSE, 0), andi(28, 28, 0xF)]);
+    a.w(addi(29, 0, 3));
+    a.branch(BEQ, 28, 29, "soft");
+    a.ws(&[addi(31, 31, 1), ld(5, 14, 0), add(5, 5, 21), sd(5, 13, 0)]);
+    a.jal(0, "work");
+    a.label("soft");
+    a.ws(&[sw(0, 12, 0), addi(26, 26, 1)]);
+    a.label("work");
+    a.w(addi(9, 0, work));
+    a.branch(BEQ, 9, 0, "done");
+    a.label("spin");
+    a.ws(&[addi(15, 15, 3), xor(16, 16, 15), addi(9, 9, -1)]);
+    a.branch(BNE, 9, 0, "spin");
+    a.label("done");
+    a.w(MRET);
+    a.finish()
+}
+
+fn mtime_of(m: &Machine) -> u64 {
+    m.clint.as_ref().unwrap().borrow().mtime
+}
+
+/// The host sleeps on a reported wait and an event for the guest ends the sleep. The time the
+/// guest spent waiting is on its clock when the handler starts — not later, and not lost to
+/// the busy-lag bound however much the handler then runs.
+#[test]
+fn paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock() {
+    const SLEPT_NS: u64 = 5_000_000_000;
+    for turbo in [false, true] {
+        for div in [1u64, 10, 64] {
+            for work in [0, 100, 1000, 5000] {
+                for bound in [Some(50_000_000u64), Some(0), None] {
+                    let label =
+                        alloc::format!("turbo={turbo} div={div} work={work} bound={bound:?}");
+                    let host = HostClock::default();
+                    host.now.set(40_000_000_000);
+                    // Timer 10 s out, re-armed 100 s out.
+                    let image = paced_wake_image(100_000_000, 1_000_000_000, work, 0);
+                    let mut m = paced_idle_machine(&image, div, turbo);
+                    m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                        .unwrap();
+                    m.set_paced_idle_policy(true, bound);
+                    host.now.set(host.now.get() + 1_000_000_000);
+                    assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+                    let wait = m.take_idle_wait_nanos().expect("idle");
+                    assert!(wait > 8_000_000_000, "{label}: about 9 s to the deadline");
+                    let t0 = mtime_of(&m);
+                    // The host sleeps 5 s of the wait; then an event for the guest arrives.
+                    host.now.set(host.now.get() + SLEPT_NS);
+                    m.clint.as_ref().unwrap().borrow_mut().msip = true;
+                    assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+                    assert_eq!(x(&m, 26), 1, "{label}: the software interrupt was handled");
+                    assert_eq!(x(&m, 31), 0, "{label}: the timer has not fired");
+                    assert_eq!(
+                        x(&m, 27),
+                        t0 + SLEPT_NS / NS_PER_TICK,
+                        "{label}: the handler's first instruction saw the slept time"
+                    );
+                    let rest = m.take_idle_wait_nanos().expect("idle again");
+                    let moved = mtime_of(&m) - t0;
+                    assert!(
+                        moved >= SLEPT_NS / NS_PER_TICK,
+                        "{label}: guest time moved {moved} ticks for 5 s of host sleep"
+                    );
+                    assert!(
+                        rest <= wait - SLEPT_NS,
+                        "{label}: the wait shrank by the sleep"
+                    );
+                }
+            }
+        }
+    }
+}
+
+/// The host oversleeps a wait (a throttled timer, a suspended laptop) and nothing but the
+/// guest's own timer wakes it. The deadline is taken on time in guest terms; the time slept
+/// past it was still waiting time and reaches the guest clock at its next idle jump, whatever
+/// the handler did in between.
+#[test]
+fn paced_idle_time_a_host_overslept_is_kept() {
+    const OVER_NS: u64 = 2_000_000_000;
+    for turbo in [false, true] {
+        for work in [0, 100, 1000, 5000] {
+            for bound in [Some(50_000_000u64), Some(0), None] {
+                let label = alloc::format!("turbo={turbo} work={work} bound={bound:?}");
+                let host = HostClock::default();
+                host.now.set(40_000_000_000);
+                let image = paced_wake_image(20_000, 1_000_000_000, work, 0);
+                let mut m = paced_idle_machine(&image, 10, turbo);
+                m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                    .unwrap();
+                m.set_paced_idle_policy(true, bound);
+                assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+                let wait = m.take_idle_wait_nanos().expect("idle");
+                let deadline = m.clint.as_ref().unwrap().borrow().mtimecmp;
+                host.now.set(host.now.get() + wait + OVER_NS);
+                assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+                assert_eq!(x(&m, 31), 1, "{label}: the timer interrupt was handled");
+                assert_eq!(
+                    x(&m, 27),
+                    deadline,
+                    "{label}: taken at its deadline in guest time"
+                );
+                assert!(m.take_idle_wait_nanos().is_some(), "{label}: idle again");
+                let past = mtime_of(&m) - deadline;
+                assert!(
+                    past >= OVER_NS / NS_PER_TICK,
+                    "{label}: guest time is {past} ticks past the deadline for 2 s overslept"
+                );
+            }
+        }
+    }
+}
+
+/// A recorded wait describes one guest under one clock. Selecting another clock or policy, or
+/// restoring another guest, drops it; rebasing the host anchor is reflected in it.
+#[test]
+fn paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore() {
+    let image = paced_idle_image(2000, 0, 100, 500);
+    for turbo in [false, true] {
+        let build = || {
+            let host = HostClock::default();
+            host.now.set(2_000_000_000);
+            // Divider 1: retire-derived guest time runs ahead of the standing host clock.
+            let mut m = paced_idle_machine(&image, 1, turbo);
+            let blob = m.save_resume().unwrap();
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            m.set_paced_idle_policy(true, None);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            (m, host, blob)
+        };
+        let (mut m, _, _) = build();
+        let wait = m.take_idle_wait_nanos().expect("the control has a wait");
+        assert_eq!(
+            wait,
+            m.clint.as_ref().unwrap().borrow().mtimecmp * NS_PER_TICK
+        );
+
+        let (mut m, _, _) = build();
+        m.set_icount_clock();
+        assert_eq!(m.take_idle_wait_nanos(), None, "turbo={turbo}: pure ICount");
+        let (mut m, host, _) = build();
+        m.set_wall_clock(
+            alloc::boxed::Box::new(host.clone()),
+            time::WallClockPolicy::DEFAULT,
+        );
+        assert_eq!(m.take_idle_wait_nanos(), None, "turbo={turbo}: wall clock");
+        let (mut m, host, _) = build();
+        m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+            .unwrap();
+        assert_eq!(
+            m.take_idle_wait_nanos(),
+            None,
+            "turbo={turbo}: clock re-selected"
+        );
+        for (yield_to_host, lag) in [(true, None), (true, Some(7)), (false, None)] {
+            let (mut m, _, _) = build();
+            m.set_paced_idle_policy(yield_to_host, lag);
+            assert_eq!(
+                m.take_idle_wait_nanos(),
+                None,
+                "turbo={turbo}: policy re-selected"
+            );
+        }
+        let (mut m, _, blob) = build();
+        m.load_resume(&blob).unwrap();
+        assert_eq!(m.hart.regs.pc, BASE);
+        assert_eq!(
+            m.take_idle_wait_nanos(),
+            None,
+            "turbo={turbo}: another guest restored"
+        );
+        // A rebase moves the pacer's ceiling to the guest's own time: the distance follows.
+        let (mut m, _, _) = build();
+        let (mtime, cmp) = {
+            let c = m.clint.as_ref().unwrap().borrow();
+            (c.mtime, c.mtimecmp)
+        };
+        assert!(mtime > 1_000, "the guest ran ahead of the host clock");
+        m.rebase_guest_clock();
+        assert_eq!(
+            m.take_idle_wait_nanos(),
+            Some((cmp - mtime) * NS_PER_TICK),
+            "turbo={turbo}: after a rebase"
+        );
+    }
+}
+
+/// No wait is recorded when the `wfi`'s wake condition is met by something its stale `mip`
+/// did not show: a software interrupt raised earlier in the `wfi`'s own block (levels are
+/// sampled at block boundaries only), or a device touched in that block, whose service at the
+/// next boundary may raise an interrupt. The guest goes straight on within the same run call.
+#[test]
+fn paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched() {
+    // (a) `sw 1, msip; wfi` in one block, software interrupt enabled.
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(12, CLINT);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&li32(20, 100_000_000));
+    a.ws(&[ld(5, 14, 0), add(5, 5, 20), sd(5, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x88), csrrs(0, MIE, 7)]);
+    a.w(addi(4, 0, 1));
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    a.ws(&[sw(4, 12, 0), WFI]);
+    a.label("loop");
+    a.ws(&[addi(19, 19, 1), WFI]);
+    a.jal(0, "loop");
+    a.org(BASE + 0x400);
+    a.label("handler");
+    a.ws(&[sw(0, 12, 0), addi(26, 26, 1), MRET]);
+    let image = a.finish();
+    for turbo in [false, true] {
+        for budget in [1_000_000u64, 1] {
+            let host = HostClock::default();
+            host.now.set(5_000_000_000);
+            let mut m = paced_idle_machine(&image, 10, turbo);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            m.set_paced_idle_policy(true, None);
+            // Run until the first `wfi` has retired, one call per `budget`.
+            let mut wait = None;
+            while m.irq_stats().wfi == 0 {
+                assert_eq!(m.run(budget), RunOutcome::MaxInstrs);
+                wait = m.take_idle_wait_nanos();
+            }
+            let label = alloc::format!("turbo={turbo} budget={budget}");
+            if budget == 1 {
+                // The call ended on the `wfi` itself, the interrupt not yet taken.
+                assert_eq!(x(&m, 26), 0);
+                assert!(m.clint.as_ref().unwrap().borrow().msip, "{label}");
+                assert_eq!(wait, None, "{label}: a wait with an interrupt deliverable");
+                let reads = host.reads.get();
+                assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+                assert_eq!(
+                    m.irq_stats().int.iter().sum::<u64>(),
+                    1,
+                    "{label}: taken at once"
+                );
+                assert_eq!(
+                    host.reads.get(),
+                    reads,
+                    "{label}: no wake accounting: nobody slept"
+                );
+            } else {
+                // The same call went on: the interrupt was taken, the handler ran, and the wait
+                // that ended the call is the second `wfi`'s, with the timer 10 s away.
+                assert_eq!(x(&m, 26), 1, "{label}: handled within the call");
+                assert_eq!(m.irq_stats().wfi, 2, "{label}");
+                assert!(
+                    wait.is_some_and(|ns| ns > 9_000_000_000),
+                    "{label}: {wait:?}"
+                );
+                // The host clock was read when the clock was selected and once per `wfi`: the
+                // guest that went straight on had not slept, so no wake was accounted for.
+                assert_eq!(host.reads.get(), 3, "{label}");
+            }
+        }
+    }
+
+    // (b) A device (the UART's scratch register) written in the `wfi`'s own block.
+    let mut a = Asm::new();
+    a.la_label(6, "handler");
+    a.w(csrrw(0, MTVEC, 6));
+    a.la(11, UART);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&li32(20, 100_000_000));
+    a.ws(&[ld(5, 14, 0), add(5, 5, 20), sd(5, 13, 0)]);
+    a.ws(&[addi(7, 0, 0x80), csrrs(0, MIE, 7)]);
+    a.ws(&[addi(7, 0, 0x8), csrrs(0, MSTATUS, 7)]);
+    a.ws(&[sb(4, 11, 7), WFI]);
+    a.label("loop");
+    a.ws(&[addi(19, 19, 1), WFI]);
+    a.jal(0, "loop");
+    a.org(BASE + 0x400);
+    a.label("handler");
+    a.w(MRET);
+    let image = a.finish();
+    for turbo in [false, true] {
+        let cfg = Cfg {
+            uart: true,
+            ..Cfg::m_mode(10)
+        };
+        let run_to_first_wait = |yield_to_host: bool| {
+            let host = HostClock::default();
+            host.now.set(5_000_000_000);
+            let mut m = machine(&cfg, &image, turbo);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            m.set_paced_idle_policy(yield_to_host, None);
+            assert_eq!(m.run(60), RunOutcome::MaxInstrs);
+            m
+        };
+        let mut m = run_to_first_wait(true);
+        assert_eq!(
+            m.irq_stats().wfi,
+            2,
+            "turbo={turbo}: not at the wfi after the device write"
+        );
+        assert_eq!(x(&m, 19), 1);
+        assert!(
+            m.take_idle_wait_nanos().is_some(),
+            "turbo={turbo}: at the next one"
+        );
+        // The device write is what holds the first wait back: without it the first `wfi` yields.
+        let control = run_to_first_wait(false);
+        assert_eq!(
+            control.irq_stats().retired,
+            60,
+            "the control spins through its budget"
+        );
+    }
+}
+
+/// The line between a guest that only went round its idle loop and one that worked is
+/// `IDLE_SPIN_INSTRS` retirements between two consultations, exactly: at the threshold the
+/// host time in between is waiting time (kept in full); one more and it is busy time (bounded).
+#[test]
+fn paced_idle_spin_threshold_is_exact() {
+    for turbo in [false, true] {
+        // One pass is `wfi`, `addi x19`, `pad` more `addi`s and the `jal`: pad + 3 retirements.
+        for (pad, worked) in [
+            (IDLE_SPIN_INSTRS as usize - 4, false), // 2047
+            (IDLE_SPIN_INSTRS as usize - 3, false), // 2048: still waiting
+            (IDLE_SPIN_INSTRS as usize - 2, true),  // 2049: worked
+        ] {
+            let label = alloc::format!("turbo={turbo} pass={} retirements", pad + 3);
+            let host = HostClock::default();
+            host.now.set(1_000_000_000);
+            let image = paced_wake_image(1_000_000_000, 1_000_000_000, 0, pad);
+            let mut m = paced_idle_machine(&image, 64, turbo);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            m.set_paced_idle_policy(true, Some(0));
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert!(
+                m.take_idle_wait_nanos().is_some(),
+                "{label}: at the first wfi"
+            );
+            let (t0, r0) = (mtime_of(&m), m.irq_stats().retired);
+            // One second of host time, then exactly one pass of the idle loop.
+            host.now.set(host.now.get() + 1_000_000_000);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert_eq!(m.irq_stats().retired - r0, pad as u64 + 3, "{label}");
+            let moved = mtime_of(&m) - t0;
+            if worked {
+                assert!(
+                    moved < 100,
+                    "{label}: busy time, bound 0: moved {moved} ticks"
+                );
+            } else {
+                assert!(
+                    moved >= 10_000_000,
+                    "{label}: waiting time in full: moved {moved} ticks"
+                );
+            }
+        }
+    }
+}
+
+/// The policy and the clock can be selected in either order and at any point of a run: the
+/// bound reaches a pacer that already exists, and selecting the clock starts a new interval for
+/// the worked/waited decision.
+#[test]
+fn paced_idle_policy_and_clock_in_either_order_and_mid_run() {
+    const FAR: u64 = 1 << 40;
+    let image = paced_idle_image(2000, 0, 100, 2000);
+    for turbo in [false, true] {
+        // (a) The bound handed to an existing pacer: clock first, then a zero bound.
+        for policy_first in [false, true] {
+            let host = HostClock::default();
+            host.now.set(1_000_000_000);
+            let mut m = paced_idle_machine(&image, 1, turbo);
+            if policy_first {
+                m.set_paced_idle_policy(true, Some(0));
+                m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                    .unwrap();
+            } else {
+                m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                    .unwrap();
+                m.set_paced_idle_policy(true, Some(0));
+            }
+            while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+                assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+            }
+            let before = mtime_of(&m);
+            m.clint.as_ref().unwrap().borrow_mut().mtimecmp = before + FAR;
+            host.now.set(host.now.get() + 10_000_000_000);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            assert_eq!(
+                mtime_of(&m),
+                before + 1,
+                "turbo={turbo} policy_first={policy_first}: a zero bound after 8,000 busy instructions"
+            );
+        }
+        // (b) The clock selected after the busy stretch: the stretch before the selection is
+        // not the pacer's business, so the first consultation counts as waiting and the host
+        // time since the selection is kept in full even with a zero bound.
+        let host = HostClock::default();
+        host.now.set(1_000_000_000);
+        let mut m = paced_idle_machine(&image, 1, turbo);
+        m.set_paced_idle_policy(true, Some(0));
+        while crate::bus::Bus::load32(&mut m.bus, m.hart.regs.pc).unwrap() != WFI {
+            assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+        }
+        assert!(m.irq_stats().retired > IDLE_SPIN_INSTRS);
+        m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+            .unwrap();
+        let before = mtime_of(&m);
+        m.clint.as_ref().unwrap().borrow_mut().mtimecmp = before + FAR;
+        host.now.set(host.now.get() + 3_000_000_000);
+        assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+        assert_eq!(
+            mtime_of(&m),
+            before + 30_000_000,
+            "turbo={turbo}: three seconds since the clock was selected"
+        );
+    }
+}
+
+/// A waiting guest can also be woken without a trap: an enabled interrupt becomes pending while
+/// interrupts are globally masked, and the `wfi` simply returns. The slept time is on the clock
+/// — and in the `time` CSR the guest reads next — before its next instruction runs.
+#[test]
+fn paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads() {
+    const SLEPT_NS: u64 = 5_000_000_000;
+    let mut a = Asm::new();
+    a.la(12, CLINT);
+    a.la(13, CLINT + 0x4000);
+    a.la(14, CLINT + 0xBFF8);
+    a.ws(&li32(20, 1_000_000_000));
+    a.ws(&[ld(5, 14, 0), add(5, 5, 20), sd(5, 13, 0)]);
+    // MSIE and MTIE on in `mie`; `mstatus.MIE` stays off, so nothing is ever taken.
+    a.ws(&[addi(7, 0, 0x88), csrrs(0, MIE, 7)]);
+    a.w(WFI);
+    a.ws(&[csrrs(25, TIME, 0), ld(27, 14, 0), addi(19, 19, 1)]);
+    a.w(JDOT);
+    let image = a.finish();
+    for turbo in [false, true] {
+        for bound in [Some(50_000_000u64), None] {
+            let label = alloc::format!("turbo={turbo} bound={bound:?}");
+            let host = HostClock::default();
+            host.now.set(40_000_000_000);
+            let mut m = paced_idle_machine(&image, 10, turbo);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            m.set_paced_idle_policy(true, bound);
+            host.now.set(host.now.get() + 1_000_000_000);
+            assert_eq!(m.run(1_000), RunOutcome::MaxInstrs);
+            assert!(m.take_idle_wait_nanos().is_some(), "{label}: waiting");
+            let t0 = mtime_of(&m);
+            host.now.set(host.now.get() + SLEPT_NS);
+            m.clint.as_ref().unwrap().borrow_mut().msip = true;
+            assert_eq!(m.run(3), RunOutcome::MaxInstrs);
+            assert_eq!(x(&m, 19), 1, "{label}: the guest went on past the wfi");
+            assert_eq!(m.irq_stats().int.iter().sum::<u64>(), 0, "{label}: no trap");
+            let slept = SLEPT_NS / NS_PER_TICK;
+            assert_eq!(
+                x(&m, 25),
+                t0 + slept,
+                "{label}: the time CSR at the next instruction"
+            );
+            assert!(x(&m, 27) >= t0 + slept, "{label}: and the CLINT register");
+        }
+    }
+}
+
+/// The wake accounting belongs to a wait the host took. A host that ignores the reported wait
+/// and simply calls again was not asleep on the guest's behalf: an interrupt it raises is taken
+/// with the guest's clock where the guest left it, and the host clock is not read for it.
+#[test]
+fn paced_idle_wake_is_only_accounted_for_a_wait_the_host_took() {
+    for turbo in [false, true] {
+        for taken in [true, false] {
+            let label = alloc::format!("turbo={turbo} taken={taken}");
+            let host = HostClock::default();
+            host.now.set(40_000_000_000);
+            let image = paced_wake_image(100_000_000, 1_000_000_000, 0, 0);
+            let mut m = paced_idle_machine(&image, 10, turbo);
+            m.set_paced_icount_clock(alloc::boxed::Box::new(host.clone()))
+                .unwrap();
+            m.set_paced_idle_policy(true, Some(50_000_000));
+            // A second of host time first, so the guest's clock is the host's, not its own
+            // few retirements ahead of it.
+            host.now.set(host.now.get() + 1_000_000_000);
+            assert_eq!(m.run(1_000_000), RunOutcome::MaxInstrs);
+            if taken {
+                assert!(m.take_idle_wait_nanos().is_some());
+            }
+            let (t0, reads) = (mtime_of(&m), host.reads.get());
+            host.now.set(host.now.get() + 5_000_000_000);
+            m.clint.as_ref().unwrap().borrow_mut().msip = true;
+            // One work slot: the interrupt is taken; the handler has not run yet.
+            assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+            assert_eq!(m.irq_stats().int.iter().sum::<u64>(), 1, "{label}");
+            if taken {
+                assert_eq!(
+                    host.reads.get(),
+                    reads + 1,
+                    "{label}: one reading for the wake"
+                );
+                assert_eq!(mtime_of(&m), t0 + 50_000_000, "{label}: five seconds slept");
+            } else {
+                assert_eq!(host.reads.get(), reads, "{label}: no reading");
+                assert_eq!(
+                    mtime_of(&m),
+                    t0,
+                    "{label}: the clock is where the guest left it"
+                );
+            }
         }
     }
 }
