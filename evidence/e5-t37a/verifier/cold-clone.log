@@ -1,0 +1,89 @@
+cold clone (sparse) at e4599fe73a8ec7d616e521f8dbfac464ec0e1e6f, tracked changes=0
+env passed to every command: HOME PATH TERM 
+$ cargo test -p wasm-vm-core --lib paced_idle
+test time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not ... ok
+test paced_idle_clock_tests::paced_selection_refuses_invalid_private_phase_before_sampling_or_replacing_policy ... ok
+test turbo_equivalence_tests::paced_idle_yield_stays_out_while_a_host_wake_is_outstanding ... ok
+test turbo_equivalence_tests::paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized ... ok
+test turbo_equivalence_tests::paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting ... ok
+test turbo_equivalence_tests::paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait ... ok
+test turbo_equivalence_tests::paced_idle_yield_leaves_the_retire_stream_unchanged ... ok
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.31s
+rc=0
+$ cargo test -p wasm-vm-core --lib
+test result: ok. 431 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.26s
+rc=0
+$ cargo build --release -p wasm-vm-cli
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 23s
+rc=0
+$ RELEASES=… bash tools/perf/oracle.sh target/release/wasm-vm target/cold-oracle && diff -r evidence/perf-overhaul/oracle-baseline target/cold-oracle/digests
+busybox-legacy   state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+diff rc=1 (1 with only the README line = identical digests)
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 2000000000 target/cold-turbo-2000000000
+turbo: exit 102, 24 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 31 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+rc=0
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 777777777 target/cold-turbo-777777777
+turbo: exit 102, 11 s, turbo: enabled=true entries=4698657 blocks=89681443 inline_ops=770096930 slow_ops=7553244 ops_per_entry=165.5 exits: horizon=293 budget=1554 boundary=4610770 trap=86040
+ordinary: exit 102, 13 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=d97496f20e00e7ac
+trace retired=777691269
+trace mode=retirement-records
+state sha256=e87de723492830b9acbf369ba104156eeefe43cc2d628e4ecba4de27c96a3df6
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=d97496f20e00e7ac
+trace retired=777691269
+trace mode=retirement-records
+state sha256=e87de723492830b9acbf369ba104156eeefe43cc2d628e4ecba4de27c96a3df6
+outcome=MaxInstrs
+EQUIVALENT (777777777 instructions)
+rc=0
+=== pre-task commit ee5582ac6, same clone, same budget (the claim: pure ICount behaves exactly as before) ===
+at ee5582ac63c4a65ab0f1828786cd1251ab09e928
+    Finished `release` profile [optimized + debuginfo] target(s) in 1m 51s
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 777777777 target/cold-base-turbo-777777777
+turbo: exit 102, 11 s, turbo: enabled=true entries=4698657 blocks=89681443 inline_ops=770096930 slow_ops=7553244 ops_per_entry=165.5 exits: horizon=293 budget=1554 boundary=4610770 trap=86040
+ordinary: exit 102, 13 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=d97496f20e00e7ac
+trace retired=777691269
+trace mode=retirement-records
+state sha256=e87de723492830b9acbf369ba104156eeefe43cc2d628e4ecba4de27c96a3df6
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=d97496f20e00e7ac
+trace retired=777691269
+trace mode=retirement-records
+state sha256=e87de723492830b9acbf369ba104156eeefe43cc2d628e4ecba4de27c96a3df6
+outcome=MaxInstrs
+EQUIVALENT (777777777 instructions)
+rc=0
+BASE == HEAD at 777777777 instructions (evidence files byte-identical)
+COLD_DONE

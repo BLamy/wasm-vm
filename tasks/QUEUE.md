@@ -72,7 +72,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 5 — `epic-5-the-window`
 
-- [?] `0.387644` [E5-T37a](epic-5-the-window/E5-T37a-paced-idle-yield-core.md) — Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded *(deps: E4-T40b)*
+- [~] `0.387644` [E5-T37a](epic-5-the-window/E5-T37a-paced-idle-yield-core.md) — Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded *(deps: E4-T40b)*
 - [ ] `0.38765` [E5-T36](epic-5-the-window/E5-T36-replay-desktop-hardware-cursor.md) — Hardware cursor plane on the Replay desktop — pointer drawn by the host, instantly (planning parent) *(deps: E5-T34g)*
 - [-] `0.38766` [E5-T37](epic-5-the-window/E5-T37-idle-yield-and-pacing.md) — Stop spinning a host core while the desktop is idle (planning parent) *(deps: E5-T34g)*
 - [ ] `0.387661` [E5-T38](epic-5-the-window/E5-T38-decoded-cache-tooling-drift.md) — Repair or retire verification tooling that has drifted (E5-T26k cache test, latency favicon filter) *(deps: E4-T40d)*

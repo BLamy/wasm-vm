@@ -1,0 +1,61 @@
+# E5-T37a verifier sabotage, head e4599fe73. Each mutation applied to the implementation, then
+# `cargo test -p wasm-vm-core --lib -- paced_idle v37a_` (worker tests = the `paced_idle` filter,
+# verifier tests = evidence/e5-t37a/verifier/verifier_tests.rs minus the four *_REFUTES tests),
+# then `git checkout -- <file>`. None of these is one of the worker's three mutations.
+
+## S1 IDLE_SPIN_INSTRS 2048 -> 4096
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): killed by 1: v37a_idle_spin_threshold_is_exactly_2048_retirements
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S2 set_paced_icount_clock: drop idle_consult_retired = irqstats.retired
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): killed by 1: v37a_clock_selected_mid_run_and_bound_selected_after_the_clock
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S3 set_paced_idle_policy: bound not handed to the existing pacer
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): killed by 6: v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full, v37a_clock_selected_mid_run_and_bound_selected_after_the_clock, v37a_extreme_bounds_deadlines_and_a_backward_host_clock, v37a_idle_spin_threshold_is_exactly_2048_retirements, v37a_near_deadlines_after_work_do_not_stack_the_bound, v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S4 limit_deadline_after: anchor not moved when clamping
+   worker tests (7): KILLED by 2: paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+   verifier tests (15 that pass unmutated): killed by 3: v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full, v37a_extreme_bounds_deadlines_and_a_backward_host_clock, v37a_near_deadlines_after_work_do_not_stack_the_bound
+   restored: git status 'crates/core/src/time.rs' -> clean
+## S5 wfi_fast_forward: limited < d -> limited <= d
+   worker tests (7): KILLED by 1: paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait
+   verifier tests (15 that pass unmutated): killed by 6: v37a_bounded_lag_oversleep_controls, v37a_lockstep_m_mode_guest_inline_block_and_page_straddle, v37a_lockstep_random_programs_with_wfi, v37a_lockstep_sbi_timer_guest, v37a_near_deadlines_after_work_do_not_stack_the_bound, v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S6 run_capture_inner: run-start clear of idle_wait_ticks dropped
+   worker tests (7): KILLED by 2: paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait
+   verifier tests (15 that pass unmutated): killed by 2: v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full, v37a_wait_is_current_or_absent_and_every_call_makes_progress
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S7 wait measured from guest time (d - limited)
+   worker tests (7): KILLED by 1: paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait
+   verifier tests (15 that pass unmutated): killed by 3: v37a_bounded_lag_oversleep_controls, v37a_extreme_bounds_deadlines_and_a_backward_host_clock, v37a_wait_is_current_or_absent_and_every_call_makes_progress
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S8 .max(1) dropped
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): survived
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S9 set_paced_icount_clock: drop idle_wait_ticks = 0
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): killed by 1: v37a_wait_is_current_or_absent_and_every_call_makes_progress
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S10 set_paced_idle_policy: drop idle_wait_ticks = 0
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): killed by 1: v37a_wait_is_current_or_absent_and_every_call_makes_progress
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S11 worked: > IDLE_SPIN_INSTRS -> >=
+   worker tests (7): SURVIVED (all pass)
+   verifier tests (15 that pass unmutated): killed by 1: v37a_idle_spin_threshold_is_exactly_2048_retirements
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S12 rebase: bound not kept
+   worker tests (7): KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+   verifier tests (15 that pass unmutated): killed by 2: v37a_extreme_bounds_deadlines_and_a_backward_host_clock, v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy
+   restored: git status 'crates/core/src/time.rs' -> clean
+## S13 set_paced_icount_clock: bound not handed to the new pacer
+   worker tests (7): KILLED by 1: paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting
+   verifier tests (15 that pass unmutated): survived
+   restored: git status 'crates/core/src/lib.rs' -> clean
+## S14 take_idle_wait_nanos does not clear
+   worker tests (7): KILLED by 1: paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait
+   verifier tests (15 that pass unmutated): killed by 4: v37a_lockstep_m_mode_guest_inline_block_and_page_straddle, v37a_lockstep_random_programs_with_wfi, v37a_lockstep_sbi_timer_guest, v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline
+   restored: git status 'crates/core/src/lib.rs' -> clean
