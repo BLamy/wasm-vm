@@ -1,0 +1,12 @@
+== scratch copy with counters in handleUpdate (nothing else changed): what the three test files that import the sink put through the new hunk
+-- tests/e5-t36-cursor-hotspot.test.mjs
+APPEAR {"updates":24324,"previousNull":1060,"previousHidden":0,"previousShown":23264,"hideUpdates":0,"restarts":1060,"restartsWhileSettling":1058,"restartsWithQuestionInFlight":1}
+ℹ pass 33
+ℹ fail 0
+-- tests/e5-t15b-cursor-sink.test.mjs
+ℹ pass 5
+ℹ fail 0
+-- tests/e5-t15c-cursor-mode.test.mjs
+APPEAR {"updates":1207,"previousNull":5,"previousHidden":200,"previousShown":1002,"hideUpdates":201,"restarts":205,"restartsWhileSettling":205,"restartsWithQuestionInFlight":0}
+ℹ pass 6
+ℹ fail 0

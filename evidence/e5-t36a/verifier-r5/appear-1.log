@@ -1,0 +1,65 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.119,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 14,
+  "unknownImages": [],
+  "answersShown": 3,
+  "answersForUnknownImages": 0,
+  "shownWrong": []
+ },
+ "stats": [],
+ "shell": [
+  {
+   "cmd": "which swaymsg; ls /run/user/1000/ | tr '\\n' ' '",
+   "stdout": "/usr/bin/swaymsg\nreplay-chromium sway-ipc.1000.646.sock sway.log wayland-1 wayland-1.lock \n"
+  },
+  {
+   "cmd": "su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1",
+   "stdout": "[   {     \"success\": true   } ] rc=0\n\n"
+  },
+  {
+   "cmd": "su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1",
+   "stdout": "[   {     \"success\": true   } ] rc=0\n\n"
+  },
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.38 0.16 0.06 1/118 1125\n\n"
+  },
+  {
+   "cmd": "su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1",
+   "stdout": "[   {     \"success\": true   } ] rc=0\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /pr",
+   "stdout": "0.32 0.16 0.06 1/117 1284\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "P12 before": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  },
+  "P12 after": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  },
+  "P13 before": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  },
+  "P13 after": {
+   "none": 0,
+   "ok": 1,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}
+exit=0

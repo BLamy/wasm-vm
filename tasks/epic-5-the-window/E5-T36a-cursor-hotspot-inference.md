@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: implemented
+status: verified
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -1520,3 +1520,256 @@ too.) Demo page
   positions were acted on, not that a client finished changing the cursor; the 512-position
   history; the output size learnt from presented frames; nothing inferred without the paced
   clock.
+
+### 2026-11-26 — verifier (round 5) — VERDICT: verified
+
+Fresh session; I implemented nothing here and verified none of rounds 1-4. Head `2d954a4d9` (the
+claim's `dacbb42ee` plus one commit of claim, evidence and the mutant runner's fix). My predictions
+were written before I ran anything or opened round 5's evidence
+(`evidence/e5-t36a/verifier-r5/predictions.txt`; three addenda, each written before the runs it
+predicts); every file named below is in that directory unless its path says otherwise. Browser
+runs: the committed bundle from `tools/serve-dist.sh` on 8125 (`main.js`, `loader.js`,
+`idle-sleep.js`, `linux-worker-protocol.js`, `src/input/pointer.js`, both sink files and the wasm
+hash as `web/dist` at this head, which equals the sources: `orient.log`), Chrome 158.0.8127.88
+headless, the session restarted on legacy KMS as the worker's script does it. Instrumented runs
+change the sink file in memory only.
+
+Round 4's finding is fixed and I could not refute round 5's two rules. All three acceptance
+commands pass for me; round 4's unit sequences and its three browser plans show no wrong hotspot
+on this code; in 4000 random sessions through the real controller, with a guest whose kernel
+drops unchanged axes and whose cursor is hidden the way this device hides it, settling never ended
+with the guest's pointer off a remembered position and no answer was more than a pixel from the
+truth; and on the built page a compositor restarted under a settled page, and a compositor that
+hid its cursor and showed it again with its pointer elsewhere, both left the page settling and
+showing nothing until the next different position — where the same page with one line changed
+drew the arrow with (21,11) for 40 s.
+
+What I found is in the tests, not in the page: the test guest hides the cursor with an event this
+device cannot send, so the half of the new `handleUpdate` line that handles the device's own hide
+decides nothing in any test, and two more one-line mutants of the round's hunks that are behaviour
+pass the worker's tests. Why `verified` and not `needs-evidence`: no acceptance criterion and no
+sentence of the claim's rules is contradicted, every changed block is executed by the tests, the
+missing device-order proof exists now — recorded here, in unit and in a browser with a
+discriminating control — and the charter's remedy for "the tests would not say so if it stopped"
+after correctness and coverage hold is the SUITE step. I promoted three tests; with them the
+three mutants are noticed. Status `verified`.
+
+**Held**
+
+- P0: the worker's `evidence/e5-t36a/gates.log` names `dacbb42ee` (sha256 `76a846f60a8c…`),
+  `evidence/e5-t36a/browser/result.json` hashes `30344f8b0944…`, every evidence file is dated after
+  `dacbb42ee` (10:20:23); `dacbb42ee..2d954a4d9` touches nothing under `web/` or `tools/`; sources,
+  `web/dist` and the server agree (`orient.log`).
+- P1: the four cursor test files, 46 of 46 (`unit-acceptance.log`). P2: `bash
+  evidence/e5-t36a/gates.sh`: 654 tests, 626 pass, 28 fail, the same 28 names as before
+  (`gates.log`).
+- P3: the browser acceptance command passes (`browser/result.json`, sha256 `510a41113e24…`): 18
+  reads with the claim's 18 rows exactly (hotspot exact, plane + hotspot on the sent pixel in
+  all); settling after the first position, settled 65 ms after the second; 48 rest runs, none
+  wrong, known after two more positions in all (0.4 s after the stop: 15 / 1 / 1 of 16 per way;
+  1.9 s after: 48 of 48); in the 16 runs of the third way the kernel's plane did not move on the
+  return (the guest's pointer 3,2 from the pixel) and the page was still settling 0.7 s and 2.2 s
+  later; four of those runs step in x only, so their first acted position changes one axis;
+  timeline 158 changes, 79 answers, none wrong; no errors, no diagnostics.
+- P4, round 4's P9 at unit level (`unit-r5.mjs`, `unit-r5.log`, 17 checks, the real controller,
+  `harness-r5.mjs`): the pointer at rest on (400,640), relative motion (-7,-5), the same pixel
+  again — the guest's pointer stays at (393,635), the page is settling 5 s later and asks
+  nothing, three commits and 5 s of rest show nothing (round 4: (8,6) for the arrow, (11,13) for
+  a caret first met during relative motion); the same pixel once more changes nothing; (400,646),
+  one axis, is acted on and ends settling; the truth in the end. Controls (the return one pixel
+  away) right. Round 4's plans without the hook, the session's first position: settling
+  throughout, (1,1) once reported again. With round 4's rule put back (the worker's C43) the same
+  script shows (8,6), (11,13), (5,4) (`unit-r5-mutants.log`).
+- P5, round 4's P9 in the browser, its three plans and runner as they are: `kernel-drop-r5`
+  (sha256 `b4b447fa36ec…`): 8 of 8 trials left the kernel's plane where relative motion put it
+  (2 to 11 px from the mouse), the page was settling at both probes after the return in all 8
+  and showed nothing (the arrow settled before, N1, kept its (1,1)); 0 wrong in the timeline
+  (round 4: (4,3), (3,5), (12,6)). `nohook-a-r5` (`04d130f84794…`), `nohook-b-r5`
+  (`3817383e2c03…`): settling through the return, (1,1) after two more positions, 0 wrong (round
+  4: (4,3) for 7.2 s, (7,5) for 7.3 s).
+- P7, P8, round 4's P13: the worker's 88 mutants reproduce, 86 noticed, survivors C12 and C52,
+  the same verdict per mutant as `evidence/e5-t36a/mutants.log` (`mutants-worker-rerun.log`). Round
+  4's M23, M6 and M17b are noticed (`mutants-r5.log`). M1: the worker's C52 is not M1 — it notes
+  the size-carrying position before the restart AND again after it
+  (`evidence/e5-t36a/mutants.py:67`), which leaves the estimator's history as the sources leave it;
+  no test could tell it apart whatever the rule. A faithful M1 (noted before instead of after, so
+  forgotten) also passes the tests, and the worker's conclusion holds for it: round 4's S1
+  through this controller, by rows and by columns, never shows a wrong hotspot with or without it
+  (`m1-r5.log`: the only difference is 9 remembered positions for 10), and 2000 random sessions
+  with 4428 size changes give the same tallies to the last count (`fuzz-r5.log`). No longer
+  behaviour: true.
+- P9, settling ends only after a position that differs from the one before it at the same
+  output size, noted in the live epoch, and an idle reading after it — readings delivered by
+  hand (`unit-r5.log`): started over with the first reading, the poll wait or the second reading
+  in flight and the old readings then answered "idle": not settled, nothing in flight; the same
+  pixel twice: not asked; one axis: asked, and settled only at a count that moved on;
+  positions alternating between two output sizes (one pixel six times, six pixels, and four by
+  columns): never asked; a guest reset between two different positions: the second not asked; a hide and show
+  in the device's order while the second reading is in flight: not settled; a counter that goes
+  down, stays, is NaN, null, a string, Infinity, throws or alternates with null: settling, nothing
+  shown.
+- P10, P11, random sessions (`fuzz-r5.mjs`, `fuzz-r5.log`; 2000 sessions on each of two seeds):
+  749,026 events — 300,136 positions (53,890 the same pixel again, 47,718 one axis only), 14,632
+  mode changes with 14,467 relative motions, 8765 hooks at random moments, 8803 size changes,
+  4379 guest resets, 4369 client hides, 4371 pointer locks in the guest, 5114 compositor starts,
+  1036 cold boots, 38,207 positions dropped by the guest's kernel. 0 moves and 0 rest answers
+  reached the estimator while settling (72,023 and 3820 otherwise); 0 samples with the page not
+  settling, a cursor shown and the guest's pointer off every remembered position; 0 of 13,117
+  answers shown more than a pixel from the truth; known and right in the end in 4000 of 4000.
+  The same sessions tell the mutants apart by the premise check: round 4's rule (C43) 71
+  sessions, no start-over on an appearance (C53) 879, V1 696, V10 146.
+- P12, P13, P17 — my one novel attack: the round's second rule on the real guest, which the
+  worker's proof does not reach (its only appearance is the first image, before anything was
+  sent) and of which the claim says "I did not check". `appear-1` (sha256 `3727b60225af…`,
+  `appear-1-analysis.log`; plan `plan-r5-appear.json`, runner `browser-r5.mjs`):
+  - the device's hide is a cursor UPDATE with resource 0: three hides in the run (the compositor
+    exiting, `events.json` #61; sway's `seat seat0 hide_cursor`, #123 and #134), 3 updates and 0
+    moves with resource 0 among 253 cursor events. So a compositor restarted under a running
+    page IS reported gone in between;
+  - P12: the page settled, the arrow forgotten by the hook, the mouse parked on (120,110), the
+    session ended and started again: the new compositor's first image (#62, at the old plane
+    position, then the move to (99,99)) finds the page settling again; through 18 s of start-up
+    and 33 s after READY, with the plane at (99,99) and the mouse 21,11 from it inside the 64x64
+    image, nothing is shown. (120,116), one axis: the kernel's plane at (119,115), settled;
+    (1,1) after the next jumps;
+  - P13: `hide_cursor 1000` hides the cursor of the live compositor; `seat seat0 cursor set`
+    puts its pointer 8,6 from the mouse and — not as I guessed — shows the cursor at once; it
+    hides again and `hide_cursor 0` shows it again: settling each time, nothing shown through
+    5.2 s of terminal bursts (35 commits reporting the plane at (391,633) with the mouse on
+    (400,640)); (400,646): plane (399,645), (1,1);
+  - the control, `appear-V1` (`58df3c9e3c70…`): the same plan with one line of the served
+    controller changed in memory to `wasShown = this._descriptor !== null`. The page does not
+    start over; the arrow is drawn with (21,11) from t=89365 for 40.4 s (tip 20,10 from the
+    guest's pointer) and with (9,7) for 1.0 s and 8.9 s. Predicted before the run (addendum 3).
+- Carried forward, the code and evidence they rest on unchanged: the estimator-level results
+  of rounds 1-3 (`cursor-hotspot.js` is byte for byte round 4's), round 3's P4 for the channel
+  and round 4's readings of the limits that rest on `_restHotspot`, `_armHotspotRest`, the
+  question loop and `web/main.js` (untouched: busy guest, 150 ms, nothing known until reported
+  again, output size, no paced clock). Not carried, `notePointer` and `handleUpdate` having
+  changed, and re-done above: round 4's P3-P8. Round 3's refuting sequences, round 4's script
+  byte for byte on a harness adapted to the new rules (`r3-sequences/`): each of the 57 log lines
+  that shows an answer shows the truth — arrow (1,1), hand (9,4), caret (4,8) — and the same
+  rows hold as in round 4's own log. Regression, judged on the worker's files, written after `dacbb42ee`: click 261 and
+  262.1 ms, key echo 45 and 42.4 ms; demo page 127 of 127, no errors.
+
+**Found in the tests — closed by the promoted tests below**
+
+- P6, the mock. `LegacyKmsGuest.hide` (`web/tests/e5-t36-cursor-hotspot.test.mjs:431`, and `:1214`)
+  hides with a cursor-MOVE carrying resource 0. This device cannot send that: `move_cursor`
+  rejects a move while the cursor is hidden and `update_cursor` publishes the hide as a cursor
+  state with resource 0 (`crates/core/src/dev/virtio/gpu/mod.rs:1621`, `:1565`, `:485`), as the
+  three hides of `appear-1` arrived. Counted in a scratch copy (`appear-hunk-counts.log`): of the
+  24,324 updates the task's test file sends, none follows a hidden descriptor and none is a
+  hide; in `e5-t15c` 200 do, all while the page is settling anyway. So
+  `&& this._descriptor.kind !== "hidden"` in `cursor-controller.js:371` decides nothing in any
+  test: V1 (`wasShown = this._descriptor !== null`) passes all of them (`mutants-r5.log`), shows
+  (8,6) and (21,11) at rest in the device's order at unit level (`unit-r5-mutants.log`) and
+  (21,11) for 40 s on the built page (above). The code as written is right in each. No expected
+  value in the tests is computed by the code under test.
+- V10, an appearing cursor that does not start over while the page is already settling — passes
+  the worker's tests. A cold boot with two positions sent before any compositor, the guest busy
+  (the question in flight), the compositor shows its cursor at (100,100), the guest idles: the
+  sources stay settling and show nothing, V10 settles and shows (21,11) (`unit-r5.log`,
+  `unit-r5-mutants.log`). The worker's cold-boot test lets the guest idle before the compositor
+  starts.
+- V3a, `acted` without the width comparison — passes the worker's tests (their size changes are
+  800 to 801 rows; a width-only change is tested for the restart, C51, not for the question): the
+  position that carries a change of width then ends settling (`m1-r5.log`). Harmless on a pixel
+  grid that does not scale, as in my model; it is the rule's "pixels of two sizes do not
+  compare".
+- Not behaviour, survive with reason: V2 (a hide while nothing is shown also starts over), M1
+  and C52 (above), the worker's C12.
+
+**The claim's limits**
+
+- The fifth, restated: true for everything I could do from the page and to the guest. Its
+  bracket — a compositor restarted under a running page "is covered only if the device reports
+  the cursor gone in between, which I did not check" — is settled: it does (P12). What a user
+  can reach of this rule is a pointer lock in the guest's Chrome, which hides the cursor and
+  holds the pointer while positions keep arriving: at unit level, in the device's order, right
+  (`unit-r5.log`, P6b); not run with a real page in the guest.
+- "A pointer that returns to exactly the pixel it left stays unknown": true (P4, P5, and probes
+  c, d of every trial).
+- "Positions the page sends before it has presented a frame are not noted": true by
+  `web/main.js:921-926`; the fuzz's cold boots deliver such positions (1079 of them), none wrong.
+  Not reached in a browser.
+- Missing, on paper only: the rule takes every noted position for delivered. The loader drops
+  tablet frames without sending them while a session capture holds `gpuCaptureBusy`
+  (`web/loader.js:1668`, `:1674`) and the page notes them all the same; the last noted position
+  is then not where the pointer stands. It needs a paused guest and the capture API; I found no
+  control on the Replay desktop's page that reaches it and did not run it. For whoever puts
+  session capture next to a hardware cursor.
+
+**My predictions that failed**
+
+- P10's control: I wrote that round 4's rule and C53 would show wrong answers in the random
+  sessions. C53 and V1 do, in 4 sessions of 2000 each; C43 and V10 in none. The sessions rarely
+  leave a displaced pointer within an image's size of the mouse, under commits, at rest; it is
+  the premise check that tells the mutants apart (above), and the hand-worked sequences that
+  show the wrong hotspots.
+- `unit-r5.mjs`, first version (`unit-r5-first-version.log`): I expected (1,1) after two more
+  positions sent 16 ms apart. Both moves came before the 40 ms poll could end settling, so
+  nothing was known until the plane was reported again — the claim's limit, not a failure;
+  corrected in the script, not the product.
+- P13: I expected the warp to leave the cursor hidden and a wheel detent to show it; sway shows
+  it on the warp. And I wrote (393,635) for the pointer; the plane was at (391,633).
+- The clock times in the headers of addenda 1 and 2 were guesses a few minutes ahead of the
+  clock; the file says so. The order is as stated.
+
+**Coverage of the diff** (`coverage-unit-tests.txt`; the browser runs above)
+
+- `cursor-controller.js`, round 5's hunks: every block executed by the tests. `:563` and `:648`
+  are round 4's waived `:539` and `:624` (a timer firing after its wait ended; a diagnostic),
+  moved by the new lines. Nothing dead: the check round 4 named (`:512`) is gone. The
+  appearance in `handleUpdate` runs with an effect twice in the worker's tests (1058 of its 1060
+  runs there find the page settling already, as does the proof's only one, the first image) and
+  twice in `appear-1` (#62, #124).
+- `cursor-hotspot.js`, `web/main.js`, `web/loader.js`: untouched this round.
+
+**SUITE**
+
+- Promoted, appended to `web/tests/e5-t36-cursor-hotspot.test.mjs` under a header that says whose
+  they are: "the device hides with an update that carries resource 0: an image after it is an
+  appearance, and inference starts over" (a pointer lock in the guest and a restarted
+  compositor, the mouse parked inside the image; and a plain hide and show); "a cursor that
+  appears while the guest is being asked drops the question"; "the first position at another
+  output width is not one the guest is asked about, like one at another height". With them the
+  four files run 49 of 49 (`unit-acceptance-after-promotion.log`), the whole suite 657 tests with
+  the same 28 failing (`gates-after-promotion.log`), and V1, V10 and V3a are noticed
+  (`mutants-r5-after-promotion.log`). The worker's `hide()` and its comment are left as they are.
+- This commit touches `web/tests`, so the pre-commit build runs. Run by hand beforehand
+  (`dist-rebuild.log`): in `web/dist` only `tasks.json` and the cache name in `sw.js` change; both
+  wasm files and every shipped source are byte for byte the bundle the runs above were made on.
+- Not promoted: the random sessions (the worker's two random tests are of the same kind; mine
+  stay as a script with its harness) and the browser plan (the proof script is shared with
+  E5-T36c and the image changes with E5-T36b; `browser-r5.mjs` and `plan-r5-appear.json` are
+  there for the taking, the in-memory mutant included).
+
+Commands (repo root):
+`cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`;
+`bash evidence/e5-t36a/gates.sh`;
+`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/verifier-r5/browser`;
+in `evidence/e5-t36a/`: `node verifier-r4/browser-r4.mjs --plan verifier-r4/plan-r4-kernel-drop.json --out verifier-r5/kernel-drop-r5 --instrument`
+(likewise `plan-r4-nohook-a.json`, `plan-r4-nohook-b.json`); in `evidence/e5-t36a/verifier-r5/`:
+`node unit-r5.mjs` (and with `SINK_DIR=SCRATCH/sinks/<mutant>`); `node fuzz-r5.mjs 2000` (and
+`2000 0xbadc0de`, and with `SINK_DIR`); `node m1-r5.mjs`; `node r3-sequences/p3-r3-sequences.mjs`;
+`node make-plan-r5.mjs > plan-r5-appear.json`;
+`node browser-r5.mjs --plan plan-r5-appear.json --out appear-1 --instrument` (and
+`--out appear-V1 --instrument --mutant V1`); `node analyze-appear.mjs DIR`;
+`python3 mutants-r5.py SCRATCH`; `python3 make-mutant-dirs.py SCRATCH`;
+`python3 evidence/e5-t36a/mutants.py SCRATCH`; the four test files with `NODE_V8_COVERAGE` and round
+1's `coverage-uncovered.mjs`; `bash tools/build-web-dist.sh`.
+
+Not checked: a pristine clone (medium risk); the latency run and the demo page (taken from
+`browser-unchanged.json`, `browser-unchanged-2.json`, `demo-suite.json`); a pointer lock or a
+`cursor: none` page in the guest's own Chrome (sway's commands stood in for them; the lock at
+unit level only); a cold boot with the mouse over the canvas in a browser (unit and random
+sessions only: the proof restarts the session before it sends anything); how libinput classes
+the tablet (read from the device's capability map — absolute axes with mouse buttons — and seen
+only as "one changed axis moves the plane in both", four runs of the proof and twice in
+`appear-1`); a guest that drops or coalesces tablet frames (the device's queue drops its oldest
+frames beyond 85 pending; the last always survives; not provoked); a slowed host and a terminal
+flood (round 3's runs, not repeated on this code); round 3's two browser plans (round 4 held
+them; the proof's 48 rest runs are theirs); a real change of output size; E5-T37a's "a reported
+wait is always true"; a guest with more than one hart; a real mouse; Firefox and Safari; cursors
+above the CSS limit; E5-T36b's image.

@@ -1,0 +1,52 @@
+== orient 2026-11-26 11:02:34 EST head 2d954a4d91b9ff31e155e6d8caaca99a9ff2897b
+-- git diff --stat dacbb42ee..HEAD (names only)
+ evidence/e5-t36a/browser-unchanged-2.json          |  289 ++
+ evidence/e5-t36a/browser-unchanged-2.log           |   54 +
+ evidence/e5-t36a/browser-unchanged-2.png           |  Bin 0 -> 105561 bytes
+ .../e5-t36a/browser-unchanged-under-load-2.json    |  289 ++
+ .../e5-t36a/browser-unchanged-under-load-2.log     |   54 +
+ evidence/e5-t36a/browser-unchanged-under-load.json |  289 ++
+ evidence/e5-t36a/browser-unchanged-under-load.log  |   54 +
+ evidence/e5-t36a/browser-unchanged.json            |  289 ++
+ evidence/e5-t36a/browser-unchanged.log             |   54 +
+ evidence/e5-t36a/browser-unchanged.png             |  Bin 0 -> 105561 bytes
+ evidence/e5-t36a/browser.log                       |   56 +
+ evidence/e5-t36a/browser/desktop.png               |  Bin 0 -> 123606 bytes
+ evidence/e5-t36a/browser/result.json               | 4088 ++++++++++++++++++++
+ evidence/e5-t36a/demo-suite.json                   |   82 +
+ evidence/e5-t36a/demo-suite.png                    |  Bin 0 -> 114498 bytes
+ evidence/e5-t36a/gates.log                         |   62 +
+ evidence/e5-t36a/mutants.log                       |   90 +
+ evidence/e5-t36a/mutants.py                        |   10 +-
+ tasks/QUEUE.md                                     |    2 +-
+ .../E5-T36a-cursor-hotspot-inference.md            |  173 +-
+ 20 files changed, 5930 insertions(+), 5 deletions(-)
+-- under web/ or tools/ in dacbb42ee..HEAD:
+-- worker evidence hashes
+76a846f60a8cd526844279c1ed3768ad9540902b0c1184702f772bb344cb0f77  evidence/e5-t36a/gates.l
+30344f8b09445365a2e94d937e45d90795f3396555a01d82fe2bd5e00fe73e5f  evidence/e5-t36a/browser
+061af410b924e681a6d8cdbae3fba3c21e58d293afb3a0d36fbd4ffdc315bf12  evidence/e5-t36a/mutants
+-- gates.log head line(s) naming a commit
+1:head dacbb42ee1771f12858f8b49117c9d1ce0b91e5d; web changes outside the commit: 0
+59:failing now: 29 lines; failing before: 29 lines (each list has one header line)
+-- sources vs web/dist
+src/sink/cursor-controller.js src=e690f1e718339ce6 dist=e690f1e718339ce6 served=e690f1e718339ce6 SAME
+src/sink/cursor-hotspot.js src=27bd68f7637b56ad dist=27bd68f7637b56ad served=27bd68f7637b56ad SAME
+main.js src=a85c80a3fa9821d8 dist=a85c80a3fa9821d8 served=a85c80a3fa9821d8 SAME
+loader.js src=4cb3330a92db2d42 dist=4cb3330a92db2d42 served=4cb3330a92db2d42 SAME
+src/input/pointer.js src=5bc2716d074fe160 dist=5bc2716d074fe160 served=5bc2716d074fe160 SAME
+idle-sleep.js src=b6757ae16a489e32 dist=b6757ae16a489e32 served=b6757ae16a489e32 SAME
+linux-worker-protocol.js src=4a64ddb02362bef4 dist=4a64ddb02362bef4 served=4a64ddb02362bef4 SAME
+-- js vs ts
+controller js==ts
+hotspot js==ts
+-- git status of web/src web/dist tools (tracked changes)
+-- cursor-hotspot.js, main.js, loader.js unchanged since ac4b91a35:
+(empty above = unchanged)
+-- served pkg wasm vs dist
+pkg/wasm_vm_wasm_bg.wasm dist=19cd4d2dd27c3df2 served=19cd4d2dd27c3df2
+package.json
+snippets
+wasm_vm_wasm.d.ts
+wasm_vm_wasm.js
+wasm_vm_wasm_bg.wasm

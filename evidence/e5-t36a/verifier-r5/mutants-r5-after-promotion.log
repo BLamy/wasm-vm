@@ -1,0 +1,15 @@
+== my mutants against the test file WITH the three promoted tests (scratch copy), 2026-11-26 11:31:47
+V1 a hidden cursor, as the device reports one (update with resource 0), counts as shown: NOTICED by 1: the device hides with an update that carries resource 0: an image after it is an appearanc
+V2 any update while nothing is shown starts over, a hide included: SURVIVED
+V3a acted: the width of the output is not compared: NOTICED by 1: the first position at another output width is not one the guest is asked about, like one a
+V3b acted: the height of the output is not compared: NOTICED by 3: the first position at another output width is not one the guest is asked about, like one a
+V4 the last position sent is kept only while settling: NOTICED by 2: a position that repeats the tablet's last one moves nothing in the guest: it does not end 
+V5 acted: both axes must differ: NOTICED by 20: a change of guest output size restarts the evidence and keeps what is settled
+V10 an appearing cursor does not start over while the page is already settling: NOTICED by 1: a cursor that appears while the guest is being asked drops the question: it was about a po
+M1 the position that carries an output-size change is noted before the restart, not after (forgotten): SURVIVED
+C52w the worker's C52: noted before the restart and again after it: SURVIVED
+M23 the hook ends the page's settling: NOTICED by 1: a run from where the pointer rests after each way of starting over: the plane reported whe
+M6 a count that went down is an idle wait: NOTICED by 1: the page starts not knowing where the guest's pointer stands: no evidence until the guest 
+M17b a width-only change of output size does not restart: NOTICED by 1: a change of guest output size restarts the evidence and keeps what is settled
+TOTAL noticed 9, survived 3: ['V2 any update while nothing is shown starts over, a hide included', 'M1 the position that carries an output-size change is noted before the restart, not after (forgotten)', "C52w the worker's C52: noted before the restart and again after it"]
+-- scratch restored: yes

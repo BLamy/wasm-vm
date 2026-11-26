@@ -1,0 +1,67 @@
+appear-V1: ran true, mutant V1 (applied in memory), 158.0.8127.88, first restart 16.081 s, WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman
+errors [] diagnostics [] events 996
+step settle at t=58652.9: {"settled":true,"settleMs":157}
+step session-stop at t=64284.8: {"swayAfterStop":"rc=1"}
+step session-start at t=67631: {"restartSeconds":18.088,"swayEnv":"WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman"}
+sh  which swaymsg; ls /run/user/1000/ | tr '\n' ' '
+    -> /usr/bin/swaymsg
+replay-chromium sway-ipc.1000.625.sock sway.log wayland-1 wayland-1.lock
+sh  su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1) swaymsg seat seat0 hide_curs
+    -> [   {     "success": true   } ] rc=0
+sh  su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1) swaymsg seat seat0 cursor se
+    -> [   {     "success": true   } ] rc=0
+sh  (while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /p
+    -> 0.25 0.12 0.04 1/117 1103
+sh  su -s /bin/sh desktop -c 'SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -1) swaymsg seat seat0 hide_curs
+    -> [   {     "success": true   } ] rc=0
+sh  kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /proc/loadavg
+    -> 0.37 0.15 0.05 2/116 1270
+
+probes
+  t=  57093.1 P12  0: before any position was sent                      plane 99,99 sent - kind css inferred null settling true updates 19 moves 19
+  t=  64173.8 P12  a: parked on (120,110)                               plane 119,109 sent 120,110 kind css inferred [1,1] settling false updates 24 moves 24
+  t=  64230.8 P12  b: after the hook                                    plane 119,109 sent 120,110 kind css inferred null settling false updates 24 moves 24
+  t=  67577.3 P12  c: the compositor is gone                            plane none    sent 120,110 kind hidden inferred null settling false updates 25 moves 24
+  t=    73048 P12  starting +0.4 s                                      plane 99,99 sent 120,110 kind css inferred null settling false updates 28 moves 27
+  t=  74990.3 P12  starting +2.3 s                                      plane 99,99 sent 120,110 kind css inferred null settling false updates 30 moves 29
+  t=  76920.6 P12  starting +4.4 s                                      plane 99,99 sent 120,110 kind css inferred null settling false updates 30 moves 29
+  t=  78980.6 P12  starting +6.3 s                                      plane 99,99 sent 120,110 kind css inferred null settling false updates 30 moves 29
+  t=  80969.8 P12  starting +8.5 s                                      plane 99,99 sent 120,110 kind css inferred null settling false updates 30 moves 29
+  t=  83063.6 P12  starting +10.5 s                                     plane 99,99 sent 120,110 kind css inferred null settling false updates 30 moves 29
+  t=  85159.1 P12  starting +12.6 s                                     plane 99,99 sent 120,110 kind css inferred null settling false updates 31 moves 30
+  t=    87236 P12  starting +14.6 s                                     plane 99,99 sent 120,110 kind css inferred null settling false updates 35 moves 34
+  t=  89198.5 P12  starting +16.5 s                                     plane 99,99 sent 120,110 kind css inferred null settling false updates 42 moves 41
+  t=  90904.1 P12  starting +18.1 s (READY)                             plane 99,99 sent 120,110 kind css inferred [21,11] settling false updates 43 moves 42
+  t=  94085.5 P12  d: 3 s after READY                                   plane 99,99 sent 120,110 kind css inferred [21,11] settling false updates 44 moves 43
+  t=  99143.9 P12  e: 8 s after READY                                   plane 99,99 sent 120,110 kind css inferred [21,11] settling false updates 44 moves 43
+  t= 109359.9 P12  f: 18 s after READY                                  plane 99,99 sent 120,110 kind css inferred [21,11] settling false updates 44 moves 43
+  t= 124417.2 P12  g: 33 s after READY                                  plane 99,99 sent 120,110 kind css inferred [21,11] settling false updates 44 moves 43
+  t= 125974.6 P12  h: 1.5 s after (120,116), one axis                   plane 119,115 sent 120,116 kind css inferred [21,11] settling false updates 45 moves 44
+  t= 129032.8 P12  i: 4.5 s after (120,116)                             plane 119,115 sent 120,116 kind css inferred [21,11] settling false updates 45 moves 44
+  t= 138711.9 P13  a: 2.5 s after `hide_cursor 1000`, the mouse at rest plane none    sent 400,640 kind hidden inferred null settling false updates 49 moves 47
+  t= 139391.2 P13  b: after `cursor set 393 635`                        plane 391,633 sent 400,640 kind css inferred [9,7] settling false updates 51 moves 49
+  t= 142283.3 P13  c: bursts running                                    plane none    sent 400,640 kind hidden inferred null settling false updates 57 moves 54
+  t= 144083.6 P13  d: 0.7 s after `hide_cursor 0`                       plane 391,633 sent 400,640 kind css inferred [9,7] settling false updates 63 moves 60
+  t=   144990 P13  e: 0.7 s after one wheel detent                      plane 391,633 sent 400,640 kind css inferred [9,7] settling false updates 68 moves 65
+  t= 146569.5 P13  f: 2.2 s after the wheel                             plane 391,633 sent 400,640 kind css inferred [9,7] settling false updates 78 moves 75
+  t= 149628.8 P13  g: 5.2 s after the wheel                             plane 391,633 sent 400,640 kind css inferred [9,7] settling false updates 96 moves 93
+  t= 151185.6 P13  h: 1.5 s after (400,646), one axis                   plane 399,645 sent 400,646 kind css inferred [9,7] settling false updates 106 moves 103
+
+reads
+  t=61815.8 P12 before: arrow over the page body, the page settled: image arrow sent [380,640] plane 379,639 answer [1,1] settling false tip error [0,0] -> ok
+  t=132193.8 P12 after: arrow over the page body, after the restart: image arrow sent [420,600] plane 419,599 answer [1,1] settling false tip error [0,0] -> ok
+  t=135308.3 P13 before: arrow, before the hide: image arrow sent [400,640] plane 399,639 answer [1,1] settling false tip error [0,0] -> ok
+  t=154555.2 P13 after: arrow, after hide and show: image arrow sent [470,660] plane 469,659 answer [1,1] settling false tip error [0,0] -> ok
+
+timeline: {"rows":16,"unknownImages":[],"answersShown":6,"answersForUnknownImages":0,"shownWrong":[{"t":89365.5,"image":"arrow","shown":[21,11],"forMs":40432,"sent":[120,110]},{"t":139084.9,"image":"arrow","shown":[9,7],"forMs":1001,"sent":[400,640]},{"t":143340.5,"image":"arrow","shown":[9,7],"forMs":8864,"sent":[400,640]}]}
+
+cursor events: 130 updates, 127 moves; with resource 0: 3 updates, 0 moves; rejected: 0
+  hide #1: event 65 t=64768.5 U rid 0 at 0,0 (before it: event 63 M rid 9 at 119,109; settling false)
+  shown again: event 66 t=70513.8 U rid 11 at 119,109; settling after it false; then event 67 M at 99,99 settling false
+  hide #2: event 816 t=137107.8 U rid 0 at 0,0 (before it: event 814 M rid 14 at 399,639; settling false)
+  shown again: event 817 t=138860.2 U rid 13 at 399,639; settling after it false; then event 818 M at 391,633 settling false
+  hide #3: event 836 t=140081.6 U rid 0 at 0,0 (before it: event 835 M rid 14 at 391,633; settling false)
+  shown again: event 837 t=143339.4 U rid 13 at 391,633; settling after it false; then event 838 M at 391,633 settling false
+
+shown hotspot changes (H): t=59014 [1,1]; t=64230 null; t=89359.4 [21,11]; t=129793.6 null; t=129999 [1,1]; t=135361.8 null; t=139080.3 [9,7]; t=152198.9 null; t=152405.8 [1,1]
+questions 24 (restart 1, rest 23); conclusions true 15, false 9, null 0

@@ -1,0 +1,682 @@
+{
+  "task": "E5-T36a verifier round 4",
+  "probes": [
+    {
+      "label": "0: before any position was sent",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 63483.8,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 99,
+        "y": 99
+      },
+      "sent": null,
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "inferred": null,
+      "settling": true,
+      "moves": 38,
+      "updates": 38,
+      "pointer": {
+        "mode": "absolute",
+        "frames": 0,
+        "last": []
+      },
+      "idleSleeps": 680
+    },
+    {
+      "label": "b: after relative motion",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 63991,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 513,
+        "y": 605
+      },
+      "sent": [
+        520,
+        610
+      ],
+      "css": {
+        "raw": "auto"
+      },
+      "inferred": null,
+      "settling": true,
+      "moves": 42,
+      "updates": 42,
+      "pointer": {
+        "mode": "relative",
+        "frames": 2,
+        "last": [
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          },
+          {
+            "device": "mouse",
+            "mode": "relative",
+            "events": [
+              [
+                2,
+                0,
+                -16
+              ],
+              [
+                2,
+                1,
+                -9
+              ]
+            ]
+          }
+        ]
+      },
+      "idleSleeps": 687
+    },
+    {
+      "label": "c: 0.7 s after the return",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 64825.5,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 513,
+        "y": 605
+      },
+      "sent": [
+        520,
+        610
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "inferred": null,
+      "settling": true,
+      "moves": 48,
+      "updates": 48,
+      "pointer": {
+        "mode": "absolute",
+        "frames": 3,
+        "last": [
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          },
+          {
+            "device": "mouse",
+            "mode": "relative",
+            "events": [
+              [
+                2,
+                0,
+                -16
+              ],
+              [
+                2,
+                1,
+                -9
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          }
+        ]
+      },
+      "idleSleeps": 696
+    },
+    {
+      "label": "d: 2.2 s after the return",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 66429.7,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 513,
+        "y": 605
+      },
+      "sent": [
+        520,
+        610
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "inferred": null,
+      "settling": true,
+      "moves": 58,
+      "updates": 58,
+      "pointer": {
+        "mode": "absolute",
+        "frames": 3,
+        "last": [
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          },
+          {
+            "device": "mouse",
+            "mode": "relative",
+            "events": [
+              [
+                2,
+                0,
+                -16
+              ],
+              [
+                2,
+                1,
+                -9
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          }
+        ]
+      },
+      "idleSleeps": 718
+    },
+    {
+      "label": "e: two more positions (+6,+2 each), at rest",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 67610.9,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 531,
+        "y": 613
+      },
+      "sent": [
+        532,
+        614
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "inferred": [
+        1,
+        1
+      ],
+      "settling": false,
+      "moves": 68,
+      "updates": 68,
+      "pointer": {
+        "mode": "absolute",
+        "frames": 5,
+        "last": [
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13478
+              ],
+              [
+                3,
+                1,
+                25087
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13632
+              ],
+              [
+                3,
+                1,
+                25169
+              ]
+            ]
+          }
+        ]
+      },
+      "idleSleeps": 732
+    },
+    {
+      "label": "g: 5 s at rest after them",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 71670.9,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 531,
+        "y": 613
+      },
+      "sent": [
+        532,
+        614
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "inferred": [
+        1,
+        1
+      ],
+      "settling": false,
+      "moves": 93,
+      "updates": 93,
+      "pointer": {
+        "mode": "absolute",
+        "frames": 5,
+        "last": [
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13324
+              ],
+              [
+                3,
+                1,
+                25005
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13478
+              ],
+              [
+                3,
+                1,
+                25087
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13632
+              ],
+              [
+                3,
+                1,
+                25169
+              ]
+            ]
+          }
+        ]
+      },
+      "idleSleeps": 776
+    },
+    {
+      "label": "f: after two jumps elsewhere",
+      "trial": "H0 no hook, session start, bursts, P=520,610 d=-14,-8",
+      "t": 73359.3,
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 549,
+        "y": 659
+      },
+      "sent": [
+        550,
+        660
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "inferred": [
+        1,
+        1
+      ],
+      "settling": false,
+      "moves": 101,
+      "updates": 101,
+      "pointer": {
+        "mode": "absolute",
+        "frames": 7,
+        "last": [
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                13632
+              ],
+              [
+                3,
+                1,
+                25169
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                14860
+              ],
+              [
+                3,
+                1,
+                23367
+              ]
+            ]
+          },
+          {
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              [
+                3,
+                0,
+                14092
+              ],
+              [
+                3,
+                1,
+                27053
+              ]
+            ]
+          }
+        ]
+      },
+      "idleSleeps": 786
+    }
+  ],
+  "ui": {
+    "present": true,
+    "disabled": false,
+    "text": "Pointer: absolute",
+    "rect": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "display": "block",
+    "visibility": "visible",
+    "hiddenBy": "div#ide-term-pane.ide-term-pane",
+    "desktopMode": "absolute",
+    "body": ""
+  },
+  "instrumented": true,
+  "plan": "plan-r4-nohook-b.json",
+  "chrome": "Google Chrome",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [],
+  "shell": [
+    {
+      "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.28 0.08 0.02 1/118 591\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid) 2>/dev/null; rm -f /tmp/v-load.pid; sleep 1; cat /proc/loadavg",
+      "stdout": "0.23 0.07 0.02 1/117 728\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "ui",
+      "t": 28036.4
+    },
+    {
+      "op": "idle",
+      "t": 28037.5,
+      "idleAfterSeconds": 32.162,
+      "reached": true
+    },
+    {
+      "op": "sh",
+      "t": 60199.9
+    },
+    {
+      "op": "wait",
+      "t": 61481.3
+    },
+    {
+      "op": "probe",
+      "t": 63483
+    },
+    {
+      "op": "jump",
+      "name": "the session's first position",
+      "to": [
+        520,
+        610
+      ],
+      "t": 63539.3
+    },
+    {
+      "op": "mode",
+      "t": 63541.3
+    },
+    {
+      "op": "mouse",
+      "to": [
+        506,
+        602
+      ],
+      "t": 63542.4
+    },
+    {
+      "op": "wait",
+      "t": 63588.5
+    },
+    {
+      "op": "probe",
+      "t": 63990.5
+    },
+    {
+      "op": "mode",
+      "t": 64116.2
+    },
+    {
+      "op": "mouse",
+      "to": [
+        520,
+        610
+      ],
+      "t": 64117.1
+    },
+    {
+      "op": "wait",
+      "t": 64123
+    },
+    {
+      "op": "probe",
+      "t": 64825
+    },
+    {
+      "op": "wait",
+      "t": 64925.8
+    },
+    {
+      "op": "probe",
+      "t": 66429.1
+    },
+    {
+      "op": "evenrun",
+      "t": 66572.2
+    },
+    {
+      "op": "wait",
+      "t": 66607.8
+    },
+    {
+      "op": "probe",
+      "t": 67610.4
+    },
+    {
+      "op": "wait",
+      "t": 67668.3
+    },
+    {
+      "op": "probe",
+      "t": 71670.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        580,
+        570
+      ],
+      "t": 71746.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        550,
+        660
+      ],
+      "t": 72457.1
+    },
+    {
+      "op": "probe",
+      "t": 73358.9
+    },
+    {
+      "op": "sh",
+      "t": 73461.8
+    }
+  ],
+  "stats": [],
+  "instrumentedBytes": 33169,
+  "sessionRestartSeconds": 16.088,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 5,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 4,
+    "unknownImages": [],
+    "answersShown": 1,
+    "answersForUnknownImages": 0,
+    "shownWrong": []
+  },
+  "events": 227,
+  "errors": [],
+  "ran": true
+}

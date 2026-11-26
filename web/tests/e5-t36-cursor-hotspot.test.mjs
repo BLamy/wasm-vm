@@ -1538,3 +1538,134 @@ test("estimator failures become diagnostics, never a broken cursor", async () =>
   for (const reason of ["cursor-hotspot-pointer-error: np", "cursor-hotspot-error: ni", "cursor-hotspot-error: nm", "cursor-hotspot-error: nr",
     "cursor-hotspot-error: fg", "cursor-hotspot-error: rs", "cursor-hotspot-error: rt"]) assert.ok(diagnostics.includes(reason), reason);
 });
+
+// ---------------------------------------------------------------------------------------------
+// Promoted by the round-5 verifier (evidence/e5-t36a/verifier-r5/). What these pin was verified
+// there against the device's own event order and, for the first, on the built page:
+//
+//   * This device hides its cursor with a cursor UPDATE that carries resource 0
+//     (crates/core/src/dev/virtio/gpu/mod.rs: `update_cursor` publishes the state for resource 0,
+//     `move_cursor` rejects a move while the cursor is hidden). A cursor-move with resource 0 —
+//     `LegacyKmsGuest.hide` above — is an event it cannot send. Recorded on the Replay desktop:
+//     the compositor going away, and `seat seat0 hide_cursor`, each arrived as an update with
+//     resource 0 (verifier-r5/appear-1/events.json #61, #123, #134), never as a move.
+//   * With the one line `wasShown = this._descriptor !== null` (a hidden cursor counting as
+//     shown) every test above still passed, and the built page drew the arrow with (21,11) for
+//     40 s after its compositor was restarted and with (9,7) after a hide and a show
+//     (verifier-r5/appear-V1/); the committed code showed nothing wrong in the same plan.
+//   * A cursor that appears while the guest is being asked about a position sent before its
+//     compositor existed must drop that question, and a position at another output WIDTH is
+//     not one the guest is asked about: mutants V10 and V3a of verifier-r5/mutants-r5.py.
+// ---------------------------------------------------------------------------------------------
+
+// The device's hide: an update with resource 0 at the plane's place, no pixels.
+function deviceHide(r) {
+  assert.ok(r.controller.handle({ type: "cursor-update",
+    state: { resourceId: 0, hotX: 0, hotY: 0, pos: { scanoutId: 0, x: r.guest.plane.x, y: r.guest.plane.y } },
+    format: null, resourceWidth: 0, resourceHeight: 0, pixels: new Uint32Array(0) }));
+  r.guest.image = null;
+  assert.equal(r.controller.snapshot().kind, "hidden");
+}
+// Positions the guest's kernel takes while nobody moves a pointer for them (no compositor yet, or
+// a client's pointer lock): the tablet holds the last one, the pointer stays where it is.
+function takenByTheKernelOnly(r, positions) {
+  for (const [x, y] of positions) r.send(x, y);
+  r.guest.queue.length = 0;
+  r.guest.tablet = { x: positions.at(-1)[0], y: positions.at(-1)[1] };
+}
+
+test("the device hides with an update that carries resource 0: an image after it is an appearance, and inference starts over", async () => {
+  for (const scenario of ["a client's pointer lock in the guest", "the compositor restarted under the page"]) {
+    const r = await rig({ size: 64 });
+    r.go("arrow", 300, 600); r.go("arrow", 400, 640);
+    assert.deepEqual(inferred(r.controller), [1, 1]);
+    r.controller.resetHotspotInference();              // the arrow not settled: any shape not met yet
+    deviceHide(r);
+    assert.equal(r.controller.snapshot().hotspotSettling, false, `${scenario}: hiding changes nothing by itself`);
+    // While nothing is shown the mouse moves on and parks; the guest's pointer does not follow.
+    const lock = scenario.startsWith("a client");
+    const parked = lock ? [407, 645] : [120, 110];
+    takenByTheKernelOnly(r, lock ? [[420, 650], parked] : [[300, 300], parked]);
+    await r.rest();
+    assert.equal(r.controller.snapshot().hotspotSettling, false, scenario);
+    // The cursor is shown again where the guest's pointer is: where the lock held it, or where a
+    // new compositor puts it — (100,100) on the Replay desktop. The mouse is within the image.
+    if (lock) r.guest.show("arrow", 400, 640); else r.guest.show("arrow", 100, 100);
+    assert.equal(r.controller.snapshot().hotspotSettling, true, `${scenario}: shown again, the page does not know where that pointer stands`);
+    for (let i = 0; i < 3; i += 1) { r.guest.commit(); await r.t.pass(100); }
+    await r.t.pass(5000);
+    assert.equal(inferred(r.controller), null, `${scenario}: the mouse's pixel minus the plane is not the arrow's hotspot`);
+    assert.equal(r.t.armed.size, 0, `${scenario}: nothing to ask the guest about`);
+    // The mouse on its pixel again reaches nobody; its first move does.
+    r.send(parked[0], parked[1]); r.guest.pump();
+    assert.deepEqual(r.guest.pointer, lock ? { x: 400, y: 640 } : { x: 100, y: 100 }, scenario);
+    await r.t.pass(1000);
+    assert.equal(r.controller.snapshot().hotspotSettling, true, scenario);
+    r.send(parked[0], parked[1] + 6); r.guest.pump();
+    await r.rest();
+    assert.equal(r.controller.snapshot().hotspotSettling, false, scenario);
+    r.send(parked[0] + 60, parked[1] + 40); r.guest.pump();
+    await r.rest();
+    assert.deepEqual(inferred(r.controller), [1, 1], scenario);
+    assert.deepEqual(hotspotOf(r.target.style.cursor), [1, 1], scenario);
+  }
+  // Hidden and shown again with the pointer following the mouse: what was settled stays with
+  // its image, the rest starts over.
+  const h = await rig({ size: 64 });
+  h.go("arrow", 400, 300); h.go("arrow", 520, 360); h.go("hand", 600, 420);
+  deviceHide(h);
+  h.send(700, 500); h.guest.pump();
+  h.guest.show("hand");
+  assert.equal(h.controller.snapshot().hotspotSettling, true);
+  h.guest.show("arrow");
+  assert.deepEqual(inferred(h.controller), [1, 1], "a settled hotspot belongs to its image");
+  h.guest.show("hand");
+  h.send(760, 540); h.guest.pump();
+  assert.equal(inferred(h.controller), null, "not evidence yet");
+  await h.rest();
+  h.send(820, 500); h.guest.pump();
+  await h.rest();
+  assert.deepEqual(inferred(h.controller), [9, 4]);
+});
+
+test("a cursor that appears while the guest is being asked drops the question: it was about a pointer that did not exist", async () => {
+  // A cold boot with the mouse moving over the canvas: two positions before any compositor, the
+  // guest busy starting (so the question stays in flight), then the compositor shows its cursor
+  // at (100,100) and the guest idles. "Idle since the second position" says nothing about a
+  // pointer that position never moved.
+  const r = await rig({ settle: false, size: 64 });
+  r.guest.busy = true;
+  takenByTheKernelOnly(r, [[300, 300], [120, 110]]);
+  await r.t.pass(500);
+  assert.equal([...r.t.armed].filter((timer) => timer.ms === HOTSPOT_POLL_MS).length, 1, "the guest is being asked");
+  r.guest.show("arrow", 100, 100);
+  assert.equal(r.controller.snapshot().hotspotSettling, true);
+  r.guest.busy = false;
+  await r.t.pass(HOTSPOT_CAUGHT_UP_TIMEOUT_MS + 500);
+  assert.equal(r.controller.snapshot().hotspotSettling, true, "the guest idled; the question was over when the cursor appeared");
+  assert.equal(r.t.armed.size, 0);
+  for (let i = 0; i < 3; i += 1) { r.guest.commit(); await r.t.pass(100); }
+  await r.t.pass(5000);
+  assert.equal(inferred(r.controller), null, "(120,110) minus the plane (99,99) is not the arrow's hotspot");
+  r.send(126, 112); r.guest.pump();
+  await r.rest();
+  assert.equal(r.controller.snapshot().hotspotSettling, false);
+  r.guest.commit();
+  await r.rest();
+  assert.deepEqual(inferred(r.controller), [1, 1]);
+});
+
+test("the first position at another output width is not one the guest is asked about, like one at another height", async () => {
+  for (const [label, size] of [["width", [1281, 800]], ["height", [1280, 801]]]) {
+    const r = await rig({ settle: false });
+    r.guest.show("arrow", 640, 400);
+    r.controller.notePointer(100, 100, 1280, 800);
+    r.controller.notePointer(110, 104, ...size);      // another pixel, but of another output size
+    await r.t.pass(10 * HOTSPOT_POLL_MS);
+    assert.equal(r.t.armed.size, 0, `${label}: not asked`);
+    assert.equal(r.controller.snapshot().hotspotSettling, true, label);
+    r.controller.notePointer(120, 104, ...size);      // the next one at that size is
+    await r.t.pass(2 * HOTSPOT_POLL_MS);
+    assert.equal(r.controller.snapshot().hotspotSettling, false, label);
+  }
+});
