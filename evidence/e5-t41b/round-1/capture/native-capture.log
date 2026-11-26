@@ -1,0 +1,37 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578773] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.89
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.97
+REPLAY_TERMINAL_MAPPED uptime=2.01
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"0BC888B39CE195C9F631D6B40285F002","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"EC9F75060D1533CCE88699FB2FAAF890"}]}} uptime=4.61
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"313360AB91A41F22A9998E92FFE1F45C"} uptime=4.95
+REPLAY_RENDERER_SANDBOX pid=/proc/192 NoNewPrivs=1 Seccomp=2 NSpid=	192	9	1 uptime=5.09
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.15
+REPLAY_CHROME_MAPPED uptime=5.32 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.33 mem_hwm_kib=170444
+REPLAY_NODE_SNAPSHOT bytes=6754398 uptime=9.74
+sleep 30 && sync && echo 1 > /proc/sys/vm/drop_caches && /u
+sr/local/bin/node -e 0 && z=$(($(awk '/^MemFree:/{print int($2/1024)}' /proc/mem
+info) - 48)) && [ $z -gt 0 ] && dd if=/dev/zero of=/dev/null bs=${z}M count=1 2>
+/dev/null && echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f
+1 /proc/uptime) || poweroff -f
+REPLAY_DESKTOP_COMPACTED zeroed_mib=554 uptime=43.68
+root@replay-desktop# [6nwasm-vm: snapshot (346123023 bytes) written to target/e5-t41b/work/replay-desktop-ready.snap at trigger "REPLAY_DESKTOP_COMPACTED zeroed_mib="
+wasm-vm: snapshot complete — exiting

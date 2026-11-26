@@ -33,9 +33,12 @@ APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 
 #   2. Compaction. A RAM snapshot stores every page that is not zero, including pages the
 #      kernel has freed (their old contents stay) and page cache nobody maps; building Node's
 #      snapshot leaves about 75 MiB of both. So: drop the unmapped page cache (everything is
-#      re-readable from the read-only root), start node once (the part of its binary a start
-#      touches is cached again, and the first `node` of a resumed session reads nothing from
-#      disk), then hand nearly all free memory to one `dd` that only zeroes it and exits.
+#      re-readable from the read-only root), run node the ways a user's first command does
+#      (a bare start, printing, -p, -e code that loads fs/os/path and starts a child, a
+#      script file and an ES module): the
+#      parts of its binary those touch are cached again, and the first `node` of a resumed
+#      session reads nothing from disk — `node -e 0` alone left 576 KiB of a printing start
+#      uncached (E5-T41b's verifier), then hand nearly all free memory to one `dd` that only zeroes it and exits.
 #      48 MiB stay untouched so nothing else is pushed out meanwhile.
 #
 # The marker is typed as two adjacent shell words, so the console's echo of the command line
@@ -45,7 +48,7 @@ APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 
 NODE_MARKER="REPLAY_NODE_SNAPSHOT bytes="
 SETTLE_GUEST_SECONDS="${REPLAY_DESKTOP_SETTLE_SECONDS:-30}"
 TRIGGER="REPLAY_DESKTOP_COMPACTED zeroed_mib="
-COMPACT_COMMAND="sleep $SETTLE_GUEST_SECONDS && sync && echo 1 > /proc/sys/vm/drop_caches && /usr/local/bin/node -e 0 && z=\$((\$(awk '/^MemFree:/{print int(\$2/1024)}' /proc/meminfo) - 48)) && [ \$z -gt 0 ] && dd if=/dev/zero of=/dev/null bs=\${z}M count=1 2>/dev/null && echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=\$z uptime=\$(cut -d' ' -f1 /proc/uptime) || poweroff -f"
+COMPACT_COMMAND="sleep $SETTLE_GUEST_SECONDS && sync && echo 1 > /proc/sys/vm/drop_caches && /usr/local/bin/node -e 0 && /usr/local/bin/node -e 'console.log(1)' >/dev/null && /usr/local/bin/node -p process.version >/dev/null && /usr/local/bin/node -e 'const cp=require(\"child_process\"),fs=require(\"fs\"),os=require(\"os\"),path=require(\"path\");fs.readFileSync(\"/etc/hostname\");cp.execFileSync(process.execPath,[\"-p\",\"6*7\"]);console.log(os.arch(),path.sep)' >/dev/null && echo 'console.log(1)' > /tmp/warm.js && echo 'import os from \"node:os\"; console.log(os.arch())' > /tmp/warm.mjs && /usr/local/bin/node /tmp/warm.js >/dev/null && /usr/local/bin/node /tmp/warm.mjs >/dev/null && rm -f /tmp/warm.js /tmp/warm.mjs && z=\$((\$(awk '/^MemFree:/{print int(\$2/1024)}' /proc/meminfo) - 48)) && [ \$z -gt 0 ] && dd if=/dev/zero of=/dev/null bs=\${z}M count=1 2>/dev/null && echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=\$z uptime=\$(cut -d' ' -f1 /proc/uptime) || poweroff -f"
 
 for f in "$BIN" "$KERNEL" "$IMAGE" "$MANIFEST"; do
   [ -f "$f" ] || { echo "build-replay-desktop-snapshot: missing $f" >&2; exit 1; }
@@ -87,7 +90,7 @@ mkfifo "$STDIN_FIFO"
   until grep -aq "$NODE_MARKER" "$BOOTLOG"; do sleep 1; done
   sleep 2 # let the monitor's line end and the shell sit at its prompt
   printf '%s\n' "$COMPACT_COMMAND" >&3
-  sleep 86400
+  exec sleep 86400 # (exec: the cleanup's kill of $FEEDER then ends it)
 ) &
 FEEDER=$!
 "$BIN" boot \

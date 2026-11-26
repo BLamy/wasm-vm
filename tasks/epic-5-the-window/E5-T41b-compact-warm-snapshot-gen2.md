@@ -3,7 +3,7 @@ id: E5-T41b
 epic: 5
 title: Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot
 priority: 0.387653
-status: refuted
+status: in-progress
 depends_on: [E5-T41a, E5-T36b]
 estimate: S
 risk: medium
