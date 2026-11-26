@@ -1,0 +1,9 @@
+head 600ceeb1181582597e8e96f5b02b75ad994f274b 2026-11-26T09:47:09Z; changes under crates: 0
+$ cargo fmt --check
+rc=0
+$ cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+rc=0
+$ cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+rc=0

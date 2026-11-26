@@ -1,0 +1,14 @@
+worker's four result files, recomputed from the raw samples (harness median = 5th of 8; conv = mean of 4th and 5th)
+paced-1    started 2026-11-26T09:25:50.467Z idle inSlice 10.2% guest s/s 0.97 clock paced-icount sleeps 595 wakes 112 sleepMs 26666 wall 30004 | click median harness 267.7 conv 265.9 min 256.4 max 519 n 8 missing 0 | echo median harness 45.4 conv 44.6 n 8 missing 0
+paced-2    started 2026-11-26T09:28:55.321Z idle inSlice 9.9% guest s/s 0.97 clock paced-icount sleeps 592 wakes 109 sleepMs 26294 wall 30005 | click median harness 270.6 conv 266.2 min 248.1 max 526.6 n 8 missing 0 | echo median harness 48.8 conv 48.0 n 8 missing 0
+unpaced-1  started 2026-11-26T09:27:23.920Z idle inSlice 99.8% guest s/s 11.91 clock icount sleeps 0 wakes 0 sleepMs 0 wall 30009 | click median harness 339.6 conv 337.6 min 318.9 max 580.8 n 8 missing 0 | echo median harness 41.1 conv 40.2 n 8 missing 0
+unpaced-2  started 2026-11-26T09:30:28.687Z idle inSlice 99.8% guest s/s 11.92 clock icount sleeps 0 wakes 0 sleepMs 0 wall 30008 | click median harness 369.7 conv 362.3 min 307.7 max 598.2 n 8 missing 0 | echo median harness 46.1 conv 46.0 n 8 missing 0
+pooled click median: paced 265.9 unpaced 347.2 ratio 0.234 lower
+pooled echo median: paced 46.8 unpaced 44.2
+pair 1 criteria [paced<=30%, paced 0.8-1.2, unpaced>=90%, unpaced>=3, click harness, click conv, echo harness, echo conv]: [True, True, True, True, True, True, True, True]
+pair 2 criteria [paced<=30%, paced 0.8-1.2, unpaced>=90%, unpaced>=3, click harness, click conv, echo harness, echo conv]: [True, True, True, True, True, True, True, True]
+ cross paced 1 vs unpaced 1 [True, True] echo diff 4.3
+ cross paced 1 vs unpaced 2 [True, True] echo diff -0.7
+ cross paced 2 vs unpaced 1 [True, True] echo diff 7.7
+ cross paced 2 vs unpaced 2 [True, True] echo diff 2.7
+ALL CRITERIA HOLD: True

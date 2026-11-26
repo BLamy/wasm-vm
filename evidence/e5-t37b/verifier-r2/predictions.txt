@@ -1,0 +1,118 @@
+E5-T37b — verifier, round 2 — predictions
+Written 2026-11-26 before opening the changed wasm test (crates/wasm/src/lib.rs, d443a3837),
+the changed unit test (web/tests/e5-t37b-paced-idle.test.mjs), gates.log, or any round-2 result
+file. Read so far: AGENTS.md, the task file (both verifier and worker entries), `git diff --stat
+939f16b9a 600ceeb11`, crates/wasm/src/lib.rs:1505-1540 (JsHostTimer, unchanged non-test code),
+web/guest-clock.js (unchanged implementation).
+
+PREMISE (what changed since the head round 1 examined, 939f16b9a)
+R1  `git diff 939f16b9a 600ceeb11 -- crates web tools` minus web/dist/**, web/tasks.json and
+    web/gpu-checkpoint-build.js touches exactly two files: crates/wasm/src/lib.rs and
+    web/tests/e5-t37b-paced-idle.test.mjs. Every lib.rs hunk lies inside one #[wasm_bindgen_test]
+    function under a cfg(test) module. No hunk outside it.
+R2  web/dist/pkg/wasm_vm_wasm_bg.wasm at the two commits: same length. The Code section is
+    byte-identical. Every differing byte is in a Data segment, and every difference is the `line`
+    field of a core::panic::Location (little-endian u32) for crates/wasm/src/lib.rs, new = old + K
+    with one K for all of them (K = net lines the test grew by; the worker says 14), and every
+    old value is a line below the changed test. Any differing byte in Type/Import/Function/
+    Export/Code, any change of a length, or a location delta that is not K, falsifies the
+    worker's "panic line numbers only".
+R3  The wasm-bindgen JS glue (web/dist/pkg/wasm_vm_wasm.js) is byte-identical at the two
+    commits, and web/dist differs otherwise only in generated task/roadmap data and the build id.
+
+FINDING 1 — the wasm test
+F1a The test has no path that returns before the behaviour half when there is no host clock:
+    between the refusals and the paced-clock selection there is an assertion (or expect) that
+    JsHostTimer::new() is Some, not `if … { return; }`.
+F1b The host clock is supplied by the test itself, with no preload: because JsHostTimer::new()
+    asks `global instanceof Window` then `global instanceof WorkerGlobalScope` and then reads
+    `.performance`, the test must define a global constructor named WorkerGlobalScope (or
+    Window) whose Symbol.hasInstance / prototype makes node's globalThis an instance, and node's
+    own `performance` supplies now(). Nothing in NODE_OPTIONS or the environment.
+F1c The test removes that global again on its success path. Therefore: after the paced test
+    has run, JsHostTimer::new() is None again, and the neighbouring refusal test (the one that
+    expects `guest_clock_source_unavailable`) passes whichever of the two runs first. If the
+    removal is deleted from a scratch copy and the paced test runs first, the neighbour must
+    FAIL (if it still passes, the neighbour is not actually checking the no-host-clock refusal
+    under node and "still runs in such a realm" is unproven).
+F1d Numbers the guest must produce (seven-word guest: four argument loads, ecall = SBI
+    set_timer served by the built-in SBI, wfi, jump back to the wfi):
+      - paced-icount + setPacedIdlePolicy(true, lag): first run(budget) returns exactly 5 retired
+        (not 6, not the budget); takeIdleWaitMs() > 0 and finite, and at most the armed deadline
+        in ms (deadline ticks / 10 MHz); a second takeIdleWaitMs() is exactly 0.
+      - the next run returns 2 (jump + wfi) and reports a wait again — if the test runs a second
+        slice at all.
+      - same guest, paced-icount, policy not opted in (yieldToHost false): run(budget) returns
+        the whole budget and takeIdleWaitMs() is 0.
+      - same guest, pure icount (with or without the policy call): whole budget, wait 0.
+    The test must assert equality on the 5 (an inequality that 5 and 6 both satisfy would hide
+    the round-1 bug the other way round).
+F1e Sabotage, in a scratch clone, each one alone, must turn `wasm-pack test --node crates/wasm
+    --lib -- exported_paced` from 2 passed to 1 passed / 1 failed, the panic pointing at a line
+    inside the behaviour half:
+      S1 expectation 5.0 -> 6.0 (the worker's own check; I repeat it);
+      S2 the binding: take_idle_wait_ms returns 0 always (non-test code, in the clone only);
+      S3 the binding: set_paced_idle_policy ignores yield_to_host (passes false to the core);
+      S4 the no-opt-in expectation inverted is not needed if S2/S3 fail the test.
+    If S2 or S3 leaves the test green, the behaviour half does not exercise the binding.
+F1f `wasm-pack test --node crates/wasm --lib` (whole set), no env: 17 passed, 0 failed, and the
+    test names include both exported_paced tests.
+
+FINDING 2 — web/guest-clock.js:68 (and 70-71, which use its result)
+F2a The new test calls createGuestClockLifecycle(machine, "icount", …, "paced", restoredClock)
+    with restoredClock.mode === "paced-icount" and expects success: calls are
+    setGuestClock("icount")?… setGuestClock("paced-icount") (restore, line 110),
+    rebaseGuestClock() (line 117), no second setGuestClock from the paced block (mode is already
+    paced-icount, line 122 false), then setPacedIdlePolicy(true, 50); idleYield true.
+F2b Refusals before the machine is touched (no setGuestClock/setICountDivider/setPacedIdlePolicy
+    call recorded): restoredClock.mode "wall" under "paced"; mtime / clockDiv / timebaseHz
+    different from the machine's; restoredClock null; a paced-icount checkpoint with
+    interactiveClock undefined; a paced-icount checkpoint under "wall-on-keyboard".
+F2c My mutants, each on a scratch copy of web/guest-clock.js with the test file pointed at it,
+    `node --test` on the 13-test file. Each must FAIL at least one test:
+      M1 line 68: drop `|| interactiveClock === "paced"` (round 1's G5 — survived 12 tests then);
+      M2 line 68: `interactiveClock === "paced" ? "wall"` i.e. paced maps to the wrong mode
+         (write as: … === "paced-on-keyboard" ? "paced-icount" : interactiveClock === "paced" ? "wall" : …);
+      M3 line 70-71: drop the mode comparison altogether (accept any restoredClock.mode) — a
+         wall checkpoint under "paced" must then be caught by a refusal case;
+      M4 line 72: drop the mtime comparison;
+      M5 line 117: do not rebase after a paced restore;
+      M6 line 122: `if (mode === "icount")` -> `if (true)` (re-select on top of a restored
+         paced clock) — only killed if the test pins the exact call sequence;
+      M7 line 133: policy set with `false`.
+    Survivors among M1-M4 are needs-evidence for finding 2; M5-M7 survivors I will report but
+    they concern lines round 1 already examined.
+F2d `cd web && node --test tests/e5-t37b-paced-idle.test.mjs`: 13 tests, 13 pass, 0 fail.
+
+EVIDENCE AT THE NEW HEAD
+E1  evidence/e5-t37b/gates.log line 1 names 8fa4ce62e; sha256 starts e8054f82531e.
+E2  browser-{paced,unpaced}-{1,2}.json and demo-suite.json carry start times after
+    2026-11-26T09:16:51Z (commit time of 8fa4ce62e) and before 09:32:11Z (the claim commit).
+E3  `git diff 8fa4ce62e 600ceeb11 -- web/dist` touches nothing but generated task/roadmap data
+    (tasks.json and the like); :8125 serves the same sha256 as web/dist at HEAD for loader.js,
+    guest-clock.js, idle-sleep.js, main.js and pkg/wasm_vm_wasm_bg.wasm.
+E4  The table in the worker's round-2 entry is a faithful copy of the four JSON files; every
+    criterion holds on each load: paced idle <= 30% and 0.8-1.2 s/s; unpaced >= 90% and >= 3;
+    paced click median <= unpaced; |key echo paced - unpaced| <= 15 ms.
+
+NOVEL ATTACK (decided now, before reading round 2's code or evidence; different from round 1's
+wake-stripping proxy and scripted run-loop harness): boundary values at the wasm -> sleeper
+seam, with the SHIPPED wasm at HEAD driven in node and each reported wait fed to the real
+web/idle-sleep.js with fake timers. Round 1 probed one guest (timer ~26.8 s ahead).
+N1  timer armed 1 tick ahead of now: by the time of the wfi it is due or < 1.5 ms away. The
+    machine either reports no wait (0) or a wait < 1.5; the sleeper must refuse to arm (returns
+    false) so the loop schedules the next slice — never a timer of 0/NaN ms that stalls or a
+    sleep longer than the wait.
+N2  timer armed in the past: no wait reported (0); slice does not end early for nothing forever
+    (retired over 100 slices grows; no slice returns 0 retired indefinitely).
+N3  no timer armed at all (guest goes straight to wfi; stimecmp at its reset value) and a timer
+    at u64::MAX (SBI "never"): takeIdleWaitMs() is a finite, nonnegative JS number — never NaN,
+    Infinity or negative. If a wait is reported the sleeper arms exactly min(wait, 50) ms; if
+    none is reported the worker spins (that is a cost, which I will report, not a contradiction
+    of the acceptance text unless the Replay desktop's idle shows it).
+N4  timer exactly 1.5 ms and exactly 50 ms and 50 ms + 1 tick ahead (as near as the retire clock
+    allows): the armed delay is the reported wait itself up to 50 and exactly 50 above it.
+N5  for every reported wait w: w <= (deadline - mtime at the wfi) / 10 kHz-per-ms + 1e-6, i.e.
+    the machine never tells the host to sleep past the guest's timer.
+A reported wait that is NaN/negative/infinite, an armed delay outside [1.5, 50], or a wait past
+the deadline is a finding against this task's bindings/sleeper (cite the probe's JSON line).

@@ -1,0 +1,261 @@
+{
+ "node": "v24.20.0",
+ "rows": [
+  {
+   "name": "baseline",
+   "seconds": 2.2,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 9,
+   "fail": 0,
+   "result": "passes",
+   "failedTests": []
+  },
+  {
+   "name": "L1 wrap does not wake",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 2,
+   "fail": 7,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "a rapid pause then resume while asleep leaves one tick, not ",
+    "stop during a sleep: done resolves 'stopped', no slice after",
+    "a delivery during a tick's await voids the wait that tick to",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "delivery: timer cleared and one tick posted in the same turn"
+  },
+  {
+   "name": "L3 wakeIdle does not schedule",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 6,
+   "fail": 3,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "delivery: timer cleared and one tick posted in the same turn"
+  },
+  {
+   "name": "L4 sleepIdle leaves tickScheduled false",
+   "seconds": 2.2,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 9,
+   "fail": 0,
+   "result": "NOT NOTICED",
+   "failedTests": []
+  },
+  {
+   "name": "L5 sleepIdle ignores paused/stopped/quota and a scheduled tick",
+   "seconds": 2.2,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 9,
+   "fail": 0,
+   "result": "NOT NOTICED",
+   "failedTests": []
+  },
+  {
+   "name": "L6 sleepIdle drops the ticket",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 7,
+   "fail": 2,
+   "result": "noticed",
+   "failedTests": [
+    "a delivery during a tick's await voids the wait that tick to",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "no sleep on the stale wait: the next slice is scheduled at once"
+  },
+  {
+   "name": "L7 sleep resumes into schedule, not tick",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 7,
+   "fail": 2,
+   "result": "noticed",
+   "failedTests": [
+    "a sleep that nothing ends resumes into exactly one slice; a ",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "timer -> slice 2 at once (1 ms wait) -> posted tick, no sleep"
+  },
+  {
+   "name": "L13 wrap applied to every boot",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 1,
+   "pass": 0,
+   "fail": 1,
+   "result": "noticed",
+   "failedTests": [
+    "tests/e5-t37b-run-loop.test.mjs"
+   ],
+   "firstMessage": "loader.js anchor must occur exactly once: \"    if (guestClockLifecycle.idleYield) {\\n      for (const [n\""
+  },
+  {
+   "name": "L15 wakeIdle keeps tickScheduled set (no tick after a wake)",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 4,
+   "fail": 5,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "a rapid pause then resume while asleep leaves one tick, not ",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "delivery: timer cleared and one tick posted in the same turn"
+  },
+  {
+   "name": "S4 stale-callback guard dropped",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 8,
+   "fail": 1,
+   "result": "noticed",
+   "failedTests": [
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "seed 1 step 7 (stale): live timers against the sleeper's own state"
+  },
+  {
+   "name": "S5 wake does not clear the timer",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 3,
+   "fail": 6,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "a rapid pause then resume while asleep leaves one tick, not ",
+    "stop during a sleep: done resolves 'stopped', no slice after",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "delivery: timer cleared and one tick posted in the same turn"
+  },
+  {
+   "name": "H1 stop() never finishes (whenDone stays pending)",
+   "seconds": 4.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 7,
+   "fail": 2,
+   "result": "noticed",
+   "failedTests": [
+    "stop during a sleep: done resolves 'stopped', no slice after",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "Error: stop(): not settled after 2000 ms"
+  },
+  {
+   "name": "H2 the sleeper resumes synchronously instead of arming a timer (runaway loop)",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 3,
+   "fail": 6,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "a sleep that nothing ends resumes into exactly one slice; a ",
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "a rapid pause then resume while asleep leaves one tick, not ",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "an idle slice arms one sleep in place of the next tick"
+  },
+  {
+   "name": "H3 a sleep AND the next tick (two pending)",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 3,
+   "fail": 6,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "a sleep that nothing ends resumes into exactly one slice; a ",
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "a rapid pause then resume while asleep leaves one tick, not ",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "an idle slice arms one sleep in place of the next tick"
+  },
+  {
+   "name": "H4 the tick never takes the machine's wait",
+   "seconds": 2.2,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 4,
+   "fail": 5,
+   "result": "noticed",
+   "failedTests": [
+    "a host call during a sleep ends it and one slice runs at onc",
+    "every controller function ends a sleep, a status read includ",
+    "a sleep that nothing ends resumes into exactly one slice; a ",
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "an idle slice arms one sleep in place of the next tick"
+  },
+  {
+   "name": "H5 a host call always reschedules, sleeping or not (second loop)",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 5,
+   "fail": 4,
+   "result": "noticed",
+   "failedTests": [
+    "pause during a sleep: no slice while paused; resume, even tw",
+    "a rapid pause then resume while asleep leaves one tick, not ",
+    "a delivery during a tick's await voids the wait that tick to",
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "one tick"
+  },
+  {
+   "name": "H6 the sleep is not capped (the machine's 400 ms is slept whole)",
+   "seconds": 0.1,
+   "killedByProcessTimeout": false,
+   "tests": 9,
+   "pass": 8,
+   "fail": 1,
+   "result": "noticed",
+   "failedTests": [
+    "random interleavings (200 seeds x 120 steps): never two pend"
+   ],
+   "firstMessage": "seed 1 step 6 (task): a sleep of 400 ms"
+  }
+ ],
+ "noticed": 14,
+ "notNoticed": [
+  "L4 sleepIdle leaves tickScheduled false",
+  "L5 sleepIdle ignores paused/stopped/quota and a scheduled tick"
+ ],
+ "hung": [],
+ "slowestSeconds": 4.1
+}

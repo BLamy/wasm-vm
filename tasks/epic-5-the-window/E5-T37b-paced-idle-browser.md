@@ -3,7 +3,7 @@ id: E5-T37b
 epic: 5
 title: Paced idle in the browser — the worker sleeps while the Replay desktop waits, and guest time keeps real time
 priority: 0.387645
-status: implemented
+status: verified
 depends_on: [E5-T37a]
 estimate: S
 risk: medium
@@ -409,3 +409,239 @@ of the lists empty).
 Pooled (16 clicks a side): median 266 ms paced against 347 ms unpaced,
 23% lower. Every criterion holds. Demo page: 127 passed,
 0 failed of 127; no page, console or HTTP errors.
+
+### 2026-11-26 — verifier (round 2) — VERDICT: verified
+
+Fresh session: I did not implement this and I am not the round-1 verifier. Head `600ceeb11` (the
+claim's `8fa4ce62e` plus one commit that touches only this file and `evidence/`). My predictions
+were written before I opened either changed test or any round-2 result
+(`evidence/e5-t37b/verifier-r2/predictions.txt`); every file named below is in that directory
+unless its path says otherwise.
+
+Both demands of round 1 are met, nothing the worker changed since is runtime code, the evidence
+is for the new bundle, and my own attack found no contradiction. Status `verified`; the roadmap
+row is flipped; one test is promoted.
+
+**Premise — what changed since the head round 1 examined (`939f16b9a`)**
+
+- R1 HELD. Predicted: outside generated files, the diff under `crates/`, `web/` and `tools/` is
+  two files and every `lib.rs` hunk is inside one test function. Observed: four hunks at old
+  lines 1796-1829 of `crates/wasm/src/lib.rs`, all inside
+  `exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest` (module `guest_clock_tests`,
+  which ends at line 1985), and `web/tests/e5-t37b-paced-idle.test.mjs` (+47 lines, one new
+  test). `tools/` is untouched.
+- R2 HELD. Predicted: the shipped wasm at the two commits has the same length and an identical
+  Code section, and differs only in panic-location line numbers, all moved by one constant.
+  Observed (`wasm-diff.py`, `wasm-diff.json`): 2,695,302 bytes both; all thirteen sections have
+  the same bounds; Type, Import, Function, Table, Memory, Global, Export, Elem, DataCount, Code
+  (2,449,023 bytes, 2,438 functions) and both custom sections are byte-identical. 48 bytes
+  differ, all in Data: 46 little-endian words, each the `line` field of a
+  `core::panic::Location` whose file is `crates/wasm/src/lib.rs`, each new = old + 14, old lines
+  2150 to 5523 (all below the test), and each names the same source line in the old file and in
+  the new one. No instruction changed. As a cross-check by behaviour, thirteen guests (204,994
+  run slices) through both binaries under a scripted host clock produce identical output
+  (`boundary-probe.json`, `boundary-probe-939f16b9a.json`).
+- R3 HELD. The JS glue `pkg/wasm_vm_wasm.js` is identical; between the two heads `web/dist`
+  differs in the wasm, `gpu-checkpoint-build.js` (its two hashes), `sw.js` (the cache version
+  string) and `tasks.json`.
+- So round 1's `Held` list is carried, not redone: the files it rests on (`web/loader.js`,
+  `web/guest-clock.js`, `web/idle-sleep.js`, `web/main.js`, `tools/perf/desktop-latency.mjs`,
+  the wasm's code) are unchanged. Carried: P5-P8 (that verifier's own paced, unpaced and
+  cold-boot loads), P10 (OS-reported CPU), A1-A9 (the attack list through the loader's own run
+  loop), the wake-removal attack, and the coverage waivers. Not carried, because their inputs
+  changed, and re-run here or by the worker at the new head: P1 (the unit file, now 13 tests),
+  P3 (fmt, clippy, build), P4 (the web suite), P9 (the demo page) and O1-O3 (evidence for the
+  head).
+
+**Finding 1 — the wasm test: met**
+
+- F1a/F1b HELD. Predicted: no return before the behaviour half; the host clock is supplied by
+  the test itself. Observed, `crates/wasm/src/lib.rs:1800-1807`: when the realm has no host clock
+  the test installs `globalThis.WorkerGlobalScope` (a class whose `Symbol.hasInstance` accepts
+  the global) through `js_sys::eval`, then `assert!(JsHostTimer::new().is_some())`. Nothing is
+  preloaded.
+- F1d HELD. Predicted: exactly 5 retired, a wait reported once, then 2; the whole budget and no
+  wait without the opt-in and in pure ICount; equality on the 5. Observed: `assert_eq!(…, 5.0)`
+  at 1822, wait in (20,000, 26,843.6] ms at 1824, second take 0 at 1825, 2 retired and a wait at
+  1827-1828, 5,000 and 0 at 1832-1833 and again at 1838-1839. The shipped wasm, driven by me
+  under a frozen host clock, gives 5 retired, 26,843.5456 ms (all of the 2^28 ticks), 0 on the
+  second take, then 2 (`boundary-probe.json`, guest A).
+- F1f HELD. `wasm-pack test --node crates/wasm --lib -- exported_paced`: 2 passed, rc 0;
+  `wasm-pack test --node crates/wasm --lib`: 17 passed, rc 0; `NODE_OPTIONS` and `RUSTFLAGS`
+  unset (`wasm-tests.log`).
+- F1e HELD — the behaviour half executes and its assertions bite. Six mutations, one at a time,
+  in a scratch clone, same command (`wasm-sabotage.py`, `wasm-sabotage.json`, a log each); every
+  one ends `1 passed; 1 failed` in the idle test:
+
+  | mutation | panics at | with |
+  |---|---|---|
+  | test expects 6 retired | `lib.rs:1822` | left 5.0, right 6.0 |
+  | binding: `takeIdleWaitMs` always 0 | `lib.rs:1824` | wait 0 ms |
+  | binding: wait in seconds, not ms | `lib.rs:1824` | wait 26.842498 ms |
+  | binding: policy always passes `false` to the core | `lib.rs:1816` | `paced_idle_yield()` false |
+  | binding: policy always passes `true` | `lib.rs:1832` | left 2.0, right 5000.0 |
+  | test: stays paced for the last block | `lib.rs:1837` (one line removed) | left 2.0, right 5000.0 |
+
+- F1c HELD, and my prediction was wrong on one point. Predicted: the shim is gone when the test
+  returns, and a neighbouring test would fail if it were not. Observed, with
+  `assert!(JsHostTimer::new().is_none())` added as the first line of both neighbours in the
+  clone: 17 pass, and the run order (paced_selection, paced_idle, clock_selection) puts one
+  neighbour before the idle test and one after, so the realm has no host clock in both
+  positions (P-A). With the removal deleted as well, the neighbour that runs after fails on the
+  probe (P-B): the probe can see a leak and the removal is what prevents one. But without my
+  probes the neighbours do not notice: removal deleted, 17 pass (P-C), because both branch on
+  `JsHostTimer::new().is_some()` (`lib.rs:1717`, `1867`) and accept either realm. What notices a
+  leak is the idle test's own last assertion (`lib.rs:1842`; with the delete replaced by a no-op
+  the test fails there, P-D). No demand: the acceptance does not speak of the neighbours and the
+  test checks its own cleanup. A panic inside the behaviour half skips the cleanup, so on a run
+  that is already failing the later tests see a host clock.
+
+**Finding 2 — `web/guest-clock.js:68`: met**
+
+- F2a/F2b HELD. Predicted: a paced checkpoint under "paced" is accepted with the calls
+  restore-as-paced, rebase, idle policy and no second clock selection; mismatches are refused
+  before the machine is touched. Observed, `web/tests/e5-t37b-paced-idle.test.mjs:179-224`:
+  the paced checkpoint gives exactly `setICountDivider 64`, `setGuestClock paced-icount`,
+  `rebaseGuestClock`, `setPacedIdlePolicy true 50`; seven refusals (a wall checkpoint; `mtime`,
+  `clockDiv` or `timebaseHz` not the machine's; `null`; a paced checkpoint with no policy and
+  under `wall-on-keyboard`), each with the expected message and zero calls on the machine;
+  `paced-on-keyboard` accepts the same paced checkpoint and sets no idle policy.
+- F2d HELD. `cd web && node --test tests/e5-t37b-paced-idle.test.mjs`: 13 tests, 13 pass
+  (`unit-e5-t37b.log`).
+- F2c HELD. Nineteen one-line mutants of lines 66-134 on a scratch copy
+  (`guest-clock-mutants.mjs`, `guest-clock-mutants.json`): 18 killed, all by the new test. On
+  the clause itself and the two lines that use it: dropping `|| interactiveClock === "paced"`
+  (round 1's G5, which survived the 12 tests), mapping "paced" to "wall", dropping
+  "paced-on-keyboard", letting `wall-on-keyboard` or no policy accept a paced checkpoint, not
+  comparing the mode at all, and refusing every mode but the boot's — seven of seven killed, in
+  both directions. Around it: the `mtime`, `clockDiv`, `timebaseHz` and `null` checks, the
+  rebase, the restore selecting the checkpoint's mode, the second selection, the policy value
+  and `idleYield` — eleven of twelve. The survivor removes the mode from the check after the
+  restore at line 112, a line from `2a8e9598b`, not from this task's diff; not raised.
+
+**Evidence at the new head: held**
+
+- E1. `evidence/e5-t37b/gates.log` begins `head 8fa4ce62e…; crates/web changes outside the
+  commit: 0`, sha256 `e8054f82531e…`; every rc 0; 2, 17 and 13 pass; the web suite 612 tests
+  with the 28 failing names of `web-unit-failing-before.txt`. Mine at `600ceeb11`: fmt, clippy
+  and the wasm32 build rc 0 (`gates-verifier.log`); the whole web suite with the promoted test
+  present, 621 tests, 593 pass, 28 fail, the same 28 names (`web-unit-suite.txt`).
+- E2. `8fa4ce62e` was committed at 09:16:51Z; `gates.log` was written at 09:25:46Z; the four
+  loads start at 09:25:50Z, 09:27:23Z, 09:28:55Z and 09:30:28Z and the last ends at 09:31:55Z;
+  `demo-suite.json` is from 09:32:03Z; the claim commit is 09:32:11Z. Each load is a warm boot
+  ("desktop ready after 3.6 s" in each log), `missing` is empty, and the one console error a
+  side is the favicon 404 round 1 identified.
+- E3. `git diff 8fa4ce62e 600ceeb11 -- web` is empty and `web/dist` is clean against HEAD;
+  `:8125` serves the bytes of HEAD for `loader.js`, `guest-clock.js`, `idle-sleep.js`,
+  `main.js`, `roadmap.js`, `app.html`, `sw.js`, `gpu-checkpoint-build.js`,
+  `pkg/wasm_vm_wasm.js` and `pkg/wasm_vm_wasm_bg.wasm` (sha256 `19cd4d2d…`, the one
+  `gpu-checkpoint-build.js` names).
+- E4. The worker's table is a faithful copy of the four files. Recomputed from their raw
+  samples (`worker-browser-check.txt`):
+
+  | | paced 1 / 2 | `&pace=0` 1 / 2 |
+  |---|---:|---:|
+  | idle: worker inside run slices, % of wall | 10.2 / 9.9 | 99.8 / 99.8 |
+  | idle: guest seconds per real second | 0.97 / 0.97 | 11.91 / 11.92 |
+  | idle: sleeps / ended early, per 30 s | 595 / 112, 592 / 109 | 0 / 0 |
+  | click result, harness median (fifth of eight), ms | 267.7 / 270.6 | 339.6 / 369.7 |
+  | click result, conventional median, ms | 265.9 / 266.2 | 337.6 / 362.3 |
+  | key echo, harness median, ms | 45.4 / 48.8 | 41.1 / 46.1 |
+  | key echo, conventional median, ms | 44.6 / 48.0 | 40.2 / 46.0 |
+
+  Pooled over both loads: click 265.9 ms against 347.2 ms (23.4% lower), key echo 46.8 ms
+  against 44.2 ms. Every criterion holds for each pair and for each paced load against each
+  unpaced load (largest key-echo difference 7.7 ms), by either median.
+- I ran no browser load of my own: the premise check leaves no doubt about the shipped wasm.
+  The browser result rests on the worker's four loads at this bundle and on the round-1
+  verifier's own loads at the previous one.
+
+**Novel attack — boundary values at the wasm-to-sleeper seam: nothing found**
+
+Round 1 probed one guest, with its timer 26.8 s away. I drove the shipped wasm at HEAD in node
+with a host clock I step by hand, fed every reported wait to the real `web/idle-sleep.js` with
+fake timers, and looped as the loader does: thirteen guests whose timer is 1 tick ahead, already
+due, never armed, at `u64::MAX`, at `0xffff_ffff_ffff_f000`, at 2^63, just under and exactly at
+the 1.5 ms minimum, exactly at and one tick over the 50 ms cap, and 26.8 s and 214.7 s away
+(`boundary-probe.mjs`, `boundary-probe.json`). Predictions N1-N5 written beforehand; a wait that
+is not a finite nonnegative number, a sleep outside 1.5-50 ms or longer than the wait, a wait
+past the guest's deadline, or a timer seen due early or more than 50 ms late would have been a
+finding. Observed, zero violations in 204,994 slices:
+
+- 1 tick ahead: wait 0.0001 ms, not slept on, due at the next slice. Already due: no wait.
+- 12,288 ticks (1.2288 ms): 62 waits from 1.2288 down to 0.0089 ms, none slept on, seen due
+  0.011 ms after the deadline. 15,000 ticks: wait 1.5, one sleep of 1.5 ms, seen due on time.
+- 500,000 ticks: wait 50, one sleep of 50 ms. 500,001: wait 50.0001, a sleep of 50, then a
+  wait of 0.0001 not slept on.
+- 26.8 s: 537 sleeps that sum to 26,843.5456 ms, the last 43.5456 ms; 214.7 s: 4,295 sleeps
+  that sum to 214,747.9552 ms. Guest time per host time 1.0000 in both; never late.
+- `0xffff_ffff_ffff_f000` and 2^63: the wait saturates at 18,446,744,073,709.55 ms (`u64::MAX`
+  ns), finite, and every sleep is 50 ms.
+- A cost, not a contradiction of this task: with no timer armed, and with the deadline set to
+  `u64::MAX` (SBI's "never"), no wait is reported at all, so the run loop spins as it did before
+  this task — 100,001 slices in 2 s of host time here, zero sleeps. The Replay desktop's idle
+  does not show it (10% in run slices), since it always has a timer pending, and the core's
+  answer is E5-T37a's. A guest that parks with its timer disarmed and waits for a device
+  interrupt alone would get no idle sleep; that belongs with the cases E5-T37c measures.
+
+**Coverage.** Round 2's diff is test code. The wasm test's new lines all execute under the
+acceptance command (the six mutations land on 1816-1838, P-D on 1842); the `shimmed == false`
+path, a realm that already has a host clock, is not taken under node (waived: it is the same
+body without the two `eval` calls). Round 1's two unexecuted hunks,
+`crates/wasm/src/lib.rs:1799-1829` (now 1808-1843) and `web/guest-clock.js:68`, are now executed
+and mutation-checked. Its waivers stand.
+
+**Suite**
+
+- Promoted: `web/tests/e5-t37b-run-loop.test.mjs` (9 tests, about 2 s,
+  `cd web && node --test tests/e5-t37b-run-loop.test.mjs`), round 1's `run-loop-harness.mjs`
+  as a `node:test` file that depends on nothing under `evidence/`. It runs the loader's own
+  text — the run loop, the real `stop`/`pause`/`resume`, the real controller wrap — against a
+  scripted machine, a hand-drained task queue and hand-fired timers: the eight scenarios of the
+  attack list and 200 seeded random walks of 120 steps, holding at most one pending tick, no
+  stall, no slice while paused or stopped, no sleep on a wait taken before a delivery, and
+  every sleep within 1.5-50 ms. It cannot hang: the scripted machine refuses more than 2,000
+  slices, every promise from the loop is awaited with a 2 s deadline, each test has a 30 s
+  timeout. Sabotage check on a scratch copy (`run-loop-test-vs-mutants.mjs`,
+  `run-loop-test-vs-mutants.json`): 14 of 16 mutants noticed, none hung, slowest 4.1 s — round
+  1's ten (the same eight noticed, among them the three the source-text tests miss) and six of
+  mine (`stop()` that never settles, a sleeper that resumes synchronously, a sleep and a tick
+  together, a tick that ignores the machine's wait, a host call that always reschedules, a
+  sleep without the cap). The two it does not notice are the two round 1 waived: `sleepIdle`
+  without its first-line guard or without setting `tickScheduled` is indistinguishable while a
+  tick awaits nothing after its slice. Why keep it: the worker's loader tests match source
+  text, and no other test runs the tick.
+- Discarded as tests, kept as evidence: `boundary-probe.mjs` (needs the built bundle and a
+  faked global; the wasm test and the sleeper's unit test now pin both sides of that seam), the
+  two mutant scripts and `wasm-sabotage.py` (one-time checks of tests, not tests), `wasm-diff.py`
+  (a comparison of two commits).
+
+**Notes — not findings**
+
+- E5-T37c could take a sixth case from the attack above: a guest whose timer is disarmed
+  (`u64::MAX`, or none) reports no wait and gets no idle sleep.
+- The two wasm tests beside the idle test accept a realm with or without a host clock, so
+  under node they show the refusal only because the idle test cleans up after itself (F1c).
+
+**Not checked**: a browser load of my own; any browser but the headless Chrome 158 the worker
+and round 1 used; a background or throttled tab; the live site (nothing was deployed); a
+release rebuild of the wasm from source before this commit (the commit hook rebuilds the
+bundle; see the addendum below); a cold `cargo clippy`; `cargo clippy --all-targets` (E5-T40);
+the core, which is E5-T37a's and unchanged; E5-T37c's cases.
+
+Commands: `wasm-pack test --node crates/wasm --lib -- exported_paced`;
+`wasm-pack test --node crates/wasm --lib`;
+`python3 evidence/e5-t37b/verifier-r2/wasm-sabotage.py <scratch clone> evidence/e5-t37b/verifier-r2`
+(the clone: `git clone --shared --no-checkout`, sparse without `evidence/`, `web/dist/`,
+`releases/`, plus `evidence/e5-t26p/baseline-semantic.stdout`, which a wasm integration test
+includes);
+`python3 evidence/e5-t37b/verifier-r2/wasm-diff.py <wasm at 939f16b9a> <wasm at 600ceeb11> <lib.rs at 939f16b9a> crates/wasm/src/lib.rs`;
+`cd web && node --test tests/e5-t37b-paced-idle.test.mjs`;
+`node evidence/e5-t37b/verifier-r2/guest-clock-mutants.mjs . <scratch>`;
+`node evidence/e5-t37b/verifier-r2/boundary-probe.mjs web/dist/pkg web [<wasm at 939f16b9a>]`;
+`cd web && node --test tests/e5-t37b-run-loop.test.mjs`;
+`node evidence/e5-t37b/verifier-r2/run-loop-test-vs-mutants.mjs . <scratch>`;
+`cargo fmt --check`; `cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings`;
+`cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`;
+`cd web && node --test --test-timeout=120000 tests/*.test.mjs`;
+`curl` of ten files from `:8125` against `git show HEAD:web/dist/…`.

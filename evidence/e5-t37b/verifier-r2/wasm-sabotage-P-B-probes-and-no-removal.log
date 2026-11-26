@@ -1,0 +1,62 @@
+$ wasm-pack test --node crates/wasm --lib
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpuFo6JC/wasm-bindgen-test.js:4317:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpuFo6JC/wasm-bindgen-test.js:5082:18)
+            at __wbg_new_227d7c05414eb861 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpuFo6JC/wasm-bindgen-test.js:4316:57)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.console_error_panic_hook::Error::new::__wbg_new_227d7c05414eb861::h189795aeb157c241 externref shim (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[29818]:0x7f4e98)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.console_error_panic_hook::Error::new::h94471273f2e99118 (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[17519]:0x76d6e6)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.console_error_panic_hook::hook_impl::h4fec77a80fa62eb2 (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[8360]:0x660132)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.console_error_panic_hook::hook::hb893e28764ec5a25 (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[26527]:0x7dd3e4)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.core::ops::function::Fn::call::h8cf08b5da9364e9d (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[22404]:0x7b3972)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[5935]:0x5e2bbc)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[12036]:0x6e8980)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[30458]:0x7f6cfe)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[30439]:0x7f6c9e)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[29996]:0x7f58f2)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[5935]:0x5e2c30)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[12036]:0x6e8980)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[30358]:0x7f69f4)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[23346]:0x7be4e9)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[19507]:0x78df51)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.wasm_vm_wasm::guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source::h13011e53892bced7 (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[467]:0x2bf96b)
+            at wasm_vm_wasm-8b63e0dddd599352.wasm.core::ops::function::FnOnce::call_once::hd7376d5c598600f1 (wasm://wasm/wasm_vm_wasm-8b63e0dddd599352.wasm-0e6e292e:wasm-function[28218]:0x7eba44)
+
+failures:
+
+    guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source
+
+test result: FAILED. 16 passed; 1 failed; 0 ignored; 0 filtered out; finished in 3.98s
+
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm)
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--lib`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-t37b-r2/clone/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-8b63e0dddd599352.wasm` (exit status: 1)
+note: test exited abnormally; to see the full output pass --no-capture to the harness.
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--lib"
+rc=1

@@ -1,0 +1,157 @@
+[
+ {
+  "case": "baseline",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "2 passed",
+  "rc": 0,
+  "result": "test result: ok. 2 passed; 0 failed",
+  "failed_tests": [],
+  "panics": []
+ },
+ {
+  "case": "S1-expect-6-retired",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails: left 5.0 right 6.0",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1822:9:",
+    "message": "assertion `left == right` failed left: 5.0 right: 6.0"
+   }
+  ]
+ },
+ {
+  "case": "S2-binding-take-always-0",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails at the wait assertion",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1824:9:",
+    "message": "wait 0 ms"
+   }
+  ]
+ },
+ {
+  "case": "S3-binding-never-yields",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails in the behaviour half",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1816:13:",
+    "message": "assertion failed: m.inner.borrow().machine.paced_idle_yield()"
+   }
+  ]
+ },
+ {
+  "case": "S4-binding-always-yields",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails (refusal loop or the no-opt-in run)",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1832:9:",
+    "message": "assertion `left == right` failed left: 2.0 right: 5000.0"
+   }
+  ]
+ },
+ {
+  "case": "S5-binding-wait-in-seconds",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails at the wait assertion",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1824:9:",
+    "message": "wait 26.842498 ms"
+   }
+  ]
+ },
+ {
+  "case": "S6-test-stays-paced-for-last-block",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails at the last 5,000 (the pure-ICount block executes and is sensitive)",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1837:9:",
+    "message": "assertion `left == right` failed left: 2.0 right: 5000.0"
+   }
+  ]
+ },
+ {
+  "case": "P-A-probes-only",
+  "command": "wasm-pack test --node crates/wasm --lib",
+  "expected": "17 passed: no host clock in either neighbour, before and after the idle test",
+  "rc": 0,
+  "result": "test result: ok. 17 passed; 0 failed",
+  "failed_tests": [],
+  "panics": []
+ },
+ {
+  "case": "P-B-probes-and-no-removal",
+  "command": "wasm-pack test --node crates/wasm --lib",
+  "expected": "the neighbour that runs after the idle test fails on the probe",
+  "rc": 1,
+  "result": "test result: FAILED. 16 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1846:9:",
+    "message": "verifier probe: no host clock in this realm"
+   }
+  ]
+ },
+ {
+  "case": "P-C-no-removal-no-probes",
+  "command": "wasm-pack test --node crates/wasm --lib",
+  "expected": "17 passed: the neighbours are adaptive and do not notice a leaked host clock",
+  "rc": 0,
+  "result": "test result: ok. 17 passed; 0 failed",
+  "failed_tests": [],
+  "panics": []
+ },
+ {
+  "case": "P-D-removal-is-a-no-op",
+  "command": "wasm-pack test --node crates/wasm --lib -- exported_paced",
+  "expected": "idle test fails on its own closing assertion",
+  "rc": 1,
+  "result": "test result: FAILED. 1 passed; 1 failed",
+  "failed_tests": [
+   "guest_clock_tests::exported_paced_idle_policy_is_strict_and_reports_a_waiting_guest"
+  ],
+  "panics": [
+   {
+    "at": "crates/wasm/src/lib.rs:1842:13:",
+    "message": "assertion failed: JsHostTimer::new().is_none()"
+   }
+  ]
+ }
+]

@@ -1,0 +1,16 @@
+✔ a sleep is armed only for a wait worth a timer, is clamped, and resumes once (0.7795ms)
+✔ a wake ends the sleep, cancels its timer and suppresses its resume (0.1ms)
+✔ a delivery voids a wait that was taken but not slept on yet (0.097166ms)
+✔ the loader takes the wait with a ticket straight after the run slice and every host call voids it (0.617084ms)
+✔ the loader admits the paced policy only for a whole-image, non-persistent boot (2.616958ms)
+✔ the defaults use the realm's timers (1.943583ms)
+✔ "paced" is an interactive clock policy of the retire-count clock with a host time source (0.315375ms)
+✔ the paced policy selects the divider, then the paced clock, then the idle policy, before any slice (0.679375ms)
+✔ after a restore the paced policy is selected on top of the restored clock, or the restore is refused (0.286084ms)
+✔ every other policy leaves the idle policy alone (0.114958ms)
+✔ a machine without the idle bindings, or one whose time moves on selection, fails closed (0.107458ms)
+✔ the Replay desktop asks for the paced policy; ?pace=0 turns it off (1.467209ms)
+✔ the loader admits the paced policy without accelerated graphics and only that one (1.444ms)
+ℹ tests 13
+ℹ pass 13
+ℹ fail 0

@@ -1,0 +1,713 @@
+{
+ "wasm": "web/dist/pkg (HEAD)",
+ "node": "v24.20.0",
+ "minMs": 1.5,
+ "maxMs": 50,
+ "budget": 1000,
+ "sliceCostMs": 0.02,
+ "guests": [
+  {
+   "name": "A 2^28 ticks (26.8 s; the worker's guest)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x10000537",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 26843.5456,
+   "slices": 538,
+   "retiredTotal": 2077,
+   "sliceEndedAtWfiWithWait": 537,
+   "slicesWithoutWait": 1,
+   "sleeps": 537,
+   "sleptMs": 26843.5456,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 43.5456,
+    "max": 26843.5456
+   },
+   "armedMs": {
+    "min": 43.5456,
+    "max": 50
+   },
+   "hostElapsedMs": 26843.5456,
+   "mtimeEnd": "268435556",
+   "guestMsPerHostMs": 1,
+   "timerSeenDueAtHostMs": 26843.5456,
+   "mtimeWhenSeenDue": "268435556",
+   "lateByMs": 0,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 5,
+     "waitMs": 26843.5456,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 50,
+     "retired": 2,
+     "waitMs": 26793.5456,
+     "mtime": "500000"
+    },
+    {
+     "hostElapsedMs": 100,
+     "retired": 2,
+     "waitMs": 26743.5456,
+     "mtime": "1000000"
+    },
+    {
+     "hostElapsedMs": 150,
+     "retired": 2,
+     "waitMs": 26693.5456,
+     "mtime": "1500000"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "B 1 tick ahead",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x00100513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 0.0001,
+   "slices": 2,
+   "retiredTotal": 1005,
+   "sliceEndedAtWfiWithWait": 1,
+   "slicesWithoutWait": 1,
+   "sleeps": 0,
+   "sleptMs": 0,
+   "waitsTooShortToSleepOn": 1,
+   "waitMs": {
+    "min": 0.0001,
+    "max": 0.0001
+   },
+   "armedMs": null,
+   "hostElapsedMs": 0.02,
+   "mtimeEnd": "101",
+   "guestMsPerHostMs": 0.505,
+   "timerSeenDueAtHostMs": 0.02,
+   "mtimeWhenSeenDue": "101",
+   "lateByMs": 0.0199,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 5,
+     "waitMs": 0.0001,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 0.02,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "101"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "C deadline 0 (already due)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x00000513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 0,
+   "slices": 2,
+   "retiredTotal": 1999,
+   "sliceEndedAtWfiWithWait": 0,
+   "slicesWithoutWait": 2,
+   "sleeps": 0,
+   "sleptMs": 0,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": null,
+   "armedMs": null,
+   "hostElapsedMs": 0.02,
+   "mtimeEnd": "199",
+   "guestMsPerHostMs": 0.995,
+   "timerSeenDueAtHostMs": 0.02,
+   "mtimeWhenSeenDue": "199",
+   "lateByMs": 0.02,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 999,
+     "waitMs": 0,
+     "mtime": "99"
+    },
+    {
+     "hostElapsedMs": 0.02,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "199"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "D no timer armed (wfi straight away)",
+   "words": [
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": null,
+   "slices": 100001,
+   "retiredTotal": 100001000,
+   "sliceEndedAtWfiWithWait": 0,
+   "slicesWithoutWait": 100001,
+   "sleeps": 0,
+   "sleptMs": 0,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": null,
+   "armedMs": null,
+   "hostElapsedMs": 2000.02,
+   "mtimeEnd": "10000100",
+   "guestMsPerHostMs": 0.5,
+   "timerSeenDueAtHostMs": null,
+   "mtimeWhenSeenDue": null,
+   "lateByMs": null,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "100"
+    },
+    {
+     "hostElapsedMs": 0.02,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "200"
+    },
+    {
+     "hostElapsedMs": 0.04,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "300"
+    },
+    {
+     "hostElapsedMs": 0.06,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "400"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "E deadline u64::MAX (SBI: never)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0xfff00513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": null,
+   "slices": 100001,
+   "retiredTotal": 100000999,
+   "sliceEndedAtWfiWithWait": 0,
+   "slicesWithoutWait": 100001,
+   "sleeps": 0,
+   "sleptMs": 0,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": null,
+   "armedMs": null,
+   "hostElapsedMs": 2000.02,
+   "mtimeEnd": "10000099",
+   "guestMsPerHostMs": 0.5,
+   "timerSeenDueAtHostMs": null,
+   "mtimeWhenSeenDue": null,
+   "lateByMs": null,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 999,
+     "waitMs": 0,
+     "mtime": "99"
+    },
+    {
+     "hostElapsedMs": 0.02,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "199"
+    },
+    {
+     "hostElapsedMs": 0.04,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "299"
+    },
+    {
+     "hostElapsedMs": 0.06,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "399"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "F deadline 0xffff_ffff_ffff_f000",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0xfffff537",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": null,
+   "slices": 41,
+   "retiredTotal": 85,
+   "sliceEndedAtWfiWithWait": 41,
+   "slicesWithoutWait": 0,
+   "sleeps": 41,
+   "sleptMs": 2050,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 18446744073709.55,
+    "max": 18446744073709.55
+   },
+   "armedMs": {
+    "min": 50,
+    "max": 50
+   },
+   "hostElapsedMs": 2050,
+   "mtimeEnd": "20000000",
+   "guestMsPerHostMs": 0.9756,
+   "timerSeenDueAtHostMs": null,
+   "mtimeWhenSeenDue": null,
+   "lateByMs": null,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 5,
+     "waitMs": 18446744073709.55,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 50,
+     "retired": 2,
+     "waitMs": 18446744073709.55,
+     "mtime": "500000"
+    },
+    {
+     "hostElapsedMs": 100,
+     "retired": 2,
+     "waitMs": 18446744073709.55,
+     "mtime": "1000000"
+    },
+    {
+     "hostElapsedMs": 150,
+     "retired": 2,
+     "waitMs": 18446744073709.55,
+     "mtime": "1500000"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "G 12,288 ticks (1.2288 ms, under the 1.5 ms minimum)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x00003537",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 1.2288000000000001,
+   "slices": 63,
+   "retiredTotal": 1127,
+   "sliceEndedAtWfiWithWait": 62,
+   "slicesWithoutWait": 1,
+   "sleeps": 0,
+   "sleptMs": 0,
+   "waitsTooShortToSleepOn": 62,
+   "waitMs": {
+    "min": 0.0089,
+    "max": 1.2288
+   },
+   "armedMs": null,
+   "hostElapsedMs": 1.24,
+   "mtimeEnd": "12388",
+   "guestMsPerHostMs": 0.999,
+   "timerSeenDueAtHostMs": 1.24,
+   "mtimeWhenSeenDue": "12388",
+   "lateByMs": 0.0112,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 5,
+     "waitMs": 1.2288,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 0.02,
+     "retired": 2,
+     "waitMs": 1.2088,
+     "mtime": "200"
+    },
+    {
+     "hostElapsedMs": 0.04,
+     "retired": 2,
+     "waitMs": 1.1888,
+     "mtime": "400"
+    },
+    {
+     "hostElapsedMs": 0.06,
+     "retired": 2,
+     "waitMs": 1.1688,
+     "mtime": "600"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "H 15,000 ticks (1.5 ms exactly)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x00004537",
+    "0xa9850513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 1.5,
+   "slices": 2,
+   "retiredTotal": 1006,
+   "sliceEndedAtWfiWithWait": 1,
+   "slicesWithoutWait": 1,
+   "sleeps": 1,
+   "sleptMs": 1.5,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 1.5,
+    "max": 1.5
+   },
+   "armedMs": {
+    "min": 1.5,
+    "max": 1.5
+   },
+   "hostElapsedMs": 1.5,
+   "mtimeEnd": "15100",
+   "guestMsPerHostMs": 1.0067,
+   "timerSeenDueAtHostMs": 1.5,
+   "mtimeWhenSeenDue": "15100",
+   "lateByMs": 0,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 6,
+     "waitMs": 1.5,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 1.5,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "15100"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "I 16,384 ticks (1.6384 ms)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x00004537",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 1.6384,
+   "slices": 2,
+   "retiredTotal": 1005,
+   "sliceEndedAtWfiWithWait": 1,
+   "slicesWithoutWait": 1,
+   "sleeps": 1,
+   "sleptMs": 1.6384,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 1.6384,
+    "max": 1.6384
+   },
+   "armedMs": {
+    "min": 1.6384,
+    "max": 1.6384
+   },
+   "hostElapsedMs": 1.6384,
+   "mtimeEnd": "16484",
+   "guestMsPerHostMs": 1.0061,
+   "timerSeenDueAtHostMs": 1.6384,
+   "mtimeWhenSeenDue": "16484",
+   "lateByMs": 0,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 5,
+     "waitMs": 1.6384,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 1.6384,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "16484"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "J 500,000 ticks (50 ms exactly)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x0007a537",
+    "0x12050513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 50,
+   "slices": 2,
+   "retiredTotal": 1006,
+   "sliceEndedAtWfiWithWait": 1,
+   "slicesWithoutWait": 1,
+   "sleeps": 1,
+   "sleptMs": 50,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 50,
+    "max": 50
+   },
+   "armedMs": {
+    "min": 50,
+    "max": 50
+   },
+   "hostElapsedMs": 50,
+   "mtimeEnd": "500100",
+   "guestMsPerHostMs": 1.0002,
+   "timerSeenDueAtHostMs": 50,
+   "mtimeWhenSeenDue": "500100",
+   "lateByMs": 0,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 6,
+     "waitMs": 50,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 50,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "500100"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "K 500,001 ticks (50 ms + 1 tick)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x0007a537",
+    "0x12150513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 50.0001,
+   "slices": 3,
+   "retiredTotal": 1008,
+   "sliceEndedAtWfiWithWait": 2,
+   "slicesWithoutWait": 1,
+   "sleeps": 1,
+   "sleptMs": 50,
+   "waitsTooShortToSleepOn": 1,
+   "waitMs": {
+    "min": 0.0001,
+    "max": 50.0001
+   },
+   "armedMs": {
+    "min": 50,
+    "max": 50
+   },
+   "hostElapsedMs": 50.02,
+   "mtimeEnd": "500100",
+   "guestMsPerHostMs": 0.9998,
+   "timerSeenDueAtHostMs": 50.02,
+   "mtimeWhenSeenDue": "500100",
+   "lateByMs": 0.0199,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 6,
+     "waitMs": 50.0001,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 50,
+     "retired": 2,
+     "waitMs": 0.0001,
+     "mtime": "500000"
+    },
+    {
+     "hostElapsedMs": 50.02,
+     "retired": 1000,
+     "waitMs": 0,
+     "mtime": "500100"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "L 0x7ffff000 ticks (214.7 s)",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x7ffff537",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": 214747.9552,
+   "slices": 4296,
+   "retiredTotal": 9593,
+   "sliceEndedAtWfiWithWait": 4295,
+   "slicesWithoutWait": 1,
+   "sleeps": 4295,
+   "sleptMs": 214747.9552,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 47.9552,
+    "max": 214747.9552
+   },
+   "armedMs": {
+    "min": 47.9552,
+    "max": 50
+   },
+   "hostElapsedMs": 214747.9552,
+   "mtimeEnd": "2147479652",
+   "guestMsPerHostMs": 1,
+   "timerSeenDueAtHostMs": 214747.9552,
+   "mtimeWhenSeenDue": "2147479652",
+   "lateByMs": 0,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 5,
+     "waitMs": 214747.9552,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 50,
+     "retired": 2,
+     "waitMs": 214697.9552,
+     "mtime": "500000"
+    },
+    {
+     "hostElapsedMs": 100,
+     "retired": 2,
+     "waitMs": 214647.9552,
+     "mtime": "1000000"
+    },
+    {
+     "hostElapsedMs": 150,
+     "retired": 2,
+     "waitMs": 214597.9552,
+     "mtime": "1500000"
+    }
+   ],
+   "violations": []
+  },
+  {
+   "name": "N 2^63 ticks",
+   "words": [
+    "0x544958b7",
+    "0xd4588893",
+    "0x00000813",
+    "0x00100513",
+    "0x03f51513",
+    "0x00000073",
+    "0x10500073",
+    "0xffdff06f"
+   ],
+   "deadlineMs": null,
+   "slices": 41,
+   "retiredTotal": 86,
+   "sliceEndedAtWfiWithWait": 41,
+   "slicesWithoutWait": 0,
+   "sleeps": 41,
+   "sleptMs": 2050,
+   "waitsTooShortToSleepOn": 0,
+   "waitMs": {
+    "min": 18446744073709.55,
+    "max": 18446744073709.55
+   },
+   "armedMs": {
+    "min": 50,
+    "max": 50
+   },
+   "hostElapsedMs": 2050,
+   "mtimeEnd": "20000000",
+   "guestMsPerHostMs": 0.9756,
+   "timerSeenDueAtHostMs": null,
+   "mtimeWhenSeenDue": null,
+   "lateByMs": null,
+   "firstSteps": [
+    {
+     "hostElapsedMs": 0,
+     "retired": 6,
+     "waitMs": 18446744073709.55,
+     "mtime": "0"
+    },
+    {
+     "hostElapsedMs": 50,
+     "retired": 2,
+     "waitMs": 18446744073709.55,
+     "mtime": "500000"
+    },
+    {
+     "hostElapsedMs": 100,
+     "retired": 2,
+     "waitMs": 18446744073709.55,
+     "mtime": "1000000"
+    },
+    {
+     "hostElapsedMs": 150,
+     "retired": 2,
+     "waitMs": 18446744073709.55,
+     "mtime": "1500000"
+    }
+   ],
+   "violations": []
+  }
+ ],
+ "violations": []
+}
