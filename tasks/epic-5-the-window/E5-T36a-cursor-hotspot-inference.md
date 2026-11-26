@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: implemented
+status: in-progress
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -115,3 +115,167 @@ input.
 E5-T41b), cursors larger than the CSS limit (they take the overlay path, untouched), and a
 guest output that is resized while a hotspot is being inferred (the candidates of an
 unresolved image may then be wrong until its history turns over; a resolved image is kept).
+
+### 2026-11-26 — verifier — VERDICT: refuted
+
+Fresh session; I did not implement this. Head `174de5271` (the claim's `49ef1ba61` plus one commit
+that adds only the claim and `evidence/`). My predictions were written before I opened any
+evidence or ran anything (`evidence/e5-t36a/verifier/predictions.txt`); every file named below is
+in that directory. Browser runs: the committed bundle from `tools/serve-dist.sh` on 8125 (the
+served `main.js` and both sink files hash the same as `web/dist` at this head), Chrome
+158.0.8127.88 headless, the session restarted on legacy KMS exactly as the worker's script does.
+
+Both acceptance commands pass as claimed, and the estimator never answers wrong when every
+position it is given really is "a sent position minus this image's hotspot". The device does not
+give it only such positions. After one ordinary straight pointer movement onto the button the
+page settles on a wrong hotspot for the hand and keeps it for the rest of the session: the drawn
+cursor sits 36 px from the guest pixel the page sent. Status `in-progress`; nothing promoted.
+
+**Refuted**
+
+- P2-E, the attack list's "two images with different hotspots" in the device's own event order —
+  FAILED. Predicted before any run: a legacy-KMS commit is `drmModeSetCursor` then
+  `drmModeMoveCursor`, so a new image's `UPDATE_CURSOR` arrives at the plane's previous position,
+  which was computed with the previous image's hotspot; given to the estimator it can leave
+  exactly one candidate, a wrong one; hand-worked case: (5,3) for a hand whose hotspot is (9,4).
+  Observed:
+  - unit, through the real `CursorController`: (5,3), and it stays after the worker's own four
+    scattered points; a device whose update carries the new image's own position gives (9,4)
+    (`attacks-legacy-order.log` §1).
+  - the device's order: every update but the first event of each log carries the plane position
+    of the event before it (559 of 560 in `natural-instrumented/events.json`, 266 of 267 in
+    `approach-C-instrumented/events.json`); the image changes 55-240 ms after the guest pointer
+    crossed the edge, in a commit of its own or together with a motion.
+  - browser, uninstrumented, `plan-approach-C.json`: the pointer rests in the page body at
+    (255,515), glides straight onto the button to (146,501) in 0.33 s (min-jerk, 60 Hz, 18
+    positions) and rests. The canvas's CSS cursor for the hand is `… 45 7`. The kernel's plane is
+    at (137,497) for the sent position (146,501), so the hotspot is (9,4); plane + CSS hotspot is
+    (182,504), 36 px from the sent position. After the worker's own four scattered points with
+    700 ms rests it is still (45,7) (tip (129,519) for the sent (93,516)), and again later in the
+    session after a visit to the terminal (`approach-C-1/result.json`, sha256 `172f324bc1fb…`; no
+    console errors, no cursor diagnostics). (45,7) was written into the plan file before the run.
+    `plan-approach-A.json`, a 0.46 s glide from (431,552) to (142,515): (12,3), 3 px off, kept
+    likewise (`approach-A-1/result.json`, sha256 `f9f97bd44c4b…`; predicted (13,3) or (12,3)).
+  - citation: `approach-C-instrumented/events.json` #221 (t=42018.6: UPDATE installs the hand at
+    plane (145,500), the arrow's plane for the pointer at (146,501); candidates
+    `56,8 45,7 36,5 27,4 19,3 12,2 7,2 4,1 2,1 1,1`, (9,4) not among them) and #222 (t=42018.8:
+    MOVE to (137,497); (45,7) alone survives and is answered). `replay-approach-C.txt` replays the
+    log through the estimator and reproduces the hotspot the page logged on 534 of 534 cursor
+    events. Code: `web/src/sink/cursor-controller.js:396` gives the update's position to the
+    estimator; `web/src/sink/cursor-hotspot.js:88-107` intersects it with the next move and
+    answers after two; `:72` never revisits an answer; `reset()` keeps it too
+    (`attacks-controller.log` §3).
+  - how often, by model only: one straight min-jerk glide from a random point of the page body
+    onto the button leaves the hand wrong at rest in 12.0 % of 2481 glides at 60 Hz (8.5 % at
+    100 Hz), 14.9 % (13.4 %) after three more short glides inside the button, worst (54,63); 0 of
+    2481 with a device whose update carries the new position (`attacks-legacy-order.log` §3). The
+    model's answers for the three browser plans held (§4); an earlier model of mine, which changed
+    the image in the commit that crossed the edge, predicted (22,1) for
+    `plan-approach-from-right.json` and the browser showed "no answer at rest, then (9,4)" — that
+    prediction of mine failed and is recorded in the script's header.
+  Demand: the position of an `UPDATE_CURSOR` that installs a different image is not evidence for
+  that image; stop treating it as such, and re-record.
+- Same class, unit level only — FAILED. An image first shown while the pointer is in relative
+  mode (no absolute position is sent; `handleMove` infers regardless of mode,
+  `cursor-controller.js:370`) answers (17,6) for a hotspot of (9,4) from the stale absolute
+  history and shows it once back in absolute mode (`attacks-controller.log` §4). And with the
+  page's output size stale for the first 1-6 moves of an image, 24 of 3000 seeds answer wrong
+  (`attacks-estimator.log`); the claim's "wrong until its history turns over" does not hold for
+  an answer, which is kept (`cursor-hotspot.js:72`). Neither was shown in a browser. Demand:
+  infer only from positions that follow a sent absolute position at the current output size, or
+  show in a run that the other cases cannot reach the estimator.
+
+**Insufficient**
+
+- The browser proof cannot see this. `tools/verify/e5-t36-hardware-cursor-browser.mjs:95` moves
+  the pointer in single jumps with 700 ms rests. Its moves replayed one for one under V8 block
+  coverage (`plan-worker-equivalent.json`, `worker-equivalent-coverage/`,
+  `coverage-browser-worker-run.txt`): `cursor-hotspot.js:85` (the callback that compares two
+  candidates of one report), `:101` (several clusters left: no answer) and `:53` (history
+  trimmed) never executed. Every report before each answer had one candidate; the run never made
+  the estimator choose, so "the browser proof runs the whole new path" holds for the functions
+  and not for what they decide. The script passes on the bundle on which plan C leaves the hand
+  36 px off (`browser/result.json`: same numbers as the claim). It does discriminate what it was
+  built for: without `--legacy-kms-session` it fails at line 102 on the first shape (cursor
+  `auto`, no plane; `browser-control-software-cursor/result.json`). Demand: the browser proof
+  makes continuous approaches onto each shape from several directions and requires, at each
+  rest, no answer or the tip within one pixel (`continuous-path-browser.mjs` with plans A and C
+  does this and may be taken as is).
+- The unit fixtures are not the device. `web/tests/e5-t36-cursor-hotspot.test.mjs:9-19`
+  (`guest()` only ever reports a sent position minus the image's own hotspot) and `:153`,
+  `:166`, `:169` (the controller test's updates carry the new image's own position). The mutant
+  that stops giving an update's position to the estimator is noticed by `:158`: the test pins
+  the behaviour that produces the wrong answer. Demand: drive the controller tests with the
+  recorded order (update at the previous plane position, then move), across an image change.
+
+**Coverage of the diff** (unit tests: `coverage-unit-tests.txt`; the worker's browser run: above)
+
+- `cursor-hotspot.js:116-123` `forget` — dead in the page: no caller in `web/main.js` or
+  `web/src` (only test line 88). Delete it or use it.
+- `cursor-controller.js:403`, an answer of (0,0) — executed by no test and no run. Needs
+  evidence: a controller test whose true hotspot is (0,0).
+- `cursor-hotspot.js:51` (a repeated sent position is dropped) — executed by no test and not by
+  the worker's browser run; `:74` (a second report from the same place) by the browser only.
+  Needs evidence: one unit assertion each.
+- Waived: `cursor-hotspot.js:21`, `:33-37` argument checks (`:38` and `:61-63` are executed by
+  tests); `cursor-controller.js:383` disposed guard; `:384` and `:406-409` diagnostics (logging,
+  unreachable with the checked values the page passes). The claim's "diagnostics on malformed
+  input" are the estimator's `RangeError` (test `:94`), not these two.
+- `web/main.js:910-917`: every block executed (14 calls for 14 moves).
+- Mutants, in a scratch copy only (`mutate.py`, `mutants.json`): 15 of 35 noticed by the
+  worker's tests. Survivors that touch a claim: `cursor-controller.js:393` without
+  `state.hotX !== 0 || state.hotY !== 0` ("a device that reports a hotspot is never
+  second-guessed" still passes: its two positions agree on no hotspot); `cursor-hotspot.js:53`
+  history never trimmed; `:83-84` no bounds on candidates; `:91-96` no restart; `:103-106` no
+  clamp. The code as written is right in each (`attacks-controller.log` §1-2,
+  `attacks-estimator.log`); the tests would not say so if it stopped. Demand: with the rework,
+  have the tests fail on these.
+
+**Held**
+
+- P0: `gates.log` names `49ef1ba61` and hashes `33ebd773ed44…`; `result.json` hashes
+  `7ac780685eaa…`; `web/dist` sink files and `main.js` are byte-identical to their sources.
+- P1: the four cursor test files, 23 of 23 (`unit-acceptance.log`).
+- P3: the worker's browser command passes with the claim's numbers (`browser/result.json`).
+- P4: the control fails where predicted (line 102).
+- Attack list with positions that belong to their image (`attacks-estimator.log`): two images
+  alternating with lag 0-4, 4000 of 4000 answered, 0 wrong; a hotspot larger than the image
+  never answers ((64,10) on a 64-wide image answers (63,10)); wrapped positions in the corners,
+  0 wrong of 1000; lag varying up to 20, 100 and 400 moves, 0 wrong of 12,000; 52,416 evenly
+  spaced sweeps, 0 wrong (20,262 answer, within a pixel); 400,000 moves over 5,000 images: 64
+  images, 128 positions, 47 candidates at most.
+- A device that reports a hotspot, before and after an inferred image, and the same pixels with
+  and without one (`attacks-controller.log` §1-2).
+- P6: click 267.1 ms and key echo 47.8 ms against E5-T37b's 267.7 / 270.6 / 267.9 and
+  45.4 / 48.8 / 44.2 (`evidence/e5-t37b/browser-paced-{1,2}.json`, `live/live.json`); judged on
+  the worker's file, not re-run.
+
+**Seen, no demand here**
+
+- No answer is the usual state after a straight approach: the hand had hotspot (0,0), 9 px off,
+  at rest in `natural-instrumented` (second read) and `approach-from-right-1` (second read)
+  until the pointer turned; by model 79-88 % of straight glides. A delay by this task's terms;
+  it is what a user will see first once E5-T36c makes this visible.
+- `natural-instrumented` then answered (8,4) for the hand and kept it: within the one pixel this
+  task allows, but line 103 of the worker's script demands (9,4) exactly.
+
+SUITE: n/a until the refutation clears.
+
+Commands (repo root unless said):
+`cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`;
+`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/verifier/browser`,
+and without `--legacy-kms-session` into `…/browser-control-software-cursor`;
+`node evidence/e5-t36a/verifier/continuous-path-browser.mjs --plan evidence/e5-t36a/verifier/plan-approach-C.json --out evidence/e5-t36a/verifier/approach-C-1`
+(likewise `plan-approach-A.json`, `plan-approach-from-right.json`; `plan-natural.json` and plan C
+again with `--instrument`; `plan-worker-equivalent.json` with `--coverage`);
+`node evidence/e5-t36a/verifier/replay-events.mjs evidence/e5-t36a/verifier/approach-C-instrumented/events.json`;
+`node evidence/e5-t36a/verifier/attacks-estimator.mjs`; `…/attacks-legacy-order.mjs`;
+`…/attacks-controller.mjs`; the four test files with `NODE_V8_COVERAGE` and
+`coverage-uncovered.mjs`; `python3 evidence/e5-t36a/verifier/mutate.py SCRATCH …/mutants.json`.
+
+Not checked: a pristine clone (medium risk); the whole web unit suite and the demo page (taken
+from `gates.log` and `demo-suite.json`); how often the wrong answer occurs with a real mouse
+(two chosen glides were wrong in the browser, two unchosen ones were not; the percentages are a
+model); Firefox and Safari; the relative-mode and stale-size cases in a browser; cursors above
+the CSS limit; E5-T36b's image. In `natural-instrumented/events.json` the `img` column is a
+constant (my logging mistake, fixed for `approach-C-instrumented`).

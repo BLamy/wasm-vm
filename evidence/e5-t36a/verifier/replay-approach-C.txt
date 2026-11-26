@@ -1,0 +1,57 @@
+785 events (251 sent, 267 updates, 267 moves)
+replay vs the hotspot the page logged after each cursor event: 534/534 equal
+updates that carry the previous event's plane position: 266/267; image changes: 9
+
+image dae41499: first answer (1,1) at event #39
+   #25 t=26105.4 M img dae41499 plane (99,99) -> page null replay null  candidates []
+   #26 t=26461.8 U img dae41499 plane (99,99) -> page null replay null  candidates []
+   #27 t=26461.8 M img dae41499 plane (99,99) -> page null replay null  candidates []
+   #28 t=26631.2 U img dae41499 plane (99,99) -> page null replay null  candidates []
+   #29 t=26631.2 M img dae41499 plane (99,99) -> page null replay null  candidates []
+   #30 t=26762.1 U img dae41499 plane (99,99) -> page null replay null  candidates []
+   #31 t=26762.1 M img dae41499 plane (99,99) -> page null replay null  candidates []
+   #32 t=30184.9 U img dae41499 plane (99,99) -> page null replay null  candidates []
+   #33 t=30185 M img dae41499 plane (99,99) -> page null replay null  candidates []
+   #34 t=36086.8 S (450,700)
+   #35 t=36229.1 U img dae41499 plane (99,99) -> page null replay null  candidates []
+   #36 t=36229.2 M img dae41499 plane (449,699) -> page null replay null  candidates [1,1]
+   #37 t=37624.3 S (449,699)
+   #38 t=37632.4 U img dae41499 plane (449,699) -> page null replay null  candidates [1,1]
+   #39 t=37632.7 M img dae41499 plane (448,698) -> page (1,1) replay (1,1)  candidates [1,1]
+   #40 t=37656.7 S (448,698)
+
+image effa3871: first answer (45,7) at event #222
+   #208 t=41927.3 U img dae41499 plane (171,503) -> page (1,1) replay (1,1)  candidates [1,1]
+   #209 t=41927.4 M img dae41499 plane (163,502) -> page (1,1) replay (1,1)  candidates [1,1]
+   #210 t=41939.2 S (157,502)
+   #211 t=41947.1 U img dae41499 plane (163,502) -> page (1,1) replay (1,1)  candidates [1,1]
+   #212 t=41947.2 M img dae41499 plane (156,501) -> page (1,1) replay (1,1)  candidates [1,1]
+   #213 t=41955.5 S (152,502)
+   #214 t=41960.7 U img dae41499 plane (156,501) -> page (1,1) replay (1,1)  candidates [1,1]
+   #215 t=41960.7 M img dae41499 plane (151,501) -> page (1,1) replay (1,1)  candidates [1,1]
+   #216 t=41972 S (149,501)
+   #217 t=41990.1 S (147,501)
+   #218 t=42006.8 S (146,501)
+   #219 t=42013.7 U img dae41499 plane (151,501) -> page (1,1) replay (1,1)  candidates [1,1]
+   #220 t=42013.8 M img dae41499 plane (145,500) -> page (1,1) replay (1,1)  candidates [1,1]
+   #221 t=42018.6 U img effa3871 plane (145,500) -> page null replay null  candidates [56,8 45,7 36,5 27,4 19,3 12,2 7,2 4,1 2,1 1,1]
+   #222 t=42018.8 M img effa3871 plane (137,497) -> page (45,7) replay (45,7)  candidates [45,7]
+   #223 t=42079.8 U img effa3871 plane (137,497) -> page (45,7) replay (45,7)  candidates [45,7]
+
+image 3554aee5: first answer (4,8) at event #367
+   #353 t=49018.8 M img dae41499 plane (744,446) -> page (1,1) replay (1,1)  candidates [1,1]
+   #354 t=49022.3 S (767,445)
+   #355 t=49029.7 U img dae41499 plane (744,446) -> page (1,1) replay (1,1)  candidates [1,1]
+   #356 t=49030.2 M img dae41499 plane (766,444) -> page (1,1) replay (1,1)  candidates [1,1]
+   #357 t=49039.8 S (789,442)
+   #358 t=49056.7 U img dae41499 plane (766,444) -> page (1,1) replay (1,1)  candidates [1,1]
+   #359 t=49056.8 S (810,440)
+   #360 t=49057 M img dae41499 plane (788,441) -> page (1,1) replay (1,1)  candidates [1,1]
+   #361 t=49068.8 U img dae41499 plane (788,441) -> page (1,1) replay (1,1)  candidates [1,1]
+   #362 t=49068.9 M img dae41499 plane (809,439) -> page (1,1) replay (1,1)  candidates [1,1]
+   #363 t=49072.7 S (830,438)
+   #364 t=49075.3 U img 3554aee5 plane (809,439) -> page null replay null  candidates [1,1 21,-1]
+   #365 t=49075.3 M img 3554aee5 plane (806,432) -> page null replay null  candidates [4,8 24,6]
+   #366 t=49084.3 U img 3554aee5 plane (806,432) -> page null replay null  candidates [4,8 24,6]
+   #367 t=49084.5 M img 3554aee5 plane (826,430) -> page (4,8) replay (4,8)  candidates [4,8]
+   #368 t=49089.9 S (848,436)

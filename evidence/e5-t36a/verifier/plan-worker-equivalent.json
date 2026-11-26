@@ -1,0 +1,144 @@
+{
+ "about": "The worker's recorded run, move for move (tools/verify/e5-t36-hardware-cursor-browser.mjs: twelve teleports with 700 ms rests, then the two painted-pointer positions), replayed under V8 block coverage to hold that run against the diff.",
+ "steps": [
+  {
+   "op": "jump",
+   "to": [
+    300,
+    620
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    380,
+    700
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    520,
+    650
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    450,
+    730
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "arrow over the page body",
+   "expectHotspot": [
+    1,
+    1
+   ],
+   "settleMs": 1500
+  },
+  {
+   "op": "jump",
+   "to": [
+    60,
+    510
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    100,
+    520
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    140,
+    505
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    93,
+    516
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "hand over the button",
+   "expectHotspot": [
+    9,
+    4
+   ],
+   "settleMs": 1500
+  },
+  {
+   "op": "jump",
+   "to": [
+    900,
+    300
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    950,
+    380
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    1100,
+    340
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    1000,
+    420
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "name": "text caret over the terminal",
+   "expectHotspot": [
+    4,
+    8
+   ],
+   "settleMs": 1500
+  },
+  {
+   "op": "jump",
+   "to": [
+    1150,
+    650
+   ],
+   "restMs": 2500
+  },
+  {
+   "op": "jump",
+   "to": [
+    1150,
+    300
+   ],
+   "restMs": 2500
+  }
+ ]
+}

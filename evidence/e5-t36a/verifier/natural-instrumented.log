@@ -1,0 +1,182 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "reads": [
+  {
+   "name": "arrow over the page body, after two glides",
+   "sent": [
+    500,
+    690
+   ],
+   "css": [
+    1,
+    1
+   ],
+   "img": "9zFk9QAA",
+   "expect": [
+    1,
+    1
+   ],
+   "plane": [
+    499,
+    689
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "hand, first time, straight glide from the page body onto the button",
+   "sent": [
+    93,
+    516
+   ],
+   "css": [
+    0,
+    0
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    84,
+    512
+   ],
+   "tipError": [
+    -9,
+    -4
+   ],
+   "wrong": true
+  },
+  {
+   "name": "hand, after moving about inside the button",
+   "sent": [
+    60,
+    505
+   ],
+   "css": [
+    8,
+    4
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    51,
+    501
+   ],
+   "tipError": [
+    -1,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "text caret, first time, glide from the button to the terminal",
+   "sent": [
+    1000,
+    420
+   ],
+   "css": [
+    4,
+    8
+   ],
+   "img": "d5f44QAA",
+   "expect": [
+    4,
+    8
+   ],
+   "plane": [
+    996,
+    412
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "text caret, after moving about inside the terminal",
+   "sent": [
+    950,
+    380
+   ],
+   "css": [
+    4,
+    8
+   ],
+   "img": "d5f44QAA",
+   "expect": [
+    4,
+    8
+   ],
+   "plane": [
+    946,
+    372
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "arrow again over the page body",
+   "sent": [
+    450,
+    730
+   ],
+   "css": [
+    1,
+    1
+   ],
+   "img": "9zFk9QAA",
+   "expect": [
+    1,
+    1
+   ],
+   "plane": [
+    449,
+    729
+   ],
+   "tipError": [
+    0,
+    0
+   ],
+   "wrong": false
+  },
+  {
+   "name": "hand again over the button",
+   "sent": [
+    100,
+    520
+   ],
+   "css": [
+    8,
+    4
+   ],
+   "img": "rPsb6QAA",
+   "expect": [
+    9,
+    4
+   ],
+   "plane": [
+    91,
+    516
+   ],
+   "tipError": [
+    -1,
+    0
+   ],
+   "wrong": false
+  }
+ ]
+}
+exit=0

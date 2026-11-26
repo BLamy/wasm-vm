@@ -1,0 +1,38 @@
+1. Case E (predictions.txt, written before any run): the arrow resolves; a jump to just left of the button; one step of (4,2) onto it, the hand arriving with that step
+     sent   (600,600)
+     arrow UPDATE at (99,99), MOVE to (599,599) -> page's hotspot null
+     sent   (590,640)
+     arrow UPDATE at (599,599), MOVE to (589,639) -> page's hotspot (1,1)
+     sent   (300,400)
+     arrow UPDATE at (589,639), MOVE to (299,399) -> page's hotspot (1,1)
+     sent   (18,500)
+     arrow UPDATE at (299,399), MOVE to (17,499) -> page's hotspot (1,1)
+     sent   (22,502)
+     hand  UPDATE at (17,499), MOVE to (13,498) -> page's hotspot (5,3)
+   the controller's CSS cursor for the hand: hotspot (5,3); truth (9,4) -> WRONG   [predicted (5,3)]
+   after four more scattered moves inside the button (the worker's own points): (5,3) — a resolved image is never revisited
+   the same pointer path on a device whose update carries the new image's own position: (9,4)
+
+2. replica == real controller on 150/150 random sessions (first hotspot answered for every image)
+
+3. one straight min-jerk glide from the page body onto the button (random start in the body, random end on the button, 0.25-1.15 s),
+   the image changing 60-300 ms after the guest pointer crossed the edge; then three short glides inside the button
+   device as recorded, 60 Hz                2481 glides: hand WRONG at rest 297 (12.0 %), still unanswered at rest 1954 (78.8 %), WRONG at the end 369 (14.9 %); worst (54,63)
+   device as recorded, 100 Hz               2481 glides: hand WRONG at rest 212 (8.5 %), still unanswered at rest 2172 (87.5 %), WRONG at the end 333 (13.4 %); worst (36,63)
+   update carries the new position, 60 Hz   2481 glides: hand WRONG at rest 0 (0.0 %), still unanswered at rest 2134 (86.0 %), WRONG at the end 0 (0.0 %)
+   update carries the new position, 100 Hz  2481 glides: hand WRONG at rest 0 (0.0 %), still unanswered at rest 2279 (91.9 %), WRONG at the end 0 (0.0 %)
+
+4. what the model says the page shows at each `read` of the browser plans (60 timing draws each: image change 60-300 ms after the crossing, guest 4-14 ms behind)
+   plan-approach-from-right.json
+      hand, first time: straight glide from the right onto the button: (9,4) x41, null x19
+      hand, after the worker's four scattered points inside the button: (9,4) x60
+      hand again, later in the session: (9,4) x60
+   plan-approach-A.json
+      hand, first time: one straight glide from the page body onto the button, then at rest: (13,3) x56, (12,3) x4
+      hand, after the worker's four scattered points inside the button (700 ms rests): (13,3) x56, (12,3) x4
+      hand again, later in the session: (13,3) x56, (12,3) x4
+   plan-approach-C.json
+      hand, first time: one straight glide from the page body onto the button, then at rest: (45,7) x60
+      hand, after the worker's four scattered points inside the button (700 ms rests): (45,7) x60
+      hand again, later in the session: (45,7) x60
+

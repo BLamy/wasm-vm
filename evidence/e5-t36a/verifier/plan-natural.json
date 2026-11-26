@@ -1,0 +1,23 @@
+{
+  "about": "Natural use: continuous min-jerk glides at 100 Hz between the page body, the button and the terminal. No teleports after the first position.",
+  "steps": [
+    { "op": "jump", "to": [450, 700], "restMs": 1500 },
+    { "op": "glide", "to": [380, 640], "ms": 400, "restMs": 800 },
+    { "op": "glide", "to": [500, 690], "ms": 500, "restMs": 800 },
+    { "op": "read", "name": "arrow over the page body, after two glides", "expectHotspot": [1, 1] },
+    { "op": "glide", "to": [93, 516], "ms": 900, "restMs": 300 },
+    { "op": "read", "name": "hand, first time, straight glide from the page body onto the button", "expectHotspot": [9, 4] },
+    { "op": "glide", "to": [130, 525], "ms": 300, "restMs": 500 },
+    { "op": "glide", "to": [60, 505], "ms": 350, "restMs": 500 },
+    { "op": "read", "name": "hand, after moving about inside the button", "expectHotspot": [9, 4] },
+    { "op": "glide", "to": [1000, 420], "ms": 1100, "restMs": 300 },
+    { "op": "read", "name": "text caret, first time, glide from the button to the terminal", "expectHotspot": [4, 8] },
+    { "op": "glide", "to": [1100, 340], "ms": 400, "restMs": 500 },
+    { "op": "glide", "to": [950, 380], "ms": 400, "restMs": 500 },
+    { "op": "read", "name": "text caret, after moving about inside the terminal", "expectHotspot": [4, 8] },
+    { "op": "glide", "to": [450, 730], "ms": 1000, "restMs": 300 },
+    { "op": "read", "name": "arrow again over the page body", "expectHotspot": [1, 1] },
+    { "op": "glide", "to": [100, 520], "ms": 900, "restMs": 300 },
+    { "op": "read", "name": "hand again over the button", "expectHotspot": [9, 4], "screenshot": "desktop.png" }
+  ]
+}

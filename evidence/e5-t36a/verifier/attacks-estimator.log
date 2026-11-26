@@ -1,0 +1,32 @@
+HELD     P2-A no lag, two teleports, H=(7,11)
+         first null, second (7,11)
+HELD     P2-B lag of one, uneven steps, H=(7,11)
+         first null, second (7,11)
+HELD     P2-C straight even sweep, lag 2, step (6,0), H=(7,11)
+         answer null
+HELD     P2-D u32-wrapped plane position, H=(20,20)
+         first null, second (20,20)
+HELD     two images alternating, own positions only, lag 0..4 (2000 seeds)
+         4000/4000 resolved, 0 wrong
+HELD     hotspot larger than the image
+         H=(70,70) -> null; H=(65,10) -> null; H=(64,10) -> (63,10) (clamped into the image, one pixel off)
+HELD     corners of the output, plane positions wrapped as u32 (1000 seeds)
+         1000/1000 resolved, 0 wrong
+INFO     hypothetical device that clamps the plane at the left edge
+         H=(9,4), pointer x=3 twice -> null, (3,4) (no such clamp exists in this stack; not a finding)
+HELD     varying lag 0..20 moves, wandering path (3000 seeds)
+         2930/3000 resolved, 0 wrong
+HELD     varying lag 0..100 moves, wandering path (3000 seeds)
+         2925/3000 resolved, 0 wrong
+HELD     varying lag 0..20 moves, scribble inside a 50 px box (3000 seeds)
+         2935/3000 resolved, 0 wrong
+HELD     lag beyond the 128-position history (0..400), scribble inside a 50 px box (3000 seeds)
+         2869/3000 resolved, 0 wrong
+HELD     evenly spaced sweeps, 624 directions x 7 lags x 6 hotspots x 2 (52416 sweeps)
+         20262 answered (all within a pixel of the truth: true), 32154 silent, 0 wrong
+FAILED   page's output size stale for the first 1..6 moves of an image (3000 seeds, whole screen)
+         3000/3000 resolved, 24 wrong first {"seed":407381,"got":{"x":13,"y":7},"hot":{"x":25,"y":21},"stale":5}
+HELD     400,000 moves over 5,000 distinct images (2 kB keys)
+         images <= 64, sent <= 128, candidates per image <= 47; heapUsed 6 MB -> 34 MB
+
+15 checks: 13 held, 1 failed, 1 info

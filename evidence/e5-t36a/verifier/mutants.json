@@ -1,0 +1,390 @@
+{
+ "tests": [
+  "tests/e5-t36-cursor-hotspot.test.mjs",
+  "tests/e5-t15b-cursor-sink.test.mjs",
+  "tests/e5-t15c-cursor-mode.test.mjs"
+ ],
+ "mutants": 35,
+ "noticed": 15,
+ "survived": [
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "tolerance 1 -> 2",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "history 128 -> 8",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "max images 64 -> 2",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "keep repeated sent positions",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "history never trimmed",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "same-place report counted again",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "upper bound loosened (>= -> >)",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no upper bound on candidates",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no lower bound on candidates",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "lower bound without slack",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no restart when nothing is kept",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "restart counts as two moves",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "answer the last candidate, not the first",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no clamp into the image",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "resolved image re-inferred",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "a device-reported hotspot is second-guessed",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "update does not reset the inferred hotspot",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "known image not recognised at once",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "style applied on every move",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "(0,0) answer treated as a hotspot",
+   "noticed": false,
+   "failing": []
+  }
+ ],
+ "all": [
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "tolerance 1 -> 0",
+   "noticed": true,
+   "failing": [
+    "failing tests:",
+    "one pixel of guest rounding is tolerated; a second image is independent"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "tolerance 1 -> 2",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "confirmations 2 -> 3",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "an arrow, a hand and a text caret each resolve to their own hotspot after two moves",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "history 128 -> 8",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "max images 64 -> 2",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no u32 wrap",
+   "noticed": true,
+   "failing": [
+    "failing tests:",
+    "plane positions left of the origin arrive wrapped as u32"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "keep repeated sent positions",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "history never trimmed",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "same-place report counted again",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "upper bound loosened (>= -> >)",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no upper bound on candidates",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no lower bound on candidates",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "lower bound without slack",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "kept by exact match, not near",
+   "noticed": true,
+   "failing": [
+    "failing tests:",
+    "one pixel of guest rounding is tolerated; a second image is independent"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no restart when nothing is kept",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "restart counts as two moves",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "answer after one move",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "an arrow, a hand and a text caret each resolve to their own hotspot after two moves",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "answer with several clusters left",
+   "noticed": true,
+   "failing": [
+    "a straight sweep alone does not guess",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "answer the last candidate, not the first",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no clamp into the image",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "resolved image re-inferred",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "eviction keeps one too few (> -> >=)",
+   "noticed": true,
+   "failing": [
+    "failing tests:",
+    "the number of remembered images is bounded; a forgotten one is inferred again"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "no eviction",
+   "noticed": true,
+   "failing": [
+    "failing tests:",
+    "the number of remembered images is bounded; a forgotten one is inferred again"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-hotspot.js",
+   "mutant": "forget(key) does nothing",
+   "noticed": true,
+   "failing": [
+    "failing tests:",
+    "positions nothing recent explains are ignored, and forgetting an image starts it over"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "inferred hotspot never used in the CSS cursor",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "a device-reported hotspot is second-guessed",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "overlay cursors inferred too",
+   "noticed": true,
+   "failing": [
+    "1,000 alternating mode/resource transitions stay bounded and return to a clean host state",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "update does not reset the inferred hotspot",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "known image not recognised at once",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "update's own position not fed",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "style applied on every move",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "moves never infer",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "(0,0) answer treated as a hotspot",
+   "noticed": false,
+   "failing": []
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "notePointer dropped",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "failing tests:"
+   ]
+  },
+  {
+   "file": "web/src/sink/cursor-controller.js",
+   "mutant": "snapshot does not report the inferred hotspot",
+   "noticed": true,
+   "failing": [
+    "a hotspot-less CSS cursor gets its inferred hotspot, once, and keeps it across updates",
+    "failing tests:"
+   ]
+  }
+ ]
+}

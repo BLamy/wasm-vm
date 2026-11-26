@@ -1,0 +1,90 @@
+E5-T36a — verifier predictions
+Written 2026-11-26 05:14 EST, after reading the task file and the diff (b2cdf9f13..174de5271),
+BEFORE opening evidence/e5-t36a/{gates.log,browser/result.json,browser-unchanged.json}, before
+running any test, and before running the browser script. (The worker's claim table in the task
+file was unavoidably read with the task file.)
+
+Model of the claim. With no hotspot from the device, a plane report is
+    plane = (guest pointer) - H,   guest pointer = one of the positions the page sent (+-1 rounding)
+so the hotspot of an image must be   H = sent_k - plane   for the sent position the guest had
+consumed when it placed the plane. The estimator may answer H only when every other (sent - plane)
+offset has been excluded; an answer that differs from H by more than one pixel is a wrong answer.
+
+P0 ORIENT
+  P0a  evidence/e5-t36a/gates.log names head 49ef1ba61 on its first line (the code commit; 174de5271
+       only adds the claim + evidence). git diff 49ef1ba61..174de5271 touches no web/ or tools/ source.
+  P0b  web/dist/src/sink/cursor-hotspot.js and cursor-controller.js at HEAD are byte-identical to
+       web/src/sink/*.js; web/dist/main.js differs from web/main.js only by the deploy-path rewrite
+       and contains the notePointer hook.
+
+P1 UNIT (acceptance 1)
+  cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs \
+      tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+  -> 23 tests, 23 pass, 0 fail (10 of them in the new file).
+
+P2 Hand-worked estimator cases of my own (32x32 image unless said; tolerance 1, confirmations 2)
+  A  no lag, two teleports, H=(7,11):
+       sent (200,300); plane (193,289)  -> candidates {(7,11)}            -> null (one move)
+       sent (640,90);  plane (633,79)   -> (7,11) again; (200,300) gives (-433,221) out of image
+                                         -> answers (7,11)
+  B  lag of one, uneven steps, H=(7,11):
+       sent (100,100), (110,104); plane (93,89)   -> {(7,11),(17,15)}      -> null
+       sent (130,100);            plane (103,93)  -> {(7,11),(27,7)} ((100,100) gives x=-3: out)
+                                         kept {(7,11)}                     -> answers (7,11)
+  C  evenly spaced straight sweep, lag 2, step (6,0), H=(7,11), 20 moves  -> null throughout
+       (offsets H+(6m,0) explain every plane position equally).
+  D  u32-wrapped: H=(20,20), sent (5,8) -> plane (0xfffffff1, 0xfffffff4) = (-15,-12): candidate (20,20).
+  E  THE CASE I EXPECT TO BREAK IT (protocol order at an image change). On legacy KMS wlroots
+     commits drmModeSetCursor (new image, plane still at the OLD position) and then
+     drmModeMoveCursor; virtio-gpu turns that into UPDATE_CURSOR(new image, pos = old plane
+     position) followed by MOVE_CURSOR(new position). So the first position the page attributes to a
+     new image was computed with the PREVIOUS image's hotspot. Arrow H_a=(1,1), hand H_h=(9,4), 24x24:
+       sent (600,600) [far], then (300,400): arrow plane at (299,399).
+       sent (304,402): the guest switches to the hand:
+           UPDATE(hand, pos (299,399))  -> hand candidates {(300,400)-(299,399)=(1,1), (304,402)-(299,399)=(5,3)}
+           MOVE  (hand, pos (295,398))  -> {(304,402)-(295,398)=(9,4), (300,400)-(295,398)=(5,2)}
+       kept = {(5,3)} (near (5,2)); moves = 2; one cluster  ->  I predict the estimator ANSWERS (5,3),
+       and the controller writes `url(...) 5 3` for the hand, whose hotspot is (9,4): wrong by (4,1) px,
+       permanently (a resolved image is never revisited).
+     If the code instead answers null or (9,4) here, my reading is wrong and this is not a finding.
+     The same contamination must hit "the same image re-installed after a different one" while it is
+     still unresolved. Whether the device really orders the events this way must be confirmed in the
+     browser before this counts (instrumented run), and the wrong hotspot must be shown on the
+     uninstrumented committed bundle with a human-like continuous pointer path (not teleports with
+     700 ms rests) to be a refutation rather than a model.
+
+P3 BROWSER (acceptance 2), committed bundle, --legacy-kms-session
+  Passes: the script teleports between four scattered points per shape and rests 700 ms on each,
+  so the stale first report shares no candidate with the next one and the estimator starts over
+  (the `kept.length === 0` branch): hotspots (1,1), (9,4), (4,8); plane + hotspot within 1 px of
+  the last point; region hash under the pointer == hash after moving away; errors [].
+  sway environment contains WLR_DRM_NO_ATOMIC=1 and not WLR_NO_HARDWARE_CURSORS.
+  What the script cannot show: a cursor that is wrong after a continuous approach.
+
+P4 CONTROL, same script without --legacy-kms-session (published image, software cursor)
+  FAILS at the first shape, at the first assertion in the loop (script line 102,
+  "the canvas cursor is the guest's image"): no cursor plane was ever reported, so the canvas's
+  computed cursor is not a url(...) with a hotspot. Exit status 1, result.pass false.
+
+P5 ATTACK LIST (unit level), expected with protocol-faithful positions (plane = sent - H):
+  two images alternating (reports attributed correctly)      -> each answers its own hotspot
+  hotspot larger than the image (H.x >= width+1)              -> never answers (null)
+  hotspot == width exactly                                    -> answers width-1 (clamped, 1 px off)
+  wrapped / negative plane positions                          -> correct
+  varying lag (0..20 moves), non-collinear path               -> correct or null, never wrong
+  evenly spaced sweep, any lag                                -> null
+  long session: _images.size <= 64, _sent.length <= 128, candidates per image <= 128
+  resize in the middle (sent positions noted with a stale output size): I expect a wrong answer
+     to be reachable near the origin (scale error smaller than the image), which the worker lists
+     under "Not claimed" — to be judged against the task's own attack list.
+  the same image re-installed after a different one, with the device's real event order   -> see E.
+
+P6 REGRESSION ("unchanged with the image as published")
+  With the software-cursor image no cursor event reaches the controller; the only new work per
+  pointer frame is presentation.snapshot() + one array push. browser-unchanged.json medians within
+  E5-T37b's spread (click ~266 ms, key echo ~47 ms).
+
+P7 COVERAGE guesses (to be checked): never executed by the browser run or a test —
+  cursor-controller.js `catch` in notePointer (cursor-hotspot-pointer-error) and in _inferHotspot
+  (cursor-hotspot-error); estimator constructor RangeErrors for history/tolerance/confirmations;
+  forget() with no argument; `(hot.x === 0 && hot.y === 0) return false`.

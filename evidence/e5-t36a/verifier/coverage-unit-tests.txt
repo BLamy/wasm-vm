@@ -1,0 +1,62 @@
+web/src/sink/cursor-hotspot.js: loaded in 2 context(s)
+  L21-21: throw new RangeError(`${name} must be a finite number`);
+  L33-33: throw new RangeError("history must be an integer >= 2");
+  L34-34: throw new RangeError("tolerance must be an integer >= 0");
+  L35-37: { throw new RangeError("confirmations must be an integer >= 2"); }
+  L51-51: return;
+  L74-74: && image.last.y === plane.y
+  L74-74: return null;
+  L117-120: { this._images.clear(); this._sent.length = 0; }
+web/src/sink/cursor-controller.js: loaded in 2 context(s)
+  L25-27: { throw new RangeError(`${name} must be an unsigned 32-bit integer`); }
+  L33-35: { throw new RangeError(`${name} must be a positive finite number`); }
+  L41-41: throw new TypeError("cursor state is missing");
+  L44-46: : state.position && typeof state.position === "object" ? state.position : state
+  L48-48: ?? state.resource_id
+  L49-49: ?? state.hot_x
+  L50-50: ?? state.hot_y
+  L51-51: ?? pos.scanout_id
+  L58-58: catch { /* diagnostics never break guest execution */ }
+  L62-62: ?? event?.event
+  L62-62: ?? event?.kind
+  L62-62: ?? CURSOR_EVENTS.UPDATE
+  L93-93: () => {}
+  L97-99: { throw new TypeError("cursor target must expose a style object"); }
+  L100-102: { throw new TypeError("cursor overlay parent must support appendChild"); }
+  L103-103: throw new TypeError("cursor onDiagnostic must be a function");
+  L104-104: throw new TypeError("cursor onStateChange must be a function");
+  L143-143: ?? 0
+  L144-144: || error
+  L144-144: : undefined
+  L154-154: ?? ""
+  L159-159: return;
+  L180-180: return;
+  L181-181: ?? ""
+  L201-203: { throw new Error("cursor overlay DOM is unavailable"); }
+  L205-205: throw new TypeError("cursor overlay element is invalid");
+  L222-225: catch (error) { this._restoreTargetPosition(); throw error; }
+  L242-244: catch (error) { this._diagnostic("overlay-remove-error", error); }
+  L245-252: { try { overlay.remove?.(); removed = true; } catch (error) { this._diagnostic("overlay-remove-error", error); } }
+  L268-268: return;
+  L308-310: catch (error) { this._diagnostic(reason, error); }
+  L315-315: return false;
+  L318-318: ?? event?.cursorState
+  L318-318: ?? event
+  L324-324: ?? []
+  L333-336: catch (error) { this._diagnostic("cursor-update-rejected", error); return false; }
+  L344-344: return false;
+  L346-346: ?? event?.cursorState
+  L346-346: ?? event
+  L347-355: { this._state = state; this._descriptor = null; this._removeOverlay(); this._restoreHostCursor(); this._moves += 1; this._notify("cursor-move-hidden")
+  L360-362: { throw new RangeError("cursor move cannot change the active hotspot"); }
+  L363-365: { throw new RangeError("cursor move hotspot is outside the active resource"); }
+  L383-383: return;
+  L384-384: catch (error) { this._diagnostic("cursor-hotspot-pointer-error", error); }
+  L403-403: && hot.y === 0
+  L406-409: catch (error) { this._diagnostic("cursor-hotspot-error", error); return false; }
+  L417-419: default: this._diagnostic("unknown-cursor-event"); return false;
+  L425-425: ?? CURSOR_MODES.ABSOLUTE
+  L442-448: setPositionScale(scaleX, scaleY = scaleX) { this._positionScaleX = checkedScale(scaleX, "cursor x scale"); this._positionScaleY = checkedScale(scaleY,
+  L452-452: : { kind: "hidden" }
+  L457-457: return this.snapshot("reset");
+  L460-462: catch (error) { this._diagnostic("cursor-reset-sink-error", error); }
