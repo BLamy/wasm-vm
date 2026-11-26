@@ -645,3 +645,16 @@ includes);
 `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`;
 `cd web && node --test --test-timeout=120000 tests/*.test.mjs`;
 `curl` of ten files from `:8125` against `git show HEAD:web/dist/…`.
+
+**Addendum, after the flip (head `57579bfaf`).** The commit hook rebuilt the bundle from source
+for that commit. `web/dist` changed in `roadmap.js` (the row), `sw.js` (the cache version string)
+and `tasks.json` only: the release wasm the hook built is byte-for-byte the committed one
+(sha256 `19cd4d2d…`; build id `87a1d434…` unchanged). That is the rebuild listed under "Not
+checked" above, and it shows the measured wasm is what the sources build to. The demo page on
+that committed bundle (`node evidence/e5-t37b/verifier-r2/demo-row.mjs`; `demo-row.json`,
+`demo-row.png`; Chrome 158.0.8127.88 headless, one load): 127 passed, 0 failed of 127; no page,
+console or HTTP errors; the row "Replay desktop keeps real time while idle and lets its worker
+sleep" has the pip class `cap-pip verified`, and the bundle's `tasks.json` lists E5-T37b as
+`verified`. The capability panel is kept hidden in `app.html` (`#legacy-roadmap`), so "shows"
+means the status the page binds to the row — what `evidence/e5-t37b/demo-suite.mjs` reads too.
+The last acceptance bullet holds.
