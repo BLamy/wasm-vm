@@ -1,0 +1,107 @@
+# verifier r2 — my tests (evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs) at d8db32db8; crates == 215cbd1f9 plus two include! lines appended to crates/core/src/turbo_equivalence_tests.rs (restored afterwards)
+$ cargo test -p wasm-vm-core --lib r2_ -- --nocapture --test-threads=1
+
+running 24 tests
+test turbo_equivalence_tests::r2_b4_time_slept_after_a_rebase_is_kept_REFUTES ... R2 B4 General rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 General rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 General rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 General rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Batched rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Batched rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Batched rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Batched rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Turbo rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Turbo rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Turbo rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+R2 B4 Turbo rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+
+thread 'turbo_equivalence_tests::r2_b4_time_slept_after_a_rebase_is_kept_REFUTES' (29078154) panicked at crates/core/src/../../../evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs:768:5:
+time slept after a rebase is not on the guest clock at the wake (12 of 12):
+General rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+General rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+General rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+General rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+Batched rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+Batched rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+Batched rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+Batched rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+Turbo rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+Turbo rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+Turbo rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 500282 ticks (50 ms) by the next wfi; lost 49499718 ticks; remaining wait 8949 ms (want 4000); host clock read 0 time(s) for the wake
+Turbo rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 0 ticks at handler entry, 50000000 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 0 time(s) for the wake
+FAILED
+test turbo_equivalence_tests::r2_b_a_wait_is_dropped_by_clock_policy_and_restore_and_follows_a_rebase ... ok
+test turbo_equivalence_tests::r2_c5a_time_slept_before_a_host_wake_is_kept_exactly ... R2 c5a: 48 configurations, all exact
+ok
+test turbo_equivalence_tests::r2_c5b_time_a_host_overslept_is_kept_exactly ... ok
+test turbo_equivalence_tests::r2_c5c1_several_sleeps_before_the_wake ... ok
+test turbo_equivalence_tests::r2_c5c2_a_wake_while_the_guest_is_ahead_of_the_host_clock ... ok
+test turbo_equivalence_tests::r2_c5c3_wake_accounting_only_for_a_taken_wait_and_an_enabled_interrupt ... ok
+test turbo_equivalence_tests::r2_c5c4_deadline_inside_the_slept_interval_with_a_host_event ... ok
+test turbo_equivalence_tests::r2_c5c5_s_mode_sbi_timer_host_wake_and_oversleep ... ok
+test turbo_equivalence_tests::r2_c5c6_wake_with_interrupts_globally_masked ... ok
+test turbo_equivalence_tests::r2_c5d_a_busy_guest_skips_exactly_one_bound_per_busy_stretch ... ok
+test turbo_equivalence_tests::r2_k2_a_reached_deadline_that_wakes_nothing_does_not_end_the_run ... ok
+test turbo_equivalence_tests::r2_m10_waiting_while_ahead_of_the_host_clock_earns_no_credit ... ok
+test turbo_equivalence_tests::r2_m13_a_restore_starts_a_new_worked_or_waited_interval ... ok
+test turbo_equivalence_tests::r2_m3_masked_s_mode_wake_at_the_deadline_shows_stip ... ok
+test turbo_equivalence_tests::r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_n5ab_clint_levels_raised_in_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES ... R2 N5c General budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+R2 N5c General budget=1000000: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+R2 N5c Batched budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+R2 N5c Batched budget=1000000: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+R2 N5c Turbo budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+R2 N5c Turbo budget=1000000: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+
+thread 'turbo_equivalence_tests::r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES' (29078181) panicked at crates/core/src/../../../evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs:930:5:
+a wait was reported while the PLIC asserted an enabled interrupt (6 of 6):
+General budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+General budget=1000000: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+Batched budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+Batched budget=1000000: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+Turbo budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+Turbo budget=1000000: the call that retired the first wfi ended at retired=49 wfi=1 with wait=Some(10000000200) ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 1
+FAILED
+test turbo_equivalence_tests::r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES ... R2 N5d control (yield off): byte delivered, host clock standing still; the UART interrupt handler started 170 guest ticks (17 us) later, inside the same run call (19999 retirements used of 20000)
+R2 N5d General: first wait 9000 ms; after the byte 341 run calls each reported a wait (smallest 9000 ms; 3069 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 342 — host clock unchanged, nothing else delivered; at 341 of those waits the machine's own fabric-idle marker said a device still had work
+R2 N5d Batched: first wait 9000 ms; after the byte 341 run calls each reported a wait (smallest 9000 ms; 3069 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 342 — host clock unchanged, nothing else delivered; at 341 of those waits the machine's own fabric-idle marker said a device still had work
+R2 N5d Turbo: first wait 9000 ms; after the byte 341 run calls each reported a wait (smallest 9000 ms; 3069 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 342 — host clock unchanged, nothing else delivered; at 341 of those waits the machine's own fabric-idle marker said a device still had work
+
+thread 'turbo_equivalence_tests::r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES' (29078182) panicked at crates/core/src/../../../evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs:1022:5:
+waits reported while a device owed an interrupt that needs neither the host clock nor a host event:
+General: first wait 9000 ms; after the byte 341 run calls each reported a wait (smallest 9000 ms; 3069 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 342 — host clock unchanged, nothing else delivered; at 341 of those waits the machine's own fabric-idle marker said a device still had work
+Batched: first wait 9000 ms; after the byte 341 run calls each reported a wait (smallest 9000 ms; 3069 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 342 — host clock unchanged, nothing else delivered; at 341 of those waits the machine's own fabric-idle marker said a device still had work
+Turbo: first wait 9000 ms; after the byte 341 run calls each reported a wait (smallest 9000 ms; 3069 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 342 — host clock unchanged, nothing else delivered; at 341 of those waits the machine's own fabric-idle marker said a device still had work
+FAILED
+test turbo_equivalence_tests::r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES ... R2 N5e control (yield off): alarm handled 0 guest ticks after the clocks moved 2 ms
+R2 N5e General: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported Some(10000000400) ns; after the host slept it the alarm handler started 99999999 guest ticks (9999 ms) after the wfi (alarms handled 1, timers 1)
+R2 N5e Batched: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported Some(10000000400) ns; after the host slept it the alarm handler started 99999999 guest ticks (9999 ms) after the wfi (alarms handled 1, timers 1)
+R2 N5e Turbo: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported Some(10000000400) ns; after the host slept it the alarm handler started 99999999 guest ticks (9999 ms) after the wfi (alarms handled 1, timers 1)
+
+thread 'turbo_equivalence_tests::r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES' (29078183) panicked at crates/core/src/../../../evidence/e5-t37a/verifier-r2/verifier_r2_tests.rs:1143:5:
+a wait longer than the time to an armed, enabled RTC alarm was reported:
+General: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported Some(10000000400) ns; after the host slept it the alarm handler started 99999999 guest ticks (9999 ms) after the wfi (alarms handled 1, timers 1)
+Batched: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported Some(10000000400) ns; after the host slept it the alarm handler started 99999999 guest ticks (9999 ms) after the wfi (alarms handled 1, timers 1)
+Turbo: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported Some(10000000400) ns; after the host slept it the alarm handler started 99999999 guest ticks (9999 ms) after the wfi (alarms handled 1, timers 1)
+FAILED
+test turbo_equivalence_tests::r2_n5fg_device_rule_in_every_loop_flavour_and_the_never_yielding_idle_loop ... R2 N5g: `lbu LSR; wfi; j` never yields in General/Batched/Turbo (budget used, state == yield off); with batching off it yields at retired=28
+ok
+test turbo_equivalence_tests::r2_nv2_bounded_pacer_closed_loop_invariants ... R2 NV2: 240000 consultations
+ok
+test turbo_equivalence_tests::r2_q1_lockstep_with_an_independent_predicate ... R2 lockstep: configs=366 calls=838866 control_steps=1495491 yields=132051 (sbi 82374, m-mode 40047, random 5460, fabric 4170)
+ok
+test turbo_equivalence_tests::r2_q3_unbounded_pacer_is_the_pre_task_pacer ... R2 Q3: 200000 consultations, new == pre-task
+ok
+
+failures:
+
+failures:
+    turbo_equivalence_tests::r2_b4_time_slept_after_a_rebase_is_kept_REFUTES
+    turbo_equivalence_tests::r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES
+    turbo_equivalence_tests::r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES
+    turbo_equivalence_tests::r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES
+
+test result: FAILED. 20 passed; 4 failed; 0 ignored; 0 measured; 458 filtered out; finished in 19.52s
+
+error: test failed, to rerun pass `-p wasm-vm-core --lib`
