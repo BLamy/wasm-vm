@@ -1,0 +1,7 @@
+FMT_OK
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Checking wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 35.58s
+
+test result: ok. 449 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.52s
+

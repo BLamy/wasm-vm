@@ -1,0 +1,94 @@
+V1 idle-spin threshold 2048 -> 4096: KILLED by 1: paced_idle_spin_threshold_is_exact
+    first panic: crates/core/src/turbo_equivalence_tests.rs:258:9: org 0x80004000 behind 0x8000406c
+V2 threshold compare > -> >=: KILLED by 1: paced_idle_spin_threshold_is_exact
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2626:17: turbo=false pass=2048 retirements: waiting time in full: moved 32 ticks
+V3 selecting the clock does not start a new worked/waited interval: KILLED by 1: paced_idle_policy_and_clock_in_either_order_and_mid_run
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2692:9: assertion `left == right` failed: turbo=false: three seconds since the clock was selected
+V4 the policy does not hand the bound to an existing pacer: KILLED by 2: paced_idle_policy_and_clock_in_either_order_and_mid_run, paced_idle_spin_threshold_is_exact
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2669:13: assertion `left == right` failed: turbo=false policy_first=false: a zero bound after 8,000 busy instructions
+V5 selecting the clock does not clear a recorded wait: KILLED by 1: paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2422:9: assertion `left == right` failed: turbo=false: clock re-selected
+V6 selecting the policy does not clear a recorded wait: KILLED by 1: paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2430:13: assertion `left == right` failed: turbo=false: policy re-selected
+N1 no wake accounting (paced_wake does nothing): KILLED by 5: paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_time_slept_after_a_rebase_is_kept, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2324:21: assertion `left == right` failed: turbo=false div=1 work=0 bound=Some(50000000): the handler's first instruction saw the slept time
+N2 wake accounting although no enabled interrupt is pending: KILLED by 3: paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_spin_threshold_is_exact, paced_idle_yield_leaves_the_retire_stream_unchanged
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2214:13: assertion `left == right` failed: turbo=false bound=Some(50000000): waiting time in full
+N3 wake accounting without the level/time resync: KILLED by 2: paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3146:13: assertion `left == right` failed: turbo=false bound=Some(50000000): MSIP and STIP both pending at once
+N4 waiting time is not owed (not accumulated): KILLED by 3: paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump, paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_time_a_host_overslept_is_kept
+    first panic: crates/core/src/time.rs:701:13: assertion `left == right` failed
+N5 owed waiting time ignored by the bound: KILLED by 3: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump, paced_idle_time_a_host_overslept_is_kept
+    first panic: crates/core/src/time.rs:549:9: assertion `left == right` failed: everything the host clock ran ahead while the guest waited
+N6 owed waiting time never consumed: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    first panic: crates/core/src/time.rs:586:9: assertion `left == right` failed
+N9 the host's take does not ask whether the wait holds: KILLED by 4: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block, paced_idle_no_wait_while_a_device_has_work
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2968:9: assertion `left == right` failed: turbo=false: not vouched for
+N10 a restore keeps a recorded wait: KILLED by 2: paced_idle_a_restore_starts_a_new_interval, paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3236:9: assertion `left == right` failed: turbo=false: three seconds of waiting since the restore
+N11 the loop top returns without asking whether the wait holds: KILLED by 3: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_no_wait_while_a_device_has_work, paced_idle_yield_leaves_the_retire_stream_unchanged
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2521:17: assertion `left == right` failed: turbo=false budget=1000000: handled within the call
+N12 an untaken wait keeps its wake armed across run calls: KILLED by 1: paced_idle_wake_is_only_accounted_for_a_wait_the_host_took
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2783:17: assertion `left == right` failed: turbo=false taken=false: no reading
+N13 a wait dropped in the same run call keeps its wake armed: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2529:17: assertion `left == right` failed: turbo=false budget=1000000
+N14 the wait is measured from guest time, not the ceiling: KILLED by 5: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait
+    first panic: crates/core/src/time.rs:532:9: assertion `left == right` failed
+N15 a rebase drops the busy-lag bound: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    first panic: crates/core/src/time.rs:504:9: assertion `left == right` failed
+W1 (worker round 1) the loop top never returns: KILLED by 17: paced_idle_no_wait_while_a_device_has_work, paced_idle_a_disabled_interrupt_does_not_end_the_wait, paced_idle_a_reached_deadline_that_wakes_nothing_does_not_end_the_run, paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads, paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait, paced_idle_spin_threshold_is_exact, paced_idle_time_slept_after_a_rebase_is_kept, paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_policy_and_clock_in_either_order_and_mid_run, paced_idle_a_restore_starts_a_new_interval, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_time_a_host_overslept_is_kept
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2911:9: assertion `left == right` failed: turbo=false
+W2 (worker round 1) the bound applies without `worked`: KILLED by 12: paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump, paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_time_a_host_overslept_is_kept, paced_idle_spin_threshold_is_exact, paced_idle_time_slept_after_a_rebase_is_kept, paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_a_restore_starts_a_new_interval, paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval, paced_idle_policy_and_clock_in_either_order_and_mid_run
+    first panic: crates/core/src/time.rs:705:13: assertion `left == right` failed
+W3 (worker round 1) a wait is recorded in pure ICount: KILLED by 1: paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized
+    first panic: crates/core/src/turbo_equivalence_tests.rs:1990:13: assertion `left == right` failed: masked timer, budget 500
+R1 a wait holds without the devices being idle: KILLED by 3: paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later, paced_idle_no_wait_while_a_device_has_work, paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2968:9: assertion `left == right` failed: turbo=false: not vouched for
+R2 fresh levels without the PLIC: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (false, false, 0, 0, true, false) stale=0x8
+R2b fresh levels without the S-context PLIC level: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (false, false, 0, 0, false, true) stale=0x808
+R3 fresh levels without the SBI timer: KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 0, false, false) stale=0x0
+R4 fresh levels without the machine timer: KILLED by 2: paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block, paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3054:13: assertion `left == right` failed: turbo=false due=true: Some(100000200)
+R5 fresh levels without the software interrupt: KILLED by 2: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched, paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2521:17: assertion `left == right` failed: turbo=false budget=1000000: handled within the call
+R6 a pending interrupt ends the wait even when it is not enabled: KILLED by 1: paced_idle_a_disabled_interrupt_does_not_end_the_wait
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3016:9: assertion failed: m.irq_stats().retired < 100
+R7 the wake jumps over an armed deadline: KILLED by 1: paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3141:13: assertion `left == right` failed: turbo=false bound=Some(50000000): the clock stopped at the deadline
+R8 the wake does not resync the SBI timer level: KILLED by 1: paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3146:13: assertion `left == right` failed: turbo=false bound=Some(50000000): MSIP and STIP both pending at once
+R9 the wake does not resync the CLINT levels and time: KILLED by 1: paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2737:13: assertion `left == right` failed: turbo=false bound=Some(50000000): the time CSR at the next instruction
+R10 a wait is recorded at a deadline that was reached (< -> <=): KILLED by 1: paced_idle_a_reached_deadline_that_wakes_nothing_does_not_end_the_run
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3197:9: assertion `left == right` failed: turbo=false: no early return
+R11 owed waiting time is not capped by what the host clock is ahead: KILLED by 2: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not, paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    first panic: crates/core/src/time.rs:613:9: assertion `left == right` failed: the guest is ahead of the host: nothing is owed
+R12 a restore does not start a new worked/waited interval: KILLED by 1: paced_idle_a_restore_starts_a_new_interval
+    first panic: crates/core/src/turbo_equivalence_tests.rs:3236:9: assertion `left == right` failed: turbo=false: three seconds of waiting since the restore
+R13 the host's take keeps the wake armed for a wait it did not report: KILLED by 1: paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2513:17: assertion `left == right` failed: turbo=false budget=1: no wake accounting: nobody slept
+R14 the worked/waited flag is inverted for the wake: KILLED by 5: paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock, paced_idle_time_slept_after_a_rebase_is_kept, paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads, paced_idle_wake_is_only_accounted_for_a_wait_the_host_took, paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2324:21: assertion `left == right` failed: turbo=false div=1 work=0 bound=Some(50000000): the handler's first instruction saw the slept time
+B11 (round-3 verifier) owed time measured from the anchor, not the previous consultation: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    first panic: crates/core/src/time.rs:638:13: assertion `left == right` failed: after 2 capped idle passes
+B3 (round-3 verifier) the S-timer level at equality (>= -> >): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 1000, false, false) stale=0x28
+B12 (round-3 verifier) the waiting flag is never set: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    first panic: crates/core/src/time.rs:652:9: short of a far deadline
+M1 (round-4 verifier) the owed-time cap judged before the jump (ceiling - limited -> ceiling - current): KILLED by 1: paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump
+    first panic: crates/core/src/time.rs:714:13: assertion `left == right` failed: deadline None: what the host clock is still ahead by, no more
+M2 (round-4 verifier) the S-timer level one tick early (mtime + 1 >= stimecmp): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 1001, false, false) stale=0x28
+M3 (round-4 verifier) the jump is taken from what was owed before this consultation's waiting time is added: KILLED by 1: paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    first panic: crates/core/src/time.rs:640:13: assertion `left == right` failed: after 1 capped idle passes
+MY1 (round-4 verifier) the S-timer level only AT its deadline (>= -> ==): KILLED by 1: paced_idle_fresh_mip_is_what_the_boundary_sync_writes
+    first panic: crates/core/src/turbo_equivalence_tests.rs:2861:13: assertion `left == right` failed: (sbi, msip, mtimecmp, stimecmp, plic M, plic S) = (true, false, 0, 0, false, false) stale=0x0
+MY2 (round-4 verifier) a guest that worked may skip max(owed, bound), not owed + bound: KILLED by 2: paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump, paced_idle_busy_lag_is_bounded_and_waiting_time_is_not
+    first panic: crates/core/src/time.rs:719:13: assertion `left == right` failed: deadline Some(300): what is owed, and one bound
+TOTAL killed 45, survived 0
+exit=0
+ M crates/core/src/time.rs
+ M crates/core/src/turbo_equivalence_tests.rs

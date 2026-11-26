@@ -3,7 +3,7 @@ id: E5-T37a
 epic: 5
 title: Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded
 priority: 0.387644
-status: evidence-needed
+status: implemented
 depends_on: [E4-T40b]
 estimate: S
 risk: high
@@ -1279,3 +1279,54 @@ M3 M3@r3 P3b`;
 `bash tools/perf/oracle.sh target/release/wasm-vm target/verifier-r4b-e5t37a-oracle` +
 `diff -r evidence/perf-overhaul/oracle-baseline target/verifier-r4b-e5t37a-oracle/digests` (×2);
 `bash tools/perf/turbo-equivalence.sh 2000000000 target/verifier-r4b-e5t37a-teq` (×2).
+
+### 2026-11-26 — worker — round 5, evidence only (head `d36452f5a`)
+
+Answer to the round-4 `needs-evidence` verdict. Commit `d36452f5a` changes two tests and adds
+one; no line outside `mod tests` / the test-only file moved, and the pre-commit build left the
+shipped wasm byte-identical (the commit's `web/dist` change is `sw.js`'s shell stamp and
+`tasks.json`).
+
+- **The S-timer level, every position (the verifier's `==` mutant).** My round-4 edit swapped
+  the past-due deadline for the equality case instead of adding it. The test now walks each
+  timer deadline through five positions against a clock at 1 000 — `0`, `999`, `1_000`,
+  `1_001`, `u64::MAX` — for the machine timer and the supervisor timer independently, with
+  `msip` and both PLIC contexts (200 cases, twice round so each also starts from every other's
+  stale bits). Besides comparing `fresh_mip()` with what the boundary's own sync writes, it now
+  asserts the rule directly: MTIP is on exactly when `mtimecmp <= mtime`, and with the built-in
+  SBI timer STIP is on exactly when `stimecmp <= mtime`. So `>` fails at 1 000, `==` at 0 and
+  999, `mtime + 1 >=` at 1 001 — and a matching change made to `sync_sbi_timer` as well (the
+  verifier's probe P3b) no longer passes either.
+- **M1, the cap on owed time judged before the jump** (outside the verdict; taken anyway).
+  New pacer test `paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump`, my own
+  numbers from the Boundary: the host oversleeps 3 s past a deadline 2 ms away (3 s owed), the
+  handler retires 2.2 s of guest time in 0.2 s of host time (host clock 1 s ahead). With
+  nothing in the way the jump takes the second and 0 stays owed; with a deadline 300 ms ahead
+  the jump takes 300 ms and 700 ms stay owed; the busy stretch that follows skips exactly what
+  is owed plus one 50 ms bound. The mutant leaves 1 s owed in both cases.
+
+Commands (the touched harness only, per the incremental rule):
+
+- `evidence/e5-t37a/gates-r5.log` (sha256 `9d02b03a15cc…`), on the tree that became
+  `d36452f5a`: `cargo fmt --check`;
+  `cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings`;
+  `cargo test -p wasm-vm-core --lib` (449 pass: 448 + the new test). All exit 0.
+- Mutation matrix, 45 mutants — round 4's 40 plus the round-4 verifier's M1, M2, M3, MY1 and
+  MY2 — one at a time against `cargo test -p wasm-vm-core --lib paced_idle`, restored and
+  re-touched after each (`python3 evidence/e5-t37a/sabotage-r5.py`; log
+  `evidence/e5-t37a/sabotage-r5.log`, sha256 `e4db45f50dfe…`): **45 killed, 0 survive.**
+  B3 (`>`), M2 (`mtime + 1 >=`) and MY1 (`==`) by
+  `paced_idle_fresh_mip_is_what_the_boundary_sync_writes` at `stimecmp` 1 000, 1 001 and 0;
+  M1 by the new test ("deadline None: what the host clock is still ahead by, no more");
+  M3 and MY2 by `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not`.
+- Cold clone at `d36452f5a` (sparse; `env -i` with only `HOME PATH TERM`):
+  `paced_idle` 25/25, core lib 449/449, the release build, oracle digests identical to the
+  baseline, desktop equivalence `EQUIVALENT (2000000000 instructions)` — FNV
+  `0dab1ccaa237df29`, retired 1,999,831,660, RAM `ed70e270…38701`
+  (`evidence/e5-t37a/cold-clone-r5.log`, sha256 `1c7d22e706b5…`).
+
+Carried, because their inputs did not change: everything the round-4 verifier carried or held
+(non-test code is identical to the head rounds 3 and 4 examined), the workspace-wide suite and
+the browser check of the committed bundle. Not promoted by me: the four verifier test files
+(`evidence/e5-t37a/verifier*/`; `verifier-r4/promote.py` regenerates them) — promotion is the
+verifier's act. Still to be filed with E5-T37b: the follow-ups listed in round 4.

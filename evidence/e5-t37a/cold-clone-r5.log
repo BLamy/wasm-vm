@@ -1,0 +1,65 @@
+round 5 cold clone (sparse: no evidence/ except the oracle baseline, no web/dist) at d36452f5a3fb3e018081289c615b2fb432922519, tracked changes=0
+env passed to every command: HOME PATH TERM 
+$ cargo test -p wasm-vm-core --lib paced_idle
+test time::tests::paced_idle_owed_time_is_capped_by_the_host_lead_after_the_jump ... ok
+test time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not ... ok
+test paced_idle_clock_tests::paced_selection_refuses_invalid_private_phase_before_sampling_or_replacing_policy ... ok
+test turbo_equivalence_tests::paced_idle_fresh_mip_is_what_the_boundary_sync_writes ... ok
+test turbo_equivalence_tests::paced_idle_a_reached_deadline_that_wakes_nothing_does_not_end_the_run ... ok
+test turbo_equivalence_tests::paced_idle_a_disabled_interrupt_does_not_end_the_wait ... ok
+test turbo_equivalence_tests::paced_idle_time_slept_after_a_rebase_is_kept ... ok
+test turbo_equivalence_tests::paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block ... ok
+test turbo_equivalence_tests::paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later ... ok
+test turbo_equivalence_tests::paced_idle_no_wait_while_a_device_has_work ... ok
+test turbo_equivalence_tests::paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval ... ok
+test turbo_equivalence_tests::paced_idle_a_restore_starts_a_new_interval ... ok
+test turbo_equivalence_tests::paced_idle_no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched ... ok
+test turbo_equivalence_tests::paced_idle_wake_without_a_trap_updates_the_time_the_guest_reads ... ok
+test turbo_equivalence_tests::paced_idle_wake_is_only_accounted_for_a_wait_the_host_took ... ok
+test turbo_equivalence_tests::paced_idle_spin_threshold_is_exact ... ok
+test turbo_equivalence_tests::paced_idle_yield_stays_out_while_a_host_wake_is_outstanding ... ok
+test turbo_equivalence_tests::paced_idle_policy_is_inert_in_other_clock_modes_and_is_not_serialized ... ok
+test turbo_equivalence_tests::paced_idle_policy_and_clock_in_either_order_and_mid_run ... ok
+test turbo_equivalence_tests::paced_idle_busy_lag_bound_applies_after_work_and_never_while_waiting ... ok
+test turbo_equivalence_tests::paced_idle_time_a_host_overslept_is_kept ... ok
+test turbo_equivalence_tests::paced_idle_wait_does_not_outlive_a_clock_change_or_a_restore ... ok
+test turbo_equivalence_tests::paced_idle_time_slept_before_a_host_wake_is_on_the_guest_clock ... ok
+test turbo_equivalence_tests::paced_idle_yield_ends_the_run_at_a_waiting_wfi_and_reports_the_wait ... ok
+test turbo_equivalence_tests::paced_idle_yield_leaves_the_retire_stream_unchanged ... ok
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 1.35s
+rc=0
+$ cargo test -p wasm-vm-core --lib
+test result: ok. 449 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.08s
+rc=0
+$ cargo build --release -p wasm-vm-cli
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 37s
+rc=0
+$ RELEASES=… bash tools/perf/oracle.sh target/release/wasm-vm target/cold-oracle && diff -r evidence/perf-overhaul/oracle-baseline target/cold-oracle/digests
+busybox-legacy   state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-cache    state sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71
+busybox-fast     state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+busybox-jit      state sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d
+alpine-fast      state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+alpine-jit       state sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f
+Only in evidence/perf-overhaul/oracle-baseline: README.md
+diff rc=1 (1 with only the README line = identical digests)
+$ RELEASES=… IMAGE=… bash tools/perf/turbo-equivalence.sh 2000000000 target/cold-turbo
+turbo: exit 102, 25 s, turbo: enabled=true entries=10927101 blocks=258114159 inline_ops=1980166535 slow_ops=19574694 ops_per_entry=183.0 exits: horizon=765 budget=3996 boundary=10755756 trap=166584
+ordinary: exit 102, 32 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=0dab1ccaa237df29
+trace retired=1999831660
+trace mode=retirement-records
+state sha256=ed70e2702353d6917618c67bb9a9d9242f7a354d2b0208e7822d856d52738701
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)
+rc=0
+COLD_DONE
