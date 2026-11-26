@@ -62,14 +62,21 @@ failure modes are a guest that is late by at most the 50 ms cap, or one that doe
   `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`; the web unit suite
   (`cd web && node --test tests/*.test.mjs`) fails no test that passed before the change.
 - Browser, the committed bundle (`bash tools/serve-dist.sh 8125`), warm Replay desktop, each
-  side at least two fresh page loads:
-  `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios idle,click,type --n 8 --idle-s 30`
+  side at least two fresh page loads, interleaved (`bash evidence/e5-t37b/run-browser.sh 1 2`):
+  `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --scenarios click,type,idle --n 8 --idle-s 30`
   and the same with `--query '&pace=0'`.
   - Idle, paced: the worker is inside run slices for at most 30% of wall time and guest time
     advances between 0.8 and 1.2 seconds per real second. Unpaced control: at least 90% and at
     least 3.
   - Click result latency, median: paced is not slower than unpaced.
   - Key echo latency, median: paced is within 15 ms of unpaced.
+
+  Idle is sampled last, about 90 s after the desktop appears, and that is part of the
+  criterion, not a convenience: Chrome schedules start-up work 10–60 s after launch on guest
+  time. Under the unpaced clock that is over within a few real seconds; under the paced clock
+  it takes its real time, so the first minute after the desktop appears is not idle (measured
+  with idle sampled first: 30% of wall time in run slices, guest time 0.82 s/s — recorded in
+  `evidence/e5-t37b/early-idle/`).
 - The demo page on the same bundle: zero console errors, the suite reaches its full count with
   0 failed, the roadmap row for this task shows `verified` once it is.
 
