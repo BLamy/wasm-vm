@@ -24213,7 +24213,7 @@
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 11,
+          "commits": 12,
           "labels": [
             "E5-T37b evidence-needed: verifier",
             "E5-T37b: name the commit and split one table row in the claim",
@@ -24224,7 +24224,7 @@
       ],
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
-      "commitCount": 11
+      "commitCount": 12
     },
     {
       "id": "E5-T37c",
@@ -24251,15 +24251,16 @@
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "E5-T37b round 2: the wasm test runs its behaviour half under node; restore cases in the unit test",
             "E5-T37b in-progress: paced idle in the browser; file E5-T37c and E5-T40"
           ]
         }
       ],
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T38",
