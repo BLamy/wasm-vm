@@ -3,7 +3,7 @@ id: E5-T37a
 epic: 5
 title: Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded
 priority: 0.387644
-status: implemented
+status: evidence-needed
 depends_on: [E4-T40b]
 estimate: S
 risk: high
@@ -773,3 +773,280 @@ timer-woken guests under the narrowed contract. Not shown: anything in the brows
 policy selected (E5-T37b); virtio-snd playback or a guest with the JIT on (neither is in a
 test; a playing stream should make the device not idle, which I have not measured); the 2048
 threshold on any other kernel; a held key still stops idle jumps altogether, as before.
+
+### 2026-11-26 — verifier (round 3) — VERDICT: needs-evidence
+
+Fresh session — not the worker, not the round-1 or round-2 verifier; head `7d25929a7`
+(`git diff 7fd2e0160 7d25929a7 -- crates` is empty). Predictions were written after reading the
+task, both diffs and the run loop, and before any evidence file was opened or anything was built
+or run: `evidence/e5-t37a/verifier-r3/predictions.txt` (the addendum for the real-kernel runs was
+written before those runs). My tests are `evidence/e5-t37a/verifier-r3/verifier_r3_tests.rs`
+(17 tests named `r3_*`: own guests, host clocks and parameters; all pass at this head), output in
+`verifier-tests.log` beside it. No implementation file was changed: every mutant was restored with
+`git checkout`, re-touched, and `git status --short crates` checked empty; the one scratch patch
+to the CLI (`cli-paced-yield-probe.py`) was built into its own target directory and reverted.
+
+**Nothing refutes the round-3 claim; two mutants of changed behaviour and one dead getter are not
+pinned by the worker's tests.** The product claim is not contradicted (status
+`evidence-needed`); the response is tests only.
+
+Incremental rule: `crates/core/src/lib.rs` changed in round 3, `time.rs` only in a comment and in
+its test. I carried forward round 2's Q3 and NV2 (the pacer alone; code unchanged) and re-ran
+everything else, both earlier verifiers' files included.
+
+**Needs evidence**
+
+- B11, Boundary "Bounded busy lag … at most `max_busy_lag` of the time it fell behind may be
+  skipped by idle jumps; the rest is forgotten" — NEEDS EVIDENCE. Mutant: `time.rs:224`
+  `ticks_of(self.latest_host_ns - before)` → `… - self.anchor_host_ns` (what a waiting guest is
+  owed becomes the host time since the anchor instead of since the previous consultation). It
+  turns the unused part of one busy-lag allowance into "owed waiting time", which survives the
+  next busy stretch on top of a fresh bound. An exact model of the function, checked against the
+  real code (`owed-arithmetic-model.py`, `.txt`): on my test's sequence the guest skips 72 ms
+  where 56 is right, and after k work/idle cycles behind near deadlines a busy guest with a
+  50 ms bound may skip 64, 78, 92 … 330 ms (k = 1, 2, 3 … 20) where the original gives 50 every
+  time — the bound stops binding. The mutant survives the worker's 24 tests, round 1's 19 and
+  round 2's 24 (`sabotage.log`, B11), including round 2's closed-loop invariant, which allows one
+  bound per consultation after work. Killed by
+  `r3_owed_time_is_the_host_time_since_the_previous_consultation` (`sabotage-pass2.log`). Demand:
+  carry a test that tells the two apart (mine may be taken as it is).
+- B3, acceptance "no wait … while an interrupt is deliverable per any level the boundary samples
+  (`fresh_mip` equals what the level sync writes, in all 32 combinations, with and without the
+  SBI timer)" — NEEDS EVIDENCE. Mutant: `lib.rs:5596` `c.mtime >= self.sbi_state.stimecmp` → `>`.
+  The 32 combinations use `stimecmp = 999` against `mtime = 1000`, so `>` and `>=` agree; the
+  machine-timer level is tested at equality, the S-timer level is not. With the mutant a wait is
+  reported when the S-timer comes due exactly at the `wfi`'s own retirement tick. Survives the
+  worker's tests; killed by `r3_k1_fresh_mip_is_the_level_sync_on_random_states` and
+  `r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi`. Demand: carry the equality case.
+- COVERAGE `IdlePacer::waiting()` (`time.rs:166-168`) and the flag it returns (`time.rs:233`) —
+  DEAD. Hit counts under the worker's tests (`coverage.log`): the getter is never executed, and
+  it has no caller anywhere under `crates/`; round 3 removed the two assertions that read it
+  (`git diff 215cbd1f9 7fd2e0160 -- crates/core/src/time.rs`). Mutant B12 (`self.waiting = false`)
+  survives the worker's tests. Demand: delete the field and the getter, or put a test on it
+  (`r3_pacer_waiting_flag_says_whether_the_last_consultation_fell_short` kills B12).
+
+**The central question**
+
+- SAFETY ("a reported wait is always true") — HELD; no counterexample.
+  - S1 behavioural probe: at 4,670 sampled reported waits a yield-off machine was put in the same
+    state (the control's resume bytes), its host clock frozen, and run on past 1,100 block
+    boundaries (more than the UART's 1024-boundary timeout) or to the deadline: 6,814,194 work
+    slots, zero interrupts taken (`r3_s1_lockstep_*`).
+  - S2 UART bytes pushed by the host between run calls (FIFO off, triggers 1/4/8/14, 1/3/9 bytes,
+    after a taken and an untaken wait, budgets 1/7/1,000,000, four loop flavours): 1,134 waits
+    reported, every one with no byte unread while the receive interrupt is on; 1,621,976 calls
+    ended with bytes unread and reported nothing (`r3_s2_*`). With the receive interrupt off the
+    wait comes back only after the timeout clock has stopped.
+  - S3 UART transmit interrupt (THR written in the `wfi`'s block and in the block before): no wait
+    before the handler ran (`r3_s3_*`). S4 RTC alarm on a wall clock that moves by itself: no wait
+    while armed, waits resume after the last alarm (`r3_s4_*`).
+  - S5 PLIC: enable, threshold, priority and complete stores placed in the `wfi`'s own block, M and
+    S context, three budgets, four loops: no wait before the external interrupt was handled
+    (`r3_s5_*`; 96 configurations).
+  - S6 `fresh_mip` against the level sync on 30,000 random states (CLINT, SBI deadline, PLIC
+    priorities/enables/thresholds/lines/claims/completes, stale software bits; with and without a
+    CLINT, a PLIC, the built-in SBI): equal, nothing changed by computing it, and the run loop's
+    own boundary sync leaves `mip` as predicted (`r3_k1_*`). The only writers of `mip` are
+    `sync_clint`, `sync_plic`, `sync_sbi_timer`, CSR instructions and the SBI IPI call (grep of
+    `set_mip_bit` / `W_MIP`); the last two end a block.
+  - S7 stale marker: after the run that ended on a wait the marker says idle and a host push does
+    not move it (asserted); a NEW RUN CALL resets it, so it serves the byte (more than 100 idle
+    passes, then the interrupt) before it reports anything, with the first wait taken or not
+    (`r3_s7_*`). See follow-up 1 for the one order this does not cover.
+  - S8 restore paths: `load_resume`, `load_session_resume`, `load_accelerated_resume` and
+    `restore_recording_branch` all commit through `load_resume_inner_with_purpose`
+    (`lib.rs:5178`); `restore_desktop_snapshot` restores device envelopes only. Read, not run, for
+    the last three.
+  - Virtio queues with work were not hand-assembled; by reading, every service returns "idle"
+    only on its no-work early return (blk also not while reads are parked, input not while a host
+    event is pending, net not unless the backend opts in), and the real desktop below has every
+    driver bound.
+- COMPLETENESS ("a true wait is not always reported") — HELD as stated, and not vacuous.
+  - C1/C2: 9,600 of 9,600 calls that started at a block boundary reported at the first waiting
+    `wfi`, in the per-op, general, batched and turbo loops (`r3_c1_*`). On a real kernel: 24,219 of
+    24,290 and 25,800 of 25,803 `wfi`s (busybox), 30,101 of 30,501 and 165,966 of 166,240 (the
+    Replay desktop snapshot).
+  - C4: with PLIC, UART, RTC, virtio blk, net (loopback), rng, keyboard, tablet, mouse, sound, GPU
+    and console attached and idle, 50 of 50 calls report (`r3_c4_*`).
+  - Unreported true waits, all of them: the call sampled no block boundary before the `wfi`
+    (111,348 in my lockstep), a device had work or was accessed since (366,062), and two classes
+    that never report: follow-ups 2 and 4.
+
+**Round-2 findings**
+
+- N5c (PLIC) — FIXED. `r2_n5c_*_REFUTES` passes unchanged (6 of 6: no wait while `plic.eip(M)` is
+  true); mine: S5 above.
+- N5d (UART character timeout) — FIXED. `r2_n5d_*_REFUTES` passes unchanged (0 waits before the
+  interrupt, was 341); mine: S2.
+- N5e (RTC alarm) — FIXED. `r2_n5e_*_REFUTES` passes unchanged; mine: S4.
+- B4 (rebase, then a host wake) — FIXED. `r2_b4_*_REFUTES` passes unchanged (12 of 12). Mine
+  (`r3_b4_*`, four loops, bounds 50 ms / 0 / none, rebase before and after the take): `mtime` at
+  the handler's first instruction = `mtime` at the rebase + 50,000,000 for 5 s slept, two host
+  readings, remaining wait shorter by exactly 5 s; two rebases with discarded sleeps: only the
+  last second; a rebase and a 2 s oversleep: timer at its deadline, deadline + 20,000,000 at the
+  next `wfi`.
+- Seven surviving mutants — FIXED: re-applied to the new code, each is killed by a worker test
+  (`sabotage.log`, A1–A7).
+- MTIP term — FIXED: `paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block`
+  exists and the 32-combination test has the machine timer at equality (B3b killed).
+
+**Held**
+
+- E1–E4: `gates-r3.log` sha256 `c89e48fe7619…bc93`, `sabotage-r3.log` `e56eaf52f6bc…0542`,
+  `verifier-tests-r3.log` `57ebc84f9b98…d73f`; the logs say what the claim says (24/448, 340
+  test binaries and none failed, 37 mutants killed, cold clone at `7fd2e0160`); no
+  `#[ignore]`, disabled assertion or `cfg(test)` branch in the non-test hunks;
+  `idle_boundary_epoch` is gone; nothing in `lib.rs` reads `waiting`. E5 as predicted: see Needs
+  evidence.
+- A1–A7: 24/24 and 448/448; release build; oracle: six digests identical, only the baseline
+  README differs; desktop equivalence at 2,000,000,000: `0dab1ccaa237df29` / 1,999,831,660 /
+  `ed70e270…38701`; at my budget 555,555,555: `219809c2bc11411e` / 555,490,133 /
+  `b4223f05…2282`, turbo = ordinary, and byte-identical to a CLI built from the pre-task commit
+  `ee5582ac6` (`cold-clone.log`); the `zicsr-stub` lint line fails with the five errors that
+  predate the task, none naming an item of it.
+- B3/K7 exact equivalence under a predicate of my own, both directions (every reported wait is
+  one that has to be reported, none is missed), `observe()` and RAM equal after every call,
+  resume bytes at every sample, host-clock reading counts equal where no host event is delivered:
+  my harness 512 configurations, 2,576,871 calls, 257,881 yields, with real device work and a
+  host delivering 45,782 events; the round-1 and round-2 harnesses, their own predicates plus my
+  level and device terms, 1,158 configurations, 3,384,888 calls, 673,749 yields. Four loop
+  flavours in mine (per-op sampling added).
+- B6a/B6b/B7/B8: a call that began inside the `wfi`'s block reports nothing (`r3_c3_*`); pending
+  but disabled `msip` and PLIC lines do not hold a wait back (`r3_pending_but_disabled_*`); a
+  zero-budget call drops an untaken wait and keeps a taken one's wake (`r3_a_zero_budget_*`);
+  clock and policy changes and a restore: both earlier verifiers' tests pass unchanged.
+- K1–K4: `fresh_mip` (S6); `paced_wait_holds` has exactly the two terms; no reader of the pacer
+  flag; the marker is reset at run entry (mutant B8 killed by the worker's
+  `…begins_inside_the_wfi_block…`).
+- K5/K6: reproduced exactly — as committed 39 of 43 pass (`earlier-verifiers-as-committed.log`);
+  the four failures are the three lockstep tests at "MISSED RETURN on the last budget slot" with
+  budgets `[1]`, and `v37a_busy_lag_is_exactly_the_bound_once_…` (`wfi` count 2, not 1). They are
+  exactly the narrowed-contract cases: with the predicate below all three lockstep tests pass in
+  both directions, and the fourth passes once its long call starts at the block's entry
+  (`earlier-verifiers-adapted.diff`). No real missed or early return hides there.
+
+**The narrowing, and the predicate**
+
+The narrowing is sound and I think it is right: until a boundary of this call has serviced the
+devices, the call cannot know what the host delivered. What it costs, measured (`r3_c3_*`): with
+block-sampled interrupts a call reports a `wfi` only if it began at or before that `wfi`'s block
+boundary. For a `wfi` that is the third op of its block, a host with a fixed budget of 1 or 2
+work slots gets 0 reports over 85 and 171 `wfi`s — not "one pass later", never; budget 3 gets
+85 of 257, 4 gets 300 of 300, 5 gets 200 of 400, 7 and more every one; a `wfi` that opens its
+block, or per-instruction sampling, is reported every time at any budget. My prediction C3 named
+only the one-slot host and was too narrow. The Boundary's "the wait is picked up at a later
+`wfi`" is true for any call long enough to go round the idle loop, which is every realistic one.
+
+The worker's scratch predicate (`sampled`) is faithful for guests without device work, which is
+all the two earlier harnesses run; it has no term for a device that has work, so it would demand
+a wait the implementation rightly withholds. The form I consider right is `r3_arch_waits` and
+`R3Vouch` in my file: no enabled interrupt in the stale `mip`; none per `msip`,
+`mtime >= mtimecmp`, the SBI deadline and the PLIC's two contexts as read from the devices; the
+nearest deadline still ahead; and a copy of the quiescence rule kept by the harness for each run
+call of the subject from the control alone (unset at call start; at each slot that begins at a
+sampled boundary where the copy is not valid for the fabric access counter, a full pass that
+finds the devices idle iff the UART's timeout clock was not running before the slot and no RTC
+alarm is armed after it). Nothing is read from the subject or from `fabric_idle_epoch`.
+
+**Novel attack: a real kernel** (`real-kernel-equivalence.sh`, `.log`). Linux 6.6 natively
+under the paced clock on a host clock that advances a fixed amount per reading — busybox
+initramfs, Alpine on virtio-blk, and the warm Replay desktop snapshot in the browser's device
+topology — yield off and on, turbo and batched, with and without a bound, each run stopped after
+the same number of retirements (350,000,000 / 1,500,000,000). Within each of the six groups the
+four evidence files and console outputs are byte-identical and the host-clock reading counts are
+equal (a wait reported while a device owed an interrupt would make `paced_wake` read the clock
+once more and shift every later reading). 516,391 waits were reported in the nine yield-on runs
+that idle, one of them with `--jit` (94.7 % of retirements compiled; identical too). The Alpine
+case retires no `wfi` in 1.5 G instructions and says nothing about the yield.
+
+COVERAGE (hit counts, `coverage.sh`, `coverage.log`): of the 191 lines the task added to
+non-test code that carry a code region, the worker's 24 tests execute 185. Never executed:
+`IdlePacer::waiting()` (dead, above); waived: the no-CLINT exit of `fresh_mip` (`lib.rs:5598`; a
+wait needs a CLINT — `r3_k1_*` runs it), the `let … else return` of `paced_wake` (`lib.rs:5628`)
+and `(0, None)` in `idle_deadline` (`lib.rs:5651`), both unreachable while a wake can be armed
+only with a pacer, a clock and a CLINT; `let holds = false` under `zicsr-stub`.
+
+SABOTAGE: 25 mutants, one at a time (`sabotage.py`, `sabotage.log`, `sabotage-pass2.log`). The
+seven round-2 survivors: killed by worker tests. Fourteen new ones, none in `sabotage-r3.log`:
+killed by worker tests — PLIC contexts swapped, no `builtin_sbi` guard, MTIP with `>`, an unset
+marker accepted, marker without the epoch, the run-entry marker reset removed, `paced_wake`
+before the boundary sync, a wait without the opt-in; survive the worker's tests — B3, B11, B12
+(above) and three equivalents: the run-entry clear of an untaken wait removed (B7: the marker
+reset at entry already makes that wait fail `paced_wait_holds` at the loop top and in the take,
+`run(0)` included — the clear at `lib.rs:7521-7523` is redundant since round 3), `paced_wake`
+writing unconditionally (B9: the same value and two idempotent syncs), `fresh_mip` starting from
+zero (B16: a stale enabled bit keeps `wfi_fast_forward` from recording a wait at all; my K1 test
+pins the documented value anyway). Four of the worker's own mutants were re-run against my file
+to show it can see them: 8, 1, 7 and 7 of my tests fail on them (no devices-idle term; no PLIC
+level; the take not asking; the loop top not asking).
+
+MOCK & ENV, cold clone: sparse clone at `7d25929a7`, `env -i` with HOME/PATH/TERM: 24/24,
+448/448, release build, oracle digests identical, desktop equivalence at 2,000,000,000 and
+555,555,555 with the values above, then the same clone at `ee5582ac6` for the pre-task digest
+(`cold-clone.log`); clone deleted. In the worker's round-3 tests (read in full) no golden value
+comes from the code under test: `fresh_mip` is compared with the real level sync, the rest with
+numbers derived from the host clock the test sets.
+
+SUITE: not promoted — the verdict is not `verified`. Ready for the re-verification: the round-1
+and round-2 files adapted to the round-3 contract by
+`adapt-earlier-verifier-files.py <dir> --lint` (the predicate above in both lockstep harnesses;
+`v37a_busy_lag_…` starting its long call at the block's entry; five clippy lints and rustfmt in
+the round-2 file) plus `verifier_r3_tests.rs`, as three files under `crates/core/src/`
+`include!`d from `turbo_equivalence_tests.rs`. With them 60 of 60 pass (`verifier-tests.log`),
+`cargo fmt --check` is clean and
+`cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings` passes. The core suite
+then has 508 tests and takes 45 s here instead of 19 s.
+
+Mistakes of mine, for the record: six first-draft expectations in my own tests were wrong and
+were corrected before any result was recorded (three completeness expectations that assumed any
+budget above 1 reports, a random PLIC line that belongs to the UART, an idle-pass threshold that
+ignored per-op sampling, a virtio slot clash), and my host-driven lockstep first let so much host
+time pass that few waits occurred, so its timing was retuned; my zero-budget test was written to
+kill B7 and does not, because B7 is equivalent; I refactored my test file while the first
+mutation pass was running, so the mutants that survived everything in it, and B3 and B16, were
+re-run in a second pass after the last tests were added.
+
+Not checked: the browser run (nothing selects the policy); the workspace-wide suite (the
+worker's log shows 340 test binaries, none failed; I re-ran the core suite, the release build
+and the digests, here and in the cold clone); virtio-snd playback; a hand-written virtio
+driver with queue work; `load_accelerated_resume` and `restore_recording_branch` under a taken
+wait (read only).
+
+Follow-ups, not part of the verdict:
+1. `take_idle_wait_nanos()` vouches for the devices as of the END OF THE RUN CALL. A host that
+   delivers something and then asks, without running in between, is told to sleep on its own
+   delivery: `r3_s7_*` measures `Some(9000000600)` with the UART's timeout clock running, in all
+   four loops. The native CLI's loop pushes stdin into the UART after its run call
+   (`crates/cli/src/boot.rs:2469`, `:2528`), so "ask at the end of the loop body" is the natural
+   mistake. E5-T37b's host must take the wait immediately after `run` returns, before delivering
+   anything, or treat any delivery of its own as cancelling it; the doc of
+   `take_idle_wait_nanos` should say so. (Round 2 filed the same; it stays outside the verdict.)
+2. A network backend that does not opt in to `NetBackend::idle` keeps the quiescence marker
+   unset for good: no wait is ever reported and the turbo loop never engages (`r3_c4_*`, with a
+   polled backend: 0 of 50 calls). The slirp stack is such a backend (`SlirpLocalBackend`,
+   `crates/slirp/src/local_backend.rs:1029`; `SharedSlirpBackend`,
+   `crates/wasm/src/browser_file_transfer.rs:18`; the CLI's `SlirpBackend`), so a session with
+   networking on gets no idle sleep. The desktop of the worker's measurement uses the loopback.
+3. An armed RTC alarm suppresses every wait however far away it is (the worker's own test); its
+   deadline is known and could bound the wait instead.
+4. A host whose budgets never exceed the `wfi`'s position in its block never gets a report
+   (above). Harmless for real hosts; the Boundary's "picked up at a later `wfi`" could say so.
+5. `cargo clippy -p wasm-vm-core --all-targets -- -D warnings` (core alone) does not build at
+   this head: three example/test targets the task does not touch import a feature-gated
+   `VecSink`. The worker's form with `-p wasm-vm-cli` passes.
+6. Carried from round 2: virtio-snd playback with the yield on is unmeasured.
+
+Commands: `cargo test -p wasm-vm-core --lib paced_idle`; `cargo test -p wasm-vm-core --lib`;
+`cargo build --release -p wasm-vm-cli`;
+`bash tools/perf/oracle.sh target/release/wasm-vm target/verifier-r3-e5t37a-oracle` + `diff -r`;
+`bash tools/perf/turbo-equivalence.sh {2000000000,555555555} …`;
+`cargo test -p wasm-vm-core --lib -- v37a_ r2_` (as committed) and
+`… -- v37a_ r2_ r3_ --nocapture --test-threads=1` (adapted);
+`python3 evidence/e5-t37a/verifier-r3/sabotage.py` (+ `"B3 " B7 B9 B11 B16`);
+`bash evidence/e5-t37a/verifier-r3/coverage.sh`;
+`python3 evidence/e5-t37a/verifier-r3/cli-paced-yield-probe.py apply|revert`,
+`CARGO_TARGET_DIR=target/verifier-r3-probe cargo build --release -p wasm-vm-cli`,
+`bash evidence/e5-t37a/verifier-r3/real-kernel-equivalence.sh …`;
+`bash evidence/e5-t37a/verifier-r3/cold-clone.sh 7d25929a7 full`;
+`cargo fmt --check`; `cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings`
+(clean tree, and with the three verifier files included).

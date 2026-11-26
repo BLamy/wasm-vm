@@ -1,0 +1,54 @@
+── busybox: 350000000 retirements, host clock +1000000 ns per reading, busy-lag bound -
+busybox.s1000000.l-.off-turbo      exit 102 r3-probe: calls=14105 yields=0 reported_wait_ms=0 retired=350000000 wfi=24290 host_reads=24288 interrupts=862 turbo_entries=1826553
+busybox.s1000000.l-.on-turbo       exit 102 r3-probe: calls=225158 yields=24219 reported_wait_ms=9468196 retired=350000000 wfi=24290 host_reads=24288 interrupts=862 turbo_entries=1857868
+busybox.s1000000.l-.off-batched    exit 102 r3-probe: calls=14105 yields=0 reported_wait_ms=0 retired=350000000 wfi=24290 host_reads=24288 interrupts=862 turbo_entries=0
+busybox.s1000000.l-.on-batched     exit 102 r3-probe: calls=225158 yields=24219 reported_wait_ms=9468196 retired=350000000 wfi=24290 host_reads=24288 interrupts=862 turbo_entries=0
+  busybox: s1000000.l-.on-turbo == s1000000.l-.off-turbo  (trace fnv64=032ebd5b253ff473 trace retired=350000000 state sha256=a3fd8adb90ce6a57…, console 11139 bytes)
+  busybox: s1000000.l-.off-batched == s1000000.l-.off-turbo  (trace fnv64=032ebd5b253ff473 trace retired=350000000 state sha256=a3fd8adb90ce6a57…, console 11139 bytes)
+  busybox: s1000000.l-.on-batched == s1000000.l-.off-turbo  (trace fnv64=032ebd5b253ff473 trace retired=350000000 state sha256=a3fd8adb90ce6a57…, console 11139 bytes)
+── busybox: 350000000 retirements, host clock +37000 ns per reading, busy-lag bound 50000000
+busybox.s37000.l50000000.off-turbo exit 102 r3-probe: calls=13827 yields=0 reported_wait_ms=0 retired=350000000 wfi=25803 host_reads=25801 interrupts=794 turbo_entries=1832889
+busybox.s37000.l50000000.on-turbo  exit 102 r3-probe: calls=227051 yields=25800 reported_wait_ms=79195642 retired=350000000 wfi=25803 host_reads=25801 interrupts=794 turbo_entries=1864495
+busybox.s37000.l50000000.off-batched exit 102 r3-probe: calls=13827 yields=0 reported_wait_ms=0 retired=350000000 wfi=25803 host_reads=25801 interrupts=794 turbo_entries=0
+busybox.s37000.l50000000.on-batched exit 102 r3-probe: calls=227051 yields=25800 reported_wait_ms=79195642 retired=350000000 wfi=25803 host_reads=25801 interrupts=794 turbo_entries=0
+  busybox: s37000.l50000000.on-turbo == s37000.l50000000.off-turbo  (trace fnv64=fdc52cabfe6e7c69 trace retired=350000000 state sha256=8be9f06a883b0792…, console 11139 bytes)
+  busybox: s37000.l50000000.off-batched == s37000.l50000000.off-turbo  (trace fnv64=fdc52cabfe6e7c69 trace retired=350000000 state sha256=8be9f06a883b0792…, console 11139 bytes)
+  busybox: s37000.l50000000.on-batched == s37000.l50000000.off-turbo  (trace fnv64=fdc52cabfe6e7c69 trace retired=350000000 state sha256=8be9f06a883b0792…, console 11139 bytes)
+── alpine: 1500000000 retirements, host clock +1000000 ns per reading, busy-lag bound -
+alpine.s1000000.l-.off-turbo       exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=9933708
+alpine.s1000000.l-.on-turbo        exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=9933708
+alpine.s1000000.l-.on-batched      exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=0
+alpine.s1000000.l-.off-batched     exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=0
+  alpine: s1000000.l-.on-turbo == s1000000.l-.off-turbo  (trace fnv64=e8afee2292fed504 trace retired=1500000000 state sha256=510c45b13d301550…, console 12135 bytes)
+  alpine: s1000000.l-.off-batched == s1000000.l-.off-turbo  (trace fnv64=e8afee2292fed504 trace retired=1500000000 state sha256=510c45b13d301550…, console 12135 bytes)
+  alpine: s1000000.l-.on-batched == s1000000.l-.off-turbo  (trace fnv64=e8afee2292fed504 trace retired=1500000000 state sha256=510c45b13d301550…, console 12135 bytes)
+── alpine: 1500000000 retirements, host clock +250000 ns per reading, busy-lag bound 20000000
+alpine.s250000.l20000000.on-turbo  exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=9933708
+alpine.s250000.l20000000.off-turbo exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=9933708
+alpine.s250000.l20000000.off-batched exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=0
+alpine.s250000.l20000000.on-batched exit 102 r3-probe: calls=107847 yields=0 reported_wait_ms=0 retired=1500000000 wfi=0 host_reads=1 interrupts=4054 turbo_entries=0
+  alpine: s250000.l20000000.on-turbo == s250000.l20000000.off-turbo  (trace fnv64=e8afee2292fed504 trace retired=1500000000 state sha256=510c45b13d301550…, console 12135 bytes)
+  alpine: s250000.l20000000.off-batched == s250000.l20000000.off-turbo  (trace fnv64=e8afee2292fed504 trace retired=1500000000 state sha256=510c45b13d301550…, console 12135 bytes)
+  alpine: s250000.l20000000.on-batched == s250000.l20000000.off-turbo  (trace fnv64=e8afee2292fed504 trace retired=1500000000 state sha256=510c45b13d301550…, console 12135 bytes)
+── desktop: 1500000000 retirements, host clock +1000000 ns per reading, busy-lag bound -
+desktop.s1000000.l-.on-turbo       exit 102 r3-probe: calls=87976 yields=30101 reported_wait_ms=5929402 retired=1500000000 wfi=30501 host_reads=30502 interrupts=1061 turbo_entries=8251562
+desktop.s1000000.l-.off-turbo      exit 102 r3-probe: calls=134088 yields=0 reported_wait_ms=0 retired=1500000000 wfi=30501 host_reads=30502 interrupts=1061 turbo_entries=8265230
+desktop.s1000000.l-.on-batched     exit 102 r3-probe: calls=87976 yields=30101 reported_wait_ms=5929402 retired=1500000000 wfi=30501 host_reads=30502 interrupts=1061 turbo_entries=0
+desktop.s1000000.l-.off-batched    exit 102 r3-probe: calls=134088 yields=0 reported_wait_ms=0 retired=1500000000 wfi=30501 host_reads=30502 interrupts=1061 turbo_entries=0
+  desktop: s1000000.l-.on-turbo == s1000000.l-.off-turbo  (trace fnv64=a6a71b3470b6f59b trace retired=1500000000 state sha256=0f3d5b9d74c6f483…, console 0 bytes)
+  desktop: s1000000.l-.off-batched == s1000000.l-.off-turbo  (trace fnv64=a6a71b3470b6f59b trace retired=1500000000 state sha256=0f3d5b9d74c6f483…, console 0 bytes)
+  desktop: s1000000.l-.on-batched == s1000000.l-.off-turbo  (trace fnv64=a6a71b3470b6f59b trace retired=1500000000 state sha256=0f3d5b9d74c6f483…, console 0 bytes)
+── desktop: 1500000000 retirements, host clock +120000 ns per reading, busy-lag bound 50000000
+desktop.s120000.l50000000.off-turbo exit 102 r3-probe: calls=123672 yields=0 reported_wait_ms=0 retired=1500000000 wfi=166240 host_reads=166239 interrupts=889 turbo_entries=9847615
+desktop.s120000.l50000000.on-turbo exit 102 r3-probe: calls=372446 yields=165966 reported_wait_ms=33867839 retired=1500000000 wfi=166240 host_reads=166239 interrupts=889 turbo_entries=9861069
+desktop.s120000.l50000000.off-batched exit 102 r3-probe: calls=123672 yields=0 reported_wait_ms=0 retired=1500000000 wfi=166240 host_reads=166239 interrupts=889 turbo_entries=0
+desktop.s120000.l50000000.on-batched exit 102 r3-probe: calls=372446 yields=165966 reported_wait_ms=33867839 retired=1500000000 wfi=166240 host_reads=166239 interrupts=889 turbo_entries=0
+  desktop: s120000.l50000000.on-turbo == s120000.l50000000.off-turbo  (trace fnv64=d28ad4e88d669c9f trace retired=1500000000 state sha256=7beb34f9a478d5c5…, console 0 bytes)
+  desktop: s120000.l50000000.off-batched == s120000.l50000000.off-turbo  (trace fnv64=d28ad4e88d669c9f trace retired=1500000000 state sha256=7beb34f9a478d5c5…, console 0 bytes)
+  desktop: s120000.l50000000.on-batched == s120000.l50000000.off-turbo  (trace fnv64=d28ad4e88d669c9f trace retired=1500000000 state sha256=7beb34f9a478d5c5…, console 0 bytes)
+ALL EQUIVALENT
+
+── extra, run by hand with the same binary: busybox with --jit (94.7% of retirements through compiled blocks), 350000000 retirements, +1000000 ns per reading
+busybox.jit.off exit 102 r3-probe: calls=14105 yields=0 reported_wait_ms=0 retired=350000000 wfi=24290 host_reads=24288 interrupts=862 turbo_entries=0
+busybox.jit.on  exit 102 r3-probe: calls=225158 yields=24219 reported_wait_ms=9468196 retired=350000000 wfi=24290 host_reads=24288 interrupts=862 turbo_entries=0
+  busybox: jit.on == jit.off (evidence file and console byte-identical; trace mode=jit-retired-counter-only, trace retired=350000000, state sha256=a3fd8adb90ce6a5722a9058c6e5d13ccedc4d05f2a1cb87f7094150abe660d20 — the interpreter runs' RAM hash)

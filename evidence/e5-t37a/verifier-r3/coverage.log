@@ -1,0 +1,195 @@
+# worker's 24 tests, head 7d25929a7; line: hits: source
+## crates/core/src/lib.rs: 261 added non-test lines, 131 with a code region, 3 never executed
+  5178:       4: self.clear_idle_wait();
+  5179:       4: self.idle_consult_retired = self.irqstats.retired;
+  5448:       7: self.clear_idle_wait();
+  5480:     753: let mut pacer = time::IdlePacer::new(
+  5485:     753: pacer.set_max_busy_lag_ticks(self.idle_max_busy_lag_ticks);
+  5490:     753: self.clear_idle_wait();
+  5491:     753: self.idle_consult_retired = self.irqstats.retired;
+  5513:     763: pub fn set_paced_idle_policy(&mut self, yield_to_host: bool, max_busy_lag_nanos: Option<u64>) {
+  5514:     763: self.idle_yield = yield_to_host;
+  5515:     763: self.clear_idle_wait();
+  5516:     763: self.idle_max_busy_lag_ticks = max_busy_lag_nanos.map_or(u64::MAX, |ns| {
+  5517:     482: (u128::from(ns) * u128::from(platform::virt::TIMEBASE_FREQ_HZ) / 1_000_000_000)
+  5518:     482: .min(u128::from(u64::MAX)) as u64
+  5519:     482: });
+  5520:     763: if let Some(pacer) = &mut self.idle_pacer {
+  5521:     180: pacer.set_max_busy_lag_ticks(self.idle_max_busy_lag_ticks);
+  5522:     583: }
+  5523:     763: }
+  5526:      12: pub fn paced_idle_yield(&self) -> bool {
+  5527:      12: self.idle_yield
+  5528:      12: }
+  5535:    151k: pub fn take_idle_wait_nanos(&mut self) -> Option<u64> {
+  5536:    151k: let deadline = core::mem::replace(&mut self.idle_wait_deadline, u64::MAX);
+  5537:    151k: if deadline == u64::MAX {
+  5538:   71.7k: return None;
+  5539:   79.5k: }
+  5544:   79.5k: let holds = self.paced_wait_holds();
+  5547:   79.5k: let ticks = match &self.idle_pacer {
+  5548:   79.5k: Some(pacer) if holds => pacer.ticks_until(deadline),
+  5549:      12: _ => 0,
+  5551:   79.5k: if ticks == 0 {
+  5552:      12: self.idle_wake_pending = false;
+  5553:      12: return None;
+  5554:   79.5k: }
+  5555:   79.5k: Some(
+  5556:   79.5k: (u128::from(ticks) * 1_000_000_000 / u128::from(platform::virt::TIMEBASE_FREQ_HZ))
+  5557:   79.5k: .min(u128::from(u64::MAX)) as u64,
+  5558:   79.5k: )
+  5559:    151k: }
+  5562:   4.03k: fn clear_idle_wait(&mut self) {
+  5563:   4.03k: self.idle_wait_deadline = u64::MAX;
+  5564:   4.03k: self.idle_wake_pending = false;
+  5565:   4.03k: }
+  5579:    143k: fn paced_wait_holds(&self) -> bool {
+  5580:    143k: self.fabric_idle_epoch == Some(self.fabric_epoch.get())
+  5581:    141k: && self.fresh_mip() & self.hart.csr.mie_bits() == 0
+  5582:    143k: }
+  5588:    142k: fn fresh_mip(&self) -> u64 {
+  5589:    142k: let mut mip = self.hart.csr.mip_bits();
+  5590:    284k: let mut level = |bit: u32, on: bool| mip = (mip & !(1 << bit)) | (u64::from(on) << bit);
+  5591:    142k: if let Some(clint) = &self.clint {
+  5592:    142k: let c = *clint.borrow();
+  5593:    142k: level(7, c.mtip());
+  5594:    142k: level(3, c.msip);
+  5595:    142k: if self.builtin_sbi {
+  5596:      80: level(5, c.mtime >= self.sbi_state.stimecmp);
+  5597:    142k: }
+  5598:       0: }  NEVER
+  5599:    142k: if let Some(plic) = &self.plic {
+  5600:     140: let p = plic.borrow();
+  5601:     140: level(11, p.eip(0));
+  5602:     140: level(9, p.eip(1));
+  5603:    141k: }
+  5604:    142k: mip
+  5605:    142k: }
+  5616:   79.4k: fn paced_wake(&mut self) {
+  5617:   79.4k: self.idle_wake_pending = false;
+  5620:   79.4k: debug_assert_eq!(self.irqstats.retired, self.idle_consult_retired);
+  5621:   79.4k: if !self.hart.csr.mip_and_mie_nonzero() {
+  5622:   79.3k: return;
+  5623:      86: }
+  5624:      86: let (mtime, deadline) = self.idle_deadline();
+  5625:      86: let (Some(pacer), Some(clock), Some(clint)) =
+  5626:      86: (&mut self.idle_pacer, &self.mono_clock, &self.clint)
+  5628:       0: return;  NEVER
+  5630:      86: let limited = pacer.limit_deadline_after(
+  5631:      86: clock.now_nanos(),
+  5632:      86: mtime,
+  5633:      86: deadline.unwrap_or(u64::MAX),
+  5636:      86: if limited != mtime {
+  5637:      86: clint.borrow_mut().mtime = limited;
+  5638:      86: // The levels and the `time` shadow this boundary already sampled follow the clock.
+  5639:      86: self.sync_clint();
+  5640:      86: self.sync_sbi_timer();
+  5641:      86: }
+  5642:   79.4k: }
+  5649:    336k: fn idle_deadline(&self) -> (u64, Option<u64>) {
+  5650:    336k: let Some(clint) = &self.clint else {
+  5651:       0: return (0, None);  NEVER
+  5653:    336k: let mut deadline: Option<u64> = None;
+  5654:    336k: let mtime = {
+  5655:    336k: let c = clint.borrow();
+  5656:    336k: if c.mtimecmp != u64::MAX && c.mtimecmp > c.mtime {
+  5657:    196k: deadline = Some(c.mtimecmp);
+  5658:    196k: }
+  5659:    336k: c.mtime
+  5661:    336k: let stimecmp = self.sbi_state.stimecmp;
+  5662:    336k: if stimecmp != u64::MAX && stimecmp > mtime {
+  5663:      16: deadline = Some(deadline.map_or(stimecmp, |d| d.min(stimecmp)));
+  5664:    336k: }
+  5665:    336k: (mtime, deadline)
+  5666:    336k: }
+  5724:       2: self.clear_idle_wait();
+  5767:    336k: let (mtime, deadline) = self.idle_deadline();
+  5770:    196k: (Some(pacer), Some(clock)) => {
+  5773:    196k: let retired = self.irqstats.retired;
+  5774:    196k: let worked = retired.wrapping_sub(self.idle_consult_retired) > IDLE_SPIN_INSTRS;
+  5775:    196k: self.idle_consult_retired = retired;
+  5776:    196k: let limited = pacer.limit_deadline_after(clock.now_nanos(), mtime, d, worked);
+  5777:    196k: if self.idle_yield && limited < d {
+  5778:   82.1k: // The deadline is in the paced future: nothing can happen in the guest
+  5779:   82.1k: // until the host clock gets there or something else wakes it. The run
+  5780:   82.1k: // loop decides at its next iteration whether the wait holds
+  5781:   82.1k: // (`paced_wait_holds`), and what wakes the guest is looked at when it
+  5782:   82.1k: // next reaches a sampled boundary (`paced_wake`).
+  5783:   82.1k: self.idle_wait_deadline = d;
+  5784:   82.1k: self.idle_wake_pending = true;
+  5785:    114k: }
+  5786:    196k: limited
+  7521:    264k: if self.idle_wait_deadline != u64::MAX {
+  7522:     602: self.clear_idle_wait();
+  7523:    263k: }
+  7531:   1.32M: if self.idle_wait_deadline != u64::MAX {
+  7532:   64.3k: if self.paced_wait_holds() {
+  7533:   62.4k: return RunOutcome::MaxInstrs;
+  7534:   1.90k: }
+  7537:   1.90k: self.clear_idle_wait();
+  7538:   1.25M: }
+  7586:    716k: if self.idle_wake_pending {
+  7587:   79.4k: self.paced_wake();
+  7588:    637k: }
+## crates/core/src/time.rs: 96 added non-test lines, 57 with a code region, 3 never executed
+   159:     776: max_busy_lag_ticks: u64::MAX,
+   160:     776: owed_wait_ticks: 0,
+   161:     776: waiting: false,
+   166:       0: pub fn waiting(&self) -> bool {  NEVER
+   167:       0: self.waiting  NEVER
+   168:       0: }  NEVER
+   172:     939: pub fn set_max_busy_lag_ticks(&mut self, ticks: u64) {
+   173:     939: self.max_busy_lag_ticks = ticks;
+   174:     939: }
+   177:       4: pub fn max_busy_lag_ticks(&self) -> u64 {
+   178:       4: self.max_busy_lag_ticks
+   179:       4: }
+   184:       1: self.limit_deadline_after(host_ns, current, deadline, true)
+   185:       1: }
+   197:    196k: pub fn limit_deadline_after(
+   198:    196k: &mut self,
+   199:    196k: host_ns: u64,
+   200:    196k: current: u64,
+   201:    196k: deadline: u64,
+   202:    196k: worked: bool,
+   203:    196k: ) -> u64 {
+   204:    196k: let before = self.latest_host_ns;
+   206:    196k: let hz = u128::from(self.timebase_hz);
+   207:    196k: let ticks_of =
+   208:    392k: |ns: u64| (u128::from(ns) * hz / NANOS_PER_SEC).min(u128::from(u64::MAX)) as u64;
+   209:    196k: let mut ceiling = self
+   210:    196k: .anchor_mtime
+   211:    196k: .saturating_add(ticks_of(self.latest_host_ns - self.anchor_host_ns));
+   212:    196k: if worked {
+   213:     276: let bounded = current
+   214:     276: .saturating_add(self.owed_wait_ticks)
+   215:     276: .saturating_add(self.max_busy_lag_ticks);
+   216:     276: if ceiling > bounded {
+   217:      16: ceiling = bounded;
+   218:      16: self.anchor_host_ns = self.latest_host_ns;
+   219:      16: self.anchor_mtime = bounded;
+   220:     260: }
+   221:    196k: } else {
+   222:    196k: self.owed_wait_ticks = self
+   223:    196k: .owed_wait_ticks
+   224:    196k: .saturating_add(ticks_of(self.latest_host_ns - before));
+   225:    196k: }
+   226:    196k: let limited = current.max(deadline.min(ceiling));
+   229:    196k: self.owed_wait_ticks = self
+   230:    196k: .owed_wait_ticks
+   231:    196k: .saturating_sub(limited - current)
+   232:    196k: .min(ceiling.saturating_sub(limited));
+   233:    196k: self.waiting = limited < deadline;
+   234:    196k: limited
+   235:    196k: }
+   241:   79.5k: pub fn ticks_until(&self, deadline: u64) -> u64 {
+   245:   79.5k: deadline.saturating_sub(ceiling)
+   246:   79.5k: }
+   249:     208: pub fn owed_wait_ticks(&self) -> u64 {
+   250:     208: self.owed_wait_ticks
+   256:      13: let max_busy_lag_ticks = self.max_busy_lag_ticks;
+   258:      13: self.max_busy_lag_ticks = max_busy_lag_ticks;
+## crates/core/src/csr.rs: 6 added non-test lines, 3 with a code region, 0 never executed
+   820:    142k: pub fn mip_bits(&self) -> u64 {
+   821:    142k: self.warl.slot(W_MIP)
+   822:    142k: }

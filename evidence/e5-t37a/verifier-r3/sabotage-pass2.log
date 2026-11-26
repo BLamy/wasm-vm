@@ -1,0 +1,17 @@
+# second pass: the mutants that survived everything in pass 1, after three tests were added to verifier_r3_tests.rs
+B3 fresh_mip: STIP level with `>`
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: KILLED by 2: r3_k1_fresh_mip_is_the_level_sync_on_random_states, r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi
+B7 the run-entry clear of an untaken wait removed
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: SURVIVED
+B9 paced_wake writes mtime and resyncs unconditionally (`limited != mtime` guard)
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: SURVIVED
+B11 owed time accumulates the whole span since the anchor at every consultation
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: KILLED by 1: r3_owed_time_is_the_host_time_since_the_previous_consultation
+B16 fresh_mip starts from zero instead of the stale bits
+    worker's 24 tests: SURVIVED
+    + the three verifiers' files: KILLED by 1: r3_k1_fresh_mip_is_the_level_sync_on_random_states
+exit=0

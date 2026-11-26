@@ -1,0 +1,195 @@
+# E5-T37a round-3 verifier, head 7d25929a7 (crates == 7fd2e0160).
+# The round-1 and round-2 verifiers' files ADAPTED to the round-3 contract
+# (python3 evidence/e5-t37a/verifier-r3/adapt-earlier-verifier-files.py <dir> --lint; semantic diff in earlier-verifiers-adapted.diff)
+# + evidence/e5-t37a/verifier-r3/verifier_r3_tests.rs, the three include!d at the end of crates/core/src/turbo_equivalence_tests.rs for this run only:
+# cargo test -p wasm-vm-core --lib -- v37a_ r2_ r3_ --nocapture --test-threads=1
+test turbo_equivalence_tests::r2_b4_time_slept_after_a_rebase_is_kept_REFUTES ... R2 B4 General rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 General rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 General rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 General rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Batched rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Batched rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Batched rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Batched rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Turbo rebase_before_take=true bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Turbo rebase_before_take=true bound=None: wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Turbo rebase_before_take=false bound=Some(50000000): wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+R2 B4 Turbo rebase_before_take=false bound=None: wait 9000 ms; slept 5000 ms; guest time moved 50000000 ticks at handler entry, 50000282 ticks (5000 ms) by the next wfi; lost 0 ticks; remaining wait 4000 ms (want 4000); host clock read 1 time(s) for the wake
+ok
+test turbo_equivalence_tests::r2_b_a_wait_is_dropped_by_clock_policy_and_restore_and_follows_a_rebase ... ok
+test turbo_equivalence_tests::r2_c5a_time_slept_before_a_host_wake_is_kept_exactly ... R2 c5a: 48 configurations, all exact
+ok
+test turbo_equivalence_tests::r2_c5b_time_a_host_overslept_is_kept_exactly ... ok
+test turbo_equivalence_tests::r2_c5c1_several_sleeps_before_the_wake ... ok
+test turbo_equivalence_tests::r2_c5c2_a_wake_while_the_guest_is_ahead_of_the_host_clock ... ok
+test turbo_equivalence_tests::r2_c5c3_wake_accounting_only_for_a_taken_wait_and_an_enabled_interrupt ... ok
+test turbo_equivalence_tests::r2_c5c4_deadline_inside_the_slept_interval_with_a_host_event ... ok
+test turbo_equivalence_tests::r2_c5c5_s_mode_sbi_timer_host_wake_and_oversleep ... ok
+test turbo_equivalence_tests::r2_c5c6_wake_with_interrupts_globally_masked ... ok
+test turbo_equivalence_tests::r2_c5d_a_busy_guest_skips_exactly_one_bound_per_busy_stretch ... ok
+test turbo_equivalence_tests::r2_k2_a_reached_deadline_that_wakes_nothing_does_not_end_the_run ... ok
+test turbo_equivalence_tests::r2_m10_waiting_while_ahead_of_the_host_clock_earns_no_credit ... ok
+test turbo_equivalence_tests::r2_m13_a_restore_starts_a_new_worked_or_waited_interval ... ok
+test turbo_equivalence_tests::r2_m3_masked_s_mode_wake_at_the_deadline_shows_stip ... ok
+test turbo_equivalence_tests::r2_m6_no_wait_when_the_s_timer_came_due_inside_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_n5ab_clint_levels_raised_in_the_wfi_block ... ok
+test turbo_equivalence_tests::r2_n5c_no_wait_while_a_plic_interrupt_is_deliverable_REFUTES ... R2 N5c General budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=None ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 0
+R2 N5c General budget=1000000: the call that retired the first wfi ended at retired=59 wfi=2 with wait=Some(10000000200) ns, plic.eip(M)=false, external handled=1; the next run(1), host clock unchanged, took 0 interrupt(s) (mcause & 0xF = 11), host readings for it 0
+R2 N5c Batched budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=None ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 0
+R2 N5c Batched budget=1000000: the call that retired the first wfi ended at retired=59 wfi=2 with wait=Some(10000000200) ns, plic.eip(M)=false, external handled=1; the next run(1), host clock unchanged, took 0 interrupt(s) (mcause & 0xF = 11), host readings for it 0
+R2 N5c Turbo budget=1: the call that retired the first wfi ended at retired=49 wfi=1 with wait=None ns, plic.eip(M)=true, external handled=0; the next run(1), host clock unchanged, took 1 interrupt(s) (mcause & 0xF = 11), host readings for it 0
+R2 N5c Turbo budget=1000000: the call that retired the first wfi ended at retired=59 wfi=2 with wait=Some(10000000200) ns, plic.eip(M)=false, external handled=1; the next run(1), host clock unchanged, took 0 interrupt(s) (mcause & 0xF = 11), host readings for it 0
+ok
+test turbo_equivalence_tests::r2_n5d_no_wait_while_the_uart_character_timeout_is_running_REFUTES ... R2 N5d control (yield off): byte delivered, host clock standing still; the UART interrupt handler started 170 guest ticks (17 us) later, inside the same run call (19999 retirements used of 20000)
+R2 N5d General: first wait 9000 ms; after the byte 0 run calls each reported a wait (smallest 18446744073709 ms; 0 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 1 — host clock unchanged, nothing else delivered; at 0 of those waits the machine's own fabric-idle marker said a device still had work
+R2 N5d Batched: first wait 9000 ms; after the byte 0 run calls each reported a wait (smallest 18446744073709 ms; 0 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 1 — host clock unchanged, nothing else delivered; at 0 of those waits the machine's own fabric-idle marker said a device still had work
+R2 N5d Turbo: first wait 9000 ms; after the byte 0 run calls each reported a wait (smallest 18446744073709 ms; 0 s of sleep in total for a host that honours them) before the UART interrupt was taken in call 1 — host clock unchanged, nothing else delivered; at 0 of those waits the machine's own fabric-idle marker said a device still had work
+ok
+test turbo_equivalence_tests::r2_n5e_no_wait_longer_than_an_armed_rtc_alarm_REFUTES ... R2 N5e control (yield off): alarm handled 0 guest ticks after the clocks moved 2 ms
+R2 N5e General: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported None ns; after the host slept it the alarm handler started 0 guest ticks (0 ms) after the wfi (alarms handled 1, timers 0)
+R2 N5e Batched: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported None ns; after the host slept it the alarm handler started 0 guest ticks (0 ms) after the wfi (alarms handled 1, timers 0)
+R2 N5e Turbo: alarm armed=true (fabric-idle marker: false), due in 1000 us; wait reported None ns; after the host slept it the alarm handler started 0 guest ticks (0 ms) after the wfi (alarms handled 1, timers 0)
+ok
+test turbo_equivalence_tests::r2_n5fg_device_rule_in_every_loop_flavour_and_the_never_yielding_idle_loop ... R2 N5g: `lbu LSR; wfi; j` never yields in General/Batched/Turbo (budget used, state == yield off); with batching off it yields at retired=28
+ok
+test turbo_equivalence_tests::r2_nv2_bounded_pacer_closed_loop_invariants ... R2 NV2: 240000 consultations
+ok
+test turbo_equivalence_tests::r2_q1_lockstep_with_an_independent_predicate ... R2 lockstep: configs=366 calls=837306 control_steps=1495491 yields=127758 (sbi 82374, m-mode 38697, random 3432, fabric 3255)
+ok
+test turbo_equivalence_tests::r2_q3_unbounded_pacer_is_the_pre_task_pacer ... R2 Q3: 200000 consultations, new == pre-task
+ok
+test turbo_equivalence_tests::r3_a_zero_budget_call_drops_an_untaken_wait_and_keeps_a_taken_one ... ok
+test turbo_equivalence_tests::r3_b4_time_slept_after_a_rebase_reaches_the_guest_clock ... ok
+test turbo_equivalence_tests::r3_c1_a_call_from_a_block_boundary_reports_at_the_first_waiting_wfi ... R3 C1: 9600 of 9600 calls from a block boundary reported their wait
+ok
+test turbo_equivalence_tests::r3_c3_which_slicings_never_see_a_wait ... R3 C3:
+PerOp wfi-third-in-block budget=1: 85 reports over 85 wfis
+PerOp wfi-third-in-block budget=2: 150 reports over 150 wfis
+PerOp wfi-third-in-block budget=3: 200 reports over 200 wfis
+PerOp wfi-third-in-block budget=4: 300 reports over 300 wfis
+PerOp wfi-third-in-block budget=5: 300 reports over 300 wfis
+PerOp wfi-third-in-block budget=6: 300 reports over 300 wfis
+PerOp wfi-third-in-block budget=7: 600 reports over 600 wfis
+PerOp wfi-third-in-block budget=13: 600 reports over 600 wfis
+PerOp wfi-first budget=1: 100 reports over 100 wfis
+PerOp wfi-first budget=2: 200 reports over 200 wfis
+PerOp wfi-first budget=3: 300 reports over 300 wfis
+PerOp wfi-first budget=4: 300 reports over 300 wfis
+PerOp wfi-first budget=5: 300 reports over 300 wfis
+PerOp wfi-first budget=6: 600 reports over 600 wfis
+PerOp wfi-first budget=7: 600 reports over 600 wfis
+PerOp wfi-first budget=13: 600 reports over 600 wfis
+General wfi-third-in-block budget=1: 0 reports over 85 wfis
+General wfi-third-in-block budget=2: 0 reports over 171 wfis
+General wfi-third-in-block budget=3: 85 reports over 257 wfis
+General wfi-third-in-block budget=4: 300 reports over 300 wfis
+General wfi-third-in-block budget=5: 200 reports over 400 wfis
+General wfi-third-in-block budget=6: 150 reports over 450 wfis
+General wfi-third-in-block budget=7: 600 reports over 600 wfis
+General wfi-third-in-block budget=13: 600 reports over 600 wfis
+General wfi-first budget=1: 100 reports over 100 wfis
+General wfi-first budget=2: 200 reports over 200 wfis
+General wfi-first budget=3: 300 reports over 300 wfis
+General wfi-first budget=4: 300 reports over 300 wfis
+General wfi-first budget=5: 300 reports over 300 wfis
+General wfi-first budget=6: 600 reports over 600 wfis
+General wfi-first budget=7: 600 reports over 600 wfis
+General wfi-first budget=13: 600 reports over 600 wfis
+Batched wfi-third-in-block budget=1: 0 reports over 85 wfis
+Batched wfi-third-in-block budget=2: 0 reports over 171 wfis
+Batched wfi-third-in-block budget=3: 85 reports over 257 wfis
+Batched wfi-third-in-block budget=4: 300 reports over 300 wfis
+Batched wfi-third-in-block budget=5: 200 reports over 400 wfis
+Batched wfi-third-in-block budget=6: 150 reports over 450 wfis
+Batched wfi-third-in-block budget=7: 600 reports over 600 wfis
+Batched wfi-third-in-block budget=13: 600 reports over 600 wfis
+Batched wfi-first budget=1: 100 reports over 100 wfis
+Batched wfi-first budget=2: 200 reports over 200 wfis
+Batched wfi-first budget=3: 300 reports over 300 wfis
+Batched wfi-first budget=4: 300 reports over 300 wfis
+Batched wfi-first budget=5: 300 reports over 300 wfis
+Batched wfi-first budget=6: 600 reports over 600 wfis
+Batched wfi-first budget=7: 600 reports over 600 wfis
+Batched wfi-first budget=13: 600 reports over 600 wfis
+Turbo wfi-third-in-block budget=1: 0 reports over 85 wfis
+Turbo wfi-third-in-block budget=2: 0 reports over 171 wfis
+Turbo wfi-third-in-block budget=3: 85 reports over 257 wfis
+Turbo wfi-third-in-block budget=4: 300 reports over 300 wfis
+Turbo wfi-third-in-block budget=5: 200 reports over 400 wfis
+Turbo wfi-third-in-block budget=6: 150 reports over 450 wfis
+Turbo wfi-third-in-block budget=7: 600 reports over 600 wfis
+Turbo wfi-third-in-block budget=13: 600 reports over 600 wfis
+Turbo wfi-first budget=1: 100 reports over 100 wfis
+Turbo wfi-first budget=2: 200 reports over 200 wfis
+Turbo wfi-first budget=3: 300 reports over 300 wfis
+Turbo wfi-first budget=4: 300 reports over 300 wfis
+Turbo wfi-first budget=5: 300 reports over 300 wfis
+Turbo wfi-first budget=6: 600 reports over 600 wfis
+Turbo wfi-first budget=7: 600 reports over 600 wfis
+Turbo wfi-first budget=13: 600 reports over 600 wfis
+ok
+test turbo_equivalence_tests::r3_c4_reports_with_every_ordinary_device_attached_and_never_with_a_polled_net_backend ... ok
+test turbo_equivalence_tests::r3_k1_fresh_mip_is_the_level_sync_on_random_states ... R3 K1: fresh_mip == level sync on 30000 random states
+ok
+test turbo_equivalence_tests::r3_no_wait_when_the_s_timer_comes_due_exactly_at_the_wfi ... ok
+test turbo_equivalence_tests::r3_owed_time_is_the_host_time_since_the_previous_consultation ... ok
+test turbo_equivalence_tests::r3_pacer_waiting_flag_says_whether_the_last_consultation_fell_short ... ok
+test turbo_equivalence_tests::r3_pending_but_disabled_interrupts_do_not_hold_a_wait_back ... ok
+test turbo_equivalence_tests::r3_s1_lockstep_timer_woken_guests_and_a_self_firing_alarm ... R3 S1 lockstep (no host): configs=320 calls=1109008 control_steps=2941225 yields=207102 (sbi 17473, m-mode 54720, random 3366, rtc 131543) probes=3589 probe_slots=5026245 unreported-true-waits: no-boundary-sampled=103995 device-busy=14502
+ok
+test turbo_equivalence_tests::r3_s1_lockstep_with_device_work_and_a_host ... R3 S1 lockstep (host events): configs=192 calls=1467863 control_steps=5746648 yields=50779 events=45782 probes=1081 probe_slots=1787949 unreported-true-waits: no-boundary-sampled=7353 device-busy=351560
+ok
+test turbo_equivalence_tests::r3_s2_no_wait_while_a_pushed_uart_byte_is_unserved ... R3 S2: 1134 waits reported, each with the UART quiet; 1621976 calls ended with bytes unread and reported nothing
+ok
+test turbo_equivalence_tests::r3_s3_no_wait_while_the_uart_transmit_interrupt_is_deliverable ... ok
+test turbo_equivalence_tests::r3_s4_no_wait_while_an_rtc_alarm_is_armed ... ok
+test turbo_equivalence_tests::r3_s5_no_wait_after_any_plic_store_in_the_wfi_block ... ok
+test turbo_equivalence_tests::r3_s7_a_host_push_after_the_run_is_seen_before_the_next_report ... R3 S7 host pushes a byte and THEN asks, without running: (loop, answer in ns, UART timeout clock running at that moment) = [(PerOp, Some(9000000600), true), (General, Some(9000000600), true), (Batched, Some(9000000600), true), (Turbo, Some(9000000600), true)]
+ok
+test turbo_equivalence_tests::v37a_a_key_staged_after_a_reported_wait_stops_the_yield ... ok
+test turbo_equivalence_tests::v37a_a_recorded_wait_does_not_outlive_a_clock_change_REFUTES ... ok
+test turbo_equivalence_tests::v37a_bounded_lag_host_wake_controls ... V37A host-wake General handler_iters=150 bound=Some(50000000): retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=150 bound=Some(50000000): retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=150 bound=Some(50000000): retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake General handler_iters=1000 bound=None: retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=1000 bound=None: retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=1000 bound=None: retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake General handler_iters=150 bound=None: retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=150 bound=None: retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=150 bound=None: retired 470 between the two waits; guest time moved 50000047 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_a_host_overslept_REFUTES ... V37A oversleep General handler_iters=1000 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Batched handler_iters=1000 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Turbo handler_iters=1000 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+ok
+test turbo_equivalence_tests::v37a_bounded_lag_keeps_time_slept_before_a_host_wake_REFUTES ... V37A host-wake General handler_iters=1000 bound=Some(50000000): retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Batched handler_iters=1000 bound=Some(50000000): retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+V37A host-wake Turbo handler_iters=1000 bound=Some(50000000): retired 3020 between the two waits; guest time moved 50000302 ticks (5000 ms) for 5000 ms of host sleep; remaining wait 4000 ms (was 9000 ms)
+ok
+test turbo_equivalence_tests::v37a_bounded_lag_oversleep_controls ... V37A oversleep General handler_iters=150 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Batched handler_iters=150 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Turbo handler_iters=150 bound=Some(50000000): host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep General handler_iters=1000 bound=None: host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Batched handler_iters=1000 bound=None: host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+V37A oversleep Turbo handler_iters=1000 bound=None: host overslept 2000 ms; guest time is 20000000 ticks (2000 ms) past the deadline
+ok
+test turbo_equivalence_tests::v37a_busy_lag_is_exactly_the_bound_once_and_waiting_passes_in_full ... ok
+test turbo_equivalence_tests::v37a_clock_selected_mid_run_and_bound_selected_after_the_clock ... ok
+test turbo_equivalence_tests::v37a_extreme_bounds_deadlines_and_a_backward_host_clock ... ok
+test turbo_equivalence_tests::v37a_idle_spin_threshold_is_exactly_2048_retirements ... ok
+test turbo_equivalence_tests::v37a_lockstep_m_mode_guest_inline_block_and_page_straddle ... V37A lockstep m-mode: configs=216 calls=1095315 yields=104241 control_steps=2080134
+ok
+test turbo_equivalence_tests::v37a_lockstep_random_programs_with_wfi ... V37A lockstep random: configs=144 calls=101184 yields=5442 control_steps=266679
+ok
+test turbo_equivalence_tests::v37a_lockstep_sbi_timer_guest ... V37A lockstep sbi: configs=432 calls=1351083 yields=436308 control_steps=2732340
+ok
+test turbo_equivalence_tests::v37a_near_deadlines_after_work_do_not_stack_the_bound ... ok
+test turbo_equivalence_tests::v37a_no_wait_is_reported_while_an_interrupt_is_deliverable_REFUTES ... V37A stale-mip General: first call ended with wfi=3 msip=false handled=1 wait=Some(10000000100); second call, host clock unchanged: interrupts taken=0 handled=1
+V37A stale-mip Batched: first call ended with wfi=3 msip=false handled=1 wait=Some(10000000100); second call, host clock unchanged: interrupts taken=0 handled=1
+V37A stale-mip Turbo: first call ended with wfi=3 msip=false handled=1 wait=Some(10000000100); second call, host clock unchanged: interrupts taken=0 handled=1
+ok
+test turbo_equivalence_tests::v37a_policy_is_inert_in_icount_wall_session_and_live_modes ... ok
+test turbo_equivalence_tests::v37a_resume_bytes_at_a_waiting_wfi_do_not_carry_the_policy ... ok
+test turbo_equivalence_tests::v37a_wait_is_current_or_absent_and_every_call_makes_progress ... ok
+test turbo_equivalence_tests::v37a_yield_off_uses_the_budget_and_yield_on_reports_ceiling_to_deadline ... ok
+test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 448 filtered out; finished in 151.18s
