@@ -34,11 +34,14 @@ What changes:
    selects `paced-icount` — refusing if guest time, timebase or divider moved — and sets the
    idle policy to yield with a 50 ms busy-lag bound. It needs no accelerated graphics. It fails
    closed on a module without the two methods.
-3. **Loader.** After each run slice the loader takes the reported wait. If there is one, and no
-   disk read or persist completed in the same tick, it arms one sleep of that length (at least
-   1.5 ms, at most 50 ms) instead of scheduling the next slice. Every controller method — input,
-   resize, paste, commands, pause, stop — ends an armed sleep before it runs, so anything the
-   host delivers is seen by the next slice at once. A sleep that nothing ends is at most 50 ms.
+3. **Loader.** Straight after each run slice the loader takes the reported wait, with a ticket.
+   If there is one it arms one sleep of that length (at least 1.5 ms, at most 50 ms) instead of
+   scheduling the next slice. Every controller method — input, resize, paste, commands, pause,
+   stop — voids the ticket and ends an armed sleep before it runs, so anything the host
+   delivers is seen by the next slice at once. A sleep that nothing ends is at most 50 ms.
+   The policy is admitted only for a whole-image, non-persistent boot: such a boot's tick
+   awaits no chunk fetch and no persist between the run slice and the sleep, so nothing but a
+   controller call can deliver anything in between. Other boots are refused at validation.
 4. **Replay desktop.** Boots with `interactiveClock: "paced"`; `?pace=0` restores the unpaced
    clock for comparison. Other guests are unchanged.
 
@@ -54,7 +57,8 @@ failure modes are a guest that is late by at most the 50 ms cap, or one that doe
   wait worth a timer, clamps to the cap, resumes once, a wake cancels and suppresses a stale
   callback; the lifecycle selects `paced-icount` and the policy for `"paced"` only, in a fresh
   boot and after a restore, and fails closed; the Replay desktop asks for it and `?pace=0` does
-  not; the loader admits it without accelerated graphics.
+  not; the loader admits it without accelerated graphics, and only for a whole-image,
+  non-persistent boot; a delivery voids a wait taken but not yet slept on.
 - `wasm-pack test --node crates/wasm --lib -- exported_paced` passes: refused arguments change
   nothing; a guest that arms a timer and idles ends its slice at the `wfi` and reports the wait
   once; without the opt-in, and in pure ICount, nothing is reported.
@@ -84,8 +88,8 @@ failure modes are a guest that is late by at most the 50 ms cap, or one that doe
 
 Medium risk. Attack list: an input, paste or resize that arrives while the worker sleeps and is
 not seen until the cap; a sleep armed while another tick is already scheduled (two ticks); a
-stale timer callback ending a later sleep; a sleep taken after a completed disk read or
-persist; pause/stop/quota-pause during a sleep; a boot restored from the warm snapshot versus a
+stale timer callback ending a later sleep; a boot with persistence or without the whole image
+asking for the policy; pause/stop/quota-pause during a sleep; a boot restored from the warm snapshot versus a
 cold boot; a module without the bindings; `?pace=0`; guests other than the Replay desktop
 (must be byte-for-byte the previous behaviour: the policy is never selected). One bounded novel
 attack of the verifier's choice.

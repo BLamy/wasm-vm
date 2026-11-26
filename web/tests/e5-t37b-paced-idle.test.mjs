@@ -95,14 +95,35 @@ test("the loader takes the wait with a ticket straight after the run slice and e
   assert.match(loader, /res = machine\.runChunk\(runQuantum, [^\n]+\);\n(?:\s*\/\/[^\n]*\n)*\s*if \(guestClockLifecycle\.idleYield\) \{ idleTicket = idleSleeper\.ticket\(\); idleMs = machine\.takeIdleWaitMs\(\); \}\n/);
   assert.equal(loader.match(/machine\.takeIdleWaitMs\(/g).length, 1, "taken in one place");
   assert.match(loader, /if \(!sleepIdle\(idleMs, idleTicket\)\) schedule\(\);/);
-  // A completed disk read or persist in the same tick cancels the wait.
-  assert.equal(loader.match(/idleMs = 0; \/\/ a /g).length, 2);
+  // Nothing else assigns the wait: no await of the tick sits between the take and the sleep
+  // for a boot the policy admits (next test).
+  assert.equal(loader.match(/\bidleMs = /g).length, 2, "declared at 0 and taken once");
   // Every function on the controller is wrapped, after the last assignment to it.
   const wrap = loader.indexOf("controller[name] = (...args) => { wakeIdle(); return method.apply(controller, args); };");
   assert.ok(wrap > 0, "wrapper not found");
   assert.match(loader.slice(wrap - 400, wrap), /for \(const \[name, method\] of Object\.entries\(controller\)\) \{\n\s*if \(typeof method !== "function"\) continue;/);
   assert.match(loader.slice(wrap, wrap + 200), /^[^\n]+\n\s*\}\n\s*\}\n\s*return controller;/, "nothing is added to the controller after the wrap");
   assert.match(loader, /const wakeIdle = \(\) => \{\n\s*if \(!idleSleeper\.delivered\(\)\) return;\n\s*tickScheduled = false;\n\s*schedule\(\);\n\s*\};/);
+});
+
+test("the loader admits the paced policy only for a whole-image, non-persistent boot", () => {
+  const loader = readFileSync(new URL("../loader.js", import.meta.url), "utf8");
+  const gate = loader.match(/^    if \((interactiveClock === "paced" && .*?)\) throw new Error\('interactiveClock "paced" requires a whole-image, non-persistent boot'\);$/m)?.[1];
+  assert.ok(gate, "gate not found");
+  const refused = (interactiveClock, persist, wholeImageUrl) => vm.runInNewContext(gate, { interactiveClock, persist, wholeImageUrl });
+  assert.equal(refused("paced", false, "https://example.test/image.img.gz"), false, "the Replay desktop's boot");
+  for (const persist of [true, undefined, null, 0, "false"]) assert.equal(refused("paced", persist, "https://example.test/i"), true, `persist ${String(persist)}`);
+  for (const whole of [undefined, null]) assert.equal(refused("paced", false, whole), true, `wholeImageUrl ${String(whole)}`);
+  for (const policy of [undefined, "paced-on-keyboard", "wall-on-keyboard"]) {
+    assert.equal(refused(policy, true, undefined), false, `${String(policy)} is not this gate's business`);
+  }
+  // It sits with the other option checks, before the first fetch of the boot.
+  assert.ok(loader.indexOf(gate) < loader.indexOf("fetchVerifiedBootAsset("), "validated before any asset fetch");
+  // The Replay desktop's options satisfy it.
+  const main = readFileSync(new URL("../main.js", import.meta.url), "utf8");
+  const body = main.slice(main.indexOf("function replayDesktopBootOptions("), main.indexOf("async function bootReplayDesktop("));
+  assert.match(body, /^    persist: false,$/m);
+  assert.match(body, /^    wholeImageUrl: absolute\(whole\.url\),$/m);
 });
 
 test("the defaults use the realm's timers", async () => {

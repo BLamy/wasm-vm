@@ -423,6 +423,11 @@ export async function startLinuxBoot(opts = {}) {
     // The keyboard-triggered policies belong to the accelerated desktop's checkpoint identity.
     // "paced" (E5-T37b) is plain host scheduling and needs no accelerated graphics.
     if (interactiveClock !== undefined && interactiveClock !== "paced" && virgl !== true) throw new Error("interactiveClock requires accelerated graphics");
+    // The paced policy sleeps on the machine's word that nothing is pending in the guest. A
+    // boot whose disk is entirely in host memory and never persisted awaits no chunk fetch and
+    // no persist between a run slice and the sleep after it; that is the only kind admitted
+    // (and the only kind measured: the Replay desktop).
+    if (interactiveClock === "paced" && (persist !== false || wholeImageUrl == null)) throw new Error('interactiveClock "paced" requires a whole-image, non-persistent boot');
     if (virgl && (!workerMode || freshDesktop || !isChunked || extraDiskUrl)) throw new Error("Accelerated graphics requires a whole-machine chunked worker boot");
     if (wholeImageUrl != null && (!isChunked || typeof wholeImageUrl !== "string" || !wholeImageSha256)) {
       throw new Error("whole-image prefill requires a chunked boot with wholeImageUrl and wholeImageSha256");
@@ -1436,7 +1441,6 @@ export async function startLinuxBoot(opts = {}) {
             fetchWaits += 1;
             fetchRequestedChunks += pending.length;
             await machine.fetchPending();
-            idleMs = 0; // a completed read may be what the guest was waiting for
             // A permanent demand-chunk failure is recorded by the wasm fetch layer while the
             // parked guest read remains pending. Stop the controller at that boundary instead of
             // re-running the same failed read forever (and leaving callers with an apparently
@@ -1472,7 +1476,6 @@ export async function startLinuxBoot(opts = {}) {
             // Credit any in-flight WVFT transfer only when this flush persisted real guest writes
             // (see the pre-slice flush above) (E3-T21d).
             if ((await machine.persistPending()) > 0) machine.noteFileTransferPersist();
-            idleMs = 0; // a cleared durability barrier may be what the guest was waiting for
           }
         } catch (e) {
           if (await handlePersistError(e)) return;
