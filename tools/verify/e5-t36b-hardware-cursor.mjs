@@ -37,7 +37,8 @@ async function planes() {
   for (const block of text.split(/^plane\[\d+\]: /m).slice(1)) {
     const name = block.split("\n")[0].trim();
     const field = (key) => new RegExp(`^\\s*${key}=(.*)$`, "m").exec(block)?.[1]?.trim() ?? null;
-    const pos = /^(\d+)x(\d+)\+(-?\d+)\+(-?\d+)$/.exec(field("crtc-pos") ?? "");
+    // The kernel prints a plane left of or above the origin as e.g. "64x64-1-1".
+    const pos = /^(\d+)x(\d+)([+-]\d+)([+-]\d+)$/.exec(field("crtc-pos") ?? "");
     found.push({ name, crtc: field("crtc"), fb: Number(field("fb")),
       w: pos ? Number(pos[1]) : null, h: pos ? Number(pos[2]) : null, x: pos ? Number(pos[3]) : null, y: pos ? Number(pos[4]) : null });
   }
@@ -52,9 +53,10 @@ try {
   await guest.rootShell();
   result.swayEnv = lines(await sh("tr '\\0' '\\n' < /proc/$(pidof sway)/environ | grep WLR_", "sway environment")).sort();
   await sh("mount -t debugfs none /sys/kernel/debug 2>/dev/null; export SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -n 1)", "debugfs");
-  // The pointer goes to four places through sway's own seat, as a pointing device would move it.
+  // The pointer goes to five places through sway's own seat, as a pointing device would move it;
+  // the last is the screen's corner, where the plane stands left of and above the origin.
   result.moves = [];
-  for (const [x, y] of [[300, 400], [640, 100], [93, 516], [1036, 420]]) {
+  for (const [x, y] of [[300, 400], [640, 100], [93, 516], [1036, 420], [0, 0]]) {
     assert.equal(last(await sh(`swaymsg seat seat0 cursor set ${x} ${y} >/dev/null && echo MOVED`, "pointer move")), "MOVED");
     await sh("sleep 1", "settle");
     const all = await planes();
