@@ -3,7 +3,7 @@ id: E5-T37a
 epic: 5
 title: Paced idle in the core — a waiting wfi ends the run slice and reports the wait; busy lag is bounded
 priority: 0.387644
-status: in-progress
+status: implemented
 depends_on: [E4-T40b]
 estimate: S
 risk: high
@@ -35,12 +35,24 @@ Two additions, both selected by one host call (`Machine::set_paced_idle_policy`)
    deadline, once. The retire stream is unchanged: after such a `wfi` the guest goes round its
    idle loop to the next `wfi` either way; only where the host call ends moves.
 
-   A wait is reported only while it holds. It does not hold when the `wfi`'s wake condition is
-   met or about to be: an enabled interrupt is pending; the CLINT or SBI-timer levels this
-   boundary will sample make one pending (`mip` is refreshed at block boundaries only, so a
-   store earlier in the `wfi`'s own block is not in it yet); or a fabric device (UART, virtio,
-   RTC) was accessed since the last sampled boundary, so its service at this boundary may raise
-   one. Then the guest goes straight on in the same run call. The check changes no state.
+   **A reported wait is always true; a true wait is not always reported.** It is reported only
+   while it holds, judged without changing any state:
+   - every device is idle: the run loop's own quiescence marker says the last full device
+     service pass found none with work (a queue to drain, a UART character timeout running, an
+     RTC alarm armed, a paced audio stream) and nothing has accessed the device fabric since.
+     A device with work can raise an interrupt on a schedule the CLINT knows nothing about;
+   - no enabled interrupt is pending once the levels this boundary samples are counted
+     (`Machine::fresh_mip`: CLINT `msip` and `mtime >= mtimecmp`, the SBI timer, the PLIC's two
+     contexts). `mip` is refreshed at block boundaries only, so a store earlier in the `wfi`'s
+     own block is not in it yet.
+
+   The quiescence marker is reset when a run call starts (the host may have delivered
+   something between calls) and set again at the call's first sampled block boundary. So a
+   run call reports a wait only after it has itself serviced the devices at a boundary: a call
+   that begins inside the `wfi`'s block, or a guest with a device that has work, goes on, and
+   the wait is picked up at a later `wfi`. That costs host CPU (the guest goes round its idle
+   loop, as it always did), never correctness. Measured on the idle Replay desktop, the devices
+   were idle at all 1,050 of 1,050 wait checks in 30 s (`evidence/e5-t37a/quiescence-on-desktop.txt`).
 
    A recorded wait describes one guest under one clock: a new run call, selecting any clock or
    idle policy, and a restore drop it; a rebase of the host anchor is reflected in the distance.
@@ -55,14 +67,15 @@ Two additions, both selected by one host call (`Machine::set_paced_idle_policy`)
    - the part of it an idle jump cannot hand over at once, because a deadline is nearer than
      the ceiling (the host overslept), stays owed and survives later work;
    - when the host took a reported wait and an interrupt then wakes the guest (the host
-     delivered an event), the host time since the `wfi` goes on the guest clock at that
-     boundary, before the handler or the next instruction runs. This costs one reading of the
-     host clock that a machine without the opt-in does not make; it happens only when something
-     other than the guest's own timer ends a wait the host took.
+     delivered an event), the host time since the `wfi` — or since a rebase after it — goes on
+     the guest clock at that boundary, stopping at an armed deadline, before the handler or the
+     next instruction runs. This costs one reading of the host clock that a machine without
+     the opt-in does not make; it happens only when something other than the guest's own timer
+     ends a wait the host took.
 
 ## Deterministic acceptance
 
-`cargo test -p wasm-vm-core --lib paced_idle` passes (15 tests), including:
+`cargo test -p wasm-vm-core --lib paced_idle` passes (24 tests), including:
 
 - yield off (the default): a paced guest spinning on `wfi` uses its whole budget, as before;
 - yield on: `run(n)` returns after the waiting `wfi` with fewer than `n` retired,
@@ -74,12 +87,17 @@ Two additions, both selected by one host call (`Machine::set_paced_idle_policy`)
   with the turbo loop on and off, on guests that take timer interrupts out of `wfi`;
 - bounded lag: after a busy stretch during which the host clock ran far ahead, the next idle
   jump moves guest time by exactly `max_busy_lag`; after only idle-loop passes it moves by the
-  full host elapsed time; the worked/waited line is exactly 2048 retirements;
+  full host elapsed time; the worked/waited line is exactly 2048 retirements; a restore starts
+  a new interval;
 - waiting time is kept: 5 s slept before a host event are on the guest clock when the handler
-  starts (and in the `time` CSR after a wake without a trap); 2 s overslept past a deadline
-  are still handed over after the handler worked;
-- no wait while an interrupt is deliverable or a device was just accessed; a wake is accounted
-  only for a wait the host took;
+  starts (also after a rebase, and in the `time` CSR after a wake without a trap); a wake stops
+  at a deadline inside the slept interval and the rest stays owed; 2 s overslept past a
+  deadline are still handed over after the handler worked;
+- no wait while a device has work (an armed RTC alarm), while an interrupt is deliverable per
+  any level the boundary samples (`fresh_mip` equals what the level sync writes, in all 32
+  combinations, with and without the SBI timer), or from a call that began inside the `wfi`'s
+  block; a pending but disabled interrupt does not end a wait; a wake is accounted only for a
+  wait the host took;
 - a recorded wait does not outlive a clock change, a policy change or a restore; a rebase is
   reflected in it;
 - pure ICount and wall-clock machines never report an idle wait and never return early.
@@ -648,3 +666,107 @@ Commands: `cargo test -p wasm-vm-core --lib paced_idle`; `cargo test -p wasm-vm-
 `python3 evidence/e5-t37a/verifier-r2/sabotage.py` (+ `--pass2 …`);
 `cargo clippy -p wasm-vm-core --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings`;
 `bash evidence/e5-t37a/verifier-r2/cold-clone.sh d8db32db8`.
+
+### 2026-11-25 — worker — round 3 claim (head `7fd2e0160`)
+
+Answer to the second refutation. Implementation `bd110f77d`; `7fd2e0160` only refreshes the
+generated `web/gpu-checkpoint-build.js`. The Boundary and Deterministic acceptance sections
+above state the round-3 contract.
+
+**The findings, and what changed**
+
+- *N5c (PLIC) and the MTIP/STIP terms.* `Machine::fresh_mip` computes `mip` as this boundary's
+  level sync will leave it — `sync_clint`, `sync_plic` and `sync_sbi_timer` applied to the
+  current bits — without changing anything, and `paced_wait_holds` tests
+  `fresh_mip() & mie == 0`. The hand-picked level terms of round 2 are gone.
+  `paced_idle_fresh_mip_is_what_the_boundary_sync_writes` checks it against the real sync in
+  all 32 combinations of the five levels, from every other combination's stale bits, with and
+  without the SBI timer.
+- *N5d/N5e (my device rule asked the wrong question).* The rule is now the run loop's own
+  quiescence marker, `fabric_idle_epoch == Some(fabric_epoch)`: the last full service pass
+  found every device idle and nothing has touched the fabric since. A UART character timeout
+  in progress or an armed RTC alarm makes a device not idle, so no wait is reported and the
+  guest goes round its idle loop as before. The `idle_boundary_epoch` field of round 2 is gone.
+- *B4 (time slept after a rebase).* `paced_wake` no longer consults a pacer flag that `rebase`
+  resets. `IdlePacer::waiting` stays as a diagnostic; nothing in the machine reads it.
+- *Seven surviving mutants and the undecided MTIP term.* Each is now killed by a test of mine
+  (the `R` rows of the table below); the MTIP term has
+  `paced_idle_no_wait_when_the_machine_timer_came_due_inside_the_wfi_block`.
+
+**A narrowing of the contract, stated plainly.** The quiescence marker is reset when a run
+call starts and set again at the call's first sampled block boundary. So a run call reports a
+wait only after it has itself serviced the devices at a boundary. A call that begins inside the
+`wfi`'s block — for instance a host that runs one work slot at a time and lands on a `wfi` that
+is not the first op of its block — does not report that wait; the guest goes on and the wait is
+picked up at a later `wfi` (`paced_idle_a_call_that_begins_inside_the_wfi_block_reports_one_pass_later`).
+Round 1's and round 2's text said "the run call returns at that boundary" without this
+condition. I think the condition is right, not just convenient: the host may have delivered
+something between calls, and until a boundary services the devices this call cannot know.
+The cost is host CPU in an unusual slicing; a reported wait is never wrong because of it.
+
+**The two earlier verifiers' tests against round 3** (`evidence/e5-t37a/verifier-tests-r3.log`,
+sha256 `57ebc84f9b98…`): as committed, 39 of 43 pass, including all eight `_REFUTES` tests of
+both rounds. The four that fail are the three lockstep tests (`v37a_lockstep_m_mode_…`,
+`v37a_lockstep_random_…`, `r2_q1_lockstep_…`), at "MISSED RETURN" for one-slot calls that
+begin inside the `wfi`'s block, and `v37a_busy_lag_is_exactly_the_bound_once_…`, which steps
+one slot at a time onto the `wfi` and expects the next call to report it. With the lockstep
+harnesses changed in a scratch copy to require a wait only when the subject's call has sampled
+a block boundary before the `wfi` — tracked in the harness from the control's block
+boundaries, not read from the subject — all three lockstep tests pass with state, RAM, resume
+bytes and host-clock reading counts equal after every call; 42 of 43. The log shows the diffs.
+I did not edit or promote the verifiers' files.
+
+**Commands**, on the working tree that became `bd110f77d` unless stated:
+
+- `evidence/e5-t37a/gates-r3.log` (sha256 `c89e48fe7619…`): `cargo fmt --check`;
+  `cargo clippy -p wasm-vm-core -p wasm-vm-cli --all-targets -- -D warnings`;
+  `cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings`; the
+  Makefile's `zicsr-stub` lint line (the same 5 errors as before the task);
+  `cargo test -p wasm-vm-core --lib paced_idle` (24 pass);
+  `cargo test -p wasm-vm-core --lib` (448 pass); the two wasm32 builds.
+- `cargo test --workspace --exclude wasm-vm-wvseccomp` → 191 `test result: ok`, no failure
+  (`workspace-tests-r3.log`). Boot oracle: only the baseline README differs
+  (`oracle-r3.log`). Desktop equivalence: `EQUIVALENT (2000000000 instructions)`, FNV
+  `0dab1ccaa237df29`, retired 1,999,831,660, RAM `ed70e270…38701`
+  (`turbo-equivalence-r3.log`).
+- Mutation matrix, 37 mutants, one at a time, the file restored and re-touched after each
+  (`evidence/e5-t37a/sabotage-r3.log`, sha256 `e56eaf52f6bc…`; the script is
+  `sabotage-r3.py`): 37 killed, 0 survive.
+
+  | Mutants | Killed by |
+  |---|---|
+  | R1 a wait without the devices idle | `paced_idle_no_wait_while_a_device_has_work`, `…a_call_that_begins_inside_the_wfi_block…`, `…or_a_device_was_touched` |
+  | R2, R2b, R3, R4, R5 a level missing from `fresh_mip` | `paced_idle_fresh_mip_is_what_the_boundary_sync_writes` (and the machine-level tests for MSIP, MTIP, STIP) |
+  | R6 a pending but disabled interrupt ends the wait | `paced_idle_a_disabled_interrupt_does_not_end_the_wait` |
+  | R7 the wake jumps over an armed deadline; R8, R9 no SBI / CLINT resync at the wake; R14 the wake counted as work | `paced_idle_wake_stops_at_a_deadline_inside_the_slept_interval`, `…wake_without_a_trap…`, `…time_slept_before_a_host_wake…` |
+  | R10 a wait recorded at a reached deadline (`<` → `<=`) | `paced_idle_a_reached_deadline_that_wakes_nothing_does_not_end_the_run` |
+  | R11 owed waiting time not capped | `time::tests::paced_idle_busy_lag_is_bounded_and_waiting_time_is_not` |
+  | R12 a restore does not start a new interval | `paced_idle_a_restore_starts_a_new_interval` |
+  | R13 `take` keeps the wake armed for an unreported wait | `…no_wait_while_an_interrupt_is_deliverable_or_a_device_was_touched` |
+  | V1–V6 (round 1's survivors), N1–N6, N9–N15, W1–W3 (rounds 1 and 2) | as in the round-2 table |
+
+- Cold clone at `7fd2e0160` (sparse; `env -i` with HOME/PATH/TERM): 24/24 and 448/448, the
+  release build, oracle digests identical, desktop equivalence `EQUIVALENT` with the same RAM
+  hash (`cold-clone-r3.log`).
+- Browser, committed `web/dist` at `7fd2e0160`
+  (`node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html --label e5-t37a-r3-dist --n 5 --scenarios idle,click,sweep,type,node --out evidence/e5-t37a/browser-dist-r3.json`):
+  exit 0, no missing samples, the favicon 404 only; idle 158 MIPS, click result median 341 ms,
+  move-and-click 285 ms, key echo 44 ms, `node -e` 5.2 s. Unchanged while nothing selects the
+  policy.
+- Whether the devices are in fact idle when the real desktop waits:
+  `evidence/e5-t37a/quiescence-on-desktop.txt` — 1,050 of 1,050 wait checks in 30 s, on a
+  scratch build; one session, no audio, no serial input, no RTC alarm.
+
+**Mistakes of mine in this round, for the record.** Two tests of mine first passed for the
+wrong reason and their mutants survived: the pure-ICount test's budgets never let the call that
+ran the `wfi` sample a boundary, and the restore test compared two outcomes that were both
+"worked". Both were rewritten until their mutants died. My first draft of the "owed time is
+handed over once" pacer test asserted that 5,000 separate busy stretches share one bound; they
+each get one, which is the design, and the test now pins the consumption of owed time directly.
+
+**What is and is not shown.** Shown: the 24 tests' statements, on machines I built with host
+clocks I set; both verifiers' refuting tests passing unchanged; lockstep exactness for
+timer-woken guests under the narrowed contract. Not shown: anything in the browser with the
+policy selected (E5-T37b); virtio-snd playback or a guest with the JIT on (neither is in a
+test; a playing stream should make the device not idle, which I have not measured); the 2048
+threshold on any other kernel; a held key still stops idle jumps altogether, as before.

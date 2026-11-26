@@ -1,0 +1,28 @@
+E5-T37a round 3 — is the device fabric actually quiescent when the idle Replay desktop waits?
+
+Why it matters: round 3 reports a wait only when the run loop's quiescence marker
+(`fabric_idle_epoch == Some(fabric_epoch)`) says every device is idle. If some device on the
+real desktop always had work, the guest would never yield and the idle sleep of E5-T37b would
+never engage.
+
+How: 2026-11-25, scratch branch `scratch/pacing` (base d106de944) carrying this task's round-2
+core and the E5-T37b loader prototype, plus two debug counters in `paced_wait_holds` (calls, and
+calls at which the marker said quiescent) exposed through jitStats. Chrome 158 headless, M4 Max,
+tools/serve-dev.sh; a Playwright probe sampled three 10 s intervals starting 5 s after the warm
+desktop was ready, nobody touching it. The counters and the probe are scratch only; this file
+records the probe's console output.
+
+  interval 1 (first 10 s after restore; worker in run slices 69.7% of wall time):
+      wait checks 170, of which fabric quiescent 170; guest time x0.50 real; 73 sleeps
+  interval 2 (idle; 13.3%):
+      wait checks 482, of which fabric quiescent 482; guest time x0.95 real; 196 sleeps
+  interval 3 (idle; 11.7%):
+      wait checks 398, of which fabric quiescent 398; guest time x0.96 real; 194 sleeps
+
+Reading: 1,050 of 1,050 checks found every device idle. (The counters sat in the round-2
+function, which did not yet require quiescence; they show that requiring it would not have
+changed one decision in this session.)
+
+Limits: one session, one guest image, no audio playing, no serial input pending, no RTC alarm
+armed. With any of those the guest goes round its idle loop instead of sleeping until the
+device is idle again — the pre-task behaviour.
