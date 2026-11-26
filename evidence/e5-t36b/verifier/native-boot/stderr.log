@@ -1,0 +1,17 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xffffb468, 2048 MiB RAM
+wasm-vm: keyboard proof injected KEY_A make/break frames
+wasm-vm: keyboard proof pending events=4
+wasm-vm: keyboard proof pending events=0
+turbo: enabled=true entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+block cache: entries=4096 entry_hits=126799902 builds=101852409
+=== E4-T29 JIT summary ===
+jit_active=true  blocks_compiled=25834  blocks_executed=1107085785  retired_via_jit=6780599745
+discovery: nominated=291340 deduped=82821350 excluded=652 dropped_stale=0 dropped_overflow=0 queue_hwm=1763
+chaining: links_made=112959 links_cut=93252 dispatch_entries=92659029 max_chain_depth=32 links_followed=1099675544
+cache: modules=3650 est_bytes=245550582 installs=150124 retranslations=65027 evictions=51250 flushes=0 generation=51252
+jit_pause: samples=82707 sum_ns=0 max_ns=0 over_target=0
+coverage: retired_via_jit=6780599745 retired_total=7989799274 jit_pct=84.87%  translations: full=149455 partial=669 rejected=0 partial_exits=6965007
+first_untranslated_op: csr:sstatus=633 csr:time=17 sfence.vma=10 csr:sie=4 csr:satp=2 csr:sscratch=2 sret=1
+partial_resume: rebuilds=0 failures=0
+JIT_STATS_JSON {"blocks_compiled":25834,"blocks_executed":1107085785,"retired_via_jit":6780599745,"retired_total":7989799274,"blocks_full":149455,"blocks_partial":669,"blocks_rejected":0,"partial_exits":6965007,"links_made":112959,"dispatch_entries":92659029,"installs":150124,"evictions":51250,"jit_pause_count":82707,"jit_pause_sum_ns":0,"jit_pause_max_ns":0,"jit_pause_over_target":0}
+wasm-vm: guest exited 0

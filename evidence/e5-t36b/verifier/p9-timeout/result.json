@@ -1,0 +1,33 @@
+{
+  "task": "E5-T36b",
+  "expect": "hardware",
+  "startedAt": "2026-11-26T20:12:24.296Z",
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t36b/image/replay-desktop.ext4,ro",
+    "--ram-mib",
+    "1024",
+    "--net",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--block-cache",
+    "--interrupt-batching",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "400000000000",
+    "--no-reboot",
+    "--append",
+    "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
+  ],
+  "imageSha256": "8a5c6c1e34b7b2ca2494ec8011a7ec41aba43af946e16da6eb06c945944b197e",
+  "pass": false,
+  "error": "Error: timeout waiting for REPLAY_DESKTOP_READY\n    at Timeout.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/replay-desktop/native-shell.mjs:41:43)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)",
+  "hostSeconds": 3.002
+}

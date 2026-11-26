@@ -1,0 +1,7 @@
+$ node tools/verify/e5-t36b-hardware-cursor.mjs --image target/e5-t36b/image/replay-desktop.ext4 --out evidence/e5-t36b/verifier/p9-timeout --timeout-min 0.05
+{
+  "pass": false,
+  "expect": "hardware",
+  "error": "Error: timeout waiting for REPLAY_DESKTOP_READY\n    at Timeout.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/replay-desktop/native-shell.mjs:41:43)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)"
+}
+exit=1

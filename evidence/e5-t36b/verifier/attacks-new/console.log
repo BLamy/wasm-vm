@@ -1,0 +1,2673 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.50
+REPLAY_SWAY_IPC uptime=1.94
+REPLAY_TERMINAL_MAPPED uptime=1.98
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"A5F567C22CC6CF9B0A6DB47B682BB664","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"4539BB8BFDE30F749240750C11E86DE3"}]}} uptime=4.56
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"6010FF77E12D36C976CA95E2BBB2CD0B"} uptime=4.93
+REPLAY_RENDERER_SANDBOX pid=/proc/182 NoNewPrivs=1 Seccomp=2 NSpid=	182	9	1 uptime=5.05
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.12
+REPLAY_CHROME_MAPPED uptime=5.27 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.28 mem_hwm_kib=162868
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; mount -t debugfs none /sy
+s/kernel/debug 2>/dev/null; export SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock 
+| head -n 1); printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; tr '\0' '\n' < /proc/$(pi
+dof sway)/environ | grep -E 'WLR_|XCURSOR'; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+WLR_DRM_NO_ATOMIC=1
+WLR_RENDERER=pixman
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; swaymsg seat seat0 cursor
+ set 1150 650 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+MOVED
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; cat /sys/kernel/debug/dri
+/0/state; printf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1146+642
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; su -s /bin/sh desktop -c 
+'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 "
+^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+ba47a5fd38de4973
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; swaymsg seat seat0 cursor
+ set 1150 300 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+MOVED
+WVM_DONE_7
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '8'; su -s /bin/sh desktop -c 
+'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 "
+^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+ba47a5fd38de4973
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; swaymsg seat seat0 cursor
+ set 1150 650 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+MOVED
+WVM_DONE_9
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '10'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum |
+ cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '10'
+WVM_BEGIN_10
+ba47a5fd38de4973
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; swaymsg seat seat0 curso
+r set 300 400 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '11
+'
+WVM_BEGIN_11
+MOVED
+WVM_DONE_11
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '12'
+WVM_BEGIN_12
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+299+399
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_12
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '13'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "284,384 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '13'
+WVM_BEGIN_13
+a220951e6fa7b603
+WVM_DONE_13
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '14'; swaymsg seat seat0 curso
+r set 640 100 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '14
+'
+WVM_BEGIN_14
+MOVED
+WVM_DONE_14
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '15'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "284,384 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '15'
+WVM_BEGIN_15
+a220951e6fa7b603
+WVM_DONE_15
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '16'; swaymsg seat seat0 curso
+r set 300 400 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '16
+'
+WVM_BEGIN_16
+MOVED
+WVM_DONE_16
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '17'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "284,384 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '17'
+WVM_BEGIN_17
+a220951e6fa7b603
+WVM_DONE_17
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '18'; sha256sum /etc/group | c
+ut -c1-64; printf '%s%s\n' 'WVM_DONE_' '18'
+WVM_BEGIN_18
+d28fc45d8dcbcc64b1101460c1306f4bb4cff5865a1844f41532d6d711263f50
+WVM_DONE_18
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '19'; sha256sum /etc/hostname 
+| cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '19'
+WVM_BEGIN_19
+cb17fb6b2fc8224135a8b46c28c05c211fd44934054c71ac5c1380e2a9bbede4
+WVM_DONE_19
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '20'; sha256sum /etc/hosts | c
+ut -c1-64; printf '%s%s\n' 'WVM_DONE_' '20'
+WVM_BEGIN_20
+a0985722c038f793cf61b83722bb23201c85a0093be1ea24a5cd9507e73ff9fe
+WVM_DONE_20
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '21'; sha256sum /etc/init.d/rc
+S | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '21'
+WVM_BEGIN_21
+61f37647b0412a3f27342e9e61993b1172f1edc3f79ac7b778839693b86c8e54
+WVM_DONE_21
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '22'; sha256sum /etc/inittab |
+ cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '22'
+WVM_BEGIN_22
+1b9122a8dfeabc144940e365eff6d2e879f7e839af6f67eb1dbfba5fc10a97e8
+WVM_DONE_22
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '23'; sha256sum /etc/nsswitch.
+conf | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '23'
+WVM_BEGIN_23
+3a5e37b3bee02d4ca90b9c6cfef0a2a2d75d296ed8de113d1204384950a1f51e
+WVM_DONE_23
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '24'; sha256sum /etc/passwd | 
+cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '24'
+WVM_BEGIN_24
+e4fe2cdb1120cb4f6fd0cdf6732369ed73984648f19ff0a4368adac009f1bbca
+WVM_DONE_24
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '25'; sha256sum /etc/profile |
+ cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '25'
+WVM_BEGIN_25
+4b609579daa54f9b64f9461d5db48aed7250c459cda71368f0dbb39beca61323
+WVM_DONE_25
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '26'; sha256sum /etc/replay-de
+sktop/sway.conf | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '26'
+WVM_BEGIN_26
+2fc6f112b2d262953cfdee9083f9038648c5d18e690c62599bbaf71492e1b862
+WVM_DONE_26
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '27'; sha256sum /etc/shadow | 
+cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '27'
+WVM_BEGIN_27
+47ed0ead1fe565c1c40c9b49f63bb9c7f8f929c7439e3b68372275b6e7074280
+WVM_DONE_27
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '28'; sha256sum /etc/xdg/foot/
+foot.ini | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '28'
+WVM_BEGIN_28
+ea6dc4dc56291ae45558de5f20080bfc02ed1973f8a2aa132d2f081c3243b031
+WVM_DONE_28
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '29'; sha256sum /usr/local/bin
+/replay-chromium | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '29'
+WVM_BEGIN_29
+d076ac1dcd10f3f1a4ec3c801255990dbbc4656ee263f89f17758406da303f9b
+WVM_DONE_29
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '30'; sha256sum /usr/local/bin
+/replay-desktop-session | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '30'
+WVM_BEGIN_30
+6b91b18ebe84c341bdc38435cb3c928f33357b83bdd32f597b346b2ecae0fad6
+WVM_DONE_30
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '31'; sha256sum /usr/local/sbi
+n/replay-desktop-monitor | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '31'
+WVM_BEGIN_31
+d7abfbaef3b5093d9623d5d13a3dc5fb0bf806a86df29d2586430163f699edcd
+WVM_DONE_31
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '32'; sha256sum /usr/local/sbi
+n/replay-desktop-shot | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '32'
+WVM_BEGIN_32
+b3c678c08fa8fe961df45058118768a9e25bbe7e8dd6ca7d3c5886c79ba6a192
+WVM_DONE_32
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '33'; sha256sum /usr/local/sbi
+n/replay-desktop-type | cut -c1-64; printf '%s%s\n' 'WVM_DONE_' '33'
+WVM_BEGIN_33
+006b52e9d0acf99266c60f58007aa4efde8e5c61d748021ad05f97204b424595
+WVM_DONE_33
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '34'; sway --version; foot --v
+ersion | head -n 1; ls /usr/share/icons /usr/share/cursors /home/desktop/.icons 
+2>&1; echo errors-in-sway.log:; grep -c -i -E 'error|fail' /run/user/1000/sway.l
+og; printf '%s%s\n' 'WVM_DONE_' '34'
+WVM_BEGIN_34
+sway version 1.9
+foot version: 1.16.2 +pgo +ime +graphemes -assertions
+ls: /usr/share/icons: No such file or directory
+ls: /usr/share/cursors: No such file or directory
+ls: /home/desktop/.icons: No such file or directory
+errors-in-sway.log:
+3
+WVM_DONE_34
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '35'; swaymsg -t get_outputs |
+ grep -E '"(name|width|height|scale|dpms|power)"' | head -n 10; printf '%s%s\n' 
+'WVM_DONE_' '35'
+WVM_BEGIN_35
+      "width": 1280,
+      "height": 800
+      "width": 0,
+      "height": 0
+      "width": 0,
+      "height": 0
+      "width": 0,
+      "height": 0
+    "name": "Virtual-1",
+        "width": 1280,
+WVM_DONE_35
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '36'; head -n 30 /run/user/100
+0/sway.log | cut -c1-200; printf '%s%s\n' 'WVM_DONE_' '36'
+WVM_BEGIN_36
+00:00:00.008 [ERROR] [wlr] [backend/drm/drm.c:1812] Unable to clone DRM fd for client fd: Permission denied
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+WVM_DONE_36
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '37'; cat /proc/bus/input/devi
+ces; printf '%s%s\n' 'WVM_DONE_' '37'
+WVM_BEGIN_37
+I: Bus=0006 Vendor=feed Product=0001 Version=0100
+N: Name="wasm-vm virtio keyboard"
+P: Phys=virtio3/input0
+S: Sysfs=/devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0
+U: Uniq=
+H: Handlers=kbd event0 
+B: PROP=0
+B: EV=20013
+B: KEY=1ffffffffffffff ffffffffffffffff ffffffffffffffff fffffffffffffffe
+B: MSC=10
+B: LED=7
+
+I: Bus=0006 Vendor=feed Product=0002 Version=0100
+N: Name="wasm-vm virtio tablet"
+P: Phys=virtio4/input0
+S: Sysfs=/devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1
+U: Uniq=
+H: Handlers=mouse0 event1 
+B: PROP=2
+B: EV=b
+B: KEY=1f0000 0 0 0 0
+B: ABS=3
+
+I: Bus=0006 Vendor=feed Product=0003 Version=0100
+N: Name="wasm-vm virtio mouse"
+P: Phys=virtio5/input0
+S: Sysfs=/devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2
+U: Uniq=
+H: Handlers=mouse1 event2 
+B: PROP=0
+B: EV=7
+B: KEY=1f0000 0 0 0 0
+B: REL=143
+
+WVM_DONE_37
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '38'; swaymsg seat seat0 curso
+r set 40 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '38'
+WVM_BEGIN_38
+MOVED
+WVM_DONE_38
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '39'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '39'
+WVM_BEGIN_39
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+39+9
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_39
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '40'; swaymsg seat seat0 curso
+r set 0 0 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '40'
+WVM_BEGIN_40
+MOVED
+WVM_DONE_40
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '41'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '41'
+WVM_BEGIN_41
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64-1-1
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_41
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '42'; swaymsg seat seat0 curso
+r set 1279 0 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '42'
+WVM_BEGIN_42
+MOVED
+WVM_DONE_42
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '43'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '43'
+WVM_BEGIN_43
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1278-1
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_43
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '44'; swaymsg seat seat0 curso
+r set 0 799 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '44'
+WVM_BEGIN_44
+MOVED
+WVM_DONE_44
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '45'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '45'
+WVM_BEGIN_45
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64-1+797
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_45
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '46'; swaymsg seat seat0 curso
+r set 1279 799 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '4
+6'
+WVM_BEGIN_46
+MOVED
+WVM_DONE_46
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '47'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '47'
+WVM_BEGIN_47
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1278+797
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_47
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '48'; swaymsg '[app_id=replay-
+terminal] focus' >/dev/null; echo ok; printf '%s%s\n' 'WVM_DONE_' '48'
+WVM_BEGIN_48
+ok
+WVM_DONE_48
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '49'; swaymsg seat seat0 curso
+r set 1036 420 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '4
+9'
+WVM_BEGIN_49
+MOVED
+WVM_DONE_49
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '50'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '50'
+WVM_BEGIN_50
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1031+411
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_50
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '51'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\001\000\036\000\001\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\001\000\036\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000' > /dev/input/event0 && echo IN
+JECTED 4 events into /dev/input/event0; printf '%s%s\n' 'WVM_DONE_' '51'
+WVM_BEGIN_51
+INJECTED 4 events into /dev/input/event0
+WVM_DONE_51
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '52'; sleep 1; printf '%s%s\n'
+ 'WVM_DONE_' '52'
+WVM_BEGIN_52
+WVM_DONE_52
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '53'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '53'
+WVM_BEGIN_53
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1031+411
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_53
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '54'; swaymsg seat seat0 hide_
+cursor when-typing enable >/dev/null && echo ENABLED; printf '%s%s\n' 'WVM_DONE_
+' '54'
+WVM_BEGIN_54
+ENABLED
+WVM_DONE_54
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '55'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\001\000\036\000\001\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\001\000\036\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000' > /dev/input/event0 && echo IN
+JECTED 4 events into /dev/input/event0; printf '%s%s\n' 'WVM_DONE_' '55'
+WVM_BEGIN_55
+INJECTED 4 events into /dev/input/event0
+WVM_DONE_55
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '56'; sleep 1; printf '%s%s\n'
+ 'WVM_DONE_' '56'
+WVM_BEGIN_56
+WVM_DONE_56
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '57'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '57'
+WVM_BEGIN_57
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=(null)
+	fb=0
+	crtc-pos=0x0+0+0
+	src-pos=0.000000x0.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=1
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_57
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '58'; swaymsg seat seat0 curso
+r set 1000 500 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '5
+8'
+WVM_BEGIN_58
+MOVED
+WVM_DONE_58
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '59'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '59'
+WVM_BEGIN_59
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+996+492
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_59
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '60'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\377\131\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED 3 events 
+into /dev/input/event1; printf '%s%s\n' 'WVM_DONE_' '60'
+WVM_BEGIN_60
+INJECTED 3 events into /dev/input/event1
+WVM_DONE_60
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '61'; sleep 1; printf '%s%s\n'
+ 'WVM_DONE_' '61'
+WVM_BEGIN_61
+WVM_DONE_61
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '62'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '62'
+WVM_BEGIN_62
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+895+292
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_62
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '63'; swaymsg seat seat0 hide_
+cursor when-typing disable >/dev/null; swaymsg seat seat0 hide_cursor 3000 >/dev
+/null; sleep 6; printf '%s%s\n' 'WVM_DONE_' '63'
+WVM_BEGIN_63
+WVM_DONE_63
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '64'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '64'
+WVM_BEGIN_64
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=(null)
+	fb=0
+	crtc-pos=0x0+0+0
+	src-pos=0.000000x0.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=1
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_64
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '65'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\377\136\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\070\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED 3 events 
+into /dev/input/event1; printf '%s%s\n' 'WVM_DONE_' '65'
+WVM_BEGIN_65
+INJECTED 3 events into /dev/input/event1
+WVM_DONE_65
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '66'; sleep 0.5; printf '%s%s\
+n' 'WVM_DONE_' '66'
+WVM_BEGIN_66
+WVM_DONE_66
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '67'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '67'
+WVM_BEGIN_67
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+945+342
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_67
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '68'; swaymsg seat seat0 hide_
+cursor 0 >/dev/null; echo ok; printf '%s%s\n' 'WVM_DONE_' '68'
+WVM_BEGIN_68
+ok
+WVM_DONE_68
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '69'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\377\137\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\231\071\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED 3 events 
+into /dev/input/event1; printf '%s%s\n' 'WVM_DONE_' '69'
+WVM_BEGIN_69
+INJECTED 3 events into /dev/input/event1
+WVM_DONE_69
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '70'; sleep 1; printf '%s%s\n'
+ 'WVM_DONE_' '70'
+WVM_BEGIN_70
+WVM_DONE_70
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '71'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '71'
+WVM_BEGIN_71
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+955+351
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_71
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '72'; d=/home/desktop/.icons/b
+ig128/cursors; mkdir -p $d && { printf '\130\143\165\162\020\000\000\000\000\000
+\001\000\001\000\000\000\002\000\375\377\200\000\000\000\034\000\000\000\044\000
+\000\000\002\000\375\377\200\000\000\000\001\000\000\000\200\000\000\000\200\000
+\000\000\004\000\000\000\004\000\000\000\000\000\000\000'; head -c 65536 /dev/ze
+ro | tr '\000' '\377'; } > $d/default && for n in left_ptr text xterm pointer ha
+nd2; do ln -s default $d/$n; done; chown -R 1000:1000 /home/desktop/.icons; echo
+ $(wc -c < $d/default) bytes $(ls $d | wc -l) names; printf '%s%s\n' 'WVM_DONE_'
+ '72'
+WVM_BEGIN_72
+65600 bytes 6 names
+WVM_DONE_72
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '73'; swaymsg seat seat0 curso
+r set 1036 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '73
+'
+WVM_BEGIN_73
+MOVED
+WVM_DONE_73
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '74'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '74'
+WVM_BEGIN_74
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1034+9
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_74
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '75'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | c
+ut -c1-16; printf '%s%s\n' 'WVM_DONE_' '75'
+WVM_BEGIN_75
+a26516bcbaed92f1
+WVM_DONE_75
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '76'; swaymsg seat seat0 curso
+r set 300 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '76'
+WVM_BEGIN_76
+MOVED
+WVM_DONE_76
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '77'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | c
+ut -c1-16; printf '%s%s\n' 'WVM_DONE_' '77'
+WVM_BEGIN_77
+a26516bcbaed92f1
+WVM_DONE_77
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '78'; swaymsg seat seat0 curso
+r set 1036 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '78
+'
+WVM_BEGIN_78
+MOVED
+WVM_DONE_78
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '79'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | c
+ut -c1-16; printf '%s%s\n' 'WVM_DONE_' '79'
+WVM_BEGIN_79
+a26516bcbaed92f1
+WVM_DONE_79
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '80'; swaymsg seat seat0 xcurs
+or_theme big128 128 >/dev/null && echo SET; sleep 2; printf '%s%s\n' 'WVM_DONE_'
+ '80'
+WVM_BEGIN_80
+SET
+WVM_DONE_80
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '81'; tr '\0' '\n' < /proc/$(p
+idof sway)/environ | grep -E 'WLR_|XCURSOR'; printf '%s%s\n' 'WVM_DONE_' '81'
+WVM_BEGIN_81
+WLR_DRM_NO_ATOMIC=1
+WLR_RENDERER=pixman
+WVM_DONE_81
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '82'; swaymsg seat seat0 curso
+r set 1036 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '82
+'
+WVM_BEGIN_82
+MOVED
+WVM_DONE_82
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '83'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '83'
+WVM_BEGIN_83
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=(null)
+	fb=0
+	crtc-pos=0x0+0+0
+	src-pos=0.000000x0.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=1
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_83
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '84'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | c
+ut -c1-16; printf '%s%s\n' 'WVM_DONE_' '84'
+WVM_BEGIN_84
+a26516bcbaed92f1
+WVM_DONE_84
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '85'; swaymsg seat seat0 curso
+r set 300 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '85'
+WVM_BEGIN_85
+MOVED
+WVM_DONE_85
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '86'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | c
+ut -c1-16; printf '%s%s\n' 'WVM_DONE_' '86'
+WVM_BEGIN_86
+a26516bcbaed92f1
+WVM_DONE_86
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '87'; swaymsg seat seat0 curso
+r set 1036 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '87
+'
+WVM_BEGIN_87
+MOVED
+WVM_DONE_87
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '88'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | c
+ut -c1-16; printf '%s%s\n' 'WVM_DONE_' '88'
+WVM_BEGIN_88
+a26516bcbaed92f1
+WVM_DONE_88
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '89'; swaymsg seat seat0 curso
+r set 1036 420 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '8
+9'
+WVM_BEGIN_89
+MOVED
+WVM_DONE_89
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '90'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '90'
+WVM_BEGIN_90
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=(null)
+	fb=0
+	crtc-pos=0x0+0+0
+	src-pos=0.000000x0.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=1
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_90
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '91'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,404 96x96" -t ppm - 2>/dev/null' | sha256sum |
+ cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '91'
+WVM_BEGIN_91
+ba47a5fd38de4973
+WVM_DONE_91
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '92'; swaymsg seat seat0 curso
+r set 1150 300 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '9
+2'
+WVM_BEGIN_92
+MOVED
+WVM_DONE_92
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '93'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,404 96x96" -t ppm - 2>/dev/null' | sha256sum |
+ cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '93'
+WVM_BEGIN_93
+ba47a5fd38de4973
+WVM_DONE_93
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '94'; swaymsg seat seat0 curso
+r set 1036 420 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '9
+4'
+WVM_BEGIN_94
+MOVED
+WVM_DONE_94
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '95'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "1020,404 96x96" -t ppm - 2>/dev/null' | sha256sum |
+ cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '95'
+WVM_BEGIN_95
+ba47a5fd38de4973
+WVM_DONE_95
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '96'; swaymsg seat seat0 curso
+r set 300 400 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '96
+'
+WVM_BEGIN_96
+MOVED
+WVM_DONE_96
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '97'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '97'
+WVM_BEGIN_97
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+299+399
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_97
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '98'; su -s /bin/sh desktop -c
+ 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1 
+"^wayland-[0-9]*$") grim -g "284,384 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '98'
+WVM_BEGIN_98
+a220951e6fa7b603
+WVM_DONE_98
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '99'; swaymsg seat seat0 curso
+r set 640 100 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '99
+'
+WVM_BEGIN_99
+MOVED
+WVM_DONE_99
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '100'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "284,384 96x96" -t ppm - 2>/dev/null' | sha256sum |
+ cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '100'
+WVM_BEGIN_100
+a220951e6fa7b603
+WVM_DONE_100
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '101'; swaymsg seat seat0 curs
+or set 300 400 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '1
+01'
+WVM_BEGIN_101
+MOVED
+WVM_DONE_101
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '102'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "284,384 96x96" -t ppm - 2>/dev/null' | sha256sum |
+ cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '102'
+WVM_BEGIN_102
+a220951e6fa7b603
+WVM_DONE_102
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '103'; swaymsg seat seat0 curs
+or set 300 400 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '1
+03'
+WVM_BEGIN_103
+MOVED
+WVM_DONE_103
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '104'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '104'
+WVM_BEGIN_104
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+299+399
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_104
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '105'; swaymsg seat seat0 curs
+or set 640 100 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '1
+05'
+WVM_BEGIN_105
+MOVED
+WVM_DONE_105
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '106'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '106'
+WVM_BEGIN_106
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+639+99
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_106
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '107'; swaymsg seat seat0 curs
+or set 93 516 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '10
+7'
+WVM_BEGIN_107
+MOVED
+WVM_DONE_107
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '108'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '108'
+WVM_BEGIN_108
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+84+511
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_108
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '109'; swaymsg seat seat0 curs
+or set 1036 420 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+109'
+WVM_BEGIN_109
+MOVED
+WVM_DONE_109
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '110'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '110'
+WVM_BEGIN_110
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1026+415
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_110
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '111'; swaymsg seat seat0 xcur
+sor_theme default 24 >/dev/null; sleep 2; printf '%s%s\n' 'WVM_DONE_' '111'
+WVM_BEGIN_111
+WVM_DONE_111
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '112'; swaymsg seat seat0 curs
+or set 1036 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '1
+12'
+WVM_BEGIN_112
+MOVED
+WVM_DONE_112
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '113'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '113'
+WVM_BEGIN_113
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1034+9
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_113
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '114'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '114'
+WVM_BEGIN_114
+a26516bcbaed92f1
+WVM_DONE_114
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '115'; swaymsg seat seat0 curs
+or set 300 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '11
+5'
+WVM_BEGIN_115
+MOVED
+WVM_DONE_115
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '116'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '116'
+WVM_BEGIN_116
+a26516bcbaed92f1
+WVM_DONE_116
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '117'; swaymsg seat seat0 curs
+or set 1036 10 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '1
+17'
+WVM_BEGIN_117
+MOVED
+WVM_DONE_117
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '118'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1020,0 96x96" -t ppm - 2>/dev/null' | sha256sum | 
+cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '118'
+WVM_BEGIN_118
+a26516bcbaed92f1
+WVM_DONE_118
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '119'; grep -i -E 'error|fail'
+ /run/user/1000/sway.log | cut -c1-200 | tail -n 12; echo end; printf '%s%s\n' '
+WVM_DONE_' '119'
+WVM_BEGIN_119
+00:00:00.008 [ERROR] [wlr] [backend/drm/drm.c:1812] Unable to clone DRM fd for client fd: Permission denied
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+end
+WVM_DONE_119
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '120'; sed -e 's/ WLR_DRM_NO_A
+TOMIC=1//' /usr/local/bin/replay-desktop-session > /tmp/session-atomic && chmod 
+755 /tmp/session-atomic && grep '^export WLR' /tmp/session-atomic; printf '%s%s\
+n' 'WVM_DONE_' '120'
+WVM_BEGIN_120
+export WLR_RENDERER=pixman LIBSEAT_BACKEND=seatd
+WVM_DONE_120
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '121'; kill $(pidof sway); sle
+ep 3; pkill -9 chrome; pkill foot; rm -rf /run/user/1000/replay-chromium /run/us
+er/1000/sway-ipc.* /run/user/1000/wayland-*; (su -s /bin/sh desktop -c /tmp/sess
+ion-atomic </dev/null >/run/session2.log 2>&1 &); sleep 5; export SWAYSOCK=$(ls 
+/run/user/1000/sway-ipc.*.sock | head -n 1); i=0; while [ $i -lt 90 ] && [ "$(sw
+aymsg -t get_tree 2>/dev/null | grep -c '"app_id": "')" -lt 2 ]; do sleep 1; i=$
+((i+1)); done; sleep 5; echo windows mapped after $i s; printf '%s%s\n' 'WVM_DON
+E_' '121'
+WVM_BEGIN_121
+-/bin/sh: pkill: not found
+-/bin/sh: pkill: not found
+REPLAY_CHROMIUM_LAUNCH uptime=108.72
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"E4034E8E1DFDA1329481E9E4BF044384","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"8049F86D39E060319357B383B7BFDD9A"}]}} uptime=111.33
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"16C77C9F81B1C3EC6437B4732B3B1ABF"} uptime=111.61
+REPLAY_RENDERER_SANDBOX pid=/proc/1288 NoNewPrivs=1 Seccomp=2 NSpid=	1288	9	1 uptime=111.72
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=111.73
+windows mapped after 0 s
+WVM_DONE_121
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '122'; tr '\0' '\n' < /proc/$(
+pidof sway)/environ | grep -E 'WLR_|XCURSOR'; printf '%s%s\n' 'WVM_DONE_' '122'
+WVM_BEGIN_122
+WLR_RENDERER=pixman
+WVM_DONE_122
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '123'; swaymsg seat seat0 curs
+or set 1150 650 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+123'
+WVM_BEGIN_123
+MOVED
+WVM_DONE_123
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '124'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '124'
+WVM_BEGIN_124
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=(null)
+	fb=0
+	crtc-pos=0x0+0+0
+	src-pos=0.000000x0.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=1
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_124
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '125'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum 
+| cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '125'
+WVM_BEGIN_125
+72e25f0d681c7114
+WVM_DONE_125
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '126'; swaymsg seat seat0 curs
+or set 1150 300 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+126'
+WVM_BEGIN_126
+MOVED
+WVM_DONE_126
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '127'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum 
+| cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '127'
+WVM_BEGIN_127
+ba47a5fd38de4973
+WVM_DONE_127
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '128'; swaymsg seat seat0 curs
+or set 1150 650 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+128'
+WVM_BEGIN_128
+MOVED
+WVM_DONE_128
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '129'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum 
+| cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '129'
+WVM_BEGIN_129
+72e25f0d681c7114
+WVM_DONE_129
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '130'; kill $(pidof sway); sle
+ep 3; pkill -9 chrome; pkill foot; rm -rf /run/user/1000/replay-chromium /run/us
+er/1000/sway-ipc.* /run/user/1000/wayland-*; (su -s /bin/sh desktop -c /usr/loca
+l/bin/replay-desktop-session </dev/null >/run/session2.log 2>&1 &); sleep 5; exp
+ort SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -n 1); i=0; while [ $i -
+lt 90 ] && [ "$(swaymsg -t get_tree 2>/dev/null | grep -c '"app_id": "')" -lt 2 
+]; do sleep 1; i=$((i+1)); done; sleep 5; echo windows mapped after $i s; printf
+ '%s%s\n' 'WVM_DONE_' '130'
+WVM_BEGIN_130
+-/bin/sh: pkill: not found
+-/bin/sh: pkill: not found
+REPLAY_CHROMIUM_LAUNCH uptime=127.36
+REPLAY_CHROMIUM_TARGETS {"id":5,"result":{"targetInfos":[{"targetId":"C7C2ECD28F7E80CE836C041F30213544","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"92084BC83D821A076DF9D5EF2F14D20D"}]}} uptime=129.95
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"DD114C4D46F70754E23D51C8651E841F"} uptime=130.27
+REPLAY_RENDERER_SANDBOX pid=/proc/1549 NoNewPrivs=1 Seccomp=2 NSpid=	1549	10	1 uptime=130.38
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=130.40
+windows mapped after 0 s
+WVM_DONE_130
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '131'; tr '\0' '\n' < /proc/$(
+pidof sway)/environ | grep -E 'WLR_|XCURSOR'; printf '%s%s\n' 'WVM_DONE_' '131'
+WVM_BEGIN_131
+WLR_DRM_NO_ATOMIC=1
+WLR_RENDERER=pixman
+WVM_DONE_131
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '132'; swaymsg seat seat0 curs
+or set 1150 650 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+132'
+WVM_BEGIN_132
+MOVED
+WVM_DONE_132
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '133'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '133'
+WVM_BEGIN_133
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=43
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1146+642
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_133
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '134'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum 
+| cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '134'
+WVM_BEGIN_134
+ba47a5fd38de4973
+WVM_DONE_134
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '135'; swaymsg seat seat0 curs
+or set 1150 300 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+135'
+WVM_BEGIN_135
+MOVED
+WVM_DONE_135
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '136'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum 
+| cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '136'
+WVM_BEGIN_136
+ba47a5fd38de4973
+WVM_DONE_136
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '137'; swaymsg seat seat0 curs
+or set 1150 650 >/dev/null && echo MOVED; sleep 1; printf '%s%s\n' 'WVM_DONE_' '
+137'
+WVM_BEGIN_137
+MOVED
+WVM_DONE_137
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '138'; su -s /bin/sh desktop -
+c 'XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | grep -m1
+ "^wayland-[0-9]*$") grim -g "1134,634 96x96" -t ppm - 2>/dev/null' | sha256sum 
+| cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '138'
+WVM_BEGIN_138
+ba47a5fd38de4973
+WVM_DONE_138
+root@replay-desktop# [6n

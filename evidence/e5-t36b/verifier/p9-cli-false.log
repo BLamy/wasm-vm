@@ -1,0 +1,7 @@
+$ node tools/verify/e5-t36b-hardware-cursor.mjs --image target/e5-t36b/image/replay-desktop.ext4 --out evidence/e5-t36b/verifier/p9-cli-false --cli /usr/bin/false
+{
+  "pass": false,
+  "expect": "hardware",
+  "error": "Error: guest exited waiting for REPLAY_DESKTOP_READY\n    at check (file:///Users/blamy/Documents/Codex/wasm-vm/tools/replay-desktop/native-shell.mjs:43:97)\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/replay-desktop/native-shell.mjs:44:29\n    at new Promise (<anonymous>)\n    at waitFor (file:///Users/blamy/Documents/Codex/wasm-vm/tools/replay-desktop/native-shell.mjs:40:12)\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t36b-hardware-cursor.mjs:48:9"
+}
+exit=1

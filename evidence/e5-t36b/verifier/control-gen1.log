@@ -1,0 +1,40 @@
+$ node tools/verify/e5-t36b-hardware-cursor.mjs --image target/e5-t34b/image/replay-desktop.ext4 --out evidence/e5-t36b/verifier/control-gen1 --expect software
+{
+  "pass": true,
+  "expect": "software",
+  "swayEnv": [
+    "WLR_NO_HARDWARE_CURSORS=1",
+    "WLR_RENDERER=pixman"
+  ],
+  "moves": [
+    {
+      "pointer": [
+        300,
+        400
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        640,
+        100
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        93,
+        516
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        1036,
+        420
+      ],
+      "cursor": null
+    }
+  ]
+}
+exit=0
