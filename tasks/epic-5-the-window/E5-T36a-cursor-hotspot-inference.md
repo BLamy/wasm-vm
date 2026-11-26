@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: in-progress
+status: implemented
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -299,3 +299,94 @@ from `gates.log` and `demo-suite.json`); how often the wrong answer occurs with 
 model); Firefox and Safari; the relative-mode and stale-size cases in a browser; cursors above
 the CSS limit; E5-T36b's image. In `natural-instrumented/events.json` the `img` column is a
 constant (my logging mistake, fixed for `approach-C-instrumented`).
+
+### 2026-11-26 — worker — round 2 claim (head `c989491f5`)
+
+The refutation is right and the fix is in the two commits `4eb3d3179` and `c989491f5`.
+
+**What was wrong.** I gave the position of every cursor UPDATE to the estimator. On legacy KMS
+an update carries the plane's previous position, computed with the previous image's hotspot, so
+at an image change it is evidence for the wrong image. My tests' device model reported the new
+image's own position in its updates, and my browser proof only jumped with long rests; neither
+could see it.
+
+**What changed.**
+
+- Only cursor MOVES are evidence (`cursor-controller.js` `handleMove`; `_trackHotspot` no longer
+  calls `noteMove`). A re-set of the same image leaves the estimator alone; a change of image
+  tells it the plane position remembered for that image is stale (`noteInstall`).
+- Positions are noted only in absolute mode; changing pointer mode, a change of the output size
+  the positions are computed for (the page hook now passes it) and a guest reset start
+  inference over (`resetHotspotInference`, `CursorHotspotEstimator.reset`; `forget` is gone).
+- The pointer at rest settles the hotspot: 300 ms without a sent position or a cursor event,
+  and the plane stands for the last position sent (`noteRest`). It must be one of the offsets
+  the moves so far allow and needs a move since the image changed. This is what gives a
+  straight approach its answer: on the verifier's approach C the hand has four fitting
+  offsets after its one move, and (9,4) at rest.
+- An answer can be taken back: three moves in a row it cannot explain although other sent
+  positions could, or a plane that moves again after a rest answer with nothing new sent.
+- An inferred (0,0) is an answer like any other (the special case the verifier found
+  unexecuted is gone).
+
+**Tests** (`web/tests/e5-t36-cursor-hotspot.test.mjs`, 22 tests). The controller tests now
+drive the device's order through a `LegacyKmsGuest` model (update at the previous plane
+position, then move). Among them: the verifier's recorded log of approach C as a fixture (65
+events with their page timestamps; ends at (9,4), and fails with (45,7) if an update's position
+is fed again); 600 random approaches across an image change with lag 0–3 and the image change
+0–3 positions late — the inferred hotspot is never more than one pixel off, and known at rest
+in at least 90% of them; relative mode; output-size change; a contradicted answer taken back; a
+same-image update before the rest; an image that comes back without a move of its own.
+Mutants: 38 one-line mutants of the estimator and of the controller's use of it, in a scratch
+copy (`python3 evidence/e5-t36a/mutants.py <scratch dir>`, log `mutants.log`): 37 killed. The
+survivor writes the style on an unchanged answer, which `_setHostCursor` already skips, so
+nothing observable changes. (My first run left 11 alive; the second commit is the tests for
+them, plus the one redundant check they exposed.)
+
+**Gates** (`bash evidence/e5-t36a/gates.sh`, log sha256 `99231c6e0f61…`, at `c989491f5`): the
+four cursor test files, 35 tests, all pass; shipped copies of the two sink files byte-identical
+to their sources; web unit suite 643 tests, 615 pass, 28 fail — the same 28 names as before,
+`diff` empty.
+
+**Browser proof, the committed bundle at `c989491f5`**
+(`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`;
+`result.json` sha256 `46b0079615e0…`; Chrome 158.0.8127.88 headless; session
+restarted on legacy KMS, back after 16 s). Four plans, each starting
+inference over; glides are min-jerk at 60 Hz; every read is taken at rest:
+
+| plan | read | sent | CSS hotspot | kernel plane | plane + hotspot − sent |
+|---|---|---|---|---|---|
+| approach C | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach C | hand, first time: one straight glide onto the button, at rest | (146, 501) | (9, 4) | (137, 497) | (0, 0) |
+| approach C | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach C | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach C | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| approach A | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach A | hand, first time: one straight glide onto the button, at rest | (142, 515) | (9, 4) | (133, 511) | (0, 0) |
+| approach A | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach A | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach A | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| approach from the right, across the button's edge at a slant | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand, first time: one straight glide onto the button, at rest | (72, 532) | (9, 4) | (63, 528) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach from the right, across the button's edge at a slant | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| jumps with rests | arrow over the page body | (450, 730) | (1, 1) | (449, 729) | (0, 0) |
+| jumps with rests | hand over the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| jumps with rests | text caret over the terminal | (1000, 420) | (4, 8) | (996, 412) | (0, 0) |
+
+18 reads, every hotspot known and exact, every tip on the sent pixel. Approach C is the plan
+that gave (45,7) before, approach A the one that gave (12,3). No painted pointer in the guest
+frame, no console errors, no cursor diagnostics.
+
+**Unchanged with the image as published**: click result median 272.8 ms, key echo
+median 46 ms (n = 8 each; E5-T37b: about 266 ms and 47 ms). Demo page:
+127 passed, 0 failed of 127; no errors.
+
+Round 1's evidence is kept in `evidence/e5-t36a/round-1/`.
+
+**Not claimed / known limits.** A guest more than 128 sent positions behind the pointer gives
+no evidence (and a contradiction is not counted) until it catches up. If the rest wait fires
+while the guest is still more than 300 ms behind, the answer read then can be wrong until the
+plane's next move, which takes it back (unit-tested; not produced in the browser). The first
+time a shape is met on a straight approach its cursor is drawn with no hotspot for the 300 ms
+before the rest answer. Cursors above the CSS size limit take the overlay path, untouched.
