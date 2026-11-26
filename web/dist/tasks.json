@@ -24213,15 +24213,16 @@
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "E5-T37b: the Replay desktop's worker sleeps while the guest waits",
             "E5-T37b in-progress: paced idle in the browser; file E5-T37c and E5-T40"
           ]
         }
       ],
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T37c",
