@@ -1,0 +1,12 @@
+[native-boot +9s] REPLAY_DESKTOP_MONITOR
+[native-boot +26s] REPLAY_CHROMIUM_LAUNCH
+[native-boot +27s] REPLAY_SWAY_IPC
+[native-boot +28s] REPLAY_TERMINAL_MAPPED
+[native-boot +88s] REPLAY_CHROMIUM_TARGETS
+[native-boot +88s] REPLAY_CHROMIUM_PAGE
+[native-boot +88s] REPLAY_RENDERER_SANDBOX
+[native-boot +88s] REPLAY_CHROMIUM_READY
+[native-boot +88s] REPLAY_CHROME_MAPPED
+[native-boot +88s] REPLAY_DESKTOP_READY
+[native-boot] wrote /Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t36b/verifier/native-boot
+exit=0

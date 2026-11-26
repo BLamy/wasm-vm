@@ -1,0 +1,16 @@
+REPLAY_DESKTOP_READY uptime=5.26 mem_hwm_kib=162112
+sway environment: ["WLR_NO_HARDWARE_CURSORS=1","WLR_RENDERER=pixman"]
+
+== P5: the composited frame around the pointer, pointer on it and away ==
+terminal background: pointer on the spot 1150,650: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+terminal background: pointer on the spot, region 1134,634 96x96 sha256=72e25f0d681c7114
+terminal background: pointer away at 1150,300, region 1134,634 96x96 sha256=ba47a5fd38de4973
+terminal background: pointer on the spot again, region 1134,634 96x96 sha256=72e25f0d681c7114
+terminal background: cursor plane on the CRTC=false; the composited frame carries a pointer=true; measurement valid (repeatable, grim produced pixels)=true
+Chrome page body: pointer on the spot 300,400: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+Chrome page body: pointer on the spot, region 284,384 96x96 sha256=e51ec92c46b6ff6f
+Chrome page body: pointer away at 640,100, region 284,384 96x96 sha256=a220951e6fa7b603
+Chrome page body: pointer on the spot again, region 284,384 96x96 sha256=e51ec92c46b6ff6f
+Chrome page body: cursor plane on the CRTC=false; the composited frame carries a pointer=true; measurement valid (repeatable, grim produced pixels)=true
+host seconds: 37.3
+exit=0

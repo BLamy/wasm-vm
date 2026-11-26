@@ -1,0 +1,4 @@
+session up: ["plane-0 crtc=crtc-0 fb=40 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=43 pos=64x64+99+99"]
+sway pids after kill: "end"
+sway gone: ["plane-0 crtc=crtc-0 fb=37 pos=1280x800+0+0","plane-1 crtc=(null) fb=0 pos=0x0+0+0"]
+session restarted (8 guest s on): ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=45 pos=64x64+99+99"]

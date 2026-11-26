@@ -1,0 +1,147 @@
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.585146] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.49
+REPLAY_SWAY_IPC uptime=1.94
+REPLAY_TERMINAL_MAPPED uptime=1.98
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"361C9A28D82BD3D225D0D3C6DC703713","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"F1BCE8DE43D1F7E6C118FEA9BDC5C501"}]}} uptime=4.67
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"2DFDDDA659163630CAE9B07E2615EFBD"} uptime=4.96
+REPLAY_RENDERER_SANDBOX pid=/proc/181 NoNewPrivs=1 Seccomp=2 NSpid=	181	9	1 uptime=5.07
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.13
+REPLAY_CHROME_MAPPED uptime=5.28 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.30 mem_hwm_kib=171528
+
+root@replay-desktop# cd /; export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:
+/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_DONE_1
+root@replay-desktop# [6nSWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock) swaymsg '[app
+_id=replay-terminal] focus' >/dev/null && echo FOCUS''_OK; printf '%s%s\n' 'WVM_
+DONE_' '2'
+FOCUS_OK
+WVM_DONE_2
+root@replay-desktop# [6nreplay-desktop-type -n 'echo KEYBOARD_'; printf '%s%s\n' 'W
+VM_DONE_' '3'
+WVM_TYPE foot=88 shell=95 tty=/dev/pts/0
+WVM_DONE_3
+root@replay-desktop# printf '%s%s\n' 'WVM_KB_' 'INJECT'; printf '%s%s\n' 'WVM_DO
+NE_' '4'
+WVM_KB_INJECT
+WVM_DONE_4
+root@replay-desktop# [6nreplay-desktop-type ' | tee /tmp/keyboard.txt'; printf '%s%
+s\n' 'WVM_DONE_' '5'
+WVM_TYPE foot=88 shell=95 tty=/dev/pts/0
+WVM_DONE_5
+root@replay-desktop# [6ncat /tmp/keyboard.txt 2>/dev/null; printf '%s%s\n' 'WVM_DON
+E_' '6'
+KEYBOARD_a
+WVM_DONE_6
+root@replay-desktop# [6nreplay-desktop-type 'node -e "console.log(process.version)"
+ | tee /tmp/node-version.txt'; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_TYPE foot=88 shell=95 tty=/dev/pts/0
+WVM_DONE_7
+root@replay-desktop# [6ncat /tmp/node-version.txt 2>/dev/null; printf '%s%s\n' 'WVM
+_DONE_' '8'
+WVM_DONE_8
+root@replay-desktop# [6ncat /tmp/node-version.txt 2>/dev/null; printf '%s%s\n' 'WVM
+_DONE_' '9'
+v26.13.1
+WVM_DONE_9
+root@replay-desktop# [6nreplay-desktop-shot desktop; printf '%s%s\n' 'WVM_DONE_' '1
+0'
+WVM_PNG_BEGIN desktop 78152 8377c2617e483fa4f7103819fd845cc0882d2c38aefe299bf259ee137d396691
+[base64 elided: see PNG]
+WVM_PNG_END desktop
+WVM_DONE_10
+root@replay-desktop# [6ncat /proc/uptime; cat /run/replay-desktop/mem-hwm-kib; grep
+ -E '^(MemTotal|MemFree|MemAvailable|Shmem|Cached):' /proc/meminfo; for p in $(p
+idof chrome sway foot seatd); do printf 'VMHWM %s %s %s\n' $p $(cat /proc/$p/com
+m) $(awk '/^VmHWM:/{print $2}' /proc/$p/status); done; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_outputs | grep -E '"(name|current_mode|width
+|height)"' | head -6; SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock) swaymsg -t g
+et_inputs | grep -E '"(identifier|type)"'; SWAYSOCK=$(ls /run/user/1000/sway-ipc
+.*.sock) swaymsg -t get_tree | grep -E '"(app_id|name)": "[^"]+"' | grep -v -E '
+root|__i3'; cat /run/replay-desktop/events | cut -c1-200; grep -i -E 'error|fail
+' /run/user/1000/sway.log | head -20; tail -20 /home/desktop/.local/state/replay
+-chromium/browser.log; mount | grep -E ' / |tmpfs'; printf '%s%s\n' 'WVM_DONE_' 
+'11'
+137.64 125.38
+181688
+MemTotal:        2022352 kB
+MemFree:         1586344 kB
+MemAvailable:    1842972 kB
+Cached:           312496 kB
+Shmem:             42292 kB
+VMHWM 181 chrome 96748
+VMHWM 150 chrome 33280
+VMHWM 148 chrome 70400
+VMHWM 147 chrome 73788
+VMHWM 128 chrome 14060
+VMHWM 126 chrome 53888
+VMHWM 125 chrome 53504
+VMHWM 94 chrome 140236
+VMHWM 71 sway 30968
+VMHWM 88 foot 13724
+VMHWM 70 seatd 1280
+      "width": 1280,
+      "height": 800
+      "width": 0,
+      "height": 0
+      "width": 0,
+      "height": 0
+    "identifier": "65261:3:wasm-vm_virtio_mouse",
+    "type": "pointer",
+    "identifier": "65261:2:wasm-vm_virtio_tablet",
+    "type": "pointer",
+    "identifier": "65261:1:wasm-vm_virtio_keyboard",
+    "type": "keyboard",
+      "name": "Virtual-1",
+          "name": "1",
+              "name": "Replay RISC-V PASS #1 - Chromium",
+              "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)",
+              "name": "Replay Node 26 terminal",
+              "app_id": "replay-terminal",
+REPLAY_CHROMIUM_LAUNCH uptime=1.49
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"361C9A28D82BD3D225D0D3C6DC703713","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","at
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    12
+REPLAY_RENDERER_SANDBOX pid=/proc/181 NoNewPrivs=1 Seccomp=2 NSpid=	181	9	1 uptime=5.07
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.13
+00:00:00.008 [ERROR] [wlr] [backend/drm/drm.c:1812] Unable to clone DRM fd for client fd: Permission denied
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+[94:140:1126/170354.469510:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[94:140:1126/170354.469867:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[94:139:1126/170354.825419:ERROR:bus.cc(399)] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[94:139:1126/170354.825496:ERROR:bus.cc(399)] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[94:191:1126/170355.788541:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[94:191:1126/170355.788645:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[94:191:1126/170355.788835:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[94:191:1126/170355.788961:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[94:191:1126/170355.789083:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+/dev/root on / type ext4 (ro,relatime)
+devtmpfs on /dev type devtmpfs (rw,relatime,size=1010076k,nr_inodes=252519,mode=755)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,relatime)
+tmpfs on /run type tmpfs (rw,nosuid,nodev,relatime,mode=755)
+tmpfs on /tmp type tmpfs (rw,nosuid,nodev,relatime)
+tmpfs on /home type tmpfs (rw,nosuid,nodev,relatime,mode=755)
+tmpfs on /var type tmpfs (rw,nosuid,nodev,relatime,mode=755)
+tmpfs on /root type tmpfs (rw,nosuid,nodev,relatime,mode=700)
+WVM_DONE_11
+root@replay-desktop# sync; poweroff -f
+[  138.639305] reboot: Power down

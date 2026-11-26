@@ -1,0 +1,148 @@
+REPLAY_DESKTOP_READY uptime=5.28 mem_hwm_kib=162868
+sway environment: ["WLR_DRM_NO_ATOMIC=1","WLR_RENDERER=pixman"]
+
+== P5: the composited frame around the pointer, pointer on it and away ==
+terminal background: pointer on the spot 1150,650: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+1146+642
+terminal background: pointer on the spot, region 1134,634 96x96 sha256=ba47a5fd38de4973
+terminal background: pointer away at 1150,300, region 1134,634 96x96 sha256=ba47a5fd38de4973
+terminal background: pointer on the spot again, region 1134,634 96x96 sha256=ba47a5fd38de4973
+terminal background: cursor plane on the CRTC=true; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+Chrome page body: pointer on the spot 300,400: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+299+399
+Chrome page body: pointer on the spot, region 284,384 96x96 sha256=a220951e6fa7b603
+Chrome page body: pointer away at 640,100, region 284,384 96x96 sha256=a220951e6fa7b603
+Chrome page body: pointer on the spot again, region 284,384 96x96 sha256=a220951e6fa7b603
+Chrome page body: cursor plane on the CRTC=true; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+
+== P6b: overlay files in the guest against HEAD ==
+same /etc/group guest=d28fc45d8dcbcc64 HEAD=d28fc45d8dcbcc64
+same /etc/hostname guest=cb17fb6b2fc82241 HEAD=cb17fb6b2fc82241
+same /etc/hosts guest=a0985722c038f793 HEAD=a0985722c038f793
+same /etc/init.d/rcS guest=61f37647b0412a3f HEAD=61f37647b0412a3f
+same /etc/inittab guest=1b9122a8dfeabc14 HEAD=1b9122a8dfeabc14
+same /etc/nsswitch.conf guest=3a5e37b3bee02d4c HEAD=3a5e37b3bee02d4c
+same /etc/passwd guest=e4fe2cdb1120cb4f HEAD=e4fe2cdb1120cb4f
+same /etc/profile guest=4b609579daa54f9b HEAD=4b609579daa54f9b
+same /etc/replay-desktop/sway.conf guest=2fc6f112b2d26295 HEAD=2fc6f112b2d26295
+same /etc/shadow guest=47ed0ead1fe565c1 HEAD=47ed0ead1fe565c1
+same /etc/xdg/foot/foot.ini guest=ea6dc4dc56291ae4 HEAD=ea6dc4dc56291ae4
+same /usr/local/bin/replay-chromium guest=d076ac1dcd10f3f1 HEAD=d076ac1dcd10f3f1
+same /usr/local/bin/replay-desktop-session guest=6b91b18ebe84c341 HEAD=6b91b18ebe84c341
+same /usr/local/sbin/replay-desktop-monitor guest=d7abfbaef3b5093d HEAD=d7abfbaef3b5093d
+same /usr/local/sbin/replay-desktop-shot guest=b3c678c08fa8fe96 HEAD=b3c678c08fa8fe96
+same /usr/local/sbin/replay-desktop-type guest=006b52e9d0acf992 HEAD=006b52e9d0acf992
+overlay files identical to HEAD: 16 of 16
+
+== inventory ==
+sway version 1.9
+foot version: 1.16.2 +pgo +ime +graphemes -assertions
+ls: /usr/share/icons: No such file or directory
+ls: /usr/share/cursors: No such file or directory
+ls: /home/desktop/.icons: No such file or directory
+errors-in-sway.log:
+3
+outputs: "width": 1280, "height": 800 "width": 0, "height": 0 "width": 0, "height": 0 "width": 0, "height": 0 "name": "Virtual-1", "width": 1280,
+sway.log:
+00:00:00.008 [ERROR] [wlr] [backend/drm/drm.c:1812] Unable to clone DRM fd for client fd: Permission denied
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+input devices: [{"name":"wasm-vm virtio keyboard","event":"event0","abs":false,"kbd":true},{"name":"wasm-vm virtio tablet","event":"event1","abs":true,"kbd":false},{"name":"wasm-vm virtio mouse","event":"event2","abs":false,"kbd":false}]
+
+== P10: screen edges (sway's own cursor over a title bar, then the four corners) ==
+title bar, pointer 40,10: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+39+9
+hotspot of sway's own cursor over a title bar: 1,1
+corner 0,0: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64-1-1
+corner 0,0: on the CRTC=true plane=-1,-1 pointer-plane=1,1 acceptance regex (line 40) parses "64x64-1-1"=false
+corner 1279,0: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+1278-1
+corner 1279,0: on the CRTC=true plane=1278,-1 pointer-plane=1,1 acceptance regex (line 40) parses "64x64+1278-1"=false
+corner 0,799: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64-1+797
+corner 0,799: on the CRTC=true plane=-1,797 pointer-plane=1,2 acceptance regex (line 40) parses "64x64-1+797"=false
+corner 1279,799: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+1278+797
+corner 1279,799: on the CRTC=true plane=1278,797 pointer-plane=1,2 acceptance regex (line 40) parses "64x64+1278+797"=true
+
+== P8: hiding the pointer, and real input events ==
+pointer over foot, before typing: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+1031+411
+KEY_A press+release, foot as shipped: INJECTED 4 events into /dev/input/event0
+after a real key into foot (image as shipped): plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+1031+411
+foot as shipped hides the pointer while typing: false
+when-typing: ENABLED
+KEY_A press+release, sway hide_cursor when-typing: INJECTED 4 events into /dev/input/event0
+after a real key with hide_cursor when-typing: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+the key hid the pointer: true
+after swaymsg cursor set 1000 500: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+996+492
+after a move through sway's IPC the plane is on the CRTC: true
+tablet ABS to 900,300: INJECTED 3 events into /dev/input/event1
+after a real pointer event: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+895+292
+after a real pointer event the plane is on the CRTC: true; pointer-plane=5,8
+after the idle timeout: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+idle for 6 s with hide_cursor 3000, plane on the CRTC: false
+tablet ABS to 950,350: INJECTED 3 events into /dev/input/event1
+right after a real pointer event: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+945+342
+after a real pointer event the plane is on the CRTC: true; pointer-plane=5,8
+tablet ABS to 960,360: INJECTED 3 events into /dev/input/event1
+idle timeout off, after a real pointer event: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+955+351
+
+== P4: a cursor image larger than the 64x64 plane (an Xcursor theme in ~/.icons, 128x128 only) ==
+theme: 65600 bytes 6 names
+built-in cursor, title bar: pointer on the spot 1036,10: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+1034+9
+built-in cursor, title bar: pointer on the spot, region 1020,0 96x96 sha256=a26516bcbaed92f1
+built-in cursor, title bar: pointer away at 300,10, region 1020,0 96x96 sha256=a26516bcbaed92f1
+built-in cursor, title bar: pointer on the spot again, region 1020,0 96x96 sha256=a26516bcbaed92f1
+built-in cursor, title bar: cursor plane on the CRTC=true; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+xcursor_theme big128: SET
+sway environment now: ["WLR_DRM_NO_ATOMIC=1","WLR_RENDERER=pixman"]
+128 px theme, title bar: pointer on the spot 1036,10: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+128 px theme, title bar: pointer on the spot, region 1020,0 96x96 sha256=a26516bcbaed92f1
+128 px theme, title bar: pointer away at 300,10, region 1020,0 96x96 sha256=a26516bcbaed92f1
+128 px theme, title bar: pointer on the spot again, region 1020,0 96x96 sha256=a26516bcbaed92f1
+128 px theme, title bar: cursor plane on the CRTC=false; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+128 px theme, foot (cursor-shape): pointer on the spot 1036,420: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+128 px theme, foot (cursor-shape): pointer on the spot, region 1020,404 96x96 sha256=ba47a5fd38de4973
+128 px theme, foot (cursor-shape): pointer away at 1150,300, region 1020,404 96x96 sha256=ba47a5fd38de4973
+128 px theme, foot (cursor-shape): pointer on the spot again, region 1020,404 96x96 sha256=ba47a5fd38de4973
+128 px theme, foot (cursor-shape): cursor plane on the CRTC=false; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+128 px theme, Chrome page (its own small cursor): pointer on the spot 300,400: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+299+399
+128 px theme, Chrome page (its own small cursor): pointer on the spot, region 284,384 96x96 sha256=a220951e6fa7b603
+128 px theme, Chrome page (its own small cursor): pointer away at 640,100, region 284,384 96x96 sha256=a220951e6fa7b603
+128 px theme, Chrome page (its own small cursor): pointer on the spot again, region 284,384 96x96 sha256=a220951e6fa7b603
+128 px theme, Chrome page (its own small cursor): cursor plane on the CRTC=true; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+OVERSIZED over the title bar: plane on the CRTC=false, pointer painted=false; a pointer is drawn somewhere=false
+OVERSIZED over foot: plane on the CRTC=false, pointer painted=false; a pointer is drawn somewhere=false
+back over a client with a small cursor: plane on the CRTC=true, pointer painted=false
+acceptance position 300,400: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+299+399
+acceptance position 640,100: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+639+99
+acceptance position 93,516: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45(64x64) crtc-pos=64x64+84+511
+acceptance position 1036,420: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+1026+415
+acceptance positions with a second plane on the CRTC: [true,true,true,true] -> "a second plane ... after every move" would PASS
+built-in cursor again, title bar: pointer on the spot 1036,10: plane-0 crtc=crtc-0 fb=40(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+1034+9
+built-in cursor again, title bar: pointer on the spot, region 1020,0 96x96 sha256=a26516bcbaed92f1
+built-in cursor again, title bar: pointer away at 300,10, region 1020,0 96x96 sha256=a26516bcbaed92f1
+built-in cursor again, title bar: pointer on the spot again, region 1020,0 96x96 sha256=a26516bcbaed92f1
+built-in cursor again, title bar: cursor plane on the CRTC=true; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+restored: plane on the CRTC=true, pointer painted=false (before: true, false)
+sway.log errors so far: 00:00:00.008 [ERROR] [wlr] [backend/drm/drm.c:1812] Unable to clone DRM fd for client fd: Permission denied
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+xkbcommon: ERROR: couldn't find a Compose file for locale "C.UTF-8" (mapped to "C.UTF-8")
+warn: input.c:565: failed to instantiate compose table; dead keys will not work
+end
+
+== P12: the session restarted without WLR_DRM_NO_ATOMIC (atomic KMS, hardware cursors allowed) ==
+script: export WLR_RENDERER=pixman LIBSEAT_BACKEND=seatd
+restart with /tmp/session-atomic: windows mapped after 0 s
+sway environment: ["WLR_RENDERER=pixman"]
+atomic KMS, terminal background: pointer on the spot 1150,650: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+atomic KMS, terminal background: pointer on the spot, region 1134,634 96x96 sha256=72e25f0d681c7114
+atomic KMS, terminal background: pointer away at 1150,300, region 1134,634 96x96 sha256=ba47a5fd38de4973
+atomic KMS, terminal background: pointer on the spot again, region 1134,634 96x96 sha256=72e25f0d681c7114
+atomic KMS, terminal background: cursor plane on the CRTC=false; the composited frame carries a pointer=true; measurement valid (repeatable, grim produced pixels)=true
+ATOMIC: plane on the CRTC=false, pointer painted=true
+restart with /usr/local/bin/replay-desktop-session: windows mapped after 0 s
+sway environment: ["WLR_DRM_NO_ATOMIC=1","WLR_RENDERER=pixman"]
+the image's own session again, terminal background: pointer on the spot 1150,650: plane-0 crtc=crtc-0 fb=39(1280x800) crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43(64x64) crtc-pos=64x64+1146+642
+the image's own session again, terminal background: pointer on the spot, region 1134,634 96x96 sha256=ba47a5fd38de4973
+the image's own session again, terminal background: pointer away at 1150,300, region 1134,634 96x96 sha256=ba47a5fd38de4973
+the image's own session again, terminal background: pointer on the spot again, region 1134,634 96x96 sha256=ba47a5fd38de4973
+the image's own session again, terminal background: cursor plane on the CRTC=true; the composited frame carries a pointer=false; measurement valid (repeatable, grim produced pixels)=true
+LEGACY AGAIN: plane on the CRTC=true, pointer painted=false
+host seconds: 121.7
+exit=0

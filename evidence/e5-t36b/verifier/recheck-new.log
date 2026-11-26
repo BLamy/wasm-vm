@@ -1,0 +1,61 @@
+tablet node: /dev/input/event1
+sway environment: ["WLR_DRM_NO_ATOMIC=1","WLR_RENDERER=pixman"] | sway command line: sway -c /etc/replay-desktop/sway.conf
+theme c64 (64x64, hotspot 4,4): 16448 bytes
+theme c65 (65x65, hotspot 4,4): 16964 bytes
+theme big128 (128x128, hotspot 4,4): 65600 bytes
+
+== the image's own session (legacy KMS) ==
+built-in cursor, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+1039+9
+built-in cursor, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=true pointer-plane=1,1, pointer painted into the frame=false, a pointer is drawn=true, valid=true
+xcursor_theme c64 64: SET
+64x64 theme (fits the plane), title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+1036+6
+64x64 theme (fits the plane), title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=true pointer-plane=4,4, pointer painted into the frame=false, a pointer is drawn=true, valid=true
+64x64 theme (fits the plane), foot: pointer at 1040,425: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+1036+421
+64x64 theme (fits the plane), foot: frame on=ba47a5fd38de4973 away=ba47a5fd38de4973 again=ba47a5fd38de4973 -> RESULT plane on the CRTC=true pointer-plane=4,4, pointer painted into the frame=false, a pointer is drawn=true, valid=true
+xcursor_theme c65 65: SET
+65x65 theme, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+65x65 theme, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=false, pointer painted into the frame=false, a pointer is drawn=false, valid=true
+65x65 theme, foot: pointer at 1040,425: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+65x65 theme, foot: frame on=ba47a5fd38de4973 away=ba47a5fd38de4973 again=ba47a5fd38de4973 -> RESULT plane on the CRTC=false, pointer painted into the frame=false, a pointer is drawn=false, valid=true
+xcursor_theme big128 128: SET
+128x128 theme, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+128x128 theme, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=false, pointer painted into the frame=false, a pointer is drawn=false, valid=true
+128x128 theme, foot: pointer at 1040,425: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+128x128 theme, foot: frame on=ba47a5fd38de4973 away=ba47a5fd38de4973 again=ba47a5fd38de4973 -> RESULT plane on the CRTC=false, pointer painted into the frame=false, a pointer is drawn=false, valid=true
+-- from a client whose own cursor image is on the plane (Chrome) onto foot, 128x128 theme --
+pointer over Chrome's page 320,400: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+319+399
+over Chrome's page: plane on the CRTC=true pointer-plane=1,1
+pointer moved onto foot 1040,425: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+1039+424
+moved onto foot: plane on the CRTC=true pointer-plane=1,1 (the theme's hotspot is 4,4)
+xcursor_theme default 24: SET
+built-in cursor again, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+1039+9
+built-in cursor again, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=true pointer-plane=1,1, pointer painted into the frame=false, a pointer is drawn=true, valid=true
+
+== the same session with sway's debug log (sway -d), 128x128 theme ==
+session restarted with /tmp/session-debug: windows mapped after 0 s
+sway environment: ["WLR_DRM_NO_ATOMIC=1","WLR_RENDERER=pixman"] | sway command line: sway -d -c /etc/replay-desktop/sway.conf
+debug session, built-in cursor, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=43 crtc-pos=64x64+99+99
+debug session, built-in cursor, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=true pointer-plane=941,-89, pointer painted into the frame=false, a pointer is drawn=true, valid=true
+xcursor_theme big128 128: SET
+debug session, 128x128 theme, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+debug session, 128x128 theme, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=2b9dc37420dfaff0 -> RESULT plane on the CRTC=false, pointer painted into the frame=false, a pointer is drawn=false, valid=true
+sway.log lines about the cursor since the theme was selected (count, text):
+      1 [INFO] [sway/commands.c:261] Handling command 'seat seat0 xcursor_theme big128 128'
+      1 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'big128' at size 128 (6 available cursors)
+      1 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'Virtual-1'
+      1 [DEBUG] [wlr] [types/output/cursor.c:373] Failed to render cursor buffer
+      1 [DEBUG] [wlr] [types/output/cursor.c:282] Cursor texture too large (128x128), exceeds hardware limitations (64x64)
+      1 [DEBUG] [sway/commands.c:436] Subcommand: xcursor_theme big128 128
+
+== the same image restarted on atomic KMS (no WLR_DRM_NO_ATOMIC), 128x128 theme ==
+session restarted with /tmp/session-atomic: windows mapped after 0 s
+sway environment: ["WLR_RENDERER=pixman"] | sway command line: sway -c /etc/replay-desktop/sway.conf
+atomic KMS, built-in cursor, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=38 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+atomic KMS, built-in cursor, title bar: frame on=2b9dc37420dfaff0 away=2b9dc37420dfaff0 again=38f1e715a4f41b81 -> RESULT plane on the CRTC=false, pointer painted into the frame=false, a pointer is drawn=false, valid=false
+xcursor_theme big128 128: SET
+atomic KMS, 128x128 theme, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=38 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+atomic KMS, 128x128 theme, title bar: frame on=894e3d476e460e7d away=2b9dc37420dfaff0 again=894e3d476e460e7d -> RESULT plane on the CRTC=false, pointer painted into the frame=true, a pointer is drawn=true, valid=true
+atomic KMS, 128x128 theme, foot: pointer at 1040,425: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+atomic KMS, 128x128 theme, foot: frame on=7880ea37a8fdcff9 away=ba47a5fd38de4973 again=7880ea37a8fdcff9 -> RESULT plane on the CRTC=false, pointer painted into the frame=true, a pointer is drawn=true, valid=true
+host seconds: 134.6
+exit=0

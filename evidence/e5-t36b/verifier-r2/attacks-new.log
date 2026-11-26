@@ -1,0 +1,76 @@
+== R5 inventory ==
+cursor theme dirs/files (find / -xdev -name cursors -o -iname '*xcursor*' -o -name index.theme):
+END
+icon dirs:
+ls: /usr/share/icons/*: No such file or directory
+ls: /usr/share/pixmaps: No such file or directory
+ls: /home/desktop/.icons: No such file or directory
+ls: /home/desktop/.local/share/icons: No such file or directory
+END
+sway env XCURSOR/scale vars: ["-/bin/sh: pgrep: not found","END"]
+foot env XCURSOR/scale vars: ["-/bin/sh: pgrep: not found","END"]
+chrome env XCURSOR/scale vars: ["-/bin/sh: pgrep: not found","END"]
+chrome browser cmdline: root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4
+outputs: ["\"name\": \"Virtual-1\",","\"scale\": 1.0,"]
+seat cursor config: ["END"]
+gtk/cursor libs: ["/usr/lib/riscv64-linux-gnu/libwayland-cursor.so.0","/usr/lib/riscv64-linux-gnu/libwayland-cursor.so.0.22.0","chromium         replay-chromium","END"]
+wayland clients (binaries linking libwayland-client): ["/usr/bin/foot /usr/bin/grim"]
+page bytes: 2062 (expected 2062)
+
+== R6/R7: the guest's Chrome at DSF 1 ==
+chrome DSF 1: windows titled r2 = 1
+DSF1 128x128 PNG 1x: pointer at 130,300: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+110+280
+RESULT DSF1 128x128 PNG 1x: plane on the CRTC=true 64x64 pointer-plane=20,20 | painted=false | a pointer is drawn=true | frame on=6e40fcdff17fe879 away=6e40fcdff17fe879 again=6e40fcdff17fe879 valid=true
+DSF1 128 image-set 1x: pointer at 395,300: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+394+299
+RESULT DSF1 128 image-set 1x: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=770310b858ca4845 away=770310b858ca4845 again=770310b858ca4845 valid=true
+DSF1 256 PNG image-set 2x: pointer at 660,300: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+659+299
+RESULT DSF1 256 PNG image-set 2x: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=bbd95d7aa9113432 away=bbd95d7aa9113432 again=bbd95d7aa9113432 valid=true
+DSF1 text input (I-beam): pointer at 200,650: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+196+642
+RESULT DSF1 text input (I-beam): plane on the CRTC=true 64x64 pointer-plane=4,8 | painted=false | a pointer is drawn=true | frame on=dde552d7ad58dc43 away=dde552d7ad58dc43 again=dde552d7ad58dc43 valid=true
+DSF1 link (hand): pointer at 600,650: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+591+646
+RESULT DSF1 link (hand): plane on the CRTC=true 64x64 pointer-plane=9,4 | painted=false | a pointer is drawn=true | frame on=d238c8988286b0dd away=d238c8988286b0dd again=d238c8988286b0dd valid=true
+DSF1 tab strip (arrow): pointer at 400,45: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+399+44
+RESULT DSF1 tab strip (arrow): plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=6c2df183570bbae7 away=6c2df183570bbae7 again=6c2df183570bbae7 valid=true
+
+== R10 novel: sway's own cursor over the tiling seam and title-bar corners ==
+tree geometry: "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":793, "x":0, "width":793, "x":2, "width":789, "x":0, "width":1018, "app_id":"chromium-browser(\/tmp\/chrome-r2)", "x":793, "width":163, "x":793, "width":163, "x":2, "width":159, "x":0, "width":1018, "app_id":"chromium-browser(\/home\/desktop\/.config\/replay-chromium)", "x":956, "width":324, "x":956, "width":324, "x":2, "width":320, "x":0, "width":700, "app_id":"replay-terminal", "width":1280, "width":1280,
+seam seam between Chrome and foot: pointer at 791,400: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+790+399
+RESULT seam seam between Chrome and foot: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=e9493e17332472c2 away=e9493e17332472c2 again=e9493e17332472c2 valid=true
+seam seam, 1 px right: pointer at 793,400: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+792+399
+RESULT seam seam, 1 px right: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=61228fcb85429acf away=61228fcb85429acf again=61228fcb85429acf valid=true
+seam foot title bar: pointer at 1000,8: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+999+7
+RESULT seam foot title bar: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=4f14a3230794cc00 away=4f14a3230794cc00 again=4f14a3230794cc00 valid=true
+seam screen right edge: pointer at 1279,400: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+1278+399
+RESULT seam screen right edge: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=4e2549afe39a7305 away=4e2549afe39a7305 again=4e2549afe39a7305 valid=true
+seam screen bottom-right: pointer at 1279,799: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+1278+798
+RESULT seam screen bottom-right: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=ca481e26cbb74c85 away=ca481e26cbb74c85 again=ca481e26cbb74c85 valid=true
+
+== R8 (informational): Chrome with --force-device-scale-factor=2 ==
+chrome forced DSF 2: windows titled r2 = 1
+DSF2-forced 128x128 PNG 1x: pointer at 130,300: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+110+280
+RESULT DSF2-forced 128x128 PNG 1x: plane on the CRTC=true 64x64 pointer-plane=20,20 | painted=false | a pointer is drawn=true | frame on=6e40fcdff17fe879 away=6e40fcdff17fe879 again=6e40fcdff17fe879 valid=true
+DSF2-forced 128 image-set 1x: pointer at 395,300: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+394+299
+RESULT DSF2-forced 128 image-set 1x: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=770310b858ca4845 away=770310b858ca4845 again=770310b858ca4845 valid=true
+DSF2-forced 256 PNG image-set 2x: pointer at 660,300: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+659+299
+RESULT DSF2-forced 256 PNG image-set 2x: plane on the CRTC=true 64x64 pointer-plane=1,1 | painted=false | a pointer is drawn=true | frame on=bbd95d7aa9113432 away=bbd95d7aa9113432 again=bbd95d7aa9113432 valid=true
+DSF2-forced text input (I-beam): pointer at 200,650: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=45 crtc-pos=64x64+196+642
+RESULT DSF2-forced text input (I-beam): plane on the CRTC=true 64x64 pointer-plane=4,8 | painted=false | a pointer is drawn=true | frame on=dde552d7ad58dc43 away=dde552d7ad58dc43 again=dde552d7ad58dc43 valid=true
+chrome forced DSF 3: windows titled r2 = 1
+DSF3-forced 128x128 PNG 1x: pointer at 130,300: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+110+280
+RESULT DSF3-forced 128x128 PNG 1x: plane on the CRTC=true 64x64 pointer-plane=20,20 | painted=false | a pointer is drawn=true | frame on=6e40fcdff17fe879 away=6e40fcdff17fe879 again=6e40fcdff17fe879 valid=true
+DSF3-forced text input (I-beam): pointer at 200,650: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+196+642
+RESULT DSF3-forced text input (I-beam): plane on the CRTC=true 64x64 pointer-plane=4,8 | painted=false | a pointer is drawn=true | frame on=dde552d7ad58dc43 away=dde552d7ad58dc43 again=dde552d7ad58dc43 valid=true
+
+== R9 (informational): sway output scale 2 (IPC), built-in cursor and Chrome ==
+scale: SET
+chrome on a scale-2 output: windows titled r2 = 1
+scale2 foot (built-in theme): pointer at 1150,400: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+1146+392
+RESULT scale2 foot (built-in theme): plane on the CRTC=true 64x64 pointer-plane=4,8 | painted=false | a pointer is drawn=true | frame on=e3b0c44298fc1c14 away=e3b0c44298fc1c14 again=e3b0c44298fc1c14 valid=false
+scale2 title bar (built-in): pointer at 1000,8: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=44 crtc-pos=64x64+1000+8
+RESULT scale2 title bar (built-in): plane on the CRTC=true 64x64 pointer-plane=0,0 | painted=false | a pointer is drawn=true | frame on=e3b0c44298fc1c14 away=e3b0c44298fc1c14 again=e3b0c44298fc1c14 valid=false
+scale2 Chrome 128x128 PNG: pointer at 130,300: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=46 crtc-pos=64x64+110+280
+RESULT scale2 Chrome 128x128 PNG: plane on the CRTC=true 64x64 pointer-plane=20,20 | painted=false | a pointer is drawn=true | frame on=94d0e1ef8e9a6a47 away=94d0e1ef8e9a6a47 again=94d0e1ef8e9a6a47 valid=true
+scale2 Chrome 128 image-set 1x: pointer at 400,300: plane-0 crtc=crtc-0 fb=39 crtc-pos=1280x800+0+0 | plane-1 crtc=crtc-0 fb=46 crtc-pos=64x64+400+300
+RESULT scale2 Chrome 128 image-set 1x: plane on the CRTC=true 64x64 pointer-plane=0,0 | painted=false | a pointer is drawn=true | frame on=78f4ecd66392ca37 away=78f4ecd66392ca37 again=78f4ecd66392ca37 valid=true
+host seconds: 1156.3
+exit=0

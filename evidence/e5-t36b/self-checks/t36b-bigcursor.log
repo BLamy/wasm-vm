@@ -1,0 +1,9 @@
+windows: 1
+pointer over the terminal: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=44 pos=64x64+1146+642"]
+page region, pointer away: b53e0ad1bb5ea770
+pointer over the page with a 100x100 cursor: ["plane-0 crtc=crtc-0 fb=40 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=45 pos=64x64+268+468"]
+page region, pointer on it: b53e0ad1bb5ea770
+cursor plane off the CRTC: false | pointer painted into the frame: false
+pointer back over the terminal: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=44 pos=64x64+1146+642"]
+page region, pointer away again: b53e0ad1bb5ea770
+frame restored: true

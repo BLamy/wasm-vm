@@ -1,0 +1,16 @@
+tablet node: /dev/input/event1
+sway environment: ["WLR_NO_HARDWARE_CURSORS=1","WLR_RENDERER=pixman"] | sway command line: sway -c /etc/replay-desktop/sway.conf
+theme c64 (64x64, hotspot 4,4): 16448 bytes
+theme c65 (65x65, hotspot 4,4): 16964 bytes
+theme big128 (128x128, hotspot 4,4): 65600 bytes
+
+== generation 1 (software cursors): the 128x128 theme ==
+gen1, built-in cursor, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+gen1, built-in cursor, title bar: frame on=38f1e715a4f41b81 away=2b9dc37420dfaff0 again=38f1e715a4f41b81 -> RESULT plane on the CRTC=false, pointer painted into the frame=true, a pointer is drawn=true, valid=true
+xcursor_theme big128 128: SET
+gen1, 128x128 theme, title bar: pointer at 1040,10: plane-0 crtc=crtc-0 fb=40 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+gen1, 128x128 theme, title bar: frame on=894e3d476e460e7d away=2b9dc37420dfaff0 again=894e3d476e460e7d -> RESULT plane on the CRTC=false, pointer painted into the frame=true, a pointer is drawn=true, valid=true
+gen1, 128x128 theme, foot: pointer at 1040,425: plane-0 crtc=crtc-0 fb=38 crtc-pos=1280x800+0+0 | plane-1 crtc=(null) fb=0 crtc-pos=0x0+0+0
+gen1, 128x128 theme, foot: frame on=7880ea37a8fdcff9 away=ba47a5fd38de4973 again=7880ea37a8fdcff9 -> RESULT plane on the CRTC=false, pointer painted into the frame=true, a pointer is drawn=true, valid=true
+host seconds: 46.8
+exit=0

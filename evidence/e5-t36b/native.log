@@ -1,0 +1,90 @@
+{
+  "pass": true,
+  "expect": "hardware",
+  "swayEnv": [
+    "WLR_DRM_NO_ATOMIC=1",
+    "WLR_RENDERER=pixman"
+  ],
+  "moves": [
+    {
+      "pointer": [
+        300,
+        400
+      ],
+      "cursor": [
+        299,
+        399,
+        64,
+        64
+      ],
+      "hotspot": [
+        1,
+        1
+      ]
+    },
+    {
+      "pointer": [
+        640,
+        100
+      ],
+      "cursor": [
+        639,
+        99,
+        64,
+        64
+      ],
+      "hotspot": [
+        1,
+        1
+      ]
+    },
+    {
+      "pointer": [
+        93,
+        516
+      ],
+      "cursor": [
+        84,
+        511,
+        64,
+        64
+      ],
+      "hotspot": [
+        9,
+        5
+      ]
+    },
+    {
+      "pointer": [
+        1036,
+        420
+      ],
+      "cursor": [
+        1031,
+        411,
+        64,
+        64
+      ],
+      "hotspot": [
+        5,
+        9
+      ]
+    },
+    {
+      "pointer": [
+        0,
+        0
+      ],
+      "cursor": [
+        -1,
+        -1,
+        64,
+        64
+      ],
+      "hotspot": [
+        1,
+        1
+      ]
+    }
+  ]
+}

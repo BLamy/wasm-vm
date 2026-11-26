@@ -1,0 +1,41 @@
+$ node tools/verify/e5-t36b-hardware-cursor.mjs --image target/e5-t34b/image/replay-desktop.ext4 --out evidence/e5-t36b/verifier/cross-gen1-expect-hardware 
+{
+  "pass": false,
+  "expect": "hardware",
+  "swayEnv": [
+    "WLR_NO_HARDWARE_CURSORS=1",
+    "WLR_RENDERER=pixman"
+  ],
+  "moves": [
+    {
+      "pointer": [
+        300,
+        400
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        640,
+        100
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        93,
+        516
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        1036,
+        420
+      ],
+      "cursor": null
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   'WLR_NO_HARDWARE_CURSORS=1',\n-   'WLR_DRM_NO_ATOMIC=1',\n    'WLR_RENDERER=pixman'\n  ]\n\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t36b-hardware-cursor.mjs:68:12\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+}
+exit=1

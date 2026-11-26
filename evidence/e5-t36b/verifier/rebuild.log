@@ -1,0 +1,40 @@
+[replay-desktop] stage
+[replay-desktop] privacy check: staged tree (before packing)
+[privacy] OK: 705 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[replay-desktop] pack
+Creating regular file /out/rootfs.ext4
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+replay-desktop: 1084/2176 files (0.5% non-contiguous), 106083/114176 blocks
+[replay-desktop] privacy check: packed image
+[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[replay-desktop] chunk + whole-image prefill artifact
+chunk_image: 467664896 bytes → 1784 chunks of 262144 B (blob); wrote target/e5-t36b-verifier/image/chunked/manifest.json
+build-whole-image: target/e5-t36b-verifier/image/replay-desktop.ext4 matches all 1784 chunks of target/e5-t36b-verifier/image/chunked/manifest.json
+{"size": 467664896, "sha256": "b51e68f67ef80cfe9afc499e800388898bb08f386a839294b3be840ba55be48e", "gzipSize": 189680659, "gzipSha256": "89f714635803fb2a35a23845b73901e0894f574df6aabf89154abef54fff3ac8", "manifestImageLen": 467664896}
+[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+{
+  "image": {
+    "file": "replay-desktop.ext4",
+    "bytes": 467664896,
+    "sha256": "b51e68f67ef80cfe9afc499e800388898bb08f386a839294b3be840ba55be48e",
+    "fs": "ext4 (no journal), mounted read-only"
+  },
+  "imgGz": {
+    "file": "replay-desktop.img.gz",
+    "bytes": 189680659,
+    "sha256": "89f714635803fb2a35a23845b73901e0894f574df6aabf89154abef54fff3ac8"
+  },
+  "chunkManifest": {
+    "file": "chunked/manifest.json",
+    "sha256": "c2237f120688cf87c51502be58b7ef098bee483c018caf8f8c802bc78db640a9",
+    "chunk_size": 262144,
+    "layout": "blob",
+    "chunks": 1784
+  },
+  "stagedRegularBytes": 432958171
+}
+exit=0

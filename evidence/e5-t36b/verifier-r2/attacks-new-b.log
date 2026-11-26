@@ -1,0 +1,63 @@
+== R5b environment ==
+sway pid 71 cmdline: sway -c /etc/replay-desktop/sway.conf
+sway env XCURSOR/GDK/scale: ["END"]
+foot pid 88 cmdline: foot --app-id=replay-terminal --title=Replay Node 26 terminal
+foot env XCURSOR/GDK/scale: ["XCURSOR_SIZE=24","END"]
+chrome browser pid 94 cmdline: /opt/replay-chromium/chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-browser-check --disable-background-networking --disable-component
+chrome browser env XCURSOR/GDK/scale: ["XCURSOR_SIZE=24","END"]
+page bytes 3023 (expected 3023)
+
+== R6b/R7b: the guest's Chrome, DSF 1 (as shipped, own instance with the shipped flags) ==
+chrome DSF 1: windows titled r2b = 1
+RESULT DSF1 auto: plane ON 64x64+64+176 pointer-plane=1,1.5 | a pointer is drawn=true
+RESULT DSF1 default: plane ON 64x64+174+176 pointer-plane=1,1.5 | a pointer is drawn=true
+RESULT DSF1 context-menu: plane ON 64x64+281+173 pointer-plane=4,4.5 | a pointer is drawn=true
+RESULT DSF1 help: plane ON 64x64+391+173 pointer-plane=4,4.5 | a pointer is drawn=true
+RESULT DSF1 pointer: plane ON 64x64+496+173 pointer-plane=9,4.5 | a pointer is drawn=true
+RESULT DSF1 progress: plane ON 64x64+600+168 pointer-plane=15,9.5 | a pointer is drawn=true
+RESULT DSF1 wait: plane ON 64x64+710+168 pointer-plane=15,9.5 | a pointer is drawn=true
+RESULT DSF1 cell: plane ON 64x64+54+271 pointer-plane=11,11.5 | a pointer is drawn=true
+RESULT DSF1 crosshair: plane ON 64x64+163+270 pointer-plane=12,12.5 | a pointer is drawn=true
+RESULT DSF1 text: plane ON 64x64+281+274 pointer-plane=4,8.5 | a pointer is drawn=true
+RESULT DSF1 vertical-text: plane ON 64x64+383+271 pointer-plane=12,11.5 | a pointer is drawn=true
+RESULT DSF1 alias: plane ON 64x64+497+276 pointer-plane=8,6.5 | a pointer is drawn=true
+RESULT DSF1 copy: plane ON 64x64+606+273 pointer-plane=9,9.5 | a pointer is drawn=true
+RESULT DSF1 move: plane ON 64x64+714+271 pointer-plane=11,11.5 | a pointer is drawn=true
+RESULT DSF1 no-drop: plane ON 64x64+56+378 pointer-plane=9,9.5 | a pointer is drawn=true
+RESULT DSF1 not-allowed: plane ON 64x64+166+378 pointer-plane=9,9.5 | a pointer is drawn=true
+RESULT DSF1 grab: plane ON 64x64+273+387 pointer-plane=12,0.5 | a pointer is drawn=true
+RESULT DSF1 grabbing: plane ON 64x64+387+379 pointer-plane=8,8.5 | a pointer is drawn=true
+RESULT DSF1 all-scroll: plane ON 64x64+494+376 pointer-plane=11,11.5 | a pointer is drawn=true
+RESULT DSF1 col-resize: plane ON 64x64+603+376 pointer-plane=12,11.5 | a pointer is drawn=true
+RESULT DSF1 row-resize: plane ON 64x64+714+375 pointer-plane=11,12.5 | a pointer is drawn=true
+RESULT DSF1 n-resize: plane ON 64x64+58+491 pointer-plane=7,1.5 | a pointer is drawn=true
+RESULT DSF1 e-resize: plane ON 64x64+161+485 pointer-plane=14,7.5 | a pointer is drawn=true
+RESULT DSF1 s-resize: plane ON 64x64+278+478 pointer-plane=7,14.5 | a pointer is drawn=true
+RESULT DSF1 w-resize: plane ON 64x64+394+485 pointer-plane=1,7.5 | a pointer is drawn=true
+RESULT DSF1 ne-resize: plane ON 64x64+491+491 pointer-plane=14,1.5 | a pointer is drawn=true
+RESULT DSF1 nw-resize: plane ON 64x64+614+491 pointer-plane=1,1.5 | a pointer is drawn=true
+RESULT DSF1 se-resize: plane ON 64x64+711+478 pointer-plane=14,14.5 | a pointer is drawn=true
+RESULT DSF1 sw-resize: plane ON 64x64+64+583 pointer-plane=1,14.5 | a pointer is drawn=true
+RESULT DSF1 ew-resize: plane ON 64x64+163+586 pointer-plane=12,11.5 | a pointer is drawn=true
+RESULT DSF1 ns-resize: plane ON 64x64+274+585 pointer-plane=11,12.5 | a pointer is drawn=true
+RESULT DSF1 nesw-resize: plane ON 64x64+383+586 pointer-plane=12,11.5 | a pointer is drawn=true
+RESULT DSF1 nwse-resize: plane ON 64x64+494+586 pointer-plane=11,11.5 | a pointer is drawn=true
+RESULT DSF1 zoom-in: plane ON 64x64+605+587 pointer-plane=10,10.5 | a pointer is drawn=true
+RESULT DSF1 zoom-out: plane ON 64x64+715+587 pointer-plane=10,10.5 | a pointer is drawn=true
+RESULT DSF1 none: plane OFF (0x0+0+0) | painted=false | a pointer is drawn=false
+RESULT DSF1 wis-2x (256 PNG @2x, hot 40,40): plane ON 64x64+155+682 pointer-plane=20,20.5 | a pointer is drawn=true
+RESULT DSF1 wis-svg (128 SVG @1x, hot 40,40): plane ON 64x64+265+682 pointer-plane=20,20.5 | a pointer is drawn=true
+
+== R8b (informational, needs --force-device-scale-factor=3) ==
+chrome forced DSF 3: windows titled r2b = 1
+RESULT DSF3-forced context-menu: plane ON 64x64+123+361 pointer-plane=8,6 | a pointer is drawn=true
+RESULT DSF3-forced help: plane ON 64x64+385+358 pointer-plane=9,9 | a pointer is drawn=true
+RESULT DSF3-forced cell: plane ON 64x64+648+358 pointer-plane=9,9 | a pointer is drawn=true
+RESULT DSF3-forced alias: plane ON 64x64+123+534 pointer-plane=8,6 | a pointer is drawn=true
+RESULT DSF3-forced copy: plane ON 64x64+385+531 pointer-plane=9,9 | a pointer is drawn=true
+RESULT DSF3-forced no-drop: plane ON 64x64+648+531 pointer-plane=9,9 | a pointer is drawn=true
+RESULT DSF3-forced not-allowed: plane ON 64x64+122+704 pointer-plane=9,9 | a pointer is drawn=true
+RESULT DSF3-forced grab: plane ON 64x64+382+713 pointer-plane=12,0 | a pointer is drawn=true
+RESULT DSF3-forced zoom-in: plane ON 64x64+647+703 pointer-plane=10,10 | a pointer is drawn=true
+host seconds: 124.4
+exit=0

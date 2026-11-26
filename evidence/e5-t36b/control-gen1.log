@@ -1,0 +1,45 @@
+{
+  "pass": true,
+  "expect": "software",
+  "swayEnv": [
+    "WLR_NO_HARDWARE_CURSORS=1",
+    "WLR_RENDERER=pixman"
+  ],
+  "moves": [
+    {
+      "pointer": [
+        300,
+        400
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        640,
+        100
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        93,
+        516
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        1036,
+        420
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        0,
+        0
+      ],
+      "cursor": null
+    }
+  ]
+}

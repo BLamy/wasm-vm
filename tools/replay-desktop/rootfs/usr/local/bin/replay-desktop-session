@@ -6,7 +6,11 @@ export XDG_RUNTIME_DIR=/run/user/1000 XDG_SESSION_TYPE=wayland LANG=C.UTF-8
 export PATH=/usr/local/bin:/usr/bin:/usr/sbin
 # No WLR_LIBINPUT_NO_DEVICES: with it set, wlroots skips its initial libinput dispatch and the
 # udev-enumerated devices are only added on the first input event (which is then lost).
-export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 LIBSEAT_BACKEND=seatd
+# Hardware cursor. Linux hides a paravirtual GPU's cursor plane from atomic KMS clients that do
+# not declare hotspot support (wlroots 0.17 does not), so sway would find one plane and paint the
+# pointer into every frame. On legacy KMS it finds both planes and the pointer becomes a
+# cursor-plane image, which the host draws at the real pointer position.
+export WLR_RENDERER=pixman WLR_DRM_NO_ATOMIC=1 LIBSEAT_BACKEND=seatd
 export RECORD_REPLAY_DONT_RECORD=1
 cd "$HOME"
 exec sway -c /etc/replay-desktop/sway.conf >"$XDG_RUNTIME_DIR/sway.log" 2>&1
