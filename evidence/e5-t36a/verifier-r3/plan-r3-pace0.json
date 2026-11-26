@@ -1,0 +1,438 @@
+{
+ "steps": [
+  {
+   "op": "stats",
+   "label": "pace=0 a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "pace=0 b (3 s later)"
+  },
+  {
+   "op": "wait",
+   "ms": 8000
+  },
+  {
+   "op": "jump",
+   "to": [
+    400,
+    650
+   ],
+   "restMs": 1500
+  },
+  {
+   "op": "reset",
+   "note": "pace0.settle"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "reset",
+   "note": "pace0.1"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    535,
+    669
+   ],
+   "restMs": 644
+  },
+  {
+   "op": "glide",
+   "to": [
+    568,
+    688
+   ],
+   "ms": 383,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.1 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    132,
+    525
+   ],
+   "ms": 507,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 340
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.1 hand: 507 ms glide to 132,525, 340 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.1 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1130,
+    396
+   ],
+   "ms": 716,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.1 caret: glide to 1130,396 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.1 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "pace0.2"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    487,
+    601
+   ],
+   "restMs": 830
+  },
+  {
+   "op": "glide",
+   "to": [
+    461,
+    618
+   ],
+   "ms": 373,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.2 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    80,
+    520
+   ],
+   "ms": 645,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 289
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.2 hand: 645 ms glide to 80,520, 289 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.2 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    917,
+    338
+   ],
+   "ms": 762,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.2 caret: glide to 917,338 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.2 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "pace0.3"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    338,
+    603
+   ],
+   "restMs": 813
+  },
+  {
+   "op": "glide",
+   "to": [
+    376,
+    635
+   ],
+   "ms": 306,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.3 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    96,
+    530
+   ],
+   "ms": 359,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 484
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.3 hand: 359 ms glide to 96,530, 484 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.3 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1099,
+    316
+   ],
+   "ms": 745,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.3 caret: glide to 1099,316 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.3 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "pace0.4"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    438,
+    696
+   ],
+   "restMs": 829
+  },
+  {
+   "op": "glide",
+   "to": [
+    468,
+    668
+   ],
+   "ms": 376,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.4 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    96,
+    513
+   ],
+   "ms": 545,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 393
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.4 hand: 545 ms glide to 96,513, 393 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.4 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1072,
+    342
+   ],
+   "ms": 587,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.4 caret: glide to 1072,342 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "pace0",
+   "name": "pace0.4 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    300,
+    620
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    380,
+    700
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    520,
+    650
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "phase": "pace0-jumps",
+   "name": "arrow after scattered jumps",
+   "settleMs": 800,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    60,
+    510
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    100,
+    520
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "jump",
+   "to": [
+    140,
+    505
+   ],
+   "restMs": 700
+  },
+  {
+   "op": "read",
+   "phase": "pace0-jumps",
+   "name": "hand after scattered jumps",
+   "settleMs": 800,
+   "noPlane": true
+  },
+  {
+   "op": "stats",
+   "label": "pace=0 end a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "pace=0 end b (3 s later)"
+  }
+ ]
+}

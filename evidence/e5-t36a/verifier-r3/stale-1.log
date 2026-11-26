@@ -1,0 +1,138 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 16.233,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 86,
+  "unknownImages": [],
+  "answersShown": 43,
+  "answersForUnknownImages": 0,
+  "shownWrong": [
+   {
+    "t": 110492.6,
+    "image": "arrow",
+    "shown": [
+     13,
+     5
+    ],
+    "forMs": 40,
+    "sent": [
+     511,
+     670
+    ]
+   },
+   {
+    "t": 175100.2,
+    "image": "arrow",
+    "shown": [
+     6,
+     4
+    ],
+    "forMs": 48,
+    "sent": [
+     461,
+     672
+    ]
+   },
+   {
+    "t": 185332.3,
+    "image": "arrow",
+    "shown": [
+     9,
+     3
+    ],
+    "forMs": 48,
+    "sent": [
+     413,
+     599
+    ]
+   },
+   {
+    "t": 199165.3,
+    "image": "arrow",
+    "shown": [
+     13,
+     5
+    ],
+    "forMs": 47,
+    "sent": [
+     486,
+     634
+    ]
+   }
+  ]
+ },
+ "stats": [
+  {
+   "label": "ticks a",
+   "t": 81887.9,
+   "idleSleeps": 1051,
+   "idleYield": true,
+   "idleWakes": 252,
+   "idleSleepMs": 43069.07729999997
+  },
+  {
+   "label": "ticks b (3 s later)",
+   "t": 84892.8,
+   "idleSleeps": 1106,
+   "idleYield": true,
+   "idleWakes": 255,
+   "idleSleepMs": 43769.91889999996
+  },
+  {
+   "label": "bursts a",
+   "t": 142972,
+   "idleSleeps": 1887,
+   "idleYield": true,
+   "idleWakes": 313,
+   "idleSleepMs": 49725.07939999992
+  },
+  {
+   "label": "bursts b (3 s later)",
+   "t": 145974.2,
+   "idleSleeps": 1920,
+   "idleYield": true,
+   "idleWakes": 318,
+   "idleSleepMs": 50902.027899999935
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do echo tick; sleep 0.05; done > /dev/pts/0 2>/dev/null & echo $! > /t",
+   "stdout": "0.22 0.08 0.03 1/119 719\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.24 0.11 0.04 1/119 1087\n\n"
+  },
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.24 0.11 0.04 1/120 1104\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.24 0.13 0.05 1/119 1717\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "stale-idle": {
+   "none": 0,
+   "ok": 12,
+   "WRONG": 0
+  },
+  "stale-ticks": {
+   "none": 0,
+   "ok": 32,
+   "WRONG": 0
+  },
+  "stale-bursts": {
+   "none": 0,
+   "ok": 32,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}
+exit 0

@@ -1,0 +1,122 @@
+{
+ "ran": true,
+ "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+ "restartSeconds": 56.47,
+ "errors": [],
+ "diagnostics": [],
+ "timeline": {
+  "rows": 173,
+  "unknownImages": [],
+  "answersShown": 89,
+  "answersForUnknownImages": 0,
+  "shownWrong": []
+ },
+ "stats": [
+  {
+   "label": "idle a",
+   "t": 274108.8,
+   "idleSleeps": 868,
+   "idleYield": true,
+   "idleWakes": 560,
+   "idleSleepMs": 38785.32449999998
+  },
+  {
+   "label": "idle b (3 s later)",
+   "t": 277115.3,
+   "idleSleeps": 881,
+   "idleYield": true,
+   "idleWakes": 568,
+   "idleSleepMs": 39339.63249999998
+  },
+  {
+   "label": "bursts a",
+   "t": 324725.1,
+   "idleSleeps": 1065,
+   "idleYield": true,
+   "idleWakes": 717,
+   "idleSleepMs": 47446.725599999954
+  },
+  {
+   "label": "bursts b (3 s later)",
+   "t": 327747.4,
+   "idleSleeps": 1069,
+   "idleYield": true,
+   "idleWakes": 718,
+   "idleSleepMs": 47551.269299999956
+  },
+  {
+   "label": "bursts end a",
+   "t": 492510.5,
+   "idleSleeps": 1243,
+   "idleYield": true,
+   "idleWakes": 855,
+   "idleSleepMs": 52917.187299999954
+  },
+  {
+   "label": "bursts end b (3 s later)",
+   "t": 495516.1,
+   "idleSleeps": 1246,
+   "idleYield": true,
+   "idleWakes": 857,
+   "idleSleepMs": 53040.47019999995
+  },
+  {
+   "label": "flood a",
+   "t": 518160.6,
+   "idleSleeps": 1254,
+   "idleYield": true,
+   "idleWakes": 861,
+   "idleSleepMs": 53394.12429999995
+  },
+  {
+   "label": "flood b (3 s later)",
+   "t": 521176.4,
+   "idleSleeps": 1254,
+   "idleYield": true,
+   "idleWakes": 861,
+   "idleSleepMs": 53394.12429999995
+  }
+ ],
+ "shell": [
+  {
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tm",
+   "stdout": "0.28 0.10 0.03 2/120 1459\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.66 0.21 0.07 1/118 1923\n\n"
+  },
+  {
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.p",
+   "stdout": "0.66 0.21 0.07 3/120 1952\n\n"
+  },
+  {
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev",
+   "stdout": "0.85 0.26 0.09 1/118 2037\n\n"
+  }
+ ],
+ "readsByPhase": {
+  "idle": {
+   "none": 0,
+   "ok": 15,
+   "WRONG": 0
+  },
+  "bursts": {
+   "none": 1,
+   "ok": 49,
+   "WRONG": 0
+  },
+  "flood": {
+   "none": 20,
+   "ok": 0,
+   "WRONG": 0
+  },
+  "recovering": {
+   "none": 0,
+   "ok": 15,
+   "WRONG": 0
+  }
+ },
+ "wrongReads": []
+}
+exit 0

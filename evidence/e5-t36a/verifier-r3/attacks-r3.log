@@ -1,0 +1,58 @@
+
+§a a restart while a rest question is in flight
+  HELD   reset: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   control without the restart: the question in flight is answered once the guest is idle: [4,8]
+  HELD   mode: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+  HELD   size: undecided before (true); the question in flight (3 readings so far) answers nothing after the restart: null; wrong shown 0; timers left 0
+
+§b two images alternating at rest (no restart)
+  HELD   300 approaches, then 1..6 flips hand <-> caret at rest: wrong answers shown 0; answered at the end 300 of 300
+
+§c the image changes at rest while the guest is being asked about the image before (my mutant V1: no key check)
+  HELD   caret undecided (true), its question out (3 readings); hand [9,4] (true (9,4)); answers shown for the hand [[490,"hand",[9,4]]]; the caret's (4,8) was never put on the hand
+  HELD   caret afterwards [4,8]; wrong shown []
+
+§d settled hotspots kept across a mode or size change are still right; unsettled ones are forgotten
+  HELD   mode: arrow [1,1], hand [9,4] right at once after the restart; wrong shown 0
+  HELD   size: arrow [1,1], hand [9,4] right at once after the restart; wrong shown 0
+
+§e a guest more than 512 positions behind in a small area (limit 3): what is shown, and what is left at rest
+  40 runs: the right answer was dropped in 7; a wrong hotspot was SHOWN in 0 (for 0 ms a run on average); at rest 3 s after the guest caught up: wrong 0, none 0, right 40
+  HELD   at rest after catching up the wrong one is gone in >= 95 % (wrong 0 of 40)
+
+§f no idle counter: no rest answers; a restart trusts moves after exactly one second
+  HELD   one move and 3 s of rest: null (no rest rule), timers armed 0
+  HELD   settling true at 999 ms, false at 1001 ms
+  a guest one position behind and silent for 1.2 s across the restart, no counter: hand [0,4] at rest (true (9,4)); shown []
+  HELD   predicted WRONG here (stated limit 4: "a restart trusts moves after one second")
+
+§g a count that misbehaves: down, NaN, Infinity, a string, a rejected promise, never resolving
+  HELD   down: no answer (null), settling true after 5 s, timers armed 1, diagnostics 0
+  HELD   nan: no answer (null), settling false after 5 s, timers armed 0, diagnostics 0
+  HELD   infinity: no answer (null), settling false after 5 s, timers armed 0, diagnostics 0
+  HELD   string: no answer (null), settling false after 5 s, timers armed 0, diagnostics 0
+  HELD   rejects: no answer (null), settling false after 5 s, timers armed 0, diagnostics 1
+  HELD   hangs: no answer (null), settling true after 5 s, timers armed 0, diagnostics 0
+  HELD   alternates: no answer (null), settling false after 5 s, timers armed 0, diagnostics 0
+
+§h a restart while an earlier restart's question is still in flight (my mutants V5, V6, V10)
+  HELD   three restarts back to back with answers in flight: settling while behind true; shown during the run null; wrong 0; settling at the end false; questions still polling: timers 0, unanswered 0
+
+§i P3 by model: after a restart at rest, ONE re-report of the plane after the first new position; even runs of n positions, the guest `lag` positions behind, then rest
+  n= 2 lag=0: a wrong hotspot shown in   0 of 200; still shown after 3 s of rest in   0 (worst 0 px)
+  n= 2 lag=1: a wrong hotspot shown in 181 of 200; still shown after 3 s of rest in 181 (worst 10 px)
+  n= 2 lag=2: a wrong hotspot shown in 178 of 200; still shown after 3 s of rest in 178 (worst 10 px)
+  n= 3 lag=0: a wrong hotspot shown in   0 of 200; still shown after 3 s of rest in   0 (worst 0 px)
+  n= 3 lag=1: a wrong hotspot shown in 172 of 200; still shown after 3 s of rest in 172 (worst 10 px)
+  n= 3 lag=2: a wrong hotspot shown in 187 of 200; still shown after 3 s of rest in 187 (worst 10 px)
+  n= 4 lag=0: a wrong hotspot shown in   0 of 200; still shown after 3 s of rest in   0 (worst 0 px)
+  n= 4 lag=1: a wrong hotspot shown in 180 of 200; still shown after 3 s of rest in 180 (worst 10 px)
+  n= 4 lag=2: a wrong hotspot shown in 174 of 200; still shown after 3 s of rest in 174 (worst 10 px)
+  n= 6 lag=0: a wrong hotspot shown in   0 of 200; still shown after 3 s of rest in   0 (worst 0 px)
+  n= 6 lag=1: a wrong hotspot shown in 180 of 200; still shown after 3 s of rest in 180 (worst 10 px)
+  n= 6 lag=2: a wrong hotspot shown in 177 of 200; still shown after 3 s of rest in 177 (worst 10 px)
+  n=10 lag=0: a wrong hotspot shown in   0 of 200; still shown after 3 s of rest in   0 (worst 0 px)
+  n=10 lag=1: a wrong hotspot shown in 182 of 200; still shown after 3 s of rest in 182 (worst 10 px)
+  n=10 lag=2: a wrong hotspot shown in 171 of 200; still shown after 3 s of rest in 171 (worst 10 px)
+
+ALL CHECKS HELD

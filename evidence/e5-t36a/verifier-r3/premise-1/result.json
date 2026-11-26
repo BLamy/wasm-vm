@@ -1,0 +1,9035 @@
+{
+  "task": "E5-T36a verifier round 3",
+  "instrumented": true,
+  "plan": "plan-r3-premise.json",
+  "chrome": "Google Chrome",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "reads": [
+    {
+      "name": "early.1 arrow in the page body",
+      "phase": "early",
+      "t": 32706.3,
+      "settleMs": 300,
+      "sent": [
+        522,
+        656
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 22,
+        "moves": 22,
+        "styleWrites": 3,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "early.1 hand: 311 ms glide to 88,514, 474 ms pause, nudge 0,3 — early",
+      "phase": "early",
+      "t": 33954.6,
+      "settleMs": 450,
+      "sent": [
+        88,
+        517
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 40,
+        "moves": 40,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "early.1 hand — late",
+      "phase": "early",
+      "t": 35458.1,
+      "settleMs": 1500,
+      "sent": [
+        88,
+        517
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 40,
+        "moves": 40,
+        "styleWrites": 4,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "early.1 caret: glide to 1066,408 — early",
+      "phase": "early",
+      "t": 36480.2,
+      "settleMs": 450,
+      "sent": [
+        1066,
+        408
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 71,
+        "moves": 71,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "early.1 caret — late",
+      "phase": "early",
+      "t": 37984.7,
+      "settleMs": 1500,
+      "sent": [
+        1066,
+        408
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": false,
+        "updates": 71,
+        "moves": 71,
+        "styleWrites": 6,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": false,
+      "verdict": "none"
+    },
+    {
+      "name": "early.2 arrow in the page body",
+      "phase": "early",
+      "t": 39987.5,
+      "settleMs": 300,
+      "sent": [
+        490,
+        634
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          0,
+          1
+        ],
+        "settling": false,
+        "updates": 90,
+        "moves": 90,
+        "styleWrites": 8,
+        "diagnostics": 0
+      },
+      "answer": [
+        0,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.2 hand: 344 ms glide to 110,527, 470 ms pause — early",
+      "phase": "early",
+      "t": 41267.4,
+      "settleMs": 450,
+      "sent": [
+        110,
+        527
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 111,
+        "moves": 111,
+        "styleWrites": 13,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.2 hand — late",
+      "phase": "early",
+      "t": 42773,
+      "settleMs": 1500,
+      "sent": [
+        110,
+        527
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 111,
+        "moves": 111,
+        "styleWrites": 13,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.2 caret: glide to 1048,349 — early",
+      "phase": "early",
+      "t": 43828,
+      "settleMs": 450,
+      "sent": [
+        1048,
+        349
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 147,
+        "moves": 147,
+        "styleWrites": 15,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.2 caret — late",
+      "phase": "early",
+      "t": 45332.3,
+      "settleMs": 1500,
+      "sent": [
+        1048,
+        349
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 147,
+        "moves": 147,
+        "styleWrites": 15,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.3 arrow in the page body",
+      "phase": "early",
+      "t": 47231,
+      "settleMs": 300,
+      "sent": [
+        371,
+        595
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          2
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          2
+        ],
+        "settling": false,
+        "updates": 163,
+        "moves": 163,
+        "styleWrites": 18,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        2
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.3 hand: 507 ms glide to 125,525, 210 ms pause — early",
+      "phase": "early",
+      "t": 48400.5,
+      "settleMs": 450,
+      "sent": [
+        125,
+        525
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 193,
+        "moves": 193,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.3 hand — late",
+      "phase": "early",
+      "t": 49906.4,
+      "settleMs": 1500,
+      "sent": [
+        125,
+        525
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 193,
+        "moves": 193,
+        "styleWrites": 22,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.3 caret: glide to 1052,393 — early",
+      "phase": "early",
+      "t": 50865.1,
+      "settleMs": 450,
+      "sent": [
+        1052,
+        393
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 221,
+        "moves": 221,
+        "styleWrites": 25,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "early.3 caret — late",
+      "phase": "early",
+      "t": 52367.4,
+      "settleMs": 1500,
+      "sent": [
+        1052,
+        393
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 221,
+        "moves": 221,
+        "styleWrites": 25,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.1 arrow in the page body",
+      "phase": "idle",
+      "t": 93641.8,
+      "settleMs": 300,
+      "sent": [
+        518,
+        592
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 517,
+        "y": 591
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 240,
+        "moves": 240,
+        "styleWrites": 28,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "tip": [
+        518,
+        592
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.1 hand: 614 ms glide to 97,512, 499 ms pause — early",
+      "phase": "idle",
+      "t": 95268.6,
+      "settleMs": 450,
+      "sent": [
+        97,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 88,
+        "y": 508
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 277,
+        "moves": 277,
+        "styleWrites": 33,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        97,
+        512
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.1 hand — late",
+      "phase": "idle",
+      "t": 96823.6,
+      "settleMs": 1500,
+      "sent": [
+        97,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 88,
+        "y": 508
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 277,
+        "moves": 277,
+        "styleWrites": 33,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        97,
+        512
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.1 caret: glide to 996,368 — early",
+      "phase": "idle",
+      "t": 98303.8,
+      "settleMs": 450,
+      "sent": [
+        996,
+        368
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 992,
+        "y": 360
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 333,
+        "moves": 333,
+        "styleWrites": 35,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        996,
+        368
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.1 caret — late",
+      "phase": "idle",
+      "t": 99855.3,
+      "settleMs": 1500,
+      "sent": [
+        996,
+        368
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 992,
+        "y": 360
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 333,
+        "moves": 333,
+        "styleWrites": 35,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        996,
+        368
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.2 arrow in the page body",
+      "phase": "idle",
+      "t": 101963.4,
+      "settleMs": 300,
+      "sent": [
+        400,
+        635
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 399,
+        "y": 634
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 349,
+        "moves": 349,
+        "styleWrites": 38,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "tip": [
+        400,
+        635
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.2 hand: 494 ms glide to 115,515, 366 ms pause, nudge 2,0 — early",
+      "phase": "idle",
+      "t": 103338.4,
+      "settleMs": 450,
+      "sent": [
+        117,
+        515
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 108,
+        "y": 511
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 381,
+        "moves": 381,
+        "styleWrites": 43,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        117,
+        515
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.2 hand — late",
+      "phase": "idle",
+      "t": 104894.8,
+      "settleMs": 1500,
+      "sent": [
+        117,
+        515
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 108,
+        "y": 511
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 381,
+        "moves": 381,
+        "styleWrites": 43,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        117,
+        515
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.2 caret: glide to 989,368 — early",
+      "phase": "idle",
+      "t": 106218.6,
+      "settleMs": 450,
+      "sent": [
+        989,
+        368
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 985,
+        "y": 360
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 428,
+        "moves": 428,
+        "styleWrites": 45,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        989,
+        368
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.2 caret — late",
+      "phase": "idle",
+      "t": 107772.6,
+      "settleMs": 1500,
+      "sent": [
+        989,
+        368
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 985,
+        "y": 360
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 428,
+        "moves": 428,
+        "styleWrites": 45,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        989,
+        368
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.3 arrow in the page body",
+      "phase": "idle",
+      "t": 109779.6,
+      "settleMs": 300,
+      "sent": [
+        533,
+        681
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 532,
+        "y": 680
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 447,
+        "moves": 447,
+        "styleWrites": 48,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "tip": [
+        533,
+        681
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.3 hand: 470 ms glide to 131,530, 294 ms pause, nudge 0,0 — early",
+      "phase": "idle",
+      "t": 111143.2,
+      "settleMs": 450,
+      "sent": [
+        131,
+        530
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 122,
+        "y": 526
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 476,
+        "moves": 476,
+        "styleWrites": 53,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        131,
+        530
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.3 hand — late",
+      "phase": "idle",
+      "t": 112763.7,
+      "settleMs": 1500,
+      "sent": [
+        131,
+        530
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 122,
+        "y": 526
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 476,
+        "moves": 476,
+        "styleWrites": 53,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        131,
+        530
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.3 caret: glide to 1127,422 — early",
+      "phase": "idle",
+      "t": 114356.1,
+      "settleMs": 450,
+      "sent": [
+        1127,
+        422
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 1123,
+        "y": 414
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 539,
+        "moves": 539,
+        "styleWrites": 55,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        1127,
+        422
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.3 caret — late",
+      "phase": "idle",
+      "t": 115909.5,
+      "settleMs": 1500,
+      "sent": [
+        1127,
+        422
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 1123,
+        "y": 414
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 539,
+        "moves": 539,
+        "styleWrites": 55,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        1127,
+        422
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.4 arrow in the page body",
+      "phase": "idle",
+      "t": 117822.2,
+      "settleMs": 300,
+      "sent": [
+        491,
+        740
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 490,
+        "y": 739
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 560,
+        "moves": 560,
+        "styleWrites": 58,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "tip": [
+        491,
+        740
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.4 hand: 471 ms glide to 69,515, 499 ms pause — early",
+      "phase": "idle",
+      "t": 119297.2,
+      "settleMs": 450,
+      "sent": [
+        69,
+        515
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 60,
+        "y": 511
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 587,
+        "moves": 587,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        69,
+        515
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.4 hand — late",
+      "phase": "idle",
+      "t": 120850.6,
+      "settleMs": 1500,
+      "sent": [
+        69,
+        515
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 60,
+        "y": 511
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 587,
+        "moves": 587,
+        "styleWrites": 62,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "tip": [
+        69,
+        515
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.4 caret: glide to 932,389 — early",
+      "phase": "idle",
+      "t": 122026.4,
+      "settleMs": 450,
+      "sent": [
+        932,
+        389
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 928,
+        "y": 381
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 626,
+        "moves": 626,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        932,
+        389
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "idle.4 caret — late",
+      "phase": "idle",
+      "t": 123580.4,
+      "settleMs": 1500,
+      "sent": [
+        932,
+        389
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 928,
+        "y": 381
+      },
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 626,
+        "moves": 626,
+        "styleWrites": 64,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "tip": [
+        932,
+        389
+      ],
+      "tipError": [
+        0,
+        0
+      ],
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.1 arrow in the page body",
+      "phase": "bursts",
+      "t": 129922.2,
+      "settleMs": 300,
+      "sent": [
+        517,
+        656
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 670,
+        "moves": 670,
+        "styleWrites": 67,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.1 hand: 301 ms glide to 137,510, 208 ms pause, nudge -3,-2 — early",
+      "phase": "bursts",
+      "t": 130893.8,
+      "settleMs": 450,
+      "sent": [
+        134,
+        508
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 694,
+        "moves": 694,
+        "styleWrites": 69,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.1 hand — late",
+      "phase": "bursts",
+      "t": 132396.4,
+      "settleMs": 1500,
+      "sent": [
+        134,
+        508
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 703,
+        "moves": 703,
+        "styleWrites": 69,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.1 caret: glide to 1135,402 — early",
+      "phase": "bursts",
+      "t": 133468.8,
+      "settleMs": 450,
+      "sent": [
+        1135,
+        402
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 739,
+        "moves": 739,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.1 caret — late",
+      "phase": "bursts",
+      "t": 134972.6,
+      "settleMs": 1500,
+      "sent": [
+        1135,
+        402
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 748,
+        "moves": 748,
+        "styleWrites": 72,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.2 arrow in the page body",
+      "phase": "bursts",
+      "t": 136986.4,
+      "settleMs": 300,
+      "sent": [
+        366,
+        632
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 776,
+        "moves": 776,
+        "styleWrites": 75,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.2 hand: 432 ms glide to 104,520, 260 ms pause — early",
+      "phase": "bursts",
+      "t": 138132.4,
+      "settleMs": 450,
+      "sent": [
+        104,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 802,
+        "moves": 802,
+        "styleWrites": 80,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.2 hand — late",
+      "phase": "bursts",
+      "t": 139636.8,
+      "settleMs": 1500,
+      "sent": [
+        104,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 810,
+        "moves": 810,
+        "styleWrites": 80,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.2 caret: glide to 1065,361 — early",
+      "phase": "bursts",
+      "t": 140856.9,
+      "settleMs": 450,
+      "sent": [
+        1065,
+        361
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 852,
+        "moves": 852,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.2 caret — late",
+      "phase": "bursts",
+      "t": 142360.9,
+      "settleMs": 1500,
+      "sent": [
+        1065,
+        361
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 861,
+        "moves": 861,
+        "styleWrites": 82,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.3 arrow in the page body",
+      "phase": "bursts",
+      "t": 144224.1,
+      "settleMs": 300,
+      "sent": [
+        512,
+        736
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 884,
+        "moves": 884,
+        "styleWrites": 85,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.3 hand: 566 ms glide to 114,507, 394 ms pause, nudge -2,1 — early",
+      "phase": "bursts",
+      "t": 145643.4,
+      "settleMs": 450,
+      "sent": [
+        112,
+        508
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 908,
+        "moves": 908,
+        "styleWrites": 87,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.3 hand — late",
+      "phase": "bursts",
+      "t": 147146,
+      "settleMs": 1500,
+      "sent": [
+        112,
+        508
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 917,
+        "moves": 917,
+        "styleWrites": 87,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.3 caret: glide to 1051,313 — early",
+      "phase": "bursts",
+      "t": 148266,
+      "settleMs": 450,
+      "sent": [
+        1051,
+        313
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 944,
+        "moves": 943,
+        "styleWrites": 91,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.3 caret — late",
+      "phase": "bursts",
+      "t": 149767.6,
+      "settleMs": 1500,
+      "sent": [
+        1051,
+        313
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 954,
+        "moves": 953,
+        "styleWrites": 91,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.4 arrow in the page body",
+      "phase": "bursts",
+      "t": 151799.5,
+      "settleMs": 300,
+      "sent": [
+        309,
+        618
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 976,
+        "moves": 975,
+        "styleWrites": 94,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.4 hand: 361 ms glide to 81,523, 154 ms pause, nudge 3,1 — early",
+      "phase": "bursts",
+      "t": 152776.9,
+      "settleMs": 450,
+      "sent": [
+        84,
+        524
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 997,
+        "moves": 996,
+        "styleWrites": 98,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.4 hand — late",
+      "phase": "bursts",
+      "t": 154279.4,
+      "settleMs": 1500,
+      "sent": [
+        84,
+        524
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1006,
+        "moves": 1005,
+        "styleWrites": 98,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.4 caret: glide to 1103,425 — early",
+      "phase": "bursts",
+      "t": 155250,
+      "settleMs": 450,
+      "sent": [
+        1103,
+        425
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1034,
+        "moves": 1033,
+        "styleWrites": 100,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.4 caret — late",
+      "phase": "bursts",
+      "t": 156752.3,
+      "settleMs": 1500,
+      "sent": [
+        1103,
+        425
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1043,
+        "moves": 1042,
+        "styleWrites": 100,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.5 arrow in the page body",
+      "phase": "bursts",
+      "t": 158824.4,
+      "settleMs": 300,
+      "sent": [
+        451,
+        646
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1071,
+        "moves": 1070,
+        "styleWrites": 103,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.5 hand: 614 ms glide to 93,526, 242 ms pause, nudge 0,2 — early",
+      "phase": "bursts",
+      "t": 160159,
+      "settleMs": 450,
+      "sent": [
+        93,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1107,
+        "moves": 1106,
+        "styleWrites": 108,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.5 hand — late",
+      "phase": "bursts",
+      "t": 161660.7,
+      "settleMs": 1500,
+      "sent": [
+        93,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1116,
+        "moves": 1115,
+        "styleWrites": 108,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.5 caret: glide to 1077,306 — early",
+      "phase": "bursts",
+      "t": 162796.9,
+      "settleMs": 450,
+      "sent": [
+        1077,
+        306
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1152,
+        "moves": 1151,
+        "styleWrites": 110,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.5 caret — late",
+      "phase": "bursts",
+      "t": 164300.5,
+      "settleMs": 1500,
+      "sent": [
+        1077,
+        306
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1161,
+        "moves": 1160,
+        "styleWrites": 110,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.6 arrow in the page body",
+      "phase": "bursts",
+      "t": 166157,
+      "settleMs": 300,
+      "sent": [
+        539,
+        699
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1191,
+        "moves": 1189,
+        "styleWrites": 113,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.6 hand: 548 ms glide to 129,519, 353 ms pause — early",
+      "phase": "bursts",
+      "t": 167515.6,
+      "settleMs": 450,
+      "sent": [
+        129,
+        519
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1226,
+        "moves": 1225,
+        "styleWrites": 115,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.6 hand — late",
+      "phase": "bursts",
+      "t": 169017.8,
+      "settleMs": 1500,
+      "sent": [
+        129,
+        519
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1234,
+        "moves": 1233,
+        "styleWrites": 115,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.6 caret: glide to 944,429 — early",
+      "phase": "bursts",
+      "t": 170438.6,
+      "settleMs": 450,
+      "sent": [
+        944,
+        429
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1288,
+        "moves": 1287,
+        "styleWrites": 120,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.6 caret — late",
+      "phase": "bursts",
+      "t": 171942.5,
+      "settleMs": 1500,
+      "sent": [
+        944,
+        429
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1299,
+        "moves": 1298,
+        "styleWrites": 120,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.7 arrow in the page body",
+      "phase": "bursts",
+      "t": 173946.7,
+      "settleMs": 300,
+      "sent": [
+        365,
+        652
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1322,
+        "moves": 1321,
+        "styleWrites": 123,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.7 hand: 385 ms glide to 133,524, 339 ms pause, nudge -1,1 — early",
+      "phase": "bursts",
+      "t": 175127.5,
+      "settleMs": 450,
+      "sent": [
+        132,
+        525
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1337,
+        "moves": 1336,
+        "styleWrites": 126,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.7 hand — late",
+      "phase": "bursts",
+      "t": 176631,
+      "settleMs": 1500,
+      "sent": [
+        132,
+        525
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1346,
+        "moves": 1345,
+        "styleWrites": 126,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.7 caret: glide to 977,390 — early",
+      "phase": "bursts",
+      "t": 178168.9,
+      "settleMs": 450,
+      "sent": [
+        977,
+        390
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1401,
+        "moves": 1399,
+        "styleWrites": 130,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.7 caret — late",
+      "phase": "bursts",
+      "t": 179672.3,
+      "settleMs": 1500,
+      "sent": [
+        977,
+        390
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1410,
+        "moves": 1408,
+        "styleWrites": 130,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.8 arrow in the page body",
+      "phase": "bursts",
+      "t": 181434.3,
+      "settleMs": 300,
+      "sent": [
+        497,
+        743
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1429,
+        "moves": 1427,
+        "styleWrites": 133,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.8 hand: 576 ms glide to 112,511, 400 ms pause — early",
+      "phase": "bursts",
+      "t": 182876.4,
+      "settleMs": 450,
+      "sent": [
+        112,
+        511
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1464,
+        "moves": 1462,
+        "styleWrites": 137,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.8 hand — late",
+      "phase": "bursts",
+      "t": 184379,
+      "settleMs": 1500,
+      "sent": [
+        112,
+        511
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1475,
+        "moves": 1473,
+        "styleWrites": 137,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.8 caret: glide to 1105,356 — early",
+      "phase": "bursts",
+      "t": 185534.9,
+      "settleMs": 450,
+      "sent": [
+        1105,
+        356
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1513,
+        "moves": 1511,
+        "styleWrites": 140,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.8 caret — late",
+      "phase": "bursts",
+      "t": 187038.4,
+      "settleMs": 1500,
+      "sent": [
+        1105,
+        356
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1522,
+        "moves": 1520,
+        "styleWrites": 140,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.9 arrow in the page body",
+      "phase": "bursts",
+      "t": 189051.5,
+      "settleMs": 300,
+      "sent": [
+        453,
+        622
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1550,
+        "moves": 1548,
+        "styleWrites": 143,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.9 hand: 313 ms glide to 71,526, 397 ms pause — early",
+      "phase": "bursts",
+      "t": 190223.3,
+      "settleMs": 450,
+      "sent": [
+        71,
+        526
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1576,
+        "moves": 1574,
+        "styleWrites": 147,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.9 hand — late",
+      "phase": "bursts",
+      "t": 191726.1,
+      "settleMs": 1500,
+      "sent": [
+        71,
+        526
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1584,
+        "moves": 1582,
+        "styleWrites": 147,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.9 caret: glide to 925,351 — early",
+      "phase": "bursts",
+      "t": 193081.3,
+      "settleMs": 450,
+      "sent": [
+        925,
+        351
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1636,
+        "moves": 1634,
+        "styleWrites": 149,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.9 caret — late",
+      "phase": "bursts",
+      "t": 194584.1,
+      "settleMs": 1500,
+      "sent": [
+        925,
+        351
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1645,
+        "moves": 1643,
+        "styleWrites": 149,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.10 arrow in the page body",
+      "phase": "bursts",
+      "t": 196538.4,
+      "settleMs": 300,
+      "sent": [
+        508,
+        593
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1671,
+        "moves": 1669,
+        "styleWrites": 152,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.10 hand: 427 ms glide to 123,527, 163 ms pause, nudge 1,1 — early",
+      "phase": "bursts",
+      "t": 197592,
+      "settleMs": 450,
+      "sent": [
+        124,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1699,
+        "moves": 1697,
+        "styleWrites": 156,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.10 hand — late",
+      "phase": "bursts",
+      "t": 199095.5,
+      "settleMs": 1500,
+      "sent": [
+        124,
+        528
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1708,
+        "moves": 1706,
+        "styleWrites": 156,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.10 caret: glide to 1114,322 — early",
+      "phase": "bursts",
+      "t": 200367.2,
+      "settleMs": 450,
+      "sent": [
+        1114,
+        322
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1751,
+        "moves": 1749,
+        "styleWrites": 158,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.10 caret — late",
+      "phase": "bursts",
+      "t": 201871.7,
+      "settleMs": 1500,
+      "sent": [
+        1114,
+        322
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1761,
+        "moves": 1759,
+        "styleWrites": 158,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.11 arrow in the page body",
+      "phase": "bursts",
+      "t": 203684.5,
+      "settleMs": 300,
+      "sent": [
+        468,
+        726
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1787,
+        "moves": 1785,
+        "styleWrites": 161,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.11 hand: 506 ms glide to 89,512, 288 ms pause, nudge 0,2 — early",
+      "phase": "bursts",
+      "t": 204931.7,
+      "settleMs": 450,
+      "sent": [
+        89,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1819,
+        "moves": 1817,
+        "styleWrites": 166,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.11 hand — late",
+      "phase": "bursts",
+      "t": 206435.8,
+      "settleMs": 1500,
+      "sent": [
+        89,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1829,
+        "moves": 1827,
+        "styleWrites": 166,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.11 caret: glide to 1113,379 — early",
+      "phase": "bursts",
+      "t": 207788.7,
+      "settleMs": 450,
+      "sent": [
+        1113,
+        379
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1876,
+        "moves": 1874,
+        "styleWrites": 168,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.11 caret — late",
+      "phase": "bursts",
+      "t": 209292.1,
+      "settleMs": 1500,
+      "sent": [
+        1113,
+        379
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1883,
+        "moves": 1881,
+        "styleWrites": 168,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.12 arrow in the page body",
+      "phase": "bursts",
+      "t": 211254.9,
+      "settleMs": 300,
+      "sent": [
+        453,
+        675
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 1901,
+        "moves": 1899,
+        "styleWrites": 171,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.12 hand: 345 ms glide to 82,530, 382 ms pause, nudge -1,2 — early",
+      "phase": "bursts",
+      "t": 212445.7,
+      "settleMs": 450,
+      "sent": [
+        81,
+        532
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1921,
+        "moves": 1919,
+        "styleWrites": 173,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.12 hand — late",
+      "phase": "bursts",
+      "t": 213949,
+      "settleMs": 1500,
+      "sent": [
+        81,
+        532
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 1931,
+        "moves": 1929,
+        "styleWrites": 173,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.12 caret: glide to 973,351 — early",
+      "phase": "bursts",
+      "t": 215053.6,
+      "settleMs": 450,
+      "sent": [
+        973,
+        351
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1962,
+        "moves": 1960,
+        "styleWrites": 176,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "bursts.12 caret — late",
+      "phase": "bursts",
+      "t": 216556.6,
+      "settleMs": 1500,
+      "sent": [
+        973,
+        351
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 1971,
+        "moves": 1969,
+        "styleWrites": 176,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "flood.1 arrow in the page body",
+      "phase": "flood",
+      "t": 231358.7,
+      "settleMs": 300,
+      "sent": [
+        294,
+        577
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2039,
+        "moves": 2037,
+        "styleWrites": 179,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.1 hand: 452 ms glide to 82,523, 256 ms pause, nudge -1,-3 — early",
+      "phase": "flood",
+      "t": 232521.8,
+      "settleMs": 450,
+      "sent": [
+        81,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2058,
+        "moves": 2056,
+        "styleWrites": 180,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.1 hand — late",
+      "phase": "flood",
+      "t": 234024.3,
+      "settleMs": 1500,
+      "sent": [
+        81,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2064,
+        "moves": 2062,
+        "styleWrites": 180,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.1 caret: glide to 1094,352 — early",
+      "phase": "flood",
+      "t": 235378.7,
+      "settleMs": 450,
+      "sent": [
+        1094,
+        352
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2081,
+        "moves": 2079,
+        "styleWrites": 182,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.1 caret — late",
+      "phase": "flood",
+      "t": 236882.8,
+      "settleMs": 1500,
+      "sent": [
+        1094,
+        352
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2087,
+        "moves": 2085,
+        "styleWrites": 182,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.2 arrow in the page body",
+      "phase": "flood",
+      "t": 238924.4,
+      "settleMs": 300,
+      "sent": [
+        482,
+        636
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2108,
+        "moves": 2106,
+        "styleWrites": 183,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.2 hand: 643 ms glide to 112,514, 426 ms pause — early",
+      "phase": "flood",
+      "t": 240457.2,
+      "settleMs": 450,
+      "sent": [
+        112,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2127,
+        "moves": 2125,
+        "styleWrites": 184,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.2 hand — late",
+      "phase": "flood",
+      "t": 241959.6,
+      "settleMs": 1500,
+      "sent": [
+        112,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2133,
+        "moves": 2131,
+        "styleWrites": 184,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.2 caret: glide to 957,406 — early",
+      "phase": "flood",
+      "t": 243198.5,
+      "settleMs": 450,
+      "sent": [
+        957,
+        406
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2149,
+        "moves": 2147,
+        "styleWrites": 186,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.2 caret — late",
+      "phase": "flood",
+      "t": 244701,
+      "settleMs": 1500,
+      "sent": [
+        957,
+        406
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2154,
+        "moves": 2152,
+        "styleWrites": 186,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.3 arrow in the page body",
+      "phase": "flood",
+      "t": 246451.2,
+      "settleMs": 300,
+      "sent": [
+        558,
+        591
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2173,
+        "moves": 2171,
+        "styleWrites": 187,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.3 hand: 398 ms glide to 115,506, 479 ms pause — early",
+      "phase": "flood",
+      "t": 247787.5,
+      "settleMs": 450,
+      "sent": [
+        115,
+        506
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2188,
+        "moves": 2186,
+        "styleWrites": 188,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.3 hand — late",
+      "phase": "flood",
+      "t": 249290.5,
+      "settleMs": 1500,
+      "sent": [
+        115,
+        506
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2194,
+        "moves": 2192,
+        "styleWrites": 188,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.3 caret: glide to 1114,410 — early",
+      "phase": "flood",
+      "t": 250430.2,
+      "settleMs": 450,
+      "sent": [
+        1114,
+        410
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2209,
+        "moves": 2207,
+        "styleWrites": 189,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.3 caret — late",
+      "phase": "flood",
+      "t": 251933.8,
+      "settleMs": 1500,
+      "sent": [
+        1114,
+        410
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2215,
+        "moves": 2213,
+        "styleWrites": 189,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.4 arrow in the page body",
+      "phase": "flood",
+      "t": 253837,
+      "settleMs": 300,
+      "sent": [
+        563,
+        601
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2233,
+        "moves": 2231,
+        "styleWrites": 190,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.4 hand: 366 ms glide to 132,516, 487 ms pause — early",
+      "phase": "flood",
+      "t": 255149,
+      "settleMs": 450,
+      "sent": [
+        132,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2239,
+        "moves": 2237,
+        "styleWrites": 191,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.4 hand — late",
+      "phase": "flood",
+      "t": 256650.6,
+      "settleMs": 1500,
+      "sent": [
+        132,
+        516
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2245,
+        "moves": 2243,
+        "styleWrites": 191,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.4 caret: glide to 1064,306 — early",
+      "phase": "flood",
+      "t": 257790.7,
+      "settleMs": 450,
+      "sent": [
+        1064,
+        306
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2266,
+        "moves": 2264,
+        "styleWrites": 192,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.4 caret — late",
+      "phase": "flood",
+      "t": 259292.7,
+      "settleMs": 1500,
+      "sent": [
+        1064,
+        306
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2271,
+        "moves": 2269,
+        "styleWrites": 192,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.5 arrow in the page body",
+      "phase": "flood",
+      "t": 261344.1,
+      "settleMs": 300,
+      "sent": [
+        516,
+        654
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2288,
+        "moves": 2286,
+        "styleWrites": 193,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.5 hand: 340 ms glide to 97,520, 453 ms pause — early",
+      "phase": "flood",
+      "t": 262587.8,
+      "settleMs": 450,
+      "sent": [
+        97,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2296,
+        "moves": 2294,
+        "styleWrites": 194,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.5 hand — late",
+      "phase": "flood",
+      "t": 264089.3,
+      "settleMs": 1500,
+      "sent": [
+        97,
+        520
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2301,
+        "moves": 2299,
+        "styleWrites": 194,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.5 caret: glide to 1013,368 — early",
+      "phase": "flood",
+      "t": 265359.3,
+      "settleMs": 450,
+      "sent": [
+        1013,
+        368
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2329,
+        "moves": 2327,
+        "styleWrites": 196,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.5 caret — late",
+      "phase": "flood",
+      "t": 266863.4,
+      "settleMs": 1500,
+      "sent": [
+        1013,
+        368
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2335,
+        "moves": 2333,
+        "styleWrites": 196,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.6 arrow in the page body",
+      "phase": "flood",
+      "t": 268791.9,
+      "settleMs": 300,
+      "sent": [
+        514,
+        694
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2345,
+        "moves": 2343,
+        "styleWrites": 197,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.6 hand: 560 ms glide to 104,523, 457 ms pause, nudge 2,2 — early",
+      "phase": "flood",
+      "t": 270273.6,
+      "settleMs": 450,
+      "sent": [
+        106,
+        525
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2363,
+        "moves": 2361,
+        "styleWrites": 198,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.6 hand — late",
+      "phase": "flood",
+      "t": 271775.8,
+      "settleMs": 1500,
+      "sent": [
+        106,
+        525
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2369,
+        "moves": 2367,
+        "styleWrites": 198,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.6 caret: glide to 935,321 — early",
+      "phase": "flood",
+      "t": 273081.2,
+      "settleMs": 450,
+      "sent": [
+        935,
+        321
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2390,
+        "moves": 2388,
+        "styleWrites": 200,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood.6 caret — late",
+      "phase": "flood",
+      "t": 274583.5,
+      "settleMs": 1500,
+      "sent": [
+        935,
+        321
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2395,
+        "moves": 2393,
+        "styleWrites": 200,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.1 arrow in the page body",
+      "phase": "flood+cpu2",
+      "t": 285235.1,
+      "settleMs": 300,
+      "sent": [
+        543,
+        660
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2423,
+        "moves": 2421,
+        "styleWrites": 201,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.1 hand: 622 ms glide to 74,507, 256 ms pause, nudge -1,-3 — early",
+      "phase": "flood+cpu2",
+      "t": 286568.2,
+      "settleMs": 450,
+      "sent": [
+        73,
+        504
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2430,
+        "moves": 2428,
+        "styleWrites": 202,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.1 hand — late",
+      "phase": "flood+cpu2",
+      "t": 288071.1,
+      "settleMs": 1500,
+      "sent": [
+        73,
+        504
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2434,
+        "moves": 2432,
+        "styleWrites": 202,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.1 caret: glide to 1122,354 — early",
+      "phase": "flood+cpu2",
+      "t": 289423,
+      "settleMs": 450,
+      "sent": [
+        1122,
+        354
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2461,
+        "moves": 2459,
+        "styleWrites": 204,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.1 caret — late",
+      "phase": "flood+cpu2",
+      "t": 290925.8,
+      "settleMs": 1500,
+      "sent": [
+        1122,
+        354
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2465,
+        "moves": 2463,
+        "styleWrites": 204,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.2 arrow in the page body",
+      "phase": "flood+cpu2",
+      "t": 292794.2,
+      "settleMs": 300,
+      "sent": [
+        421,
+        625
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2473,
+        "moves": 2471,
+        "styleWrites": 205,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.2 hand: 539 ms glide to 137,511, 346 ms pause — early",
+      "phase": "flood+cpu2",
+      "t": 294128.1,
+      "settleMs": 450,
+      "sent": [
+        137,
+        511
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2487,
+        "moves": 2485,
+        "styleWrites": 208,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.2 hand — late",
+      "phase": "flood+cpu2",
+      "t": 295630,
+      "settleMs": 1500,
+      "sent": [
+        137,
+        511
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2491,
+        "moves": 2489,
+        "styleWrites": 208,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.2 caret: glide to 1058,389 — early",
+      "phase": "flood+cpu2",
+      "t": 297168.1,
+      "settleMs": 450,
+      "sent": [
+        1058,
+        389
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2509,
+        "moves": 2507,
+        "styleWrites": 210,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.2 caret — late",
+      "phase": "flood+cpu2",
+      "t": 298671.4,
+      "settleMs": 1500,
+      "sent": [
+        1058,
+        389
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2513,
+        "moves": 2511,
+        "styleWrites": 210,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.3 arrow in the page body",
+      "phase": "flood+cpu2",
+      "t": 300402.9,
+      "settleMs": 300,
+      "sent": [
+        430,
+        639
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2520,
+        "moves": 2518,
+        "styleWrites": 211,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.3 hand: 378 ms glide to 129,514, 347 ms pause, nudge -1,-2 — early",
+      "phase": "flood+cpu2",
+      "t": 301591.1,
+      "settleMs": 450,
+      "sent": [
+        128,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2529,
+        "moves": 2527,
+        "styleWrites": 212,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.3 hand — late",
+      "phase": "flood+cpu2",
+      "t": 303092.7,
+      "settleMs": 1500,
+      "sent": [
+        128,
+        512
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2532,
+        "moves": 2530,
+        "styleWrites": 212,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.3 caret: glide to 1128,404 — early",
+      "phase": "flood+cpu2",
+      "t": 304431.1,
+      "settleMs": 450,
+      "sent": [
+        1128,
+        404
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2551,
+        "moves": 2549,
+        "styleWrites": 213,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.3 caret — late",
+      "phase": "flood+cpu2",
+      "t": 305932.8,
+      "settleMs": 1500,
+      "sent": [
+        1128,
+        404
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2554,
+        "moves": 2552,
+        "styleWrites": 213,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.4 arrow in the page body",
+      "phase": "flood+cpu2",
+      "t": 307739.5,
+      "settleMs": 300,
+      "sent": [
+        389,
+        569
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2568,
+        "moves": 2566,
+        "styleWrites": 215,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.4 hand: 536 ms glide to 84,527, 339 ms pause, nudge 0,-1 — early",
+      "phase": "flood+cpu2",
+      "t": 309071.1,
+      "settleMs": 450,
+      "sent": [
+        84,
+        526
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2574,
+        "moves": 2572,
+        "styleWrites": 216,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.4 hand — late",
+      "phase": "flood+cpu2",
+      "t": 310572.9,
+      "settleMs": 1500,
+      "sent": [
+        84,
+        526
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2578,
+        "moves": 2576,
+        "styleWrites": 216,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.4 caret: glide to 963,318 — early",
+      "phase": "flood+cpu2",
+      "t": 311576.7,
+      "settleMs": 450,
+      "sent": [
+        963,
+        318
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2583,
+        "moves": 2581,
+        "styleWrites": 217,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "flood+cpu2.4 caret — late",
+      "phase": "flood+cpu2",
+      "t": 313080.2,
+      "settleMs": 1500,
+      "sent": [
+        963,
+        318
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          0,
+          0
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": null,
+        "settling": true,
+        "updates": 2586,
+        "moves": 2584,
+        "styleWrites": 217,
+        "diagnostics": 0
+      },
+      "answer": null,
+      "settling": true,
+      "verdict": "none"
+    },
+    {
+      "name": "recovering.1 arrow in the page body",
+      "phase": "recovering",
+      "t": 316417.7,
+      "settleMs": 300,
+      "sent": [
+        383,
+        689
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          1
+        ],
+        "settling": false,
+        "updates": 2603,
+        "moves": 2601,
+        "styleWrites": 219,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.1 hand: 373 ms glide to 117,514, 352 ms pause — early",
+      "phase": "recovering",
+      "t": 317594,
+      "settleMs": 450,
+      "sent": [
+        117,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 2625,
+        "moves": 2623,
+        "styleWrites": 221,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.1 hand — late",
+      "phase": "recovering",
+      "t": 319096.5,
+      "settleMs": 1500,
+      "sent": [
+        117,
+        514
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 2625,
+        "moves": 2623,
+        "styleWrites": 221,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.1 caret: glide to 999,408 — early",
+      "phase": "recovering",
+      "t": 320535.5,
+      "settleMs": 450,
+      "sent": [
+        999,
+        408
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 2682,
+        "moves": 2680,
+        "styleWrites": 224,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.1 caret — late",
+      "phase": "recovering",
+      "t": 322037.4,
+      "settleMs": 1500,
+      "sent": [
+        999,
+        408
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 2682,
+        "moves": 2680,
+        "styleWrites": 224,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.2 arrow in the page body",
+      "phase": "recovering",
+      "t": 323948.9,
+      "settleMs": 300,
+      "sent": [
+        387,
+        598
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          2
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          1,
+          2
+        ],
+        "settling": false,
+        "updates": 2701,
+        "moves": 2699,
+        "styleWrites": 227,
+        "diagnostics": 0
+      },
+      "answer": [
+        1,
+        2
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.2 hand: 485 ms glide to 94,530, 447 ms pause — early",
+      "phase": "recovering",
+      "t": 325337.5,
+      "settleMs": 450,
+      "sent": [
+        94,
+        530
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 2730,
+        "moves": 2728,
+        "styleWrites": 232,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.2 hand — late",
+      "phase": "recovering",
+      "t": 326839.7,
+      "settleMs": 1500,
+      "sent": [
+        94,
+        530
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 2730,
+        "moves": 2728,
+        "styleWrites": 232,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.2 caret: glide to 1039,319 — early",
+      "phase": "recovering",
+      "t": 327911.4,
+      "settleMs": 450,
+      "sent": [
+        1039,
+        319
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 2767,
+        "moves": 2765,
+        "styleWrites": 234,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.2 caret — late",
+      "phase": "recovering",
+      "t": 329414.3,
+      "settleMs": 1500,
+      "sent": [
+        1039,
+        319
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 2767,
+        "moves": 2765,
+        "styleWrites": 234,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.3 arrow in the page body",
+      "phase": "recovering",
+      "t": 331397.5,
+      "settleMs": 300,
+      "sent": [
+        319,
+        755
+      ],
+      "css": {
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          2,
+          1
+        ]
+      },
+      "image": "arrow",
+      "truth": [
+        1,
+        1
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          2,
+          1
+        ],
+        "settling": false,
+        "updates": 2788,
+        "moves": 2786,
+        "styleWrites": 237,
+        "diagnostics": 0
+      },
+      "answer": [
+        2,
+        1
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.3 hand: 491 ms glide to 123,517, 493 ms pause, nudge 0,0 — early",
+      "phase": "recovering",
+      "t": 332831.5,
+      "settleMs": 450,
+      "sent": [
+        123,
+        517
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 2816,
+        "moves": 2814,
+        "styleWrites": 239,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.3 hand — late",
+      "phase": "recovering",
+      "t": 334335,
+      "settleMs": 1500,
+      "sent": [
+        123,
+        517
+      ],
+      "css": {
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "image": "hand",
+      "truth": [
+        9,
+        4
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          9,
+          4
+        ],
+        "settling": false,
+        "updates": 2816,
+        "moves": 2814,
+        "styleWrites": 239,
+        "diagnostics": 0
+      },
+      "answer": [
+        9,
+        4
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.3 caret: glide to 974,371 — early",
+      "phase": "recovering",
+      "t": 335355.3,
+      "settleMs": 450,
+      "sent": [
+        974,
+        371
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 2849,
+        "moves": 2847,
+        "styleWrites": 242,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    },
+    {
+      "name": "recovering.3 caret — late",
+      "phase": "recovering",
+      "t": 336857.5,
+      "settleMs": 1500,
+      "sent": [
+        974,
+        371
+      ],
+      "css": {
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "image": "caret",
+      "truth": [
+        4,
+        8
+      ],
+      "plane": null,
+      "state": {
+        "kind": "css",
+        "inferred": [
+          4,
+          8
+        ],
+        "settling": false,
+        "updates": 2849,
+        "moves": 2847,
+        "styleWrites": 242,
+        "diagnostics": 0
+      },
+      "answer": [
+        4,
+        8
+      ],
+      "settling": false,
+      "verdict": "ok"
+    }
+  ],
+  "shell": [
+    {
+      "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.24 0.14 0.05 2/119 998\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg",
+      "stdout": "0.28 0.18 0.07 2/118 1885\n\n"
+    },
+    {
+      "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.28 0.18 0.07 3/120 1914\n\n"
+    },
+    {
+      "cmd": "(while :; do :; done & echo $! > /tmp/v-load2.pid); (while :; do :; done & echo $! > /tmp/v-load3.pid); sleep 1; cat /proc/loadavg",
+      "stdout": "0.78 0.29 0.11 6/122 2128\n\n"
+    },
+    {
+      "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg",
+      "stdout": "1.11 0.37 0.14 1/118 2232\n\n"
+    }
+  ],
+  "steps": [
+    {
+      "op": "stats",
+      "t": 27858.6
+    },
+    {
+      "op": "wait",
+      "t": 27860
+    },
+    {
+      "op": "stats",
+      "t": 30861.8
+    },
+    {
+      "op": "reset",
+      "name": "early.1",
+      "t": 30867.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        528,
+        620
+      ],
+      "t": 30868.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        522,
+        656
+      ],
+      "t": 31534.2
+    },
+    {
+      "op": "read",
+      "name": "early.1 arrow in the page body",
+      "t": 32404.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        88,
+        514
+      ],
+      "t": 32707.3
+    },
+    {
+      "op": "wait",
+      "t": 33024.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        88,
+        517
+      ],
+      "t": 33501.4
+    },
+    {
+      "op": "read",
+      "name": "early.1 hand: 311 ms glide to 88,514, 474 ms pause, nudge 0,3 — early",
+      "t": 33502.4
+    },
+    {
+      "op": "read",
+      "name": "early.1 hand — late",
+      "t": 33955.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        1066,
+        408
+      ],
+      "t": 35458.9
+    },
+    {
+      "op": "read",
+      "name": "early.1 caret: glide to 1066,408 — early",
+      "t": 36027.7
+    },
+    {
+      "op": "read",
+      "name": "early.1 caret — late",
+      "t": 36481.1
+    },
+    {
+      "op": "reset",
+      "name": "early.2",
+      "t": 37985.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        434,
+        630
+      ],
+      "t": 37986.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        490,
+        634
+      ],
+      "t": 38863.3
+    },
+    {
+      "op": "read",
+      "name": "early.2 arrow in the page body",
+      "t": 39684.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        110,
+        527
+      ],
+      "t": 39988.7
+    },
+    {
+      "op": "wait",
+      "t": 40340.5
+    },
+    {
+      "op": "read",
+      "name": "early.2 hand: 344 ms glide to 110,527, 470 ms pause — early",
+      "t": 40813.1
+    },
+    {
+      "op": "read",
+      "name": "early.2 hand — late",
+      "t": 41269.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        1048,
+        349
+      ],
+      "t": 42773.9
+    },
+    {
+      "op": "read",
+      "name": "early.2 caret: glide to 1048,349 — early",
+      "t": 43374.5
+    },
+    {
+      "op": "read",
+      "name": "early.2 caret — late",
+      "t": 43829.8
+    },
+    {
+      "op": "reset",
+      "name": "early.3",
+      "t": 45334
+    },
+    {
+      "op": "jump",
+      "to": [
+        385,
+        609
+      ],
+      "t": 45335.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        371,
+        595
+      ],
+      "t": 46057.7
+    },
+    {
+      "op": "read",
+      "name": "early.3 arrow in the page body",
+      "t": 46928.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        125,
+        525
+      ],
+      "t": 47231.9
+    },
+    {
+      "op": "wait",
+      "t": 47734.4
+    },
+    {
+      "op": "read",
+      "name": "early.3 hand: 507 ms glide to 125,525, 210 ms pause — early",
+      "t": 47947.5
+    },
+    {
+      "op": "read",
+      "name": "early.3 hand — late",
+      "t": 48402.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        1052,
+        393
+      ],
+      "t": 49908.1
+    },
+    {
+      "op": "read",
+      "name": "early.3 caret: glide to 1052,393 — early",
+      "t": 50412
+    },
+    {
+      "op": "read",
+      "name": "early.3 caret — late",
+      "t": 50866
+    },
+    {
+      "op": "idle",
+      "t": 52369,
+      "idleAfterSeconds": 36.174,
+      "reached": true
+    },
+    {
+      "op": "stats",
+      "t": 88543.9
+    },
+    {
+      "op": "wait",
+      "t": 88545
+    },
+    {
+      "op": "stats",
+      "t": 91545.9
+    },
+    {
+      "op": "reset",
+      "name": "idle.1",
+      "t": 91547.1
+    },
+    {
+      "op": "settle",
+      "t": 91549.3,
+      "settled": true,
+      "settleMs": 52
+    },
+    {
+      "op": "jump",
+      "to": [
+        539,
+        602
+      ],
+      "t": 91601.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        518,
+        592
+      ],
+      "t": 92435.1
+    },
+    {
+      "op": "read",
+      "name": "idle.1 arrow in the page body",
+      "t": 93338.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        97,
+        512
+      ],
+      "t": 93697
+    },
+    {
+      "op": "wait",
+      "t": 94313.8
+    },
+    {
+      "op": "read",
+      "name": "idle.1 hand: 614 ms glide to 97,512, 499 ms pause — early",
+      "t": 94815.2
+    },
+    {
+      "op": "read",
+      "name": "idle.1 hand — late",
+      "t": 95322.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        996,
+        368
+      ],
+      "t": 96882.5
+    },
+    {
+      "op": "read",
+      "name": "idle.1 caret: glide to 996,368 — early",
+      "t": 97850.2
+    },
+    {
+      "op": "read",
+      "name": "idle.1 caret — late",
+      "t": 98354.9
+    },
+    {
+      "op": "reset",
+      "name": "idle.2",
+      "t": 99911
+    },
+    {
+      "op": "settle",
+      "t": 99911.9,
+      "settled": true,
+      "settleMs": 54
+    },
+    {
+      "op": "jump",
+      "to": [
+        379,
+        630
+      ],
+      "t": 99966
+    },
+    {
+      "op": "glide",
+      "to": [
+        400,
+        635
+      ],
+      "t": 100825.9
+    },
+    {
+      "op": "read",
+      "name": "idle.2 arrow in the page body",
+      "t": 101660.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        115,
+        515
+      ],
+      "t": 102017.5
+    },
+    {
+      "op": "wait",
+      "t": 102517.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        117,
+        515
+      ],
+      "t": 102884.7
+    },
+    {
+      "op": "read",
+      "name": "idle.2 hand: 494 ms glide to 115,515, 366 ms pause, nudge 2,0 — early",
+      "t": 102885.6
+    },
+    {
+      "op": "read",
+      "name": "idle.2 hand — late",
+      "t": 103392.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        989,
+        368
+      ],
+      "t": 104948.5
+    },
+    {
+      "op": "read",
+      "name": "idle.2 caret: glide to 989,368 — early",
+      "t": 105767
+    },
+    {
+      "op": "read",
+      "name": "idle.2 caret — late",
+      "t": 106271.8
+    },
+    {
+      "op": "reset",
+      "name": "idle.3",
+      "t": 107825.9
+    },
+    {
+      "op": "settle",
+      "t": 107826.6,
+      "settled": true,
+      "settleMs": 53
+    },
+    {
+      "op": "jump",
+      "to": [
+        510,
+        698
+      ],
+      "t": 107879.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        533,
+        681
+      ],
+      "t": 108623.1
+    },
+    {
+      "op": "read",
+      "name": "idle.3 arrow in the page body",
+      "t": 109477.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        131,
+        530
+      ],
+      "t": 109922.6
+    },
+    {
+      "op": "wait",
+      "t": 110391.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        131,
+        530
+      ],
+      "t": 110688.2
+    },
+    {
+      "op": "read",
+      "name": "idle.3 hand: 470 ms glide to 131,530, 294 ms pause, nudge 0,0 — early",
+      "t": 110690.2
+    },
+    {
+      "op": "read",
+      "name": "idle.3 hand — late",
+      "t": 111260.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        1127,
+        422
+      ],
+      "t": 112819.7
+    },
+    {
+      "op": "read",
+      "name": "idle.3 caret: glide to 1127,422 — early",
+      "t": 113903.3
+    },
+    {
+      "op": "read",
+      "name": "idle.3 caret — late",
+      "t": 114407.9
+    },
+    {
+      "op": "reset",
+      "name": "idle.4",
+      "t": 115961.8
+    },
+    {
+      "op": "settle",
+      "t": 115963.1,
+      "settled": true,
+      "settleMs": 52
+    },
+    {
+      "op": "jump",
+      "to": [
+        443,
+        712
+      ],
+      "t": 116015.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        491,
+        740
+      ],
+      "t": 116633.5
+    },
+    {
+      "op": "read",
+      "name": "idle.4 arrow in the page body",
+      "t": 117521
+    },
+    {
+      "op": "glide",
+      "to": [
+        69,
+        515
+      ],
+      "t": 117875.7
+    },
+    {
+      "op": "wait",
+      "t": 118343.2
+    },
+    {
+      "op": "read",
+      "name": "idle.4 hand: 471 ms glide to 69,515, 499 ms pause — early",
+      "t": 118844.5
+    },
+    {
+      "op": "read",
+      "name": "idle.4 hand — late",
+      "t": 119350.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        932,
+        389
+      ],
+      "t": 120904
+    },
+    {
+      "op": "read",
+      "name": "idle.4 caret: glide to 932,389 — early",
+      "t": 121575
+    },
+    {
+      "op": "read",
+      "name": "idle.4 caret — late",
+      "t": 122079.5
+    },
+    {
+      "op": "sh",
+      "t": 123632.4
+    },
+    {
+      "op": "stats",
+      "t": 124912.3
+    },
+    {
+      "op": "wait",
+      "t": 124913.8
+    },
+    {
+      "op": "stats",
+      "t": 127916.6
+    },
+    {
+      "op": "reset",
+      "name": "bursts.1",
+      "t": 127918.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        517,
+        645
+      ],
+      "t": 127918.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        517,
+        656
+      ],
+      "t": 128815.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.1 arrow in the page body",
+      "t": 129621.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        137,
+        510
+      ],
+      "t": 129923
+    },
+    {
+      "op": "wait",
+      "t": 130224.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        134,
+        508
+      ],
+      "t": 130434.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.1 hand: 301 ms glide to 137,510, 208 ms pause, nudge -3,-2 — early",
+      "t": 130441.1
+    },
+    {
+      "op": "read",
+      "name": "bursts.1 hand — late",
+      "t": 130894.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        1135,
+        402
+      ],
+      "t": 132397.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.1 caret: glide to 1135,402 — early",
+      "t": 133015.1
+    },
+    {
+      "op": "read",
+      "name": "bursts.1 caret — late",
+      "t": 133469.7
+    },
+    {
+      "op": "reset",
+      "name": "bursts.2",
+      "t": 134973.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        383,
+        630
+      ],
+      "t": 134974.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        366,
+        632
+      ],
+      "t": 135799.5
+    },
+    {
+      "op": "read",
+      "name": "bursts.2 arrow in the page body",
+      "t": 136685.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        104,
+        520
+      ],
+      "t": 136987.3
+    },
+    {
+      "op": "wait",
+      "t": 137419.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.2 hand: 432 ms glide to 104,520, 260 ms pause — early",
+      "t": 137681.4
+    },
+    {
+      "op": "read",
+      "name": "bursts.2 hand — late",
+      "t": 138133.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        1065,
+        361
+      ],
+      "t": 139637.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.2 caret: glide to 1065,361 — early",
+      "t": 140404.5
+    },
+    {
+      "op": "read",
+      "name": "bursts.2 caret — late",
+      "t": 140857.8
+    },
+    {
+      "op": "reset",
+      "name": "bursts.3",
+      "t": 142361.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        483,
+        701
+      ],
+      "t": 142362.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        512,
+        736
+      ],
+      "t": 143052.4
+    },
+    {
+      "op": "read",
+      "name": "bursts.3 arrow in the page body",
+      "t": 143921.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        114,
+        507
+      ],
+      "t": 144225
+    },
+    {
+      "op": "wait",
+      "t": 144792.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        112,
+        508
+      ],
+      "t": 145189.5
+    },
+    {
+      "op": "read",
+      "name": "bursts.3 hand: 566 ms glide to 114,507, 394 ms pause, nudge -2,1 — early",
+      "t": 145190.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.3 hand — late",
+      "t": 145644.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        1051,
+        313
+      ],
+      "t": 147147
+    },
+    {
+      "op": "read",
+      "name": "bursts.3 caret: glide to 1051,313 — early",
+      "t": 147815
+    },
+    {
+      "op": "read",
+      "name": "bursts.3 caret — late",
+      "t": 148267
+    },
+    {
+      "op": "reset",
+      "name": "bursts.4",
+      "t": 149768.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        358,
+        656
+      ],
+      "t": 149769.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        309,
+        618
+      ],
+      "t": 150628.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.4 arrow in the page body",
+      "t": 151496.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        81,
+        523
+      ],
+      "t": 151800.3
+    },
+    {
+      "op": "wait",
+      "t": 152167.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        84,
+        524
+      ],
+      "t": 152323.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.4 hand: 361 ms glide to 81,523, 154 ms pause, nudge 3,1 — early",
+      "t": 152324.7
+    },
+    {
+      "op": "read",
+      "name": "bursts.4 hand — late",
+      "t": 152777.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        1103,
+        425
+      ],
+      "t": 154280.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.4 caret: glide to 1103,425 — early",
+      "t": 154798.5
+    },
+    {
+      "op": "read",
+      "name": "bursts.4 caret — late",
+      "t": 155250.8
+    },
+    {
+      "op": "reset",
+      "name": "bursts.5",
+      "t": 156753.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        447,
+        683
+      ],
+      "t": 156754
+    },
+    {
+      "op": "glide",
+      "to": [
+        451,
+        646
+      ],
+      "t": 157652.5
+    },
+    {
+      "op": "read",
+      "name": "bursts.5 arrow in the page body",
+      "t": 158522
+    },
+    {
+      "op": "glide",
+      "to": [
+        93,
+        526
+      ],
+      "t": 158825.3
+    },
+    {
+      "op": "wait",
+      "t": 159442.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        93,
+        528
+      ],
+      "t": 159687.7
+    },
+    {
+      "op": "read",
+      "name": "bursts.5 hand: 614 ms glide to 93,526, 242 ms pause, nudge 0,2 — early",
+      "t": 159706.4
+    },
+    {
+      "op": "read",
+      "name": "bursts.5 hand — late",
+      "t": 160159.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        1077,
+        306
+      ],
+      "t": 161661.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.5 caret: glide to 1077,306 — early",
+      "t": 162344.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.5 caret — late",
+      "t": 162797.8
+    },
+    {
+      "op": "reset",
+      "name": "bursts.6",
+      "t": 164301.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        504,
+        704
+      ],
+      "t": 164302.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        539,
+        699
+      ],
+      "t": 164985.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.6 arrow in the page body",
+      "t": 165855.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        129,
+        519
+      ],
+      "t": 166157.9
+    },
+    {
+      "op": "wait",
+      "t": 166708.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.6 hand: 548 ms glide to 129,519, 353 ms pause — early",
+      "t": 167063.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.6 hand — late",
+      "t": 167516.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        944,
+        429
+      ],
+      "t": 169018.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.6 caret: glide to 944,429 — early",
+      "t": 169985.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.6 caret — late",
+      "t": 170439.5
+    },
+    {
+      "op": "reset",
+      "name": "bursts.7",
+      "t": 171943.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        361,
+        623
+      ],
+      "t": 171944
+    },
+    {
+      "op": "glide",
+      "to": [
+        365,
+        652
+      ],
+      "t": 172786.4
+    },
+    {
+      "op": "read",
+      "name": "bursts.7 arrow in the page body",
+      "t": 173643.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        133,
+        524
+      ],
+      "t": 173947.5
+    },
+    {
+      "op": "wait",
+      "t": 174331.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        132,
+        525
+      ],
+      "t": 174673.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.7 hand: 385 ms glide to 133,524, 339 ms pause, nudge -1,1 — early",
+      "t": 174674.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.7 hand — late",
+      "t": 175128.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        977,
+        390
+      ],
+      "t": 176632
+    },
+    {
+      "op": "read",
+      "name": "bursts.7 caret: glide to 977,390 — early",
+      "t": 177715.2
+    },
+    {
+      "op": "read",
+      "name": "bursts.7 caret — late",
+      "t": 178169.8
+    },
+    {
+      "op": "reset",
+      "name": "bursts.8",
+      "t": 179673.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        545,
+        716
+      ],
+      "t": 179674.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        497,
+        743
+      ],
+      "t": 180311.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.8 arrow in the page body",
+      "t": 181131.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        112,
+        511
+      ],
+      "t": 181435.3
+    },
+    {
+      "op": "wait",
+      "t": 182021.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.8 hand: 576 ms glide to 112,511, 400 ms pause — early",
+      "t": 182423.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.8 hand — late",
+      "t": 182877.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        1105,
+        356
+      ],
+      "t": 184379.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.8 caret: glide to 1105,356 — early",
+      "t": 185081.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.8 caret — late",
+      "t": 185535.7
+    },
+    {
+      "op": "reset",
+      "name": "bursts.9",
+      "t": 187039.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        484,
+        648
+      ],
+      "t": 187040.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        453,
+        622
+      ],
+      "t": 187844.5
+    },
+    {
+      "op": "read",
+      "name": "bursts.9 arrow in the page body",
+      "t": 188748.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        71,
+        526
+      ],
+      "t": 189052.4
+    },
+    {
+      "op": "wait",
+      "t": 189373.7
+    },
+    {
+      "op": "read",
+      "name": "bursts.9 hand: 313 ms glide to 71,526, 397 ms pause — early",
+      "t": 189771.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.9 hand — late",
+      "t": 190224.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        925,
+        351
+      ],
+      "t": 191727.1
+    },
+    {
+      "op": "read",
+      "name": "bursts.9 caret: glide to 925,351 — early",
+      "t": 192629
+    },
+    {
+      "op": "read",
+      "name": "bursts.9 caret — late",
+      "t": 193082.1
+    },
+    {
+      "op": "reset",
+      "name": "bursts.10",
+      "t": 194584.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        488,
+        617
+      ],
+      "t": 194585.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        508,
+        593
+      ],
+      "t": 195350.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.10 arrow in the page body",
+      "t": 196236.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        123,
+        527
+      ],
+      "t": 196539.4
+    },
+    {
+      "op": "wait",
+      "t": 196972.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        124,
+        528
+      ],
+      "t": 197138.7
+    },
+    {
+      "op": "read",
+      "name": "bursts.10 hand: 427 ms glide to 123,527, 163 ms pause, nudge 1,1 — early",
+      "t": 197139.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.10 hand — late",
+      "t": 197592.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        1114,
+        322
+      ],
+      "t": 199096.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.10 caret: glide to 1114,322 — early",
+      "t": 199914.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.10 caret — late",
+      "t": 200368.1
+    },
+    {
+      "op": "reset",
+      "name": "bursts.11",
+      "t": 201872.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        495,
+        709
+      ],
+      "t": 201873.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        468,
+        726
+      ],
+      "t": 202562.4
+    },
+    {
+      "op": "read",
+      "name": "bursts.11 arrow in the page body",
+      "t": 203382.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        89,
+        512
+      ],
+      "t": 203685.3
+    },
+    {
+      "op": "wait",
+      "t": 204189
+    },
+    {
+      "op": "jump",
+      "to": [
+        89,
+        514
+      ],
+      "t": 204479.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.11 hand: 506 ms glide to 89,512, 288 ms pause, nudge 0,2 — early",
+      "t": 204480.3
+    },
+    {
+      "op": "read",
+      "name": "bursts.11 hand — late",
+      "t": 204932.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        1113,
+        379
+      ],
+      "t": 206436.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.11 caret: glide to 1113,379 — early",
+      "t": 207337.9
+    },
+    {
+      "op": "read",
+      "name": "bursts.11 caret — late",
+      "t": 207789.5
+    },
+    {
+      "op": "reset",
+      "name": "bursts.12",
+      "t": 209293
+    },
+    {
+      "op": "jump",
+      "to": [
+        443,
+        659
+      ],
+      "t": 209293.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        453,
+        675
+      ],
+      "t": 210114.6
+    },
+    {
+      "op": "read",
+      "name": "bursts.12 arrow in the page body",
+      "t": 210951.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        82,
+        530
+      ],
+      "t": 211255.8
+    },
+    {
+      "op": "wait",
+      "t": 211607.4
+    },
+    {
+      "op": "jump",
+      "to": [
+        81,
+        532
+      ],
+      "t": 211992.1
+    },
+    {
+      "op": "read",
+      "name": "bursts.12 hand: 345 ms glide to 82,530, 382 ms pause, nudge -1,2 — early",
+      "t": 211993
+    },
+    {
+      "op": "read",
+      "name": "bursts.12 hand — late",
+      "t": 212446.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        973,
+        351
+      ],
+      "t": 213949.8
+    },
+    {
+      "op": "read",
+      "name": "bursts.12 caret: glide to 973,351 — early",
+      "t": 214602
+    },
+    {
+      "op": "read",
+      "name": "bursts.12 caret — late",
+      "t": 215054.5
+    },
+    {
+      "op": "stats",
+      "t": 216557.4
+    },
+    {
+      "op": "wait",
+      "t": 216558.8
+    },
+    {
+      "op": "stats",
+      "t": 219561.1
+    },
+    {
+      "op": "sh",
+      "t": 219565.3
+    },
+    {
+      "op": "sh",
+      "t": 220655.5
+    },
+    {
+      "op": "stats",
+      "t": 226602.1
+    },
+    {
+      "op": "wait",
+      "t": 226608
+    },
+    {
+      "op": "stats",
+      "t": 229608.4
+    },
+    {
+      "op": "reset",
+      "name": "flood.1",
+      "t": 229610.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        342,
+        598
+      ],
+      "t": 229610.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        294,
+        577
+      ],
+      "t": 230253.6
+    },
+    {
+      "op": "read",
+      "name": "flood.1 arrow in the page body",
+      "t": 231055.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        82,
+        523
+      ],
+      "t": 231359.5
+    },
+    {
+      "op": "wait",
+      "t": 231811.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        81,
+        520
+      ],
+      "t": 232068.5
+    },
+    {
+      "op": "read",
+      "name": "flood.1 hand: 452 ms glide to 82,523, 256 ms pause, nudge -1,-3 — early",
+      "t": 232069.5
+    },
+    {
+      "op": "read",
+      "name": "flood.1 hand — late",
+      "t": 232522.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        1094,
+        352
+      ],
+      "t": 234025.2
+    },
+    {
+      "op": "read",
+      "name": "flood.1 caret: glide to 1094,352 — early",
+      "t": 234925.6
+    },
+    {
+      "op": "read",
+      "name": "flood.1 caret — late",
+      "t": 235379.5
+    },
+    {
+      "op": "reset",
+      "name": "flood.2",
+      "t": 236883.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        436,
+        633
+      ],
+      "t": 236884.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        482,
+        636
+      ],
+      "t": 237753.4
+    },
+    {
+      "op": "read",
+      "name": "flood.2 arrow in the page body",
+      "t": 238622.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        112,
+        514
+      ],
+      "t": 238925.1
+    },
+    {
+      "op": "wait",
+      "t": 239576.9
+    },
+    {
+      "op": "read",
+      "name": "flood.2 hand: 643 ms glide to 112,514, 426 ms pause — early",
+      "t": 240004.6
+    },
+    {
+      "op": "read",
+      "name": "flood.2 hand — late",
+      "t": 240458
+    },
+    {
+      "op": "glide",
+      "to": [
+        957,
+        406
+      ],
+      "t": 241960.5
+    },
+    {
+      "op": "read",
+      "name": "flood.2 caret: glide to 957,406 — early",
+      "t": 242745.5
+    },
+    {
+      "op": "read",
+      "name": "flood.2 caret — late",
+      "t": 243199.4
+    },
+    {
+      "op": "reset",
+      "name": "flood.3",
+      "t": 244702.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        523,
+        619
+      ],
+      "t": 244702.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        558,
+        591
+      ],
+      "t": 245344.6
+    },
+    {
+      "op": "read",
+      "name": "flood.3 arrow in the page body",
+      "t": 246148.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        115,
+        506
+      ],
+      "t": 246452
+    },
+    {
+      "op": "wait",
+      "t": 246854.5
+    },
+    {
+      "op": "read",
+      "name": "flood.3 hand: 398 ms glide to 115,506, 479 ms pause — early",
+      "t": 247336
+    },
+    {
+      "op": "read",
+      "name": "flood.3 hand — late",
+      "t": 247788.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        1114,
+        410
+      ],
+      "t": 249291.3
+    },
+    {
+      "op": "read",
+      "name": "flood.3 caret: glide to 1114,410 — early",
+      "t": 249977.8
+    },
+    {
+      "op": "read",
+      "name": "flood.3 caret — late",
+      "t": 250431
+    },
+    {
+      "op": "reset",
+      "name": "flood.4",
+      "t": 251934.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        516,
+        624
+      ],
+      "t": 251935.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        563,
+        601
+      ],
+      "t": 252696.9
+    },
+    {
+      "op": "read",
+      "name": "flood.4 arrow in the page body",
+      "t": 253535
+    },
+    {
+      "op": "glide",
+      "to": [
+        132,
+        516
+      ],
+      "t": 253837.8
+    },
+    {
+      "op": "wait",
+      "t": 254206.6
+    },
+    {
+      "op": "read",
+      "name": "flood.4 hand: 366 ms glide to 132,516, 487 ms pause — early",
+      "t": 254696.1
+    },
+    {
+      "op": "read",
+      "name": "flood.4 hand — late",
+      "t": 255149.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        1064,
+        306
+      ],
+      "t": 256651.4
+    },
+    {
+      "op": "read",
+      "name": "flood.4 caret: glide to 1064,306 — early",
+      "t": 257337.5
+    },
+    {
+      "op": "read",
+      "name": "flood.4 caret — late",
+      "t": 257792
+    },
+    {
+      "op": "reset",
+      "name": "flood.5",
+      "t": 259293.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        514,
+        669
+      ],
+      "t": 259294.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        516,
+        654
+      ],
+      "t": 260169.4
+    },
+    {
+      "op": "read",
+      "name": "flood.5 arrow in the page body",
+      "t": 261041.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        97,
+        520
+      ],
+      "t": 261344.9
+    },
+    {
+      "op": "wait",
+      "t": 261680.6
+    },
+    {
+      "op": "read",
+      "name": "flood.5 hand: 340 ms glide to 97,520, 453 ms pause — early",
+      "t": 262134.9
+    },
+    {
+      "op": "read",
+      "name": "flood.5 hand — late",
+      "t": 262588.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        1013,
+        368
+      ],
+      "t": 264090.2
+    },
+    {
+      "op": "read",
+      "name": "flood.5 caret: glide to 1013,368 — early",
+      "t": 264908.9
+    },
+    {
+      "op": "read",
+      "name": "flood.5 caret — late",
+      "t": 265360.1
+    },
+    {
+      "op": "reset",
+      "name": "flood.6",
+      "t": 266864.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        541,
+        666
+      ],
+      "t": 266864.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        514,
+        694
+      ],
+      "t": 267603
+    },
+    {
+      "op": "read",
+      "name": "flood.6 arrow in the page body",
+      "t": 268488.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        104,
+        523
+      ],
+      "t": 268792.7
+    },
+    {
+      "op": "wait",
+      "t": 269359.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        106,
+        525
+      ],
+      "t": 269819.7
+    },
+    {
+      "op": "read",
+      "name": "flood.6 hand: 560 ms glide to 104,523, 457 ms pause, nudge 2,2 — early",
+      "t": 269820.8
+    },
+    {
+      "op": "read",
+      "name": "flood.6 hand — late",
+      "t": 270274.5
+    },
+    {
+      "op": "glide",
+      "to": [
+        935,
+        321
+      ],
+      "t": 271776.6
+    },
+    {
+      "op": "read",
+      "name": "flood.6 caret: glide to 935,321 — early",
+      "t": 272628.5
+    },
+    {
+      "op": "read",
+      "name": "flood.6 caret — late",
+      "t": 273082.1
+    },
+    {
+      "op": "sh",
+      "t": 274584.4
+    },
+    {
+      "op": "stats",
+      "t": 280382.1
+    },
+    {
+      "op": "wait",
+      "t": 280385.7
+    },
+    {
+      "op": "stats",
+      "t": 283388.3
+    },
+    {
+      "op": "reset",
+      "name": "flood+cpu2.1",
+      "t": 283392.9
+    },
+    {
+      "op": "jump",
+      "to": [
+        489,
+        620
+      ],
+      "t": 283393.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        543,
+        660
+      ],
+      "t": 284062.8
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.1 arrow in the page body",
+      "t": 284932.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        74,
+        507
+      ],
+      "t": 285236
+    },
+    {
+      "op": "wait",
+      "t": 285853.3
+    },
+    {
+      "op": "jump",
+      "to": [
+        73,
+        504
+      ],
+      "t": 286112.6
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.1 hand: 622 ms glide to 74,507, 256 ms pause, nudge -1,-3 — early",
+      "t": 286115.2
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.1 hand — late",
+      "t": 286569
+    },
+    {
+      "op": "glide",
+      "to": [
+        1122,
+        354
+      ],
+      "t": 288072
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.1 caret: glide to 1122,354 — early",
+      "t": 288972
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.1 caret — late",
+      "t": 289423.8
+    },
+    {
+      "op": "reset",
+      "name": "flood+cpu2.2",
+      "t": 290926.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        390,
+        640
+      ],
+      "t": 290927.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        421,
+        625
+      ],
+      "t": 291690.1
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.2 arrow in the page body",
+      "t": 292492.2
+    },
+    {
+      "op": "glide",
+      "to": [
+        137,
+        511
+      ],
+      "t": 292795
+    },
+    {
+      "op": "wait",
+      "t": 293328.6
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.2 hand: 539 ms glide to 137,511, 346 ms pause — early",
+      "t": 293676.5
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.2 hand — late",
+      "t": 294129
+    },
+    {
+      "op": "glide",
+      "to": [
+        1058,
+        389
+      ],
+      "t": 295630.8
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.2 caret: glide to 1058,389 — early",
+      "t": 296715.2
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.2 caret — late",
+      "t": 297168.8
+    },
+    {
+      "op": "reset",
+      "name": "flood+cpu2.3",
+      "t": 298672.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        479,
+        674
+      ],
+      "t": 298672.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        430,
+        639
+      ],
+      "t": 299297.1
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.3 arrow in the page body",
+      "t": 300099.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        129,
+        514
+      ],
+      "t": 300403.7
+    },
+    {
+      "op": "wait",
+      "t": 300788.6
+    },
+    {
+      "op": "jump",
+      "to": [
+        128,
+        512
+      ],
+      "t": 301137.5
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.3 hand: 378 ms glide to 129,514, 347 ms pause, nudge -1,-2 — early",
+      "t": 301138.4
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.3 hand — late",
+      "t": 301591.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        1128,
+        404
+      ],
+      "t": 303093.6
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.3 caret: glide to 1128,404 — early",
+      "t": 303978.9
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.3 caret — late",
+      "t": 304431.9
+    },
+    {
+      "op": "reset",
+      "name": "flood+cpu2.4",
+      "t": 305933.5
+    },
+    {
+      "op": "jump",
+      "to": [
+        341,
+        586
+      ],
+      "t": 305934
+    },
+    {
+      "op": "glide",
+      "to": [
+        389,
+        569
+      ],
+      "t": 306617.5
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.4 arrow in the page body",
+      "t": 307436.7
+    },
+    {
+      "op": "glide",
+      "to": [
+        84,
+        527
+      ],
+      "t": 307740.3
+    },
+    {
+      "op": "wait",
+      "t": 308275.7
+    },
+    {
+      "op": "jump",
+      "to": [
+        84,
+        526
+      ],
+      "t": 308617.4
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.4 hand: 536 ms glide to 84,527, 339 ms pause, nudge 0,-1 — early",
+      "t": 308618.4
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.4 hand — late",
+      "t": 309071.9
+    },
+    {
+      "op": "glide",
+      "to": [
+        963,
+        318
+      ],
+      "t": 310573.6
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.4 caret: glide to 963,318 — early",
+      "t": 311124.5
+    },
+    {
+      "op": "read",
+      "name": "flood+cpu2.4 caret — late",
+      "t": 311577.5
+    },
+    {
+      "op": "sh",
+      "t": 313081
+    },
+    {
+      "op": "reset",
+      "name": "recovering.1",
+      "t": 314549.8
+    },
+    {
+      "op": "jump",
+      "to": [
+        368,
+        695
+      ],
+      "t": 314550.6
+    },
+    {
+      "op": "glide",
+      "to": [
+        383,
+        689
+      ],
+      "t": 315311.1
+    },
+    {
+      "op": "read",
+      "name": "recovering.1 arrow in the page body",
+      "t": 316114.3
+    },
+    {
+      "op": "glide",
+      "to": [
+        117,
+        514
+      ],
+      "t": 316418.5
+    },
+    {
+      "op": "wait",
+      "t": 316787.8
+    },
+    {
+      "op": "read",
+      "name": "recovering.1 hand: 373 ms glide to 117,514, 352 ms pause — early",
+      "t": 317142.6
+    },
+    {
+      "op": "read",
+      "name": "recovering.1 hand — late",
+      "t": 317594.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        999,
+        408
+      ],
+      "t": 319098.2
+    },
+    {
+      "op": "read",
+      "name": "recovering.1 caret: glide to 999,408 — early",
+      "t": 320083.3
+    },
+    {
+      "op": "read",
+      "name": "recovering.1 caret — late",
+      "t": 320536.3
+    },
+    {
+      "op": "reset",
+      "name": "recovering.2",
+      "t": 322038.2
+    },
+    {
+      "op": "jump",
+      "to": [
+        390,
+        627
+      ],
+      "t": 322039.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        387,
+        598
+      ],
+      "t": 322761.4
+    },
+    {
+      "op": "read",
+      "name": "recovering.2 arrow in the page body",
+      "t": 323645.8
+    },
+    {
+      "op": "glide",
+      "to": [
+        94,
+        530
+      ],
+      "t": 323949.7
+    },
+    {
+      "op": "wait",
+      "t": 324434.5
+    },
+    {
+      "op": "read",
+      "name": "recovering.2 hand: 485 ms glide to 94,530, 447 ms pause — early",
+      "t": 324884.1
+    },
+    {
+      "op": "read",
+      "name": "recovering.2 hand — late",
+      "t": 325338.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        1039,
+        319
+      ],
+      "t": 326840.5
+    },
+    {
+      "op": "read",
+      "name": "recovering.2 caret: glide to 1039,319 — early",
+      "t": 327458.1
+    },
+    {
+      "op": "read",
+      "name": "recovering.2 caret — late",
+      "t": 327912.1
+    },
+    {
+      "op": "reset",
+      "name": "recovering.3",
+      "t": 329415.1
+    },
+    {
+      "op": "jump",
+      "to": [
+        368,
+        738
+      ],
+      "t": 329416.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        319,
+        755
+      ],
+      "t": 330210.2
+    },
+    {
+      "op": "read",
+      "name": "recovering.3 arrow in the page body",
+      "t": 331094.1
+    },
+    {
+      "op": "glide",
+      "to": [
+        123,
+        517
+      ],
+      "t": 331398.3
+    },
+    {
+      "op": "wait",
+      "t": 331883
+    },
+    {
+      "op": "jump",
+      "to": [
+        123,
+        517
+      ],
+      "t": 332379.3
+    },
+    {
+      "op": "read",
+      "name": "recovering.3 hand: 491 ms glide to 123,517, 493 ms pause, nudge 0,0 — early",
+      "t": 332380.4
+    },
+    {
+      "op": "read",
+      "name": "recovering.3 hand — late",
+      "t": 332832.4
+    },
+    {
+      "op": "glide",
+      "to": [
+        974,
+        371
+      ],
+      "t": 334335.8
+    },
+    {
+      "op": "read",
+      "name": "recovering.3 caret: glide to 974,371 — early",
+      "t": 334903.4
+    },
+    {
+      "op": "read",
+      "name": "recovering.3 caret — late",
+      "t": 335356.1
+    },
+    {
+      "op": "stats",
+      "t": 336858.3
+    },
+    {
+      "op": "wait",
+      "t": 336859.5
+    },
+    {
+      "op": "stats",
+      "t": 339861.2
+    }
+  ],
+  "stats": [
+    {
+      "label": "early (session just restarted, no idle wait) a",
+      "t": 27859.7,
+      "idleSleeps": 79,
+      "idleYield": true,
+      "idleWakes": 22,
+      "idleSleepMs": 2813.3955
+    },
+    {
+      "label": "early (session just restarted, no idle wait) b (3 s later)",
+      "t": 30867.2,
+      "idleSleeps": 114,
+      "idleYield": true,
+      "idleWakes": 28,
+      "idleSleepMs": 4114.9728
+    },
+    {
+      "label": "idle a",
+      "t": 88544.7,
+      "idleSleeps": 1187,
+      "idleYield": true,
+      "idleWakes": 297,
+      "idleSleepMs": 48867.34639999998
+    },
+    {
+      "label": "idle b (3 s later)",
+      "t": 91546.9,
+      "idleSleeps": 1248,
+      "idleYield": true,
+      "idleWakes": 308,
+      "idleSleepMs": 51576.93479999997
+    },
+    {
+      "label": "bursts a",
+      "t": 124913.4,
+      "idleSleeps": 1908,
+      "idleYield": true,
+      "idleWakes": 498,
+      "idleSleepMs": 76805.9796999999
+    },
+    {
+      "label": "bursts b (3 s later)",
+      "t": 127917.7,
+      "idleSleeps": 1945,
+      "idleYield": true,
+      "idleWakes": 502,
+      "idleSleepMs": 77980.0253999999
+    },
+    {
+      "label": "bursts end a",
+      "t": 216558.5,
+      "idleSleeps": 2831,
+      "idleYield": true,
+      "idleWakes": 703,
+      "idleSleepMs": 107047.7193999998
+    },
+    {
+      "label": "bursts end b (3 s later)",
+      "t": 219564.9,
+      "idleSleeps": 2867,
+      "idleYield": true,
+      "idleWakes": 708,
+      "idleSleepMs": 108260.04109999978
+    },
+    {
+      "label": "flood a",
+      "t": 226607.6,
+      "idleSleeps": 2891,
+      "idleYield": true,
+      "idleWakes": 713,
+      "idleSleepMs": 109190.63169999978
+    },
+    {
+      "label": "flood b (3 s later)",
+      "t": 229609.8,
+      "idleSleeps": 2891,
+      "idleYield": true,
+      "idleWakes": 713,
+      "idleSleepMs": 109190.63169999978
+    },
+    {
+      "label": "flood+cpu2 a",
+      "t": 280385.4,
+      "idleSleeps": 2891,
+      "idleYield": true,
+      "idleWakes": 713,
+      "idleSleepMs": 109190.63169999978
+    },
+    {
+      "label": "flood+cpu2 b (3 s later)",
+      "t": 283392.6,
+      "idleSleeps": 2891,
+      "idleYield": true,
+      "idleWakes": 713,
+      "idleSleepMs": 109190.63169999978
+    },
+    {
+      "label": "after a",
+      "t": 336859.3,
+      "idleSleeps": 3351,
+      "idleYield": true,
+      "idleWakes": 830,
+      "idleSleepMs": 127442.6018999998
+    },
+    {
+      "label": "after b (3 s later)",
+      "t": 339862.5,
+      "idleSleeps": 3414,
+      "idleYield": true,
+      "idleWakes": 843,
+      "idleSleepMs": 130144.4838999998
+    }
+  ],
+  "instrumentedBytes": 29783,
+  "sessionRestartSeconds": 16.248,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "movesSent": 2794,
+  "cursorDiagnostics": [],
+  "timeline": {
+    "rows": 230,
+    "unknownImages": [],
+    "answersShown": 106,
+    "answersForUnknownImages": 0,
+    "shownWrong": []
+  },
+  "events": 11539,
+  "errors": [],
+  "ran": true
+}

@@ -1,0 +1,10 @@
+log pace0-1: 1215 entries {"S":354,"U":381,"M":381,"Q":28,"N":28,"C":28,"H":15}
+conclusions "caught up": 0 (rest 0, restart 0); answered at rest right after: 0
+  of 0 with a known image and a sent position: plane stood for the last position sent in 0, BEHIND in 0
+  LATE MOVES after a conclusion (same image, nothing sent since the question): 0
+  image changed after a conclusion, then moved (limit 2): 0
+moves 381; re-reports of an unchanged plane position while a newer position had been sent and not acted on: 2
+by phase:
+  start        rest questions: 17; rest -> null: 17
+  pace0.settle restart questions: 1; restart -> null: 1
+  pace0        restart questions: 4; restart -> null: 4; rest questions: 6; rest -> null: 6; stale re-reports: 2

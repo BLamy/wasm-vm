@@ -1,0 +1,2428 @@
+{
+ "steps": [
+  {
+   "op": "idle",
+   "seconds": 20
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "stats",
+   "label": "bursts a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "bursts b (3 s later)"
+  },
+  {
+   "op": "jump",
+   "to": [
+    451,
+    611
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.1"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 38
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.1 arrow after 3 positions of 5,3 from 451,611 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.1 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.1 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    420,
+    634
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.2"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 52
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.2 arrow after 2 positions of 6,0 from 420,634 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.2 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.2 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    381,
+    612
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.3"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 78
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.3 arrow after 4 positions of 4,4 from 381,612 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.3 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.3 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    433,
+    669
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.4"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 138
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.4 arrow after 3 positions of 8,2 from 433,669 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.4 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.4 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    394,
+    623
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.5"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 83
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.5 arrow after 2 positions of 3,5 from 394,623 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.5 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.5 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    377,
+    592
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.6"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 56
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.6 arrow after 4 positions of 10,0 from 377,592 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.6 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.6 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    440,
+    685
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.7"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 53
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.7 arrow after 3 positions of 7,7 from 440,685 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.7 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.7 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    460,
+    672
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.8"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 32
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.8 arrow after 2 positions of 12,4 from 460,672 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.8 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.8 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    369,
+    661
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.9"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 27
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.9 arrow after 4 positions of 5,3 from 369,661 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.9 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.9 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    412,
+    669
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.10"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 32
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.10 arrow after 3 positions of 6,0 from 412,669 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.10 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.10 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    424,
+    639
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.11"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 41
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.11 arrow after 2 positions of 4,4 from 424,639 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.11 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.11 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    427,
+    676
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.12"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 127
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.12 arrow after 4 positions of 8,2 from 427,676 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.12 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.12 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    350,
+    677
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.13"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 141
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.13 arrow after 3 positions of 3,5 from 350,677 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.13 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.13 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    414,
+    633
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.14"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 85
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.14 arrow after 2 positions of 10,0 from 414,633 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.14 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.14 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    360,
+    599
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.15"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 100
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.15 arrow after 4 positions of 7,7 from 360,599 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.15 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.15 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    462,
+    663
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.16"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 120
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.16 arrow after 3 positions of 12,4 from 462,663 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.16 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.16 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    457,
+    638
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.17"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 103
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.17 arrow after 2 positions of 5,3 from 457,638 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.17 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.17 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    351,
+    600
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.18"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 102
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.18 arrow after 4 positions of 6,0 from 351,600 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.18 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.18 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    467,
+    594
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.19"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 90
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.19 arrow after 3 positions of 4,4 from 467,594 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.19 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.19 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    348,
+    625
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.20"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 65
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.20 arrow after 2 positions of 8,2 from 348,625 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.20 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.20 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    477,
+    671
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.21"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 105
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.21 arrow after 4 positions of 3,5 from 477,671 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.21 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.21 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    442,
+    613
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.22"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 123
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.22 arrow after 3 positions of 10,0 from 442,613 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.22 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.22 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    382,
+    678
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.23"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 88
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.23 arrow after 2 positions of 7,7 from 382,678 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.23 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.23 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    387,
+    644
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.24"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 93
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.24 arrow after 4 positions of 12,4 from 387,644 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.24 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.24 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    379,
+    670
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.25"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 19
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.25 arrow after 3 positions of 5,3 from 379,670 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.25 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.25 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    359,
+    657
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.26"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 16
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.26 arrow after 2 positions of 6,0 from 359,657 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.26 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.26 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    395,
+    624
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.27"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 79
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.27 arrow after 4 positions of 4,4 from 395,624 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.27 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.27 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    380,
+    650
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.28"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 137
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.28 arrow after 3 positions of 8,2 from 380,650 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.28 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.28 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    469,
+    663
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.29"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 74
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.29 arrow after 2 positions of 3,5 from 469,663 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.29 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.29 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    343,
+    647
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.30"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 141
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.30 arrow after 4 positions of 10,0 from 343,647 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.30 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.30 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    436,
+    667
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.31"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 4
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.31 arrow after 3 positions of 7,7 from 436,667 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.31 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.31 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    381,
+    678
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.32"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 77
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.32 arrow after 2 positions of 12,4 from 381,678 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.32 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.32 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    360,
+    678
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.33"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 21
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.33 arrow after 4 positions of 5,3 from 360,678 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.33 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.33 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    469,
+    638
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.34"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 95
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.34 arrow after 3 positions of 6,0 from 469,638 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.34 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.34 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    365,
+    671
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.35"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 114
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.35 arrow after 2 positions of 4,4 from 365,671 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.35 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.35 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    386,
+    667
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.36"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 122
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.36 arrow after 4 positions of 8,2 from 386,667 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.36 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.36 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    347,
+    670
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.37"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 46
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.37 arrow after 3 positions of 3,5 from 347,670 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.37 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.37 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    429,
+    652
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.38"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 72
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.38 arrow after 2 positions of 10,0 from 429,652 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.38 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.38 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    461,
+    603
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.39"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 11
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.39 arrow after 4 positions of 7,7 from 461,603 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.39 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.39 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    441,
+    632
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.40"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 61
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.40 arrow after 3 positions of 12,4 from 441,632 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.40 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.40 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    475,
+    666
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.41"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 5
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    5,
+    3
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.41 arrow after 2 positions of 5,3 from 475,666 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.41 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.41 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    407,
+    623
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.42"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 78
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    6,
+    0
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.42 arrow after 4 positions of 6,0 from 407,623 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.42 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.42 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    364,
+    631
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.43"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 92
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    4,
+    4
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.43 arrow after 3 positions of 4,4 from 364,631 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.43 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.43 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    468,
+    625
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.44"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 45
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    8,
+    2
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.44 arrow after 2 positions of 8,2 from 468,625 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.44 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.44 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    341,
+    610
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.45"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 3
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    3,
+    5
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.45 arrow after 4 positions of 3,5 from 341,610 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.45 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.45 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    390,
+    647
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.46"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 34
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    10,
+    0
+   ],
+   "n": 3,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.46 arrow after 3 positions of 10,0 from 390,647 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.46 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.46 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    431,
+    639
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.47"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 103
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    7,
+    7
+   ],
+   "n": 2,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.47 arrow after 2 positions of 7,7 from 431,639 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.47 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.47 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "jump",
+   "to": [
+    447,
+    682
+   ],
+   "restMs": 1000
+  },
+  {
+   "op": "reset",
+   "note": "short-bursts.48"
+  },
+  {
+   "op": "settle",
+   "ms": 8000
+  },
+  {
+   "op": "wait",
+   "ms": 22
+  },
+  {
+   "op": "evenrun",
+   "step": [
+    12,
+    4
+   ],
+   "n": 4,
+   "everyMs": 16
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.48 arrow after 4 positions of 12,4 from 447,682 — early",
+   "settleMs": 400,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.48 arrow — late (1.5 s more)",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "short-bursts",
+   "name": "short-bursts.48 arrow — 4 s",
+   "settleMs": 2100,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg"
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+== head
+e902fffb94c93096675d343c0a25738f5e860d6d
+ M web/tasks.json
+== gates.log first lines
+head 09e327eeb0fd8e92cc9b8cebc05d0b6a0bbcfe24; web changes outside the commit: 0
+$ cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs
+✔ 64x64 BGRA checkerboard round-trips every RGBA byte, including alpha (5.107125ms)
+9fc64fd2c6ed805361d2210e641238c08e49df51b07828e185d35adfff0c5812  evidence/e5-t36a/gates.log
+56c61729e493c2a65ce47c572abf9a17c3944c05b5248fe7455b07f4bec0c13f  evidence/e5-t36a/browser/result.json
+== 09e327eeb..HEAD files
+ evidence/e5-t36a/gates.log                         |   55 +
+ evidence/e5-t36a/mutants.log                       |   62 +
+ tasks/QUEUE.md                                     |    2 +-
+ .../E5-T36a-cursor-hotspot-inference.md            |  111 +-
+ 12 files changed, 1971 insertions(+), 2 deletions(-)
+tasks/QUEUE.md
+tasks/epic-5-the-window/E5-T36a-cursor-hotspot-inference.md
+== 9861abce7..09e327eeb files
+tools/verify/e5-t36-hardware-cursor-browser.mjs
+== dist vs src (sink)
+cursor-controller.js identical
+cursor-controller.ts identical
+cursor-hotspot.js identical
+cursor-hotspot.ts identical
+== dist vs src main.js/loader.js
+--loader
+== result.json mtime
+Nov 26 07:31:25 2026 evidence/e5-t36a/browser/result.json
+Nov 26 07:32:59 2026 evidence/e5-t36a/gates.log
+Nov 26 07:34:03 2026 evidence/e5-t36a/browser-unchanged.json
+Nov 26 07:32:44 2026 evidence/e5-t36a/mutants.log
+== server 8125
+main.js served=60df7b9a8984e574 dist=60df7b9a8984e574
+loader.js served=4cb3330a92db2d42 dist=4cb3330a92db2d42
+src/sink/cursor-controller.js served=485e5e179b6e1cff dist=485e5e179b6e1cff
+src/sink/cursor-hotspot.js served=89106e4512ad16fa dist=89106e4512ad16fa
+idle-sleep.js served=b6757ae16a489e32 dist=b6757ae16a489e32

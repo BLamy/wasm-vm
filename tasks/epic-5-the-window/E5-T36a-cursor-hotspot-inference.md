@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: implemented
+status: in-progress
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -707,3 +707,219 @@ median 44 ms (n = 8 each). Demo page: 127 passed,
   or at rest.
 - Without the paced clock (`?pace=0`): no rest rule, and a restart trusts moves after one
   second.
+
+### 2026-11-26 — verifier (round 3) — VERDICT: refuted
+
+Fresh session; I implemented nothing here and was not round 1's or round 2's verifier. Head
+`e902fffb9` (the claim's `09e327eeb` plus one commit of claim and evidence only). My predictions
+were written before I ran anything or opened round 3's evidence
+(`evidence/e5-t36a/verifier-r3/predictions.txt`; one addendum, timed in the file, written before
+the run it predicts); every file named below is in that directory unless its path says otherwise.
+Browser runs: the committed bundle from `tools/serve-dist.sh` on 8125 (the served `main.js`,
+`loader.js`, `idle-sleep.js` and both sink files hash as `web/dist` at this head, which equals the
+sources: `orient.log`), Chrome 158.0.8127.88 headless, the session restarted on legacy KMS as the
+worker's script does it. Instrumented runs change the sink file in memory only (`page.route`).
+
+Round 2's two refuting sequences are fixed, both acceptance commands pass for me, and the premise
+the rework rests on held in every browser run: in 252 conclusions "the guest has caught up" (idle,
+terminal output in bursts, a terminal flood, flood plus CPU loops, a slowed host) the plane stood
+for the last position sent every time it could be checked, and no move for an earlier position
+arrived after one. What does not hold is the restart rule. Starting inference over forgets every
+position sent, including the one the plane is standing for; the device re-reports the plane's
+place on every commit; after the restart that re-report is taken as a fresh move, against
+positions sent later. The page then shows truth plus one pointer step. I predicted it, produced it
+at unit level, and produced it in a browser on the committed bundle through the proof script's
+own hook: the arrow drawn with (9,3), (5,5) and (9,3) for its (1,1), for as long as the pointer
+rested. Status `in-progress`; nothing promoted.
+
+**Refuted**
+
+- P3, inference started over with the guest NOT behind — FAILED.
+  - Predicted before any run (64x64, hand (9,4); `resetHotspotInference()` with the pointer at
+    rest and the guest idle; then an even run of 6 px steps from the rest position, the guest one
+    position behind, and one commit that leaves the plane where it is after the first new
+    position): hand (15,4) from the second move, through the run and at rest.
+  - Observed, unit, the real `CursorController`, device order, an idle counter that moves only
+    with nothing outstanding (`p3-stale-rereport.log`, case A): exactly that — hand (15,4), arrow
+    (6,4) for steps of (5,3), caret (0,6) for (-4,-2); still shown after 5 s at rest with no wait
+    armed, through the next jump, dropped on the one after (the third move it cannot explain).
+    Case B (no even run: the image flips to the arrow and back where the plane stands): (15,4),
+    kept. Case M (no hook: relative mode and back at rest on an image a busy guest never let
+    settle, then the run): (15,4), kept. Controls: the same run after a restart by output size is
+    right (C: that restart happens on the first sent position, so the guest is asked after it);
+    the same re-report with the history intact is right (D). Three rows of A failed MY
+    prediction: a mode change on a settled image is right — my script had settled the image
+    first, and settled hotspots are kept.
+  - Why: `web/src/sink/cursor-hotspot.js:218-225` and `:228-231` forget `_sent` and delete every
+    unsettled image with its `last`, so `:145` (a second report from the same place is nothing
+    new) no longer knows the plane's place; `cursor-controller.js:408-411` gives every move to the
+    estimator once settling is over, and settling (`:469-483`) ends when the guest has acted on
+    what was sent BEFORE the restart — the plane then still stands for the last of those.
+    Round 2 demanded that "a move is evidence only once it can stand for a position sent after"
+    the restart.
+  - The device: 767 of 2847 moves in `premise-1/events.json` re-report the plane where it
+    already was (sway commits for other reasons; update and move both, as round 1 recorded), 61
+    of them after a newer position had been sent.
+  - Browser, the committed bundle, arrow, true (1,1). Each trial: rest in the page body, the
+    hook, wait for `hotspotSettling === false`, then even steps at 60 Hz from the rest position.
+    - 10 steps (`plan-r3-stale.json`, `stale-1/result.json` sha256 `0c06323bc740…`): idle guest 0
+      of 6; under terminal output 4 of 32: the page showed (13,5), (6,4), (9,3), (13,5) — truth
+      plus the step each time — for 40-48 ms, then took it back (the guest kept up for the rest
+      of the run: three moves it could not explain). `stale-1/events.json` #4207-#4234: hook at
+      t=174891.7, caught up at 174940.9; S(451,666) at 175053.8; U/M (445,662), the old place,
+      at 175069.3; S(456,669), S(461,672); M(450,665) at 175100.1 and (6,4) is shown; none at
+      175144.9; (1,1) at 175161.9.
+    - 2-4 steps (`plan-r3-stale-short.json`, `stale-short-1/result.json` sha256
+      `d14a3bcfcc67…`; predicted in the addendum): 3 of 48 trials end WRONG and stay so at the
+      reads 0.4 s, 1.9 s and 4 s after the stop: (9,3), (5,5), (9,3), each shown for 5.0 s — until
+      the next trial's hook. `stale-short-1/events.json` #1135-#1180: hook at t=80894, caught up
+      at 80990.5; S(441,671) at 81137.6; M(432,668), the old place, at 81146.6; S(449,673),
+      S(457,675); M(440,670) at 81178.7 and (9,3) is shown; M(448,672) (explained by the position
+      sent after it), M(456,674) (one miss); the plane then rests at (456,674) with (9,3): the
+      drawn tip is 8 px right of and 2 px below the pixel the page sent. Guest load: `seq 1 30;
+      sleep 0.15` in a loop on the terminal, load average 0.24; no console errors, no cursor
+      diagnostics.
+  - By model, given the one re-report (`attacks-r3.log` §i, 200 seeds a row, runs of 2-10
+    positions): guest one or two positions behind, wrong after 3 s of rest in 86-94 %; guest
+    keeping up, 0.
+  - Reach: nothing in the page calls `resetHotspotInference()`; the proof scripts do, and then
+    jump far away, which is why the proof cannot see this. A pointer-mode change reaches it only
+    for an image not yet settled and with the first absolute position a step from where the
+    guest's pointer was left (M); a restart by output size does not reach it (C). I produced it
+    in a browser through the hook only.
+  Demand: after inference starts over, a move that leaves the plane where it stood is not
+  evidence against positions sent afterwards (or what the plane stands for is not forgotten) — or
+  state the limit as it is and say why it is acceptable; either way a controller test in the
+  device's order that starts a run from the rest position after each kind of restart.
+
+**Insufficient**
+
+- The test guest is still not the device in one respect. `LegacyKmsGuest.show` reports a MOVE
+  only when the plane moves (`web/tests/e5-t36-cursor-hotspot.test.mjs:368`); the device reports
+  one on every commit (the file's own fixture has such a pair at `:463`). With that condition
+  removed in a scratch copy 25 of 26 tests still pass (the one that fails, `:663-674`, pins "an
+  update, no move", an order the device does not produce): the code is right about re-reports
+  while the history is intact, and no test starts a run where the pointer rests after a restart.
+  Demand: the guest model reports a move on every commit.
+- Mutants of the asynchronous code, scratch copies only (`mutants-r3.py`, `mutants-r3.log`):
+  11 of my 17 survive the worker's tests. One is behaviour: V1, a rest answer given to whatever
+  image is shown when the guest answers (no `key !== this._imageKey` at
+  `cursor-controller.js:606`) — with it the hand is drawn with the caret's (4,8) and keeps it
+  when the client changes the cursor while the guest is being asked
+  (`mutants-r3-vs-my-attacks.log`); that is the ordinary order on a button (Chrome changes the
+  cursor 55-240 ms after the pointer arrives). The code as written is right there
+  (`attacks-r3.log` §c). V5, V6 and V10 (epoch checks of a restart's question, the epoch bump)
+  I could not turn into a wrong answer — the guards back each other up; V2, V3, V4, V7, V8, V16,
+  V20 change nothing observable (V20: `cursor-hotspot.js:222` is never read). The worker's 61
+  reproduce, 60 noticed (`mutants-worker-rerun.log`). Demand: a test in which the image changes
+  while the guest is being asked.
+
+**Held** (carry forward while the code and evidence they rest on are unchanged)
+
+- P0: `gates.log` names `09e327eeb` (sha256 `9fc64fd2c6ed…`); `09e327eeb..e902fffb9` touches no
+  source; `web/dist` sink files, `main.js` and `loader.js` are byte-identical to their sources;
+  the server on 8125 serves them (`orient.log`). The worker's `browser/result.json` (sha256
+  `56c61729e493…`) was written at 07:31:25, after `9861abce7` (07:25:51) and 11 s before the
+  proof script's change was committed (`09e327eeb`, 07:31:36); my own run of the committed
+  script stands in for it.
+- P1: the four cursor test files, 39 of 39 (`unit-acceptance.log`).
+- P2: round 2's sequences through the new controller with an honest idle counter
+  (`p2-handworked-r3.log`). Its E2: no answer at t=381 (round 2 observed (0,4)) nor when the
+  guest catches up at 516; (9,4) at t=790; (9,4) after 9 s, after 20 more positions with the
+  guest one behind, after the jumps; never anything but none or (9,4). (I predicted 640-710: my
+  arithmetic, the commit at t=600 re-arms the wait.) MAIN (9,4) at t=286, E1 at t=510, both as
+  predicted. Its §4, three ways: no answer during the run nor in 3 s of the guest staying
+  behind, none at rest after it caught up, (9,4) after one more position.
+- P4, the premise, in the real system. Read: pointer events and the stats call share one FIFO
+  (`web/linux-worker-protocol.js` `chain`), cursor frames and RPC results share the worker's
+  endpoint in the order produced, every run entry forces a full device sync
+  (`crates/core/src/lib.rs:7484`), the input device drops its OLDEST frames on overflow.
+  Measured (`analyze-premise.mjs` over the instrumented logs of `premise-1`, `premise-slow-host`,
+  `stale-1`, `stale-short-1`): 252 conclusions "caught up" (126 after a rest, 126 after a
+  restart). In the 195 with a known image and a sent position the last cursor move plus the true
+  hotspot was within a pixel of the last position sent before the question (or of one sent
+  during it): 195 of 195. Moves that took the plane elsewhere after a conclusion with nothing
+  sent since the question: 0. Six times the client changed the image after a conclusion (the
+  claim's limit 2), each handled. Question to conclusion: median 50 ms; on the slowed host 531 ms
+  (max 7.2 s). Under the flood no question was answered (26 of 26 restart questions timed out;
+  with two CPU loops 14 of 15; slowed host 15 of 16) and no rest question was ever asked.
+- P5a: the worker's browser command passes for me with the claim's 18 rows exactly; timeline 44
+  changes, 31 answers, none wrong (`browser/result.json`, sha256 `4422291a2b53…`).
+- P5b, what the proof's 20 idle seconds hide: the claim's limit 1 and nothing else. Without the
+  wait, right after the session is up (`premise-1`, phase `early`): 15 reads, 10 right, 5 none,
+  0 wrong.
+- P5c, continuous approaches of my own, each starting inference over, every answer the page
+  showed recorded (8 ms recorder). `premise-1` (sha256 `8e2dfae834ad…`), 32 approaches, 160
+  reads: idle 20 of 20 right (the kernel's plane + hotspot on the sent pixel in all 20), bursts
+  60 of 60, flood 0 of 30 answered, flood + CPU loops 0 of 20, after the load 15 of 15; 106
+  answers in the timeline, none wrong. `premise-slow-host` (Chrome under `taskpolicy -b`,
+  session restart 56 s; sha256 `ef2a6e74abc5…`), 20 approaches, 100 reads: 79 right, 21 none
+  (20 of them under the flood), 0 wrong; 89 answers, none wrong.
+- P6, unit, real controller (`attacks-r3.log`, 22 checks): a restart while a rest question is
+  in flight answers nothing (three ways; the control without the restart is answered); 300
+  approaches then 1-6 flips hand/caret at rest, 0 wrong; settled hotspots are right at once
+  after a mode or size change; a guest 600-900 positions behind in a 40x30 px area drops the
+  right answer in 7 of 40 runs, shows a wrong one in 0, is right at rest in 40 of 40 (limit 3
+  as stated); a count that goes down, is NaN, Infinity, a string, rejects, hangs or alternates
+  with null gives no answer and no throw; three restarts back to back with answers in flight.
+- No counter in the real page (`pace0-1`, `&pace=0`, sha256 `ede417b7ca71…`): `idleYield`
+  false, `idleSleeps` 0; five restarts end after 1032-1036 ms; 22 reads, 18 right, 4 none (first
+  straight approaches), 0 wrong; 26 answers, none wrong.
+- Regression, judged on the worker's files: click 265.2 ms and key echo 44 ms against
+  E5-T37b's 267.7 / 270.6 / 267.9 and 45.4 / 48.8 / 44.2; demo page 127 of 127. With the image as
+  published no rest wait is armed (no image to infer for), so the page asks the guest nothing.
+  `web/tests/e5-t37b-*.test.mjs`: 22 of 22 with the extra stats field.
+
+**The claim's limits**
+
+- Limit 1 is true and is what the flood phases show, with two corrections. It takes ONE idle
+  wait within 2 s of the question, not 2 s of idleness. And "hotspots are then settled by moves
+  alone" holds only without a restart: while a restart has not ended, moves are not evidence
+  either, so after `resetHotspotInference()` or a mode or size change under continuous load
+  nothing is inferred at all (0 of 70 reads under the flood here; round 2 had 339 of 342 by
+  moves). Settled hotspots are kept across mode and size changes, so a user loses only shapes
+  not yet met.
+- Limit 2 true (seen six times, handled; unit §c). Limit 3 true as far as I tried (§e).
+- Limit 4 true; what "trusts moves" means: a guest one position behind and silent for 1.2 s
+  across a restart leaves the hand at (0,4) at rest (`attacks-r3.log` §f). Also, in the page
+  the rest wait IS armed without the count (`web/main.js:864` always passes a function): 23
+  questions, each answered "no counter" at its first reading; no effect on what is shown.
+- Missing: P3. And, a delay only: after a restart at rest nothing is known about the image
+  shown until its plane moves again (`cursor-controller.js:480`).
+
+**Coverage of the diff** (`coverage-unit-tests.txt`; the browser runs above)
+
+- `cursor-hotspot.js`: every block executed by the tests.
+- `cursor-controller.js`, by no test: `:476` (a restart during the one-second fallback) and
+  `:506` (the count disappearing during a question; my §g "alternates" runs it, right) — needs
+  evidence, one assertion each; `:479` — unreachable as far as I can see (after `:472` nothing
+  awaits, and a fallback wait that elapsed was not ended), delete or waive as a guard; `:517`
+  and `:602` waived (a timer firing after its wait ended; a diagnostic); `:114` the default
+  timer, executed in every browser run.
+- `web/main.js:864-867` and `web/loader.js:1843`: both arms executed in a browser (paced: 5929
+  readings in the four instrumented runs; `&pace=0`: null, `idleYield` false).
+
+SUITE: n/a until the refutation clears.
+
+Commands (repo root):
+`cd web && node --test tests/e5-t36-cursor-hotspot.test.mjs tests/e5-t15b-cursor-sink.test.mjs tests/e5-t15c-cursor-mode.test.mjs tests/e5-t15d-cursor-integration.test.mjs`;
+`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/verifier-r3/browser`;
+in `evidence/e5-t36a/verifier-r3/`: `node p2-handworked-r3.mjs`; `node p3-stale-rereport.mjs`;
+`node attacks-r3.mjs`; `node make-plans-r3.mjs`;
+`node premise-browser-r3.mjs --plan plan-r3-premise.json --out premise-1 --instrument` (likewise
+`plan-r3-stale.json` into `stale-1`, `plan-r3-stale-short.json` into `stale-short-1`,
+`plan-r3-slow-host.json` into `premise-slow-host` with
+`--chrome ../verifier-r2/chrome-background-qos.sh`, `plan-r3-pace0.json` into `pace0-1` with
+`--query '&pace=0'`); `node analyze-premise.mjs DIR --phases`; `node analyze-stale.mjs DIR`;
+`python3 evidence/e5-t36a/mutants.py SCRATCH`; `python3 mutants-r3.py SCRATCH`; the four test
+files with `NODE_V8_COVERAGE` and round 1's `coverage-uncovered.mjs`;
+`cd web && node --test tests/e5-t37b-paced-idle.test.mjs tests/e5-t37b-run-loop.test.mjs`.
+
+Not checked: a pristine clone (medium risk); the whole web unit suite, the demo page and the
+latency run (taken from `gates.log`, `demo-suite.json`, `browser-unchanged.json`); P3 through a
+pointer-mode change in a browser (unit only, case M), and a mode or size change in a browser at
+all; E5-T37a's "a reported wait is always true" (leaned on as told; my check of the premise is
+end to end and would see a false wait only as a conclusion with the plane behind); a guest with
+more than one hart; a real mouse; how often a guest commits a frame between a position and its
+move on other people's machines (9 of 48 and 4 of 32 trials here, under light terminal output);
+Firefox and Safari; cursors above the CSS limit; E5-T36b's image.

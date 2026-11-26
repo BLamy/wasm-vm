@@ -1,0 +1,21 @@
+log premise-1: 11539 entries {"S":2794,"U":2849,"M":2847,"Q":119,"N":2728,"C":119,"H":83}
+conclusions "caught up": 68 (rest 45, restart 23); answered at rest right after: 24
+  of 59 with a known image and a sent position: plane stood for the last position sent in 59, BEHIND in 0
+  LATE MOVES after a conclusion (same image, nothing sent since the question): 0
+  image changed after a conclusion, then moved (limit 2): 6
+  question -> conclusion: median 50 ms, p90 809 ms, max 2167 ms
+moves 2847; re-reports of an unchanged plane position while a newer position had been sent and not acted on: 44
+  image-change {"q":34,"why":"restart","phase":"bursts","afterMs":23,"img":"caret","toImg":"arrow","plane":[513,637],"to":[516,644]}
+  image-change {"q":45,"why":"restart","phase":"bursts","afterMs":2,"img":"caret","toImg":"arrow","plane":[354,648],"to":[357,655]}
+  image-change {"q":55,"why":"restart","phase":"bursts","afterMs":5,"img":"caret","toImg":"arrow","plane":[357,615],"to":[360,622]}
+  image-change {"q":60,"why":"restart","phase":"bursts","afterMs":9,"img":"caret","toImg":"arrow","plane":[480,640],"to":[483,647]}
+  image-change {"q":67,"why":"restart","phase":"bursts","afterMs":3,"img":"caret","toImg":"arrow","plane":[491,701],"to":[494,708]}
+  image-change {"q":115,"why":"restart","phase":"recovering","afterMs":18,"img":"caret","toImg":"arrow","plane":[364,687],"to":[367,694]}
+by phase:
+  start        rest questions: 18; rest -> false: 9; rest -> true: 9; conclusions unverifiable (unknown image / nothing sent): 9
+  early        restart questions: 5; restart -> false: 2; stale re-reports: 2; restart -> true: 3; conclusions: plane stood for the last position: 5; rest questions: 2; rest -> true: 2
+  idle         restart questions: 4; restart -> true: 4; conclusions: plane stood for the last position: 8; rest questions: 4; rest -> true: 4; stale re-reports: 3
+  bursts       restart questions: 12; restart -> true: 12; conclusions: plane stood for the last position: 40; image changed after a conclusion (limit 2): 5; rest questions: 28; rest -> true: 28; stale re-reports: 25
+  flood        restart questions: 26; restart -> false: 26; stale re-reports: 5
+  flood+cpu2   stale re-reports: 5; restart questions: 15; restart -> false: 14; restart -> true: 1; conclusions: plane stood for the last position: 1
+  recovering   restart questions: 3; restart -> true: 3; conclusions: plane stood for the last position: 5; image changed after a conclusion (limit 2): 1; rest questions: 2; rest -> true: 2; stale re-reports: 4

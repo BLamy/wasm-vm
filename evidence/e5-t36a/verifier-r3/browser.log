@@ -1,0 +1,54 @@
+{
+  "pass": true,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "plans": [
+    {
+      "plan": "approach C: from just right of the button, one 0.33 s glide onto it",
+      "reads": [
+        "arrow over the page body: sent 380,640 hotspot 1,1 plane 379,639 tip error 0,0",
+        "hand, first time: one straight glide onto the button, at rest: sent 146,501 hotspot 9,4 plane 137,497 tip error 0,0",
+        "hand, after four scattered points inside the button: sent 93,516 hotspot 9,4 plane 84,512 tip error 0,0",
+        "text caret over the terminal, after two glides: sent 1100,340 hotspot 4,8 plane 1096,332 tip error 0,0",
+        "hand again, later in the plan: sent 100,520 hotspot 9,4 plane 91,516 tip error 0,0"
+      ]
+    },
+    {
+      "plan": "approach A: from the page body, one 0.46 s glide onto the button",
+      "reads": [
+        "arrow over the page body: sent 380,640 hotspot 1,1 plane 379,639 tip error 0,0",
+        "hand, first time: one straight glide onto the button, at rest: sent 142,515 hotspot 9,4 plane 133,511 tip error 0,0",
+        "hand, after four scattered points inside the button: sent 93,516 hotspot 9,4 plane 84,512 tip error 0,0",
+        "text caret over the terminal, after two glides: sent 1100,340 hotspot 4,8 plane 1096,332 tip error 0,0",
+        "hand again, later in the plan: sent 100,520 hotspot 9,4 plane 91,516 tip error 0,0"
+      ]
+    },
+    {
+      "plan": "approach from the right, across the button's edge at a slant",
+      "reads": [
+        "arrow over the page body: sent 380,640 hotspot 1,1 plane 379,639 tip error 0,0",
+        "hand, first time: one straight glide onto the button, at rest: sent 72,532 hotspot 9,4 plane 63,528 tip error 0,0",
+        "hand, after four scattered points inside the button: sent 93,516 hotspot 9,4 plane 84,512 tip error 0,0",
+        "text caret over the terminal, after two glides: sent 1100,340 hotspot 4,8 plane 1096,332 tip error 0,0",
+        "hand again, later in the plan: sent 100,520 hotspot 9,4 plane 91,516 tip error 0,0"
+      ]
+    },
+    {
+      "plan": "jumps with rests: each shape from scattered points",
+      "reads": [
+        "arrow over the page body: sent 450,730 hotspot 1,1 plane 449,729 tip error 0,0",
+        "hand over the button: sent 93,516 hotspot 9,4 plane 84,512 tip error 0,0",
+        "text caret over the terminal: sent 1000,420 hotspot 4,8 plane 996,412 tip error 0,0"
+      ]
+    }
+  ],
+  "timeline": "44 changes, 31 answers shown, none wrong",
+  "paintedPointer": {
+    "spot": [
+      1150,
+      650
+    ],
+    "hashUnderPointer": 3836707013,
+    "hashAfterMovingAway": 3836707013
+  }
+}
+exit 0

@@ -1,0 +1,1677 @@
+{
+ "steps": [
+  {
+   "op": "idle",
+   "seconds": 10,
+   "maxMs": 180000
+  },
+  {
+   "op": "stats",
+   "label": "idle a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "idle b (3 s later)"
+  },
+  {
+   "op": "reset",
+   "note": "idle.1"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    400,
+    736
+   ],
+   "restMs": 708
+  },
+  {
+   "op": "glide",
+   "to": [
+    355,
+    748
+   ],
+   "ms": 396,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.1 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    129,
+    528
+   ],
+   "ms": 566,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 335
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.1 hand: 566 ms glide to 129,528, 335 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.1 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1001,
+    311
+   ],
+   "ms": 592,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.1 caret: glide to 1001,311 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.1 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "idle.2"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    417,
+    626
+   ],
+   "restMs": 608
+  },
+  {
+   "op": "glide",
+   "to": [
+    364,
+    647
+   ],
+   "ms": 395,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.2 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    517
+   ],
+   "ms": 644,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 442
+  },
+  {
+   "op": "jump",
+   "to": [
+    98,
+    515
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.2 hand: 644 ms glide to 100,517, 442 ms pause, nudge -2,-2 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.2 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    955,
+    392
+   ],
+   "ms": 735,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.2 caret: glide to 955,392 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.2 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "idle.3"
+  },
+  {
+   "op": "settle",
+   "ms": 5000
+  },
+  {
+   "op": "jump",
+   "to": [
+    391,
+    690
+   ],
+   "restMs": 778
+  },
+  {
+   "op": "glide",
+   "to": [
+    434,
+    659
+   ],
+   "ms": 380,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.3 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    104,
+    527
+   ],
+   "ms": 550,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 403
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.3 hand: 550 ms glide to 104,527, 403 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.3 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1072,
+    384
+   ],
+   "ms": 608,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.3 caret: glide to 1072,384 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "idle",
+   "name": "idle.3 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 30; sleep 0.15; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "stats",
+   "label": "bursts a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "bursts b (3 s later)"
+  },
+  {
+   "op": "reset",
+   "note": "bursts.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    393,
+    726
+   ],
+   "restMs": 814
+  },
+  {
+   "op": "glide",
+   "to": [
+    349,
+    765
+   ],
+   "ms": 358,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.1 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    88,
+    524
+   ],
+   "ms": 637,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 204
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.1 hand: 637 ms glide to 88,524, 204 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.1 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1012,
+    416
+   ],
+   "ms": 575,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.1 caret: glide to 1012,416 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.1 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    337,
+    717
+   ],
+   "restMs": 637
+  },
+  {
+   "op": "glide",
+   "to": [
+    397,
+    695
+   ],
+   "ms": 325,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.2 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    98,
+    523
+   ],
+   "ms": 558,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 377
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.2 hand: 558 ms glide to 98,523, 377 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.2 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1115,
+    303
+   ],
+   "ms": 522,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.2 caret: glide to 1115,303 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.2 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    396,
+    624
+   ],
+   "restMs": 683
+  },
+  {
+   "op": "glide",
+   "to": [
+    361,
+    637
+   ],
+   "ms": 394,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.3 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    134,
+    508
+   ],
+   "ms": 499,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 437
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.3 hand: 499 ms glide to 134,508, 437 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.3 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1099,
+    335
+   ],
+   "ms": 885,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.3 caret: glide to 1099,335 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.3 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    522,
+    591
+   ],
+   "restMs": 687
+  },
+  {
+   "op": "glide",
+   "to": [
+    572,
+    622
+   ],
+   "ms": 347,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.4 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    116,
+    527
+   ],
+   "ms": 548,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 194
+  },
+  {
+   "op": "jump",
+   "to": [
+    118,
+    529
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.4 hand: 548 ms glide to 116,527, 194 ms pause, nudge 2,2 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.4 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    930,
+    413
+   ],
+   "ms": 931,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.4 caret: glide to 930,413 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.4 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.5"
+  },
+  {
+   "op": "jump",
+   "to": [
+    501,
+    672
+   ],
+   "restMs": 794
+  },
+  {
+   "op": "glide",
+   "to": [
+    539,
+    641
+   ],
+   "ms": 365,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.5 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    96,
+    519
+   ],
+   "ms": 489,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 246
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.5 hand: 489 ms glide to 96,519, 246 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.5 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    974,
+    404
+   ],
+   "ms": 815,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.5 caret: glide to 974,404 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.5 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.6"
+  },
+  {
+   "op": "jump",
+   "to": [
+    399,
+    661
+   ],
+   "restMs": 735
+  },
+  {
+   "op": "glide",
+   "to": [
+    411,
+    673
+   ],
+   "ms": 376,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.6 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    127,
+    524
+   ],
+   "ms": 483,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 360
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.6 hand: 483 ms glide to 127,524, 360 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.6 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1140,
+    422
+   ],
+   "ms": 694,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.6 caret: glide to 1140,422 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.6 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.7"
+  },
+  {
+   "op": "jump",
+   "to": [
+    358,
+    704
+   ],
+   "restMs": 684
+  },
+  {
+   "op": "glide",
+   "to": [
+    398,
+    733
+   ],
+   "ms": 380,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.7 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    89,
+    529
+   ],
+   "ms": 309,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "jump",
+   "to": [
+    92,
+    528
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.7 hand: 309 ms glide to 89,529, 200 ms pause, nudge 3,-1 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.7 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    994,
+    326
+   ],
+   "ms": 1012,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.7 caret: glide to 994,326 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.7 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.8"
+  },
+  {
+   "op": "jump",
+   "to": [
+    444,
+    620
+   ],
+   "restMs": 633
+  },
+  {
+   "op": "glide",
+   "to": [
+    485,
+    645
+   ],
+   "ms": 320,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.8 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    139,
+    514
+   ],
+   "ms": 384,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 222
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.8 hand: 384 ms glide to 139,514, 222 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.8 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    937,
+    370
+   ],
+   "ms": 1066,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.8 caret: glide to 937,370 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.8 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.9"
+  },
+  {
+   "op": "jump",
+   "to": [
+    375,
+    681
+   ],
+   "restMs": 644
+  },
+  {
+   "op": "glide",
+   "to": [
+    405,
+    684
+   ],
+   "ms": 331,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.9 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    114,
+    517
+   ],
+   "ms": 407,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 440
+  },
+  {
+   "op": "jump",
+   "to": [
+    117,
+    517
+   ],
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.9 hand: 407 ms glide to 114,517, 440 ms pause, nudge 3,0 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.9 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1057,
+    402
+   ],
+   "ms": 980,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.9 caret: glide to 1057,402 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.9 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "bursts.10"
+  },
+  {
+   "op": "jump",
+   "to": [
+    417,
+    634
+   ],
+   "restMs": 803
+  },
+  {
+   "op": "glide",
+   "to": [
+    467,
+    634
+   ],
+   "ms": 349,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.10 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    76,
+    509
+   ],
+   "ms": 411,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 178
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.10 hand: 411 ms glide to 76,509, 178 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.10 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1111,
+    356
+   ],
+   "ms": 562,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.10 caret: glide to 1111,356 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "bursts",
+   "name": "bursts.10 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "stats",
+   "label": "bursts end a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "bursts end b (3 s later)"
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "sh",
+   "cmd": "(while :; do seq 1 2000; done > /dev/pts/0 2>/dev/null & echo $! > /tmp/v-load.pid); sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "stats",
+   "label": "flood a"
+  },
+  {
+   "op": "wait",
+   "ms": 3000
+  },
+  {
+   "op": "stats",
+   "label": "flood b (3 s later)"
+  },
+  {
+   "op": "reset",
+   "note": "flood.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    425,
+    702
+   ],
+   "restMs": 790
+  },
+  {
+   "op": "glide",
+   "to": [
+    484,
+    698
+   ],
+   "ms": 395,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.1 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    100,
+    520
+   ],
+   "ms": 524,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 195
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.1 hand: 524 ms glide to 100,520, 195 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.1 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    901,
+    334
+   ],
+   "ms": 748,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.1 caret: glide to 901,334 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.1 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "flood.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    346,
+    731
+   ],
+   "restMs": 820
+  },
+  {
+   "op": "glide",
+   "to": [
+    387,
+    751
+   ],
+   "ms": 308,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.2 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    124,
+    527
+   ],
+   "ms": 500,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 244
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.2 hand: 500 ms glide to 124,527, 244 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.2 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1103,
+    409
+   ],
+   "ms": 999,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.2 caret: glide to 1103,409 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.2 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "flood.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    332,
+    703
+   ],
+   "restMs": 615
+  },
+  {
+   "op": "glide",
+   "to": [
+    317,
+    735
+   ],
+   "ms": 340,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.3 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    67,
+    528
+   ],
+   "ms": 480,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 344
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.3 hand: 480 ms glide to 67,528, 344 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.3 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1048,
+    398
+   ],
+   "ms": 952,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.3 caret: glide to 1048,398 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.3 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "flood.4"
+  },
+  {
+   "op": "jump",
+   "to": [
+    361,
+    600
+   ],
+   "restMs": 713
+  },
+  {
+   "op": "glide",
+   "to": [
+    363,
+    563
+   ],
+   "ms": 392,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.4 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    79,
+    518
+   ],
+   "ms": 373,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 392
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.4 hand: 373 ms glide to 79,518, 392 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.4 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1091,
+    384
+   ],
+   "ms": 1031,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.4 caret: glide to 1091,384 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "flood",
+   "name": "flood.4 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "sh",
+   "cmd": "kill $(cat /tmp/v-load.pid /tmp/v-load2.pid /tmp/v-load3.pid 2>/dev/null) 2>/dev/null; rm -f /tmp/v-load*.pid; sleep 1; cat /proc/loadavg"
+  },
+  {
+   "op": "reset",
+   "note": "recovering.1"
+  },
+  {
+   "op": "jump",
+   "to": [
+    508,
+    620
+   ],
+   "restMs": 674
+  },
+  {
+   "op": "glide",
+   "to": [
+    534,
+    616
+   ],
+   "ms": 373,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.1 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    75,
+    516
+   ],
+   "ms": 525,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 420
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.1 hand: 525 ms glide to 75,516, 420 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.1 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1090,
+    340
+   ],
+   "ms": 987,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.1 caret: glide to 1090,340 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.1 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "recovering.2"
+  },
+  {
+   "op": "jump",
+   "to": [
+    380,
+    651
+   ],
+   "restMs": 813
+  },
+  {
+   "op": "glide",
+   "to": [
+    370,
+    679
+   ],
+   "ms": 397,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.2 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    76,
+    529
+   ],
+   "ms": 650,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 243
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.2 hand: 650 ms glide to 76,529, 243 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.2 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    1048,
+    303
+   ],
+   "ms": 963,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.2 caret: glide to 1048,303 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.2 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "reset",
+   "note": "recovering.3"
+  },
+  {
+   "op": "jump",
+   "to": [
+    462,
+    678
+   ],
+   "restMs": 832
+  },
+  {
+   "op": "glide",
+   "to": [
+    504,
+    656
+   ],
+   "ms": 350,
+   "restMs": 500
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.3 arrow in the page body",
+   "settleMs": 300,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    74,
+    507
+   ],
+   "ms": 304,
+   "restMs": 0
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.3 hand: 304 ms glide to 74,507, 200 ms pause — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.3 hand — late",
+   "settleMs": 1500,
+   "noPlane": true
+  },
+  {
+   "op": "glide",
+   "to": [
+    993,
+    313
+   ],
+   "ms": 1060,
+   "restMs": 0
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.3 caret: glide to 993,313 — early",
+   "settleMs": 450,
+   "noPlane": true
+  },
+  {
+   "op": "read",
+   "phase": "recovering",
+   "name": "recovering.3 caret — late",
+   "settleMs": 1500,
+   "noPlane": true
+  }
+ ]
+}
