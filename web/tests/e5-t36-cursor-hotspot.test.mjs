@@ -427,6 +427,11 @@ class LegacyKmsGuest {
   commit() {
     this.show(this.name());
   }
+  // The cursor is hidden (a client hides it, the compositor goes away): a move with resource 0.
+  hide() {
+    assert.ok(this.controller.handle({ type: "cursor-move", state: { resourceId: 0, hotX: 0, hotY: 0, pos: { scanoutId: 0, x: this.plane.x, y: this.plane.y } } }));
+    this.image = null;
+  }
   // Handle up to `n` queued positions with cursor `name` (default: the one shown; a guest
   // that shows no cursor yet has nothing to report). One that repeats the tablet's last
   // position is handled and acted on by nobody.
@@ -477,7 +482,9 @@ async function rig({ idle = true, settle = idle, size = 16, ...options } = {}) {
       assert.equal(controller.snapshot().hotspotSettling, false);
     },
   };
-  if (settle) await r.settle();
+  // A session shows a cursor from its start. (One that appears later, where none was shown,
+  // starts the page's settling over: a rig that settles shows its arrow first.)
+  if (settle) { guestOs.show("arrow", FAR[0] - 16, FAR[1]); await r.settle(); }
   return r;
 }
 
@@ -968,6 +975,63 @@ test("a position that repeats the tablet's last one moves nothing in the guest: 
   assert.deepEqual(inferred(z.controller), [1, 1]);
 });
 
+test("a cursor that appears where none was shown starts over: the page does not know where that pointer stands", async () => {
+  // A cold boot with the mouse over the canvas. Positions are sent before any compositor reads
+  // the tablet, the guest idles: by every rule so far the page is settled.
+  const r = await rig({ settle: false, size: 64 });
+  r.send(300, 300); r.send(120, 110); r.guest.pump();
+  await r.rest();
+  assert.equal(r.controller.snapshot().hotspotSettling, false, "idle after a position that differs from the one before it");
+  // The compositor starts. Its pointer is where IT puts it — (100,100) on the Replay desktop,
+  // the plane at (99,99) before any position was sent — whatever the tablet holds. The mouse
+  // is parked twenty pixels away: inside the image, seen from that plane.
+  r.guest.pointer = { x: 100, y: 100 };
+  r.guest.show("arrow");
+  assert.equal(r.controller.snapshot().hotspotSettling, true);
+  for (let i = 0; i < 3; i += 1) { r.guest.commit(); await r.t.pass(100); }
+  await r.t.pass(5000);
+  assert.equal(inferred(r.controller), null, "(120,110) minus the plane (99,99) is not the arrow's hotspot");
+  assert.equal(r.t.armed.size, 0);
+  // The mouse still on its pixel changes nothing (the tablet holds it); its first move does.
+  r.send(120, 110); r.guest.pump();
+  assert.deepEqual(r.guest.pointer, { x: 100, y: 100 });
+  await r.t.pass(1000);
+  assert.equal(r.controller.snapshot().hotspotSettling, true);
+  r.send(126, 112); r.guest.pump();
+  await r.rest();
+  assert.equal(r.controller.snapshot().hotspotSettling, false);
+  r.guest.commit();
+  await r.rest();
+  assert.deepEqual(inferred(r.controller), [1, 1]);
+  // A client hides the cursor (a terminal does while one types) and shows it again: what the
+  // page has settled stays with its image; what it had not, and what it knew of the pointer,
+  // starts over.
+  const h = await rig({ size: 64 });
+  h.go("arrow", 400, 300); h.go("arrow", 520, 360);
+  h.go("hand", 600, 420);
+  assert.equal(inferred(h.controller), null, "one move of the hand");
+  h.guest.hide();
+  assert.equal(h.controller.snapshot().hotspotSettling, false, "hiding changes nothing by itself");
+  h.send(700, 500); h.guest.pump();                   // acted on; there is nothing to report
+  h.guest.show("hand");
+  assert.equal(h.controller.snapshot().hotspotSettling, true, "shown again");
+  assert.equal(inferred(h.controller), null);
+  h.guest.show("arrow");
+  assert.deepEqual(inferred(h.controller), [1, 1], "a settled hotspot belongs to its image");
+  h.guest.show("hand");
+  h.send(760, 540); h.guest.pump();
+  assert.equal(inferred(h.controller), null, "not evidence yet");
+  await h.rest();
+  assert.equal(h.controller.snapshot().hotspotSettling, false);
+  h.send(820, 500); h.guest.pump();
+  await h.rest();
+  assert.deepEqual(inferred(h.controller), [9, 4]);
+  // An image that replaces another is no appearance: nothing starts over.
+  const k = await rig({ size: 64 });
+  k.go("arrow", 400, 300); k.go("hand", 520, 360); k.go("caret", 600, 420);
+  assert.equal(k.controller.snapshot().hotspotSettling, false);
+});
+
 test("the rest wait elapses while the guest is behind and the pointer moves on: no answer until it has caught up", async () => {
   // Round 2's refutation, in its own numbers: 24x24 images, an even 10 px run, the guest one
   // position behind, the hand appearing in the middle. A rest answer read then is (0,4).
@@ -1087,7 +1151,7 @@ test("the pointer at rest with the guest caught up settles the hotspot after a s
   // sent while the guest is being asked means the pointer was not at rest.
   const s = await rig();
   const restWaits = () => [...s.t.armed].filter((timer) => timer.ms === HOTSPOT_REST_MS);
-  assert.equal(s.t.armed.size, 0, "nothing to wait for before a cursor exists");
+  assert.equal(s.t.armed.size, 0, "nothing to wait for: nothing was reported since the page settled");
   ambiguousCaret(s);
   assert.equal(restWaits().length, 1);
   const first = restWaits()[0];

@@ -44,9 +44,11 @@ What is and is not evidence (revised after three refutations and one open findin
   (767 of 2847 moves in round 3's log). A move therefore says "the pointer is here", not "the
   pointer has just arrived for the last position sent", and comparing it with sent positions
   is sound only if the position the pointer stands on is among them. It is not at the page's
-  start, after a guest reset, and after a change of pointer mode or of the guest output size —
-  those forget the positions sent and everything not settled (a settled hotspot is kept: it
-  belongs to its image). From any of them on, no move is evidence (`hotspotSettling`) until the
+  start, after a guest reset, after a change of pointer mode or of the guest output size, and
+  when a cursor appears where none was shown (a compositor that has just started puts its
+  pointer where it likes — (100,100) on the Replay desktop — and has read nothing of what the
+  tablet was sent; a client that had hidden the cursor) — those forget the positions sent and
+  everything not settled (a settled hotspot is kept: it belongs to its image). From any of them on, no move is evidence (`hotspotSettling`) until the
   guest has been idle after a position sent SINCE that it acts on: its pointer then stands on
   that position or a later one. (Round 2: moves for positions sent before the restart. Round 3:
   the restart ended when the guest was idle, with no position sent since; the report of the
@@ -97,8 +99,9 @@ What is and is not evidence (revised after three refutations and one open findin
   move — after each way inference can start over (the page's start, a guest reset, pointer mode
   with and without relative motion, pointer mode and then the hook, output size, the hook), and
   500 random such runs; round 4's — relative motion, then the position the mouse left, which
-  the test guest like the kernel passes on to nobody; the client changing the cursor while the
-  guest is being asked. In all of them the inferred hotspot is never more than one pixel from
+  the test guest like the kernel passes on to nobody; a compositor that starts, with its
+  pointer where it puts it, after the page has sent positions; the client changing the cursor
+  while the guest is being asked. In all of them the inferred hotspot is never more than one pixel from
   the truth, and is known at rest once the guest has caught up and the image was reported since.
   The web unit suite fails no test that passed before.
 - Browser, the committed bundle, published generation-1 image with its session restarted on

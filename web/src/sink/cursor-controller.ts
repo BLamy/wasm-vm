@@ -144,13 +144,13 @@ export class CursorController {
     // Bumped whenever inference starts over; an asynchronous step of an older epoch gives up.
     this._hotspotEpoch = 0;
     // True while the page does not know that the guest's pointer stands on a position it
-    // remembers sending: from the start, after a guest reset, and after the pointer mode or
-    // the output size changed (the positions sent before are forgotten then). A cursor move
-    // reported in that state may stand for a position the page does not have — the device
-    // reports the plane's place on every commit, also where it already stood — so it is not
-    // evidence. It ends when the guest has been idle after a position sent since that it acts
-    // on (see `notePointer`): its pointer is then on that position or a later one, and stays
-    // on remembered ones.
+    // remembers sending: from the start, after a guest reset, after the pointer mode or the
+    // output size changed, and when a cursor appears where none was shown (the positions sent
+    // before are forgotten then). A cursor move reported in that state may stand for a
+    // position the page does not have — the device reports the plane's place on every commit,
+    // also where it already stood — so it is not evidence. It ends when the guest has been
+    // idle after a position sent since that it acts on (see `notePointer`): its pointer is
+    // then on that position or a later one, and stays on remembered ones.
     this._hotspotSettling = true;
     // The epoch whose settling question is being asked (one loop of questions per epoch).
     this._settleEpoch = -1;
@@ -368,9 +368,15 @@ export class CursorController {
         event?.resourceHeight,
         event?.pixels ?? [],
       );
+      const wasShown = this._descriptor !== null && this._descriptor.kind !== "hidden";
       this._state = state;
       this._descriptor = descriptor;
       this._updates += 1;
+      // A cursor appears where none was shown. A compositor that has just started puts its
+      // pointer where it likes and has read nothing of what the tablet was sent; and while a
+      // client hid the cursor the page saw nothing of where the pointer went. Either way the
+      // page no longer knows where the guest's pointer stands.
+      if (!wasShown && descriptor.kind !== "hidden") this._restartHotspotInference();
       this._trackHotspot(state, descriptor);
       this._applySafely("cursor-update-dom-error");
       this._notify("cursor-update");
@@ -481,7 +487,8 @@ export class CursorController {
 
   /**
    * Start inference over: what the page sent before this moment no longer compares with what
-   * the guest reports (the pointer mode or the output size changed). The positions sent and
+   * the guest reports (the pointer mode or the output size changed, or a cursor appeared where
+   * none was shown). The positions sent and
    * everything not settled are forgotten; hotspots already settled belong to their images and
    * stay, on the page too. The guest's pointer now stands on a position the page has
    * forgotten, so its cursor moves are not evidence again until it has acted on a position
