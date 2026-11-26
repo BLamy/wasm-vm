@@ -1,0 +1,28 @@
+{
+  "mode": "kill-subshell",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:05:25.221Z",
+  "early": "0.92 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n0\n",
+  "buildPid": "",
+  "kill": "cat: can't open '/proc/grep:': No such file or directory\ncat: can't open '/proc//status:': No such file or directory\ncat: can't open 'No': No such file or directory\ncat: can't open 'such': No such file or directory\ncat: can't open 'file': No such file or directory\ncat: can't open 'or': No such file or directory\ncat: can't open 'directory/cmdline': No such file or directory\n\nsh: invalid number 'grep:'\nsh: invalid number '/proc//status:'\nsh: invalid number 'No'\nsh: invalid number 'such'\nsh: invalid number 'file'\nsh: invalid number 'or'\nsh: invalid number 'directory'\nREPLAY_CHROMIUM_LAUNCH uptime=1.66\nREPLAY_SWAY_IPC uptime=1.97\n2.21 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\nbuild-node-still-running\n",
+  "ready": [
+    "5.39",
+    "167672"
+  ],
+  "after": "REPLAY_RENDERER_SANDBOX pid=/proc/262 NoNewPrivs=1 Seccomp=2 NSpid=\t262\t10\t1 uptime=5.28\nREPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.36\nREPLAY_NODE_SNAPSHOT bytes=6754174 uptime=9.80\n65.40 53.79\ntotal 6596\ndrwxr-xr-x    2 root     root           100 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6754174 Nov 26 21:05 startup.blob\n--snapshot-blob=/run/replay-node/startup.blob 42\n",
+  "nodeLine": "REPLAY_NODE_SNAPSHOT bytes=6754174 uptime=9.80\r",
+  "order": {
+    "readyIndex": 4085,
+    "nodeIndex": 4482
+  },
+  "state": "total 6596\ndrwxr-xr-x    2 root     root           100 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6754174 Nov 26 21:05 startup.blob\n--snapshot-blob=/run/replay-node/startup.blob 42\nrc=0\n",
+  "timing": [
+    "T 71.32 71.65\n",
+    "T 74.88 75.20\n",
+    "T 84.00 84.32\n"
+  ],
+  "monitorPid": "82\n182316\n",
+  "pass": true,
+  "hostSeconds": 70.642
+}
+exit=0

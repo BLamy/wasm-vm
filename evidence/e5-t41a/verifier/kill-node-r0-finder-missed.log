@@ -1,0 +1,27 @@
+{
+  "mode": "kill-node",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:05:25.220Z",
+  "early": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n0\n",
+  "buildPid": "",
+  "kill": "sh: you need to specify whom to kill\nREPLAY_CHROMIUM_LAUNCH uptime=1.64\nREPLAY_SWAY_IPC uptime=1.95\n2.18 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n",
+  "ready": [
+    "5.40",
+    "166496"
+  ],
+  "nodeLine": "REPLAY_NODE_SNAPSHOT bytes=6755006 uptime=9.81\r",
+  "order": {
+    "readyIndex": 3154,
+    "nodeIndex": 3356
+  },
+  "state": "total 6600\ndrwxr-xr-x    2 root     root           100 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6755006 Nov 26 21:05 startup.blob\n--snapshot-blob=/run/replay-node/startup.blob 42\nrc=0\n",
+  "timing": [
+    "T 11.34 12.34\n",
+    "T 12.36 13.28\n",
+    "T 13.29 13.94\n"
+  ],
+  "monitorPid": "81\n182968\n",
+  "pass": true,
+  "hostSeconds": 67.31
+}
+exit=0

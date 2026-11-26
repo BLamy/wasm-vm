@@ -1,0 +1,117 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; cat /proc/uptime; ls -la 
+/run/replay-node; grep -c . /run/replay-desktop/events; printf '%s%s\n' 'WVM_DON
+E_' '2'
+WVM_BEGIN_2
+0.91 0.02
+total 0
+drwxr-xr-x    2 root     root            60 Nov 26 21:06 .
+drwxr-xr-x    6 root     root           180 Nov 26 21:06 ..
+-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log
+0
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; i=0; while [ $i -lt 400 ]
+; do pid=$(for p in /proc/[0-9]*; do tr '\0' ' ' < $p/cmdline 2>/dev/null | grep
+ -q '^/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob
+.tm[p]' && echo ${p#/proc/}; done | head -n 1); [ -n "$pid" ] && break; sleep 0.
+05; i=$((i+1)); done; echo "tries=$i comm=$(cat /proc/$pid/comm 2>/dev/null) upt
+ime=$(cut -d' ' -f1 /proc/uptime)"; echo $pid; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+-/bin/sh: can't open /proc/97/cmdline: no such file
+tries=0 comm=node-MainThread uptime=1.35
+73
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; cut -d' ' -f19 /proc/73/s
+tat | sed 's/^/nice=/'; tr '\0' '\n' < /proc/73/environ | grep RECORD_REPLAY; tr
+ '\0' ' ' < /proc/73/cmdline; echo; grep PPid /proc/73/status; ls -l /run/replay
+-node; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+nice=19
+RECORD_REPLAY_DONT_RECORD=1
+/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tmp --build-snapshot /dev/null 
+PPid:	71
+total 0
+-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log
+WVM_DONE_4
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '5'; kill -9 73; sleep 1; cat 
+/proc/uptime; ls -la /run/replay-node; cat /run/replay-node/build.log; printf '%
+s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+REPLAY_CHROMIUM_LAUNCH uptime=1.78
+REPLAY_SWAY_IPC uptime=1.95
+2.42 0.02
+total 0
+drwxr-xr-x    2 root     root            60 Nov 26 21:06 .
+drwxr-xr-x    6 root     root           180 Nov 26 21:06 ..
+-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log
+WVM_DONE_5
+root@replay-desktop# [6nREPLAY_TERMINAL_MAPPED uptime=3.09
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"C07A26D98271CA47A4CEC012F5FF51AD","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"0FAC14E4A1750BB1405FBEDECE0E2265"}]}} uptime=4.99
+REPLAY_CHROME_MAPPED uptime=5.31 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.37 mem_hwm_kib=160672
+REPLAY_NODE_SNAPSHOT_FAILED uptime=5.39
+printf '%s%s\n' 'WVM_BEGIN_' '6'; ls -la /run/replay-node; 
+cat /run/replay-node/build.log; node -p 'String(process.env.NODE_OPTIONS) + " " 
++ 6*7'; echo rc=$?; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+total 4
+drwxr-xr-x    2 root     root            80 Nov 26 21:06 .
+drwxr-xr-x    6 root     root           180 Nov 26 21:06 ..
+-rw-r--r--    1 root     root             7 Nov 26 21:06 build.log
+-rw-r--r--    1 root     root             0 Nov 26 21:06 done
+Killed
+undefined 42
+rc=0
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; a=$(cut -d' ' -f1 /proc/u
+ptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $
+b"; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+T 8.56 9.38
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; a=$(cut -d' ' -f1 /proc/u
+ptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $
+b"; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"EFA72469AEE23C364C8187C121A5E50C"} uptime=5.34
+REPLAY_RENDERER_SANDBOX pid=/proc/325 NoNewPrivs=1 Seccomp=2 NSpid=	325	10	1 uptime=5.51
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.57
+T 9.75 10.56
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; a=$(cut -d' ' -f1 /proc/u
+ptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $
+b"; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+T 11.58 13.79
+WVM_DONE_9
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '10'; for p in /proc/[0-9]*; d
+o grep -qs 'replay-desktop-monito[r]' $p/cmdline && echo ${p#/proc/}; done; cat 
+/run/replay-desktop/mem-hwm-kib; printf '%s%s\n' 'WVM_DONE_' '10'
+WVM_BEGIN_10
+81
+169172
+WVM_DONE_10
+root@replay-desktop# [6n

@@ -1,0 +1,308 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; cat /proc/uptime; ls -la 
+/run/replay-node; grep -c . /run/replay-desktop/events; printf '%s%s\n' 'WVM_DON
+E_' '2'
+WVM_BEGIN_2
+0.91 0.02
+total 0
+drwxr-xr-x    2 root     root            60 Nov 26 21:05 .
+drwxr-xr-x    6 root     root           180 Nov 26 21:05 ..
+-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log
+0
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; for p in /proc/[0-9]*; do
+ [ "$(cat $p/comm 2>/dev/null)" = node ] && grep -qs 'build-snapsho[t]' $p/cmdli
+ne && echo ${p#/proc/}; done | head -n 1; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; ls -l /run/replay-node; n
+ode -p 'String(process.env.NODE_OPTIONS) + " " + 6*7'; echo rc=$?; ls -l /run/re
+play-node; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+total 0
+-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_CHROMIUM_LAUNCH uptime=2.08
+REPLAY_TERMINAL_MAPPED uptime=3.24
+undefined 42
+rc=0
+total 0
+-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log
+WVM_DONE_4
+root@replay-desktop# [6nREPLAY_CHROME_MAPPED uptime=5.52 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"384830B2346B9AC829ED6346868841AF","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"3071682D99500270D87E8AD410BC3C23"}]}} uptime=5.73
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"B6E4F434E9AA0CBE2041807D6C15A2C4"} uptime=6.10
+REPLAY_RENDERER_SANDBOX pid=/proc/273 NoNewPrivs=1 Seccomp=2 NSpid=	273	9	1 uptime=6.23
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=6.28
+REPLAY_DESKTOP_READY uptime=6.59 mem_hwm_kib=174020
+REPLAY_NODE_SNAPSHOT bytes=6753966 uptime=11.00
+printf '%s%s\n' 'WVM_BEGIN_' '5'; ls -la /run/replay-node; 
+cat /run/replay-node/build.log; node -p 'String(process.env.NODE_OPTIONS) + " " 
++ 6*7'; echo rc=$?; printf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+total 6596
+drwxr-xr-x    2 root     root           100 Nov 26 21:05 .
+drwxr-xr-x    6 root     root           180 Nov 26 21:05 ..
+-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log
+-rw-r--r--    1 root     root             0 Nov 26 21:05 done
+-rw-r--r--    1 root     root       6753966 Nov 26 21:05 startup.blob
+--snapshot-blob=/run/replay-node/startup.blob 42
+rc=0
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; a=$(cut -d' ' -f1 /proc/u
+ptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $
+b"; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+T 12.25 13.24
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; a=$(cut -d' ' -f1 /proc/u
+ptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $
+b"; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+T 13.26 14.17
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; a=$(cut -d' ' -f1 /proc/u
+ptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $
+b"; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+T 14.18 14.81
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; cd /tmp
+WVM_BEGIN_9
+root@replay-desktop# [6nprintf 'console.log(JSON.stringify(process.argv.slice(1)), 
+String(process.env.NODE_OPTIONS))\n' > a.js
+dashs
+ls /opt/replay-node-26/binroot@replay-desktop# cp a.js ./--build-snapshot.js
+ /opt/replay-node-26/lib/node_modules 2>&1 | head -20; printf '%root@replay-desktop# printf '#!/usr/bin/env node\nconsole.log("envshebang", proc
+ess.argv.length, process.argv[1], typeof require)\n' > envs; chmod +x envs
+root@replay-desktop# printf '#!/usr/local/bin/node\nconsole.log("directshebang",
+ process.argv.length, process.argv[1])\n' > dirs; chmod +x dirs
+root@replay-desktop# printf '#!/usr/bin/env -S node --no-warnings\nconsole.log("
+dashS", JSON.stringify(process.execArgv))\n' > dashs; chmod +x dashs
+root@replay-desktop# ls /opt/replay-node-26/bin /opt/replay-node-26/lib/node_mod
+ules 2>&1 | head -20; printf '%s%s\n' 'WVM_DONE_' '9'
+ls: /opt/replay-node-26/lib/node_modules: No such file or directory
+/opt/replay-node-26/bin:
+node
+WVM_DONE_9
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '10'; node -- /tmp/a.js x; pri
+ntf '%s%s\n' 'WVM_DONE_' '10'
+WVM_BEGIN_10
+["/tmp/a.js","x"] --snapshot-blob=/run/replay-node/startup.blob
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; /opt/replay-node-26/bin/
+node -- /tmp/a.js x; printf '%s%s\n' 'WVM_DONE_' '11'
+WVM_BEGIN_11
+["/tmp/a.js","x"] undefined
+WVM_DONE_11
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; node ./--build-snapshot.
+js q; printf '%s%s\n' 'WVM_DONE_' '12'
+WVM_BEGIN_12
+["/tmp/--build-snapshot.js","q"] undefined
+WVM_DONE_12
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '13'; /opt/replay-node-26/bin/
+node ./--build-snapshot.js q; printf '%s%s\n' 'WVM_DONE_' '13'
+WVM_BEGIN_13
+["/tmp/--build-snapshot.js","q"] undefined
+WVM_DONE_13
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '14'; NODE_OPTIONS= node -p 'J
+SON.stringify(process.env.NODE_OPTIONS)'; printf '%s%s\n' 'WVM_DONE_' '14'
+WVM_BEGIN_14
+"--snapshot-blob=/run/replay-node/startup.blob"
+WVM_DONE_14
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '15'; NODE_OPTIONS='--title="a
+ b"' node -p 'process.title + "|" + process.env.NODE_OPTIONS'; printf '%s%s\n' '
+WVM_DONE_' '15'
+WVM_BEGIN_15
+a b|--snapshot-blob=/run/replay-node/startup.blob --title="a b"
+WVM_DONE_15
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '16'; NODE_OPTIONS='--title="a
+ b"' /opt/replay-node-26/bin/node -p 'process.title + "|" + process.env.NODE_OPT
+IONS'; printf '%s%s\n' 'WVM_DONE_' '16'
+WVM_BEGIN_16
+a b|--title="a b"
+WVM_DONE_16
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '17'; node /tmp/a.js 'a b' '' 
+c; printf '%s%s\n' 'WVM_DONE_' '17'
+WVM_BEGIN_17
+["/tmp/a.js","a b","","c"] --snapshot-blob=/run/replay-node/startup.blob
+WVM_DONE_17
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '18'; /opt/replay-node-26/bin/
+node /tmp/a.js 'a b' '' c; printf '%s%s\n' 'WVM_DONE_' '18'
+WVM_BEGIN_18
+["/tmp/a.js","a b","","c"] undefined
+WVM_DONE_18
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '19'; node /tmp/a.js --snapsho
+t-blob; printf '%s%s\n' 'WVM_DONE_' '19'
+WVM_BEGIN_19
+["/tmp/a.js","--snapshot-blob"] undefined
+WVM_DONE_19
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '20'; /opt/replay-node-26/bin/
+node /tmp/a.js --snapshot-blob; printf '%s%s\n' 'WVM_DONE_' '20'
+WVM_BEGIN_20
+["/tmp/a.js","--snapshot-blob"] undefined
+WVM_DONE_20
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '21'; /tmp/envs 1 2; printf '%
+s%s\n' 'WVM_DONE_' '21'
+WVM_BEGIN_21
+envshebang 4 /tmp/envs function
+WVM_DONE_21
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '22'; env -u NODE_OPTIONS PATH
+=/opt/replay-node-26/bin:$PATH /tmp/envs 1 2; printf '%s%s\n' 'WVM_DONE_' '22'
+WVM_BEGIN_22
+envshebang 4 /tmp/envs function
+WVM_DONE_22
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '23'; /tmp/dirs 1; printf '%s%
+s\n' 'WVM_DONE_' '23'
+WVM_BEGIN_23
+directshebang 3 /tmp/dirs
+WVM_DONE_23
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '24'; /tmp/dashs; printf '%s%s
+\n' 'WVM_DONE_' '24'
+WVM_BEGIN_24
+/usr/bin/env: invalid option -- 'S'
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) multi-call binary.
+
+Usage: env [-i0] [-u NAME]... [-] [NAME=VALUE]... [PROG ARGS]
+
+Print current environment or run PROG after setting up environment
+
+	-, -i	Start with empty environment
+	-0	NUL terminated output
+	-u NAME	Remove variable from environment
+WVM_DONE_24
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '25'; npm --version 2>&1 | tai
+l -n 1; echo rc=$?; printf '%s%s\n' 'WVM_DONE_' '25'
+WVM_BEGIN_25
+-/bin/sh: npm: not found
+rc=0
+WVM_DONE_25
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '26'; env -u NODE_OPTIONS PATH
+=/opt/replay-node-26/bin:$PATH /opt/replay-node-26/bin/npm --version 2>&1 | tail
+ -n 1; printf '%s%s\n' 'WVM_DONE_' '26'
+WVM_BEGIN_26
+env: can't execute '/opt/replay-node-26/bin/npm': No such file or directory
+WVM_DONE_26
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '27'; npm exec -c 'node -p pro
+cess.env.NODE_OPTIONS' 2>&1 | tail -n 2; printf '%s%s\n' 'WVM_DONE_' '27'
+WVM_BEGIN_27
+-/bin/sh: npm: not found
+WVM_DONE_27
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '28'; node -e 'console.log(req
+uire("child_process").execSync("node -p process.env.NODE_OPTIONS").toString().tr
+im())'; printf '%s%s\n' 'WVM_DONE_' '28'
+WVM_BEGIN_28
+--snapshot-blob=/run/replay-node/startup.blob
+WVM_DONE_28
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '29'; echo '6*7' | node -i 2>&
+1 | grep -c 42; printf '%s%s\n' 'WVM_DONE_' '29'
+WVM_BEGIN_29
+1
+WVM_DONE_29
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '30'; echo '6*7' | /opt/replay
+-node-26/bin/node -i 2>&1 | grep -c 42; printf '%s%s\n' 'WVM_DONE_' '30'
+WVM_BEGIN_30
+1
+WVM_DONE_30
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '31'; echo 'console.log(proces
+s.argv.length, 5*5)' | node - x y; printf '%s%s\n' 'WVM_DONE_' '31'
+WVM_BEGIN_31
+4 25
+WVM_DONE_31
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '32'; echo 'console.log(proces
+s.argv.length, 5*5)' | /opt/replay-node-26/bin/node - x y; printf '%s%s\n' 'WVM_
+DONE_' '32'
+WVM_BEGIN_32
+4 25
+WVM_DONE_32
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '33'; cp /run/replay-node/star
+tup.blob /tmp/good.blob; head -c 1048576 /tmp/good.blob > /run/replay-node/start
+up.blob; node -p 6*7 2>&1 | tail -n 5; echo rc=$?; cp /tmp/good.blob /run/replay
+-node/startup.blob; node -p 6*7; echo rc=$?; printf '%s%s\n' 'WVM_DONE_' '33'
+WVM_BEGIN_33
+The startup snapshot is truncated.
+rc=0
+42
+rc=0
+WVM_DONE_33
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '34'; : > /run/replay-node/sta
+rtup.blob; node -p 6*7 2>&1 | tail -n 3; echo rc=$?; cp /tmp/good.blob /run/repl
+ay-node/startup.blob; printf '%s%s\n' 'WVM_DONE_' '34'
+WVM_BEGIN_34
+The startup snapshot is not a Node.js snapshot blob.
+rc=0
+WVM_DONE_34
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '35'; su -s /bin/sh desktop -c
+ "/usr/local/bin/node -p 'process.env.NODE_OPTIONS + \" \" + process.getuid()'";
+ ls -l /run/replay-node; printf '%s%s\n' 'WVM_DONE_' '35'
+WVM_BEGIN_35
+--snapshot-blob=/run/replay-node/startup.blob 1000
+total 6596
+-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log
+-rw-r--r--    1 root     root             0 Nov 26 21:05 done
+-rw-r--r--    1 root     root       6753966 Nov 26 21:07 startup.blob
+WVM_DONE_35
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '36'; df -k /run /tmp /dev/shm
+; printf '%s%s\n' 'WVM_DONE_' '36'
+WVM_BEGIN_36
+Filesystem           1K-blocks      Used Available Use% Mounted on
+tmpfs                   495864      6648    489216   1% /run
+tmpfs                   495864      6616    489248   1% /tmp
+shm                     495864     16776    479088   3% /dev/shm
+WVM_DONE_36
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '37'; rm /run/replay-node/star
+tup.blob; node -p 'String(process.env.NODE_OPTIONS) + " " + 6*7'; echo rc=$?; pr
+intf '%s%s\n' 'WVM_DONE_' '37'
+WVM_BEGIN_37
+undefined 42
+rc=0
+WVM_DONE_37
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '38'; a=$(cut -d' ' -f1 /proc/
+uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a 
+$b"; printf '%s%s\n' 'WVM_DONE_' '38'
+WVM_BEGIN_38
+T 128.54 129.34
+WVM_DONE_38
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '39'; a=$(cut -d' ' -f1 /proc/
+uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a 
+$b"; printf '%s%s\n' 'WVM_DONE_' '39'
+WVM_BEGIN_39
+T 136.22 137.03
+WVM_DONE_39
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '40'; a=$(cut -d' ' -f1 /proc/
+uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a 
+$b"; printf '%s%s\n' 'WVM_DONE_' '40'
+WVM_BEGIN_40
+T 146.24 147.05
+WVM_DONE_40
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '41'; for p in /proc/[0-9]*; d
+o grep -qs 'replay-desktop-monito[r]' $p/cmdline && echo ${p#/proc/}; done; cat 
+/run/replay-desktop/mem-hwm-kib; printf '%s%s\n' 'WVM_DONE_' '41'
+WVM_BEGIN_41
+82
+184312
+WVM_DONE_41
+root@replay-desktop# [6n

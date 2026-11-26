@@ -1,0 +1,29 @@
+{
+  "mode": "kill-subshell",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:06:48.992Z",
+  "early": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n0\n",
+  "buildPid": "73",
+  "buildProc": "nice=19\nRECORD_REPLAY_DONT_RECORD=1\n/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tmp --build-snapshot /dev/null \nPPid:\t71\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n",
+  "kill": "/bin/sh /etc/init.d/rcS \nREPLAY_CHROMIUM_LAUNCH uptime=1.78\nREPLAY_SWAY_IPC uptime=1.98\n2.40 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\nbuild-node-still-running\n",
+  "ready": [
+    "5.44",
+    "169020"
+  ],
+  "after": "REPLAY_CHROMIUM_PAGE {\"id\":900002,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"pass {\\n  \\\"pass\\\": true,\\n  \\\"runs\\\": 1,\\n  \\\"javascript\\\": 42,\\n  \\\"webassembly\\\": 42,\\n  \\\"pixel\\\": [\\n    42,\\n    128,\\n    64,\\n    255\\n  ],\\n  \\\"browser\\\": \\\"Chrome/108.0.0.0\\\"\\n}\"}},\"sessionId\":\"89A6F1426AA90573CEAD5F895F625E30\"} uptime=5.36\nREPLAY_RENDERER_SANDBOX pid=/proc/328 NoNewPrivs=1 Seccomp=2 NSpid=\t328\t10\t1 uptime=5.52\nREPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.56\n65.46 53.86\ntotal 6608\ndrwxr-xr-x    2 root     root            80 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n-rw-r--r--    1 root     root       6765998 Nov 26 21:06 startup.blob.tmp\nundefined 42\n",
+  "nodeLine": null,
+  "order": {
+    "readyIndex": 3967,
+    "nodeIndex": -1
+  },
+  "state": "total 6608\ndrwxr-xr-x    2 root     root            80 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n-rw-r--r--    1 root     root       6765998 Nov 26 21:06 startup.blob.tmp\nundefined 42\nrc=0\n",
+  "timing": [
+    "T 69.74 70.55\n",
+    "T 71.53 72.35\n",
+    "T 73.78 74.59\n"
+  ],
+  "monitorPid": "81\n197760\n",
+  "pass": true,
+  "hostSeconds": 85.362
+}
+exit=0

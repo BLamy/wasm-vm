@@ -1,0 +1,291 @@
+{
+  "mode": "success",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:05:25.223Z",
+  "early": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n0\n",
+  "buildPid": "",
+  "duringBuild": "total 0\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\nREPLAY_SWAY_IPC uptime=1.96\nREPLAY_CHROMIUM_LAUNCH uptime=2.08\nREPLAY_TERMINAL_MAPPED uptime=3.24\nundefined 42\nrc=0\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n",
+  "ready": [
+    "6.59",
+    "174020"
+  ],
+  "nodeLine": "REPLAY_NODE_SNAPSHOT bytes=6753966 uptime=11.00\r",
+  "order": {
+    "readyIndex": 3251,
+    "nodeIndex": 3304
+  },
+  "state": "total 6596\ndrwxr-xr-x    2 root     root           100 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6753966 Nov 26 21:05 startup.blob\n--snapshot-blob=/run/replay-node/startup.blob 42\nrc=0\n",
+  "timing": [
+    "T 12.25 13.24\n",
+    "T 13.26 14.17\n",
+    "T 14.18 14.81\n"
+  ],
+  "args": {
+    "dashdash": {
+      "wrapped": "[\"/tmp/a.js\",\"x\"] --snapshot-blob=/run/replay-node/startup.blob",
+      "plain": "[\"/tmp/a.js\",\"x\"] undefined"
+    },
+    "dashScript": {
+      "wrapped": "[\"/tmp/--build-snapshot.js\",\"q\"] undefined",
+      "plain": "[\"/tmp/--build-snapshot.js\",\"q\"] undefined"
+    },
+    "emptyNO": {
+      "wrapped": "\"--snapshot-blob=/run/replay-node/startup.blob\""
+    },
+    "spacesNO": {
+      "wrapped": "a b|--snapshot-blob=/run/replay-node/startup.blob --title=\"a b\"",
+      "plain": "a b|--title=\"a b\""
+    },
+    "spacesArgv": {
+      "wrapped": "[\"/tmp/a.js\",\"a b\",\"\",\"c\"] --snapshot-blob=/run/replay-node/startup.blob",
+      "plain": "[\"/tmp/a.js\",\"a b\",\"\",\"c\"] undefined"
+    },
+    "snapArg": {
+      "wrapped": "[\"/tmp/a.js\",\"--snapshot-blob\"] undefined",
+      "plain": "[\"/tmp/a.js\",\"--snapshot-blob\"] undefined"
+    },
+    "envShebang": {
+      "wrapped": "envshebang 4 /tmp/envs function",
+      "plain": "envshebang 4 /tmp/envs function"
+    },
+    "directShebang": {
+      "wrapped": "directshebang 3 /tmp/dirs"
+    },
+    "dashS": {
+      "wrapped": "/usr/bin/env: invalid option -- 'S'\nBusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) multi-call binary.\nUsage: env [-i0] [-u NAME]... [-] [NAME=VALUE]... [PROG ARGS]\nPrint current environment or run PROG after setting up environment\n-, -i\tStart with empty environment\n-0\tNUL terminated output\n-u NAME\tRemove variable from environment"
+    },
+    "npm": {
+      "wrapped": "-/bin/sh: npm: not found\nrc=0",
+      "plain": "env: can't execute '/opt/replay-node-26/bin/npm': No such file or directory"
+    },
+    "npmNodeOpt": {
+      "wrapped": "-/bin/sh: npm: not found"
+    },
+    "nested": {
+      "wrapped": "--snapshot-blob=/run/replay-node/startup.blob"
+    },
+    "repl": {
+      "wrapped": "1",
+      "plain": "1"
+    },
+    "stdinScript": {
+      "wrapped": "4 25",
+      "plain": "4 25"
+    }
+  },
+  "truncated": "The startup snapshot is truncated.\nrc=0\n42\nrc=0\n",
+  "emptyBlob": "The startup snapshot is not a Node.js snapshot blob.\nrc=0\n",
+  "desktopUser": "--snapshot-blob=/run/replay-node/startup.blob 1000\ntotal 6596\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6753966 Nov 26 21:07 startup.blob\n",
+  "df": "Filesystem           1K-blocks      Used Available Use% Mounted on\ntmpfs                   495864      6648    489216   1% /run\ntmpfs                   495864      6616    489248   1% /tmp\nshm                     495864     16776    479088   3% /dev/shm\n",
+  "deleted": "undefined 42\nrc=0\n",
+  "deletedTiming": [
+    "T 128.54 129.34\n",
+    "T 136.22 137.03\n",
+    "T 146.24 147.05\n"
+  ],
+  "monitorPid": "82\n184312\n",
+  "pass": true,
+  "hostSeconds": 166.645,
+  "log": [
+    {
+      "name": "early state",
+      "cmd": "cat /proc/uptime; ls -la /run/replay-node; grep -c . /run/replay-desktop/events",
+      "out": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n0\n"
+    },
+    {
+      "name": "build pid",
+      "cmd": "for p in /proc/[0-9]*; do [ \"$(cat $p/comm 2>/dev/null)\" = node ] && grep -qs 'build-snapsho[t]' $p/cmdline && echo ${p#/proc/}; done | head -n 1",
+      "out": ""
+    },
+    {
+      "name": "node during build",
+      "cmd": "ls -l /run/replay-node; node -p 'String(process.env.NODE_OPTIONS) + \" \" + 6*7'; echo rc=$?; ls -l /run/replay-node",
+      "out": "total 0\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\nREPLAY_SWAY_IPC uptime=1.96\nREPLAY_CHROMIUM_LAUNCH uptime=2.08\nREPLAY_TERMINAL_MAPPED uptime=3.24\nundefined 42\nrc=0\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n"
+    },
+    {
+      "name": "state after",
+      "cmd": "ls -la /run/replay-node; cat /run/replay-node/build.log; node -p 'String(process.env.NODE_OPTIONS) + \" \" + 6*7'; echo rc=$?",
+      "out": "total 6596\ndrwxr-xr-x    2 root     root           100 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6753966 Nov 26 21:05 startup.blob\n--snapshot-blob=/run/replay-node/startup.blob 42\nrc=0\n"
+    },
+    {
+      "name": "node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 12.25 13.24\n"
+    },
+    {
+      "name": "node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 13.26 14.17\n"
+    },
+    {
+      "name": "node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 14.18 14.81\n"
+    },
+    {
+      "name": "fixtures",
+      "cmd": "cd /tmp\nprintf 'console.log(JSON.stringify(process.argv.slice(1)), String(process.env.NODE_OPTIONS))\\n' > a.js\ncp a.js ./--build-snapshot.js\nprintf '#!/usr/bin/env node\\nconsole.log(\"envshebang\", process.argv.length, process.argv[1], typeof require)\\n' > envs; chmod +x envs\nprintf '#!/usr/local/bin/node\\nconsole.log(\"directshebang\", process.argv.length, process.argv[1])\\n' > dirs; chmod +x dirs\nprintf '#!/usr/bin/env -S node --no-warnings\\nconsole.log(\"dashS\", JSON.stringify(process.execArgv))\\n' > dashs; chmod +x dashs\nls /opt/replay-node-26/bin /opt/replay-node-26/lib/node_modules 2>&1 | head -20",
+      "out": "root@replay-desktop# \u001b[6nprintf 'console.log(JSON.stringify(process.argv.slice(1)), \nString(process.env.NODE_OPTIONS))\\n' > a.js\ndashs\nls /opt/replay-node-26/binroot@replay-desktop# cp a.js ./--build-snapshot.js\n /opt/replay-node-26/lib/node_modules 2>&1 | head -20; printf '%root@replay-desktop# printf '#!/usr/bin/env node\\nconsole.log(\"envshebang\", proc\ness.argv.length, process.argv[1], typeof require)\\n' > envs; chmod +x envs\nroot@replay-desktop# printf '#!/usr/local/bin/node\\nconsole.log(\"directshebang\",\n process.argv.length, process.argv[1])\\n' > dirs; chmod +x dirs\nroot@replay-desktop# printf '#!/usr/bin/env -S node --no-warnings\\nconsole.log(\"\ndashS\", JSON.stringify(process.execArgv))\\n' > dashs; chmod +x dashs\nroot@replay-desktop# ls /opt/replay-node-26/bin /opt/replay-node-26/lib/node_mod\nules 2>&1 | head -20; printf '%s%s\\n' 'WVM_DONE_' '9'\nls: /opt/replay-node-26/lib/node_modules: No such file or directory\n/opt/replay-node-26/bin:\nnode\n"
+    },
+    {
+      "name": "w dashdash",
+      "cmd": "node -- /tmp/a.js x",
+      "out": "[\"/tmp/a.js\",\"x\"] --snapshot-blob=/run/replay-node/startup.blob\n"
+    },
+    {
+      "name": "p dashdash",
+      "cmd": "/opt/replay-node-26/bin/node -- /tmp/a.js x",
+      "out": "[\"/tmp/a.js\",\"x\"] undefined\n"
+    },
+    {
+      "name": "w dashScript",
+      "cmd": "node ./--build-snapshot.js q",
+      "out": "[\"/tmp/--build-snapshot.js\",\"q\"] undefined\n"
+    },
+    {
+      "name": "p dashScript",
+      "cmd": "/opt/replay-node-26/bin/node ./--build-snapshot.js q",
+      "out": "[\"/tmp/--build-snapshot.js\",\"q\"] undefined\n"
+    },
+    {
+      "name": "w emptyNO",
+      "cmd": "NODE_OPTIONS= node -p 'JSON.stringify(process.env.NODE_OPTIONS)'",
+      "out": "\"--snapshot-blob=/run/replay-node/startup.blob\"\n"
+    },
+    {
+      "name": "w spacesNO",
+      "cmd": "NODE_OPTIONS='--title=\"a b\"' node -p 'process.title + \"|\" + process.env.NODE_OPTIONS'",
+      "out": "a b|--snapshot-blob=/run/replay-node/startup.blob --title=\"a b\"\n"
+    },
+    {
+      "name": "p spacesNO",
+      "cmd": "NODE_OPTIONS='--title=\"a b\"' /opt/replay-node-26/bin/node -p 'process.title + \"|\" + process.env.NODE_OPTIONS'",
+      "out": "a b|--title=\"a b\"\n"
+    },
+    {
+      "name": "w spacesArgv",
+      "cmd": "node /tmp/a.js 'a b' '' c",
+      "out": "[\"/tmp/a.js\",\"a b\",\"\",\"c\"] --snapshot-blob=/run/replay-node/startup.blob\n"
+    },
+    {
+      "name": "p spacesArgv",
+      "cmd": "/opt/replay-node-26/bin/node /tmp/a.js 'a b' '' c",
+      "out": "[\"/tmp/a.js\",\"a b\",\"\",\"c\"] undefined\n"
+    },
+    {
+      "name": "w snapArg",
+      "cmd": "node /tmp/a.js --snapshot-blob",
+      "out": "[\"/tmp/a.js\",\"--snapshot-blob\"] undefined\n"
+    },
+    {
+      "name": "p snapArg",
+      "cmd": "/opt/replay-node-26/bin/node /tmp/a.js --snapshot-blob",
+      "out": "[\"/tmp/a.js\",\"--snapshot-blob\"] undefined\n"
+    },
+    {
+      "name": "w envShebang",
+      "cmd": "/tmp/envs 1 2",
+      "out": "envshebang 4 /tmp/envs function\n"
+    },
+    {
+      "name": "p envShebang",
+      "cmd": "env -u NODE_OPTIONS PATH=/opt/replay-node-26/bin:$PATH /tmp/envs 1 2",
+      "out": "envshebang 4 /tmp/envs function\n"
+    },
+    {
+      "name": "w directShebang",
+      "cmd": "/tmp/dirs 1",
+      "out": "directshebang 3 /tmp/dirs\n"
+    },
+    {
+      "name": "w dashS",
+      "cmd": "/tmp/dashs",
+      "out": "/usr/bin/env: invalid option -- 'S'\nBusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) multi-call binary.\n\nUsage: env [-i0] [-u NAME]... [-] [NAME=VALUE]... [PROG ARGS]\n\nPrint current environment or run PROG after setting up environment\n\n\t-, -i\tStart with empty environment\n\t-0\tNUL terminated output\n\t-u NAME\tRemove variable from environment\n"
+    },
+    {
+      "name": "w npm",
+      "cmd": "npm --version 2>&1 | tail -n 1; echo rc=$?",
+      "out": "-/bin/sh: npm: not found\nrc=0\n"
+    },
+    {
+      "name": "p npm",
+      "cmd": "env -u NODE_OPTIONS PATH=/opt/replay-node-26/bin:$PATH /opt/replay-node-26/bin/npm --version 2>&1 | tail -n 1",
+      "out": "env: can't execute '/opt/replay-node-26/bin/npm': No such file or directory\n"
+    },
+    {
+      "name": "w npmNodeOpt",
+      "cmd": "npm exec -c 'node -p process.env.NODE_OPTIONS' 2>&1 | tail -n 2",
+      "out": "-/bin/sh: npm: not found\n"
+    },
+    {
+      "name": "w nested",
+      "cmd": "node -e 'console.log(require(\"child_process\").execSync(\"node -p process.env.NODE_OPTIONS\").toString().trim())'",
+      "out": "--snapshot-blob=/run/replay-node/startup.blob\n"
+    },
+    {
+      "name": "w repl",
+      "cmd": "echo '6*7' | node -i 2>&1 | grep -c 42",
+      "out": "1\n"
+    },
+    {
+      "name": "p repl",
+      "cmd": "echo '6*7' | /opt/replay-node-26/bin/node -i 2>&1 | grep -c 42",
+      "out": "1\n"
+    },
+    {
+      "name": "w stdinScript",
+      "cmd": "echo 'console.log(process.argv.length, 5*5)' | node - x y",
+      "out": "4 25\n"
+    },
+    {
+      "name": "p stdinScript",
+      "cmd": "echo 'console.log(process.argv.length, 5*5)' | /opt/replay-node-26/bin/node - x y",
+      "out": "4 25\n"
+    },
+    {
+      "name": "truncated blob",
+      "cmd": "cp /run/replay-node/startup.blob /tmp/good.blob; head -c 1048576 /tmp/good.blob > /run/replay-node/startup.blob; node -p 6*7 2>&1 | tail -n 5; echo rc=$?; cp /tmp/good.blob /run/replay-node/startup.blob; node -p 6*7; echo rc=$?",
+      "out": "The startup snapshot is truncated.\nrc=0\n42\nrc=0\n"
+    },
+    {
+      "name": "empty blob",
+      "cmd": ": > /run/replay-node/startup.blob; node -p 6*7 2>&1 | tail -n 3; echo rc=$?; cp /tmp/good.blob /run/replay-node/startup.blob",
+      "out": "The startup snapshot is not a Node.js snapshot blob.\nrc=0\n"
+    },
+    {
+      "name": "desktop user",
+      "cmd": "su -s /bin/sh desktop -c \"/usr/local/bin/node -p 'process.env.NODE_OPTIONS + \\\" \\\" + process.getuid()'\"; ls -l /run/replay-node",
+      "out": "--snapshot-blob=/run/replay-node/startup.blob 1000\ntotal 6596\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6753966 Nov 26 21:07 startup.blob\n"
+    },
+    {
+      "name": "df",
+      "cmd": "df -k /run /tmp /dev/shm",
+      "out": "Filesystem           1K-blocks      Used Available Use% Mounted on\ntmpfs                   495864      6648    489216   1% /run\ntmpfs                   495864      6616    489248   1% /tmp\nshm                     495864     16776    479088   3% /dev/shm\n"
+    },
+    {
+      "name": "rm blob",
+      "cmd": "rm /run/replay-node/startup.blob; node -p 'String(process.env.NODE_OPTIONS) + \" \" + 6*7'; echo rc=$?",
+      "out": "undefined 42\nrc=0\n"
+    },
+    {
+      "name": "rm node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 128.54 129.34\n"
+    },
+    {
+      "name": "rm node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 136.22 137.03\n"
+    },
+    {
+      "name": "rm node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 146.24 147.05\n"
+    },
+    {
+      "name": "monitor",
+      "cmd": "for p in /proc/[0-9]*; do grep -qs 'replay-desktop-monito[r]' $p/cmdline && echo ${p#/proc/}; done; cat /run/replay-desktop/mem-hwm-kib",
+      "out": "82\n184312\n"
+    }
+  ]
+}
