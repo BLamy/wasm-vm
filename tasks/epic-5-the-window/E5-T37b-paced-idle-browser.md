@@ -107,8 +107,8 @@ attack of the verifier's choice.
 
 Commits on `codex/paced-idle-browser`: `3214330d5` (bindings, clock policy, loader sleep, Replay
 desktop option, benchmark fields), `d0fa60058` (roadmap row; idle sampled last), `4e1adc7c8`
-(the policy is admitted only for a whole-image, non-persistent boot), the commit before
-`423985d3d` (the sleep resumes into the tick directly), and three regenerated build-id commits.
+(the policy is admitted only for a whole-image, non-persistent boot), `38d7839f3` (the sleep
+resumes into the tick directly), and three regenerated build-id commits.
 `crates/core` is untouched.
 
 **Gates** (`bash evidence/e5-t37b/gates.sh`, log `evidence/e5-t37b/gates.log`, sha256
@@ -132,7 +132,8 @@ load per run, paced and `&pace=0` interleaved, click and type first, idle last):
 | idle: worker inside run slices, % of wall | 9.9 / 9.9 | 99.8 / 99.8 |
 | idle: guest seconds per real second | 0.97 / 0.97 | 11.78 / 11.82 |
 | idle: instructions retired, M/s | 10.4 / 10.5 | 120.5 / 121.1 |
-| idle: sleeps / sleeps ended early by a host call, per 30 s | 601 / 599 / 108 / 108 | 0 / 0 |
+| idle: sleeps per 30 s | 601 / 599 | 0 / 0 |
+| idle: of those, ended early by a host call | 108 / 108 | 0 / 0 |
 | click result, median ms (n = 8 each) | 266 / 270.4 | 371.6 / 340.6 |
 | click result, min – max ms | 252 / 261.7 – 599.8 / 530.7 | 305.8 / 312.6 – 578.9 / 611.6 |
 | key echo, median ms (n = 8 each) | 45 / 47.7 | 43.5 / 47.3 |
