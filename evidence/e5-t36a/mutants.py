@@ -1,4 +1,4 @@
-import subprocess, shutil, os, sys
+import subprocess, shutil, os, signal, sys
 S=sys.argv.pop(1)  # a scratch copy: DIR/web/src/sink (from web/src/sink) and DIR/web/tests/e5-t36-cursor-hotspot.test.mjs
 H=f'{S}/web/src/sink/cursor-hotspot.js'; C=f'{S}/web/src/sink/cursor-controller.js'
 M=[
@@ -100,10 +100,14 @@ for name,path,old,new in M:
     open(path,'w').write(src.replace(old,new)); open(ts,'w').write(src.replace(old,new))
     try:
         # A mutant that spins without ever yielding (a question loop that no longer ends) never
-        # lets the test runner's own timeout fire: the process is killed from here instead.
+        # lets the test runner's own timeout fire: the run is killed from here instead — the
+        # whole process group, because the runner's child is the one that spins and would
+        # otherwise be left behind at 100% of a core.
+        run=subprocess.Popen(['node','--test','--test-timeout=120000','tests/e5-t36-cursor-hotspot.test.mjs'],cwd=f'{S}/web',stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,text=True,start_new_session=True)
         try:
-            out=subprocess.run(['node','--test','--test-timeout=120000','tests/e5-t36-cursor-hotspot.test.mjs'],cwd=f'{S}/web',capture_output=True,text=True,timeout=90).stdout
+            out=run.communicate(timeout=90)[0]
         except subprocess.TimeoutExpired:
+            os.killpg(run.pid,signal.SIGKILL); run.communicate()
             out='✖ the test run did not end within 90 s (it takes 5)\n'
         failed=[l[2:].split(' (')[0] for l in out.splitlines() if l.startswith('✖ ') and 'failing tests' not in l]
         failed=sorted(set(failed))

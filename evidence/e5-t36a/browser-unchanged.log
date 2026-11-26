@@ -1,0 +1,54 @@
+[desktop-latency 15:40:13.552] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 15:40:16.973] desktop ready after 3.4 s
+[desktop-latency 15:40:16.982] scenario click
+[desktop-latency 15:40:22.965] click #1: result 572.6 ms, pressed-state frame 474.2 ms, 68.5M instr @ 116.3 MIPS
+[desktop-latency 15:40:26.985] click #2: result 444 ms, pressed-state frame 245 ms, 60M instr @ 124.8 MIPS
+[desktop-latency 15:40:30.545] click #3: result 261 ms, pressed-state frame 144.3 ms, 26M instr @ 94.9 MIPS
+[desktop-latency 15:40:33.851] click #4: result 250.7 ms, pressed-state frame 132.5 ms, 25.9M instr @ 95.8 MIPS
+[desktop-latency 15:40:37.167] click #5: result 242.9 ms, pressed-state frame 127.1 ms, 25.3M instr @ 90.6 MIPS
+[desktop-latency 15:40:40.478] click #6: result 259.3 ms, pressed-state frame 142 ms, 25.9M instr @ 95.1 MIPS
+[desktop-latency 15:40:43.785] click #7: result 253.7 ms, pressed-state frame 138.6 ms, 26.2M instr @ 95.2 MIPS
+[desktop-latency 15:40:47.200] click #8: result 322.2 ms, pressed-state frame 187.9 ms, 35.8M instr @ 95.7 MIPS
+[desktop-latency 15:40:50.230] scenario type
+[desktop-latency 15:40:57.149] type #1: echo 62.4 ms
+[desktop-latency 15:40:58.707] type #2: echo 33.7 ms
+[desktop-latency 15:41:00.265] type #3: echo 43.2 ms
+[desktop-latency 15:41:01.824] type #4: echo 35.1 ms
+[desktop-latency 15:41:03.440] type #5: echo 52.8 ms
+[desktop-latency 15:41:05.051] type #6: echo 45 ms
+[desktop-latency 15:41:06.664] type #7: echo 47.3 ms
+[desktop-latency 15:41:08.224] type #8: echo 35.7 ms
+[desktop-latency 15:41:12.549] {"echoMs":{"n":8,"missing":0,"min":33.7,"median":45,"max":62.4}}
+[desktop-latency 15:41:12.553] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 242.9,
+   "median": 261,
+   "max": 572.6
+  },
+  "pointerArrivedMs": 34.8,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 127.1,
+    "median": 144.3,
+    "max": 474.2
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 33.7,
+   "median": 45,
+   "max": 62.4
+  }
+ }
+}
+[desktop-latency 15:41:12.648] wrote evidence/e5-t36a/browser-unchanged.json

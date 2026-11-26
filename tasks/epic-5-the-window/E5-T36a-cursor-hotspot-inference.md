@@ -3,7 +3,7 @@ id: E5-T36a
 epic: 5
 title: Infer the hotspot of a guest cursor image the device did not describe
 priority: 0.387651
-status: in-progress
+status: implemented
 depends_on: [E5-T37b]
 estimate: S
 risk: medium
@@ -1349,3 +1349,174 @@ a terminal flood (round 3's runs, not repeated on this code); what the 20 idle s
 proof hide on this code (round 3's P5b); a pointer-mode or output-size change by a real resize;
 E5-T37a's "a reported wait is always true"; a guest with more than one hart; a real mouse;
 Firefox and Safari; cursors above the CSS limit; E5-T36b's image.
+
+### 2026-11-26 — worker — round 5 claim (head `dacbb42ee`)
+
+The round-4 finding is right, and I count it as a refutation of what round 4 claimed: the rule
+said "idle after a position sent since: its pointer then stands on that position", and that is
+false for a position the guest's kernel passes on to nobody. Whether a user of the Replay
+desktop can reach it today (the mode toggle is not displayed in that layout) does not make the
+sentence true. Commits `87a5306da` (status), `9f7877e75` and `dacbb42ee`.
+
+**What was wrong.** Linux's input core passes on only the absolute axes whose value changed. A
+position equal to the tablet's last one is no event at all: the pointer stays where it is. That
+is where it stands already — unless something else has moved it since, and relative motion
+(another device) does exactly that and leaves the tablet's values alone. Round 4 asked the guest
+after ANY position sent since the restart.
+
+**What changed** (`web/src/sink/cursor-controller.js`, `notePointer`): a position counts as one
+the guest acts on only if it differs from the position sent before it — kept across pointer-mode
+changes (the tablet keeps its values through relative mode), forgotten at a guest reset (a new
+guest's tablet is not the old one's). The first position of a page or after a guest reset never
+counts (what the tablet holds is not known), nor the first at another output size (pixels of two
+sizes do not compare; equal pixels at one size may be equal values, different pixels never are).
+Only a position that counts has the guest asked; the rest of round 4's rule is as it was. The
+unreachable check you named (`:512`) is deleted. `cursor-hotspot.js` is unchanged.
+
+**And one more of the same class, which you listed as not checked** ("positions sent before a
+compositor reads the tablet"): there is a user path, a cold boot with the mouse over the
+canvas. Positions are sent while no compositor exists, the guest idles, the page is settled;
+then sway starts and puts its pointer at (100,100) — your probe 0 has its plane at (99,99)
+before any position — while the tablet holds the mouse's position, so the mouse on its pixel
+is passed on to nobody. With the mouse parked within the image's size of that corner the rest
+rule answers "last sent minus plane" (at unit level: (21,11) for the arrow; I did not reproduce
+it in a browser). So: **a cursor that appears where none was shown starts
+inference over** (`handleUpdate`; commit `dacbb42ee`). That also covers a client that hid the
+cursor, and a compositor restarted under a running page provided the device reports the cursor
+gone in between — I did not check that it does (the proof script restarts sway, but before the
+page has sent anything). Settled hotspots are kept; a terminal that hides the pointer while one types costs shapes not
+settled yet one more move of the mouse.
+
+Why two different positions are enough when nothing is known: if the first equals what the
+tablet holds it is dropped, and the second differs from it; if it does not, it is acted on, and
+the second differs from what the tablet then holds. Either way the guest acts on the second.
+
+**Your demands.**
+
+1. P9. "a position that repeats the tablet's last one moves nothing in the guest: it does not
+   end settling" — your sequence (64x64, the pointer at rest on (400,640), relative motion
+   (-7,-5), back in absolute mode on (400,640)), for the arrow forgotten by the hook and for a
+   caret first met during relative motion: the guest's pointer is still at (393,635), the page
+   is still settling after 5 s and asks nothing, three commits of the guest's own and 5 s of
+   rest show nothing (round 4: (8,6) and (11,13)); the same position once more changes
+   nothing; a position straight below it is acted on, and the truth follows. Also: in absolute
+   mode a repeated position is harmless and the rest answer right; a guest whose tablet holds
+   the page's very first position. "a cursor that appears where none was shown starts over":
+   the cold boot above (64x64, the mouse parked at (120,110): nothing shown after three commits
+   and 5 s — without the rule (21,11) — and (1,1) after the first move), a hide and show with
+   a settled arrow and an unsettled hand, and an image that merely replaces another.
+2. P10, the test guest. `LegacyKmsGuest` has a tablet: `pump` handles a position equal to its
+   last one without moving the pointer or committing, `relative(dx, dy)` moves the pointer and
+   leaves the tablet alone, and "idle" is no longer only "queue empty" (`busy`: other work,
+   which the earlier tests faked by queueing positions it never acted on). The run-from-rest
+   test has three more ways of starting over: pointer mode with relative motion in between,
+   pointer mode and then the hook (your S2), and the size changing on one position at rest (your
+   S1). The 500 random runs do relative motion in two of three mode changes and begin one run
+   in three with the position the mouse was left on. The browser proof: see below.
+3. P13. M23 (the hook ending settling): killed by "pointer mode, then the hook" (my C49). M6 (a
+   count that went down): killed by a reading of 4 after 6, and 6 again, in the hand-delivered
+   readings (C50). M17b (width only): killed by a width-only and a height-only change (C51). M1
+   (the position that carries a size change noted before the restart): **no longer behaviour**,
+   and it survives (C52). With the new rule that position never ends settling — it is not
+   compared with the one before — so by the time any move is evidence the guest has acted on a
+   later position, and whether the estimator remembers the earlier one cannot matter. Your S1
+   is in the test as "size, at rest": the page is still settling after the position and the
+   idle wait, and nothing wrong is shown in the run that follows; it passes with and without M1.
+4. Coverage: `:512` deleted. `:539` and `:624` as you waived them.
+
+**Tests and mutants.** 46 tests in the four cursor files, all pass. `python3
+evidence/e5-t36a/mutants.py <scratch dir>` (`mutants.log`, a scratch copy of the committed
+files): 88 mutants, 86 killed. The survivors: C12 (an unchanged answer written again; the
+setter skips it either way) and C52 (your M1, above). New in the list: round 4's rule itself
+(C43, any position has the guest asked), the first position counting (C44), pixels compared
+across sizes (C45), a guest reset keeping the old guest's last position (C46), starting over
+forgetting it (C47), one axis compared (C48), your four (C49-C52), and an appearing cursor not
+starting over (C53) or every update doing so (C54).
+
+**Gates** (`bash evidence/e5-t36a/gates.sh`, log sha256 `76a846f60a8c…`, at `dacbb42ee`): the four
+cursor test files pass; shipped copies of the two sink files byte-identical to their sources;
+web unit suite 654 tests, 626 pass, 28 fail — the same 28 names as before, `diff` empty.
+
+**Browser proof, the committed bundle**: `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --legacy-kms-session --out evidence/e5-t36a/browser`
+(`result.json` sha256 `30344f8b0944…`; Chrome 158.0.8127.88 headless; session restart
+16 s, idle after 34 s). The page was settling before any position and still 1.5 s
+after the first; it settled 66 ms after the second. The four plans, each after the hook:
+
+| plan | read | sent | CSS hotspot | kernel plane | plane + hotspot − sent |
+|---|---|---|---|---|---|
+| approach C | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach C | hand, first time: one straight glide onto the button, at rest | (146, 501) | (9, 4) | (137, 497) | (0, 0) |
+| approach C | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach C | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach C | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| approach A | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach A | hand, first time: one straight glide onto the button, at rest | (142, 515) | (9, 4) | (133, 511) | (0, 0) |
+| approach A | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach A | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach A | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| approach from the right, across the button's edge at a slant | arrow over the page body | (380, 640) | (1, 1) | (379, 639) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand, first time: one straight glide onto the button, at rest | (72, 532) | (9, 4) | (63, 528) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand, after four scattered points inside the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| approach from the right, across the button's edge at a slant | text caret over the terminal, after two glides | (1100, 340) | (4, 8) | (1096, 332) | (0, 0) |
+| approach from the right, across the button's edge at a slant | hand again, later in the plan | (100, 520) | (9, 4) | (91, 516) | (0, 0) |
+| jumps with rests | arrow over the page body | (450, 730) | (1, 1) | (449, 729) | (0, 0) |
+| jumps with rests | hand over the button | (93, 516) | (9, 4) | (84, 512) | (0, 0) |
+| jumps with rests | text caret over the terminal | (1000, 420) | (4, 8) | (996, 412) | (0, 0) |
+
+18 reads, 18 with the exact hotspot and the tip on the sent pixel. Then 48 even runs from where
+the pointer rests, right after starting over, the terminal printing in bursts:
+
+| started over by | runs | arrow known 0.4 s after the stop | 1.9 s after | after two more positions | wrong |
+|---|---|---|---|---|---|
+| hook | 16 | 16 | 16 | 16 | 0 |
+| hook and pointer mode | 16 | 1 | 16 | 16 | 0 |
+| hook, relative motion, and the mouse back on the pixel it left | 16 | 2 | 16 | 16 | 0 |
+
+In each of the 16 runs of the third kind the script reads the kernel's cursor plane after the
+relative motion and again after the mouse is back on the pixel it left: the plane had not moved
+(the guest's pointer was left (3,2) from that pixel), and 0.7 s and 2.2 s after
+the return the page showed nothing and was still settling — round 4 settled there within
+134 ms. The run that follows is the first position the guest acts on.
+
+The timeline of the canvas's cursor over the whole run (sampled every 8 ms): 154 changes,
+76 answers shown, none more than a pixel from the truth. No painted pointer, no console
+errors, no cursor diagnostics.
+
+**Unchanged with the image as published** (two runs, n = 8 each; `browser-unchanged.json`,
+`browser-unchanged-2.json`): click result median 261 and 262.1 ms, key echo median
+45 and 42.4 ms — round 4 measured 278 and 271.1 ms, 45.7 and 46 ms; rounds 2 and 3
+272.8 and 265.2 ms; E5-T37b 267.7 / 270.6 / 267.9 and 45.4 / 48.8 / 44.2. (A first pair of runs at
+this head gave 279.2 and 295.7 ms while test processes orphaned by my own mutant runner were
+spinning on two or three cores: the guest work per click was the same, 25.4-26.6 M instructions,
+the host slower. The runner now kills its whole process group; those two runs are kept as
+`browser-unchanged-under-load*.json`, and the browser proof above was taken under that load
+too.) Demo page
+(`E5_DEMO_TASK=E5-T36a E5_DEMO_OUT=evidence/e5-t36a node evidence/e5-t36a/demo-suite.mjs`):
+127 passed, 0 failed of 127; no errors. Round 4's evidence is kept in
+`evidence/e5-t36a/round-4/`.
+
+**Limits, as they are.** Round 4's list stands with these changes.
+
+- **The fifth, restated.** The page assumes that the guest's pointer goes where a position it
+  ACTS ON sends it, and is moved by nothing else while the pointer mode is absolute. What it
+  knows after a pointer-mode change is now exactly this: nothing, until a position that differs
+  from the last absolute one has been sent and the guest has been idle after it. What it still
+  cannot see: a guest that moves or holds its own pointer in absolute mode while its cursor
+  stays shown — a compositor warp (sway's default warps only between outputs, and there is
+  one), a client's pointer lock inside the guest that keeps a cursor image up. A wrong answer
+  is then possible until three moves contradict it. I found no way for a user of the Replay
+  desktop to do either from the page. (A compositor that starts shows its cursor where none
+  was: covered now. One restarted under a running page is covered only if the device reports
+  the cursor gone in between, which I did not check; no user of the page can restart it.)
+- **New: a pointer that returns to exactly the pixel it left stays unknown.** After a mode
+  change, a guest reset, a cursor shown again or at the page's start, shapes not settled yet
+  are drawn without their hotspot until the mouse has moved by at least a pixel (and the guest
+  has been idle after that). Settled hotspots are kept as before.
+- **New: positions the page sends before it has presented a frame are not noted** (their pixel
+  is not known). The first noted position is then compared with nothing and does not count;
+  the second does, as at any page start.
+- Unchanged: a busy guest; rest needs 150 ms without a position or a cursor event; nothing is
+  known about the image shown until it is reported again after starting over; idle proves
+  positions were acted on, not that a client finished changing the cursor; the 512-position
+  history; the output size learnt from presented frames; nothing inferred without the paced
+  clock.
