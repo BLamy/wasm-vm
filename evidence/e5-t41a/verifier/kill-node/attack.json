@@ -1,0 +1,74 @@
+{
+  "mode": "kill-node",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:06:41.747Z",
+  "early": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n0\n",
+  "buildPid": "73",
+  "buildProc": "nice=19\nRECORD_REPLAY_DONT_RECORD=1\n/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tmp --build-snapshot /dev/null \nPPid:\t71\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n",
+  "kill": "REPLAY_CHROMIUM_LAUNCH uptime=1.78\nREPLAY_SWAY_IPC uptime=1.95\n2.42 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n",
+  "ready": [
+    "5.37",
+    "160672"
+  ],
+  "nodeLine": "REPLAY_NODE_SNAPSHOT_FAILED uptime=5.39\r",
+  "order": {
+    "readyIndex": 3687,
+    "nodeIndex": 3740
+  },
+  "state": "total 4\ndrwxr-xr-x    2 root     root            80 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             7 Nov 26 21:06 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:06 done\nKilled\nundefined 42\nrc=0\n",
+  "timing": [
+    "T 8.56 9.38\n",
+    "REPLAY_CHROMIUM_PAGE {\"id\":900002,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"pass {\\n  \\\"pass\\\": true,\\n  \\\"runs\\\": 1,\\n  \\\"javascript\\\": 42,\\n  \\\"webassembly\\\": 42,\\n  \\\"pixel\\\": [\\n    42,\\n    128,\\n    64,\\n    255\\n  ],\\n  \\\"browser\\\": \\\"Chrome/108.0.0.0\\\"\\n}\"}},\"sessionId\":\"EFA72469AEE23C364C8187C121A5E50C\"} uptime=5.34\nREPLAY_RENDERER_SANDBOX pid=/proc/325 NoNewPrivs=1 Seccomp=2 NSpid=\t325\t10\t1 uptime=5.51\nREPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.57\nT 9.75 10.56\n",
+    "T 11.58 13.79\n"
+  ],
+  "monitorPid": "81\n169172\n",
+  "pass": true,
+  "hostSeconds": 60.083,
+  "log": [
+    {
+      "name": "early state",
+      "cmd": "cat /proc/uptime; ls -la /run/replay-node; grep -c . /run/replay-desktop/events",
+      "out": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n0\n"
+    },
+    {
+      "name": "build pid",
+      "cmd": "i=0; while [ $i -lt 400 ]; do pid=$(for p in /proc/[0-9]*; do tr '\\0' ' ' < $p/cmdline 2>/dev/null | grep -q '^/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tm[p]' && echo ${p#/proc/}; done | head -n 1); [ -n \"$pid\" ] && break; sleep 0.05; i=$((i+1)); done; echo \"tries=$i comm=$(cat /proc/$pid/comm 2>/dev/null) uptime=$(cut -d' ' -f1 /proc/uptime)\"; echo $pid",
+      "out": "-/bin/sh: can't open /proc/97/cmdline: no such file\ntries=0 comm=node-MainThread uptime=1.35\n73\n"
+    },
+    {
+      "name": "build proc",
+      "cmd": "cut -d' ' -f19 /proc/73/stat | sed 's/^/nice=/'; tr '\\0' '\\n' < /proc/73/environ | grep RECORD_REPLAY; tr '\\0' ' ' < /proc/73/cmdline; echo; grep PPid /proc/73/status; ls -l /run/replay-node",
+      "out": "nice=19\nRECORD_REPLAY_DONT_RECORD=1\n/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tmp --build-snapshot /dev/null \nPPid:\t71\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n"
+    },
+    {
+      "name": "kill build node",
+      "cmd": "kill -9 73; sleep 1; cat /proc/uptime; ls -la /run/replay-node; cat /run/replay-node/build.log",
+      "out": "REPLAY_CHROMIUM_LAUNCH uptime=1.78\nREPLAY_SWAY_IPC uptime=1.95\n2.42 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n"
+    },
+    {
+      "name": "state after",
+      "cmd": "ls -la /run/replay-node; cat /run/replay-node/build.log; node -p 'String(process.env.NODE_OPTIONS) + \" \" + 6*7'; echo rc=$?",
+      "out": "total 4\ndrwxr-xr-x    2 root     root            80 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             7 Nov 26 21:06 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:06 done\nKilled\nundefined 42\nrc=0\n"
+    },
+    {
+      "name": "node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 8.56 9.38\n"
+    },
+    {
+      "name": "node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "REPLAY_CHROMIUM_PAGE {\"id\":900002,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"pass {\\n  \\\"pass\\\": true,\\n  \\\"runs\\\": 1,\\n  \\\"javascript\\\": 42,\\n  \\\"webassembly\\\": 42,\\n  \\\"pixel\\\": [\\n    42,\\n    128,\\n    64,\\n    255\\n  ],\\n  \\\"browser\\\": \\\"Chrome/108.0.0.0\\\"\\n}\"}},\"sessionId\":\"EFA72469AEE23C364C8187C121A5E50C\"} uptime=5.34\nREPLAY_RENDERER_SANDBOX pid=/proc/325 NoNewPrivs=1 Seccomp=2 NSpid=\t325\t10\t1 uptime=5.51\nREPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.57\nT 9.75 10.56\n"
+    },
+    {
+      "name": "node -e 0",
+      "cmd": "a=$(cut -d' ' -f1 /proc/uptime); node -e 0 >/dev/null 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo \"T $a $b\"",
+      "out": "T 11.58 13.79\n"
+    },
+    {
+      "name": "monitor",
+      "cmd": "for p in /proc/[0-9]*; do grep -qs 'replay-desktop-monito[r]' $p/cmdline && echo ${p#/proc/}; done; cat /run/replay-desktop/mem-hwm-kib",
+      "out": "81\n169172\n"
+    }
+  ]
+}

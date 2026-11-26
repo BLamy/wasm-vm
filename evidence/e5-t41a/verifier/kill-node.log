@@ -1,0 +1,28 @@
+{
+  "mode": "kill-node",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:06:41.747Z",
+  "early": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n0\n",
+  "buildPid": "73",
+  "buildProc": "nice=19\nRECORD_REPLAY_DONT_RECORD=1\n/opt/replay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob.tmp --build-snapshot /dev/null \nPPid:\t71\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n",
+  "kill": "REPLAY_CHROMIUM_LAUNCH uptime=1.78\nREPLAY_SWAY_IPC uptime=1.95\n2.42 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:06 build.log\n",
+  "ready": [
+    "5.37",
+    "160672"
+  ],
+  "nodeLine": "REPLAY_NODE_SNAPSHOT_FAILED uptime=5.39\r",
+  "order": {
+    "readyIndex": 3687,
+    "nodeIndex": 3740
+  },
+  "state": "total 4\ndrwxr-xr-x    2 root     root            80 Nov 26 21:06 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:06 ..\n-rw-r--r--    1 root     root             7 Nov 26 21:06 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:06 done\nKilled\nundefined 42\nrc=0\n",
+  "timing": [
+    "T 8.56 9.38\n",
+    "REPLAY_CHROMIUM_PAGE {\"id\":900002,\"result\":{\"result\":{\"type\":\"string\",\"value\":\"pass {\\n  \\\"pass\\\": true,\\n  \\\"runs\\\": 1,\\n  \\\"javascript\\\": 42,\\n  \\\"webassembly\\\": 42,\\n  \\\"pixel\\\": [\\n    42,\\n    128,\\n    64,\\n    255\\n  ],\\n  \\\"browser\\\": \\\"Chrome/108.0.0.0\\\"\\n}\"}},\"sessionId\":\"EFA72469AEE23C364C8187C121A5E50C\"} uptime=5.34\nREPLAY_RENDERER_SANDBOX pid=/proc/325 NoNewPrivs=1 Seccomp=2 NSpid=\t325\t10\t1 uptime=5.51\nREPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.57\nT 9.75 10.56\n",
+    "T 11.58 13.79\n"
+  ],
+  "monitorPid": "81\n169172\n",
+  "pass": true,
+  "hostSeconds": 60.083
+}
+exit=0

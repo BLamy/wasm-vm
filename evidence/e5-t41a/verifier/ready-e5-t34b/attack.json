@@ -1,0 +1,12 @@
+{
+  "mode": "ready-only",
+  "image": "target/e5-t34b/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:05:25.222Z",
+  "ready": [
+    "5.27",
+    "163624"
+  ],
+  "pass": true,
+  "hostSeconds": 29.913,
+  "log": []
+}

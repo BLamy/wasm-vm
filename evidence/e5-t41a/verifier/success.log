@@ -1,0 +1,90 @@
+{
+  "mode": "success",
+  "image": "target/e5-t41a/image/replay-desktop.ext4",
+  "startedAt": "2026-11-26T21:05:25.223Z",
+  "early": "0.91 0.02\ntotal 0\ndrwxr-xr-x    2 root     root            60 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n0\n",
+  "buildPid": "",
+  "duringBuild": "total 0\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\nREPLAY_SWAY_IPC uptime=1.96\nREPLAY_CHROMIUM_LAUNCH uptime=2.08\nREPLAY_TERMINAL_MAPPED uptime=3.24\nundefined 42\nrc=0\ntotal 0\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n",
+  "ready": [
+    "6.59",
+    "174020"
+  ],
+  "nodeLine": "REPLAY_NODE_SNAPSHOT bytes=6753966 uptime=11.00\r",
+  "order": {
+    "readyIndex": 3251,
+    "nodeIndex": 3304
+  },
+  "state": "total 6596\ndrwxr-xr-x    2 root     root           100 Nov 26 21:05 .\ndrwxr-xr-x    6 root     root           180 Nov 26 21:05 ..\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6753966 Nov 26 21:05 startup.blob\n--snapshot-blob=/run/replay-node/startup.blob 42\nrc=0\n",
+  "timing": [
+    "T 12.25 13.24\n",
+    "T 13.26 14.17\n",
+    "T 14.18 14.81\n"
+  ],
+  "args": {
+    "dashdash": {
+      "wrapped": "[\"/tmp/a.js\",\"x\"] --snapshot-blob=/run/replay-node/startup.blob",
+      "plain": "[\"/tmp/a.js\",\"x\"] undefined"
+    },
+    "dashScript": {
+      "wrapped": "[\"/tmp/--build-snapshot.js\",\"q\"] undefined",
+      "plain": "[\"/tmp/--build-snapshot.js\",\"q\"] undefined"
+    },
+    "emptyNO": {
+      "wrapped": "\"--snapshot-blob=/run/replay-node/startup.blob\""
+    },
+    "spacesNO": {
+      "wrapped": "a b|--snapshot-blob=/run/replay-node/startup.blob --title=\"a b\"",
+      "plain": "a b|--title=\"a b\""
+    },
+    "spacesArgv": {
+      "wrapped": "[\"/tmp/a.js\",\"a b\",\"\",\"c\"] --snapshot-blob=/run/replay-node/startup.blob",
+      "plain": "[\"/tmp/a.js\",\"a b\",\"\",\"c\"] undefined"
+    },
+    "snapArg": {
+      "wrapped": "[\"/tmp/a.js\",\"--snapshot-blob\"] undefined",
+      "plain": "[\"/tmp/a.js\",\"--snapshot-blob\"] undefined"
+    },
+    "envShebang": {
+      "wrapped": "envshebang 4 /tmp/envs function",
+      "plain": "envshebang 4 /tmp/envs function"
+    },
+    "directShebang": {
+      "wrapped": "directshebang 3 /tmp/dirs"
+    },
+    "dashS": {
+      "wrapped": "/usr/bin/env: invalid option -- 'S'\nBusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) multi-call binary.\nUsage: env [-i0] [-u NAME]... [-] [NAME=VALUE]... [PROG ARGS]\nPrint current environment or run PROG after setting up environment\n-, -i\tStart with empty environment\n-0\tNUL terminated output\n-u NAME\tRemove variable from environment"
+    },
+    "npm": {
+      "wrapped": "-/bin/sh: npm: not found\nrc=0",
+      "plain": "env: can't execute '/opt/replay-node-26/bin/npm': No such file or directory"
+    },
+    "npmNodeOpt": {
+      "wrapped": "-/bin/sh: npm: not found"
+    },
+    "nested": {
+      "wrapped": "--snapshot-blob=/run/replay-node/startup.blob"
+    },
+    "repl": {
+      "wrapped": "1",
+      "plain": "1"
+    },
+    "stdinScript": {
+      "wrapped": "4 25",
+      "plain": "4 25"
+    }
+  },
+  "truncated": "The startup snapshot is truncated.\nrc=0\n42\nrc=0\n",
+  "emptyBlob": "The startup snapshot is not a Node.js snapshot blob.\nrc=0\n",
+  "desktopUser": "--snapshot-blob=/run/replay-node/startup.blob 1000\ntotal 6596\n-rw-r--r--    1 root     root             0 Nov 26 21:05 build.log\n-rw-r--r--    1 root     root             0 Nov 26 21:05 done\n-rw-r--r--    1 root     root       6753966 Nov 26 21:07 startup.blob\n",
+  "df": "Filesystem           1K-blocks      Used Available Use% Mounted on\ntmpfs                   495864      6648    489216   1% /run\ntmpfs                   495864      6616    489248   1% /tmp\nshm                     495864     16776    479088   3% /dev/shm\n",
+  "deleted": "undefined 42\nrc=0\n",
+  "deletedTiming": [
+    "T 128.54 129.34\n",
+    "T 136.22 137.03\n",
+    "T 146.24 147.05\n"
+  ],
+  "monitorPid": "82\n184312\n",
+  "pass": true,
+  "hostSeconds": 166.645
+}
+exit=0
