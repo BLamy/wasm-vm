@@ -24213,18 +24213,18 @@
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "E5-T37b: admit the paced policy only for a whole-image, non-persistent boot",
             "E5-T37b: roadmap row; idle is sampled after the click and type scenarios",
             "E5-T37b: the Replay desktop's worker sleeps while the guest waits",
-            "E5-T37b in-progress: paced idle in the browser; file E5-T37c and E5-T40",
-            "E5-T37b: regenerated GPU checkpoint build id (matches web/dist)"
+            "E5-T37b in-progress: paced idle in the browser; file E5-T37c and E5-T40"
           ]
         }
       ],
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E5-T37c",
