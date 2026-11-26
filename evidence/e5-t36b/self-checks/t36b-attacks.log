@@ -1,0 +1,12 @@
+64 px cursor, pointer on the spot: ["plane-0 crtc=crtc-0 fb=40 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=45 pos=64x64+1146+642"]
+frame around the pointer (hardware cursor): ba47a5fd38de4973
+same region, pointer away: ba47a5fd38de4973
+hardware cursor: the frame carries no pointer: true
+xcursor 128: SET
+128 px cursor, pointer on the spot: ["plane-0 crtc=crtc-0 fb=40 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=45 pos=64x64+1149+649"]
+frame around the pointer (128 px cursor): ba47a5fd38de4973
+same region, pointer away: ba47a5fd38de4973
+oversized cursor: the pointer is painted into the frame: false
+24 px theme again, pointer on the spot: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=44 pos=64x64+1149+649"]
+after sway hid the cursor (1 s idle timeout, 3 s on): ["plane-0 crtc=crtc-0 fb=40 pos=1280x800+0+0","plane-1 crtc=(null) fb=0 pos=0x0+0+0"]
+after the pointer moved again: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=(null) fb=0 pos=0x0+0+0"]
