@@ -78,7 +78,7 @@ Two additions, both selected by one host call (`Machine::set_paced_idle_policy`)
 
 ## Deterministic acceptance
 
-`cargo test -p wasm-vm-core --lib paced_idle` passes (24 tests), including:
+`cargo test -p wasm-vm-core --lib paced_idle` passes (25 tests since round 5; 24 before), including:
 
 - yield off (the default): a paced guest spinning on `wfi` uses its whole budget, as before;
 - yield on: `run(n)` returns after the waiting `wfi` with fewer than `n` retired,
