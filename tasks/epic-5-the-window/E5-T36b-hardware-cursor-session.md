@@ -3,7 +3,7 @@ id: E5-T36b
 epic: 5
 title: Replay desktop image — the session runs on legacy KMS with a hardware cursor
 priority: 0.3876515
-status: implemented
+status: verified
 depends_on: [E5-T36a]
 estimate: S
 risk: medium
@@ -254,3 +254,94 @@ passes (`result.json` sha256 `c40f8246f7b5…`; same image, sha256 `8a5c6c1e34b7
 `--expect software` on generation 1 passes with no plane on the CRTC at all five places
 (`evidence/e5-t36b/control-gen1/`). Round 1's runs are in `evidence/e5-t36b/round-1/`. Nothing
 else changed: the session script is as in round 1, so the verifier's HELD results on it stand.
+
+### 2026-11-26 — verifier (round 2) — VERDICT: verified
+
+VERDICT: verified
+
+Fresh session at head `e57b40bc0` (code `7c5191e91`). I wrote the predictions before running
+anything (`evidence/e5-t36b/verifier-r2/predictions.md`, R1–R11). I added an addendum (R5b–R8b)
+after the first attack log showed two of its probes had tested nothing, and before the follow-up
+boot. Image `target/e5-t36b/image/replay-desktop.ext4` (sha256 `8a5c6c1e34b7…`, round 1's image).
+Native CLI `target/release/wasm-vm` sha256 `62fde0c35fc8…`, the same binary round 1 used. No rr,
+no `ssh dev` (2026-09-01 policy). Carried forward from round 1 as HELD: P2, P3, P5–P9, P11 and P12.
+Since round 1 the diff touches nothing under `tools/replay-desktop/`, the image build, `crates/` or
+`web/`, and the image and CLI are unchanged.
+
+- **R1 — acceptance at HEAD — HELD.** I ran it myself: exit 0
+  (`verifier-r2/native.log`, `native/result.json` sha256 `d4a7e1c15427…`). `swayEnv` is
+  `[WLR_DRM_NO_ATOMIC=1, WLR_RENDERER=pixman]`. All five moves give a 64x64 plane on crtc-0 with
+  fb>0. The hotspots are (1,1), (1,1), (9,5), (5,9), and at the corner (0,0) the plane is parsed at
+  **x=-1, y=-1**, hotspot (1,1). Both axes are negative in one run. This matches the worker's table.
+  The worker's own `result.json` has `startedAt` 20:17:57Z, about 2 min before commit `7c5191e91`
+  (20:19:44Z). So it was made from the working tree, not from the commit. My rerun at HEAD gives
+  identical numbers and stands in for it.
+- **R2 — control on generation 1 — HELD.** `--expect software` exits 0 with
+  `WLR_NO_HARDWARE_CURSORS=1` and `cursor:null` at all five places (`verifier-r2/control-gen1.log`).
+- **R3 — parser on every sign combination — HELD.** `verifier-r2/regex-check.log` takes the regex
+  straight from the file at HEAD. It parses `64x64-1-1`→(-1,-1), `64x64+1278-1`→(1278,-1),
+  `64x64-1+797`→(-1,797), `64x64-63-63` and the positive forms. Round 1's regex gives `null` on
+  every negative form. The mixed-sign cases are checked only offline (the acceptance's corner has
+  both axes negative), and the regex treats each axis independently.
+- **R4 — sabotage: the fifth position is what exercises the fix — HELD.** I ran a scratch copy of
+  the acceptance with round 1's regex restored (`verifier-r2/sabotage-old-regex.mjs`, which differs
+  from HEAD only on line 41 and in its import path). It exits 1 at the corner: "plane at null,null
+  for a pointer at 0,0" (`sabotage-old-regex.log`, `sabotage-old-regex/result.json`).
+- **The revised attack item — legitimate, and its reachability claim HELD (R5–R9, R5b–R8b).**
+  *Legitimacy:* round 1's demand allowed either a fix or a recorded decision that removes the item.
+  The worker narrowed the item in the open: the revision is marked as such, the failure is filed as
+  E5-T36d (pending, depends on this task, with the round-1 three-way check as its acceptance), and
+  the "Deterministic acceptance" section was strengthened, not weakened. Fixing wlroots' pixman
+  fallback is a second boundary that this S task (one session variable) does not contain, and
+  AGENTS.md says to file such work as a follow-up. I accept the revision because the narrowed claim
+  survived the attack below. A wrong reachability claim would have been a refutation.
+  *Reachability, attacked on the booted image* (`verifier-r2/attacks-new.log`, `attacks-new-b.log`):
+  - R5/R5b. The image has no `cursors` directory, `index.theme` or `*xcursor*` file anywhere, and no
+    `/usr/share/icons` or `~/.icons`. So `XCURSOR_PATH` has nothing to find. Sway's environment has
+    no XCURSOR_*. foot and Chrome carry the default `XCURSOR_SIZE=24` (which sway exports to its
+    children). The output scale is 1.0. The EDID is a fixed 96-DPI panel
+    (`crates/core/src/dev/virtio/gpu/edid.rs`, `physical_size_cm`), so sway never auto-scales.
+    The only binaries that link libwayland-client are foot, grim and Chrome.
+  - R6/R6b. The guest's Chrome at DSF 1 with a 128x128 **PNG** cursor, a 256x256 PNG through
+    `-webkit-image-set(… 2x)`, and a 128 SVG through `-webkit-image-set(… 1x)`. Each gives a
+    64x64 plane with hotspot 20,20, the declared 40,40 halved, so the custom image is what is on the
+    plane. Unprefixed `image-set()` is ignored by Chrome 108 (those probes in `attacks-new.log` show
+    the arrow, 1,1); I re-ran them prefixed.
+  - R7/R7b. I swept all 35 CSS cursor keywords in Chrome, so its own cursor images were each on the
+    plane at least once. Every keyword gives a 64x64 plane on the CRTC
+    (`attacks-new-b.log:12-46`). The exception is `none`, which hides the pointer by design (`:47`).
+    Chrome's I-beam, hand and tab-strip arrow give the same (`attacks-new.log`).
+  - R8/R8b (informational: these need a Chrome flag the shipped launcher does not pass). With
+    `--force-device-scale-factor=2` and `=3`, the CSS cursors and nine of Chrome's own bitmap
+    cursors still give 64x64 planes. My R8b prediction that one would exceed 64 failed: Chrome caps
+    every cursor bitmap at 64 physical px.
+  - R9 (informational, IPC). With `swaymsg output '*' scale 2`, wlroots' built-in cursor over foot
+    and over the title bar, and Chrome's 128 PNG cursor, all keep a 64x64 plane on the CRTC.
+  Nothing in the image, as shipped, produced a cursor buffer larger than the plane. Round 1's
+  oversized themes are still the only way I know, and that is E5-T36d.
+- **R10 — novel attack: sway's own cursor at seams and edges — HELD.** I probed the tiling seam
+  between Chrome and foot (791 and 793), foot's title bar, the screen's right edge and the
+  bottom-right corner. Each gives a 64x64 plane on the CRTC, hotspot (1,1), with positive positions
+  (`64x64+1278+798`) (`attacks-new.log`, "seam" lines).
+- **R11 — mock hunt — HELD.** The corner assertion reads the kernel's
+  `/sys/kernel/debug/dri/0/state` like the other four moves. Nothing in the diff special-cases
+  (0,0). The control shows the five-move loop still fails an image that paints its pointer.
+- **COVERAGE.** The diff (`git diff 894f8c7fe..HEAD -- tools`) is a regex, the position list, and
+  two comments. The regex's negative-sign branch ran at the corner in R1. R4 shows it is the line
+  that turns that move from fail into pass. The fifth position ran in R1 and R2. The comments are
+  waived. No changed line went unexecuted.
+- **SUITE.** No new permanent test. The acceptance script already is the recurring check, and its
+  fifth position is now the regression for the parser (R4 shows it discriminates).
+  `verifier-r2/attacks-r2b.mjs` stays in evidence as the reachability sweep. Re-run it when the
+  guest's Chrome, foot or wlroots change. E5-T36d can reuse it.
+
+Commands: `node tools/verify/e5-t36b-hardware-cursor.mjs --image target/e5-t36b/image/replay-desktop.ext4 --out evidence/e5-t36b/verifier-r2/native`;
+the same with `--image target/e5-t34b/image/replay-desktop.ext4 --expect software --out …/control-gen1`;
+`node evidence/e5-t36b/verifier-r2/regex-check.mjs`;
+`node evidence/e5-t36b/verifier-r2/sabotage-old-regex.mjs --image target/e5-t36b/image/replay-desktop.ext4 --out …/sabotage-old-regex`;
+`node evidence/e5-t36b/verifier-r2/attacks-r2.mjs target/e5-t36b/image/replay-desktop.ext4 …/attacks-new`;
+`node evidence/e5-t36b/verifier-r2/attacks-r2b.mjs target/e5-t36b/image/replay-desktop.ext4 …/attacks-new-b`.
+Not checked: the browser (E5-T36c); typing into foot natively (round 1, P8, used sway's
+`hide_cursor`); drag-and-drop icons (in wlroots these are scene surfaces, not the cursor plane,
+so I did not probe them); grim's frame hashes at output scale 2 came back empty, but the plane was
+on, so a pointer was drawn; no cold clone (medium risk).

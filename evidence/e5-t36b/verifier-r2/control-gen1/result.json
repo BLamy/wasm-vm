@@ -1,0 +1,174 @@
+{
+  "task": "E5-T36b",
+  "expect": "software",
+  "startedAt": "2026-11-26T20:22:59.320Z",
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t34b/image/replay-desktop.ext4,ro",
+    "--ram-mib",
+    "1024",
+    "--net",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--block-cache",
+    "--interrupt-batching",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "400000000000",
+    "--no-reboot",
+    "--append",
+    "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
+  ],
+  "imageSha256": "2af6100e9b37b9d1effd5102922672b682ec27d1eb1f56aa66e343c865d55b05",
+  "chromiumPage": true,
+  "swayEnv": [
+    "WLR_NO_HARDWARE_CURSORS=1",
+    "WLR_RENDERER=pixman"
+  ],
+  "moves": [
+    {
+      "pointer": [
+        300,
+        400
+      ],
+      "planes": [
+        {
+          "name": "plane-0",
+          "crtc": "crtc-0",
+          "fb": 40,
+          "w": 1280,
+          "h": 800,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "plane-1",
+          "crtc": "(null)",
+          "fb": 0,
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        640,
+        100
+      ],
+      "planes": [
+        {
+          "name": "plane-0",
+          "crtc": "crtc-0",
+          "fb": 38,
+          "w": 1280,
+          "h": 800,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "plane-1",
+          "crtc": "(null)",
+          "fb": 0,
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        93,
+        516
+      ],
+      "planes": [
+        {
+          "name": "plane-0",
+          "crtc": "crtc-0",
+          "fb": 40,
+          "w": 1280,
+          "h": 800,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "plane-1",
+          "crtc": "(null)",
+          "fb": 0,
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        1036,
+        420
+      ],
+      "planes": [
+        {
+          "name": "plane-0",
+          "crtc": "crtc-0",
+          "fb": 38,
+          "w": 1280,
+          "h": 800,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "plane-1",
+          "crtc": "(null)",
+          "fb": 0,
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "cursor": null
+    },
+    {
+      "pointer": [
+        0,
+        0
+      ],
+      "planes": [
+        {
+          "name": "plane-0",
+          "crtc": "crtc-0",
+          "fb": 40,
+          "w": 1280,
+          "h": 800,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "plane-1",
+          "crtc": "(null)",
+          "fb": 0,
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "cursor": null
+    }
+  ],
+  "pass": true,
+  "hostSeconds": 36.327
+}

@@ -1,0 +1,3443 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.89
+REPLAY_CHROMIUM_LAUNCH uptime=1.49
+REPLAY_SWAY_IPC uptime=1.95
+REPLAY_TERMINAL_MAPPED uptime=1.99
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"AFB022537CED2DDBBB988B7452E474B8","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"E60AAF3A267BCCA66A1D0B1DD7616786"}]}} uptime=4.57
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"5652428677FF203DC5D23C96A891ECE9"} uptime=4.96
+REPLAY_RENDERER_SANDBOX pid=/proc/184 NoNewPrivs=1 Seccomp=2 NSpid=	184	10	1 uptime=5.08
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.15
+REPLAY_CHROME_MAPPED uptime=5.25 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.26 mem_hwm_kib=164104
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; mount -t debugfs none /sy
+s/kernel/debug 2>/dev/null; export SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock 
+| head -n 1); printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cat /proc/bus/input/devic
+es; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+I: Bus=0006 Vendor=feed Product=0001 Version=0100
+N: Name="wasm-vm virtio keyboard"
+P: Phys=virtio3/input0
+S: Sysfs=/devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0
+U: Uniq=
+H: Handlers=kbd event0 
+B: PROP=0
+B: EV=20013
+B: KEY=1ffffffffffffff ffffffffffffffff ffffffffffffffff fffffffffffffffe
+B: MSC=10
+B: LED=7
+
+I: Bus=0006 Vendor=feed Product=0002 Version=0100
+N: Name="wasm-vm virtio tablet"
+P: Phys=virtio4/input0
+S: Sysfs=/devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1
+U: Uniq=
+H: Handlers=mouse0 event1 
+B: PROP=2
+B: EV=b
+B: KEY=1f0000 0 0 0 0
+B: ABS=3
+
+I: Bus=0006 Vendor=feed Product=0003 Version=0100
+N: Name="wasm-vm virtio mouse"
+P: Phys=virtio5/input0
+S: Sysfs=/devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2
+U: Uniq=
+H: Handlers=mouse1 event2 
+B: PROP=0
+B: EV=7
+B: KEY=1f0000 0 0 0 0
+B: REL=143
+
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; find / -xdev \( -name cur
+sors -o -iname '*xcursor*' -o -name index.theme \) 2>/dev/null | grep -v ^/proc 
+| head -n 40; echo END; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+END
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; ls -d /usr/share/icons/* 
+/usr/share/pixmaps /home/desktop/.icons /home/desktop/.local/share/icons 2>&1 | 
+head -n 20; echo END; printf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+ls: /usr/share/icons/*: No such file or directory
+ls: /usr/share/pixmaps: No such file or directory
+ls: /home/desktop/.icons: No such file or directory
+ls: /home/desktop/.local/share/icons: No such file or directory
+END
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; for p in $(pgrep -x sway 
+| head -n 1); do tr '\0' '\n' < /proc/$p/environ | grep -E 'XCURSOR|SCALE|GDK|QT
+_' ; done; echo END; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+-/bin/sh: pgrep: not found
+END
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; for p in $(pgrep -x foot 
+| head -n 1); do tr '\0' '\n' < /proc/$p/environ | grep -E 'XCURSOR|SCALE|GDK|QT
+_' ; done; echo END; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+-/bin/sh: pgrep: not found
+END
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; for p in $(pgrep -x chrom
+e | head -n 1); do tr '\0' '\n' < /proc/$p/environ | grep -E 'XCURSOR|SCALE|GDK|
+QT_' ; done; echo END; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+-/bin/sh: pgrep: not found
+END
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; tr '\0' ' ' < /proc/$(pgr
+ep -o -x chrome)/cmdline; echo; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+-/bin/sh: pgrep: not found
+root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4
+
+WVM_DONE_9
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '10'; swaymsg -t get_outputs |
+ grep -E '"(name|scale|physical_width|physical_height)"'; printf '%s%s\n' 'WVM_D
+ONE_' '10'
+WVM_BEGIN_10
+    "name": "Virtual-1",
+    "scale": 1.0,
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; grep -ri -E 'xcursor|sea
+t|scale' /etc/replay-desktop/sway.conf /etc/sway 2>/dev/null; echo END; printf '
+%s%s\n' 'WVM_DONE_' '11'
+WVM_BEGIN_11
+END
+WVM_DONE_11
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; ls /usr/lib/*/libgtk-3* 
+/usr/lib/*/libwayland-cursor* /usr/lib/*/libXcursor* 2>/dev/null; ls /home/deskt
+op/.config 2>/dev/null; echo END; printf '%s%s\n' 'WVM_DONE_' '12'
+WVM_BEGIN_12
+/usr/lib/riscv64-linux-gnu/libwayland-cursor.so.0
+/usr/lib/riscv64-linux-gnu/libwayland-cursor.so.0.22.0
+chromium         replay-chromium
+END
+WVM_DONE_12
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '13'; for f in /usr/bin/* /usr
+/local/bin/* /usr/sbin/* /opt/replay-chromium/chrome; do grep -l -s libwayland-c
+lient $f; done 2>/dev/null | tr '\n' ' '; echo; printf '%s%s\n' 'WVM_DONE_' '13'
+WVM_BEGIN_13
+/usr/bin/foot /usr/bin/grim 
+WVM_DONE_13
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '14'; : > /tmp/r2.html; printf
+ '%s%s\n' 'WVM_DONE_' '14'
+WVM_BEGIN_14
+WVM_DONE_14
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '15'; printf '%s' '<!doctype h
+tml><title>r2 cursors</title><style>body{margin:0;display:flex;flex-direction:co
+lumn;height:100vh}.r{flex:1;display:flex}.r>*{flex:1;margin:0;border:0;font-size
+:40px}</style><body><div class=r><div style="background:#fee;cursor:url(data:ima
+ge/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAA7klEQVR42u3SMQ0AAA
+jAsPk3DTZI6DEDS5sa/S0TADACAAEgAASAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACQAAIAA
+EgAASAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACQAAIAAEgAASAABAAAkAACAABIAAEgAAQAA
+JAAAgAASAABIAAEAACQAAIAAEgAASAABAAAkAACAABIAAEAAAmAGAEAAJAAAgAASAABIAAEAACQAAIAA
+EgAASAABAAAkAACAABIAAEgAAQAAJ' >> /tmp/r2.html; printf '%s%s\n' 'WVM_DONE_' '15'
+WVM_BEGIN_15
+WVM_DONE_15
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '16'; printf '%s' 'AAAgAASAABI
+AAEAACQAAIAAEgAASAbrRW0YdyUv8SrQAAAABJRU5ErkJggg==) 40 40, crosshair"></div><div
+ style="background:#efe;cursor:image-set(url(&quot;data:image/svg+xml;utf8,<svg 
+xmlns=%27http://www.w3.org/2000/svg%27 width=%27128%27 height=%27128%27><rect wi
+dth=%27128%27 height=%27128%27 fill=%27green%27/></svg>&quot;) 1x) 40 40, crossh
+air"></div><div style="background:#eef;cursor:image-set(url(data:image/png;base6
+4,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAACXElEQVR42u3UMQEAAAzCMPybZgZwsB
+wx0KNJWuArEcAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADA
+AwAMAAAAMADAAwAMAAAAMADAAwAMA' >> /tmp/r2.html; printf '%s%s\n' 'WVM_DONE_' '16'
+WVM_BEGIN_16
+WVM_DONE_16
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '17'; printf '%s' 'AAAMADAAwAD
+AAEcAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAA
+MADAAwAMAAAAMADAAwAMAAAAMADAAwADAAEcAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADA
+AwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwADAAwAAAAwAMADAAwA
+AAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMADAAwAAAAwAMAD
+AAwAAAAwAMADAAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAA
+ADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADA
+AwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAwAMAAAAMADAAQAAwAMA
+DAAAADAAwAMADAAAADAAwAMADAAAA' >> /tmp/r2.html; printf '%s%s\n' 'WVM_DONE_' '17'
+WVM_BEGIN_17
+WVM_DONE_17
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '18'; printf '%s' 'DAAwAMADAAA
+ADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAMADAAAADAAwAGA5V5B3jhsVkTwAAAABJRU5Erk
+Jggg==) 2x) 40 40, crosshair"></div></div><div class=r><input value="text text t
+ext text"><a href="#x" style="display:block;background:#ffd">a link a link</a></
+div></body>' >> /tmp/r2.html; printf '%s%s\n' 'WVM_DONE_' '18'
+WVM_BEGIN_18
+WVM_DONE_18
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '19'; chmod 644 /tmp/r2.html; 
+printf '%s%s\n' 'WVM_DONE_' '19'
+WVM_BEGIN_19
+WVM_DONE_19
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '20'; wc -c < /tmp/r2.html; pr
+intf '%s%s\n' 'WVM_DONE_' '20'
+WVM_BEGIN_20
+2062
+WVM_DONE_20
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '21'; pkill -f /opt/replay-chr
+omium/chrome; sleep 3; true; printf '%s%s\n' 'WVM_DONE_' '21'
+WVM_BEGIN_21
+-/bin/sh: pkill: not found
+WVM_DONE_21
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '22'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); /opt/replay-chromium/chrome --ozone-platform=wayland
+ --disable-gpu --no-first-run --no-default-browser-check --disable-background-ne
+tworking --disable-component-update --disable-sync --password-store=basic --num-
+raster-threads=1 --renderer-process-limit=1  --user-data-dir=/tmp/chrome-r2 file
+:///tmp/r2.html >/tmp/chrome-r2.log 2>&1 &'; sleep 60; printf '%s%s\n' 'WVM_DONE
+_' '22'
+WVM_BEGIN_22
+WVM_DONE_22
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '23'; swaymsg -t get_tree | gr
+ep -c '"name": "r2'; true; printf '%s%s\n' 'WVM_DONE_' '23'
+WVM_BEGIN_23
+1
+WVM_DONE_23
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '24'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '24'
+WVM_BEGIN_24
+INJECTED
+WVM_DONE_24
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '25'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '25'
+WVM_BEGIN_25
+INJECTED
+WVM_DONE_25
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '26'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '26'
+WVM_BEGIN_26
+WVM_DONE_26
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '27'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '27'
+WVM_BEGIN_27
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+110+280
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_27
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '28'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '28'
+WVM_BEGIN_28
+6e40fcdff17fe879
+WVM_DONE_28
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '29'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '29'
+WVM_BEGIN_29
+INJECTED
+WVM_DONE_29
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '30'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '30'
+WVM_BEGIN_30
+6e40fcdff17fe879
+WVM_DONE_30
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '31'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '31'
+WVM_BEGIN_31
+INJECTED
+WVM_DONE_31
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '32'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '32'
+WVM_BEGIN_32
+INJECTED
+WVM_DONE_32
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '33'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '33'
+WVM_BEGIN_33
+WVM_DONE_33
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '34'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '34'
+WVM_BEGIN_34
+6e40fcdff17fe879
+WVM_DONE_34
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '35'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\315\047\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '35'
+WVM_BEGIN_35
+INJECTED
+WVM_DONE_35
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '36'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\200\047\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '36'
+WVM_BEGIN_36
+INJECTED
+WVM_DONE_36
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '37'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '37'
+WVM_BEGIN_37
+WVM_DONE_37
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '38'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '38'
+WVM_BEGIN_38
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+394+299
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_38
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '39'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "379,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '39'
+WVM_BEGIN_39
+770310b858ca4845
+WVM_DONE_39
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '40'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '40'
+WVM_BEGIN_40
+INJECTED
+WVM_DONE_40
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '41'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "379,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '41'
+WVM_BEGIN_41
+770310b858ca4845
+WVM_DONE_41
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '42'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\315\047\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '42'
+WVM_BEGIN_42
+INJECTED
+WVM_DONE_42
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '43'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\200\047\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '43'
+WVM_BEGIN_43
+INJECTED
+WVM_DONE_43
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '44'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '44'
+WVM_BEGIN_44
+WVM_DONE_44
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '45'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "379,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '45'
+WVM_BEGIN_45
+770310b858ca4845
+WVM_DONE_45
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '46'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\102\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '46'
+WVM_BEGIN_46
+INJECTED
+WVM_DONE_46
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '47'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\102\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '47'
+WVM_BEGIN_47
+INJECTED
+WVM_DONE_47
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '48'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '48'
+WVM_BEGIN_48
+WVM_DONE_48
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '49'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '49'
+WVM_BEGIN_49
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+659+299
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_49
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '50'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "644,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '50'
+WVM_BEGIN_50
+bbd95d7aa9113432
+WVM_DONE_50
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '51'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '51'
+WVM_BEGIN_51
+INJECTED
+WVM_DONE_51
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '52'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "644,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '52'
+WVM_BEGIN_52
+bbd95d7aa9113432
+WVM_DONE_52
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '53'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\102\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '53'
+WVM_BEGIN_53
+INJECTED
+WVM_DONE_53
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '54'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\102\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '54'
+WVM_BEGIN_54
+INJECTED
+WVM_DONE_54
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '55'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '55'
+WVM_BEGIN_55
+WVM_DONE_55
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '56'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "644,284 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '56'
+WVM_BEGIN_56
+bbd95d7aa9113432
+WVM_DONE_56
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '57'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\024\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '57'
+WVM_BEGIN_57
+INJECTED
+WVM_DONE_57
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '58'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\024\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '58'
+WVM_BEGIN_58
+INJECTED
+WVM_DONE_58
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '59'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '59'
+WVM_BEGIN_59
+WVM_DONE_59
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '60'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '60'
+WVM_BEGIN_60
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+196+642
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_60
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '61'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '61'
+WVM_BEGIN_61
+dde552d7ad58dc43
+WVM_DONE_61
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '62'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '62'
+WVM_BEGIN_62
+INJECTED
+WVM_DONE_62
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '63'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '63'
+WVM_BEGIN_63
+dde552d7ad58dc43
+WVM_DONE_63
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '64'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\024\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '64'
+WVM_BEGIN_64
+INJECTED
+WVM_DONE_64
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '65'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\024\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '65'
+WVM_BEGIN_65
+INJECTED
+WVM_DONE_65
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '66'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '66'
+WVM_BEGIN_66
+WVM_DONE_66
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '67'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '67'
+WVM_BEGIN_67
+dde552d7ad58dc43
+WVM_DONE_67
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '68'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\074\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '68'
+WVM_BEGIN_68
+INJECTED
+WVM_DONE_68
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '69'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\074\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '69'
+WVM_BEGIN_69
+INJECTED
+WVM_DONE_69
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '70'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '70'
+WVM_BEGIN_70
+WVM_DONE_70
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '71'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '71'
+WVM_BEGIN_71
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+591+646
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_71
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '72'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "584,634 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '72'
+WVM_BEGIN_72
+d238c8988286b0dd
+WVM_DONE_72
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '73'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '73'
+WVM_BEGIN_73
+INJECTED
+WVM_DONE_73
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '74'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "584,634 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '74'
+WVM_BEGIN_74
+d238c8988286b0dd
+WVM_DONE_74
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '75'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\074\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '75'
+WVM_BEGIN_75
+INJECTED
+WVM_DONE_75
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '76'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\074\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '76'
+WVM_BEGIN_76
+INJECTED
+WVM_DONE_76
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '77'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '77'
+WVM_BEGIN_77
+WVM_DONE_77
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '78'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "584,634 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '78'
+WVM_BEGIN_78
+d238c8988286b0dd
+WVM_DONE_78
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '79'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\050\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\257\007\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '79'
+WVM_BEGIN_79
+INJECTED
+WVM_DONE_79
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '80'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\050\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\064\007\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '80'
+WVM_BEGIN_80
+INJECTED
+WVM_DONE_80
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '81'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '81'
+WVM_BEGIN_81
+WVM_DONE_81
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '82'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '82'
+WVM_BEGIN_82
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+399+44
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_82
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '83'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "384,29 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '83'
+WVM_BEGIN_83
+6c2df183570bbae7
+WVM_DONE_83
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '84'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '84'
+WVM_BEGIN_84
+INJECTED
+WVM_DONE_84
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '85'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "384,29 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '85'
+WVM_BEGIN_85
+6c2df183570bbae7
+WVM_DONE_85
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '86'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\050\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\257\007\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '86'
+WVM_BEGIN_86
+INJECTED
+WVM_DONE_86
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '87'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\050\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\064\007\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '87'
+WVM_BEGIN_87
+INJECTED
+WVM_DONE_87
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '88'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '88'
+WVM_BEGIN_88
+WVM_DONE_88
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '89'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "384,29 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '89'
+WVM_BEGIN_89
+6c2df183570bbae7
+WVM_DONE_89
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '90'; swaymsg -t get_tree | gr
+ep -E '"(app_id|x|width)"' | tr -d ' ' | tr '\n' ' '; echo; printf '%s%s\n' 'WVM
+_DONE_' '90'
+WVM_BEGIN_90
+"x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":1280, "x":0, "width":0, "x":0, "width":0, "x":0, "width":0, "x":0, "width":793, "x":0, "width":793, "x":2, "width":789, "x":0, "width":1018, "app_id":"chromium-browser(\/tmp\/chrome-r2)", "x":793, "width":163, "x":793, "width":163, "x":2, "width":159, "x":0, "width":1018, "app_id":"chromium-browser(\/home\/desktop\/.config\/replay-chromium)", "x":956, "width":324, "x":956, "width":324, "x":2, "width":320, "x":0, "width":700, "app_id":"replay-terminal", "width":1280, "width":1280, 
+WVM_DONE_90
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '91'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\147\117\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '91'
+WVM_BEGIN_91
+INJECTED
+WVM_DONE_91
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '92'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\032\117\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '92'
+WVM_BEGIN_92
+INJECTED
+WVM_DONE_92
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '93'; sleep 2; printf '%s%s\n'
+ 'WVM_DONE_' '93'
+WVM_BEGIN_93
+WVM_DONE_93
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '94'; cat /sys/kernel/debug/dr
+i/0/state; printf '%s%s\n' 'WVM_DONE_' '94'
+WVM_BEGIN_94
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+790+399
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_94
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '95'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "775,384 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '95'
+WVM_BEGIN_95
+e9493e17332472c2
+WVM_DONE_95
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '96'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '96'
+WVM_BEGIN_96
+INJECTED
+WVM_DONE_96
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '97'; su -s /bin/sh desktop -c
+ 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | gr
+ep -m1 "^wayland-[0-9]*$"); grim -g "775,384 96x96" -t ppm - 2>/dev/null' | sha2
+56sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '97'
+WVM_BEGIN_97
+e9493e17332472c2
+WVM_DONE_97
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '98'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\147\117\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '98'
+WVM_BEGIN_98
+INJECTED
+WVM_DONE_98
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '99'; printf '\000\000\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\032\117\000\000
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\000
+\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1;
+ printf '%s%s\n' 'WVM_DONE_' '99'
+WVM_BEGIN_99
+INJECTED
+WVM_DONE_99
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '100'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '100'
+WVM_BEGIN_100
+WVM_DONE_100
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '101'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "775,384 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '101'
+WVM_BEGIN_101
+e9493e17332472c2
+WVM_DONE_101
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '102'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\232\117\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '102'
+WVM_BEGIN_102
+INJECTED
+WVM_DONE_102
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '103'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\117\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '103'
+WVM_BEGIN_103
+INJECTED
+WVM_DONE_103
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '104'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '104'
+WVM_BEGIN_104
+WVM_DONE_104
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '105'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '105'
+WVM_BEGIN_105
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+792+399
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_105
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '106'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "777,384 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '106'
+WVM_BEGIN_106
+61228fcb85429acf
+WVM_DONE_106
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '107'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '107'
+WVM_BEGIN_107
+INJECTED
+WVM_DONE_107
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '108'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "777,384 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '108'
+WVM_BEGIN_108
+61228fcb85429acf
+WVM_DONE_108
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '109'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\232\117\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '109'
+WVM_BEGIN_109
+INJECTED
+WVM_DONE_109
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '110'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\117\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '110'
+WVM_BEGIN_110
+INJECTED
+WVM_DONE_110
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '111'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '111'
+WVM_BEGIN_111
+WVM_DONE_111
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '112'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "777,384 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '112'
+WVM_BEGIN_112
+61228fcb85429acf
+WVM_DONE_112
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '113'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\303\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '113'
+WVM_BEGIN_113
+INJECTED
+WVM_DONE_113
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '114'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\110\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '114'
+WVM_BEGIN_114
+INJECTED
+WVM_DONE_114
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '115'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '115'
+WVM_BEGIN_115
+WVM_DONE_115
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '116'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '116'
+WVM_BEGIN_116
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+999+7
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_116
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '117'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "984,0 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '117'
+WVM_BEGIN_117
+4f14a3230794cc00
+WVM_DONE_117
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '118'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '118'
+WVM_BEGIN_118
+INJECTED
+WVM_DONE_118
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '119'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "984,0 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '119'
+WVM_BEGIN_119
+4f14a3230794cc00
+WVM_DONE_119
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '120'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\303\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '120'
+WVM_BEGIN_120
+INJECTED
+WVM_DONE_120
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '121'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\110\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '121'
+WVM_BEGIN_121
+INJECTED
+WVM_DONE_121
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '122'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '122'
+WVM_BEGIN_122
+WVM_DONE_122
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '123'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "984,0 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '123'
+WVM_BEGIN_123
+4f14a3230794cc00
+WVM_DONE_123
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '124'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\064\200\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '124'
+WVM_BEGIN_124
+INJECTED
+WVM_DONE_124
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '125'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\347\177\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '125'
+WVM_BEGIN_125
+INJECTED
+WVM_DONE_125
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '126'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '126'
+WVM_BEGIN_126
+WVM_DONE_126
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '127'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '127'
+WVM_BEGIN_127
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1278+399
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_127
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '128'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1263,384 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '128'
+WVM_BEGIN_128
+4e2549afe39a7305
+WVM_DONE_128
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '129'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '129'
+WVM_BEGIN_129
+INJECTED
+WVM_DONE_129
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '130'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1263,384 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '130'
+WVM_BEGIN_130
+4e2549afe39a7305
+WVM_DONE_130
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '131'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\064\200\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '131'
+WVM_BEGIN_131
+INJECTED
+WVM_DONE_131
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '132'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\347\177\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '132'
+WVM_BEGIN_132
+INJECTED
+WVM_DONE_132
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '133'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '133'
+WVM_BEGIN_133
+WVM_DONE_133
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '134'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1263,384 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '134'
+WVM_BEGIN_134
+4e2549afe39a7305
+WVM_DONE_134
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '135'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\064\200\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\122\200\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '135'
+WVM_BEGIN_135
+INJECTED
+WVM_DONE_135
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '136'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\347\177\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\330\177\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '136'
+WVM_BEGIN_136
+INJECTED
+WVM_DONE_136
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '137'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '137'
+WVM_BEGIN_137
+WVM_DONE_137
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '138'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '138'
+WVM_BEGIN_138
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1278+798
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_138
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '139'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1263,783 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '139'
+WVM_BEGIN_139
+ca481e26cbb74c85
+WVM_DONE_139
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '140'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '140'
+WVM_BEGIN_140
+INJECTED
+WVM_DONE_140
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '141'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1263,783 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '141'
+WVM_BEGIN_141
+ca481e26cbb74c85
+WVM_DONE_141
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '142'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\064\200\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\122\200\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '142'
+WVM_BEGIN_142
+INJECTED
+WVM_DONE_142
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '143'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\347\177\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\330\177\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '143'
+WVM_BEGIN_143
+INJECTED
+WVM_DONE_143
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '144'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '144'
+WVM_BEGIN_144
+WVM_DONE_144
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '145'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1263,783 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '145'
+WVM_BEGIN_145
+ca481e26cbb74c85
+WVM_DONE_145
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '146'; pkill -f /opt/replay-ch
+romium/chrome; sleep 3; true; printf '%s%s\n' 'WVM_DONE_' '146'
+WVM_BEGIN_146
+-/bin/sh: pkill: not found
+WVM_DONE_146
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '147'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); /opt/replay-chromium/chrome --ozone-platform=waylan
+d --disable-gpu --no-first-run --no-default-browser-check --disable-background-n
+etworking --disable-component-update --disable-sync --password-store=basic --num
+-raster-threads=1 --renderer-process-limit=1 --force-device-scale-factor=2 --use
+r-data-dir=/tmp/chrome-r2 file:///tmp/r2.html >/tmp/chrome-r2.log 2>&1 &'; sleep
+ 60; printf '%s%s\n' 'WVM_DONE_' '147'
+WVM_BEGIN_147
+WVM_DONE_147
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '148'; swaymsg -t get_tree | g
+rep -c '"name": "r2'; true; printf '%s%s\n' 'WVM_DONE_' '148'
+WVM_BEGIN_148
+1
+WVM_DONE_148
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '149'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '149'
+WVM_BEGIN_149
+INJECTED
+WVM_DONE_149
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '150'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '150'
+WVM_BEGIN_150
+INJECTED
+WVM_DONE_150
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '151'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '151'
+WVM_BEGIN_151
+WVM_DONE_151
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '152'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '152'
+WVM_BEGIN_152
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+110+280
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_152
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '153'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '153'
+WVM_BEGIN_153
+6e40fcdff17fe879
+WVM_DONE_153
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '154'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '154'
+WVM_BEGIN_154
+INJECTED
+WVM_DONE_154
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '155'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '155'
+WVM_BEGIN_155
+6e40fcdff17fe879
+WVM_DONE_155
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '156'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '156'
+WVM_BEGIN_156
+INJECTED
+WVM_DONE_156
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '157'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '157'
+WVM_BEGIN_157
+INJECTED
+WVM_DONE_157
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '158'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '158'
+WVM_BEGIN_158
+WVM_DONE_158
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '159'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '159'
+WVM_BEGIN_159
+6e40fcdff17fe879
+WVM_DONE_159
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '160'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\315\047\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '160'
+WVM_BEGIN_160
+INJECTED
+WVM_DONE_160
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '161'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\200\047\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '161'
+WVM_BEGIN_161
+INJECTED
+WVM_DONE_161
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '162'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '162'
+WVM_BEGIN_162
+WVM_DONE_162
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '163'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '163'
+WVM_BEGIN_163
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+394+299
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_163
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '164'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "379,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '164'
+WVM_BEGIN_164
+770310b858ca4845
+WVM_DONE_164
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '165'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '165'
+WVM_BEGIN_165
+INJECTED
+WVM_DONE_165
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '166'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "379,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '166'
+WVM_BEGIN_166
+770310b858ca4845
+WVM_DONE_166
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '167'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\315\047\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '167'
+WVM_BEGIN_167
+INJECTED
+WVM_DONE_167
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '168'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\200\047\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '168'
+WVM_BEGIN_168
+INJECTED
+WVM_DONE_168
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '169'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '169'
+WVM_BEGIN_169
+WVM_DONE_169
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '170'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "379,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '170'
+WVM_BEGIN_170
+770310b858ca4845
+WVM_DONE_170
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '171'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\102\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '171'
+WVM_BEGIN_171
+INJECTED
+WVM_DONE_171
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '172'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\102\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '172'
+WVM_BEGIN_172
+INJECTED
+WVM_DONE_172
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '173'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '173'
+WVM_BEGIN_173
+WVM_DONE_173
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '174'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '174'
+WVM_BEGIN_174
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+659+299
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_174
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '175'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "644,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '175'
+WVM_BEGIN_175
+bbd95d7aa9113432
+WVM_DONE_175
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '176'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '176'
+WVM_BEGIN_176
+INJECTED
+WVM_DONE_176
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '177'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "644,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '177'
+WVM_BEGIN_177
+bbd95d7aa9113432
+WVM_DONE_177
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '178'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\102\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '178'
+WVM_BEGIN_178
+INJECTED
+WVM_DONE_178
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '179'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\102\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '179'
+WVM_BEGIN_179
+INJECTED
+WVM_DONE_179
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '180'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '180'
+WVM_BEGIN_180
+WVM_DONE_180
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '181'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "644,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '181'
+WVM_BEGIN_181
+bbd95d7aa9113432
+WVM_DONE_181
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '182'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '182'
+WVM_BEGIN_182
+INJECTED
+WVM_DONE_182
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '183'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '183'
+WVM_BEGIN_183
+INJECTED
+WVM_DONE_183
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '184'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '184'
+WVM_BEGIN_184
+WVM_DONE_184
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '185'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '185'
+WVM_BEGIN_185
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=45
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+196+642
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_185
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '186'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '186'
+WVM_BEGIN_186
+dde552d7ad58dc43
+WVM_DONE_186
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '187'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '187'
+WVM_BEGIN_187
+INJECTED
+WVM_DONE_187
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '188'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '188'
+WVM_BEGIN_188
+dde552d7ad58dc43
+WVM_DONE_188
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '189'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '189'
+WVM_BEGIN_189
+INJECTED
+WVM_DONE_189
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '190'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '190'
+WVM_BEGIN_190
+INJECTED
+WVM_DONE_190
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '191'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '191'
+WVM_BEGIN_191
+WVM_DONE_191
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '192'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '192'
+WVM_BEGIN_192
+dde552d7ad58dc43
+WVM_DONE_192
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '193'; pkill -f /opt/replay-ch
+romium/chrome; sleep 3; true; printf '%s%s\n' 'WVM_DONE_' '193'
+WVM_BEGIN_193
+-/bin/sh: pkill: not found
+WVM_DONE_193
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '194'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); /opt/replay-chromium/chrome --ozone-platform=waylan
+d --disable-gpu --no-first-run --no-default-browser-check --disable-background-n
+etworking --disable-component-update --disable-sync --password-store=basic --num
+-raster-threads=1 --renderer-process-limit=1 --force-device-scale-factor=3 --use
+r-data-dir=/tmp/chrome-r2 file:///tmp/r2.html >/tmp/chrome-r2.log 2>&1 &'; sleep
+ 60; printf '%s%s\n' 'WVM_DONE_' '194'
+WVM_BEGIN_194
+WVM_DONE_194
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '195'; swaymsg -t get_tree | g
+rep -c '"name": "r2'; true; printf '%s%s\n' 'WVM_DONE_' '195'
+WVM_BEGIN_195
+1
+WVM_DONE_195
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '196'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '196'
+WVM_BEGIN_196
+INJECTED
+WVM_DONE_196
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '197'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '197'
+WVM_BEGIN_197
+INJECTED
+WVM_DONE_197
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '198'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '198'
+WVM_BEGIN_198
+WVM_DONE_198
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '199'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '199'
+WVM_BEGIN_199
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+110+280
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_199
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '200'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '200'
+WVM_BEGIN_200
+6e40fcdff17fe879
+WVM_DONE_200
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '201'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '201'
+WVM_BEGIN_201
+INJECTED
+WVM_DONE_201
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '202'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '202'
+WVM_BEGIN_202
+6e40fcdff17fe879
+WVM_DONE_202
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '203'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '203'
+WVM_BEGIN_203
+INJECTED
+WVM_DONE_203
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '204'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '204'
+WVM_BEGIN_204
+INJECTED
+WVM_DONE_204
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '205'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '205'
+WVM_BEGIN_205
+WVM_DONE_205
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '206'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '206'
+WVM_BEGIN_206
+6e40fcdff17fe879
+WVM_DONE_206
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '207'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '207'
+WVM_BEGIN_207
+INJECTED
+WVM_DONE_207
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '208'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '208'
+WVM_BEGIN_208
+INJECTED
+WVM_DONE_208
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '209'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '209'
+WVM_BEGIN_209
+WVM_DONE_209
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '210'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '210'
+WVM_BEGIN_210
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=001007d0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+196+642
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_210
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '211'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '211'
+WVM_BEGIN_211
+dde552d7ad58dc43
+WVM_DONE_211
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '212'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '212'
+WVM_BEGIN_212
+INJECTED
+WVM_DONE_212
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '213'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '213'
+WVM_BEGIN_213
+dde552d7ad58dc43
+WVM_DONE_213
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '214'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '214'
+WVM_BEGIN_214
+INJECTED
+WVM_DONE_214
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '215'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\024\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\150\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '215'
+WVM_BEGIN_215
+INJECTED
+WVM_DONE_215
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '216'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '216'
+WVM_BEGIN_216
+WVM_DONE_216
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '217'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "184,634 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '217'
+WVM_BEGIN_217
+dde552d7ad58dc43
+WVM_DONE_217
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '218'; swaymsg output '*' scal
+e 2 >/dev/null && echo SET; sleep 3; printf '%s%s\n' 'WVM_DONE_' '218'
+WVM_BEGIN_218
+SET
+WVM_DONE_218
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '219'; pkill -f /opt/replay-ch
+romium/chrome; sleep 3; true; printf '%s%s\n' 'WVM_DONE_' '219'
+WVM_BEGIN_219
+-/bin/sh: pkill: not found
+WVM_DONE_219
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '220'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); /opt/replay-chromium/chrome --ozone-platform=waylan
+d --disable-gpu --no-first-run --no-default-browser-check --disable-background-n
+etworking --disable-component-update --disable-sync --password-store=basic --num
+-raster-threads=1 --renderer-process-limit=1  --user-data-dir=/tmp/chrome-r2 fil
+e:///tmp/r2.html >/tmp/chrome-r2.log 2>&1 &'; sleep 60; printf '%s%s\n' 'WVM_DON
+E_' '220'
+WVM_BEGIN_220
+WVM_DONE_220
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '221'; swaymsg -t get_tree | g
+rep -c '"name": "r2'; true; printf '%s%s\n' 'WVM_DONE_' '221'
+WVM_BEGIN_221
+1
+WVM_DONE_221
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '222'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '222'
+WVM_BEGIN_222
+INJECTED
+WVM_DONE_222
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '223'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '223'
+WVM_BEGIN_223
+INJECTED
+WVM_DONE_223
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '224'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '224'
+WVM_BEGIN_224
+WVM_DONE_224
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '225'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '225'
+WVM_BEGIN_225
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1146+392
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_225
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '226'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1134,384 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '226'
+WVM_BEGIN_226
+e3b0c44298fc1c14
+WVM_DONE_226
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '227'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\036\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '227'
+WVM_BEGIN_227
+INJECTED
+WVM_DONE_227
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '228'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1134,384 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '228'
+WVM_BEGIN_228
+e3b0c44298fc1c14
+WVM_DONE_228
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '229'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '229'
+WVM_BEGIN_229
+INJECTED
+WVM_DONE_229
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '230'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '230'
+WVM_BEGIN_230
+INJECTED
+WVM_DONE_230
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '231'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '231'
+WVM_BEGIN_231
+WVM_DONE_231
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '232'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "1134,384 96x96" -t ppm - 2>/dev/null' | sh
+a256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '232'
+WVM_BEGIN_232
+e3b0c44298fc1c14
+WVM_DONE_232
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '233'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\303\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '233'
+WVM_BEGIN_233
+INJECTED
+WVM_DONE_233
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '234'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\110\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '234'
+WVM_BEGIN_234
+INJECTED
+WVM_DONE_234
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '235'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '235'
+WVM_BEGIN_235
+WVM_DONE_235
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '236'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '236'
+WVM_BEGIN_236
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=40
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001003e8
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=44
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc0
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+1000+8
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_236
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '237'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "984,0 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '237'
+WVM_BEGIN_237
+e3b0c44298fc1c14
+WVM_DONE_237
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '238'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\036\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '238'
+WVM_BEGIN_238
+INJECTED
+WVM_DONE_238
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '239'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "984,0 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '239'
+WVM_BEGIN_239
+e3b0c44298fc1c14
+WVM_DONE_239
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '240'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\303\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '240'
+WVM_BEGIN_240
+INJECTED
+WVM_DONE_240
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '241'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\144\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\110\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '241'
+WVM_BEGIN_241
+INJECTED
+WVM_DONE_241
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '242'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '242'
+WVM_BEGIN_242
+WVM_DONE_242
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '243'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "984,0 96x96" -t ppm - 2>/dev/null' | sha25
+6sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '243'
+WVM_BEGIN_243
+e3b0c44298fc1c14
+WVM_DONE_243
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '244'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '244'
+WVM_BEGIN_244
+INJECTED
+WVM_DONE_244
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '245'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '245'
+WVM_BEGIN_245
+INJECTED
+WVM_DONE_245
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '246'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '246'
+WVM_BEGIN_246
+WVM_DONE_246
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '247'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '247'
+WVM_BEGIN_247
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=46
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bc4
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+110+280
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_247
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '248'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '248'
+WVM_BEGIN_248
+94d0e1ef8e9a6a47
+WVM_DONE_248
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '249'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '249'
+WVM_BEGIN_249
+INJECTED
+WVM_DONE_249
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '250'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '250'
+WVM_BEGIN_250
+94d0e1ef8e9a6a47
+WVM_DONE_250
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '251'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '251'
+WVM_BEGIN_251
+INJECTED
+WVM_DONE_251
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '252'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\015\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '252'
+WVM_BEGIN_252
+INJECTED
+WVM_DONE_252
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '253'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '253'
+WVM_BEGIN_253
+WVM_DONE_253
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '254'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "114,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '254'
+WVM_BEGIN_254
+94d0e1ef8e9a6a47
+WVM_DONE_254
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '255'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\050\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '255'
+WVM_BEGIN_255
+INJECTED
+WVM_DONE_255
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '256'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\050\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '256'
+WVM_BEGIN_256
+INJECTED
+WVM_DONE_256
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '257'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '257'
+WVM_BEGIN_257
+WVM_DONE_257
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '258'; cat /sys/kernel/debug/d
+ri/0/state; printf '%s%s\n' 'WVM_DONE_' '258'
+WVM_BEGIN_258
+plane[31]: plane-0
+	crtc=crtc-0
+	fb=39
+		allocated by = sway
+		refcount=2
+		format=XR24 little-endian (0x34325258)
+		modifier=0x0
+		size=1280x800
+		layers:
+			size[0]=1280x800
+			pitch[0]=5120
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=4
+				start=001007d4
+				size=4096000
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=1280x800+0+0
+	src-pos=1280.000000x800.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+plane[32]: plane-1
+	crtc=crtc-0
+	fb=46
+		allocated by = sway
+		refcount=1
+		format=AR24 little-endian (0x34325241)
+		modifier=0x0
+		size=64x64
+		layers:
+			size[0]=64x64
+			pitch[0]=256
+			offset[0]=0
+			obj[0]:
+				name=0
+				refcount=5
+				start=00100bbc
+				size=16384
+				imported=no
+				pages_use_count=2
+				vmap_use_count=0
+				vaddr=0000000000000000
+	crtc-pos=64x64+400+300
+	src-pos=64.000000x64.000000+0.000000+0.000000
+	rotation=1
+	normalized-zpos=0
+	color-encoding=ITU-R BT.601 YCbCr
+	color-range=YCbCr limited range
+crtc[33]: crtc-0
+	enable=1
+	active=1
+	self_refresh_active=0
+	planes_changed=1
+	mode_changed=0
+	active_changed=0
+	connectors_changed=0
+	color_mgmt_changed=0
+	plane_mask=3
+	connector_mask=1
+	encoder_mask=1
+	mode: "1280x800": 60 71710 1280 1320 1340 1440 800 807 810 830 0x48 0x9
+connector[34]: Virtual-1
+	crtc=crtc-0
+	self_refresh_aware=0
+	max_requested_bpc=0
+	colorspace=Default
+WVM_DONE_258
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '259'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "384,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '259'
+WVM_BEGIN_259
+78f4ecd66392ca37
+WVM_DONE_259
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '260'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\163\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\100\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '260'
+WVM_BEGIN_260
+INJECTED
+WVM_DONE_260
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '261'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "384,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '261'
+WVM_BEGIN_261
+78f4ecd66392ca37
+WVM_DONE_261
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '262'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\115\050\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\173\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '262'
+WVM_BEGIN_262
+INJECTED
+WVM_DONE_262
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '263'; printf '\000\000\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\003\000\000\000\000\050\000\00
+0\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\003\000\001\00
+0\000\060\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\00
+0\000\000\000\000\000\000\000\000' > /dev/input/event1 && echo INJECTED; sleep 1
+; printf '%s%s\n' 'WVM_DONE_' '263'
+WVM_BEGIN_263
+INJECTED
+WVM_DONE_263
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '264'; sleep 2; printf '%s%s\n
+' 'WVM_DONE_' '264'
+WVM_BEGIN_264
+WVM_DONE_264
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '265'; su -s /bin/sh desktop -
+c 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=$(ls /run/user/1000 | g
+rep -m1 "^wayland-[0-9]*$"); grim -g "384,284 96x96" -t ppm - 2>/dev/null' | sha
+256sum | cut -c1-16; printf '%s%s\n' 'WVM_DONE_' '265'
+WVM_BEGIN_265
+78f4ecd66392ca37
+WVM_DONE_265
+root@replay-desktop# [6n
