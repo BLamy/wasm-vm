@@ -1,0 +1,13 @@
+windows: 1
+65x65: region, pointer away: b53e0ad1bb5ea770
+65x65 CSS cursor, pointer over it: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=44 pos=64x64+127+497"]
+65x65: region, pointer on it: b53e0ad1bb5ea770
+RESULT 65x65: cursor plane 64x64+127+497 | pointer painted into the frame: false | a pointer is drawn: true
+100x100: region, pointer away: 21983a48075c0338
+100x100 CSS cursor, pointer over it: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=44 pos=64x64+393+498"]
+100x100: region, pointer on it: 21983a48075c0338
+RESULT 100x100: cursor plane 64x64+393+498 | pointer painted into the frame: false | a pointer is drawn: true
+128x128: region, pointer away: 4d911358f6fc70b4
+128x128 CSS cursor, pointer over it: ["plane-0 crtc=crtc-0 fb=39 pos=1280x800+0+0","plane-1 crtc=crtc-0 fb=44 pos=64x64+658+498"]
+128x128: region, pointer on it: 4d911358f6fc70b4
+RESULT 128x128: cursor plane 64x64+658+498 | pointer painted into the frame: false | a pointer is drawn: true

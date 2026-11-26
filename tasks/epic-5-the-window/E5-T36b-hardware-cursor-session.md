@@ -3,7 +3,7 @@ id: E5-T36b
 epic: 5
 title: Replay desktop image — the session runs on legacy KMS with a hardware cursor
 priority: 0.3876515
-status: in-progress
+status: implemented
 depends_on: [E5-T36a]
 estimate: S
 risk: medium
@@ -28,8 +28,9 @@ right hotspot (E5-T36a).
 
 `node tools/verify/e5-t36b-hardware-cursor.mjs --image <built image> --out evidence/e5-t36b/native`
 boots the image on the native CLI (browser device topology) and asserts, from the kernel's own
-DRM state (`/sys/kernel/debug/dri/0/state`) after the pointer is moved to four places through
-sway's seat:
+DRM state (`/sys/kernel/debug/dri/0/state`) after the pointer is moved to five places through
+sway's seat (the last is the screen's corner, where the plane stands left of and above the
+origin):
 
 - the primary plane scans out the 1280x800 frame;
 - a second, cursor-sized plane is on the CRTC with a framebuffer after every move, and its
@@ -42,8 +43,11 @@ Control: the same script with `--expect software` on the published generation-1 
 
 ## Adversarial verification
 
-Medium risk. Attack list: a cursor image larger than the plane (fallback to software must
-still draw a pointer); a client that hides the pointer (foot while typing); the control above;
+Medium risk. Attack list: a cursor image larger than the plane — **revised after the first
+verifier's refutation:** what the image ships must never produce one (wlroots' built-in cursor,
+foot, and the guest's Chrome with CSS cursors up to its 128x128 maximum each keep a 64x64
+plane image); that a theme of more than 64 px set through sway draws no pointer at all is a
+known limit of this session, filed as E5-T36d; a client that hides the pointer (foot while typing); the control above;
 the E5-T34b native acceptance (`tools/replay-desktop/native-boot.mjs`) on the new image. One
 bounded novel attack.
 
@@ -214,3 +218,39 @@ and the same with the gen-1 image and `gen1` (P4 with controls);
 `bash tools/build-replay-desktop-image.sh target/e5-t36b-verifier/image` (P6d); P9 as listed.
 Not checked: the browser (out of scope, E5-T36c); whether any shipped client can actually produce
 a cursor larger than 64x64 (Chrome scaled 100x100 down to 64x64 in the worker's run).
+
+### 2026-11-26 — worker — round 2 claim (head `7c5191e91`)
+
+The refutation is right about the session: a cursor image larger than the 64x64 plane is drawn
+nowhere, because wlroots 0.17's software fallback fails under pixman. I did not fix that here.
+What I checked is whether anything the image ships can produce such a cursor, and it cannot:
+
+- wlroots' built-in cursor (the image ships no cursor theme): 64x64 plane (round 1).
+- The guest's Chrome with CSS cursors of 65x65, 100x100 and 128x128 — 128 is Chrome's maximum
+  for a CSS cursor — keeps a 64x64 image on the plane each time, and a pointer is drawn
+  (`evidence/e5-t36b/self-checks/t36b-css-cursor-sizes.mjs` and `.log`, native, this image).
+- foot draws its pointer from the cursor theme, which is wlroots' built-in one here.
+
+So a too-large cursor needs a theme of more than 64 px set through sway (the verifier's way)
+or a Wayland client that supplies a larger buffer itself; neither ships. I revised the attack
+item to say exactly that, and filed the fallback failure as **E5-T36d** (pending, depends on
+this task). Whether that is an acceptable revision is the next verifier's call; if it is not,
+E5-T36d's work belongs in this task.
+
+**Fixed: the parser the verifier found** (`tools/verify/e5-t36b-hardware-cursor.mjs:41`): the
+kernel prints a plane left of or above the origin as `64x64-1-1`. The acceptance now moves the
+pointer to a fifth place, the screen's corner, where that happens:
+
+| pointer set to | cursor plane | pointer − plane |
+|---|---|---|
+| (300, 400) | 64x64 at (299, 399) | (1, 1) |
+| (640, 100) | 64x64 at (639, 99) | (1, 1) |
+| (93, 516) | 64x64 at (84, 511) | (9, 5) |
+| (1036, 420) | 64x64 at (1031, 411) | (5, 9) |
+| (0, 0) | 64x64 at (-1, -1) | (1, 1) |
+
+`node tools/verify/e5-t36b-hardware-cursor.mjs --image target/e5-t36b/image/replay-desktop.ext4 --out evidence/e5-t36b/native`
+passes (`result.json` sha256 `c40f8246f7b5…`; same image, sha256 `8a5c6c1e34b7…`); the control with
+`--expect software` on generation 1 passes with no plane on the CRTC at all five places
+(`evidence/e5-t36b/control-gen1/`). Round 1's runs are in `evidence/e5-t36b/round-1/`. Nothing
+else changed: the session script is as in round 1, so the verifier's HELD results on it stand.
