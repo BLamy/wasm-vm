@@ -147,6 +147,102 @@ async fn secure_relay_closes_a_connection_that_never_authenticates() {
     );
 }
 
+/// E5-T43a round-2 verifier: the HELLO deadline ends only unauthenticated connections; an
+/// authenticated session is served after it (a mutant cutting every session at 10 s survived).
+#[tokio::test]
+async fn an_authenticated_session_outlives_the_hello_deadline() {
+    let echo = spawn_echo().await;
+    let (mut ws, token) = secure_client_with_map(
+        Some("https://vm.example"),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+    )
+    .await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+    tokio::time::sleep(crate::ws_proxy::HELLO_DEADLINE + Duration::from_secs(1)).await;
+    send_frame(
+        &mut ws,
+        Frame::Open {
+            stream: 3,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut ws).await, Frame::OpenOk { stream: 3 });
+}
+
+/// E5-T43a round-2 verifier: one client may hold only so many authenticated sessions at once; a
+/// closed one frees its place.
+#[tokio::test]
+async fn a_client_over_its_session_cap_is_refused_and_a_closed_session_frees_a_place() {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(serve_secure_with_limits(
+        listener,
+        b"relay test secret".to_vec(),
+        ["https://vm.example".to_owned()].into_iter().collect(),
+        BTreeMap::new(),
+        RelayLimits {
+            max_sessions_per_client: 1,
+            ..RelayLimits::default()
+        },
+    ));
+    let connect = |id: &'static str| async move {
+        let tcp = TcpStream::connect(addr).await.unwrap();
+        let mut request = format!("ws://{addr}/").into_client_request().unwrap();
+        request.headers_mut().insert(
+            http::header::ORIGIN,
+            http::HeaderValue::from_static("https://vm.example"),
+        );
+        let (mut ws, _) = client_async(request, tcp).await.unwrap();
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        let token = issue_relay_token(
+            b"relay test secret",
+            now,
+            now + 60,
+            "https://vm.example",
+            id,
+        )
+        .unwrap();
+        assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+        send_frame(&mut ws, hello(token)).await;
+        ws
+    };
+    // Whether a connection is still served: an OPEN gets an answer (any) or the socket closes.
+    async fn served(ws: &mut ClientWs, stream: u32) -> bool {
+        send_frame(
+            ws,
+            Frame::Open {
+                stream,
+                host: "127.0.0.1".into(),
+                port: 9,
+            },
+        )
+        .await;
+        matches!(timeout(Duration::from_secs(5), ws.next()).await, Ok(Some(Ok(m))) if m.is_binary())
+    }
+    let mut first = connect("session-1").await;
+    assert!(served(&mut first, 1).await, "the first session is served");
+    let mut second = connect("session-2").await;
+    assert!(
+        !served(&mut second, 1).await,
+        "a second session of the same client is refused"
+    );
+    drop(first);
+    tokio::time::sleep(Duration::from_millis(300)).await;
+    let mut third = connect("session-3").await;
+    assert!(
+        served(&mut third, 1).await,
+        "the closed session freed its place"
+    );
+}
+
 #[tokio::test]
 async fn secure_relay_closes_absent_wrong_origin_and_forged_hello_before_open() {
     for origin in [None, Some("https://evil.example")] {
@@ -222,6 +318,7 @@ async fn secure_relay_caps_streams_and_bytes_without_disturbing_an_existing_stre
             max_concurrent_streams: 1,
             max_connects_per_minute: 4,
             max_bytes_per_token: 10,
+            ..RelayLimits::default()
         },
     )
     .await;
@@ -314,6 +411,7 @@ async fn secure_relay_duplicate_open_does_not_leak_shared_concurrency() {
             max_concurrent_streams: 2,
             max_connects_per_minute: 8,
             max_bytes_per_token: 1024,
+            ..RelayLimits::default()
         },
     )
     .await;
@@ -357,6 +455,7 @@ async fn secure_relay_connect_rate_is_typed_and_released_streams_stay_released()
             max_concurrent_streams: 1,
             max_connects_per_minute: 2,
             max_bytes_per_token: 1024,
+            ..RelayLimits::default()
         },
     )
     .await;
@@ -420,6 +519,7 @@ async fn secure_relay_bounds_a_500_open_attack_and_reaps_every_accepted_socket()
             max_concurrent_streams: ACCEPTED as usize,
             max_connects_per_minute: ATTEMPTS as usize,
             max_bytes_per_token: 1024,
+            ..RelayLimits::default()
         },
     )
     .await;

@@ -29,6 +29,35 @@ results.noHello = await new Promise((resolve) => {
     const timer = setTimeout(() => { ws.terminate(); resolve({ closed: false, afterMs: Date.now() - t0 }); }, 30000);
     ws.on("close", (code) => { clearTimeout(timer); resolve({ closed: true, code, afterMs: Date.now() - t0 }); }); })();
 });
+// 2b. One client holds at most 8 authenticated sessions at once: open ten, each served or not.
+{
+  const sockets = [];
+  const served = [];
+  for (let i = 0; i < 10; i++) {
+    const t = await token();
+    const r = await new Promise((resolve) => {
+      const ws = new WebSocket(t.ws, { headers: { Origin: opt.origin } }); ws.binaryType = "arraybuffer";
+      const timer = setTimeout(() => resolve("no answer"), 15000);
+      ws.on("open", () => { ws.send(frame(0, OP.HELLO, new Uint8Array([1, ...new TextEncoder().encode(t.token)]))); ws.send(frame(1, OP.OPEN, openPayload("example.com", 80))); });
+      ws.on("message", (d) => { const b = new Uint8Array(d); if (new DataView(b.buffer, b.byteOffset).getUint32(0) === 1) { clearTimeout(timer); resolve(b[4] === OP.OPEN_OK ? "served" : `fail ${b[5]}`); } });
+      ws.on("close", () => { clearTimeout(timer); resolve("closed"); });
+      sockets.push(ws);
+    });
+    served.push(r);
+  }
+  results.sessionsPerClient = { served, count: served.filter((x) => x === "served").length };
+  for (const ws of sockets) ws.terminate();
+  await new Promise((r) => setTimeout(r, 2000));
+  // With the ten gone, a new session is served again.
+  const t = await token();
+  results.sessionsPerClient.afterClose = await new Promise((resolve) => {
+    const ws = new WebSocket(t.ws, { headers: { Origin: opt.origin } }); ws.binaryType = "arraybuffer";
+    const timer = setTimeout(() => resolve("no answer"), 15000);
+    ws.on("open", () => { ws.send(frame(0, OP.HELLO, new Uint8Array([1, ...new TextEncoder().encode(t.token)]))); ws.send(frame(1, OP.OPEN, openPayload("example.com", 80))); });
+    ws.on("message", (d) => { const b = new Uint8Array(d); if (new DataView(b.buffer, b.byteOffset).getUint32(0) === 1) { clearTimeout(timer); ws.close(); resolve(b[4] === OP.OPEN_OK ? "served" : `fail ${b[5]}`); } });
+    ws.on("close", () => { clearTimeout(timer); resolve("closed"); });
+  });
+}
 // 3. /token is rate-limited per client IP (20 a minute).
 const statuses = [];
 for (let i = 0; i < 26; i++) statuses.push((await fetch(`${opt.base}/token`, { headers: { Origin: opt.origin } })).status);

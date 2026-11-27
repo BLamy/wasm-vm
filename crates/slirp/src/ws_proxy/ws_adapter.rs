@@ -100,7 +100,7 @@ pub async fn serve_secure_with_policy(
     let usage = RelayUsageRegistry::default();
     loop {
         match listener.accept().await {
-            Ok((tcp, _peer)) => {
+            Ok((tcp, peer)) => {
                 let secret = hmac_secret.clone();
                 let origins = allowed_origins.clone();
                 let host_map = host_map.clone();
@@ -109,6 +109,7 @@ pub async fn serve_secure_with_policy(
                 tokio::spawn(async move {
                     handle_secure_conn(
                         tcp,
+                        peer,
                         secret,
                         origins,
                         host_map,
@@ -169,8 +170,15 @@ async fn handle_conn(tcp: TcpStream, token: Vec<u8>, host_map: BTreeMap<String, 
 // `accept_hdr_async` fixes the callback's error type to tungstenite's intentionally rich HTTP
 // response. We only return `Ok`, but clippy still attributes the trait's large unused Err here.
 #[allow(clippy::result_large_err)]
+/// Request header naming the client a front end saw (`x-wvrelay-client`).
+pub const CLIENT_HEADER: &str = "x-wvrelay-client";
+
+// The handshake callback's error type is tungstenite's own response; one more argument than
+// clippy likes carries the TCP peer, the client of last resort.
+#[allow(clippy::too_many_arguments, clippy::result_large_err)]
 async fn handle_secure_conn(
     tcp: TcpStream,
+    peer: std::net::SocketAddr,
     hmac_secret: Vec<u8>,
     allowed_origins: BTreeSet<String>,
     host_map: BTreeMap<String, String>,
@@ -180,6 +188,8 @@ async fn handle_secure_conn(
 ) {
     let captured_origin = Arc::new(Mutex::new(None::<String>));
     let callback_origin = captured_origin.clone();
+    let captured_client = Arc::new(Mutex::new(None::<String>));
+    let callback_client = captured_client.clone();
     let ws = match accept_hdr_async(
         tcp,
         move |request: &tokio_tungstenite::tungstenite::handshake::server::Request, response| {
@@ -189,6 +199,15 @@ async fn handle_secure_conn(
                 .and_then(|value| value.to_str().ok())
                 .map(str::to_owned);
             *callback_origin.lock().expect("origin capture poisoned") = origin;
+            // The front end (the Cloudflare Worker) names the client it saw; with none, the TCP
+            // peer is the client. The relay must be reachable only through that front end.
+            let client = request
+                .headers()
+                .get(CLIENT_HEADER)
+                .and_then(|value| value.to_str().ok())
+                .map(|value| value.trim().to_owned())
+                .filter(|value| !value.is_empty() && value.len() <= 64);
+            *callback_client.lock().expect("client capture poisoned") = client;
             Ok(response)
         },
     )
@@ -205,12 +224,18 @@ async fn handle_secure_conn(
         eprintln!("{{\"event\":\"relay_origin_rejected\"}}");
         return;
     };
+    let client = captured_client
+        .lock()
+        .expect("client capture poisoned")
+        .clone()
+        .unwrap_or_else(|| peer.ip().to_string());
     let session_usage = usage.clone();
     bridge_ws(
         ws,
         RelayConnectionSecurity {
             hmac_secret,
             origin,
+            client,
             limits,
             usage,
             protected_networks,

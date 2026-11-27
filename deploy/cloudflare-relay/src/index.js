@@ -23,6 +23,18 @@ export class Relay extends Container {
   }
 }
 
+// Who a request is from, for per-client limits: an IPv4 address, or an IPv6 /64 (one subscriber
+// usually holds a whole /64). CF-Connecting-IP is set by Cloudflare and cannot be supplied by
+// the caller.
+export function clientKey(request) {
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (!ip.includes(":")) return ip;
+  const full = ip.includes("::")
+    ? (() => { const [a, b] = ip.split("::"); const l = a ? a.split(":") : []; const r = b ? b.split(":") : []; return [...l, ...Array(8 - l.length - r.length).fill("0"), ...r]; })()
+    : ip.split(":");
+  return `${full.slice(0, 4).map((x) => (x || "0").toLowerCase()).join(":")}::/64`;
+}
+
 const allowed = (env) => new Set(String(env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean));
 
 function cors(origin) {
@@ -40,8 +52,7 @@ export default {
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...cors(origin), "Access-Control-Allow-Methods": "GET", "Access-Control-Max-Age": "600" } });
       if (request.method !== "GET") return new Response("method not allowed", { status: 405, headers: cors(origin) });
       if (!env.RELAY_HMAC_SECRET) return new Response("relay not configured", { status: 503, headers: cors(origin) });
-      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-      if (env.TOKEN_LIMITER && !(await env.TOKEN_LIMITER.limit({ key: ip })).success) {
+      if (env.TOKEN_LIMITER && !(await env.TOKEN_LIMITER.limit({ key: clientKey(request) })).success) {
         return new Response("too many tokens", { status: 429, headers: { ...cors(origin), "Retry-After": "60" } });
       }
       const t = await issueToken(env.RELAY_HMAC_SECRET, origin, Math.floor(Date.now() / 1000), Number(env.TOKEN_TTL_SECS || 600));
@@ -58,7 +69,11 @@ export default {
       // WebSocket goes straight to wvrelay on 8080.
       const relay = getContainer(env.RELAY, env.RELAY_INSTANCE || "relay");
       await relay.startAndWaitForPorts(8081);
-      return relay.fetch(switchPort(request, 8080));
+      // wvrelay caps authenticated sessions per client by this header; the Worker always sets
+      // it, so a caller's own value never reaches the relay.
+      const headers = new Headers(request.headers);
+      headers.set("x-wvrelay-client", clientKey(request));
+      return relay.fetch(switchPort(new Request(request, { headers }), 8080));
     }
     return new Response("not found", { status: 404 });
   },

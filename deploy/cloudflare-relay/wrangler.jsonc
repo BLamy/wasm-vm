@@ -23,7 +23,7 @@
     // little for a browser session that keeps its budget for its whole life).
     "MAX_BYTES_PER_TOKEN": "2147483648",
     // The Durable Object (and so container) the WebSocket goes to; change it to start a fresh one.
-    "RELAY_INSTANCE": "relay-3"
+    "RELAY_INSTANCE": "relay-4"
   }
   // Secret, set with `wrangler secret put RELAY_HMAC_SECRET`: shared by the Worker (to sign) and
   // the Container (to verify). Never in this file or the repository.

@@ -97,6 +97,12 @@ pub struct RelayLimits {
     pub max_concurrent_streams: usize,
     pub max_connects_per_minute: usize,
     pub max_bytes_per_token: u64,
+    /// Authenticated sessions one client (an IPv4 address or IPv6 /64, as the front end names it)
+    /// may hold at once. An authenticated session is never ended by its token's expiry, so this —
+    /// not the number of tokens — is what bounds one client (E5-T43a round-2 verifier).
+    pub max_sessions_per_client: usize,
+    /// Authenticated sessions the whole relay holds at once.
+    pub max_sessions_total: usize,
 }
 
 impl Default for RelayLimits {
@@ -105,6 +111,8 @@ impl Default for RelayLimits {
             max_concurrent_streams: 64,
             max_connects_per_minute: 120,
             max_bytes_per_token: 64 * 1024 * 1024,
+            max_sessions_per_client: 8,
+            max_sessions_total: 256,
         }
     }
 }
@@ -114,6 +122,8 @@ pub enum RelayQuotaError {
     ConcurrentStreams,
     ConnectRate,
     ByteLimit,
+    SessionsPerClient,
+    SessionsTotal,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -131,6 +141,9 @@ pub struct RelayMetrics {
 #[derive(Debug, Default)]
 struct RegistryState {
     tokens: HashMap<String, TokenUsage>,
+    /// Authenticated sessions per client key, and in all.
+    client_sessions: HashMap<String, usize>,
+    total_sessions: usize,
     metrics: RelayMetrics,
 }
 
@@ -150,20 +163,56 @@ struct TokenUsage {
 }
 
 impl RelayUsageRegistry {
-    /// A relay session authenticated with `token`; pair with [`Self::close_session`].
-    pub fn open_session(&self, token: &RelayToken) {
+    /// A relay session of `client` authenticated with `token`, if the client's and the relay's
+    /// session caps allow it; pair a success with [`Self::close_session`].
+    pub fn open_session(
+        &self,
+        token: &RelayToken,
+        client: &str,
+        limits: RelayLimits,
+    ) -> Result<(), RelayQuotaError> {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        if registry.total_sessions >= limits.max_sessions_total {
+            return Err(RelayQuotaError::SessionsTotal);
+        }
+        if registry.client_sessions.get(client).copied().unwrap_or(0)
+            >= limits.max_sessions_per_client
+        {
+            return Err(RelayQuotaError::SessionsPerClient);
+        }
+        *registry
+            .client_sessions
+            .entry(client.to_owned())
+            .or_default() += 1;
+        registry.total_sessions += 1;
         let usage = registry.tokens.entry(token.id.clone()).or_default();
         usage.expiry_unix_secs = usage.expiry_unix_secs.max(token.expiry_unix_secs);
         usage.sessions += 1;
+        Ok(())
     }
 
     /// The session opened with [`Self::open_session`] ended.
-    pub fn close_session(&self, token_id: &str) {
+    pub fn close_session(&self, token_id: &str, client: &str) {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
         if let Some(usage) = registry.tokens.get_mut(token_id) {
             usage.sessions = usage.sessions.saturating_sub(1);
         }
+        if let Some(count) = registry.client_sessions.get_mut(client) {
+            *count = count.saturating_sub(1);
+            if *count == 0 {
+                registry.client_sessions.remove(client);
+            }
+        }
+        registry.total_sessions = registry.total_sessions.saturating_sub(1);
+    }
+
+    /// Authenticated sessions held now: in all, and by `client`.
+    pub fn sessions(&self, client: &str) -> (usize, usize) {
+        let registry = self.0.lock().expect("relay usage registry poisoned");
+        (
+            registry.total_sessions,
+            registry.client_sessions.get(client).copied().unwrap_or(0),
+        )
     }
 
     pub fn record_authentication(&self, accepted: bool) {
@@ -215,7 +264,11 @@ impl RelayUsageRegistry {
                 registry.metrics.rejected_rate += 1;
                 return Err(RelayQuotaError::ConnectRate);
             }
-            Err(RelayQuotaError::ByteLimit) => unreachable!(),
+            Err(
+                RelayQuotaError::ByteLimit
+                | RelayQuotaError::SessionsPerClient
+                | RelayQuotaError::SessionsTotal,
+            ) => unreachable!(),
             Ok(()) => {}
         }
         registry.metrics.active_streams += 1;
@@ -660,13 +713,16 @@ mod tests {
             max_concurrent_streams: 8,
             max_connects_per_minute: 100,
             max_bytes_per_token: 100,
+            ..RelayLimits::default()
         };
         let token = RelayToken {
             expiry_unix_secs: 1_000,
             origin: "https://vm.example".into(),
             id: "t1".into(),
         };
-        registry.open_session(&token);
+        registry
+            .open_session(&token, "203.0.113.1", limits)
+            .unwrap();
         registry.reserve_stream(&token, 900, limits).unwrap();
         registry.record_bytes("t1", 90, limits).unwrap();
         registry.release_stream("t1");
@@ -679,8 +735,10 @@ mod tests {
         );
         registry.record_bytes("t1", 10, limits).unwrap();
         registry.release_stream("t1");
-        // Session over: the expired entry goes at the next reservation of any token.
-        registry.close_session("t1");
+        // Session over: the expired entry goes at the next reservation of any token, and the
+        // client's session count is back to zero.
+        registry.close_session("t1", "203.0.113.1");
+        assert_eq!(registry.sessions("203.0.113.1"), (0, 0));
         let other = RelayToken {
             expiry_unix_secs: 9_000,
             origin: "https://vm.example".into(),
@@ -688,10 +746,50 @@ mod tests {
         };
         registry.reserve_stream(&other, 5_001, limits).unwrap();
         assert_eq!(
-            registry.record_bytes("t1", 1, limits),
+            registry.record_bytes("t1", 0, limits),
             Err(RelayQuotaError::ByteLimit),
-            "t1's entry is gone"
+            "t1's entry is gone (with it present, 100 + 0 bytes would fit)"
         );
+    }
+
+    /// E5-T43a round-2 verifier: sessions are capped per client and in total; a closed session
+    /// frees its place, so the counts return to zero (no leak).
+    #[test]
+    fn sessions_are_capped_per_client_and_in_total() {
+        let registry = RelayUsageRegistry::default();
+        let limits = RelayLimits {
+            max_sessions_per_client: 2,
+            max_sessions_total: 3,
+            ..RelayLimits::default()
+        };
+        let token = |id: &str| RelayToken {
+            expiry_unix_secs: 1_000,
+            origin: "https://vm.example".into(),
+            id: id.into(),
+        };
+        registry.open_session(&token("a"), "c1", limits).unwrap();
+        registry.open_session(&token("b"), "c1", limits).unwrap();
+        assert_eq!(
+            registry.open_session(&token("c"), "c1", limits),
+            Err(RelayQuotaError::SessionsPerClient)
+        );
+        registry.open_session(&token("d"), "c2", limits).unwrap();
+        assert_eq!(
+            registry.open_session(&token("e"), "c3", limits),
+            Err(RelayQuotaError::SessionsTotal)
+        );
+        assert_eq!(registry.sessions("c1"), (3, 2));
+        registry.close_session("a", "c1");
+        registry.open_session(&token("f"), "c3", limits).unwrap();
+        for (id, client) in [("b", "c1"), ("d", "c2"), ("f", "c3")] {
+            registry.close_session(id, client);
+        }
+        assert_eq!(registry.sessions("c1"), (0, 0), "every place freed");
+        for i in 0..10 {
+            registry.open_session(&token("g"), "c1", limits).unwrap();
+            registry.close_session("g", "c1");
+            assert_eq!(registry.sessions("c1"), (0, 0), "round {i}");
+        }
     }
 
     #[test]
@@ -741,6 +839,7 @@ mod tests {
             max_concurrent_streams: 1,
             max_connects_per_minute: 2,
             max_bytes_per_token: 5,
+            ..RelayLimits::default()
         };
         registry.reserve_stream(&token, NOW, limits).unwrap();
         assert_eq!(

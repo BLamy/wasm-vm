@@ -130,6 +130,9 @@ pub struct RelayServer {
 pub struct RelayConnectionSecurity {
     pub hmac_secret: Vec<u8>,
     pub origin: String,
+    /// Who the connection is for, as the front end names it (an IPv4 address or IPv6 /64), for
+    /// the per-client session cap.
+    pub client: String,
     pub limits: RelayLimits,
     pub usage: RelayUsageRegistry,
     pub protected_networks: Vec<ProtectedNetwork>,
@@ -231,7 +234,7 @@ impl RelayServer {
         }
         self.release_all_quota_streams();
         if let (Some(security), Some(token)) = (&self.security, &self.authenticated_token) {
-            security.usage.close_session(&token.id);
+            security.usage.close_session(&token.id, &security.client);
         }
     }
 
@@ -271,8 +274,16 @@ impl RelayServer {
                     return Err(RelayError::Authentication);
                 }
             };
+            if let Err(reason) =
+                security
+                    .usage
+                    .open_session(&verified, &security.client, security.limits)
+            {
+                security.usage.record_authentication(false);
+                eprintln!("{{\"event\":\"relay_session_refused\",\"reason\":\"{reason:?}\"}}");
+                return Err(RelayError::Authentication);
+            }
             security.usage.record_authentication(true);
-            security.usage.open_session(&verified);
             eprintln!("{{\"event\":\"relay_session_authenticated\"}}");
             self.authenticated_token = Some(verified);
         }
