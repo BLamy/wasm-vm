@@ -83,7 +83,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `0.387654` [E5-T36c](epic-5-the-window/E5-T36c-hardware-cursor-browser-proof.md) — Hardware cursor on the published Replay desktop — one pointer, drawn by the host, tip on the pixel *(deps: E5-T41b)*
 - [ ] `0.3876545` [E5-T36d](epic-5-the-window/E5-T36d-oversized-cursor-fallback.md) — Replay desktop on legacy KMS — a cursor image larger than the 64x64 plane still shows a pointer *(deps: E5-T36b)*
 - [-] `0.38766` [E5-T37](epic-5-the-window/E5-T37-idle-yield-and-pacing.md) — Stop spinning a host core while the desktop is idle (planning parent) *(deps: E5-T34g)*
-- [~] `0.38766` [E5-T43a](epic-5-the-window/E5-T43a-public-relay-on-cloudflare.md) — Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin *(deps: —)*
+- [?] `0.38766` [E5-T43a](epic-5-the-window/E5-T43a-public-relay-on-cloudflare.md) — Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin *(deps: —)*
 - [ ] `0.387661` [E5-T38](epic-5-the-window/E5-T38-decoded-cache-tooling-drift.md) — Repair or retire verification tooling that has drifted (E5-T26k cache test, latency favicon filter) *(deps: E4-T40d)*
 - [ ] `0.387661` [E5-T43b](epic-5-the-window/E5-T43b-slirp-reports-idle.md) — Paced idle with networking on — the slirp backend reports when it is idle *(deps: —)*
 - [ ] `0.387662` [E5-T39](epic-5-the-window/E5-T39-desktop-boot-failure-visible.md) — Show a boot failure on the desktop page instead of a black screen *(deps: E4-T40d)*

@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: in-progress
+status: implemented
 depends_on: []
 estimate: S
 risk: high
@@ -426,3 +426,56 @@ Not checked: anything from IPv6 or a second address; the container's fd and memo
 takes to cause an outage; no load was run); whether the Cloudflare edge or the Durable Object would end a held
 connection after more than 116 s; whether the deployed image is byte-for-byte this head's wvrelay (the live behaviour
 matches the code); the Cloudflare dashboard, logs and billing.
+
+### 2026-11-27 — worker — round 4 claim (head `edaf2824b`)
+
+**User decision, recorded** (2026-11-27, asked after round 3 with the two residual risks spelled
+out: traffic over time per client uncapped, and idle sessions able to fill every place): the user
+chose **"Add both caps"** — an hourly byte cap per client and closing sessions idle for 30
+minutes, accepting that a desktop left idle that long loses its network until reloaded (the
+client has no reconnect yet).
+
+**Changed** (commit `edaf2824b`):
+- **Finished connections are dropped by the relay** (`ws_adapter.rs` `bridge_ws`): once the relay
+  side ends a session — the HELLO deadline, a refusal at a cap, a protocol error — it sends Close
+  and drops the connection after `CLOSE_GRACE` (2 s), whatever the client does.
+- **Caps** (`RelayLimits` defaults): 4 authenticated sessions per client, 1024 in all; **5 GiB per
+  client per clock hour** across all its sessions and tokens; a session with **no traffic in either
+  direction for 30 minutes is closed**, open streams or not; per token as before (2 GiB via the
+  Worker, 120 connects/min, 64 streams).
+- **Client key**: IPv4 address, or IPv6 /48 (round 3: /64), from `CF-Connecting-IP`; the Worker
+  always overwrites `x-wvrelay-client`.
+
+**Tests** (`cargo test -p wasm-vm-slirp --features native --lib`, 277 passed; relay smoke and
+token-rejection integration tests pass; clippy clean): raw WebSocket clients written by hand that
+never answer Close are dropped — the never-authenticating one after the deadline, the one refused
+at the cap within the grace — while an authenticated one is kept
+(`a_finished_connection_is_dropped_even_if_the_client_never_answers_close`); the cap is per client
+name (two names get their own places, the same name shares one, an overlong header falls back to
+the TCP peer: `the_session_cap_is_per_client_name`); hourly bytes per client
+(`a_client_byte_budget_per_clock_hour`, `a_client_past_its_hourly_bytes_gets_no_more_data_through`);
+idle closed, active kept by data-free frames (`an_idle_session_is_closed_and_an_active_one_kept`).
+Mutants, each applied and the file restored: no forced close, the client header ignored, no
+length limit on it, the idle check never closing, client bytes not checked, inbound frames not
+refreshing activity — all six caught.
+
+**Live** (redeployed, `relay-5`; container application version 6): `smoke.mjs` passes
+(`smoke-live-r4.json`). `hardening.mjs` (`hardening-live-r4.json`): six authenticated sessions
+from this machine — 4 served, 5th and 6th closed, and after they close a new one is served; port
+25 and the three IPv6 forms OPEN_FAIL within 209 ms; an unauthenticated `ws` client is closed at
+10.2 s.
+
+**What the live raw clients show, and what they do not.** Raw TLS clients that never answer Close
+(`rawNoHello`, `rawRefusedAtCap`) were NOT dropped within 30 s and 20 s. Between them and the
+container sits the Containers library's WebSocket proxy (`containerFetch`): when the container
+side closes, it forwards a Close to the client, and the Cloudflare edge then holds the client's
+half until the client answers — a Worker has no call that aborts it. The container side is dropped
+(the local raw-client tests above, against wvrelay at this head), and the refused session's place
+is free (after those clients, a new session of the same client is served). So a held connection
+now costs the Cloudflare edge, not the container's file descriptors, memory or session places;
+how long the edge keeps it is Cloudflare's, not measured here.
+
+**Limits, as they now are**: everyone behind one NAT shares 4 sessions and 5 GiB an hour; a
+desktop idle 30 minutes loses its network until reloaded; the token rate limit is approximate
+(26 of 26 allowed in this run, 33-40 of 80 in earlier ones); 256 IPv4 addresses (or /48s) each
+holding 4 sessions can still fill all 1024 places.
