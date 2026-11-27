@@ -1,0 +1,106 @@
+{
+  "startedAt": "2026-11-27T20:54:08.395Z",
+  "base": "https://wasm-vm-relay.brett-lamy.workers.dev",
+  "tokens": {
+    "fetched": 34,
+    "throttled429": 1,
+    "tookS": 12
+  },
+  "Q1_spoofedHeaders": {
+    "results": [
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "closed 1000",
+      "closed 1000"
+    ],
+    "served": 8,
+    "at": 14
+  },
+  "Q5_at12s": {
+    "refused": {
+      "upgraded": true,
+      "frames": [
+        2,
+        8
+      ],
+      "closeFrameAtMs": 197,
+      "serverEndAtMs": null,
+      "heldForS": 12
+    },
+    "noHello": {
+      "upgraded": true,
+      "frames": [
+        2,
+        8
+      ],
+      "closeFrameAtMs": 10169,
+      "serverEndAtMs": null,
+      "heldForS": 12
+    },
+    "at": 27
+  },
+  "Q3_versionMismatch": "closed 1000",
+  "Q2_recount": {
+    "results": [
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "served",
+      "closed 1000"
+    ],
+    "served": 8,
+    "at": 34
+  },
+  "Q4_race": {
+    "results": [
+      "served",
+      "closed 1000",
+      "served",
+      "closed 1000",
+      "served",
+      "served",
+      "served",
+      "closed 1000",
+      "closed 1000",
+      "served",
+      "served",
+      "served"
+    ],
+    "served": 8,
+    "at": 37
+  },
+  "Q5_end": {
+    "refused": {
+      "upgraded": true,
+      "frames": [
+        2,
+        8
+      ],
+      "closeFrameAtMs": 197,
+      "serverEndAtMs": null,
+      "heldForS": 116
+    },
+    "noHello": {
+      "upgraded": true,
+      "frames": [
+        2,
+        8
+      ],
+      "closeFrameAtMs": 10169,
+      "serverEndAtMs": null,
+      "heldForS": 116
+    },
+    "at": 130
+  },
+  "finishedAt": "2026-11-27T20:56:18.552Z"
+}

@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: implemented
+status: in-progress
 depends_on: []
 estimate: S
 risk: high
@@ -336,3 +336,93 @@ allows on the handshake function, which now takes the TCP peer).
 (`hardening-live-r3.json`): ten authenticated sessions from this machine — 8 served, 9th and 10th
 closed; after the ten close, a new one is served; port 25 and the three IPv6 forms OPEN_FAIL within
 221 ms; no HELLO closed at 10.2 s; `/token` 23 of 26 then 429.
+
+### 2026-11-27 — verifier (round 3) — VERDICT: refuted
+
+VERDICT: refuted
+
+A fresh session (I was not the implementer or either earlier verifier), against head `3bde7fe1c` (code `32029ac72`)
+and the live `https://wasm-vm-relay.brett-lamy.workers.dev` (`relay-4`). I wrote the predictions first
+(`evidence/e5-t43a/verifier-r3/predictions.md`). Then I ran: `verifier-r3/live3.mjs` (`live3.json`, sha256 `b0412c91…`,
+34 WebSockets, connect-only); `local-hold.mjs` against native wvrelay built at this head on loopback with a throwaway
+secret (`local-hold.json`, `60c60dff…`); 11 mutants in a scratch `git archive HEAD` copy (`run-mutants.py`,
+`mutants.log`, `af0ddca1…`); and `clientkey.mjs` (`clientkey.log`). The session cap works as built, live and in code.
+The claim fails on a bound it restates: that unauthenticated connections close at 10 s. The relay sends a Close frame
+then. It does not drop the connection, so a client that ignores the Close keeps it. The same holds for a session refused
+at the cap.
+
+- Q5 "Unauthenticated connections close at 10 s", and a refused session holding resources: FAILED. Predicted from
+  `ws_adapter.rs:277-289`: when `RelayServer::run` returns (HELLO deadline, refusal at the cap, bad token), the writer
+  sends a Close frame. `bridge_ws` then keeps reading `ws_stream.next()` until the *client* sends Close or a binary
+  frame, or drops TCP. Nothing closes the socket from the relay's side, and nothing times out.
+  Observed locally: 30 server-side ESTABLISHED sockets at 62 s (`local-hold.json` `at62s.serverSockets`). They were
+  8 live sessions, plus 22 connections the relay had finished with: a no-HELLO connection whose Close came at 10.0 s, a
+  ninth session refused `SessionsPerClient` (Close at 1 ms), and 20 more no-HELLO connections. All 20 got a Close frame,
+  and the server ended none of them (`many.serverEnded` 0). They went only when the client tore them down.
+  Observed live: a raw TLS client got Close at 0.2 s for a session refused at the cap, and at 10.2 s for no HELLO. Both
+  connections were still open at 116 s, with no TCP end from Cloudflare (`live3.json` `Q5_end`).
+  The relay counts sessions, but nothing counts these connections, so one IPv4 client can pile up an unbounded number of
+  them on the one container. Each holds a socket, a task and buffers, for as long as it likes. That is the outage route
+  through "connections or memory" that round 2 (R11) asked to be capped; the session cap closes it only for
+  authenticated sessions.
+  Demand: after `run` returns, the relay ends the connection itself. Finish the close handshake with a short timeout,
+  then drop the TCP stream: stop the reader when the writer is done, or wrap it in a deadline. Add a test that a client
+  which never answers Close is disconnected within a bound, for both the HELLO deadline and a refusal at the cap. Add a
+  live check like `live3.mjs` Q5. Optionally also cap unauthenticated connections per client.
+- Round 2's demand, "a real cap, or the user's explicit acceptance": partly met.
+  - Concurrency: met, a real cap (Q1, Q2, Q4 below).
+  - Bytes over time: neither capped nor accepted. The claim states the residual honestly, but it says "the user is told
+    it in the summary of this round". That is notice, not acceptance, and no acceptance is recorded in this file.
+    NEEDS EVIDENCE: the user's explicit acceptance recorded here, or a per-client or per-instance byte budget per hour.
+  - Lockout, new with this round's total cap, and not stated in the claim. Authenticated sessions still have no idle
+    limit (round 2 R11: 675 s, no pings; the `driver.rs:207` guard is unchanged). So 32 IPv4 addresses that hold 8 idle
+    sessions each fill all 256 places, and keep every other user out at no egress cost. The IPv6 key is a /64
+    (`clientkey.log`: one routed /56 gives 256 keys × 8 = 2048 places), so one actor with a common residential /56, or
+    a free tunnel-broker /48, can do it alone. Not tested live (this host has no IPv6).
+    Demand, either of: (a) an idle limit for authenticated sessions, and/or a coarser IPv6 key (a /56 or /48) plus a
+    cap per prefix; or (b) the lockout stated in the claim and accepted by the user in this file.
+- Q1 the Worker overwrites `x-wvrelay-client`: HELD live. Ten sessions, each sending its own random `x-wvrelay-client`,
+  `X-Forwarded-For` and `True-Client-IP`: 8 served, the 9th and 10th closed 1000 (`live3.json` `Q1_spoofedHeaders`). A
+  raw client's own header was refused at the cap as well (`Q5`).
+  Reached directly, wvrelay trusts the header: 10 sessions with 10 header values were all served locally
+  (`local-hold.json` `directHeaderSpoof`). The Worker is therefore the only guard. That is acceptable, because the
+  container has no ingress except `relay.fetch` in `/ws`, which always sets the header (`index.js:72-76`; Q6 by code
+  read: `/health`, `/token`, 404 and 426 never touch the container).
+- Q2 a refused session leaks no place: HELD. After the ten (two refused) and a version-mismatch HELLO closed, 8 of 9 new
+  sessions were served and the 9th was refused (`Q2_recount`). Q3: a HELLO with version 2 closed 1000. `open_session`
+  runs before `on_hello` rejects the version, so the session is opened and then closed once (`driver.rs:277-288` →
+  break → `close_session`), and the recount shows no leak.
+- Q4 twelve HELLOs at once: HELD, exactly 8 served (`Q4_race`). The check and the increment happen under one lock.
+- Per-client cap live: NEEDS EVIDENCE (the sufficiency of the claim's live proof). All live tests come from one
+  address. If wvrelay ignored the header, every Cloudflare connection would come from the same peer, and the result
+  would be identical: 8 places in all instead of 8 per client. Mutant V4 (the header ignored, the peer IP always used)
+  SURVIVED every test (`mutants.log`): no Rust test sends `x-wvrelay-client`, so the per-client keying is not proven
+  anywhere. Demand: a `ws_adapter` test in which two header values each get their own places, and the header falls
+  back to the peer IP when empty or over 64 bytes (V6, the length filter removed, also survived). Plus one live check
+  from a second address while the first holds 8 sessions.
+- Mutants (scratch copy, restored after each; slirp `ws_proxy` lib tests and wvrelay's three integration tests): the
+  worker's five are KILLED. W1 cuts every session at the deadline; W2 removes the port check in
+  `resolve_destination`; W3 means close never frees the client's place; W4 means close never decrements the token's
+  sessions; W5 removes the per-client cap. Mine: V1 (`>` for `>=` per client), V2 (no total cap), V3 (close never
+  decrements the total) and V5 (a refusal is ignored) are KILLED. V4 and V6 SURVIVED (above).
+- Q9 NAT: 8 sessions per IPv4 address are shared by everyone behind one NAT or CGNAT, so a ninth desktop on a campus
+  or carrier network is refused. The claim does not say so. A demo-scale limit, not refuting; state it with the
+  lockout.
+- `clientKey`: normalizes only letter case, not leading zeros (`2001:0db8:…` and `2001:db8:…` give different keys),
+  and an IPv4-mapped `::ffff:a.b.c.d` maps to `0:0:0:0::/64`. Cloudflare sends canonical addresses, so a caller cannot
+  use either; noted, not a finding.
+- Carried forward as HELD, with the code and deployment unchanged on those paths: round 1 P1–P4, P5/P6, P10/P11 and
+  P14; round 2 R1, R2, R5 (client side), R6, R7 (25 refused), R8, R9 and R12. This round's sessions got OPEN_OK to
+  `example.com:80` (the happy path). I did not run `smoke.mjs` again. Secrets: my evidence writes no token
+  (`grep` finds no `v1` token or long base64 run in `verifier-r3/`), and the round-3 diff adds no secret value.
+- SUITE: none promoted until the refutation clears. `verifier-r3/live3.mjs` Q1–Q5 and `local-hold.mjs` should become
+  part of `hardening.mjs` and a Rust test.
+
+Commands: `node evidence/e5-t43a/verifier-r3/live3.mjs`;
+`node evidence/e5-t43a/verifier-r3/local-hold.mjs <wvrelay built by cargo build -p wasm-vm-cli --bin wvrelay>`;
+`python3 -I evidence/e5-t43a/verifier-r3/run-mutants.py <scratch git-archive copy>`, with RUSTFLAGS, RUST_LOG and
+CARGO_* unset; `node evidence/e5-t43a/verifier-r3/clientkey.mjs deploy/cloudflare-relay/src/index.js`.
+Not checked: anything from IPv6 or a second address; the container's fd and memory limits (how many held connections it
+takes to cause an outage; no load was run); whether the Cloudflare edge or the Durable Object would end a held
+connection after more than 116 s; whether the deployed image is byte-for-byte this head's wvrelay (the live behaviour
+matches the code); the Cloudflare dashboard, logs and billing.
