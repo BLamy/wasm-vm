@@ -1,0 +1,138 @@
+{
+  "startedAt": "2026-11-27T22:03:51.329Z",
+  "base": "https://wasm-vm-relay.brett-lamy.workers.dev",
+  "tokens": {
+    "fetched": 9,
+    "throttled429": 0,
+    "atS": 0.5
+  },
+  "afterOpenS": 5.4,
+  "S2_at": 18.9,
+  "S3_withHeld": {
+    "results": [
+      "served",
+      "served",
+      "served",
+      "served",
+      "closed 1000"
+    ],
+    "served": 4,
+    "http": "HTTP/1.1 200 OK",
+    "atS": 20.2
+  },
+  "S2_end": {
+    "r1": {
+      "name": "noHello_thenHelloAfterClose",
+      "upgraded": true,
+      "frames": [
+        {
+          "wsOp": 2,
+          "proxyOp": 0,
+          "stream": 0,
+          "closeCode": null,
+          "atMs": 207
+        },
+        {
+          "wsOp": 8,
+          "proxyOp": null,
+          "stream": null,
+          "closeCode": 1000,
+          "atMs": 10207
+        }
+      ],
+      "closeFrameAtMs": 10207,
+      "serverEndAtMs": null,
+      "sent": [
+        {
+          "label": "HELLO after close",
+          "atMs": 15333
+        },
+        {
+          "label": "OPEN example.com:80 after close",
+          "atMs": 15334
+        }
+      ],
+      "heldForS": 61
+    },
+    "r2": {
+      "name": "authed_thenProtocolError_thenOpenAfterClose",
+      "upgraded": true,
+      "frames": [
+        {
+          "wsOp": 2,
+          "proxyOp": 0,
+          "stream": 0,
+          "closeCode": null,
+          "atMs": 176
+        },
+        {
+          "wsOp": 8,
+          "proxyOp": null,
+          "stream": null,
+          "closeCode": 1000,
+          "atMs": 1736
+        }
+      ],
+      "closeFrameAtMs": 1736,
+      "serverEndAtMs": null,
+      "sent": [
+        {
+          "label": "HELLO",
+          "atMs": 176
+        },
+        {
+          "label": "undecodable",
+          "atMs": 1678
+        },
+        {
+          "label": "OPEN example.com:80 after close",
+          "atMs": 8622
+        }
+      ],
+      "heldForS": 61
+    },
+    "atS": 61.2
+  },
+  "S3_held": {
+    "count": 16,
+    "upgraded": 16,
+    "closeFrameAtMs": [
+      10196,
+      10169,
+      10166,
+      10187,
+      10172,
+      10200,
+      10180,
+      10177,
+      10211,
+      10212,
+      10177,
+      10171,
+      10185,
+      10190,
+      10166,
+      10171
+    ],
+    "serverEnded": 0,
+    "framesAfterClose": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "finishedAt": "2026-11-27T22:04:52.570Z"
+}

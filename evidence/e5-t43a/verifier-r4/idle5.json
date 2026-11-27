@@ -1,0 +1,542 @@
+{
+  "startedAt": "2026-11-27T22:38:35.320Z",
+  "base": "https://wasm-vm-relay.brett-lamy.workers.dev",
+  "Q_lastActivityAtS": 2.3,
+  "Q_progress": {
+    "upgraded": true,
+    "frames": [
+      {
+        "wsOp": 2,
+        "proxyOp": 0,
+        "stream": 0,
+        "closeCode": null,
+        "atS": 0.2
+      },
+      {
+        "wsOp": 2,
+        "proxyOp": 2,
+        "stream": 1,
+        "closeCode": null,
+        "atS": 2.4
+      },
+      {
+        "wsOp": 2,
+        "proxyOp": 8,
+        "stream": 1,
+        "closeCode": null,
+        "atS": 2.4
+      },
+      {
+        "wsOp": 8,
+        "proxyOp": null,
+        "stream": null,
+        "closeCode": 1000,
+        "atS": 1830.1
+      }
+    ],
+    "sent": [
+      {
+        "label": "HELLO",
+        "atS": 0.3
+      },
+      {
+        "label": "OPEN stream 1 example.com:80 (proves auth)",
+        "atS": 2.3
+      },
+      {
+        "label": "OPEN stream 3 example.com:80 after idle",
+        "atS": 1860.3
+      }
+    ],
+    "closeFrameAtS": null,
+    "tcpEndAtS": null,
+    "atS": 1682.3
+  },
+  "at29": {
+    "Q": {
+      "upgraded": true,
+      "frames": [
+        {
+          "wsOp": 2,
+          "proxyOp": 0,
+          "stream": 0,
+          "closeCode": null,
+          "atS": 0.2
+        },
+        {
+          "wsOp": 2,
+          "proxyOp": 2,
+          "stream": 1,
+          "closeCode": null,
+          "atS": 2.4
+        },
+        {
+          "wsOp": 2,
+          "proxyOp": 8,
+          "stream": 1,
+          "closeCode": null,
+          "atS": 2.4
+        },
+        {
+          "wsOp": 8,
+          "proxyOp": null,
+          "stream": null,
+          "closeCode": 1000,
+          "atS": 1830.1
+        }
+      ],
+      "sent": [
+        {
+          "label": "HELLO",
+          "atS": 0.3
+        },
+        {
+          "label": "OPEN stream 1 example.com:80 (proves auth)",
+          "atS": 2.3
+        },
+        {
+          "label": "OPEN stream 3 example.com:80 after idle",
+          "atS": 1860.3
+        }
+      ],
+      "closeFrameAtS": null,
+      "tcpEndAtS": null,
+      "atS": 1742
+    },
+    "sessions": [
+      {
+        "name": "N1",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N2",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.2
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741.3
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741.3
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N3",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.4
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741.5
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741.5
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N4",
+        "result": "closed 1000",
+        "closed": 1000,
+        "closedAtS": 1742,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.7
+          }
+        ]
+      }
+    ]
+  },
+  "at31": {
+    "Q": {
+      "upgraded": true,
+      "frames": [
+        {
+          "wsOp": 2,
+          "proxyOp": 0,
+          "stream": 0,
+          "closeCode": null,
+          "atS": 0.2
+        },
+        {
+          "wsOp": 2,
+          "proxyOp": 2,
+          "stream": 1,
+          "closeCode": null,
+          "atS": 2.4
+        },
+        {
+          "wsOp": 2,
+          "proxyOp": 8,
+          "stream": 1,
+          "closeCode": null,
+          "atS": 2.4
+        },
+        {
+          "wsOp": 8,
+          "proxyOp": null,
+          "stream": null,
+          "closeCode": 1000,
+          "atS": 1830.1
+        }
+      ],
+      "sent": [
+        {
+          "label": "HELLO",
+          "atS": 0.3
+        },
+        {
+          "label": "OPEN stream 1 example.com:80 (proves auth)",
+          "atS": 2.3
+        },
+        {
+          "label": "OPEN stream 3 example.com:80 after idle",
+          "atS": 1860.3
+        }
+      ],
+      "closeFrameAtS": 1830.1,
+      "tcpEndAtS": null,
+      "atS": 1860.3
+    },
+    "N5": {
+      "name": "N5",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1860.2
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 1860.3
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 1860.3
+        }
+      ]
+    },
+    "N1to3": [
+      {
+        "name": "N1",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N2",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.2
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741.3
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741.3
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N3",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.4
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741.5
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741.5
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      }
+    ]
+  },
+  "end": {
+    "Q": {
+      "upgraded": true,
+      "frames": [
+        {
+          "wsOp": 2,
+          "proxyOp": 0,
+          "stream": 0,
+          "closeCode": null,
+          "atS": 0.2
+        },
+        {
+          "wsOp": 2,
+          "proxyOp": 2,
+          "stream": 1,
+          "closeCode": null,
+          "atS": 2.4
+        },
+        {
+          "wsOp": 2,
+          "proxyOp": 8,
+          "stream": 1,
+          "closeCode": null,
+          "atS": 2.4
+        },
+        {
+          "wsOp": 8,
+          "proxyOp": null,
+          "stream": null,
+          "closeCode": 1000,
+          "atS": 1830.1
+        }
+      ],
+      "sent": [
+        {
+          "label": "HELLO",
+          "atS": 0.3
+        },
+        {
+          "label": "OPEN stream 1 example.com:80 (proves auth)",
+          "atS": 2.3
+        },
+        {
+          "label": "OPEN stream 3 example.com:80 after idle",
+          "atS": 1860.3
+        }
+      ],
+      "closeFrameAtS": 1830.1,
+      "tcpEndAtS": null,
+      "atS": 1890.3
+    },
+    "sessions": [
+      {
+        "name": "N1",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N2",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.2
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741.3
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741.3
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N3",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.4
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1741.5
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1741.5
+          },
+          {
+            "id": 1,
+            "op": 5,
+            "atS": 1772
+          }
+        ]
+      },
+      {
+        "name": "N4",
+        "result": "closed 1000",
+        "closed": 1000,
+        "closedAtS": 1742,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1741.7
+          }
+        ]
+      },
+      {
+        "name": "N5",
+        "result": "served",
+        "closed": null,
+        "closedAtS": null,
+        "frames": [
+          {
+            "id": 0,
+            "op": 0,
+            "atS": 1860.2
+          },
+          {
+            "id": 1,
+            "op": 2,
+            "atS": 1860.3
+          },
+          {
+            "id": 1,
+            "op": 8,
+            "atS": 1860.3
+          }
+        ]
+      }
+    ]
+  },
+  "finishedAt": "2026-11-27T23:10:05.596Z"
+}

@@ -1,0 +1,62 @@
+{
+  "startedAt": "2026-11-27T22:18:22.876Z",
+  "baselineServerSockets": 0,
+  "noHello": {
+    "closeFrameAtMs": 10003,
+    "serverEndAtMs": null,
+    "serverSocketsAt12s": 0
+  },
+  "eight": [
+    "served",
+    "served",
+    "served",
+    "served",
+    "closed",
+    "closed",
+    "closed",
+    "closed"
+  ],
+  "ninthRaw": {
+    "closeFrameAtMs": 0,
+    "serverEndAtMs": null,
+    "frames": [
+      2,
+      8
+    ]
+  },
+  "at62s": {
+    "serverSockets": 4,
+    "noHello": {
+      "closeFrameAtMs": 10003,
+      "serverEndAtMs": 12061
+    },
+    "ninth": {
+      "closeFrameAtMs": 0,
+      "serverEndAtMs": 2002
+    },
+    "many": {
+      "closeFramesSeen": 20,
+      "serverEnded": 20
+    }
+  },
+  "afterTeardownServerSockets": 0,
+  "directHeaderSpoof": [
+    "served",
+    "served",
+    "served",
+    "served",
+    "served",
+    "served",
+    "served",
+    "served",
+    "served",
+    "served"
+  ],
+  "relayEvents": {
+    "relay_hello_deadline": 21,
+    "relay_session_closed": 30,
+    "relay_session_authenticated": 14,
+    "relay_session_refused:SessionsPerClient": 5
+  },
+  "finishedAt": "2026-11-27T22:19:28.152Z"
+}

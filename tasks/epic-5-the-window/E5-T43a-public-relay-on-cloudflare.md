@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: implemented
+status: evidence-needed
 depends_on: []
 estimate: S
 risk: high
@@ -479,3 +479,111 @@ how long the edge keeps it is Cloudflare's, not measured here.
 desktop idle 30 minutes loses its network until reloaded; the token rate limit is approximate
 (26 of 26 allowed in this run, 33-40 of 80 in earlier ones); 256 IPv4 addresses (or /48s) each
 holding 4 sessions can still fill all 1024 places.
+
+### 2026-11-27 — verifier (round 4) — VERDICT: needs-evidence
+
+VERDICT: needs-evidence
+
+A fresh session (I was not the implementer or any earlier verifier). I checked head `091cb8ab1` (code `edaf2824b`) and
+the live `https://wasm-vm-relay.brett-lamy.workers.dev` (`relay-5`). I wrote the predictions first
+(`evidence/e5-t43a/verifier-r4/predictions.md`). Then I ran, in this order: `verifier-r4/live4.mjs` (`live4.json`, sha256
+`04f2cde2…`, 23 WebSockets); `idle4.mjs` (`idle4.json`, `daf995d6…`, 32 min, 7 WebSockets); the gates and 14 mutants in a
+sparse `git clone --shared` scratch copy at this head (`gates.log`, `mutants.log` `8ffd55f4…`); round 3's `local-hold.mjs`
+against wvrelay built at this head (`local-hold.json`, `289fd218…`); `smoke.mjs` (`smoke.json`, SMOKE PASS); and
+`idle5.mjs` (`idle5.json`, 32 min, 6 WebSockets).
+Nothing I ran contradicts the round-4 product claim. Two of round 3's demands are met. Three proofs are still missing,
+and only tests and evidence are needed to close them. One is round 3's live check from a second address. The other two
+are driver-level tests: the one the claim cites for the hourly cap proves nothing, and the idle close's cleanup has none.
+
+- Round 3 demand (1), the relay drops finished connections: HELD, container side.
+  - Local: at 62 s the relay holds 4 server sockets, the 4 live sessions. Round 3 held 30 at the same point. A no-HELLO
+    client got Close at 10.003 s and was disconnected at 12.061 s. A client refused at the cap got Close at 0 s and was
+    disconnected at 2.002 s. 20 more no-HELLO clients that never answered were all disconnected (`local-hold.json` `at62s`).
+    Mutant W1 (no forced close) is KILLED.
+  - Live: 18 raw clients that never answer Close each got exactly one Close (1000). 16 were no-HELLO clients (Close at
+    10.17–10.21 s). One was an authenticated session ended by an undecodable frame (Close at 1.74 s after upgrade).
+    Frames sent after the Close got no bytes back: a valid HELLO plus an OPEN 5 s later, and an OPEN 7 s later
+    (`live4.json` `S2_end`). With all 18 held, 4 new sessions were served, one got `HTTP/1.1 200 OK`, and the 5th was
+    refused (`S3_withHeld`). So the protocol-error session's place was freed while its edge connection stayed open.
+  - Deployed binary: the gitignored `deploy/cloudflare-relay/wvrelay` contains the round-4-only string
+    `relay_session_idle_closed`.
+  - Residual, stated in the claim: none of the 18 got a TCP end from Cloudflare (`serverEnded` 0). The edge keeps the
+    client's half. Not measured: what that costs the edge or the Durable Object.
+- Round 3 demand (2), the cap is per client: HELD in code, NEEDS EVIDENCE live.
+  - Code: `the_session_cap_is_per_client_name` passes. W2 (header ignored) and W3 (no length limit) are KILLED.
+  - Live: round 3 asked for "one live check from a second address while the first holds" its sessions. The claim does
+    not mention it, and no evidence has it. From one address, a Worker that keyed every client the same would give the
+    identical result: 4 places for everyone, so one client could lock out all users. I could not run it: this host has
+    no IPv6 (`ipv6-check.log`, curl rc 7) and one IPv4 egress.
+  - Demand: one live run from a second address (IPv6, a hotspot or a VPS) while this address holds 4 sessions.
+  - Nit: V3 (an empty `x-wvrelay-client` accepted as a name) SURVIVED. The Worker never sends an empty one.
+- Round 3 demand (3), bytes over time and the idle lockout: HELD as accepted. The user's choice ("Add both caps") is now
+  recorded in this file.
+  - Hourly cap: the code is right, but its driver-level proof is NEEDS EVIDENCE.
+    `a_client_past_its_hourly_bytes_gets_no_more_data_through` never grants WINDOW credit, so nothing can be echoed back
+    whether or not the budget is checked. I printed its state in the scratch copy: `echoed=0 ended=true` as written, and
+    `echoed=0 ended=false` with the driver's client-budget check removed. Both pass.
+    The suite does not kill W5 (the driver ignores `record_client_bytes`) or V6 (the hourly budget keyed by token, not
+    client). W5b (the registry never refuses) is KILLED, by `a_client_byte_budget_per_clock_hour`.
+    My scratch test, `verifier-r4/verifier_tests.rs` `verifier_hourly_bytes_are_per_client_across_tokens`, passes on this
+    head. In it, client c1 echoes 40 of 40 bytes on token t1. A second token of c1 is then RST with 0 echoed, and client
+    c2 still echoes 40. It kills W5 and V6 (`mutants-with-verifier-tests.log`).
+    Demand: commit a driver test of this strength.
+  - Clock-hour edges, observation: the window is a fixed clock hour, not a sliding one. A client can move up to
+    2 × 5 GiB within seconds across H:59:59 and H+1:00:00. That is consistent with "per clock hour". State it if the
+    bound is meant over any 60 minutes.
+- Idle limit, live: HELD on the relay side.
+  - idle5: a raw session idle since 2.3 s got Close (1000) at 1830.1 s, 30:28 after its last frame. It still held its
+    place at 29 min (N1–N3 served, N4 refused) and the place was free by 31 min (N5 served). An OPEN it sent afterwards
+    got nothing.
+  - idle4: two sessions sending only WINDOW frames (one every 240 s, no bytes) were still open and served at 32 min.
+    The places of A (idle, with an open TCP stream) and D (idle, no stream) were freed: E and F were served and G
+    refused at 1923 s.
+  - Unexplained, observation: in idle4, A and D (`ws` 8.23.1 clients, which answer a Close and emit `close` within its
+    30 s close timeout) never emitted `close` in 32 min. So they never received the relay's Close, although their places
+    were freed. In idle5 the raw client did receive it.
+    Demand: one idle run from the real page (browser WebSocket), to show what a desktop sees after 30 minutes. The user
+    accepted "loses its network until reloaded"; a page that is never told cannot even say so.
+  - Tests: NEEDS EVIDENCE. V1 (the idle close returns and skips the cleanup, so the client's place and the token's
+    streams leak for good) SURVIVED the suite. My `verifier_idle_close_frees_the_place` passes on this head and kills it.
+    V2 (outbound data does not refresh activity) SURVIVED. The claim says "no traffic in either direction", but only the
+    inbound half is tested. W4 (the idle check never closes) and W6 (inbound frames do not refresh) are KILLED.
+    Demand: tests that kill V1 and V2.
+- 1024 in all as a lockout: HELD as a stated limit. The claim says that 256 IPv4 addresses (or /48s) holding 4 sessions
+  each fill every place. With the idle limit, that takes one frame per session every 30 minutes.
+  - Follow-up, not refuting: 1024 sessions × 64 streams is up to 65,536 backend sockets on one basic instance. Neither
+    the Dockerfile nor wvrelay raises `RLIMIT_NOFILE`, and nobody has measured the instance's fd or memory ceiling. So
+    the total cap bounds places; it is not shown to be below the container's capacity. Measure it, or raise or clamp the
+    limit.
+- Worker's six mutants: W1, W2, W3, W4 and W6 are KILLED. "Client bytes not checked" is KILLED if it is the registry
+  variant (W5b). The driver variant W5 SURVIVES (above). Mine: V4 (the hour never resets), V5 (`<=` to `<`) and V7 (a
+  daily window) are KILLED. V1, V2, V3 and V6 SURVIVED.
+- Gates at the exact head (scratch clone, with RUSTFLAGS, RUST_LOG and CARGO_* unset): `cargo fmt --check` passes.
+  `cargo test -p wasm-vm-slirp --features native --lib`: 277 passed. The wvrelay smoke, token-rejection and
+  ws-connector tests: 3 + 1 + 5 passed. Clippy with `-D warnings` is clean. The diff adds no `#[ignore]` and disables no
+  `debug_assert`.
+- Secrets: HELD. The round-4 diff adds no 64-hex run and no secret assignment, and my evidence holds no token
+  (`secret-hygiene.log`).
+- Carried forward as HELD (code and deployment unchanged on these paths): round 1 P1–P4, P5/P6, P10/P11 and P14; round 2
+  R1, R2, R5–R9 and R12; round 3 Q1–Q4. This round's live sessions all got OPEN_OK to example.com:80, and `smoke.mjs`
+  passes again.
+- SUITE: none promoted yet. `verifier-r4/verifier_tests.rs` is offered for `ws_adapter_tests.rs`.
+  `live4.mjs` (S2/S3) and `idle5.mjs` should join `hardening.mjs` (the idle one as a slow, opt-in check).
+
+What closes this (tests and evidence only, so no full gauntlet restart):
+1. The second-address live check.
+2. Driver tests that kill W5, V6, V1 and V2.
+3. One browser-page idle run.
+
+Commands: `node evidence/e5-t43a/verifier-r4/live4.mjs`; `node …/idle4.mjs`; `node …/idle5.mjs`;
+`node deploy/cloudflare-relay/smoke.mjs --base https://wasm-vm-relay.brett-lamy.workers.dev --out evidence/e5-t43a/verifier-r4/smoke.json`;
+`node …/local-hold.mjs <scratch>/target/debug/wvrelay`; `python3 -I …/run-mutants.py <scratch clone>` (with and without
+`verifier_tests.rs` appended there).
+Not checked:
+- anything from IPv6 or a second address;
+- load: the container's fd and memory ceiling, the Durable Object's or edge's cost of held connections, and how long
+  the edge keeps them;
+- a 5 GiB hour spent live;
+- why idle4's `ws` clients never saw the Close;
+- the Cloudflare dashboard, logs and billing;
+- a byte-for-byte match of the deployed image with this head (the strings and the behaviour match).
