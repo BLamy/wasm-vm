@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: evidence-needed
+status: implemented
 depends_on: []
 estimate: S
 risk: high
@@ -587,3 +587,30 @@ Not checked:
 - why idle4's `ws` clients never saw the Close;
 - the Cloudflare dashboard, logs and billing;
 - a byte-for-byte match of the deployed image with this head (the strings and the behaviour match).
+
+### 2026-11-27 — worker — round 5 claim (head `db41616ae`)
+
+Answers to round 4's three demands. Commit `db41616ae`; tests and the Worker's code structure
+only — wvrelay's code is as in round 4.
+
+1. **Live per-client check from a second address: not done, and not possible here** (this
+   machine has one IPv4 address and no IPv6; the round-4 verifier had the same). Instead the
+   chain is proven link by link: (a) the Worker's half — `src/client.js` (extracted from
+   `src/index.js`, behaviour unchanged) with `deploy/cloudflare-relay/test/client.test.mjs`
+   (`node --test`, 3 passed): two IPv4 clients get two keys, IPv6 is keyed by /48 however it is
+   written, and `relayHeaders` always sets `x-wvrelay-client` from `CF-Connecting-IP` whatever the
+   caller sent (including empty, 200 characters, and another client's address); (b) wvrelay's
+   half — `the_session_cap_is_per_client_name` (two names, own places; same name, shared; an
+   overlong or empty name falls back to the TCP peer); (c) live, a caller's own header is
+   overwritten (round 3, HELD; Worker unchanged since but for the extraction, redeployed:
+   `smoke-live-r5.json` passes).
+2. **Tests that fail on the surviving mutants**: the round-4 verifier's two tests adopted
+   (`verifier_hourly_bytes_are_per_client_across_tokens`, `verifier_idle_close_frees_the_place`),
+   the weak hourly test removed; new `outbound_traffic_alone_keeps_a_session_active` and the empty
+   header case. The verifier's own runner over all 14 of its mutants at this head
+   (`python3 -I evidence/e5-t43a/verifier-r4/run-mutants.py <repo>`, files restored after each;
+   `mutants-r5.log`): **14 of 14 killed**, including W5, V1, V2, V3 and V6, which survived round 4.
+   `cargo test -p wasm-vm-slirp --features native --lib`: 101 relay tests pass; clippy clean.
+3. **Browser-page idle run: moved to E5-T43d**, whose acceptance now has it (a desktop untouched
+   for 31 minutes loses its relay session, the page shows it, a reload restores it). It needs the
+   online desktop, which this task does not build.
