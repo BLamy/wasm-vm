@@ -3,7 +3,7 @@ id: E5-T36c
 epic: 5
 title: Hardware cursor on the published Replay desktop — one pointer, drawn by the host, tip on the pixel
 priority: 0.387654
-status: pending
+status: in-progress
 depends_on: [E5-T41b]
 estimate: S
 risk: low
