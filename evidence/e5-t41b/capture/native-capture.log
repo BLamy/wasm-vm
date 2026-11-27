@@ -17,28 +17,49 @@ BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
 Enter 'help' for a list of built-in commands.
 
 root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
-REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_CHROMIUM_LAUNCH uptime=1.50
 REPLAY_SWAY_IPC uptime=1.96
 REPLAY_TERMINAL_MAPPED uptime=2.00
-REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"621B13D8F3B2E5617E02F8B52B2E234A","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"4A9F066A2DA08144A76F7159A3D8E9BD"}]}} uptime=4.58
-REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"2E49C69F457AE15E697A4EDB50CE3C27"} uptime=4.93
-REPLAY_RENDERER_SANDBOX pid=/proc/192 NoNewPrivs=1 Seccomp=2 NSpid=	192	9	1 uptime=5.06
-REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.12
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"FE591D8FDB2B67E35AE50C2CCE80C898","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"EE86EEE7E20FF99B7840452823FE3548"}]}} uptime=4.66
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"42E06983B8B50928E9CBD349A581CEAB"} uptime=4.99
+REPLAY_RENDERER_SANDBOX pid=/proc/192 NoNewPrivs=1 Seccomp=2 NSpid=	192	9	1 uptime=5.10
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.15
 REPLAY_CHROME_MAPPED uptime=5.29 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
-REPLAY_DESKTOP_READY uptime=5.30 mem_hwm_kib=171936
-REPLAY_NODE_SNAPSHOT bytes=6754046 uptime=9.71
-sleep 30 && sync && echo 1 > /proc/sys/vm/drop_caches && /u
-sr/local/bin/node -e 0 && /usr/local/bin/node -e 'console.log(1)' >/dev/null && 
-/usr/local/bin/node -p process.version >/dev/null && /usr/local/bin/node -e 'con
-st cp=require("child_process"),fs=require("fs"),os=require("os"),path=require("p
-ath");fs.readFileSync("/etc/hostname");cp.execFileSync(process.execPath,["-p","6
-*7"]);console.log(os.arch(),path.sep)' >/dev/null && echo 'console.log(1)' > /tm
-p/warm.js && echo 'import os from "node:os"; console.log(os.arch())' > /tmp/warm
-.mjs && /usr/local/bin/node /tmp/warm.js >/dev/null && /usr/local/bin/node /tmp/
-warm.mjs >/dev/null && rm -f /tmp/warm.js /tmp/warm.mjs && z=$(($(awk '/^MemFree
-:/{print int($2/1024)}' /proc/meminfo) - 48)) && [ $z -gt 0 ] && dd if=/dev/zero
- of=/dev/null bs=${z}M count=1 2>/dev/null && echo REPLAY_DESKTOP_COMPACT''ED ze
-roed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptime) || poweroff -f
-REPLAY_DESKTOP_COMPACTED zeroed_mib=553 uptime=45.71
-root@replay-desktop# [6nwasm-vm: snapshot (347353922 bytes) written to target/e5-t41b/work/replay-desktop-ready.snap at trigger "REPLAY_DESKTOP_COMPACTED zeroed_mib="
+REPLAY_DESKTOP_READY uptime=5.31 mem_hwm_kib=170536
+REPLAY_NODE_SNAPSHOT bytes=6754694 uptime=9.72
+cat > /tmp/compact.sh <<'COMPACT_EOF'
+> set -e
+> N=/usr/local/bin/node
+> sleep 30
+> sync
+> echo 1 > /proc/sys/vm/drop_caches
+> $N -e 0
+> $N -e 'console.log(1)' >/dev/null
+> $N -p process.version >/dev/null
+> $N -e 'const cp=require("child_process"),fs=require("fs"),os=require("os"),pat
+h=require("path");fs.readFileSync("/etc/hostname");cp.execFileSync(process.execP
+ath,["-p","6*7"]);console.log(os.arch(),path.sep)' >/dev/null
+> echo 'console.log(1)' > /tmp/warm.js
+> echo 'import os from "node:os"; console.log(os.arch())' > /tmp/warm.mjs
+> $N /tmp/warm.js >/dev/null
+OP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptime> $N /tmp/warm.mjs >/dev/null
+> echo '#!/usr/bin/env node' > /tmp/warm
+> echo 'console.log(1)' >> /tmp/warm
+> chmod +x /tmp/warm
+> /tmp/warm >/dev/null
+> printf '1+1\n.exit\n' | $N -i >/dev/null
+> $N -e 'require("crypto").createHash("sha256").update("x").digest("hex");requir
+e("zlib").gzipSync("x")' >/dev/null
+> $N -e 'console.log(new Intl.DateTimeFormat("de",{month:"long"}).format(0),new 
+Intl.NumberFormat("en").format(1234.5),new Date(0).toLocaleString())' >/dev/null
+> rm -f /tmp/warm /tmp/warm.js /tmp/warm.mjs
+> z=$(($(awk '/^MemFree:/{print int($2/1024)}' /proc/meminfo) - 16))
+> [ $z -gt 0 ]
+> dd if=/dev/zero of=/dev/null bs=${z}M count=1 2>/dev/null
+> echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/upt
+ime)
+> COMPACT_EOF
+root@replay-desktop# sh /tmp/compact.sh || poweroff -f
+REPLAY_DESKTOP_COMPACTED zeroed_mib=577 uptime=47.64
+root@replay-desktop# [6nwasm-vm: snapshot (357412069 bytes) written to target/e5-t41b/work/replay-desktop-ready.snap at trigger "REPLAY_DESKTOP_COMPACTED zeroed_mib="
 wasm-vm: snapshot complete — exiting

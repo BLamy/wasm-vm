@@ -1,0 +1,20 @@
+first command: node -e "console.log(6*7)"
+before: requests sectors = 8943 620554
+after:  requests sectors = 8943 620554
+
+first command: node -p process.version
+before: requests sectors = 8943 620554
+after:  requests sectors = 8943 620554
+
+first command: echo "console.log([1,2,3].map(x=>x*2))" > /tmp/s.js; node /tmp/s.js
+before: requests sectors = 8943 620554
+after:  requests sectors = 8943 620554
+
+first command: echo "import p from \"node:path\"; console.log(p.sep)" > /tmp/s.mjs; node /tmp/s.mjs
+before: requests sectors = 8943 620554
+after:  requests sectors = 8943 620554
+
+first command: node -e "require(\"child_process\").execSync(\"echo hi\")"
+before: requests sectors = 8943 620554
+after:  requests sectors = 8943 620554
+

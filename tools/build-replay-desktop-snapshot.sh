@@ -35,11 +35,13 @@ APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 
 #      snapshot leaves about 75 MiB of both. So: drop the unmapped page cache (everything is
 #      re-readable from the read-only root), run node the ways a user's first command does
 #      (a bare start, printing, -p, -e code that loads fs/os/path and starts a child, a
-#      script file and an ES module): the
+#      script file, an ES module, a shebang script, the REPL, crypto, zlib and Intl in two locales — E5-T41b's round-2 verifier found each of the last five
+#      reading 0.1-6.8 MB; a worker thread, 4.2 MB more, is left out to stay under 135 MB): the
 #      parts of its binary those touch are cached again, and the first `node` of a resumed
 #      session reads nothing from disk — `node -e 0` alone left 576 KiB of a printing start
 #      uncached (E5-T41b's verifier), then hand nearly all free memory to one `dd` that only zeroes it and exits.
-#      48 MiB stay untouched so nothing else is pushed out meanwhile.
+#      16 MiB stay untouched so nothing else is pushed out meanwhile (48 gave 135.8 MB with the
+#      wider warm-up; E5-T41b round 3).
 #
 # The marker is typed as two adjacent shell words, so the console's echo of the command line
 # cannot fire the trigger. If any step fails the guest powers off: the capture ends at once
@@ -48,7 +50,36 @@ APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 
 NODE_MARKER="REPLAY_NODE_SNAPSHOT bytes="
 SETTLE_GUEST_SECONDS="${REPLAY_DESKTOP_SETTLE_SECONDS:-30}"
 TRIGGER="REPLAY_DESKTOP_COMPACTED zeroed_mib="
-COMPACT_COMMAND="sleep $SETTLE_GUEST_SECONDS && sync && echo 1 > /proc/sys/vm/drop_caches && /usr/local/bin/node -e 0 && /usr/local/bin/node -e 'console.log(1)' >/dev/null && /usr/local/bin/node -p process.version >/dev/null && /usr/local/bin/node -e 'const cp=require(\"child_process\"),fs=require(\"fs\"),os=require(\"os\"),path=require(\"path\");fs.readFileSync(\"/etc/hostname\");cp.execFileSync(process.execPath,[\"-p\",\"6*7\"]);console.log(os.arch(),path.sep)' >/dev/null && echo 'console.log(1)' > /tmp/warm.js && echo 'import os from \"node:os\"; console.log(os.arch())' > /tmp/warm.mjs && /usr/local/bin/node /tmp/warm.js >/dev/null && /usr/local/bin/node /tmp/warm.mjs >/dev/null && rm -f /tmp/warm.js /tmp/warm.mjs && z=\$((\$(awk '/^MemFree:/{print int(\$2/1024)}' /proc/meminfo) - 48)) && [ \$z -gt 0 ] && dd if=/dev/zero of=/dev/null bs=\${z}M count=1 2>/dev/null && echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=\$z uptime=\$(cut -d' ' -f1 /proc/uptime) || poweroff -f"
+# The compaction is typed as a script, one short line at a time (busybox's line editor cuts a
+# typed line at about 1 KiB), then run; any failing step powers the guest off.
+read -r -d '' COMPACT_SCRIPT <<'SCRIPT' || true
+set -e
+N=/usr/local/bin/node
+sleep __SETTLE__
+sync
+echo 1 > /proc/sys/vm/drop_caches
+$N -e 0
+$N -e 'console.log(1)' >/dev/null
+$N -p process.version >/dev/null
+$N -e 'const cp=require("child_process"),fs=require("fs"),os=require("os"),path=require("path");fs.readFileSync("/etc/hostname");cp.execFileSync(process.execPath,["-p","6*7"]);console.log(os.arch(),path.sep)' >/dev/null
+echo 'console.log(1)' > /tmp/warm.js
+echo 'import os from "node:os"; console.log(os.arch())' > /tmp/warm.mjs
+$N /tmp/warm.js >/dev/null
+$N /tmp/warm.mjs >/dev/null
+echo '#!/usr/bin/env node' > /tmp/warm
+echo 'console.log(1)' >> /tmp/warm
+chmod +x /tmp/warm
+/tmp/warm >/dev/null
+printf '1+1\n.exit\n' | $N -i >/dev/null
+$N -e 'require("crypto").createHash("sha256").update("x").digest("hex");require("zlib").gzipSync("x")' >/dev/null
+$N -e 'console.log(new Intl.DateTimeFormat("de",{month:"long"}).format(0),new Intl.NumberFormat("en").format(1234.5),new Date(0).toLocaleString())' >/dev/null
+rm -f /tmp/warm /tmp/warm.js /tmp/warm.mjs
+z=$(($(awk '/^MemFree:/{print int($2/1024)}' /proc/meminfo) - 16))
+[ $z -gt 0 ]
+dd if=/dev/zero of=/dev/null bs=${z}M count=1 2>/dev/null
+echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptime)
+SCRIPT
+COMPACT_SCRIPT=${COMPACT_SCRIPT//__SETTLE__/$SETTLE_GUEST_SECONDS}
 
 for f in "$BIN" "$KERNEL" "$IMAGE" "$MANIFEST"; do
   [ -f "$f" ] || { echo "build-replay-desktop-snapshot: missing $f" >&2; exit 1; }
@@ -89,7 +120,9 @@ mkfifo "$STDIN_FIFO"
   exec 3>"$STDIN_FIFO"
   until grep -aq "$NODE_MARKER" "$BOOTLOG"; do sleep 1; done
   sleep 2 # let the monitor's line end and the shell sit at its prompt
-  printf '%s\n' "$COMPACT_COMMAND" >&3
+  printf '%s\n' "cat > /tmp/compact.sh <<'COMPACT_EOF'" >&3
+  printf '%s\n' "$COMPACT_SCRIPT" >&3
+  printf '%s\n' "COMPACT_EOF" "sh /tmp/compact.sh || poweroff -f" >&3
   exec sleep 86400 # (exec: the cleanup's kill of $FEEDER then ends it)
 ) &
 FEEDER=$!

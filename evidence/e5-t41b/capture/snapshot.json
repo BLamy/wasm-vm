@@ -1,10 +1,10 @@
 {
   "task": "E5-T41b",
-  "url": "releases/boot-snapshot/replay-desktop-ready-f729cee9838e.snap.gz",
-  "sha256": "f729cee9838e14240b508d5ab8c0f7a9a25fc98dbef37f0da020c46ec66daf96",
-  "size": 130233796,
-  "uncompressedSize": 347353922,
-  "uncompressedSha256": "a699552838585ba6db07a93ad2afa99de87ce88761bdb271ab28704a91ecb52e",
+  "url": "releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+  "sha256": "39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db",
+  "size": 134069642,
+  "uncompressedSize": 357412069,
+  "uncompressedSha256": "7e7400130358e4a79b6d66aa2e37176e128e27c10320a6268d3955a676834ab6",
   "identity": {
     "imageSha256": "20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c",
     "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
@@ -17,5 +17,5 @@
     "deviceLayout": "browser-topology",
     "readOnlyRoot": true
   },
-  "captureHostSeconds": 213
+  "captureHostSeconds": 256
 }

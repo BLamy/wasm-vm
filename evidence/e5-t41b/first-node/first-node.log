@@ -1,20 +1,30 @@
-first command: node -e "console.log(6*7)"
-before: requests sectors = 8943 620554
-after:  requests sectors = 8943 620554
-
-first command: node -p process.version
-before: requests sectors = 8943 620554
-after:  requests sectors = 8943 620554
-
-first command: echo "console.log([1,2,3].map(x=>x*2))" > /tmp/s.js; node /tmp/s.js
-before: requests sectors = 8943 620554
-after:  requests sectors = 8943 620554
-
-first command: echo "import p from \"node:path\"; console.log(p.sep)" > /tmp/s.mjs; node /tmp/s.mjs
-before: requests sectors = 8943 620554
-after:  requests sectors = 8943 620554
-
-first command: node -e "require(\"child_process\").execSync(\"echo hi\")"
-before: requests sectors = 8943 620554
-after:  requests sectors = 8943 620554
-
+first command: node -e "console.log(6*7)"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node --version   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -p process.version   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: /tmp/x.js   (setup: printf "#!/usr/bin/env node\nconsole.log(1)\n" > /tmp/x.js && chmod +x /tmp/x.js)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: echo "1+1" | node   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: printf "1+1\n.exit\n" | node -i   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9060 638562 ; delta requests=3 KiB=156
+first command: node -e "console.log(typeof fetch)"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -e "console.log(require(\"crypto\").createHash(\"sha256\").update(\"x\").digest(\"hex\"))"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -e "console.log(require(\"zlib\").gzipSync(\"x\").length)"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -e "console.log(new Intl.DateTimeFormat(\"de\",{month:\"long\"}).format(0))"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -e "console.log(new Intl.DateTimeFormat(\"ja\",{month:\"long\"}).format(0))"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9059 638506 ; delta requests=2 KiB=128
+first command: node -e "const {Worker}=require(\"worker_threads\");new Worker(\"console.log(1)\",{eval:true})"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9103 645530 ; delta requests=46 KiB=3640
+first command: node /tmp/s.js   (setup: echo "console.log([1,2,3].map(x=>x*2))" > /tmp/s.js)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node /tmp/s.mjs   (setup: echo "import p from \"node:path\"; console.log(p.sep)" > /tmp/s.mjs)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -e "require(\"child_process\").execSync(\"echo hi\")"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
