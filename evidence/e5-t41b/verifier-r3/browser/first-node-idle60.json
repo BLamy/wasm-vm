@@ -1,0 +1,108 @@
+{
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "idleS": 60,
+  "points": [
+    {
+      "label": "ready-1",
+      "readRequests": 9021,
+      "readSectors": 637690,
+      "localHits": 1,
+      "localBytes": 262144,
+      "fetches": 0
+    },
+    {
+      "label": "idle 10 s",
+      "readRequests": 9021,
+      "readSectors": 637690,
+      "localHits": 1,
+      "localBytes": 262144,
+      "fetches": 0
+    },
+    {
+      "label": "idle 20 s",
+      "readRequests": 9072,
+      "readSectors": 638250,
+      "localHits": 8,
+      "localBytes": 2097152,
+      "fetches": 0
+    },
+    {
+      "label": "idle 30 s",
+      "readRequests": 9072,
+      "readSectors": 638250,
+      "localHits": 8,
+      "localBytes": 2097152,
+      "fetches": 0
+    },
+    {
+      "label": "idle 40 s",
+      "readRequests": 9072,
+      "readSectors": 638250,
+      "localHits": 8,
+      "localBytes": 2097152,
+      "fetches": 0
+    },
+    {
+      "label": "idle 50 s",
+      "readRequests": 9072,
+      "readSectors": 638250,
+      "localHits": 8,
+      "localBytes": 2097152,
+      "fetches": 0
+    },
+    {
+      "label": "idle 60 s",
+      "readRequests": 9072,
+      "readSectors": 638250,
+      "localHits": 8,
+      "localBytes": 2097152,
+      "fetches": 0
+    },
+    {
+      "label": "ready-2",
+      "readRequests": 9072,
+      "readSectors": 638250,
+      "localHits": 8,
+      "localBytes": 2097152,
+      "fetches": 0
+    },
+    {
+      "label": "typed, before Enter",
+      "readRequests": 9073,
+      "readSectors": 638258,
+      "localHits": 9,
+      "localBytes": 2359296,
+      "fetches": 0
+    },
+    {
+      "label": "15 s after Enter",
+      "readRequests": 9073,
+      "readSectors": 638258,
+      "localHits": 9,
+      "localBytes": 2359296,
+      "fetches": 0
+    }
+  ],
+  "firstNodeDelta": {
+    "readRequests": 0,
+    "readKiB": 0,
+    "localHits": 0
+  },
+  "typingDelta": {
+    "readRequests": 1,
+    "readKiB": 4,
+    "localHits": 1
+  },
+  "beforeTypingDelta": {
+    "readRequests": 51,
+    "readKiB": 280,
+    "localHits": 7
+  },
+  "snapshotRequests": [
+    "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz"
+  ],
+  "staleGen1": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+}

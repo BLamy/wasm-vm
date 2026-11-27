@@ -1,0 +1,27 @@
+local releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz
+ 134069642
+39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db  releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz
+7e7400130358e4a79b6d66aa2e37176e128e27c10320a6268d3955a676834ab6  -
+ 357412069
+{'url': 'releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz', 'sha256': '39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db', 'size': 134069642, 'uncompressedSize': 357412069, 'uncompressedSha256': '7e7400130358e4a79b6d66aa2e37176e128e27c10320a6268d3955a676834ab6'}
+{
+  "task": "E5-T41b",
+  "url": "releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+  "sha256": "39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db",
+  "size": 134069642,
+  "uncompressedSize": 357412069,
+  "uncompressedSha256": "7e7400130358e4a79b6d66aa2e37176e128e27c10320a6268d3955a676834ab6",
+  "identity": {
+    "imageSha256": "20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c",
+    "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "baseId": "b674702960a2b19714112b6d510bf438ed689438b91f1b12100c329e7db11dcf",
+    "ramMib": 1024,
+    "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
+    "guestClock": "icount",
+    "icountDivider": 64,
+    "deviceLayout": "browser-topology",
+    "readOnlyRoot": true
+  },
+  "captureHostSeconds": 256
+}

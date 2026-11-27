@@ -1,0 +1,38 @@
+L0
+total 4
+drwxrwxrwt    3 root     root            60 Nov 26 22:14 .
+drwxr-xr-x   15 root     root          4096 Nov  1 00:00 ..
+drwx------    2 desktop  desktop         80 Nov 26 22:14 .org.chromium.Chromium.cSly6a
+L1
+PID   USER     COMMAND
+    1 root     init
+   60 root     /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
+   73 root     seatd -g video
+   81 desktop  sway -c /etc/replay-desktop/sway.conf
+   82 root     {replay-desktop-} /bin/sh /usr/local/sbin/replay-desktop-monitor
+   83 root     -/bin/sh
+   96 desktop  {replay-chromium} /bin/bash /usr/local/bin/replay-chromium
+   98 desktop  foot --app-id=replay-terminal --title=Replay Node 26 terminal
+  104 desktop  /opt/replay-chromium/chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-browser-check --disable-background-networking --disable-component-update --disable-sync --password-store=basic --lang=en-US --num-raster-threads=1 --renderer-process-limit=1 --user-data-dir=/home/desktop/.config/replay-chromium --remote-debugging-pipe file:///opt/replay-chromium/smoke.html
+  105 desktop  -/bin/sh
+  129 desktop  /opt/replay-chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Unknown --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=91 --shared-client-connection
+  132 desktop  /opt/replay-chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Unknown --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=4 --shared-client-connection
+  135 desktop  /opt/replay-chromium/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  136 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  138 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  158 desktop  /opt/replay-chromium/chrome --type=gpu-process --ozone-platform=wayland --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --gpu-preferences=WAAAAAAAAAAgAAAYAAAAAAAAAAAAAAAAAABgAAEAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --use-gl=angle --use-angle=swiftshader-webgl --shared-files --field-trial-handle=0,i,979528291846310374,16996855732424982762,131072
+  159 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,979528291846310374,16996855732424982762,131072
+  161 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,979528291846310374,16996855732424982762,131072
+  192 desktop  /opt/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --event-path-policy=0 --change-stack-guard-on-fork=enable --first-renderer-process --remote-debugging-pipe --ozone-platform=wayland --disable-gpu-compositing --lang=en-US --num-raster-threads=1 --renderer-client-id=5 --time-ticks-at-unix-epoch=-1795731251924507 --launch-time-ticks=3548134 --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,979528291846310374,16996855732424982762,131072
+  651 root     {ps} -/bin/sh
+L2
+ls: /root/.ash_history: No such file or directory
+ls: /root/.node_repl_history: No such file or directory
+ls: /home/desktop/.ash_history: No such file or directory
+ls: /home/desktop/.bash_history: No such file or directory
+L3
+grep: /root/.ash_history: No such file or directory
+MemTotal:         991728 kB
+MemFree:          612724 kB
+MemAvailable:     819124 kB
+L4

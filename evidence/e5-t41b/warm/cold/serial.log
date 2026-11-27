@@ -1,0 +1,45 @@
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578773] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.50
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=2.00
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"8F898463A594471A33064477350DEB86","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"F2BA194BD3AEAC30F810A67B703D8A99"}]}} uptime=4.69
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"FAAD1534F1D13091BC3CC63EF1E0C6E1"} uptime=5.02
+REPLAY_RENDERER_SANDBOX pid=/proc/192 NoNewPrivs=1 Seccomp=2 NSpid=	192	10	1 uptime=5.17
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.22
+REPLAY_CHROME_MAPPED uptime=5.27 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.28 mem_hwm_kib=169728
+printf '\n__WVBEGIN_mwy9s1530\n'; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o 'Replay RISC-V PASS #[0-9]*' 
+| head -n 1; printf '\n__WVEND_mwy9s1530_%s\n' "$?"
+
+__WVBEGIN_mwy9s1530
+Replay RISC-V PASS #1
+
+__WVEND_mwy9s1530_0
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwy9s53c1\n'; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o 'Replay RISC-V PASS #[0-9]*' 
+| head -n 1; printf '\n__WVEND_mwy9s53c1_%s\n' "$?"
+
+__WVBEGIN_mwy9s53c1
+Replay RISC-V PASS #2
+
+__WVEND_mwy9s53c1_0
+root@replay-desktop# [6nREPLAY_NODE_SNAPSHOT bytes=6762366 uptime=10.95
+E5T34E_15F05182 v26.13.1

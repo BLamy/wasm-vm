@@ -1,0 +1,47 @@
+{
+  "parsedProcesses": 59,
+  "snaps": [
+    {
+      "at": 0,
+      "text": "    9021        0   637690      727     \n1 init 16\n10 kworker/0:1-mm_percpu_wq 0\n103 chrome 1436\n104 sh 0\n11 kworker/u2:0-events_unbound 0\n12 kworker/R-mm_pe 0\n128 chrome_crashpad 16\n13 rcu_tasks_trace_kthread 0\n131 chrome_crashpad 0\n134 chrome 19\n135 chrome 15\n137 chrome 0\n14 ksoftirqd/0 0\n15 rcu_sched 0\n158 chrome 233\n159 chrome 37\n16 migration/0 0\n161 chrome 12\n17 cpuhp/0 0\n18 kdevtmpfs 0\n19 kworker/R-inet_ 0\n192 chrome 445\n2 kthreadd 0\n20 kworker/u2:1-iou_exit 0\n21 kauditd 0\n22 khungtaskd 0\n23 oom_reaper 0\n24 kworker/R-write 0\n25 kcompactd0 0\n26 kworker/R-kbloc 0\n27 kworker/R-ata_s 0\n28 watchdogd 0\n29 kworker/R-rpcio 0\n3 pool_workqueue_release 0\n30 kworker/0:1H-kblockd 0\n31 kworker/R-xprti 0\n32 kswapd0 0\n33 kworker/R-nfsio 0\n34 khvcd 0\n35 hwrng 0\n358 (udev-worker) 0\n36 kworker/R-dm_bu 0\n37 kworker/R-mld 0\n38 kworker/R-ipv6_ 0\n39 kworker/R-ext4- 0\n4 kworker/R-rcu_g 0\n5 kworker/R-rcu_p 0\n6 kworker/R-slub_ 0\n60 systemd-udevd 4\n69 kworker/u2:2-events_unbound 0\n7 kworker/R-netns 0\n72 seatd 2\n8 kworker/0:0-rcu_gp 0\n80 sway 273\n81 replay-desktop- 0\n82 sh 0\n9 kworker/0:0H-events_highpri 0\n95 replay-chromium 30\n97 foot 16\n48.49\n\n"
+    },
+    {
+      "at": 10,
+      "text": "    9021        0   637690      727     \n1 init 16\n10 kworker/0:1-pm 0\n103 chrome 1436\n104 sh 0\n11 kworker/u2:0-events_unbound 0\n12 kworker/R-mm_pe 0\n128 chrome_crashpad 16\n13 rcu_tasks_trace_kthread 0\n131 chrome_crashpad 0\n134 chrome 19\n135 chrome 15\n137 chrome 0\n14 ksoftirqd/0 0\n15 rcu_sched 0\n158 chrome 233\n159 chrome 37\n16 migration/0 0\n161 chrome 12\n17 cpuhp/0 0\n18 kdevtmpfs 0\n19 kworker/R-inet_ 0\n192 chrome 445\n2 kthreadd 0\n20 kworker/u2:1-iou_exit 0\n21 kauditd 0\n22 khungtaskd 0\n23 oom_reaper 0\n24 kworker/R-write 0\n25 kcompactd0 0\n26 kworker/R-kbloc 0\n27 kworker/R-ata_s 0\n28 watchdogd 0\n29 kworker/R-rpcio 0\n3 pool_workqueue_release 0\n30 kworker/0:1H-kblockd 0\n31 kworker/R-xprti 0\n32 kswapd0 0\n33 kworker/R-nfsio 0\n34 khvcd 0\n35 hwrng 0\n36 kworker/R-dm_bu 0\n37 kworker/R-mld 0\n38 kworker/R-ipv6_ 0\n39 kworker/R-ext4- 0\n4 kworker/R-rcu_g 0\n5 kworker/R-rcu_p 0\n6 kworker/R-slub_ 0\n60 systemd-udevd 4\n69 kworker/u2:2-events_unbound 0\n7 kworker/R-netns 0\n72 seatd 2\n8 kworker/0:0-rcu_gp 0\n80 sway 273\n81 replay-desktop- 0\n82 sh 0\n9 kworker/0:0H-events_highpri 0\n95 replay-chromium 30\n97 foot 16\n59.00\n\n"
+    },
+    {
+      "at": 20,
+      "text": "    9022        0   637698      727     \n1 init 16\n10 kworker/0:1-pm 0\n103 chrome 1436\n104 sh 0\n11 kworker/u2:0-events_unbound 0\n12 kworker/R-mm_pe 0\n128 chrome_crashpad 16\n13 rcu_tasks_trace_kthread 0\n131 chrome_crashpad 0\n134 chrome 19\n135 chrome 15\n137 chrome 0\n14 ksoftirqd/0 0\n15 rcu_sched 0\n158 chrome 233\n159 chrome 37\n16 migration/0 0\n161 chrome 12\n17 cpuhp/0 0\n18 kdevtmpfs 0\n19 kworker/R-inet_ 0\n192 chrome 445\n2 kthreadd 0\n20 kworker/u2:1-iou_exit 0\n21 kauditd 0\n22 khungtaskd 0\n23 oom_reaper 0\n24 kworker/R-write 0\n25 kcompactd0 0\n26 kworker/R-kbloc 0\n27 kworker/R-ata_s 0\n28 watchdogd 0\n29 kworker/R-rpcio 0\n3 pool_workqueue_release 0\n30 kworker/0:1H-kblockd 0\n31 kworker/R-xprti 0\n32 kswapd0 0\n33 kworker/R-nfsio 0\n34 khvcd 0\n35 hwrng 0\n36 kworker/R-dm_bu 0\n37 kworker/R-mld 0\n38 kworker/R-ipv6_ 0\n39 kworker/R-ext4- 0\n4 kworker/R-rcu_g 0\n5 kworker/R-rcu_p 0\n6 kworker/R-slub_ 0\n60 systemd-udevd 4\n69 kworker/u2:2-events_unbound 0\n7 kworker/R-netns 0\n72 seatd 2\n8 kworker/0:0-rcu_gp 0\n80 sway 273\n81 replay-desktop- 0\n82 sh 0\n9 kworker/0:0H-events_highpri 0\n95 replay-chromium 30\n97 foot 16\n69.52\n\n"
+    },
+    {
+      "at": 30,
+      "text": "    9075        0   638250      734     \n1 init 16\n10 kworker/0:1-pm 0\n103 chrome 1437\n104 sh 0\n11 kworker/u2:0-events_unbound 0\n12 kworker/R-mm_pe 0\n128 chrome_crashpad 16\n13 rcu_tasks_trace_kthread 0\n131 chrome_crashpad 0\n134 chrome 19\n135 chrome 15\n137 chrome 0\n14 ksoftirqd/0 0\n15 rcu_sched 0\n158 chrome 233\n159 chrome 37\n16 migration/0 0\n161 chrome 12\n17 cpuhp/0 0\n18 kdevtmpfs 0\n19 kworker/R-inet_ 0\n192 chrome 448\n2 kthreadd 0\n20 kworker/u2:1-iou_exit 0\n21 kauditd 0\n22 khungtaskd 0\n23 oom_reaper 0\n24 kworker/R-write 0\n25 kcompactd0 0\n26 kworker/R-kbloc 0\n27 kworker/R-ata_s 0\n28 watchdogd 0\n29 kworker/R-rpcio 0\n3 pool_workqueue_release 0\n30 kworker/0:1H-kblockd 0\n31 kworker/R-xprti 0\n32 kswapd0 0\n33 kworker/R-nfsio 0\n34 khvcd 0\n35 hwrng 0\n36 kworker/R-dm_bu 0\n37 kworker/R-mld 0\n38 kworker/R-ipv6_ 0\n39 kworker/R-ext4- 0\n4 kworker/R-rcu_g 0\n5 kworker/R-rcu_p 0\n6 kworker/R-slub_ 0\n60 systemd-udevd 4\n69 kworker/u2:2-events_unbound 0\n7 kworker/R-netns 0\n72 seatd 2\n8 kworker/0:0-rcu_gp 0\n80 sway 273\n81 replay-desktop- 0\n82 sh 0\n9 kworker/0:0H-events_highpri 0\n95 replay-chromium 30\n97 foot 16\n79.99\n\n"
+    }
+  ],
+  "changed": [
+    {
+      "pid": "103",
+      "comm": "chrome",
+      "majfltDelta": 1,
+      "perStep": [
+        1436,
+        1436,
+        1436,
+        1437
+      ],
+      "new": false
+    },
+    {
+      "pid": "192",
+      "comm": "chrome",
+      "majfltDelta": 3,
+      "perStep": [
+        445,
+        445,
+        445,
+        448
+      ],
+      "new": false
+    }
+  ]
+}

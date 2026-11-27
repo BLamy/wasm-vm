@@ -1,0 +1,10 @@
+## output on the serial tty (no redirect), as a user or the latency script runs it
+first command: node -e "console.log(6*7)"   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0
+first command: node -p process.version   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0
+first command: node --version   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0
+## the same command with stdout to /dev/null (the worker's probe)
+first command: node -e "console.log(6*7)" >/dev/null   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0

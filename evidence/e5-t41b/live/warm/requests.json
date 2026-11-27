@@ -1,0 +1,1595 @@
+[
+  {
+    "t": 5,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1",
+    "range": null,
+    "finished": 188,
+    "responseBodySize": 18327,
+    "status": 200
+  },
+  {
+    "t": 186,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/vendor/xterm/xterm.css",
+    "range": null,
+    "finished": 243,
+    "responseBodySize": 2337,
+    "status": 200
+  },
+  {
+    "t": 186,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-library.css",
+    "range": null,
+    "finished": 243,
+    "responseBodySize": 1096,
+    "status": 200
+  },
+  {
+    "t": 186,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/ui.css?rev=1d9da085070f",
+    "range": null,
+    "finished": 267,
+    "responseBodySize": 45425,
+    "status": 200
+  },
+  {
+    "t": 187,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/vendor/xterm/xterm.js",
+    "range": null,
+    "finished": 290,
+    "responseBodySize": 69064,
+    "status": 200
+  },
+  {
+    "t": 187,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/vendor/xterm/addon-fit.js",
+    "range": null,
+    "finished": 267,
+    "responseBodySize": 915,
+    "status": 200
+  },
+  {
+    "t": 187,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/ui.js?rev=fd66d5071f8a",
+    "range": null,
+    "finished": 323,
+    "responseBodySize": 250203,
+    "status": 200
+  },
+  {
+    "t": 187,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/tabs.js",
+    "range": null,
+    "finished": 244,
+    "responseBodySize": 798,
+    "status": 200
+  },
+  {
+    "t": 187,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/ide.js",
+    "range": null,
+    "finished": 244,
+    "responseBodySize": 34891,
+    "status": 200
+  },
+  {
+    "t": 296,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/omarchy-startup-state.js",
+    "range": null,
+    "finished": 363,
+    "responseBodySize": 2050,
+    "status": 200
+  },
+  {
+    "t": 296,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/coi-serviceworker-register.js",
+    "range": null,
+    "finished": 363,
+    "responseBodySize": 1873,
+    "status": 200
+  },
+  {
+    "t": 296,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/cpu-isolation.js",
+    "range": null,
+    "finished": 363,
+    "responseBodySize": 2821,
+    "status": 200
+  },
+  {
+    "t": 361,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+    "range": null,
+    "finished": 421,
+    "responseBodySize": 46289,
+    "status": 200
+  },
+  {
+    "t": 361,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+    "range": null,
+    "finished": 420,
+    "responseBodySize": 15452,
+    "status": 200
+  },
+  {
+    "t": 376,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/main.js",
+    "range": null,
+    "finished": 443,
+    "responseBodySize": 57044,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+    "range": null,
+    "finished": 517,
+    "responseBodySize": 33852,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/riscv-tests.js",
+    "range": null,
+    "finished": 478,
+    "responseBodySize": 1343,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-gpu-reader-demo.js",
+    "range": null,
+    "finished": 490,
+    "responseBodySize": 1717,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/roadmap.js",
+    "range": null,
+    "finished": 611,
+    "responseBodySize": 23925,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/loader.js",
+    "range": null,
+    "finished": 527,
+    "responseBodySize": 36516,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/linux-worker-host.js",
+    "range": null,
+    "finished": 527,
+    "responseBodySize": 2091,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/overlay-reset-target.js",
+    "range": null,
+    "finished": 494,
+    "responseBodySize": 839,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-library.js",
+    "range": null,
+    "finished": 493,
+    "responseBodySize": 9732,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-timeline.js",
+    "range": null,
+    "finished": 527,
+    "responseBodySize": 8980,
+    "status": 200
+  },
+  {
+    "t": 443,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/gpu-checkpoint-build.js",
+    "range": null,
+    "finished": 519,
+    "responseBodySize": 802,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/event-clock-probe.js",
+    "range": null,
+    "finished": 500,
+    "responseBodySize": 4359,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/input-recording-probe.js",
+    "range": null,
+    "finished": 493,
+    "responseBodySize": 5540,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/time-entropy-probe.js",
+    "range": null,
+    "finished": 519,
+    "responseBodySize": 3783,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/device-completions-probe.js",
+    "range": null,
+    "finished": 520,
+    "responseBodySize": 4071,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/network-capture-probe.js",
+    "range": null,
+    "finished": 527,
+    "responseBodySize": 5373,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-replay-probe.js",
+    "range": null,
+    "finished": 533,
+    "responseBodySize": 6749,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-streamed-replay-probe.js",
+    "range": null,
+    "finished": 520,
+    "responseBodySize": 2549,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-keyframe-probe.js",
+    "range": null,
+    "finished": 520,
+    "responseBodySize": 5375,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-seek-probe.js",
+    "range": null,
+    "finished": 491,
+    "responseBodySize": 3219,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/unrecorded-control-probe.js",
+    "range": null,
+    "finished": 493,
+    "responseBodySize": 2306,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/owned-http-probe.js",
+    "range": null,
+    "finished": 520,
+    "responseBodySize": 5162,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/gpu-journal-stream-probe.js",
+    "range": null,
+    "finished": 500,
+    "responseBodySize": 5763,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/witness-pages-probe.js",
+    "range": null,
+    "finished": 520,
+    "responseBodySize": 4488,
+    "status": 200
+  },
+  {
+    "t": 444,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/terminal.js",
+    "range": null,
+    "finished": 518,
+    "responseBodySize": 5354,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/file-transfer.js",
+    "range": null,
+    "finished": 520,
+    "responseBodySize": 7198,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/boot-progress.js",
+    "range": null,
+    "finished": 521,
+    "responseBodySize": 2286,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/guest-rpc.js",
+    "range": null,
+    "finished": 534,
+    "responseBodySize": 2466,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/input/keyboard.js",
+    "range": null,
+    "finished": 518,
+    "responseBodySize": 2810,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/input/capture.js",
+    "range": null,
+    "finished": 494,
+    "responseBodySize": 3742,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/input/held-keys.js",
+    "range": null,
+    "finished": 521,
+    "responseBodySize": 2155,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/input/reconciliation.js",
+    "range": null,
+    "finished": 491,
+    "responseBodySize": 2668,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/autoplay.js",
+    "range": null,
+    "finished": 533,
+    "responseBodySize": 3940,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/sink.js",
+    "range": null,
+    "finished": 541,
+    "responseBodySize": 4215,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/capture-ring.js",
+    "range": null,
+    "finished": 541,
+    "responseBodySize": 1765,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/microphone.js",
+    "range": null,
+    "finished": 493,
+    "responseBodySize": 4908,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/input/pointer.js",
+    "range": null,
+    "finished": 494,
+    "responseBodySize": 7261,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/presentation.js",
+    "range": null,
+    "finished": 507,
+    "responseBodySize": 7516,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/viewport.js",
+    "range": null,
+    "finished": 541,
+    "responseBodySize": 4028,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/cursor-controller.js",
+    "range": null,
+    "finished": 543,
+    "responseBodySize": 9791,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/desktop-agent-session.js",
+    "range": null,
+    "finished": 519,
+    "responseBodySize": 2268,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/desktop-restore.js",
+    "range": null,
+    "finished": 543,
+    "responseBodySize": 2010,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/cold-counter-recycling.js",
+    "range": null,
+    "finished": 494,
+    "responseBodySize": 1269,
+    "status": 200
+  },
+  {
+    "t": 445,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/omarchy-desktop-readiness.js",
+    "range": null,
+    "finished": 518,
+    "responseBodySize": 1393,
+    "status": 200
+  },
+  {
+    "t": 491,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/gpu-history-reader-probe.js",
+    "range": null,
+    "finished": 543,
+    "responseBodySize": 5091,
+    "status": 200
+  },
+  {
+    "t": 491,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-store.js",
+    "range": null,
+    "finished": 554,
+    "responseBodySize": 10774,
+    "status": 200
+  },
+  {
+    "t": 491,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-gpu-history-reader.js",
+    "range": null,
+    "finished": 554,
+    "responseBodySize": 8529,
+    "status": 200
+  },
+  {
+    "t": 491,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-gpu-replay.js",
+    "range": null,
+    "finished": 555,
+    "responseBodySize": 4032,
+    "status": 200
+  },
+  {
+    "t": 491,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-seek.js",
+    "range": null,
+    "finished": 555,
+    "responseBodySize": 3721,
+    "status": 200
+  },
+  {
+    "t": 494,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/capture-worklet.js",
+    "range": null,
+    "finished": 555,
+    "responseBodySize": 2135,
+    "status": 200
+  },
+  {
+    "t": 494,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-checkpoints.js",
+    "range": null,
+    "finished": 555,
+    "responseBodySize": 6637,
+    "status": 200
+  },
+  {
+    "t": 501,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-gpu-journal.js",
+    "range": null,
+    "finished": 556,
+    "responseBodySize": 8398,
+    "status": 200
+  },
+  {
+    "t": 501,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/production.mjs",
+    "range": null,
+    "finished": 556,
+    "responseBodySize": 8521,
+    "status": 200
+  },
+  {
+    "t": 507,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/canvas2d.js",
+    "range": null,
+    "finished": 576,
+    "responseBodySize": 1832,
+    "status": 200
+  },
+  {
+    "t": 507,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/webgl.js",
+    "range": null,
+    "finished": 575,
+    "responseBodySize": 3431,
+    "status": 200
+  },
+  {
+    "t": 507,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/frame-scheduler.js",
+    "range": null,
+    "finished": 574,
+    "responseBodySize": 2296,
+    "status": 200
+  },
+  {
+    "t": 507,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/visibility-scheduler.js",
+    "range": null,
+    "finished": 575,
+    "responseBodySize": 2064,
+    "status": 200
+  },
+  {
+    "t": 518,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "range": null,
+    "finished": 576,
+    "responseBodySize": 941,
+    "status": 200
+  },
+  {
+    "t": 518,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+    "range": null,
+    "finished": 576,
+    "responseBodySize": 817,
+    "status": 200
+  },
+  {
+    "t": 518,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+    "range": null,
+    "finished": 577,
+    "responseBodySize": 1144,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/input/keymap.js",
+    "range": null,
+    "finished": 577,
+    "responseBodySize": 3657,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/osc52.js",
+    "range": null,
+    "finished": 576,
+    "responseBodySize": 3100,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/paste.js",
+    "range": null,
+    "finished": 578,
+    "responseBodySize": 1711,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/desktop-agent-bridge.js",
+    "range": null,
+    "finished": 577,
+    "responseBodySize": 1730,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/agent-channel.js",
+    "range": null,
+    "finished": 580,
+    "responseBodySize": 10329,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-inputs.js",
+    "range": null,
+    "finished": 579,
+    "responseBodySize": 8417,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+    "range": null,
+    "finished": 578,
+    "responseBodySize": 3808,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-devices.js",
+    "range": null,
+    "finished": 578,
+    "responseBodySize": 2138,
+    "status": 200
+  },
+  {
+    "t": 520,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-block-transfer-probe.js",
+    "range": null,
+    "finished": 579,
+    "responseBodySize": 1838,
+    "status": 200
+  },
+  {
+    "t": 521,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-network.js",
+    "range": null,
+    "finished": 579,
+    "responseBodySize": 2841,
+    "status": 200
+  },
+  {
+    "t": 521,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-witness-pages.js",
+    "range": null,
+    "finished": 579,
+    "responseBodySize": 3458,
+    "status": 200
+  },
+  {
+    "t": 521,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-witness-graph.js",
+    "range": null,
+    "finished": 580,
+    "responseBodySize": 3298,
+    "status": 200
+  },
+  {
+    "t": 521,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-witness-archives.js",
+    "range": null,
+    "finished": 580,
+    "responseBodySize": 2488,
+    "status": 200
+  },
+  {
+    "t": 521,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/progress.js",
+    "range": null,
+    "finished": 580,
+    "responseBodySize": 3596,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/boot-path.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 1871,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/overlay-seed-identity.js",
+    "range": null,
+    "finished": 581,
+    "responseBodySize": 946,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/gpu-checkpoint.js",
+    "range": null,
+    "finished": 581,
+    "responseBodySize": 2944,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/task-quiescence.js",
+    "range": null,
+    "finished": 580,
+    "responseBodySize": 1025,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/guest-clock.js",
+    "range": null,
+    "finished": 580,
+    "responseBodySize": 3112,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/decoded-cache.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 1345,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/idle-sleep.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 1928,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/boot-asset-cache.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 3494,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/snapshot-stream.js",
+    "range": null,
+    "finished": 589,
+    "responseBodySize": 1704,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/whole-image.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 2243,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/readonly-root-snapshot.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 1488,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/admission-probe.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 945,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/linux-worker-protocol.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 9607,
+    "status": 200
+  },
+  {
+    "t": 528,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-timeline-runtime.js",
+    "range": null,
+    "finished": 583,
+    "responseBodySize": 3815,
+    "status": 200
+  },
+  {
+    "t": 534,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/ring.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 3866,
+    "status": 200
+  },
+  {
+    "t": 541,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/audio/worklet.js",
+    "range": null,
+    "finished": 584,
+    "responseBodySize": 1911,
+    "status": 200
+  },
+  {
+    "t": 543,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/cursor.js",
+    "range": null,
+    "finished": 596,
+    "responseBodySize": 5618,
+    "status": 200
+  },
+  {
+    "t": 543,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/cursor-hotspot.js",
+    "range": null,
+    "finished": 589,
+    "responseBodySize": 4788,
+    "status": 200
+  },
+  {
+    "t": 554,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-keyframes.js",
+    "range": null,
+    "finished": 610,
+    "responseBodySize": 2194,
+    "status": 200
+  },
+  {
+    "t": 554,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-witnesses.js",
+    "range": null,
+    "finished": 609,
+    "responseBodySize": 1854,
+    "status": 200
+  },
+  {
+    "t": 554,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-witness-graph-limits.js",
+    "range": null,
+    "finished": 652,
+    "responseBodySize": 1058,
+    "status": 200
+  },
+  {
+    "t": 555,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/checkpoint-codec.mjs",
+    "range": null,
+    "finished": 614,
+    "responseBodySize": 2350,
+    "status": 200
+  },
+  {
+    "t": 555,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/checkpoint-profile.mjs",
+    "range": null,
+    "finished": 611,
+    "responseBodySize": 1227,
+    "status": 200
+  },
+  {
+    "t": 555,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-gpu-frame-inspection.js",
+    "range": null,
+    "finished": 610,
+    "responseBodySize": 3449,
+    "status": 200
+  },
+  {
+    "t": 555,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-gpu-replay-format.js",
+    "range": null,
+    "finished": 610,
+    "responseBodySize": 4403,
+    "status": 200
+  },
+  {
+    "t": 555,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-branch-format.js",
+    "range": null,
+    "finished": 612,
+    "responseBodySize": 1789,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-disk-roots.js",
+    "range": null,
+    "finished": 612,
+    "responseBodySize": 3120,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/checkpoint.mjs",
+    "range": null,
+    "finished": 611,
+    "responseBodySize": 5915,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/multisample.mjs",
+    "range": null,
+    "finished": 611,
+    "responseBodySize": 2903,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-shader/standard.mjs",
+    "range": null,
+    "finished": 613,
+    "responseBodySize": 4591,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/resources.mjs",
+    "range": null,
+    "finished": 614,
+    "responseBodySize": 34670,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/decoder.mjs",
+    "range": null,
+    "finished": 613,
+    "responseBodySize": 14827,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/color-images.mjs",
+    "range": null,
+    "finished": 614,
+    "responseBodySize": 1310,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/float-images.mjs",
+    "range": null,
+    "finished": 611,
+    "responseBodySize": 1502,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/packed-float-images.mjs",
+    "range": null,
+    "finished": 614,
+    "responseBodySize": 1384,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/shared-exponent-images.mjs",
+    "range": null,
+    "finished": 611,
+    "responseBodySize": 930,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/integer-images.mjs",
+    "range": null,
+    "finished": 612,
+    "responseBodySize": 1289,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/packed-normalized-images.mjs",
+    "range": null,
+    "finished": 612,
+    "responseBodySize": 1410,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/packed-unsigned-images.mjs",
+    "range": null,
+    "finished": 613,
+    "responseBodySize": 1110,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/floating-depth-images.mjs",
+    "range": null,
+    "finished": 612,
+    "responseBodySize": 1042,
+    "status": 200
+  },
+  {
+    "t": 556,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/unorm-depth-images.mjs",
+    "range": null,
+    "finished": 614,
+    "responseBodySize": 1181,
+    "status": 200
+  },
+  {
+    "t": 576,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/src/sink/present-backend.js",
+    "range": null,
+    "finished": 616,
+    "responseBodySize": 2158,
+    "status": 200
+  },
+  {
+    "t": 581,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-bundle-format.js",
+    "range": null,
+    "finished": 623,
+    "responseBodySize": 2678,
+    "status": 200
+  },
+  {
+    "t": 612,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/control-bridge.mjs",
+    "range": null,
+    "finished": 652,
+    "responseBodySize": 11023,
+    "status": 200
+  },
+  {
+    "t": 612,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/checkpoint-dma.mjs",
+    "range": null,
+    "finished": 653,
+    "responseBodySize": 1655,
+    "status": 200
+  },
+  {
+    "t": 615,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/dimensional-depth-images.mjs",
+    "range": null,
+    "finished": 659,
+    "responseBodySize": 3258,
+    "status": 200
+  },
+  {
+    "t": 615,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/shared-exponent-gpu.mjs",
+    "range": null,
+    "finished": 653,
+    "responseBodySize": 4510,
+    "status": 200
+  },
+  {
+    "t": 615,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/floating-depth-gpu.mjs",
+    "range": null,
+    "finished": 653,
+    "responseBodySize": 4923,
+    "status": 200
+  },
+  {
+    "t": 653,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/scanout.mjs",
+    "range": null,
+    "finished": 692,
+    "responseBodySize": 5880,
+    "status": 200
+  },
+  {
+    "t": 653,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/state.mjs",
+    "range": null,
+    "finished": 713,
+    "responseBodySize": 52379,
+    "status": 200
+  },
+  {
+    "t": 713,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/queries.mjs",
+    "range": null,
+    "finished": 752,
+    "responseBodySize": 2533,
+    "status": 200
+  },
+  {
+    "t": 713,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-shader/index.mjs",
+    "range": null,
+    "finished": 758,
+    "responseBodySize": 4642,
+    "status": 200
+  },
+  {
+    "t": 713,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/cache.mjs",
+    "range": null,
+    "finished": 757,
+    "responseBodySize": 1728,
+    "status": 200
+  },
+  {
+    "t": 713,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/constant-domain.mjs",
+    "range": null,
+    "finished": 765,
+    "responseBodySize": 22644,
+    "status": 200
+  },
+  {
+    "t": 769,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+    "range": null,
+    "finished": 1003,
+    "responseBodySize": 150831,
+    "status": 200
+  },
+  {
+    "t": 1003,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+    "range": null,
+    "finished": 1250,
+    "responseBodySize": 937409,
+    "status": 200
+  },
+  {
+    "t": 1250,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/assets/hello.elf",
+    "range": null,
+    "finished": 1294,
+    "responseBodySize": 6099,
+    "status": 200
+  },
+  {
+    "t": 1294,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/artifacts-alpine.json",
+    "range": null,
+    "finished": 1322,
+    "responseBodySize": 1040,
+    "status": 200
+  },
+  {
+    "t": 1323,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/artifacts-node-alpine.json",
+    "range": null,
+    "finished": 1352,
+    "responseBodySize": 1060,
+    "status": 200
+  },
+  {
+    "t": 1353,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/artifacts-omarchy.json",
+    "range": null,
+    "finished": 1383,
+    "responseBodySize": 1158,
+    "status": 200
+  },
+  {
+    "t": 1383,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/artifacts-replay-desktop.json",
+    "range": null,
+    "finished": 1496,
+    "responseBodySize": 1709,
+    "status": 200
+  },
+  {
+    "t": 1903,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/linux-worker.js",
+    "range": null,
+    "finished": 1931,
+    "responseBodySize": 543,
+    "status": 200
+  },
+  {
+    "t": 1931,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/loader.js",
+    "range": null,
+    "finished": 1951,
+    "responseBodySize": 489,
+    "status": 200
+  },
+  {
+    "t": 1931,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/linux-worker-protocol.js",
+    "range": null,
+    "finished": 1953,
+    "responseBodySize": 482,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+    "range": null,
+    "finished": 1997,
+    "responseBodySize": 488,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/boot-path.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 487,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/overlay-seed-identity.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 490,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/gpu-checkpoint-build.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 487,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/gpu-checkpoint.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 493,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/task-quiescence.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 486,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/guest-clock.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 485,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/decoded-cache.js",
+    "range": null,
+    "finished": 1996,
+    "responseBodySize": 483,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/idle-sleep.js",
+    "range": null,
+    "finished": 1996,
+    "responseBodySize": 485,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/boot-asset-cache.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 485,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/snapshot-stream.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 486,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/whole-image.js",
+    "range": null,
+    "finished": 1996,
+    "responseBodySize": 486,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/readonly-root-snapshot.js",
+    "range": null,
+    "finished": 1996,
+    "responseBodySize": 484,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/admission-probe.js",
+    "range": null,
+    "finished": 1995,
+    "responseBodySize": 490,
+    "status": 200
+  },
+  {
+    "t": 1953,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/cold-counter-recycling.js",
+    "range": null,
+    "finished": 1996,
+    "responseBodySize": 484,
+    "status": 200
+  },
+  {
+    "t": 1996,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/renderer/virgl-command/checkpoint-codec.mjs",
+    "range": null,
+    "finished": 2024,
+    "responseBodySize": 488,
+    "status": 200
+  },
+  {
+    "t": 1997,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "range": null,
+    "finished": 2023,
+    "responseBodySize": 484,
+    "status": 200
+  },
+  {
+    "t": 1997,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+    "range": null,
+    "finished": 2024,
+    "responseBodySize": 487,
+    "status": 200
+  },
+  {
+    "t": 1997,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+    "range": null,
+    "finished": 2023,
+    "responseBodySize": 485,
+    "status": 200
+  },
+  {
+    "t": 2027,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/artifacts-replay-desktop.json",
+    "range": null,
+    "finished": 2062,
+    "responseBodySize": 1711,
+    "status": 200
+  },
+  {
+    "t": 2065,
+    "method": "GET",
+    "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+    "range": null,
+    "finished": 31810,
+    "responseBodySize": 134069642,
+    "status": 200
+  },
+  {
+    "t": 2065,
+    "method": "GET",
+    "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
+    "range": null,
+    "finished": 5006,
+    "responseBodySize": 24208896,
+    "status": 200
+  },
+  {
+    "t": 5006,
+    "method": "GET",
+    "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/4a4b014c9f0fbe26cf16fc6bb38d3834bb33802fe8935ba096c372169be8b37f/releases/rootfs/replay-desktop-20f03da7c51d.chunks.json",
+    "range": null,
+    "finished": 5115,
+    "responseBodySize": 128555,
+    "status": 200
+  },
+  {
+    "t": 5116,
+    "method": "GET",
+    "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0/releases/rootfs/replay-desktop-20f03da7c51d.img.gz",
+    "range": null,
+    "finished": 35933,
+    "responseBodySize": 189683821,
+    "status": 200
+  },
+  {
+    "t": 35934,
+    "method": "GET",
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+    "range": null,
+    "finished": 35979,
+    "responseBodySize": 274,
+    "status": 200
+  }
+]

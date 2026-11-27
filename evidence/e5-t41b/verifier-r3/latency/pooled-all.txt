@@ -1,0 +1,14 @@
+gen1-a.json node 5098.6 click 284 echo 44 idle% 10.8 localHits 256 net 0
+gen1-b.json node 5102.1 click 276.6 echo 42.1 idle% 10.8 localHits 256 net 0
+gen1-c.json node 5076.3 click 276.6 echo 44.1 idle% 9.9 localHits 256 net 0
+gen1-d.json node 4844.7 click 262.6 echo 42.3 idle% 9.7 localHits 256 net 0
+gen2-a.json node 1775 click 278.9 echo 45.3 idle% 1.5 localHits 24 net 0
+gen2-b.json node 1745.2 click 278 echo 45.7 idle% 1.3 localHits 24 net 0
+gen2-c.json node 1807.5 click 284.4 echo 40.7 idle% 1.4 localHits 24 net 0
+gen2-d.json node 1664.1 click 256.8 echo 46.1 idle% 1.1 localHits 24 net 0
+click mine (4 a side): pooled median gen1 275.9 gen2 275.9 (n=32,32) MWU z=-1.11; run medians gen1 [284, 276.6, 276.6, 262.6] gen2 [278.9, 278, 284.4, 256.8]; gen1 spread 21.4
+click mine+worker r3 (6 a side): pooled median gen1 273.7 gen2 267.9 (n=48,48) MWU z=-1.73; run medians gen1 [284, 276.6, 276.6, 262.6, 261.5, 268.4] gen2 [278.9, 278, 284.4, 256.8, 256.3, 260.7]; gen1 spread 22.5
+type  mine (4 a side): pooled median gen1 42.3 gen2 44.7 (n=32,32) MWU z=+0.96; run medians gen1 [44, 42.1, 44.1, 42.3] gen2 [45.3, 45.7, 40.7, 46.1]; gen1 spread 2.0
+type  mine+worker r3 (6 a side): pooled median gen1 42.3 gen2 45.2 (n=48,48) MWU z=+1.50; run medians gen1 [44, 42.1, 44.1, 42.3, 46.4, 43.7] gen2 [45.3, 45.7, 40.7, 46.1, 46.8, 46.8]; gen1 spread 4.3
+node  mine (4 a side): pooled median gen1 5087.5 gen2 1760.1 (n=12,12) MWU z=-4.16; run medians gen1 [5098.6, 5102.1, 5076.3, 4844.7] gen2 [1775, 1745.2, 1807.5, 1664.1]; gen1 spread 257.4
+node  mine+worker r3 (6 a side): pooled median gen1 5072.5 gen2 1745.2 (n=18,18) MWU z=-5.13; run medians gen1 [5098.6, 5102.1, 5076.3, 4844.7, 4837.2, 4862.7] gen2 [1775, 1745.2, 1807.5, 1664.1, 1643, 1704.2]; gen1 spread 264.9

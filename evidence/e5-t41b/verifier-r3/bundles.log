@@ -1,0 +1,18 @@
+== git web/dist vs HEAD
+== 8125 vs web/dist
+artifacts-replay-desktop.json 8125=f8d9d747692db310 dist=f8d9d747692db310
+sw.js 8125=c19a47b12fcb9fb6 dist=c19a47b12fcb9fb6
+app.html 8125=43aa5fb153456598 dist=43aa5fb153456598
+roadmap.js 8125=82a3929ba552219e dist=82a3929ba552219e
+main.js 8125=a85c80a3fa9821d8 dist=a85c80a3fa9821d8
+index.html 8125=f7f2d0406b37d48b dist=f7f2d0406b37d48b
+== 8128 manifest
+replay-desktop-ready-dfcf85c2c260
+51105e2609740d11
+51105e2609740d11
+8128 sw.js c19a47b12fcb9fb6 dist=c19a47b12fcb9fb6
+8128 app.html 43aa5fb153456598 dist=43aa5fb153456598
+8128 roadmap.js 82a3929ba552219e dist=82a3929ba552219e
+8128 main.js a85c80a3fa9821d8 dist=a85c80a3fa9821d8
+8128 index.html f7f2d0406b37d48b dist=f7f2d0406b37d48b
+Files /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/dist-gen1/artifacts-replay-desktop.json and web/dist/artifacts-replay-desktop.json differ

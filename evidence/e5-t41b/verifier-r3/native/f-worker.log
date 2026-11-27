@@ -1,0 +1,3 @@
+snapshot: /Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz
+first command: node -e "const {Worker}=require(\"worker_threads\");new Worker(\"console.log(1)\",{eval:true})"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9102 645530 ; delta requests=45 KiB=3640

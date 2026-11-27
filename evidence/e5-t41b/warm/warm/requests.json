@@ -1,0 +1,1595 @@
+[
+  {
+    "t": 7,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1",
+    "range": null,
+    "finished": 69,
+    "responseBodySize": 75108,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/vendor/xterm/xterm.css",
+    "range": null,
+    "finished": 67,
+    "responseBodySize": 5559,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-library.css",
+    "range": null,
+    "finished": 67,
+    "responseBodySize": 2628,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/ui.css?rev=1d9da085070f",
+    "range": null,
+    "finished": 69,
+    "responseBodySize": 271295,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/vendor/xterm/xterm.js",
+    "range": null,
+    "finished": 70,
+    "responseBodySize": 289441,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/vendor/xterm/addon-fit.js",
+    "range": null,
+    "finished": 70,
+    "responseBodySize": 1497,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/ui.js?rev=fd66d5071f8a",
+    "range": null,
+    "finished": 76,
+    "responseBodySize": 782520,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/tabs.js",
+    "range": null,
+    "finished": 70,
+    "responseBodySize": 1005,
+    "status": 200
+  },
+  {
+    "t": 60,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/ide.js",
+    "range": null,
+    "finished": 70,
+    "responseBodySize": 143977,
+    "status": 200
+  },
+  {
+    "t": 76,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/omarchy-startup-state.js",
+    "range": null,
+    "finished": 132,
+    "responseBodySize": 4152,
+    "status": 200
+  },
+  {
+    "t": 76,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/coi-serviceworker-register.js",
+    "range": null,
+    "finished": 131,
+    "responseBodySize": 2991,
+    "status": 200
+  },
+  {
+    "t": 76,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/cpu-isolation.js",
+    "range": null,
+    "finished": 132,
+    "responseBodySize": 5756,
+    "status": 200
+  },
+  {
+    "t": 150,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/ui-assets/ibm-plex-sans-latin-wght-normal-U42Y2LR5.woff2",
+    "range": null,
+    "finished": 156,
+    "responseBodySize": 45712,
+    "status": 200
+  },
+  {
+    "t": 150,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/ui-assets/ibm-plex-mono-latin-500-normal-33HAQIPI.woff2",
+    "range": null,
+    "finished": 155,
+    "responseBodySize": 14888,
+    "status": 200
+  },
+  {
+    "t": 156,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/main.js",
+    "range": null,
+    "finished": 170,
+    "responseBodySize": 207280,
+    "status": 200
+  },
+  {
+    "t": 174,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/wasm_vm_wasm.js",
+    "range": null,
+    "finished": 177,
+    "responseBodySize": 196102,
+    "status": 200
+  },
+  {
+    "t": 174,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/riscv-tests.js",
+    "range": null,
+    "finished": 176,
+    "responseBodySize": 3087,
+    "status": 200
+  },
+  {
+    "t": 174,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-gpu-reader-demo.js",
+    "range": null,
+    "finished": 176,
+    "responseBodySize": 3088,
+    "status": 200
+  },
+  {
+    "t": 174,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/roadmap.js",
+    "range": null,
+    "finished": 177,
+    "responseBodySize": 71720,
+    "status": 200
+  },
+  {
+    "t": 174,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/loader.js",
+    "range": null,
+    "finished": 178,
+    "responseBodySize": 120452,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/linux-worker-host.js",
+    "range": null,
+    "finished": 177,
+    "responseBodySize": 4051,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/overlay-reset-target.js",
+    "range": null,
+    "finished": 178,
+    "responseBodySize": 540,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-library.js",
+    "range": null,
+    "finished": 179,
+    "responseBodySize": 32099,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-timeline.js",
+    "range": null,
+    "finished": 179,
+    "responseBodySize": 30511,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/gpu-checkpoint-build.js",
+    "range": null,
+    "finished": 179,
+    "responseBodySize": 340,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/event-clock-probe.js",
+    "range": null,
+    "finished": 180,
+    "responseBodySize": 10763,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/input-recording-probe.js",
+    "range": null,
+    "finished": 180,
+    "responseBodySize": 13512,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/time-entropy-probe.js",
+    "range": null,
+    "finished": 180,
+    "responseBodySize": 8954,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/device-completions-probe.js",
+    "range": null,
+    "finished": 180,
+    "responseBodySize": 9074,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/network-capture-probe.js",
+    "range": null,
+    "finished": 181,
+    "responseBodySize": 12651,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-replay-probe.js",
+    "range": null,
+    "finished": 181,
+    "responseBodySize": 20591,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-streamed-replay-probe.js",
+    "range": null,
+    "finished": 181,
+    "responseBodySize": 5467,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-keyframe-probe.js",
+    "range": null,
+    "finished": 182,
+    "responseBodySize": 15130,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-seek-probe.js",
+    "range": null,
+    "finished": 183,
+    "responseBodySize": 7857,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/unrecorded-control-probe.js",
+    "range": null,
+    "finished": 183,
+    "responseBodySize": 3951,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/owned-http-probe.js",
+    "range": null,
+    "finished": 183,
+    "responseBodySize": 12303,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/gpu-journal-stream-probe.js",
+    "range": null,
+    "finished": 184,
+    "responseBodySize": 14109,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/witness-pages-probe.js",
+    "range": null,
+    "finished": 184,
+    "responseBodySize": 10720,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/terminal.js",
+    "range": null,
+    "finished": 185,
+    "responseBodySize": 11503,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/file-transfer.js",
+    "range": null,
+    "finished": 185,
+    "responseBodySize": 26316,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/boot-progress.js",
+    "range": null,
+    "finished": 185,
+    "responseBodySize": 4127,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/guest-rpc.js",
+    "range": null,
+    "finished": 186,
+    "responseBodySize": 3995,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/input/keyboard.js",
+    "range": null,
+    "finished": 186,
+    "responseBodySize": 6948,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/input/capture.js",
+    "range": null,
+    "finished": 186,
+    "responseBodySize": 11472,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/input/held-keys.js",
+    "range": null,
+    "finished": 187,
+    "responseBodySize": 4516,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/input/reconciliation.js",
+    "range": null,
+    "finished": 187,
+    "responseBodySize": 6655,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/autoplay.js",
+    "range": null,
+    "finished": 188,
+    "responseBodySize": 10547,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/sink.js",
+    "range": null,
+    "finished": 188,
+    "responseBodySize": 12043,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/capture-ring.js",
+    "range": null,
+    "finished": 188,
+    "responseBodySize": 3268,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/microphone.js",
+    "range": null,
+    "finished": 189,
+    "responseBodySize": 16079,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/input/pointer.js",
+    "range": null,
+    "finished": 189,
+    "responseBodySize": 25428,
+    "status": 200
+  },
+  {
+    "t": 175,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/presentation.js",
+    "range": null,
+    "finished": 190,
+    "responseBodySize": 25422,
+    "status": 200
+  },
+  {
+    "t": 176,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/viewport.js",
+    "range": null,
+    "finished": 190,
+    "responseBodySize": 11016,
+    "status": 200
+  },
+  {
+    "t": 176,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/cursor-controller.js",
+    "range": null,
+    "finished": 191,
+    "responseBodySize": 31330,
+    "status": 200
+  },
+  {
+    "t": 176,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/desktop-agent-session.js",
+    "range": null,
+    "finished": 190,
+    "responseBodySize": 5243,
+    "status": 200
+  },
+  {
+    "t": 176,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/desktop-restore.js",
+    "range": null,
+    "finished": 191,
+    "responseBodySize": 3896,
+    "status": 200
+  },
+  {
+    "t": 176,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/cold-counter-recycling.js",
+    "range": null,
+    "finished": 192,
+    "responseBodySize": 1614,
+    "status": 200
+  },
+  {
+    "t": 176,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/omarchy-desktop-readiness.js",
+    "range": null,
+    "finished": 192,
+    "responseBodySize": 1836,
+    "status": 200
+  },
+  {
+    "t": 177,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/gpu-history-reader-probe.js",
+    "range": null,
+    "finished": 192,
+    "responseBodySize": 11715,
+    "status": 200
+  },
+  {
+    "t": 177,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-store.js",
+    "range": null,
+    "finished": 193,
+    "responseBodySize": 36279,
+    "status": 200
+  },
+  {
+    "t": 177,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-gpu-history-reader.js",
+    "range": null,
+    "finished": 193,
+    "responseBodySize": 25678,
+    "status": 200
+  },
+  {
+    "t": 177,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-gpu-replay.js",
+    "range": null,
+    "finished": 194,
+    "responseBodySize": 11487,
+    "status": 200
+  },
+  {
+    "t": 177,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/linux-worker-protocol.js",
+    "range": null,
+    "finished": 194,
+    "responseBodySize": 32731,
+    "status": 200
+  },
+  {
+    "t": 177,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "range": null,
+    "finished": 194,
+    "responseBodySize": 987,
+    "status": 200
+  },
+  {
+    "t": 178,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+    "range": null,
+    "finished": 195,
+    "responseBodySize": 437,
+    "status": 200
+  },
+  {
+    "t": 178,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+    "range": null,
+    "finished": 195,
+    "responseBodySize": 1314,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/boot-path.js",
+    "range": null,
+    "finished": 196,
+    "responseBodySize": 2867,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/overlay-seed-identity.js",
+    "range": null,
+    "finished": 195,
+    "responseBodySize": 692,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/gpu-checkpoint.js",
+    "range": null,
+    "finished": 196,
+    "responseBodySize": 7331,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/task-quiescence.js",
+    "range": null,
+    "finished": 196,
+    "responseBodySize": 1025,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/guest-clock.js",
+    "range": null,
+    "finished": 197,
+    "responseBodySize": 8644,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/decoded-cache.js",
+    "range": null,
+    "finished": 197,
+    "responseBodySize": 1814,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/idle-sleep.js",
+    "range": null,
+    "finished": 197,
+    "responseBodySize": 3181,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/boot-asset-cache.js",
+    "range": null,
+    "finished": 198,
+    "responseBodySize": 9253,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/snapshot-stream.js",
+    "range": null,
+    "finished": 198,
+    "responseBodySize": 2593,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/whole-image.js",
+    "range": null,
+    "finished": 199,
+    "responseBodySize": 3661,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/readonly-root-snapshot.js",
+    "range": null,
+    "finished": 198,
+    "responseBodySize": 1907,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/admission-probe.js",
+    "range": null,
+    "finished": 199,
+    "responseBodySize": 819,
+    "status": 200
+  },
+  {
+    "t": 179,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-timeline-runtime.js",
+    "range": null,
+    "finished": 200,
+    "responseBodySize": 7998,
+    "status": 200
+  },
+  {
+    "t": 180,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-checkpoints.js",
+    "range": null,
+    "finished": 200,
+    "responseBodySize": 22095,
+    "status": 200
+  },
+  {
+    "t": 180,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-inputs.js",
+    "range": null,
+    "finished": 201,
+    "responseBodySize": 26452,
+    "status": 200
+  },
+  {
+    "t": 180,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-pkg/wasm_vm_session.js",
+    "range": null,
+    "finished": 201,
+    "responseBodySize": 16636,
+    "status": 200
+  },
+  {
+    "t": 181,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-devices.js",
+    "range": null,
+    "finished": 201,
+    "responseBodySize": 3895,
+    "status": 200
+  },
+  {
+    "t": 181,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-block-transfer-probe.js",
+    "range": null,
+    "finished": 202,
+    "responseBodySize": 2760,
+    "status": 200
+  },
+  {
+    "t": 181,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-network.js",
+    "range": null,
+    "finished": 201,
+    "responseBodySize": 6036,
+    "status": 200
+  },
+  {
+    "t": 183,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-seek.js",
+    "range": null,
+    "finished": 202,
+    "responseBodySize": 9223,
+    "status": 200
+  },
+  {
+    "t": 184,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-gpu-journal.js",
+    "range": null,
+    "finished": 204,
+    "responseBodySize": 25037,
+    "status": 200
+  },
+  {
+    "t": 184,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/production.mjs",
+    "range": null,
+    "finished": 206,
+    "responseBodySize": 23373,
+    "status": 200
+  },
+  {
+    "t": 184,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-witness-pages.js",
+    "range": null,
+    "finished": 205,
+    "responseBodySize": 8044,
+    "status": 200
+  },
+  {
+    "t": 184,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-witness-graph.js",
+    "range": null,
+    "finished": 207,
+    "responseBodySize": 7762,
+    "status": 200
+  },
+  {
+    "t": 184,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-witness-archives.js",
+    "range": null,
+    "finished": 207,
+    "responseBodySize": 5741,
+    "status": 200
+  },
+  {
+    "t": 185,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/osc52.js",
+    "range": null,
+    "finished": 207,
+    "responseBodySize": 6183,
+    "status": 200
+  },
+  {
+    "t": 185,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/paste.js",
+    "range": null,
+    "finished": 207,
+    "responseBodySize": 2256,
+    "status": 200
+  },
+  {
+    "t": 186,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/progress.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 8163,
+    "status": 200
+  },
+  {
+    "t": 186,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/input/keymap.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 13680,
+    "status": 200
+  },
+  {
+    "t": 188,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/ring.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 12823,
+    "status": 200
+  },
+  {
+    "t": 189,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/worklet.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 4123,
+    "status": 200
+  },
+  {
+    "t": 189,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/audio/capture-worklet.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 4322,
+    "status": 200
+  },
+  {
+    "t": 190,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/canvas2d.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 3751,
+    "status": 200
+  },
+  {
+    "t": 190,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/webgl.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 9381,
+    "status": 200
+  },
+  {
+    "t": 190,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/frame-scheduler.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 6059,
+    "status": 200
+  },
+  {
+    "t": 190,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/visibility-scheduler.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 5475,
+    "status": 200
+  },
+  {
+    "t": 191,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/desktop-agent-bridge.js",
+    "range": null,
+    "finished": 208,
+    "responseBodySize": 2993,
+    "status": 200
+  },
+  {
+    "t": 191,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/agent-channel.js",
+    "range": null,
+    "finished": 209,
+    "responseBodySize": 39591,
+    "status": 200
+  },
+  {
+    "t": 191,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/cursor.js",
+    "range": null,
+    "finished": 209,
+    "responseBodySize": 16477,
+    "status": 200
+  },
+  {
+    "t": 191,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/cursor-hotspot.js",
+    "range": null,
+    "finished": 209,
+    "responseBodySize": 11716,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-keyframes.js",
+    "range": null,
+    "finished": 209,
+    "responseBodySize": 4209,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-witnesses.js",
+    "range": null,
+    "finished": 210,
+    "responseBodySize": 3313,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-witness-graph-limits.js",
+    "range": null,
+    "finished": 210,
+    "responseBodySize": 1061,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/checkpoint-codec.mjs",
+    "range": null,
+    "finished": 210,
+    "responseBodySize": 5017,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/checkpoint-profile.mjs",
+    "range": null,
+    "finished": 211,
+    "responseBodySize": 1517,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-gpu-frame-inspection.js",
+    "range": null,
+    "finished": 211,
+    "responseBodySize": 7855,
+    "status": 200
+  },
+  {
+    "t": 193,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-gpu-replay-format.js",
+    "range": null,
+    "finished": 211,
+    "responseBodySize": 10897,
+    "status": 200
+  },
+  {
+    "t": 200,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-disk-roots.js",
+    "range": null,
+    "finished": 211,
+    "responseBodySize": 7349,
+    "status": 200
+  },
+  {
+    "t": 201,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-branch-format.js",
+    "range": null,
+    "finished": 211,
+    "responseBodySize": 2931,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/checkpoint.mjs",
+    "range": null,
+    "finished": 212,
+    "responseBodySize": 15949,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/multisample.mjs",
+    "range": null,
+    "finished": 212,
+    "responseBodySize": 7360,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-shader/standard.mjs",
+    "range": null,
+    "finished": 212,
+    "responseBodySize": 20285,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/resources.mjs",
+    "range": null,
+    "finished": 214,
+    "responseBodySize": 167021,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/decoder.mjs",
+    "range": null,
+    "finished": 214,
+    "responseBodySize": 55229,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/color-images.mjs",
+    "range": null,
+    "finished": 212,
+    "responseBodySize": 2770,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/float-images.mjs",
+    "range": null,
+    "finished": 213,
+    "responseBodySize": 3132,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/packed-float-images.mjs",
+    "range": null,
+    "finished": 213,
+    "responseBodySize": 1620,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/shared-exponent-images.mjs",
+    "range": null,
+    "finished": 214,
+    "responseBodySize": 563,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/integer-images.mjs",
+    "range": null,
+    "finished": 214,
+    "responseBodySize": 1557,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/packed-normalized-images.mjs",
+    "range": null,
+    "finished": 214,
+    "responseBodySize": 2046,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/packed-unsigned-images.mjs",
+    "range": null,
+    "finished": 215,
+    "responseBodySize": 991,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/floating-depth-images.mjs",
+    "range": null,
+    "finished": 215,
+    "responseBodySize": 947,
+    "status": 200
+  },
+  {
+    "t": 207,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/unorm-depth-images.mjs",
+    "range": null,
+    "finished": 215,
+    "responseBodySize": 1409,
+    "status": 200
+  },
+  {
+    "t": 208,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-bundle-format.js",
+    "range": null,
+    "finished": 215,
+    "responseBodySize": 5899,
+    "status": 200
+  },
+  {
+    "t": 208,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/src/sink/present-backend.js",
+    "range": null,
+    "finished": 216,
+    "responseBodySize": 4367,
+    "status": 200
+  },
+  {
+    "t": 212,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/control-bridge.mjs",
+    "range": null,
+    "finished": 216,
+    "responseBodySize": 43195,
+    "status": 200
+  },
+  {
+    "t": 212,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/checkpoint-dma.mjs",
+    "range": null,
+    "finished": 216,
+    "responseBodySize": 2754,
+    "status": 200
+  },
+  {
+    "t": 214,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/dimensional-depth-images.mjs",
+    "range": null,
+    "finished": 216,
+    "responseBodySize": 8781,
+    "status": 200
+  },
+  {
+    "t": 214,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/shared-exponent-gpu.mjs",
+    "range": null,
+    "finished": 216,
+    "responseBodySize": 12102,
+    "status": 200
+  },
+  {
+    "t": 214,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/floating-depth-gpu.mjs",
+    "range": null,
+    "finished": 217,
+    "responseBodySize": 15338,
+    "status": 200
+  },
+  {
+    "t": 216,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/scanout.mjs",
+    "range": null,
+    "finished": 217,
+    "responseBodySize": 16712,
+    "status": 200
+  },
+  {
+    "t": 216,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/state.mjs",
+    "range": null,
+    "finished": 218,
+    "responseBodySize": 223059,
+    "status": 200
+  },
+  {
+    "t": 218,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/queries.mjs",
+    "range": null,
+    "finished": 219,
+    "responseBodySize": 6094,
+    "status": 200
+  },
+  {
+    "t": 218,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-shader/index.mjs",
+    "range": null,
+    "finished": 220,
+    "responseBodySize": 22546,
+    "status": 200
+  },
+  {
+    "t": 218,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/cache.mjs",
+    "range": null,
+    "finished": 219,
+    "responseBodySize": 2989,
+    "status": 200
+  },
+  {
+    "t": 218,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/constant-domain.mjs",
+    "range": null,
+    "finished": 220,
+    "responseBodySize": 127535,
+    "status": 200
+  },
+  {
+    "t": 222,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/session-pkg/wasm_vm_session_bg.wasm",
+    "range": null,
+    "finished": 398,
+    "responseBodySize": 474318,
+    "status": 200
+  },
+  {
+    "t": 398,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/wasm_vm_wasm_bg.wasm",
+    "range": null,
+    "finished": 404,
+    "responseBodySize": 2695302,
+    "status": 200
+  },
+  {
+    "t": 404,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/assets/hello.elf",
+    "range": null,
+    "finished": 406,
+    "responseBodySize": 5536,
+    "status": 200
+  },
+  {
+    "t": 406,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/artifacts-alpine.json",
+    "range": null,
+    "finished": 406,
+    "responseBodySize": 774,
+    "status": 200
+  },
+  {
+    "t": 407,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/artifacts-node-alpine.json",
+    "range": null,
+    "finished": 407,
+    "responseBodySize": 795,
+    "status": 200
+  },
+  {
+    "t": 408,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/artifacts-omarchy.json",
+    "range": null,
+    "finished": 409,
+    "responseBodySize": 1036,
+    "status": 200
+  },
+  {
+    "t": 409,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/artifacts-replay-desktop.json",
+    "range": null,
+    "finished": 410,
+    "responseBodySize": 2325,
+    "status": 200
+  },
+  {
+    "t": 819,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/linux-worker.js",
+    "range": null,
+    "finished": 832,
+    "responseBodySize": 0,
+    "status": 200
+  },
+  {
+    "t": 833,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/loader.js",
+    "range": null,
+    "finished": 835,
+    "responseBodySize": 120452,
+    "status": 200
+  },
+  {
+    "t": 833,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/linux-worker-protocol.js",
+    "range": null,
+    "finished": 834,
+    "responseBodySize": 32731,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/wasm_vm_wasm.js",
+    "range": null,
+    "finished": 838,
+    "responseBodySize": 196102,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/boot-path.js",
+    "range": null,
+    "finished": 836,
+    "responseBodySize": 2867,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/overlay-seed-identity.js",
+    "range": null,
+    "finished": 837,
+    "responseBodySize": 692,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/gpu-checkpoint-build.js",
+    "range": null,
+    "finished": 838,
+    "responseBodySize": 340,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/gpu-checkpoint.js",
+    "range": null,
+    "finished": 838,
+    "responseBodySize": 7331,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/task-quiescence.js",
+    "range": null,
+    "finished": 838,
+    "responseBodySize": 1025,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/guest-clock.js",
+    "range": null,
+    "finished": 838,
+    "responseBodySize": 8644,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/decoded-cache.js",
+    "range": null,
+    "finished": 839,
+    "responseBodySize": 1814,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/idle-sleep.js",
+    "range": null,
+    "finished": 840,
+    "responseBodySize": 3181,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/boot-asset-cache.js",
+    "range": null,
+    "finished": 839,
+    "responseBodySize": 9253,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/snapshot-stream.js",
+    "range": null,
+    "finished": 841,
+    "responseBodySize": 2593,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/whole-image.js",
+    "range": null,
+    "finished": 841,
+    "responseBodySize": 3661,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/readonly-root-snapshot.js",
+    "range": null,
+    "finished": 840,
+    "responseBodySize": 1907,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/admission-probe.js",
+    "range": null,
+    "finished": 841,
+    "responseBodySize": 819,
+    "status": 200
+  },
+  {
+    "t": 836,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/cold-counter-recycling.js",
+    "range": null,
+    "finished": 841,
+    "responseBodySize": 1614,
+    "status": 200
+  },
+  {
+    "t": 838,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+    "range": null,
+    "finished": 842,
+    "responseBodySize": 987,
+    "status": 200
+  },
+  {
+    "t": 838,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+    "range": null,
+    "finished": 842,
+    "responseBodySize": 437,
+    "status": 200
+  },
+  {
+    "t": 838,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js",
+    "range": null,
+    "finished": 842,
+    "responseBodySize": 1314,
+    "status": 200
+  },
+  {
+    "t": 838,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/renderer/virgl-command/checkpoint-codec.mjs",
+    "range": null,
+    "finished": 843,
+    "responseBodySize": 5017,
+    "status": 200
+  },
+  {
+    "t": 844,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/artifacts-replay-desktop.json",
+    "range": null,
+    "finished": 845,
+    "responseBodySize": 2325,
+    "status": 200
+  },
+  {
+    "t": 846,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+    "range": null,
+    "finished": 1297,
+    "responseBodySize": 134069642,
+    "status": 200
+  },
+  {
+    "t": 846,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/releases/kernel/6.6.63/Image",
+    "range": null,
+    "finished": 859,
+    "responseBodySize": 24208896,
+    "status": 200
+  },
+  {
+    "t": 860,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.chunks.json",
+    "range": null,
+    "finished": 862,
+    "responseBodySize": 128555,
+    "status": 200
+  },
+  {
+    "t": 862,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.img.gz",
+    "range": null,
+    "finished": 1827,
+    "responseBodySize": 189683821,
+    "status": 200
+  },
+  {
+    "t": 1827,
+    "method": "GET",
+    "url": "http://127.0.0.1:8125/pkg/wasm_vm_wasm_bg.wasm",
+    "range": null,
+    "finished": 1831,
+    "responseBodySize": 2695302,
+    "status": 200
+  }
+]

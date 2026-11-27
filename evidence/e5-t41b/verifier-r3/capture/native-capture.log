@@ -1,0 +1,65 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578773] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=2.00
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"9A1FDA032623C08D8D55F0735519C2AD","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"803C69ABBE3B8E2CD7E8A0BF451D1D04"}]}} uptime=4.60
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"B21D1499058B0FAC1267B29F3174111D"} uptime=4.95
+REPLAY_RENDERER_SANDBOX pid=/proc/191 NoNewPrivs=1 Seccomp=2 NSpid=	191	9	1 uptime=5.08
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.14
+REPLAY_CHROME_MAPPED uptime=5.27 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.28 mem_hwm_kib=170904
+REPLAY_NODE_SNAPSHOT bytes=6765694 uptime=9.69
+cat > /tmp/compact.sh <<'COMPACT_EOF'
+> set -e
+> N=/usr/local/bin/node
+> sleep 30
+> sync
+> echo 1 > /proc/sys/vm/drop_caches
+> $N -e 0
+> $N -e 'console.log(1)' >/dev/null
+> $N -p process.version >/dev/null
+> $N -e 'const cp=require("child_process"),fs=require("fs"),os=require("os"),pat
+h=require("path");fs.readFileSync("/etc/hostname");cp.execFileSync(process.execP
+ath,["-p","6*7"]);console.log(os.arch(),path.sep)' >/dev/null
+ormat("de",{month:"long"}).format(0),new Intl.NumberFormat("en")> echo 'console.log(1)' > /tmp/warm.js
+> echo 'import os from "node:os"; console.log(os.arch())' > /tmp/warm.mjs
+> $N /tmp/warm.js >/dev/null
+> $N /tmp/warm.mjs >/dev/null
+> echo '#!/usr/bin/env node' > /tmp/warm
+> echo 'console.log(1)' >> /tmp/warm
+> chmod +x /tmp/warm
+> /tmp/warm >/dev/null
+> printf '1+1\n.exit\n' | $N -i >/dev/null
+> $N -e 'require("crypto").createHash("sha256").update("x").digest("hex");requir
+e("zlib").gzipSync("x")' >/dev/null
+> $N -e 'console.log(new Intl.DateTimeFormat("de",{month:"long"}).format(0),new 
+Intl.NumberFormat("en").format(1234.5),new Date(0).toLocaleString())' >/dev/null
+> rm -f /tmp/warm /tmp/warm.js /tmp/warm.mjs
+> z=$(($(awk '/^MemFree:/{print int($2/1024)}' /proc/meminfo) - 16))
+> [ $z -gt 0 ]
+> dd if=/dev/zero of=/dev/null bs=${z}M count=1 2>/dev/null
+> echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/upt
+ime)
+> COMPACT_EOF
+root@replay-desktop# sh /tmp/compact.sh || poweroff -f
+REPLAY_DESKTOP_COMPACTED zeroed_mib=578 uptime=47.69
+root@replay-desktop# [6nwasm-vm: snapshot (356851486 bytes) written to /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/0b27a4b5-1939-4b94-b3b2-0885ff5196b6/scratchpad/cap-work/replay-desktop-ready.snap at trigger "REPLAY_DESKTOP_COMPACTED zeroed_mib="
+wasm-vm: snapshot complete — exiting

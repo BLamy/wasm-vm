@@ -1,0 +1,51 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+wasm-vm: resumed 357412069 bytes from /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/0b27a4b5-1939-4b94-b3b2-0885ff5196b6/scratchpad/fc/ready.snap — continuing guest
+
+root@replay-desktop# [6nread s < /sys/block/vda/stat; true; read a < /sys/block/vda
+/stat; ls -la /tmp; grep oom_kill /proc/vmstat; dmesg | grep -ciE "oom|out of me
+mory|allocation fail"; dmesg | grep -iE "oom|out of memory|allocation fail" | he
+ad -5; grep -E "MemFree|MemAvail" /proc/meminfo; ps -o pid,user,args | grep -v "
+\[" | head -40; cat /tmp/compact.sh | head -3; ls -la /tmp/compact.sh; echo "RC"
+"=$?"; read b < /sys/block/vda/stat; echo "VS""S $s"; echo "VS""A $a"; echo "VS"
+"B $b"; echo VDO""NE
+total 8
+drwxrwxrwt    3 root     root            80 Nov 27 00:45 .
+drwxr-xr-x   15 root     root          4096 Nov  1 00:00 ..
+drwx------    2 desktop  desktop         80 Nov 27 00:44 .org.chromium.Chromium.ksBQ9x
+-rw-r--r--    1 root     root          1228 Nov 27 00:45 compact.sh
+oom_kill 0
+0
+MemFree:          603636 kB
+MemAvailable:     819908 kB
+PID   USER     COMMAND
+    1 root     init
+   60 root     /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
+   72 root     seatd -g video
+   80 desktop  sway -c /etc/replay-desktop/sway.conf
+   81 root     {replay-desktop-} /bin/sh /usr/local/sbin/replay-desktop-monitor
+   82 root     -/bin/sh
+   95 desktop  {replay-chromium} /bin/bash /usr/local/bin/replay-chromium
+   97 desktop  foot --app-id=replay-terminal --title=Replay Node 26 terminal
+  103 desktop  /opt/replay-chromium/chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-browser-check --disable-background-networking --disable-component-update --disable-sync --password-store=basic --lang=en-US --num-raster-threads=1 --renderer-process-limit=1 --user-data-dir=/home/desktop/.config/replay-chromium --remote-debugging-pipe file:///opt/replay-chromium/smoke.html
+  104 desktop  -/bin/sh
+  128 desktop  /opt/replay-chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Unknown --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=91 --shared-client-connection
+  131 desktop  /opt/replay-chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Unknown --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=4 --shared-client-connection
+  134 desktop  /opt/replay-chromium/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  135 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  137 desktop  /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  158 desktop  /opt/replay-chromium/chrome --type=gpu-process --ozone-platform=wayland --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --gpu-preferences=WAAAAAAAAAAgAAAYAAAAAAAAAAAAAAAAAABgAAEAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --use-gl=angle --use-angle=swiftshader-webgl --shared-files --field-trial-handle=0,i,568259345466667594,9812407391662764220,131072
+  159 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,568259345466667594,9812407391662764220,131072
+  161 desktop  /opt/replay-chromium/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,568259345466667594,9812407391662764220,131072
+  192 desktop  /opt/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --event-path-policy=0 --change-stack-guard-on-fork=enable --first-renderer-process --remote-debugging-pipe --ozone-platform=wayland --disable-gpu-compositing --lang=en-US --num-raster-threads=1 --renderer-client-id=5 --time-ticks-at-unix-epoch=-1795740294924507 --launch-time-ticks=3544135 --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,568259345466667594,9812407391662764220,131072
+  855 root     {ps} -/bin/sh
+  857 root     {head} -/bin/sh
+set -e
+N=/usr/local/bin/node
+sleep 30
+-rw-r--r--    1 root     root          1228 Nov 27 00:45 /tmp/compact.sh
+RC=0
+VSS 9057        0   638250      731        0        0        0        0        0       52      731        0        0        0        0        0        0
+VSA 9057        0   638250      731        0        0        0        0        0       52      731        0        0        0        0        0        0
+VSB 9076        0   638402      732        0        0        0        0        0       52      732        0        0        0        0        0        0
+VDONE
+root@replay-desktop# [6n

@@ -1,0 +1,22 @@
+first command: node --version   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0
+first command: node -p process.version   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0
+first command: /tmp/x.js   (setup: printf "#!/usr/bin/env node\nconsole.log(1)\n" > /tmp/x.js && chmod +x /tmp/x.js)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8977 620826 ; delta requests=34 KiB=136
+first command: echo "1+1" | node   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8945 620618 ; delta requests=2 KiB=32
+first command: printf "1+1\n.exit\n" | node -i   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8960 622394 ; delta requests=17 KiB=920
+first command: node -e "console.log(typeof fetch)"   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8943 620554 ; delta requests=0 KiB=0
+first command: node -e "console.log(require(\"crypto\").createHash(\"sha256\").update(\"x\").digest(\"hex\"))"   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8950 621106 ; delta requests=7 KiB=276
+first command: node -e "console.log(require(\"zlib\").gzipSync(\"x\").length)"   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8948 621138 ; delta requests=5 KiB=292
+first command: node -e "console.log(new Intl.DateTimeFormat(\"de\",{month:\"long\"}).format(0))"   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 9058 634098 ; delta requests=115 KiB=6772
+first command: node -e "const {Worker}=require(\"worker_threads\");new Worker(\"console.log(1)\",{eval:true})"   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 9015 628994 ; delta requests=72 KiB=4220
+first command: cat /usr/local/bin/node /usr/lib/locale/* /usr/share/fonts/* 2>/dev/null | wc -c   (setup: true)  RC=0
+  setup: 8943 620554 -> 8943 620554 ; first command: before 8943 620554 after 8945 620570 ; delta requests=2 KiB=8

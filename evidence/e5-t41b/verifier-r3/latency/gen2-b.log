@@ -1,0 +1,83 @@
+[desktop-latency 01:38:08.682] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 01:38:12.343] desktop ready after 3.7 s
+[desktop-latency 01:38:12.353] scenario click
+[desktop-latency 01:38:17.973] click #1: result 352 ms, pressed-state frame 102 ms, 27.3M instr @ 73.3 MIPS
+[desktop-latency 01:38:21.325] click #2: result 281.6 ms, pressed-state frame 148.3 ms, 26.8M instr @ 83.6 MIPS
+[desktop-latency 01:38:24.681] click #3: result 278.6 ms, pressed-state frame 145.3 ms, 26.2M instr @ 80.9 MIPS
+[desktop-latency 01:38:28.028] click #4: result 276.4 ms, pressed-state frame 143.1 ms, 26M instr @ 81.8 MIPS
+[desktop-latency 01:38:31.379] click #5: result 278 ms, pressed-state frame 144.6 ms, 26.1M instr @ 81.1 MIPS
+[desktop-latency 01:38:34.732] click #6: result 275.5 ms, pressed-state frame 142.2 ms, 25.9M instr @ 80.7 MIPS
+[desktop-latency 01:38:38.084] click #7: result 272.7 ms, pressed-state frame 139.3 ms, 25.6M instr @ 79.9 MIPS
+[desktop-latency 01:38:41.434] click #8: result 274.8 ms, pressed-state frame 141.5 ms, 26.1M instr @ 80.7 MIPS
+[desktop-latency 01:38:44.212] scenario type
+[desktop-latency 01:38:51.138] type #1: echo 61 ms
+[desktop-latency 01:38:52.752] type #2: echo 45.7 ms
+[desktop-latency 01:38:54.370] type #3: echo 45.9 ms
+[desktop-latency 01:38:55.929] type #4: echo 34.6 ms
+[desktop-latency 01:38:57.536] type #5: echo 43.1 ms
+[desktop-latency 01:38:59.092] type #6: echo 35.5 ms
+[desktop-latency 01:39:00.703] type #7: echo 45.2 ms
+[desktop-latency 01:39:02.316] type #8: echo 49.3 ms
+[desktop-latency 01:39:06.635] {"echoMs":{"n":8,"missing":0,"min":34.6,"median":45.7,"max":61}}
+[desktop-latency 01:39:06.635] scenario node
+[desktop-latency 01:39:22.115] node #1: prompt back 1818.8 ms after Enter, 224.1M instr @ 122.2 MIPS
+[desktop-latency 01:39:37.453] node #2: prompt back 1745.2 ms after Enter, 227.3M instr @ 127.4 MIPS
+[desktop-latency 01:39:52.730] node #3: prompt back 1717.7 ms after Enter, 225.2M instr @ 129.9 MIPS
+[desktop-latency 01:39:55.259] {"promptMs":{"n":3,"missing":0,"min":1717.7,"median":1745.2,"max":1818.8}}
+[desktop-latency 01:39:55.259] scenario idle
+[desktop-latency 01:40:27.804] {"wallMs":30004,"instructionsM":18.8,"mips":0.6,"inSlicePct":1.3,"guestSecondsPerSecond":1,"idleSleeps":650,"idleSleepMs":29868,"idleWakes":121,"clockMode":"paced-icount","framesReceived":0,"drawnPresents":0}
+[desktop-latency 01:40:27.808] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 272.7,
+   "median": 278,
+   "max": 352
+  },
+  "pointerArrivedMs": 149.9,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 102,
+    "median": 143.1,
+    "max": 148.3
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 34.6,
+   "median": 45.7,
+   "max": 61
+  }
+ },
+ "node": {
+  "promptMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 1717.7,
+   "median": 1745.2,
+   "max": 1818.8
+  }
+ },
+ "idle": {
+  "wallMs": 30004,
+  "instructionsM": 18.8,
+  "mips": 0.6,
+  "inSlicePct": 1.3,
+  "guestSecondsPerSecond": 1,
+  "idleSleeps": 650,
+  "idleSleepMs": 29868,
+  "idleWakes": 121,
+  "clockMode": "paced-icount",
+  "framesReceived": 0,
+  "drawnPresents": 0
+ }
+}
+[desktop-latency 01:40:27.988] wrote evidence/e5-t41b/verifier-r3/latency/gen2-b.json

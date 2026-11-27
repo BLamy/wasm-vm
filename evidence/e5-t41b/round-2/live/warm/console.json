@@ -1,0 +1,32 @@
+[
+  {
+    "t": 453,
+    "type": "verbose",
+    "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+    "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide"
+  },
+  {
+    "t": 453,
+    "type": "verbose",
+    "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+    "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide"
+  },
+  {
+    "t": 454,
+    "type": "warning",
+    "text": "Service Worker registration blocked by Playwright",
+    "url": ""
+  },
+  {
+    "t": 515,
+    "type": "error",
+    "text": "Failed to load resource: the server responded with a status of 404 ()",
+    "url": "https://wasm-vm.pages.dev/favicon.ico"
+  },
+  {
+    "t": 34474,
+    "type": "info",
+    "text": "wasm-vm: browser JIT NOT enabled — forced-off",
+    "url": "https://wasm-vm.pages.dev/loader.js"
+  }
+]

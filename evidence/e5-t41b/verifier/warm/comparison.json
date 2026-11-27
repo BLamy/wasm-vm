@@ -1,0 +1,24 @@
+{
+  "warm": {
+    "wholeImageFinishedMs": 1630,
+    "snapshotStartedMs": 729,
+    "snapshotFinishedMs": 1106,
+    "wholeImageStartedMs": 744,
+    "downloadsFinishedMs": 1630,
+    "desktopVisibleMs": 3419,
+    "downloadEndToDesktopMs": 1789,
+    "runAgainAnsweredMs": 5132,
+    "nodeAnswerAfterTypingMs": 21336
+  },
+  "cold": {
+    "wholeImageFinishedMs": 1550,
+    "wholeImageStartedMs": 687,
+    "downloadsFinishedMs": 1550,
+    "desktopVisibleMs": 29616,
+    "downloadEndToDesktopMs": 28066,
+    "runAgainAnsweredMs": 5206,
+    "nodeAnswerAfterTypingMs": 27309
+  },
+  "coldDesktopAfterDownloadMs": 28066,
+  "warmDesktopAfterDownloadMs": 1789
+}

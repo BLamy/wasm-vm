@@ -1,0 +1,26 @@
+[
+  {
+    "t": 78,
+    "type": "verbose",
+    "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+    "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&noSnapshot#ide"
+  },
+  {
+    "t": 79,
+    "type": "verbose",
+    "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+    "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&noSnapshot#ide"
+  },
+  {
+    "t": 87,
+    "type": "warning",
+    "text": "Service Worker registration blocked by Playwright",
+    "url": ""
+  },
+  {
+    "t": 1660,
+    "type": "info",
+    "text": "wasm-vm: browser JIT NOT enabled — forced-off",
+    "url": "http://127.0.0.1:8125/loader.js"
+  }
+]

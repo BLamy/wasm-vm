@@ -1,0 +1,47 @@
+[replay-snapshot] image_sha256=20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c kernel_sha256=af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce
+[replay-snapshot] core_id=302e302e31000000000000000000000000000000000000000000000000000000 (version 0.0.1) base_id=b674702960a2b19714112b6d510bf438ed689438b91f1b12100c329e7db11dcf
+[replay-snapshot] cold-booting to REPLAY_DESKTOP_COMPACTED zeroed_mib= (browser device topology)…
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578773] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=2.00
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"CEC48576E201019E144058A70E6FD478","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"8F026E8C38521DA0A16253E0C521685E"}]}} uptime=4.69
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"C3B17C93A06BEBB99F230AAADD798DDF"} uptime=5.03
+REPLAY_RENDERER_SANDBOX pid=/proc/191 NoNewPrivs=1 Seccomp=2 NSpid=	191	9	1 uptime=5.16
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.23
+REPLAY_CHROME_MAPPED uptime=5.30 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.32 mem_hwm_kib=170348
+turbo: enabled=true entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+block cache: entries=4096 entry_hits=99053012 builds=49493066
+=== E4-T29 JIT summary ===
+jit_active=true  blocks_compiled=26465  blocks_executed=525464383  retired_via_jit=3179623998
+discovery: nominated=182789 deduped=37687653 excluded=501 dropped_stale=0 dropped_overflow=0 queue_hwm=1371
+chaining: links_made=75638 links_cut=53881 dispatch_entries=43445122 max_chain_depth=32 links_followed=522842799
+cache: modules=3454 est_bytes=233312436 installs=95773 retranslations=22416 evictions=27675 flushes=0 generation=27677
+jit_pause: samples=50177 sum_ns=0 max_ns=0 over_target=0
+coverage: retired_via_jit=3179623998 retired_total=3999814210 jit_pct=79.49%  translations: full=95446 partial=327 rejected=0 partial_exits=2498457
+first_untranslated_op: csr:sstatus=300 csr:time=12 sfence.vma=8 csr:satp=2 csr:sie=2 csr:sscratch=2 sret=1
+partial_resume: rebuilds=0 failures=0
+JIT_STATS_JSON {"blocks_compiled":26465,"blocks_executed":525464383,"retired_via_jit":3179623998,"retired_total":3999814210,"blocks_full":95446,"blocks_partial":327,"blocks_rejected":0,"partial_exits":2498457,"links_made":75638,"dispatch_entries":43445122,"installs":95773,"evictions":27675,"jit_pause_count":50177,"jit_pause_sum_ns":0,"jit_pause_max_ns":0,"jit_pause_over_target":0}
+wasm-vm: reached --max-instrs 4000000000
+tools/build-replay-desktop-snapshot.sh: line 74: 86755 Terminated: 15          ( exec 3> "$STDIN_FIFO"; until grep -aq "$NODE_MARKER" "$BOOTLOG"; do
+    sleep 1;
+done; sleep 2; printf '%s\n' "$COMPACT_COMMAND" 1>&3; sleep 86400 )

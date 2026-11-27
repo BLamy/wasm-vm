@@ -1,0 +1,16 @@
+first command: node -e "console.log(6*7)"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: node -p process.version   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: /tmp/x.js   (setup: printf "#!/usr/bin/env node\nconsole.log(1)\n" > /tmp/x.js && chmod +x /tmp/x.js)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: printf "1+1\n.exit\n" | node -i   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9060 638562 ; delta requests=3 KiB=156
+first command: node -e "console.log(new Intl.DateTimeFormat(\"ja\",{month:\"long\"}).format(0))"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9058 638506 ; delta requests=1 KiB=128
+first command: node -e "const {Worker}=require(\"worker_threads\");new Worker(\"console.log(1)\",{eval:true})"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9102 645530 ; delta requests=45 KiB=3640
+first command: node -e "console.log(6*7)"   (setup: sleep 45)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9057 638250 ; delta requests=0 KiB=0
+first command: ls -la /tmp; grep oom_kill /proc/vmstat; dmesg | grep -ciE "oom|out of memory|allocation fail"; dmesg | grep -iE "oom|out of memory|allocation fail" | head -5; grep -E "MemFree|MemAvail" /proc/meminfo; ps -o pid,user,args | grep -v "\[" | head -40; cat /tmp/compact.sh | head -3; ls -la /tmp/compact.sh   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9076 638402 ; delta requests=19 KiB=76

@@ -1,0 +1,10 @@
+gen1 click all n=31 median=151.1 mean=169.4 | verifier-only n=16 median=154.0
+gen1 type all n=32 median=45.3 mean=56.3 | verifier-only n=16 median=43.5
+gen2 click all n=32 median=141.5 mean=139.1 | verifier-only n=16 median=146.7
+gen2 type all n=32 median=44.3 mean=47.9 | verifier-only n=16 median=45.2
+gen1 click pressed n=31 median=151.1
+gen1 click answered n=32 median=266.5
+gen1 click pressed n=31 median=151.1
+gen1 click answered n=32 median=266.5
+gen2 click pressed n=32 median=141.5
+gen2 click answered n=32 median=258.2

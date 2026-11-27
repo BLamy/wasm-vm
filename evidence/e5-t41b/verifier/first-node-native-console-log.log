@@ -1,0 +1,12 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+wasm-vm: resumed 346123023 bytes from /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/553b8fef-a45c-471a-bc17-0c35035361f4/scratchpad/firstnode/ready.snap — continuing guest
+
+root@replay-desktop# [6nread a < /sys/block/vda/stat; node -e "console.log(6*7)"; r
+ead b < /sys/block/vda/stat; echo "VS""A $a"; echo "VS""B $b"; command -v node; 
+echo VDO""NE
+42
+VSA 8789        0   618498      714        0        0        0        0        0       56      714        0        0        0        0        0        0
+VSB 8799        0   619650      714        0        0        0        0        0       56      714        0        0        0        0        0        0
+/usr/local/bin/node
+VDONE
+root@replay-desktop# [6n

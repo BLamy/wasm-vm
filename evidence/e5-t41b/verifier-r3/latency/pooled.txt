@@ -1,0 +1,12 @@
+gen1-a node 5098.6 click 284 echo 44 idle% 10.8 disk {'fetchWaits': 0, 'fetchRequestedChunks': 0, 'fetchWaitTotalMs': 0, 'localImage': True, 'localHits': 256, 'localBytes': 67108864, 'networkFetches': 0}
+gen2-a node 1775 click 278.9 echo 45.3 idle% 1.5 disk {'fetchWaits': 0, 'fetchRequestedChunks': 0, 'fetchWaitTotalMs': 0, 'localImage': True, 'localHits': 24, 'localBytes': 6291456, 'networkFetches': 0}
+gen1-b node 5102.1 click 276.6 echo 42.1 idle% 10.8 disk {'fetchWaits': 0, 'fetchRequestedChunks': 0, 'fetchWaitTotalMs': 0, 'localImage': True, 'localHits': 256, 'localBytes': 67108864, 'networkFetches': 0}
+gen2-b node 1745.2 click 278 echo 45.7 idle% 1.3 disk {'fetchWaits': 0, 'fetchRequestedChunks': 0, 'fetchWaitTotalMs': 0, 'localImage': True, 'localHits': 24, 'localBytes': 6291456, 'networkFetches': 0}
+raw keys click: ['pressed', 'answered', 'rates'] type: ['echo']
+click run medians gen1 [284, 276.6, 261.5, 268.4] gen2 [278.9, 278, 256.3, 260.7] | median of run medians gen1 272.5 gen2 269.35 | gen1 max-min spread 22.5
+type run medians gen1 [44, 42.1, 46.4, 43.7] gen2 [45.3, 45.7, 46.8, 46.8] | median of run medians gen1 43.85 gen2 46.25 | gen1 max-min spread 4.3
+node run medians gen1 [5098.6, 5102.1, 4837.2, 4862.7] gen2 [1775, 1745.2, 1643, 1704.2] | median of run medians gen1 4980.65 gen2 1724.7 | gen1 max-min spread 264.9
+click mine: pooled median gen1 276.3 (n=16) gen2 277.2 (n=16); MWU z=-0.49 (positive = gen2 larger)
+click all8: pooled median gen1 272.7 (n=32) gen2 266.9 (n=32); MWU z=-1.22 (positive = gen2 larger)
+type mine: pooled median gen1 41.4 (n=16) gen2 45.2 (n=16); MWU z=+1.56 (positive = gen2 larger)
+type all8: pooled median gen1 42.1 (n=32) gen2 45.7 (n=32); MWU z=+1.92 (positive = gen2 larger)

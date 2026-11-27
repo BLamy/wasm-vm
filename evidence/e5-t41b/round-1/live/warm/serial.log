@@ -1,0 +1,18 @@
+
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwy2otvi0\n'; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o 'Replay RISC-V PASS #[0-9]*' 
+| head -n 1; printf '\n__WVEND_mwy2otvi0_%s\n' "$?"
+
+__WVBEGIN_mwy2otvi0
+Replay RISC-V PASS #1
+
+__WVEND_mwy2otvi0_0
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwy2oxtk1\n'; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o 'Replay RISC-V PASS #[0-9]*' 
+| head -n 1; printf '\n__WVEND_mwy2oxtk1_%s\n' "$?"
+
+__WVBEGIN_mwy2oxtk1
+Replay RISC-V PASS #2
+
+__WVEND_mwy2oxtk1_0
+root@replay-desktop# [6nE5T34E_E7EDC9C9 v26.13.1
