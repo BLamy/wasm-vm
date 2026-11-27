@@ -124,6 +124,8 @@ pub struct RelayServer {
     security: Option<RelayConnectionSecurity>,
     authenticated_token: Option<RelayToken>,
     quota_streams: HashSet<u32>,
+    /// Last traffic in either direction, for the idle limit.
+    last_activity: std::sync::Mutex<tokio::time::Instant>,
 }
 
 #[derive(Debug, Clone)]
@@ -153,6 +155,7 @@ impl RelayServer {
             security: None,
             authenticated_token: None,
             quota_streams: HashSet::new(),
+            last_activity: std::sync::Mutex::new(tokio::time::Instant::now()),
         }
     }
 
@@ -171,6 +174,7 @@ impl RelayServer {
             security: None,
             authenticated_token: None,
             quota_streams: HashSet::new(),
+            last_activity: std::sync::Mutex::new(tokio::time::Instant::now()),
         }
     }
 
@@ -189,6 +193,7 @@ impl RelayServer {
             security: Some(security),
             authenticated_token: None,
             quota_streams: HashSet::new(),
+            last_activity: std::sync::Mutex::new(tokio::time::Instant::now()),
         }
     }
 
@@ -203,9 +208,28 @@ impl RelayServer {
         let mut udp: HashMap<u32, UdpHandle> = HashMap::new();
         let hello_deadline = tokio::time::sleep(HELLO_DEADLINE);
         tokio::pin!(hello_deadline);
+        let idle_limit = self
+            .security
+            .as_ref()
+            .map(|s| std::time::Duration::from_secs(s.limits.session_idle_secs.max(1)));
+        let mut idle_check = tokio::time::interval(idle_limit.map_or(
+            std::time::Duration::from_secs(3600),
+            |l| {
+                (l / 4).clamp(
+                    std::time::Duration::from_millis(250),
+                    std::time::Duration::from_secs(30),
+                )
+            },
+        ));
 
         loop {
             tokio::select! {
+                _ = idle_check.tick(), if idle_limit.is_some() && self.authenticated_token.is_some() => {
+                    if idle_limit.is_some_and(|limit| self.last_activity.lock().expect("activity clock poisoned").elapsed() >= limit) {
+                        eprintln!("{{\"event\":\"relay_session_idle_closed\"}}");
+                        break;
+                    }
+                }
                 () = &mut hello_deadline, if self.security.is_some() && self.authenticated_token.is_none() => {
                     eprintln!("{{\"event\":\"relay_hello_deadline\"}}");
                     break;
@@ -249,6 +273,7 @@ impl RelayServer {
         let Some(frame) = Frame::decode(bytes) else {
             return Err(RelayError::UnknownStream(0)); // undecodable → protocol error
         };
+        *self.last_activity.lock().expect("activity clock poisoned") = tokio::time::Instant::now();
         if !self.core.is_ready()
             && let Some(security) = &self.security
         {
@@ -687,10 +712,18 @@ impl RelayServer {
         let Some(token) = &self.authenticated_token else {
             return false;
         };
+        *self.last_activity.lock().expect("activity clock poisoned") = tokio::time::Instant::now();
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs());
         let accepted = security
             .usage
-            .record_bytes(&token.id, bytes, security.limits)
-            .is_ok();
+            .record_client_bytes(&security.client, bytes, now, security.limits)
+            .is_ok()
+            && security
+                .usage
+                .record_bytes(&token.id, bytes, security.limits)
+                .is_ok();
         if !accepted {
             let metrics = security.usage.metrics();
             eprintln!(

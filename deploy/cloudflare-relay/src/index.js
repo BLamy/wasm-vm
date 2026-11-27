@@ -23,8 +23,8 @@ export class Relay extends Container {
   }
 }
 
-// Who a request is from, for per-client limits: an IPv4 address, or an IPv6 /64 (one subscriber
-// usually holds a whole /64). CF-Connecting-IP is set by Cloudflare and cannot be supplied by
+// Who a request is from, for per-client limits: an IPv4 address, or an IPv6 /48 (a subscriber
+// usually holds a /56 or a /48, so a /64 key would give one person hundreds of clients). CF-Connecting-IP is set by Cloudflare and cannot be supplied by
 // the caller.
 export function clientKey(request) {
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
@@ -32,7 +32,7 @@ export function clientKey(request) {
   const full = ip.includes("::")
     ? (() => { const [a, b] = ip.split("::"); const l = a ? a.split(":") : []; const r = b ? b.split(":") : []; return [...l, ...Array(8 - l.length - r.length).fill("0"), ...r]; })()
     : ip.split(":");
-  return `${full.slice(0, 4).map((x) => (x || "0").toLowerCase()).join(":")}::/64`;
+  return `${full.slice(0, 3).map((x) => (x || "0").toLowerCase()).join(":")}::/48`;
 }
 
 const allowed = (env) => new Set(String(env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean));

@@ -266,7 +266,7 @@ async fn bridge_ws(
     let (in_tx, in_rx) = mpsc::channel::<Vec<u8>>(CHAN_DEPTH);
     let (out_tx, mut out_rx) = mpsc::channel::<Vec<u8>>(CHAN_DEPTH);
     tokio::spawn(RelayServer::with_security(in_rx, out_tx, security, host_map).run());
-    let writer = tokio::spawn(async move {
+    let mut writer = tokio::spawn(async move {
         while let Some(bytes) = out_rx.recv().await {
             if ws_sink.send(Message::Binary(bytes)).await.is_err() {
                 break;
@@ -274,20 +274,39 @@ async fn bridge_ws(
         }
         let _ = ws_sink.close().await;
     });
-    while let Some(msg) = ws_stream.next().await {
-        match msg {
-            Ok(Message::Binary(bytes)) => {
-                if in_tx.send(bytes).await.is_err() {
-                    break;
+    loop {
+        tokio::select! {
+            msg = ws_stream.next() => match msg {
+                Some(Ok(Message::Binary(bytes))) => {
+                    if in_tx.send(bytes).await.is_err() {
+                        break;
+                    }
                 }
+                Some(Ok(Message::Close(_)) | Err(_)) | None => break,
+                Some(Ok(_)) => {}
+            },
+            // The relay ended the session (HELLO deadline, a refusal, a protocol error) and has sent
+            // Close. The client gets CLOSE_GRACE to answer; then the connection is dropped whatever it
+            // does, so a client cannot hold a finished connection open (E5-T43a round-3 verifier).
+            _ = &mut writer => {
+                let _ = tokio::time::timeout(CLOSE_GRACE, async {
+                    while let Some(msg) = ws_stream.next().await {
+                        if matches!(msg, Ok(Message::Close(_)) | Err(_)) {
+                            break;
+                        }
+                    }
+                })
+                .await;
+                return;
             }
-            Ok(Message::Close(_)) | Err(_) => break,
-            Ok(_) => {}
         }
     }
     drop(in_tx);
-    let _ = writer.await;
+    let _ = tokio::time::timeout(CLOSE_GRACE, writer).await;
 }
+
+/// How long a client has to answer the relay's Close before its connection is dropped.
+pub const CLOSE_GRACE: std::time::Duration = std::time::Duration::from_secs(2);
 
 #[cfg(test)]
 #[path = "ws_adapter_tests.rs"]

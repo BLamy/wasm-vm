@@ -103,6 +103,12 @@ pub struct RelayLimits {
     pub max_sessions_per_client: usize,
     /// Authenticated sessions the whole relay holds at once.
     pub max_sessions_total: usize,
+    /// Bytes one client may move through the relay per clock hour, across all its sessions and
+    /// tokens (the user's choice after the round-3 verifier: total traffic over time is capped).
+    pub max_bytes_per_client_per_hour: u64,
+    /// A session with no traffic in either direction for this long is closed, open streams or
+    /// not, so idle sessions cannot hold the relay's places (the user's choice, round 3).
+    pub session_idle_secs: u64,
 }
 
 impl Default for RelayLimits {
@@ -111,8 +117,10 @@ impl Default for RelayLimits {
             max_concurrent_streams: 64,
             max_connects_per_minute: 120,
             max_bytes_per_token: 64 * 1024 * 1024,
-            max_sessions_per_client: 8,
-            max_sessions_total: 256,
+            max_sessions_per_client: 4,
+            max_sessions_total: 1024,
+            max_bytes_per_client_per_hour: 5 * 1024 * 1024 * 1024,
+            session_idle_secs: 30 * 60,
         }
     }
 }
@@ -143,6 +151,8 @@ struct RegistryState {
     tokens: HashMap<String, TokenUsage>,
     /// Authenticated sessions per client key, and in all.
     client_sessions: HashMap<String, usize>,
+    /// Bytes per client key in the current clock hour: (hour, bytes).
+    client_bytes: HashMap<String, (u64, u64)>,
     total_sessions: usize,
     metrics: RelayMetrics,
 }
@@ -204,6 +214,34 @@ impl RelayUsageRegistry {
             }
         }
         registry.total_sessions = registry.total_sessions.saturating_sub(1);
+    }
+
+    /// Account `count` bytes to `client` for the clock hour of `now_unix_secs`; refused once the
+    /// client's hourly budget would be exceeded.
+    pub fn record_client_bytes(
+        &self,
+        client: &str,
+        count: usize,
+        now_unix_secs: u64,
+        limits: RelayLimits,
+    ) -> Result<(), RelayQuotaError> {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        let hour = now_unix_secs / 3600;
+        registry.client_bytes.retain(|_, (h, _)| *h == hour);
+        let entry = registry
+            .client_bytes
+            .entry(client.to_owned())
+            .or_insert((hour, 0));
+        match entry.1.checked_add(count as u64) {
+            Some(next) if next <= limits.max_bytes_per_client_per_hour => {
+                entry.1 = next;
+                Ok(())
+            }
+            _ => {
+                registry.metrics.rejected_bytes += 1;
+                Err(RelayQuotaError::ByteLimit)
+            }
+        }
     }
 
     /// Authenticated sessions held now: in all, and by `client`.
@@ -790,6 +828,37 @@ mod tests {
             registry.close_session("g", "c1");
             assert_eq!(registry.sessions("c1"), (0, 0), "round {i}");
         }
+    }
+
+    /// The user's hourly byte cap per client: shared by its sessions, refused when spent, reset
+    /// at the next clock hour, separate for each client.
+    #[test]
+    fn a_client_byte_budget_per_clock_hour() {
+        let registry = RelayUsageRegistry::default();
+        let limits = RelayLimits {
+            max_bytes_per_client_per_hour: 100,
+            ..RelayLimits::default()
+        };
+        registry
+            .record_client_bytes("c1", 60, 7_200, limits)
+            .unwrap();
+        registry
+            .record_client_bytes("c1", 40, 7_300, limits)
+            .unwrap();
+        assert_eq!(
+            registry.record_client_bytes("c1", 1, 7_400, limits),
+            Err(RelayQuotaError::ByteLimit)
+        );
+        registry
+            .record_client_bytes("c2", 100, 7_400, limits)
+            .unwrap();
+        registry
+            .record_client_bytes("c1", 100, 10_800, limits)
+            .unwrap();
+        assert_eq!(
+            registry.record_client_bytes("c1", 1, 10_801, limits),
+            Err(RelayQuotaError::ByteLimit)
+        );
     }
 
     #[test]
