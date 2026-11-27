@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: implemented
+status: in-progress
 depends_on: []
 estimate: S
 risk: high
@@ -208,3 +208,94 @@ approximately); 80 in a row: 40 and then 33 got 200, the rest 429 (`token-rate-8
 minute per IP. The container sleeps after `sleepAfter` (set to 15 minutes in the class) with no
 requests; an open WebSocket keeps it awake. Container and egress cost is the account's. A session
 past its token's expiry keeps working by design (above).
+
+### 2026-11-27 — verifier (round 2) — VERDICT: refuted
+
+VERDICT: refuted
+
+A fresh session (I was neither the implementer nor round 1's verifier), against head `21610fec8` (code `8b3a524bf`)
+and the live `https://wasm-vm-relay.brett-lamy.workers.dev`. I wrote the predictions first
+(`evidence/e5-t43a/verifier-r2/predictions.md`), then ran `verifier-r2/long2.mjs` (`long2.json`, sha256 `5c849d5f…`,
+about 11 min, 3 WebSockets), `short2.mjs` (`short2.json`, `b56dbf86…`), `ports2.mjs` (`ports2.json`, `68b1c8ae…`), one
+`curl` (`cfip-403.*`) and 7 mutants in a scratch `git archive` copy (`run-mutants.py`, `mutants.log`, `7bc248d9…`). The
+round-2 mechanisms work as built. The claim fails because of the bound it states: that the number of tokens a client can
+get bounds a non-browser client. It does not. The operative bound is the single container, and no one has accepted that.
+
+- R11 "What bounds a non-browser claiming the allowed Origin is then the number of tokens it can get": FAILED.
+  Predicted from the code: an authenticated session has no idle timer, no lifetime cap and no per-token session limit (the
+  deadline arm in `driver.rs:206` is guarded by `authenticated_token.is_none()`). Each token's 64 concurrent streams and
+  120 connects/min (a sliding window, `relay_security.rs:192-205`) therefore last as long as any session that holds it.
+  Observed: session B authenticated with T, sent nothing more, not even pings, and was still open 675 s later, 75 s past T's
+  expiry (`long2.json` `B_end.aliveForS` 675). A opened `example.com:80` at expiry+75 s and got HTTP 200 (`A_late`). A
+  client gets about 45 tokens a minute per IP (R9 below). It can keep every one of them, so the capacity it holds grows
+  with time and has no ceiling. Even one minute's tokens (about 45 × 64 streams, 45 × 120 connects/min, 45 × 2 GiB) is
+  more than the one container can carry. Every `/ws` goes to the one Durable Object named `RELAY_INSTANCE`
+  (`index.js:59`), so one container serves everyone. The real ceiling is therefore that container's capacity: one IP can
+  take its whole egress (billed to the account) and its connections or memory (an outage for every user), for as long
+  as it likes. Round 1's P9 demand said: "otherwise the claim must stop calling token lifetime a bound, and the user must
+  accept that risk explicitly." The claim dropped the lifetime wording, but it now names a different non-bound, and the
+  task file records no acceptance by the user. Demand, either of:
+  (a) a cap below the container's capacity: a global limit on concurrent sessions and streams in wvrelay, a limit on
+  sessions per token, and/or a byte budget per instance per hour. Each needs a test and a live check.
+  (b) a claim that states the operative bound as above (one container; per-IP capacity unbounded over time; egress up to
+  the instance's throughput), plus the user's explicit acceptance recorded in this file.
+  The design itself (a browser session outlives its token because the client has no reconnect; I found no reconnect in
+  `crates/slirp/src/ws_proxy` or `crates/wasm-web/src`) is not what I refute.
+- R1 a token's budget is shared, and is the same budget after expiry: HELD. A and B both sent HELLO with T. A spent 100
+  connects on OPEN 127.0.0.1:80 from expiry−41 s to −36 s, and all 100 got OPEN_FAIL:1 (policy refusals still count,
+  because the quota is reserved before the policy runs). At expiry+8 s, B's 10 OPENs all got OPEN_FAIL:1. A's next 20
+  got 10 × OPEN_FAIL:1 and then exactly 10 × OPEN_FAIL:2, the quota refusal (`long2.json` `B_after`, `A_after.seq`).
+  That is 120 in one window, across expiry and across two sessions. Round 1's code would have purged the entry and given
+  30 × FAIL:1.
+- R2 a new HELLO with expired T: HELD (`D_expired` closed 1000 after 59 ms).
+- R5 HELLO deadline: HELD. A valid HELLO at 9 s authenticated, and OPEN example.com:80 got OPEN_OK and HTTP 200, still
+  open at 12 s. With a HELLO due at 12 s, the socket was already closed (1000) at 10.2 s (`short2.json` `hello_at_*`).
+- R6 partial or slow HELLO: HELD. I used a raw TLS WebSocket whose frame header promised 300 bytes, then sent one byte a
+  second. A close frame came 10.02 s after the upgrade, after 10 bytes (`short2.json` `partialHello`).
+- R9 `/token` limit, and spoofing it: HELD, with a looser number. The 42nd plain request in the window got the first 429,
+  about 45 a minute counting the script's earlier tokens; the claim says 20, and "roughly 20-40". Once limited, spoofed
+  `X-Forwarded-For`, `True-Client-IP`, `X-Real-IP`, `CF-Connecting-IPv6` and `Forwarded` were all 429. A client-supplied
+  `CF-Connecting-IP` is refused at Cloudflare's edge: 403 `error code: 1000`, before the Worker runs (`cfip-403.headers`,
+  `cfip-403.body`). The header cannot be spoofed from outside. Confirmed.
+- R10 the IPv6 limiter key: NEEDS EVIDENCE (follow-up). `index.js` keys the limiter on the whole `CF-Connecting-IP`, so an
+  IPv6 client is limited per /128, and one /64 is effectively unlimited. Not tested: this host has no IPv6
+  (`curl -6` failed). Key on the /64 for IPv6.
+- R7 ports: HELD for 25, follow-up for the rest. `aspmx.l.google.com:25` got OPEN_FAIL:1 in 33 ms.
+  `smtp.gmail.com:587` and `:465` got OPEN_OK (connect-and-close only), and the new unit test asserts that they stay
+  allowed. Submission needs credentials, so this is not refuting. Other abuse ports (22, 23, 3389, 445) are a policy
+  choice to file with the cap.
+- R8 IPv6 forms: HELD for the claimed forms (`::127.0.0.1` got OPEN_FAIL:1 in 37 ms; the worker's run covered NAT64 and
+  6to4). Not covered: the SIIT form `::ffff:0:0/96` (`::ffff:0:7f00:1`, `::ffff:0:a9fe:a9fe`) and site-local `fec0::1`.
+  Policy lets them through (no refusal within 3 s, while the session stayed up), and they then go nowhere, so I found no
+  breach. Follow-up: judge `::ffff:0:a.b.c.d` by its embedded address, and refuse `fec0::/10`.
+- Mutants (scratch copy, `mutants.log`; each run: the slirp `ws_proxy` lib tests plus wvrelay's three integration tests):
+  M1 retain-by-expiry-only and M2 `open_session` not counting are killed by
+  `a_session_keeps_its_budget_after_the_token_expires`. M6, the 6to4 branch removed, is killed by
+  `embedded_ipv4_forms_and_blocked_ports`. M7, the deadline removed, is killed by
+  `secure_relay_closes_a_connection_that_never_authenticates`. Three SURVIVED, a FAILED sufficiency check:
+  M4: deadline guard without `authenticated_token.is_none()`. Every authenticated session is then cut at 10 s, which
+  breaks the round's central design, and all tests pass.
+  M5: port check removed from `resolve_destination` (`driver.rs:725`). The test calls only the helper.
+  M3: `close_session` a no-op, so entries leak forever. The test's final assertion holds anyway, because t1 is full
+  (100/100), so "t1's entry is gone" checks nothing.
+  Demand: a test that holds an authenticated session past `HELLO_DEADLINE` and still opens a stream; one that sends OPEN
+  to a public host on port 25 through the driver; and an entry-gone assertion that fails while the entry exists (leave t1
+  with spare budget).
+- R12 secrets: HELD. The round-2 commits add no 64-hex run and no secret assignment. `.wrangler/` is empty and ignored.
+  `web/dist` mentions the relay only in task text. The new evidence holds no token values (`secret-hygiene.log`).
+- Deployed binary: the gitignored `deploy/cloudflare-relay/wvrelay` (static x86-64, 15:14, before the 15:18 commit)
+  contains `relay_hello_deadline` and `WVRELAY_MAX_BYTES_PER_TOKEN`, and the live behaviour matches the new code (R1, R5,
+  R7). Not byte-compared with a build of this head.
+- Carried forward from round 1 as HELD, with the code unchanged on those paths: P1–P4 Worker surface, P5/P6 token and
+  Origin at wvrelay, P10/P11 protected destinations, P14 happy paths.
+- SUITE: none promoted. `verifier-r2/long2.mjs` is the deployed check that the budget is shared across expiry; together
+  with `short2.mjs`'s 9 s, 12 s and partial-HELLO cases it should become the next `hardening.mjs`. Note: `short2.json`'s
+  `portsAndV6` block is void (my script sent CLOSE after an OPEN_FAIL, a protocol error that closed the session);
+  `ports2.json` is the valid rerun.
+
+Commands: `node evidence/e5-t43a/verifier-r2/long2.mjs`; `node evidence/e5-t43a/verifier-r2/short2.mjs`;
+`node evidence/e5-t43a/verifier-r2/ports2.mjs`; `curl -H 'CF-Connecting-IP: 198.51.100.7' …/token`;
+`python3 -I evidence/e5-t43a/verifier-r2/run-mutants.py` (in a scratch copy from `git archive HEAD`, with RUSTFLAGS and
+CARGO_* unset). Not checked: any load (I did not measure how many sessions or streams the container survives, or its
+throughput); IPv6 rotation (no IPv6 here); the Cloudflare dashboard, logs and billing; a 2 GiB budget exhausted live
+(only the connect budget was driven to its limit); UDP after expiry (it shares `reserve_quota_stream`, by the code).

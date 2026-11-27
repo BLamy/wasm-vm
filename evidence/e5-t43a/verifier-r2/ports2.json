@@ -1,0 +1,37 @@
+{
+  "tokenStatus": 200,
+  "startedAt": "2026-11-27T20:26:07.511Z",
+  "::127.0.0.1:80": {
+    "result": "OPEN_FAIL:1",
+    "ms": 37
+  },
+  "aspmx.l.google.com:25": {
+    "result": "OPEN_FAIL:1",
+    "ms": 33
+  },
+  "smtp.gmail.com:587": {
+    "result": "OPEN_OK",
+    "ms": 59
+  },
+  "smtp.gmail.com:465": {
+    "result": "OPEN_OK",
+    "ms": 58
+  },
+  "::ffff:0:7f00:1:80": {
+    "result": "none",
+    "ms": 3003
+  },
+  "fec0::1:80": {
+    "result": "none",
+    "ms": 3002
+  },
+  "::ffff:0:a9fe:a9fe:80": {
+    "result": "none",
+    "ms": 3002
+  },
+  "example.com:80": {
+    "result": "OPEN_OK",
+    "ms": 31
+  },
+  "sessionClosed": null
+}
