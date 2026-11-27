@@ -455,65 +455,6 @@ async fn an_idle_session_is_closed_and_an_active_one_kept() {
     assert!(opened, "the active session is still served");
 }
 
-/// The user's hourly byte cap per client: once a client has spent it, its streams carry no more.
-#[tokio::test]
-async fn a_client_past_its_hourly_bytes_gets_no_more_data_through() {
-    let echo = spawn_echo().await;
-    let limits = RelayLimits {
-        max_bytes_per_client_per_hour: 16,
-        ..RelayLimits::default()
-    };
-    let (mut ws, token) = secure_client_with_limits(
-        Some("https://vm.example"),
-        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
-            .into_iter()
-            .collect(),
-        limits,
-    )
-    .await;
-    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
-    send_frame(&mut ws, hello(token)).await;
-    send_frame(
-        &mut ws,
-        Frame::Open {
-            stream: 1,
-            host: "fixture.test".into(),
-            port: echo.port(),
-        },
-    )
-    .await;
-    assert_eq!(recv_frame(&mut ws).await, Frame::OpenOk { stream: 1 });
-    send_frame(
-        &mut ws,
-        Frame::Data {
-            stream: 1,
-            bytes: vec![b'x'; 40],
-        },
-    )
-    .await;
-    // Over budget: the stream is reset or failed, never echoed back in full.
-    let mut echoed = 0usize;
-    let mut ended = false;
-    while let Ok(Some(Ok(m))) = timeout(Duration::from_secs(3), ws.next()).await {
-        if !m.is_binary() {
-            ended = true;
-            break;
-        }
-        match Frame::decode(&m.into_data()) {
-            Some(Frame::Data { bytes, .. }) => echoed += bytes.len(),
-            Some(Frame::Rst { .. } | Frame::Close { .. }) | None => {
-                ended = true;
-                break;
-            }
-            _ => {}
-        }
-    }
-    assert!(
-        echoed < 40,
-        "the 40-byte echo did not get through a 16-byte budget ({echoed} bytes, ended {ended})"
-    );
-}
-
 /// E5-T43a round-3 verifier: the session cap is per client as the front end names it — two names
 /// get their own places, the same name shares one.
 #[tokio::test]
@@ -564,6 +505,17 @@ async fn the_session_cap_is_per_client_name() {
     assert!(
         p2.is_some(),
         "the overlong name fell back to the peer, which holds its one place"
+    );
+    let p3 = raw_client_until_dropped(
+        addr,
+        Some(""),
+        Some(hello_frame("p3")),
+        Duration::from_secs(4),
+    )
+    .await;
+    assert!(
+        p3.is_some(),
+        "an empty name is no name either: the peer's place is taken"
     );
     assert_eq!(p1.await.unwrap(), None);
 }
@@ -1112,4 +1064,222 @@ async fn a_relay_protocol_error_delivers_a_clean_close_to_the_client() {
         saw_clean_close,
         "the client received a proper WS Close frame when the relay died"
     );
+}
+
+async fn verifier_server(limits: RelayLimits) -> SocketAddr {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(serve_secure_with_limits(
+        listener,
+        b"relay test secret".to_vec(),
+        ["https://vm.example".to_owned()].into_iter().collect(),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+        limits,
+    ));
+    addr
+}
+
+async fn verifier_session(addr: SocketAddr, client: &str, id: &str) -> ClientWs {
+    let tcp = TcpStream::connect(addr).await.unwrap();
+    let mut request = format!("ws://{addr}/").into_client_request().unwrap();
+    request.headers_mut().insert(
+        http::header::ORIGIN,
+        http::HeaderValue::from_static("https://vm.example"),
+    );
+    request.headers_mut().insert(
+        super::CLIENT_HEADER,
+        http::HeaderValue::from_str(client).unwrap(),
+    );
+    let (mut ws, _) = client_async(request, tcp).await.unwrap();
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    ws.send(Message::Binary(hello_frame(id))).await.unwrap();
+    ws
+}
+
+/// Echo `n` bytes on a fresh stream (credit granted); returns the bytes echoed before a RST/close/timeout.
+async fn verifier_echo(ws: &mut ClientWs, stream: u32, port: u16, n: usize) -> (usize, bool) {
+    send_frame(
+        ws,
+        Frame::Open {
+            stream,
+            host: "fixture.test".into(),
+            port,
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(ws).await, Frame::OpenOk { stream });
+    send_frame(
+        ws,
+        Frame::Window {
+            stream,
+            credit: 1 << 16,
+        },
+    )
+    .await;
+    send_frame(
+        ws,
+        Frame::Data {
+            stream,
+            bytes: vec![b'x'; n],
+        },
+    )
+    .await;
+    let (mut echoed, mut reset) = (0usize, false);
+    while echoed < n {
+        match timeout(Duration::from_secs(2), ws.next()).await {
+            Ok(Some(Ok(m))) if m.is_binary() => match Frame::decode(&m.into_data()) {
+                Some(Frame::Data { bytes, .. }) => echoed += bytes.len(),
+                Some(Frame::Rst { .. }) => {
+                    reset = true;
+                    break;
+                }
+                _ => {}
+            },
+            _ => break,
+        }
+    }
+    (echoed, reset)
+}
+
+/// (E5-T43a round-4 verifier's test.) The hourly budget is the CLIENT's, shared by its tokens and sessions, and enforced on the wire.
+#[tokio::test]
+async fn verifier_hourly_bytes_are_per_client_across_tokens() {
+    let echo = spawn_echo().await;
+    let addr = verifier_server(RelayLimits {
+        max_bytes_per_client_per_hour: 100,
+        ..RelayLimits::default()
+    })
+    .await;
+    let mut s1 = verifier_session(addr, "c1", "t1").await;
+    assert_eq!(
+        verifier_echo(&mut s1, 1, echo.port(), 40).await,
+        (40, false),
+        "40 out + 40 back fits 100"
+    );
+    let mut s2 = verifier_session(addr, "c1", "t2").await;
+    let (echoed, reset) = verifier_echo(&mut s2, 1, echo.port(), 40).await;
+    assert!(
+        echoed == 0 && reset,
+        "a second token of the same client shares its spent budget: echoed {echoed}, reset {reset}"
+    );
+    let mut s3 = verifier_session(addr, "c2", "t3").await;
+    assert_eq!(
+        verifier_echo(&mut s3, 1, echo.port(), 40).await,
+        (40, false),
+        "another client has its own budget"
+    );
+}
+
+/// (E5-T43a round-4 verifier's test.) An idle close frees the client's place (the same exit path as a disconnect).
+#[tokio::test]
+async fn verifier_idle_close_frees_the_place() {
+    let echo = spawn_echo().await;
+    let addr = verifier_server(RelayLimits {
+        session_idle_secs: 1,
+        max_sessions_per_client: 1,
+        ..RelayLimits::default()
+    })
+    .await;
+    let mut a = verifier_session(addr, "c", "a").await;
+    send_frame(
+        &mut a,
+        Frame::Open {
+            stream: 1,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut a).await, Frame::OpenOk { stream: 1 });
+    let closed = timeout(Duration::from_secs(5), async {
+        while let Some(m) = a.next().await {
+            if m.is_err() || m.is_ok_and(|m| m.is_close()) {
+                break;
+            }
+        }
+    })
+    .await;
+    assert!(closed.is_ok(), "the idle session is closed");
+    let mut b = verifier_session(addr, "c", "b").await;
+    send_frame(
+        &mut b,
+        Frame::Open {
+            stream: 1,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    let got = timeout(Duration::from_secs(3), recv_frame(&mut b)).await;
+    assert_eq!(
+        got.ok(),
+        Some(Frame::OpenOk { stream: 1 }),
+        "the idle-closed session's place is free again"
+    );
+}
+
+/// Traffic from the remote end alone keeps a session active: the idle limit counts both
+/// directions (a mutant counting only the client's frames survived round 4).
+#[tokio::test]
+async fn outbound_traffic_alone_keeps_a_session_active() {
+    // A backend that sends a byte every 250 ms for three seconds and never reads.
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let port = listener.local_addr().unwrap().port();
+    tokio::spawn(async move {
+        if let Ok((mut sock, _)) = listener.accept().await {
+            for _ in 0..12 {
+                if sock.write_all(b"t").await.is_err() {
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(250)).await;
+            }
+            tokio::time::sleep(Duration::from_secs(30)).await;
+        }
+    });
+    let addr = verifier_server(RelayLimits {
+        session_idle_secs: 1,
+        ..RelayLimits::default()
+    })
+    .await;
+    let mut s = verifier_session(addr, "c", "t").await;
+    send_frame(
+        &mut s,
+        Frame::Open {
+            stream: 1,
+            host: "fixture.test".into(),
+            port,
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut s).await, Frame::OpenOk { stream: 1 });
+    send_frame(
+        &mut s,
+        Frame::Window {
+            stream: 1,
+            credit: 1 << 16,
+        },
+    )
+    .await;
+    // The client now only reads, for three seconds: the remote's bytes are the only traffic.
+    let mut got = 0usize;
+    let until = tokio::time::Instant::now() + Duration::from_secs(3);
+    while tokio::time::Instant::now() < until {
+        match timeout(Duration::from_millis(600), s.next()).await {
+            Ok(Some(Ok(m))) if m.is_binary() => {
+                if let Some(Frame::Data { bytes, .. }) = Frame::decode(&m.into_data()) {
+                    got += bytes.len();
+                }
+            }
+            Ok(Some(Ok(m))) if m.is_close() => {
+                panic!("closed as idle while the remote was sending ({got} bytes in)")
+            }
+            Ok(None) | Ok(Some(Err(_))) => {
+                panic!("dropped while the remote was sending ({got} bytes in)")
+            }
+            _ => {}
+        }
+    }
+    assert!(got >= 8, "the remote's bytes arrived: {got}");
 }

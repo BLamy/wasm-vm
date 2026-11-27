@@ -25,6 +25,10 @@ snapshot captured with the DHCP lease logic in place), manifest, roadmap row, de
 - Warm resume still passes; click, key echo and node -e not slower than generation 2 on the
   same bundle; idle worker time within 2 points of generation 2's (E5-T43b).
 - `?net=0`: no relay request at all.
+- Idle (moved here from E5-T43a's round-4 verifier, which needs the online page): a desktop left
+  untouched for 31 minutes has its relay session closed by the 30-minute idle limit; the page
+  shows that the network is gone (the relay's Close reaches it, or the page notices), and a
+  reload brings it back.
 
 ## Adversarial verification
 

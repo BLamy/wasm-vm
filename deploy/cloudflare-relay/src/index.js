@@ -11,6 +11,7 @@
 // after DNS; per-token stream and byte limits are wvrelay's too.
 import { Container, getContainer, switchPort } from "@cloudflare/containers";
 import { issueToken } from "./token.js";
+import { clientKey, relayHeaders } from "./client.js";
 
 export class Relay extends Container {
   constructor(ctx, env) {
@@ -21,18 +22,6 @@ export class Relay extends Container {
       WVRELAY_MAX_BYTES_PER_TOKEN: String(env.MAX_BYTES_PER_TOKEN || "2147483648"),
     };
   }
-}
-
-// Who a request is from, for per-client limits: an IPv4 address, or an IPv6 /48 (a subscriber
-// usually holds a /56 or a /48, so a /64 key would give one person hundreds of clients). CF-Connecting-IP is set by Cloudflare and cannot be supplied by
-// the caller.
-export function clientKey(request) {
-  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  if (!ip.includes(":")) return ip;
-  const full = ip.includes("::")
-    ? (() => { const [a, b] = ip.split("::"); const l = a ? a.split(":") : []; const r = b ? b.split(":") : []; return [...l, ...Array(8 - l.length - r.length).fill("0"), ...r]; })()
-    : ip.split(":");
-  return `${full.slice(0, 3).map((x) => (x || "0").toLowerCase()).join(":")}::/48`;
 }
 
 const allowed = (env) => new Set(String(env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean));
@@ -71,9 +60,7 @@ export default {
       await relay.startAndWaitForPorts(8081);
       // wvrelay caps authenticated sessions per client by this header; the Worker always sets
       // it, so a caller's own value never reaches the relay.
-      const headers = new Headers(request.headers);
-      headers.set("x-wvrelay-client", clientKey(request));
-      return relay.fetch(switchPort(new Request(request, { headers }), 8080));
+      return relay.fetch(switchPort(new Request(request, { headers: relayHeaders(request) }), 8080));
     }
     return new Response("not found", { status: 404 });
   },
