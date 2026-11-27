@@ -1,0 +1,4186 @@
+{
+  "task": "E5-T36",
+  "legacyKmsSession": false,
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "shapes": [
+    {
+      "name": "arrow over the page body",
+      "expectHotspot": [
+        1,
+        1
+      ],
+      "sent": [
+        450,
+        730
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          1,
+          1
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 449,
+        "y": 729
+      },
+      "inferred": [
+        1,
+        1
+      ],
+      "tip": [
+        450,
+        730
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hand over the button",
+      "expectHotspot": [
+        9,
+        4
+      ],
+      "sent": [
+        93,
+        516
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          9,
+          4
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 84,
+        "y": 512
+      },
+      "inferred": [
+        9,
+        4
+      ],
+      "tip": [
+        93,
+        516
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "text caret over the terminal",
+      "expectHotspot": [
+        4,
+        8
+      ],
+      "sent": [
+        1000,
+        420
+      ],
+      "css": {
+        "image": 22046,
+        "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+        "hotspot": [
+          4,
+          8
+        ]
+      },
+      "plane": {
+        "w": 64,
+        "h": 64,
+        "x": 996,
+        "y": 412
+      },
+      "inferred": [
+        4,
+        8
+      ],
+      "tip": [
+        1000,
+        420
+      ],
+      "tipError": [
+        0,
+        0
+      ]
+    }
+  ],
+  "plans": [
+    {
+      "name": "approach C: from just right of the button, one 0.33 s glide onto it",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            146,
+            501
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 137,
+            "y": 497
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            146,
+            501
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "approach A: from the page body, one 0.46 s glide onto the button",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            142,
+            515
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 133,
+            "y": 511
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            142,
+            515
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "approach from the right, across the button's edge at a slant",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            380,
+            640
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 379,
+            "y": 639
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            380,
+            640
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, first time: one straight glide onto the button, at rest",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            72,
+            532
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 63,
+            "y": 528
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            72,
+            532
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand, after four scattered points inside the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal, after two glides",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1100,
+            340
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 1096,
+            "y": 332
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1100,
+            340
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand again, later in the plan",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            100,
+            520
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 91,
+            "y": 516
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            100,
+            520
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jumps with rests: each shape from scattered points",
+      "reads": [
+        {
+          "name": "arrow over the page body",
+          "expectHotspot": [
+            1,
+            1
+          ],
+          "sent": [
+            450,
+            730
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "9zFk9QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              1,
+              1
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 449,
+            "y": 729
+          },
+          "inferred": [
+            1,
+            1
+          ],
+          "tip": [
+            450,
+            730
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "hand over the button",
+          "expectHotspot": [
+            9,
+            4
+          ],
+          "sent": [
+            93,
+            516
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "rPsb6QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              9,
+              4
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 84,
+            "y": 512
+          },
+          "inferred": [
+            9,
+            4
+          ],
+          "tip": [
+            93,
+            516
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "text caret over the terminal",
+          "expectHotspot": [
+            4,
+            8
+          ],
+          "sent": [
+            1000,
+            420
+          ],
+          "css": {
+            "image": 22046,
+            "imageTail": "d5f44QAAAABJRU5ErkJggg==",
+            "hotspot": [
+              4,
+              8
+            ]
+          },
+          "plane": {
+            "w": 64,
+            "h": 64,
+            "x": 996,
+            "y": 412
+          },
+          "inferred": [
+            4,
+            8
+          ],
+          "tip": [
+            1000,
+            420
+          ],
+          "tipError": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "idleAfterSeconds": 20.104,
+  "swayEnv": "WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman",
+  "settledAfterSecondPositionMs": 65,
+  "restRuns": {
+    "load": "0.04 0.05 0.01 1/116 435",
+    "trials": [
+      {
+        "way": "hook",
+        "from": [
+          451,
+          611
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          420,
+          634
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          381,
+          612
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 377,
+            "y": 609
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 377,
+            "y": 609
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          433,
+          669
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          394,
+          623
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          377,
+          592
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 373,
+            "y": 589
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 373,
+            "y": 589
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          440,
+          685
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          460,
+          672
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          369,
+          661
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 365,
+            "y": 658
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 365,
+            "y": 658
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          412,
+          669
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          424,
+          639
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          427,
+          676
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 423,
+            "y": 673
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 423,
+            "y": 673
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          350,
+          677
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          414,
+          633
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          360,
+          599
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 356,
+            "y": 596
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 356,
+            "y": 596
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          462,
+          663
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          457,
+          638
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          351,
+          600
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 347,
+            "y": 597
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 347,
+            "y": 597
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          467,
+          594
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          348,
+          625
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          477,
+          671
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 473,
+            "y": 668
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 473,
+            "y": 668
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          442,
+          613
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          382,
+          678
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          387,
+          644
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 383,
+            "y": 641
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 383,
+            "y": 641
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          379,
+          670
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          359,
+          657
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          395,
+          624
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 391,
+            "y": 621
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 391,
+            "y": 621
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          380,
+          650
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          469,
+          663
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          343,
+          647
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 339,
+            "y": 644
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 339,
+            "y": 644
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          436,
+          667
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          381,
+          678
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          360,
+          678
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 356,
+            "y": 675
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 356,
+            "y": 675
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          469,
+          638
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          365,
+          671
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          386,
+          667
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 382,
+            "y": 664
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 382,
+            "y": 664
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          347,
+          670
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          429,
+          652
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          461,
+          603
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 457,
+            "y": 600
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 457,
+            "y": 600
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          441,
+          632
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          475,
+          666
+        ],
+        "step": [
+          5,
+          3
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          407,
+          623
+        ],
+        "step": [
+          6,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 403,
+            "y": 620
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 403,
+            "y": 620
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          364,
+          631
+        ],
+        "step": [
+          4,
+          4
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          468,
+          625
+        ],
+        "step": [
+          8,
+          2
+        ],
+        "positions": 10,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          341,
+          610
+        ],
+        "step": [
+          3,
+          5
+        ],
+        "positions": 3,
+        "reads": [
+          null,
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 337,
+            "y": 607
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 337,
+            "y": 607
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook",
+        "from": [
+          390,
+          647
+        ],
+        "step": [
+          10,
+          0
+        ],
+        "positions": 2,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook and pointer mode",
+        "from": [
+          431,
+          639
+        ],
+        "step": [
+          7,
+          7
+        ],
+        "positions": 4,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      },
+      {
+        "way": "hook, relative motion, and the mouse back on the pixel it left",
+        "from": [
+          447,
+          682
+        ],
+        "step": [
+          12,
+          4
+        ],
+        "positions": 10,
+        "reads": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "beforeTheRun": [
+          {
+            "inferred": null,
+            "settling": true
+          },
+          {
+            "inferred": null,
+            "settling": true
+          }
+        ],
+        "plane": {
+          "afterRelativeMotion": {
+            "w": 64,
+            "h": 64,
+            "x": 443,
+            "y": 679
+          },
+          "afterTheReturn": {
+            "w": 64,
+            "h": 64,
+            "x": 443,
+            "y": 679
+          }
+        },
+        "end": {
+          "inferred": [
+            1,
+            1
+          ],
+          "settling": false
+        }
+      }
+    ],
+    "loadAfter": "0.10 0.06 0.01 1/115 2039",
+    "knownAtFirstRead": 23,
+    "knownAtSecondRead": 48
+  },
+  "timeline": [
+    [
+      25486,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      25696,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      30025,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      30062,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      31358,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      31598,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      38383,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      38840,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      43199,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      44983,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      45070,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      45142,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      47710,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      47758,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      47983,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      52303,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      52343,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      52407,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      53689,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      53711,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      60766,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      61223,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      65583,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      67383,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      67463,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      67534,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      70087,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      70127,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      70351,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      74606,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      74646,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      75862,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      75878,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      83246,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      83702,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      88063,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      89879,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      89951,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      90062,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      92574,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      92622,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      92855,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      96991,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      97215,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      101320,
+      "d5f44QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      101566,
+      "d5f44QAAAABJRU5ErkJggg==",
+      [
+        4,
+        8
+      ],
+      [
+        4,
+        8
+      ]
+    ],
+    [
+      106879,
+      "rPsb6QAAAABJRU5ErkJggg==",
+      [
+        9,
+        4
+      ],
+      [
+        9,
+        4
+      ]
+    ],
+    [
+      106896,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      107838,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      107920,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      112359,
+      null,
+      null,
+      null
+    ],
+    [
+      112367,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      112966,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      116878,
+      null,
+      null,
+      null
+    ],
+    [
+      117398,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      120294,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      124215,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      124382,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      128958,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      129574,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      133511,
+      null,
+      null,
+      null
+    ],
+    [
+      133982,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      137007,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      140790,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      140919,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      145342,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      145950,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      149966,
+      null,
+      null,
+      null
+    ],
+    [
+      150454,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      153223,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      157206,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      157326,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      161686,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      162215,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      166207,
+      null,
+      null,
+      null
+    ],
+    [
+      166742,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      169823,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      173798,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      173974,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      178406,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      178966,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      182974,
+      null,
+      null,
+      null
+    ],
+    [
+      183439,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      186246,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      190286,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      190502,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      194990,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      195526,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      199558,
+      null,
+      null,
+      null
+    ],
+    [
+      200086,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      202991,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      206958,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      207078,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      211527,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      212358,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      216166,
+      null,
+      null,
+      null
+    ],
+    [
+      216639,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      219566,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      223559,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      223734,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      228135,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      228799,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      232702,
+      null,
+      null,
+      null
+    ],
+    [
+      233166,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      236031,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      240119,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      240191,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      244598,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      245207,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      249070,
+      null,
+      null,
+      null
+    ],
+    [
+      249590,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      252502,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      256406,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      256582,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      261126,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      261735,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      265662,
+      null,
+      null,
+      null
+    ],
+    [
+      266142,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      269063,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      272982,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      273046,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      277479,
+      null,
+      null,
+      null
+    ],
+    [
+      277487,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      278142,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      282134,
+      null,
+      null,
+      null
+    ],
+    [
+      282670,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      285534,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      289446,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      289591,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      293998,
+      null,
+      null,
+      null
+    ],
+    [
+      294006,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      294623,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      298590,
+      null,
+      null,
+      null
+    ],
+    [
+      299166,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      302078,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      306150,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      306238,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      310670,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      311430,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      315190,
+      null,
+      null,
+      null
+    ],
+    [
+      315646,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      318414,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      322398,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      322495,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      327054,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      327543,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      331535,
+      null,
+      null,
+      null
+    ],
+    [
+      331999,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      335118,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      338791,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      338993,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      343367,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      344207,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      347983,
+      null,
+      null,
+      null
+    ],
+    [
+      348470,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      351494,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      355198,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      355270,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      359686,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      360230,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    [
+      364271,
+      null,
+      null,
+      null
+    ],
+    [
+      364726,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      null,
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      367583,
+      "9zFk9QAAAABJRU5ErkJggg==",
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ]
+  ],
+  "timelineAnswers": 81,
+  "cursorDiagnostics": [],
+  "paintedPointer": {
+    "spot": [
+      1150,
+      650
+    ],
+    "hashUnderPointer": 3836707013,
+    "hashAfterMovingAway": 3836707013
+  },
+  "errors": [],
+  "pass": true
+}
