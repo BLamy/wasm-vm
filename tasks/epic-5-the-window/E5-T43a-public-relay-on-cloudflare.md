@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: in-progress
+status: implemented
 depends_on: []
 estimate: S
 risk: high
@@ -299,3 +299,40 @@ Commands: `node evidence/e5-t43a/verifier-r2/long2.mjs`; `node evidence/e5-t43a/
 CARGO_* unset). Not checked: any load (I did not measure how many sessions or streams the container survives, or its
 throughput); IPv6 rotation (no IPv6 here); the Cloudflare dashboard, logs and billing; a 2 GiB budget exhausted live
 (only the connect budget was driven to its limit); UDP after expiry (it shares `reserve_quota_stream`, by the code).
+
+### 2026-11-27 — worker — round 3 claim (head `32029ac72`)
+
+The refutation is right: with sessions outliving tokens, nothing bounded how many sessions one
+client could hold. This round caps them; sessions still outlive their tokens (the client has no
+reconnect), and the bound no longer rests on the number of tokens.
+
+**The bounds, as they now are** (commit `32029ac72`):
+- **Per client: at most 8 authenticated sessions at once**, the client being its IPv4 address or
+  its IPv6 /64, named by the Worker from `CF-Connecting-IP` (set by Cloudflare; the round-2
+  verifier found a caller-supplied one rejected) and passed in `x-wvrelay-client`, which the
+  Worker always overwrites. wvrelay refuses a ninth at HELLO; closing one frees its place.
+- **In all: at most 256 authenticated sessions.** So one client holds at most 8/256 of the relay.
+- Per token, as in round 2: 2 GiB, 120 connects a minute, 64 concurrent streams, shared by its
+  sessions and lasting past expiry. Unauthenticated connections close at 10 s. Port 25 refused.
+- `/token`: per client key, about 20 a minute (approximate per location).
+
+So one client's share is bounded in concurrency (8 sessions × 64 streams) and in bytes per
+session (2 GiB, then that session can open no more), but not in bytes over time: it can close a
+spent session and open another with a new token. The container's own link (250 Mbit/s,
+`wrangler containers info`) is shared by everyone. That is the residual risk of a public relay
+the user chose; the user is told it in the summary of this round.
+
+**Tests**: `cargo test -p wasm-vm-slirp --features native --lib` 272 passed; new
+`sessions_are_capped_per_client_and_in_total`, `an_authenticated_session_outlives_the_hello_deadline`,
+`a_client_over_its_session_cap_is_refused_and_a_closed_session_frees_a_place`,
+`the_public_relay_never_resolves_a_blocked_port`; the "entry is gone" assertion now records
+zero bytes. Mutants (applied to the file, restored after each): cutting every session at the
+deadline, removing the port check from `resolve_destination`, `close_session` not freeing the
+client's place, `close_session` not decrementing the token's sessions, and no per-client cap — all
+five caught. wvrelay smoke and token-rejection integration tests pass; clippy clean (two lint
+allows on the handshake function, which now takes the TCP peer).
+
+**Live** (`relay-4`): `smoke.mjs` passes (`smoke-live-r3.json`). `hardening.mjs`
+(`hardening-live-r3.json`): ten authenticated sessions from this machine — 8 served, 9th and 10th
+closed; after the ten close, a new one is served; port 25 and the three IPv6 forms OPEN_FAIL within
+221 ms; no HELLO closed at 10.2 s; `/token` 23 of 26 then 429.
