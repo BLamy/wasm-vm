@@ -1,0 +1,37 @@
+{
+  "startedAt": "2026-11-27T19:58:56.708Z",
+  "token": {
+    "status": 200,
+    "expiresAt": 1795810136,
+    "issuedNow": 1795809536
+  },
+  "A_before": {
+    "result": "OPEN_OK",
+    "ms": 39
+  },
+  "atCheck": {
+    "now": 1795810146,
+    "pastExpiryBy": 10
+  },
+  "A_alive": true,
+  "A_closed": null,
+  "A_after": {
+    "result": "OPEN_OK",
+    "ms": 40,
+    "http": "200"
+  },
+  "B": {
+    "alive": true,
+    "closed": null
+  },
+  "C": {
+    "alive": true,
+    "closed": null
+  },
+  "D_expired": {
+    "result": "closed:1000",
+    "ms": 67
+  },
+  "D_closed": 1000,
+  "finishedAt": "2026-11-27T20:09:06.532Z"
+}
