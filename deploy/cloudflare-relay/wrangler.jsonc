@@ -1,0 +1,24 @@
+{
+  // E5-T43a: the public wvrelay for wasm-vm's guests. The Worker issues short-lived relay tokens
+  // to allowed page origins and forwards the WebSocket to one Container running wvrelay, which
+  // verifies the token and the Origin itself and refuses protected networks.
+  "name": "wasm-vm-relay",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "observability": { "enabled": true },
+  "containers": [
+    { "class_name": "Relay", "image": "./Dockerfile", "max_instances": 3, "instance_type": "basic" }
+  ],
+  "durable_objects": { "bindings": [{ "name": "RELAY", "class_name": "Relay" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Relay"] }],
+  "vars": {
+    // Exact page origins that may get a token (and that wvrelay accepts as the WebSocket Origin).
+    "ALLOWED_ORIGINS": "https://wasm-vm.pages.dev,http://127.0.0.1:8125,http://127.0.0.1:8123,http://localhost:8123",
+    // Token lifetime in seconds (wvrelay caps it at 900).
+    "TOKEN_TTL_SECS": "600",
+    // The Durable Object (and so container) the WebSocket goes to; change it to start a fresh one.
+    "RELAY_INSTANCE": "relay-2"
+  }
+  // Secret, set with `wrangler secret put RELAY_HMAC_SECRET`: shared by the Worker (to sign) and
+  // the Container (to verify). Never in this file or the repository.
+}

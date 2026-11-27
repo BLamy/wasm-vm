@@ -1,0 +1,15 @@
+{
+  "name": "wasm-vm-relay",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.3.7"
+  },
+  "devDependencies": {
+    "wrangler": "^4.169.0",
+    "ws": "^8.23.1"
+  }
+}
