@@ -1,0 +1,7 @@
+kernel digests/sizes live==committed: True identity same: True live url: https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+chunkManifest digests/sizes live==committed: True identity same: True live url: https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/4a4b014c9f0fbe26cf16fc6bb38d3834bb33802fe8935ba096c372169be8b37f/releases/rootfs/replay-desktop-20f03da7c51d.chunks.json
+wholeImage digests/sizes live==committed: True identity same: True live url: https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0/releases/rootfs/replay-desktop-20f03da7c51d.img.gz
+bootSnapshot digests/sizes live==committed: True identity same: True live url: https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz
+bootSnapshot R2 GET: size 134069642 sha 39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db
+  gunzip: size 357412069 sha 7e7400130358e4a79b6d66aa2e37176e128e27c10320a6268d3955a676834ab6
+chunkManifest R2 GET sha 4a4b014c9f0fbe26cf16fc6bb38d3834bb33802fe8935ba096c372169be8b37f

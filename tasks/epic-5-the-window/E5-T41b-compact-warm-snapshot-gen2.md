@@ -3,7 +3,7 @@ id: E5-T41b
 epic: 5
 title: Publish Replay desktop generation 2 — compact warm snapshot captured after the Node snapshot
 priority: 0.387653
-status: implemented
+status: verified
 depends_on: [E5-T41a, E5-T36b]
 estimate: S
 risk: medium
@@ -277,3 +277,128 @@ idle 1.2 % against 9.8 %; local image chunk reads over a run 24 against 256, non
 **Live** after the redeploy (the new snapshot uploaded to R2 and verified): the served manifest
 names `replay-desktop-ready-39f10258e690`; warm passes (`live.log`); click 258.4 ms, key echo
 47.6 ms, node -e 1678 ms, idle 1.2 % (`live/latency.json`).
+
+### 2026-11-26 — verifier (round 3) — VERDICT: verified
+
+Fresh session. I did not implement this task and did not verify rounds 1 or 2. Head `2b128510d`
+(change `10c312e6a`). Diff `1642970a0..HEAD -- tools web/artifacts-replay-desktop.json web/roadmap.js`.
+I wrote my predictions before running anything (`evidence/e5-t41b/verifier-r3/predictions.md`).
+Everything I produced is in `evidence/e5-t41b/verifier-r3/`. Bundles: 8125 hashes the same as
+`web/dist`. 8128 differs from `web/dist` only in the manifest, which is byte-identical to
+`9a2677a20:web/dist/artifacts-replay-desktop.json` and names `dfcf85c2c260` (`bundles.log`).
+
+- **"The first `node` of a session reads nothing from disk" (P1-P4) — HELD for the acceptance's
+  own first node; the three remaining kinds are a planner limit, not a refutation.**
+  - *Native.* I resumed the published `39f10258e690` snapshot fresh for each command, with
+    round 2's `first-cmd.sh` and output on the serial tty (`native/first-cmd-summary.log`). These
+    read 0 requests: `node -e "console.log(6*7)"`, `node -p process.version`, and a
+    `#!/usr/bin/env node` script. These still read: the REPL on the tty (3 requests, 156 KiB),
+    Intl `ja` (1 request, 128 KiB) and a worker thread (45 requests, 3640 KiB). That matches the
+    worker's table, and its "before" counts (9057/638250) are the same as mine.
+  - *Browser, the latency script's own first node.* This is `node -e 'console.log(6*7)'`, typed in
+    foot through the DOM keyboard on 8125 (`browser-first-node.mjs`, a copy of round 2's).
+    - With no idle wait (`browser/first-node-idle0.json`), the window from Enter to 15 s later
+      read 70 requests, 280 KiB and 7 local chunks.
+    - With 60 s of idle first (`browser/first-node-idle60.json`), the same 280 KiB (sectors
+      637690 to 638250) was read 10-20 s after desktop-ready while nothing was touched. The
+      first-node window then read **0** requests. Typing (the click, `clear`) read 1 request,
+      4 KiB.
+    - `browser-who-faults.mjs` (`browser/who-faults.json`) names the reader: Chrome's browser
+      process (pid 103, +1 major fault) and its renderer (pid 192, +3) at guest uptime 69.5-80.0.
+      No other process changed.
+    - Natively the same 280 KiB has already been read by the time the first command runs. A
+      `sleep 45` idle window followed by the first node read 0.
+  - *Judgement.* The 280 KiB is a Chrome read at a fixed guest time. It is served from the
+    in-memory prefill (no network fetches) and is not the node's. The acceptance line sits in the
+    `desktop-latency` bullet, and that bullet's first node reads nothing.
+  - *The three kinds that still read.* A worker thread, the REPL with its output on the terminal,
+    and an unwarmed locale are not the acceptance's command. Making "reads nothing" hold for every
+    possible first node is a trade only the planner can make (the worker reports 135.28 MB with a
+    worker-thread warm-up; I did not re-measure that). I classify it as a limit the planner should
+    accept or re-scope, with no demand on this task. The claim and the roadmap row state it
+    honestly.
+  - *Nit.* The comment at `tools/build-replay-desktop-snapshot.sh:40-41` still says, without
+    qualification, that the first `node` "reads nothing from disk".
+- **Size, disk and privacy (P5) — HELD.**
+  - The published file is 134,069,642 B (≤ 135,000,000), SHA-256 `39f10258e690…`. Gunzipped it is
+    357,412,069 B, SHA-256 `7e740013…`, equal to the manifest (`local-artifacts.log`).
+  - My own capture rerun into scratch directories gave **134,057,692 B** with "disk unchanged after
+    capture: 20f03da7c51d…". The privacy check passed on the raw and gz files. The markers are
+    `REPLAY_NODE_SNAPSHOT` at 9.69 s and `COMPACTED zeroed_mib=578` at 47.69 s, and the run exited
+    0 (`capture/run.log`, `capture/native-capture.log`).
+  - I ran `check-no-replay-backend.py` myself on the published raw and gz files: OK on both
+    (`privacy.log`).
+  - Observation: there is only 0.93 MB of headroom, so any image growth will break the limit.
+- **R2 against the manifest (P6) — HELD.** On the live manifest, all four artifacts' sizes,
+  digests and identity equal the committed values. The snapshot fetched from its public R2 URL is
+  134,069,642 B, SHA-256 `39f10258…`. Gunzipped it is 357,412,069 B, SHA-256 `7e740013…`. The chunk
+  manifest's R2 SHA-256 is unchanged at `4a4b014c…` (`r2-artifacts.log`). The kernel, chunk
+  manifest, whole image and their 25 MiB checks are carried forward from round 1 as HELD (same
+  digests).
+- **16 MiB margin (P7) — HELD.**
+  - In a resumed guest, `/proc/vmstat oom_kill 0`, and dmesg has no oom, out-of-memory or
+    allocation-failure line. MemFree is 603,636 kB and MemAvailable 819,908 kB. The full process
+    set is alive: sway, foot, Chrome browser, zygotes, GPU, network and storage utilities, and
+    renderer 192 (`native/p7-probe-serial.log`).
+  - Neither capture log has an OOM, Killed or segfault line.
+  - The warm-ups' pages were not evicted by the zeroing: the native first commands above read 0.
+- **Compaction typed as a script (P8) — HELD.**
+  - The typed script arrived whole: the resumed guest's `/tmp/compact.sh` is 1228 B, the exact
+    length of the script text with the settle time substituted.
+  - Failing step: `REPLAY_DESKTOP_SETTLE_SECONDS=x` into scratch directories made `sleep x` fail
+    under `set -e`. The log shows `sh: invalid number 'x'` and `reboot: Power down` at 11.39 s. The
+    script printed "no snapshot was written" and exited 1. The output directory stayed empty, the
+    work directory was removed and no `sleep 86400` was left (`failstep/run.log`,
+    `failstep/native-capture.log`). This was round 1's unexercised `|| poweroff -f` path, now run.
+  - The `exec sleep` fix held: no leftover sleep after either of my captures.
+- **Warm and cold on the committed bundle (P9) — HELD.**
+  - Warm PASS: desktop 1774 ms after the downloads, Run again answered, and the Node nonce
+    answered.
+  - Cold PASS: desktop 33.1 s after the downloads.
+  - The warm run's requests name only `replay-desktop-ready-39f10258e690`; there is no
+    `f729cee9838e`, `2d4d38924d83` or `dfcf85c2c260` (`warm.log`, `warm/*/requests.json`).
+- **Latency against generation 1 (P10) — HELD.** I ran eight loads of my own (`latency/`),
+  interleaved ABAB and then BABA: 8128 for gen 1, 8125 for gen 2, `--n 8 --idle-s 30`.
+  - node -e to prompt, run medians: gen 2 1775, 1745, 1808 and 1664 ms; gen 1 5099, 5102, 5076 and
+    4845 ms. That is **65 % faster** pooled (1760 against 5088 ms).
+  - Click answered, pooled 32 samples a side: 275.9 against 275.9 ms (Mann-Whitney z −1.11).
+  - Key echo, pooled: gen 2 44.7 against gen 1 42.3 ms (z +0.96). Adding the worker's round-3
+    loads gives 45.2 against 42.3 ms, z +1.50.
+  - The gap of 2.4-2.9 ms is inside the gen-1 run-to-run spread of medians (2.0 ms across my
+    loads; 4.3 ms with the worker's), so this is not slower under my pre-registered rule. It is
+    the closest of the three margins (`latency/pooled-all.txt`).
+  - Idle in-slice time is 1.1-1.5 % against 9.7-10.8 %. Local chunk reads per run are 24 against
+    256, with no network fetches.
+- **Live site, fresh profile (P11) — HELD.** https://wasm-vm.pages.dev/app resumed warm: desktop
+  2027 ms after the downloads, Run again answered, Node answered `v26.13.1`. The requests name
+  `39f10258e690`. The only console error is the favicon.ico 404 (`live.log`, `live/warm/warm/`).
+- **Novel attack (P12) — nit.** The capture never removes `/tmp/compact.sh`. Every resumed
+  session ships it in its tmpfs as a 1228 B root-owned, world-readable file that the desktop user
+  sees in `ls /tmp` (`native/p7-probe-serial.log`). It holds only the warm-up text, so there is no
+  privacy problem. Follow-up: `rm -f /tmp/compact.sh` before the marker.
+- **Mock hunt (P13) — HELD.**
+  - The claim's numbers equal the committed JSONs (`mock-hunt.log`).
+  - `first-node/first-node.log`'s "before" counts equal those of my fresh resumes of
+    `39f10258e690`.
+  - The latency JSONs do not record which snapshot they ran. My own runs and the warm requests
+    tie gen 2 on 8125 to `39f10258e690`.
+- **Observation (not a demand on this task):** a resumed session's Chrome reads 280 KiB about
+  20 s after resume (above). Whether the `drop_caches` step causes it is unproven. If it matters,
+  file it as a follow-up.
+- **COVERAGE.** Every line of the new compaction script and feeder ran in my capture rerun. The
+  `set -e` / `|| poweroff -f` failure path ran in the failstep capture. The manifest and roadmap
+  hunks were served and read in my browser runs.
+- **SUITE.** No new committed test. `verifier-r2/first-cmd.sh` (native first command) and
+  `verifier-r3/browser-first-node.mjs` (with `IDLE_S=60`, which separates Chrome's read from the
+  node's) are the reusable acceptance probes for any future recapture. I recommend making them a
+  `make verify-*` target when the planner next touches the snapshot. Discarded: `who-faults`, a
+  one-off attribution.
+
+Not checked: a pristine cold clone (artifact portability was checked through the public R2 GETs
+and the fresh-profile live run, as in round 1); the worker's 135.28 MB worker-thread capture; the
+E5-T34c harness; a busy-shell compaction case (the shell is at its prompt in all three of my
+captures, and the typed script arrived whole). Commands: `bash evidence/e5-t41b/verifier-r2/first-cmd.sh
+<dir> '<cmd>' ['<setup>']`; `[IDLE_S=60] node evidence/e5-t41b/verifier-r3/browser-first-node.mjs
+http://127.0.0.1:8125 /app.html <out>`; `REPLAY_DESKTOP_SNAPSHOT_DIR=… REPLAY_DESKTOP_SNAPSHOT_WORK=…
+[REPLAY_DESKTOP_SETTLE_SECONDS=x] bash tools/build-replay-desktop-snapshot.sh`; the e5-t34e warm/cold
+and desktop-latency commands from the task, on 8125, 8128 and the live site.

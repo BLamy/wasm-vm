@@ -1,0 +1,96 @@
+{
+  "task": "E5-T34e",
+  "mode": "warm",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "budgetMs": 15000,
+  "nonce": "044C1BB8",
+  "command": "node -e \"console.log('E5T34E_044C1BB8', process.version)\" | tee -a /run/replay-desktop/events",
+  "times": {
+    "wholeImageFinishedMs": 1793,
+    "snapshotStartedMs": 798,
+    "snapshotFinishedMs": 1263,
+    "wholeImageStartedMs": 823,
+    "downloadsFinishedMs": 1793,
+    "desktopVisibleMs": 3567,
+    "downloadEndToDesktopMs": 1774,
+    "runAgainAnsweredMs": 5119,
+    "nodeAnswerAfterTypingMs": 23227
+  },
+  "states": [
+    {
+      "state": "fetching",
+      "at": 791.295000076294
+    },
+    {
+      "state": "instantiating",
+      "at": 1784.3500000238419
+    },
+    {
+      "state": "restoring",
+      "at": 1940.5350000858307
+    },
+    {
+      "state": "restored",
+      "at": 3281.2750000953674
+    }
+  ],
+  "downloads": {
+    "wholeImage": {
+      "url": "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.img.gz",
+      "bytes": 189683821,
+      "declared": 189683821
+    },
+    "snapshot": {
+      "url": "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+      "bytes": 134069642,
+      "declared": 134069642
+    }
+  },
+  "counts": {
+    "total": 177,
+    "wholeImage": 1,
+    "snapshot": 1,
+    "chunkOrRange": 0,
+    "diskRelated": [
+      "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+      "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.img.gz"
+    ],
+    "chunkManifest": 1,
+    "bootDiskRelated": 2
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 26,
+    "localBytes": 6815744,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 342,
+      "misses": 26,
+      "evictions": 0,
+      "residentBytes": 6815744,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 0,
+      "used": 0,
+      "profileEntries": 0,
+      "accuracyPct": 0
+    }
+  },
+  "chrome": {
+    "runsBefore": 1,
+    "runsAfter": 2
+  },
+  "node": [
+    "root@replay-desktop# \u001b[6nE5T34E_044C1BB8 v26.13.1\r"
+  ],
+  "keyboard": {
+    "framesBefore": 0,
+    "framesAfter": 212,
+    "typedChars": 93
+  },
+  "consoleErrors": []
+}

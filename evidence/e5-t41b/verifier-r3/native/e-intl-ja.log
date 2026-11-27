@@ -1,0 +1,3 @@
+snapshot: /Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz
+first command: node -e "console.log(new Intl.DateTimeFormat(\"ja\",{month:\"long\"}).format(0))"   (setup: true)  RC=0
+  setup: 9057 638250 -> 9057 638250 ; first command: before 9057 638250 after 9058 638506 ; delta requests=1 KiB=128
