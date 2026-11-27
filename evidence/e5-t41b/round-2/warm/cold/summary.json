@@ -1,0 +1,85 @@
+{
+  "task": "E5-T34e",
+  "mode": "cold",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&noSnapshot#ide",
+  "browser": "158.0.8127.88",
+  "budgetMs": 15000,
+  "nonce": "1ACC529E",
+  "command": "node -e \"console.log('E5T34E_1ACC529E', process.version)\" | tee -a /run/replay-desktop/events",
+  "times": {
+    "wholeImageFinishedMs": 1462,
+    "wholeImageStartedMs": 592,
+    "downloadsFinishedMs": 1462,
+    "desktopVisibleMs": 29793,
+    "downloadEndToDesktopMs": 28331,
+    "runAgainAnsweredMs": 5217,
+    "nodeAnswerAfterTypingMs": 27339
+  },
+  "states": [
+    {
+      "state": "fetching",
+      "at": 578.3049999475479
+    },
+    {
+      "state": "instantiating",
+      "at": 1459.7299998998642
+    },
+    {
+      "state": "booting",
+      "at": 1559.2799999713898
+    }
+  ],
+  "downloads": {
+    "wholeImage": {
+      "url": "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.img.gz",
+      "bytes": 189683821,
+      "declared": 189683821
+    },
+    "snapshot": null
+  },
+  "counts": {
+    "total": 176,
+    "wholeImage": 1,
+    "snapshot": 0,
+    "chunkOrRange": 0,
+    "diskRelated": [
+      "http://127.0.0.1:8125/releases/rootfs/replay-desktop-20f03da7c51d.img.gz"
+    ],
+    "chunkManifest": 1,
+    "bootDiskRelated": 1
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 1244,
+    "localBytes": 326107136,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 74568,
+      "misses": 1244,
+      "evictions": 220,
+      "residentBytes": 268435456,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 0,
+      "used": 0,
+      "profileEntries": 0,
+      "accuracyPct": 0
+    }
+  },
+  "chrome": {
+    "runsBefore": 1,
+    "runsAfter": 2
+  },
+  "node": [
+    "E5T34E_1ACC529E v26.13.1\r"
+  ],
+  "keyboard": {
+    "framesBefore": 0,
+    "framesAfter": 214,
+    "typedChars": 93
+  },
+  "consoleErrors": []
+}

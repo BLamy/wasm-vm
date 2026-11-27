@@ -237,3 +237,43 @@ manifest names `replay-desktop-ready-f729cee9838e`; warm resume passes (`live.lo
 Unchanged from round 1 and carried as you held them: the artifacts' R2 integrity method, the
 Node-line-never-comes path, memory pressure, the service-worker upgrade behaviour. The
 `node`-line nit at `:111` is not changed.
+
+### 2026-11-26 — worker — round 3 claim (head `10c312e6a`)
+
+Round 2's verifier session ended before a verdict; its partial evidence is in
+`evidence/e5-t41b/verifier-r2/` and showed six first commands still reading 0.1-6.8 MB (a shebang
+script, the REPL, crypto, zlib, Intl, a worker thread). Round 2's evidence is in `round-2/`.
+
+**Changed** (`tools/build-replay-desktop-snapshot.sh`, commit `10c312e6a`):
+- The compaction also warms a shebang script, the REPL (`printf '1+1\n.exit\n' | node -i`),
+  crypto and zlib, and Intl (`de` month names, `en` numbers, `toLocaleString`). NOT a worker
+  thread: with it the snapshot was 135.28 MB, over the limit.
+- It is typed as a script file, one line at a time, then run with `|| poweroff -f`: the single
+  command line had grown to about 1.2 KiB and busybox's line editor cut it, leaving the shell
+  at a continuation prompt until the capture's time limit (one capture lost that way).
+- Free memory is zeroed down to 16 MiB (was 48): with 48 the snapshot was 135.76 MB. No
+  out-of-memory kill in the capture log.
+
+**Capture**: 134,069,642 bytes compressed (limit 135 MB), disk unchanged, privacy passed on raw
+and compressed (`capture/`).
+
+**First command of a resumed session** (round-2 verifier's `first-cmd.sh`, a fresh resume each,
+`/sys/block/vda/stat` before and after; `first-node/first-node.log`): no reads for
+`node -e "console.log(6*7)"`, `node --version`, `node -p process.version`, a `#!/usr/bin/env node`
+script, `echo 1+1 | node`, `typeof fetch`, crypto, zlib, Intl `de`, a script file, an ES module,
+a child process — 12 of 15. Still read: the REPL with its output on the terminal
+(`printf … | node -i`, 3 requests / 156 KiB — the warm-up sends its output to /dev/null), Intl in a
+locale not warmed (`ja`, 2 / 128 KiB), a worker thread (46 / about 3.6 MB). So the acceptance line
+"the first node of a session reads nothing from disk" holds for those 12 kinds of first command
+and not universally; caching the whole 105.6 MB binary to make it universal would put the
+snapshot far over 135 MB. That trade is the planner's to confirm.
+
+**Committed bundle** (generation 1 on the same bundle at 8128): warm and cold pass (`warm.log`);
+two interleaved loads a side (`browser/`): node -e to prompt 1643 / 1704 ms against 4837 / 4863 ms
+(65 % faster); click 256.3 / 260.7 against 261.5 / 268.4 ms; key echo 46.8 / 46.8 against
+46.4 / 43.7 ms (pooled 46.8 against 45.1 ms, within the spread of earlier rounds, 41-48 ms);
+idle 1.2 % against 9.8 %; local image chunk reads over a run 24 against 256, none from the network.
+
+**Live** after the redeploy (the new snapshot uploaded to R2 and verified): the served manifest
+names `replay-desktop-ready-39f10258e690`; warm passes (`live.log`); click 258.4 ms, key echo
+47.6 ms, node -e 1678 ms, idle 1.2 % (`live/latency.json`).

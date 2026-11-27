@@ -1,30 +1,30 @@
 [
   {
-    "t": 121,
+    "t": 160,
     "type": "verbose",
     "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
     "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide"
   },
   {
-    "t": 121,
+    "t": 160,
     "type": "verbose",
     "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
     "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide"
   },
   {
-    "t": 121,
+    "t": 169,
     "type": "warning",
     "text": "Service Worker registration blocked by Playwright",
     "url": ""
   },
   {
-    "t": 140,
+    "t": 192,
     "type": "error",
     "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
     "url": "http://127.0.0.1:8125/favicon.ico"
   },
   {
-    "t": 1777,
+    "t": 1931,
     "type": "info",
     "text": "wasm-vm: browser JIT NOT enabled — forced-off",
     "url": "http://127.0.0.1:8125/loader.js"

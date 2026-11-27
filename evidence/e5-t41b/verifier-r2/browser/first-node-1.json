@@ -1,0 +1,59 @@
+{
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "points": [
+    {
+      "label": "ready-1",
+      "readRequests": 8911,
+      "readSectors": 620114,
+      "localHits": 1,
+      "localBytes": 262144,
+      "fetches": 0
+    },
+    {
+      "label": "ready-2",
+      "readRequests": 8911,
+      "readSectors": 620114,
+      "localHits": 1,
+      "localBytes": 262144,
+      "fetches": 0
+    },
+    {
+      "label": "typed, before Enter",
+      "readRequests": 8911,
+      "readSectors": 620114,
+      "localHits": 1,
+      "localBytes": 262144,
+      "fetches": 0
+    },
+    {
+      "label": "15 s after Enter",
+      "readRequests": 8966,
+      "readSectors": 620554,
+      "localHits": 7,
+      "localBytes": 1835008,
+      "fetches": 0
+    }
+  ],
+  "firstNodeDelta": {
+    "readRequests": 55,
+    "readKiB": 220,
+    "localHits": 6
+  },
+  "typingDelta": {
+    "readRequests": 0,
+    "readKiB": 0,
+    "localHits": 0
+  },
+  "execNoise": {
+    "readRequests": 0,
+    "readKiB": 0,
+    "localHits": 0
+  },
+  "snapshotRequests": [
+    "http://127.0.0.1:8125/releases/boot-snapshot/replay-desktop-ready-f729cee9838e.snap.gz"
+  ],
+  "staleGen1": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+}

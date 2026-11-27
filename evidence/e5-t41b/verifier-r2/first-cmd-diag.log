@@ -1,0 +1,27 @@
+S0
+    8943        0   620554      733     
+S1-after-env-true
+    8977        0   620826      745     
+1
+S2-after-shebang
+    8977        0   620826      745     
+2
+S3-after-stdin
+    8978        0   620890      745     
+lrwxrwxrwx    1 root     root            16 Nov  1 00:00 /usr/bin/env -> /usr/bin/busybox
+
+/usr/local/bin/:
+total 16
+-rwxr-xr-x    1 root     root           673 Nov  1 00:00 node
+-rwxr-xr-x    1 root     root          4262 Nov  1 00:00 replay-chromium
+-rwxr-xr-x    1 root     root          1117 Nov  1 00:00 replay-desktop-session
+/usr/local/bin/node
+/dev/root on / type ext4 (ro,relatime)
+tmpfs on /tmp type tmpfs (rw,nosuid,nodev,relatime)
+-/bin/sh
+uid=0(root) gid=0(root)
+RC=0
+VSS 8943        0   620554      733        0        0        0        0        0       76      733        0        0        0        0        0        0
+VSA 8943        0   620554      733        0        0        0        0        0       76      733        0        0        0        0        0        0
+VSB 9005        0   621122      749        0        0        0        0        0       80      749        0        0        0        0        0        0
+VDONE

@@ -1,0 +1,21 @@
+{
+  "task": "E5-T41b",
+  "url": "releases/boot-snapshot/replay-desktop-ready-dc36dce62d18.snap.gz",
+  "sha256": "dc36dce62d1841bc61a870ae10ebe11ae930d35573623908a0ce00e8979e1ec6",
+  "size": 130503034,
+  "uncompressedSize": 348723134,
+  "uncompressedSha256": "07e2bc2adecbe6661f10e6afb01af778e12a6ab50181e6f4cc56d1c5feed27ba",
+  "identity": {
+    "imageSha256": "20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c",
+    "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "baseId": "b674702960a2b19714112b6d510bf438ed689438b91f1b12100c329e7db11dcf",
+    "ramMib": 1024,
+    "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
+    "guestClock": "icount",
+    "icountDivider": 64,
+    "deviceLayout": "browser-topology",
+    "readOnlyRoot": true
+  },
+  "captureHostSeconds": 3427
+}

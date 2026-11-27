@@ -1,0 +1,11 @@
+== git: web/dist clean vs HEAD?
+== 8125 served files vs web/dist (manifest, sw.js, app.html, index)
+artifacts-replay-desktop.json 8125=6c084e5eb83f2848 web/dist=6c084e5eb83f2848
+sw.js 8125=a24db137c2f65801 web/dist=a24db137c2f65801
+app.html 8125=43aa5fb153456598 web/dist=43aa5fb153456598
+roadmap.js 8125=38b73b5f2f0148e6 web/dist=38b73b5f2f0148e6
+== 8128 manifest snapshot url:
+replay-desktop-ready-dfcf85c2c260
+== 8128 clone vs web/dist (diff -rq, excluding releases/)
+Files /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/dist-gen1/artifacts-replay-desktop.json and web/dist/artifacts-replay-desktop.json differ
+8128 manifest == 9a2677a20:web/dist manifest

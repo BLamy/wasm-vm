@@ -1,0 +1,57 @@
+[replay-snapshot] image_sha256=20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c kernel_sha256=af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce
+[replay-snapshot] core_id=302e302e31000000000000000000000000000000000000000000000000000000 (version 0.0.1) base_id=b674702960a2b19714112b6d510bf438ed689438b91f1b12100c329e7db11dcf
+[replay-snapshot] cold-booting to REPLAY_DESKTOP_COMPACTED zeroed_mib= (browser device topology)…
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578773] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.97
+REPLAY_TERMINAL_MAPPED uptime=2.01
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"FC929246214C74A88D4667D947A6C9F7","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"C2658AEB5F1A3F30BBF48B36E3D1727C"}]}} uptime=4.72
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"B32288280FD18DA8C2D2DEDF5F32B8C5"} uptime=5.02
+REPLAY_RENDERER_SANDBOX pid=/proc/192 NoNewPrivs=1 Seccomp=2 NSpid=	192	9	1 uptime=5.17
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.22
+REPLAY_CHROME_MAPPED uptime=5.31 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.33 mem_hwm_kib=170364
+REPLAY_NODE_SNAPSHOT bytes=6754894 uptime=9.74
+sleep 30 && sync && echo 1 > /proc/sys/vm/drop_caches && /u
+sr/local/bin/node -e 0 && /usr/local/bin/node -e 'console.log(1)' >/dev/null && 
+/usr/local/bin/node -p process.version >/dev/null && /usr/local/bin/node -e 'con
+st cp=require("child_process"),fs=require("fs"),os=require("os"),path=require("p
+ath");fs.readFileSync("/etc/hostname");cp.execFileSync(process.execPath,["-p","6
+*7"]);console.log(os.arch(),path.sep)' >/dev/null && echo 'console.log(1)' > /tm
+p/warm.js && echo 'import os from "node:os"; console.log(os.arch())' > /tmp/warm
+.mjs && /usr/local/bin/node /tmp/warm.js >/dev/null && /usr/local/bin/node /tmp/
+warm.mjs >/dev/null && rm -f /tmp/warm.js /tmp/warm.mjs && z=$(($(awk '/^MemFree
+:/{print int($2/1024)}' /proc/meminfo) - 48)) && [ $z -gt 0 ] && dd if=/dev/zero
+ of=/dev/null bs=${z}M count=1 2>/dev/null && echo REPLAY_DESKTOP_COMPACT''ED ze
+roed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptime) || poweroff -f
+REPLAY_DESKTOP_COMPACTED zeroed_mib=552 uptime=45.82
+root@replay-desktop# [6nwasm-vm: snapshot (348723134 bytes) written to /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/d2b09937-2449-43d9-a27c-3870b812583b/scratchpad/cap-work/replay-desktop-ready.snap at trigger "REPLAY_DESKTOP_COMPACTED zeroed_mib="
+wasm-vm: snapshot complete — exiting
+tools/build-replay-desktop-snapshot.sh: line 114: 32475 Terminated: 15          ( exec 3> "$STDIN_FIFO"; until grep -aq "$NODE_MARKER" "$BOOTLOG"; do
+    sleep 1;
+done; sleep 2; printf '%s\n' "$COMPACT_COMMAND" 1>&3; exec sleep 86400 )
+[replay-snapshot] disk unchanged after capture: 20f03da7c51d3965cf8a97fda77dd376b0301014951ba8731a578b42fd300b8c (no overlay delta needed)
+[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)
+[replay-snapshot] RAM raw=348723134B gz=130503034B sha256=dc36dce62d1841bc61a870ae10ebe11ae930d35573623908a0ce00e8979e1ec6 -> /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/d2b09937-2449-43d9-a27c-3870b812583b/scratchpad/cap-out/replay-desktop-ready-dc36dce62d18.snap.gz (3427 s capture)
+[replay-snapshot] record: evidence/e5-t41b/verifier-r2/capture/snapshot.json — copy its url/sha256/size/uncompressed*/identity into web/artifacts-replay-desktop.json artifacts.bootSnapshot
+env REPLAY_DESKTOP_SNAPSHOT_DIR=$S/cap-out    bash  > $O/capture/run.log 2>&1  295.47s user 3.00s system 8% cpu 57:36.54 total
+exit 0

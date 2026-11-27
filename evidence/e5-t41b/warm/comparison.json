@@ -1,24 +1,24 @@
 {
   "warm": {
-    "wholeImageFinishedMs": 1682,
-    "snapshotStartedMs": 757,
-    "snapshotFinishedMs": 1174,
-    "wholeImageStartedMs": 773,
-    "downloadsFinishedMs": 1682,
-    "desktopVisibleMs": 3468,
-    "downloadEndToDesktopMs": 1786,
-    "runAgainAnsweredMs": 5112,
-    "nodeAnswerAfterTypingMs": 21352
+    "wholeImageFinishedMs": 1827,
+    "snapshotStartedMs": 846,
+    "snapshotFinishedMs": 1297,
+    "wholeImageStartedMs": 862,
+    "downloadsFinishedMs": 1827,
+    "desktopVisibleMs": 3604,
+    "downloadEndToDesktopMs": 1777,
+    "runAgainAnsweredMs": 5114,
+    "nodeAnswerAfterTypingMs": 23380
   },
   "cold": {
-    "wholeImageFinishedMs": 1462,
-    "wholeImageStartedMs": 592,
-    "downloadsFinishedMs": 1462,
-    "desktopVisibleMs": 29793,
-    "downloadEndToDesktopMs": 28331,
-    "runAgainAnsweredMs": 5217,
-    "nodeAnswerAfterTypingMs": 27339
+    "wholeImageFinishedMs": 1556,
+    "wholeImageStartedMs": 602,
+    "downloadsFinishedMs": 1556,
+    "desktopVisibleMs": 31391,
+    "downloadEndToDesktopMs": 29835,
+    "runAgainAnsweredMs": 5257,
+    "nodeAnswerAfterTypingMs": 33376
   },
-  "coldDesktopAfterDownloadMs": 28331,
-  "warmDesktopAfterDownloadMs": 1786
+  "coldDesktopAfterDownloadMs": 29835,
+  "warmDesktopAfterDownloadMs": 1777
 }

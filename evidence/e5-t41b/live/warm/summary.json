@@ -4,35 +4,35 @@
   "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide",
   "browser": "158.0.8127.88",
   "budgetMs": 15000,
-  "nonce": "D327BCE8",
-  "command": "node -e \"console.log('E5T34E_D327BCE8', process.version)\" | tee -a /run/replay-desktop/events",
+  "nonce": "9F62469E",
+  "command": "node -e \"console.log('E5T34E_9F62469E', process.version)\" | tee -a /run/replay-desktop/events",
   "times": {
-    "wholeImageFinishedMs": 34281,
-    "snapshotStartedMs": 2112,
-    "snapshotFinishedMs": 38943,
-    "wholeImageStartedMs": 5242,
-    "downloadsFinishedMs": 38943,
-    "desktopVisibleMs": 39218,
-    "downloadEndToDesktopMs": 275,
-    "runAgainAnsweredMs": 5129,
-    "nodeAnswerAfterTypingMs": 23331
+    "wholeImageFinishedMs": 35934,
+    "snapshotStartedMs": 2065,
+    "snapshotFinishedMs": 31810,
+    "wholeImageStartedMs": 5116,
+    "downloadsFinishedMs": 35934,
+    "desktopVisibleMs": 37713,
+    "downloadEndToDesktopMs": 1779,
+    "runAgainAnsweredMs": 5111,
+    "nodeAnswerAfterTypingMs": 23346
   },
   "states": [
     {
       "state": "fetching",
-      "at": 2105.100000023842
+      "at": 2058.7400000095367
     },
     {
       "state": "instantiating",
-      "at": 34277.08500003815
+      "at": 35928.80999994278
     },
     {
       "state": "restoring",
-      "at": 37797.26000010967
+      "at": 36121.78499996662
     },
     {
       "state": "restored",
-      "at": 38937.50499999523
+      "at": 37425.75999999046
     }
   ],
   "downloads": {
@@ -42,18 +42,18 @@
       "declared": 189683821
     },
     "snapshot": {
-      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f729cee9838e14240b508d5ab8c0f7a9a25fc98dbef37f0da020c46ec66daf96/releases/boot-snapshot/replay-desktop-ready-f729cee9838e.snap.gz",
-      "bytes": 130233796,
-      "declared": 130233796
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
+      "bytes": 134069642,
+      "declared": 134069642
     }
   },
   "counts": {
-    "total": 175,
+    "total": 177,
     "wholeImage": 1,
     "snapshot": 1,
     "chunkOrRange": 0,
     "diskRelated": [
-      "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f729cee9838e14240b508d5ab8c0f7a9a25fc98dbef37f0da020c46ec66daf96/releases/boot-snapshot/replay-desktop-ready-f729cee9838e.snap.gz",
+      "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/39f10258e69080a437dc681855580f9d4e4e432c4c1c4a2c05836d5b77d5a2db/releases/boot-snapshot/replay-desktop-ready-39f10258e690.snap.gz",
       "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/a28de82e5cc301105221eeffcdd6768a46f3911d5a5dbeb5672e6837a3777eb0/releases/rootfs/replay-desktop-20f03da7c51d.img.gz"
     ],
     "chunkManifest": 1,
@@ -67,7 +67,7 @@
     "localImage": true,
     "error": null,
     "cache": {
-      "hits": 348,
+      "hits": 342,
       "misses": 26,
       "evictions": 0,
       "residentBytes": 6815744,
@@ -85,11 +85,11 @@
     "runsAfter": 2
   },
   "node": [
-    "root@replay-desktop# \u001b[6nE5T34E_D327BCE8 v26.13.1\r"
+    "root@replay-desktop# \u001b[6nE5T34E_9F62469E v26.13.1\r"
   ],
   "keyboard": {
     "framesBefore": 0,
-    "framesAfter": 214,
+    "framesAfter": 210,
     "typedChars": 93
   },
   "consoleErrors": []
