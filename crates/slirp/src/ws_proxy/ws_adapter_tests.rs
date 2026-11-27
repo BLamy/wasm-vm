@@ -119,6 +119,34 @@ async fn secure_client_with_limits(
     (ws, token)
 }
 
+/// E5-T43a verifier: a secured connection that never sends HELLO is closed at the deadline.
+#[tokio::test]
+async fn secure_relay_closes_a_connection_that_never_authenticates() {
+    let (mut ws, _token) = secure_client_with_limits(
+        Some("https://vm.example"),
+        BTreeMap::new(),
+        RelayLimits::default(),
+    )
+    .await;
+    let started = std::time::Instant::now();
+    let ended = timeout(
+        crate::ws_proxy::HELLO_DEADLINE + Duration::from_secs(5),
+        async {
+            while let Some(msg) = ws.next().await {
+                if msg.is_err() || msg.is_ok_and(|m| m.is_close()) {
+                    break;
+                }
+            }
+        },
+    )
+    .await;
+    assert!(ended.is_ok(), "closed within the deadline");
+    assert!(
+        started.elapsed() >= crate::ws_proxy::HELLO_DEADLINE - Duration::from_millis(200),
+        "not before it"
+    );
+}
+
 #[tokio::test]
 async fn secure_relay_closes_absent_wrong_origin_and_forged_hello_before_open() {
     for origin in [None, Some("https://evil.example")] {

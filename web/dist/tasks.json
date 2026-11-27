@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 584,
-    "total": 806
+    "verified": 585,
+    "total": 811
   },
   "epics": [
     {
@@ -68,7 +68,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-11-26"
+    "end": "2026-11-27"
   },
   "tasks": [
     {
@@ -24197,7 +24197,7 @@
       "epicKey": "5",
       "title": "Hardware cursor on the published Replay desktop — one pointer, drawn by the host, tip on the pixel",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T41b"
       ],
@@ -24210,22 +24210,29 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-11-27 — worker — claim\n\n`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --out evidence/e5-t36c`\non the committed bundle (the generation-2 manifest, E5-T41b; no `--legacy-kms-session`: the\npublished image's own session) passes (`evidence/e5-t36c/result.json`, `browser.log`). Sway's\nenvironment is `WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman`; the page settled 65 ms after its second\nposition.\n\n- The canvas's computed `cursor` is a `url(\"data:image/png…\") X Y` made from the guest's image:\n  arrow (1,1), hand (9,4), text caret (4,8) — 18 of 18 reads in four plans (three continuous\n  glides onto the button from different directions, and jumps), each the exact hotspot.\n- For each read the kernel's cursor-plane position (`/sys/kernel/debug/dri/0/state`) plus the\n  hotspot is the guest position the page sent, to the pixel (tip error (0,0) in all 18).\n- No painted pointer: the canvas region around the resting pointer hashes the same with the\n  pointer on it and after it moved away (3836707013 both).\n- Zero console errors and zero cursor diagnostics. 48 runs from the rest position after\n  starting over: known and right in the end in all 48; the 8 ms timeline (163 changes, 82\n  answers) has none more than a pixel off.\n\nRoadmap: the generation-2 row is now `verified` and names this proof. A deploy publishes it.",
+      "verificationLog": "### 2026-11-27 — worker — claim\n\n`node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --out evidence/e5-t36c`\non the committed bundle (the generation-2 manifest, E5-T41b; no `--legacy-kms-session`: the\npublished image's own session) passes (`evidence/e5-t36c/result.json`, `browser.log`). Sway's\nenvironment is `WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman`; the page settled 65 ms after its second\nposition.\n\n- The canvas's computed `cursor` is a `url(\"data:image/png…\") X Y` made from the guest's image:\n  arrow (1,1), hand (9,4), text caret (4,8) — 18 of 18 reads in four plans (three continuous\n  glides onto the button from different directions, and jumps), each the exact hotspot.\n- For each read the kernel's cursor-plane position (`/sys/kernel/debug/dri/0/state`) plus the\n  hotspot is the guest position the page sent, to the pixel (tip error (0,0) in all 18).\n- No painted pointer: the canvas region around the resting pointer hashes the same with the\n  pointer on it and after it moved away (3836707013 both).\n- Zero console errors and zero cursor diagnostics. 48 runs from the rest position after\n  starting over: known and right in the end in all 48; the 8 ms timeline (163 changes, 82\n  answers) has none more than a pixel off.\n\nRoadmap: the generation-2 row is now `verified` and names this proof. A deploy publishes it.\n\n### 2026-11-27 — verifier — VERDICT: verified\n\nLow risk: direct result inspected; no cold clone, sabotage or novel attack (AGENTS.md risk table).\nHead `5108bc8c9` (`evidence/e5-t36c/verifier/head.txt`). Server on 8125 is\n`python3 - 8125 web/dist releases`; `app.html`, `artifacts-replay-desktop.json`, `roadmap.js` and\n`sw.js` served there hash the same as the committed `web/dist` (clean in `git status`), and the\nmanifest names boot snapshot `replay-desktop-ready-39f10258e690`.\n\n- Acceptance, re-run — HELD. `node tools/verify/e5-t36-hardware-cursor-browser.mjs --url http://127.0.0.1:8125 --app /app.html --out evidence/e5-t36c/verifier/browser`\n  exits 0 in 6 min 18 s (`evidence/e5-t36c/verifier/run.log`, `browser/result.json`, `pass: true`).\n  Four plans, 18 reads: every canvas `cursor` is `url(\"data:image/png;base64,…\") X Y`, hotspots\n  exactly (1,1) page body, (9,4) button, (4,8) terminal; kernel plane position plus hotspot minus\n  sent guest position is (0,0) in all 18 (e.g. hand: plane 84,512 + 9,4 = sent 93,516; caret:\n  996,412 + 4,8 = 1000,420). Timeline 163 changes, 81 answers, none wrong; rest runs 48 of 48\n  right in the end.\n- No painted pointer — HELD. Region at guest (1150,650) hashes 3836707013 under the pointer and\n  after it moved away; the canvas screenshot (`browser/desktop.png`, pointer then at 1150,300)\n  shows no pointer drawn into the frame.\n- Zero console errors — HELD. `errors: []`, `cursorDiagnostics: []`.\n- Published image's own session — HELD. `legacyKmsSession: false` (flag not passed); sway's\n  environment read from the guest's `/proc/<sway>/environ` is `WLR_DRM_NO_ATOMIC=1 WLR_RENDERER=pixman`.\n- Roadmap row — HELD. The only `web/roadmap.js` change (9a4c210a0..HEAD) flips the generation-2\n  row to `verified` and adds the hotspots (1,1)/(9,4)/(4,8), \"18 of 18 reads\", \"no pointer painted\n  into the frame\" (all in `evidence/e5-t36c/result.json` and reproduced above) and the >64x64\n  limitation, which matches pending E5-T36d's statement; E5-T41a/b and E5-T36a/b are `verified`.\n  `https://wasm-vm.pages.dev/roadmap.js` sha256 4ca7d34c… equals `web/roadmap.js` and\n  `web/dist/roadmap.js` and contains the new text.\n- SUITE: discard — the acceptance script is already the committed recurring check (E5-T36a); the\n  rerun's result is kept as evidence only.",
       "adversarial": "Low risk: inspect the direct result.",
       "file": "tasks/epic-5-the-window/E5-T36c-hardware-cursor-browser-proof.md",
       "activity": [
         {
           "date": "2026-11-26",
-          "commits": 2,
+          "commits": 4,
           "labels": [
+            "E5-T36c verified: verifier",
+            "E5-T36c implemented: hardware cursor on the published desktop, proven in the browser; roadmap row verified",
             "E5-T36c in progress",
             "E5-T36a: infer the hotspot of a guest cursor image the device did not describe"
           ]
+        },
+        {
+          "date": "2026-11-27",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-11-26",
-      "lastActivity": "2026-11-26",
-      "commitCount": 2
+      "lastActivity": "2026-11-27",
+      "commitCount": 4
     },
     {
       "id": "E5-T36d",
@@ -24612,6 +24619,156 @@
       "firstActivity": "2026-11-26",
       "lastActivity": "2026-11-26",
       "commitCount": 10
+    },
+    {
+      "id": "E5-T43a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\nNew `deploy/cloudflare-relay/`: a Worker plus a Cloudflare Container running the existing\n`wvrelay` (unchanged relay code; `deploy/e3-t19/relay.Dockerfile` is the starting point).\n- `GET /token`: for an allowed `Origin` only (https://wasm-vm.pages.dev and the local dev\n  origins), returns a relay token in wvrelay's own format (`v1`, expiry at most 15 min,\n  origin, random id, HMAC-SHA256; `crates/slirp/src/ws_proxy/relay_security.rs`), CORS for\n  that origin only. The HMAC secret is a Worker/Container secret, never in the repository.\n- `GET /ws`: the WebSocket, forwarded to the Container with the browser's `Origin`; wvrelay\n  checks the token and the origin itself and refuses protected networks (loopback, private,\n  link-local, metadata, as it already does).\n- A deploy script (`deploy/cloudflare-relay/deploy.sh`) and its README.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n- `cargo run -p wasm-vm-cli --bin wvrelay -- …` client smoke, or a node script speaking the\n  ws-proxy protocol, against the DEPLOYED URL: with a token from `/token` (Origin\n  https://wasm-vm.pages.dev) an OPEN to `example.com:80` and an HTTP GET returns `200`.\n- Refusals against the deployed URL: no token; an expired token; a token for another origin;\n  a token used from a different `Origin`; `/token` from a disallowed origin (403, no CORS);\n  OPEN to 127.0.0.1, 10.0.0.1, 169.254.169.254 and a hostname resolving to a private address.\n- No secret in the repository, the deployed Pages bundle, or logs (grep + privacy check).\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-11-27 — worker — claim (head `654ec1634`)\n\nDeployed: `https://wasm-vm-relay.brett-lamy.workers.dev` (Worker `wasm-vm-relay`, Container\napplication `wasm-vm-relay-relay`, basic instance, at most 3), from `deploy/cloudflare-relay/`\nwith `bash deploy/cloudflare-relay/deploy.sh --secret`. wvrelay is the repository's, unchanged,\nbuilt at this head as a static linux/amd64 binary (zig as C compiler and linker).\n\n`node deploy/cloudflare-relay/smoke.mjs --base https://wasm-vm-relay.brett-lamy.workers.dev --out evidence/e5-t43a/smoke-live.json`\npasses (`smoke-live.json`):\n- `/token` with `Origin: https://wasm-vm.pages.dev`: 200, CORS to that origin only; with\n  `Origin: https://evil.example`: 403, no CORS header.\n- TCP: OPEN `example.com:80`, an HTTP/1.1 GET: `200`, title `Example Domain`.\n- UDP: UDP_OPEN `1.1.1.1:53`, an A query for example.com: one reply, 2 answers.\n- Protected: OPEN to 127.0.0.1, 10.0.0.1, 169.254.169.254 and `localhost` each get OPEN_FAIL\n  (code 1).\n- No token, a forged token (last four characters changed): HELLO answered, no stream opened,\n  the connection closed (1000). The right token from `Origin: https://evil.example`: refused by\n  the Worker before the container (1006, 403).\n- Locally against the native wvrelay with the same token code (before the deploy): the same\n  results, proving `src/token.js` produces tokens wvrelay verifies.\n\nNo secret is in the repository (generated with `openssl rand -hex 32`, sent once with\n`wrangler secret put RELAY_HMAC_SECRET`); the privacy check passed on the commit.\n\nBring-up notes: the Containers library checks readiness with a plain HTTP request on the port it\nis about to use, which wvrelay drops (\"Network connection lost\"), so the container carries a\nstatic busybox `httpd` on 8081 and the Worker starts it there before handing the WebSocket to\n8080. The Durable Object is named by `RELAY_INSTANCE` (`relay-2`; the first instance from the\nbroken bring-up is left idle and sleeps after 15 minutes).\n\nNot done: abuse bounds beyond wvrelay's own (per-token stream and byte limits, 15-minute\ntokens). A non-browser client can claim the allowed Origin and get tokens from `/token`; nothing\nrate-limits `/token` yet. Container cost: one basic instance while in use, sleeping after 15\nminutes idle; egress is the account's.\n\n### 2026-11-27 — verifier — VERDICT: refuted\n\nVERDICT: refuted\n\nFresh session against head `44a03c51a` (code `654ec1634`) and the live\n`https://wasm-vm-relay.brett-lamy.workers.dev`. I wrote the predictions first\n(`evidence/e5-t43a/verifier/predictions.md`), then ran `smoke.mjs` again (`verifier/smoke.json`, SMOKE PASS),\n`verifier/probe.mjs` (`probe.json`, sha256 `1ec733af…`) and `verifier/long.mjs` (`long.json`, sha256\n`6c6f43a0…`, about 11 minutes, 4 connections). Every acceptance criterion held. The claim fails on the\nabuse bounds it gives in answer to the attack list.\n\n- P9 the token's lifetime bounds a session: FAILED. The claim lists \"15-minute tokens\" as an abuse bound. I\n  predicted from the code that an authenticated session outlives its token. Observed: session A sent HELLO\n  with token T (expiresAt 1795810136), and 10 s after T expired it opened a new TCP stream to\n  `example.com:80` and got HTTP `200` (`long.json` `A_after` = OPEN_OK, http 200, `pastExpiryBy` 10).\n  Cause: the token is checked only on HELLO (`driver.rs:234`). `reserve_stream` never compares expiry with\n  now: it drops the expired entry and creates a fresh one (`relay_security.rs:167-169`), so the token's\n  64 MiB byte counter also starts again at 0. One token therefore gives an unlimited session with byte\n  budgets that reset. Demand: enforce expiry on OPEN/UDP_OPEN or close the session at expiry, and stop\n  resetting quotas. That needs a wvrelay change (a new dependency task, since this task keeps wvrelay\n  unchanged), or the Worker must close the WebSocket at expiry. Otherwise the claim must stop calling\n  token lifetime a bound, and the user must accept that risk explicitly.\n- P16 slowloris (attack list): FAILED (nothing bounds it, and the claim does not say so). Connection C\n  upgraded with the allowed Origin and then sent nothing, not even pings. Connection B never sent HELLO and\n  sent only client pings. Both were still open about 10 min later (`long.json` `B.alive`/`C.alive` =\n  true). wvrelay has no deadline for HELLO (`ws_adapter.rs:183` onward, `driver.rs:234`). The library\n  counts an open WebSocket as an in-flight request (`@cloudflare/containers` 0.3.7\n  `container.js:887-896`), so idle sockets also keep the one container awake. Demand: a HELLO deadline and\n  an idle cap, or a stated, accepted limit.\n- P15 `/token` rate: HELD as a stated limit. A non-browser client that sends `Origin:\n  https://wasm-vm.pages.dev` gets tokens without limit (`probe.json` P1/P2/P7). The worker said so. The\n  per-token bounds in the code (64 concurrent streams, 120 connects/min, 64 MiB, 1024 streams per WebSocket)\n  apply to a token id. Free tokens plus P9 mean they do not bound a client.\n- P13 port 25: observed, follow-up. A TCP OPEN to `aspmx.l.google.com:25` got OPEN_OK (`probe.json` P13;\n  connect only, RST at once). Together with free tokens, the relay is an SMTP-capable proxy on the\n  user's account. The task names \"cost exposure\", not ports, so this alone does not refute. File a port\n  policy (deny 25/465/587 at least) with the fix for P9.\n- P12 IPv4-embedded IPv6: observed, follow-up, no breach. The container has IPv6 egress\n  (`control.ipv6Public` OPEN_OK in 41 ms). `::127.0.0.1` (IPv4-compatible) and `64:ff9b::7f00:1` (NAT64)\n  pass wvrelay's policy: no OPEN_FAIL within 15 s, against about 40 ms for every policy refusal. So the\n  connect was attempted, and it hung without reaching anything. `ipv6_is_public` only unwraps\n  `::ffff:0:0/96` (`relay_security.rs:387`). Follow-up: classify `::/96`, `64:ff9b::/96`,\n  `64:ff9b:1::/48`, `2002::/16` and `2001::/32` by the IPv4 address they embed.\n- P1–P4 Worker surface: HELD. `/token` returns 200 with ACAO equal to the origin, `Vary: Origin`,\n  `no-store`, and only the keys `{token, expiresAt, ws}`. The token is `v1`, TTL 600, the origin, a\n  32-hex id and a 64-hex MAC, with a new id each time; `?ttl=86400` is ignored (600). Each of\n  `evil.example`, `HTTPS://WASM-VM.PAGES.DEV`, a trailing `/`, `:443`, `null`, a subdomain and no Origin\n  gets 403 with no ACAO. OPTIONS gives 204, POST 405, `/health` 200, `/ws` without Upgrade 426,\n  unknown paths 404.\n- P5/P6/P6b token and Origin at wvrelay: HELD (new coverage). The smoke's `wrongOrigin` used an origin\n  the Worker refuses, so it never reached the container. Here the pages.dev token from Origin\n  `http://localhost:8123`, which the Worker allows and passes on, was closed 1000 by wvrelay. A token\n  with its origin edited, and one with its expiry extended (signature kept), were each closed 1000 with\n  no OPEN_OK.\n- P8 an expired token in a new HELLO: HELD (`long.json` `D_expired` closed 1000). This is the acceptance\n  item \"an expired token\", which the worker's smoke did not run against the deployed URL.\n- P7 one token on two concurrent connections: both get OPEN_OK and HTTP 200. Tokens are not single-use;\n  this is by design, not a finding.\n- P10/P11 protected destinations: HELD. TCP OPEN_FAIL:1 in 33–522 ms for `::1`, `[::1]`, `fd00::1`,\n  `fe80::1`, `::ffff:127.0.0.1`, `::ffff:10.0.0.1`, `0.0.0.0`, `127.1`, `2130706433`, `100.64.0.1`,\n  `172.16.0.1`, `192.168.0.1`, `169.254.169.254`, and hostnames that resolve to private addresses\n  (`127.0.0.1.nip.io`, `10.0.0.1.sslip.io`, `169.254.169.254.nip.io`; the acceptance item that the smoke\n  covered only with `localhost` from /etc/hosts). UDP_OPEN_FAIL:1 for 127.0.0.1, 10.0.0.1,\n  169.254.169.254 and `127.0.0.1.nip.io` on port 53.\n- P14 TCP and UDP happy paths: HELD (`smoke.json`: example.com 200 \"Example Domain\"; DNS id 0x1234,\n  2 answers).\n- P17 secrets: HELD as far as I can check without the value. The task's two commits add no 64-hex string\n  (package-lock excluded) and no `*_HMAC_SECRET=` value. Nothing is in `.wrangler/` or `.dev.vars`, and\n  `web/dist` has no relay or secret string. Worker responses carry only the token (`response-headers.log`,\n  `secret-hygiene.log`). No token value is written in the verifier evidence.\n- COVERAGE of `src/index.js`/`src/token.js`: every branch ran except the 503 path with no secret,\n  which cannot run without changing the deploy (waived: a guard). token.js ran in full.\n- Nit: the claim says the container sleeps \"after 15 minutes\"; `DEFAULT_SLEEP_AFTER` is `'10m'`\n  (`container.js:20`), and an open WebSocket keeps it awake indefinitely (see P16).\n- SUITE: not yet; the refutations come first. Keep `verifier/probe.mjs` and `long.mjs` as the deployed-relay\n  attack harness; the P9 and P16 assertions belong in the next smoke.\n\nCommands: `node deploy/cloudflare-relay/smoke.mjs --base https://wasm-vm-relay.brett-lamy.workers.dev --out evidence/e5-t43a/verifier/smoke.json`;\n`node evidence/e5-t43a/verifier/probe.mjs`; `node evidence/e5-t43a/verifier/long.mjs`. Not checked: the\nCloudflare dashboard, Worker logs and egress billing (no account access); whether the deployed image is\nbyte-for-byte this head's wvrelay; sustained load, and whether the 120 connects/min and 64 MiB limits\ntrip in production (they are only in the code).",
+      "adversarial": "High risk (a public proxy on the user's account). Attack list: token replay after expiry;\ntoken forged with a guessed secret; origin spoofing from a non-browser client (the token\nbinds the origin, but a non-browser can send any Origin — state what bounds abuse then:\nper-token streams/bytes, token lifetime, rate of `/token`); DNS rebinding to a protected\naddress; slowloris-style idle streams; cost exposure (container instances, egress).",
+      "file": "tasks/epic-5-the-window/E5-T43a-public-relay-on-cloudflare.md",
+      "activity": [
+        {
+          "date": "2026-11-27",
+          "commits": 4,
+          "labels": [
+            "E5-T43a refuted: verifier",
+            "E5-T43a implemented: claim and live evidence",
+            "E5-T43a: the wvrelay WebSocket relay on Cloudflare, with tokens for the page's origin",
+            "File E5-T43a-d (network for the Replay desktop through a public relay) and E5-T44 (Tailscale stack on Cloudflare)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-27",
+      "lastActivity": "2026-11-27",
+      "commitCount": 4
+    },
+    {
+      "id": "E5-T43b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Paced idle with networking on — the slirp backend reports when it is idle",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`crates/slirp` (and the core's net seam if needed): the slirp backends report idle exactly when\nno frame is queued for the guest, no timer of the stack is due before the wait would end, and no\noutbound transport has data or a pending event; the next deadline bounds the wait. No other\ndevice changes.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n- Core/slirp tests: idle is reported with an empty, quiet stack; not reported with a queued\n  frame, a due DHCP/ARP/TCP timer, or pending relay data; a reported wait never passes a stack\n  deadline; the existing paced-idle tests (E5-T37a) pass.\n- Browser, committed bundle, Replay desktop with `slirpNet` on (offline provider is enough):\n  idle worker time in run slices within 2 points of the networking-off figure.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "High risk (guest timing). Attack list: a TCP retransmit timer due during a long idle wait; DHCP\nrenewal; relay data arriving while the worker sleeps (it must wake); a guest polling the NIC.",
+      "file": "tasks/epic-5-the-window/E5-T43b-slirp-reports-idle.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T43c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Replay desktop image — the guest brings up eth0 with DHCP and resolves names",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\nGuest image sources only (`tools/replay-desktop/rootfs/`): rcS brings up `lo` and `eth0` and\nruns busybox `udhcpc` in the background with a script that sets the address, the default route\nand `/run/resolv.conf` (the root is read-only; `/etc/resolv.conf` becomes a link to it). It must\nnot delay `REPLAY_DESKTOP_READY` and must be harmless with no network device or no DHCP server.\nThe image is local; E5-T43d publishes it.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nNative CLI with its network backend (`--net`): the guest gets an address, a default route and a\nnameserver; `node -e 'fetch(\"http://example.com\").then(r=>console.log(r.status))'` prints 200\nin the guest; READY's guest uptime within 0.3 s of generation 2's; the E5-T36b and E5-T41a\nacceptances still pass on the image. Without `--net`, READY is unchanged and nothing waits.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Medium risk. Attack list: no DHCP answer (READY must not wait); a lease renewal; the warm\nsnapshot captured before or after the lease (E5-T43d must not resume with a stale address).",
+      "file": "tasks/epic-5-the-window/E5-T43c-replay-desktop-dhcp.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T43d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Publish the Replay desktop online — generation 3 with networking through the public relay",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T43a",
+        "E5-T43b",
+        "E5-T43c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`web/main.js` Replay desktop boot options: `slirpNet` on with the `websocket` provider pointed at\nthe E5-T43a relay, the token fetched from its `/token` (fail closed: no token, no network, the\ndesktop still boots); `?net=0` turns it off. Generation 3 published (E5-T43c's image, a warm\nsnapshot captured with the DHCP lease logic in place), manifest, roadmap row, deploy.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n- Committed bundle and the live site: in the guest's Chrome a typed `https://example.com` loads\n  (title `Example Domain`, read over the serial shell from sway's window title); in the terminal\n  `node -e 'fetch(\"https://example.com\").then(r=>console.log(r.status))'` prints 200.\n- Warm resume still passes; click, key echo and node -e not slower than generation 2 on the\n  same bundle; idle worker time within 2 points of generation 2's (E5-T43b).\n- `?net=0`: no relay request at all.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Medium risk (deployment claim). Attack list: relay down (the desktop must boot and say so);\ntoken expiry during a long session (renewal); the service worker caching `/token`.",
+      "file": "tasks/epic-5-the-window/E5-T43d-replay-desktop-online.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T44",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Tailscale for the Replay desktop — own DERP relay, Headscale control plane and exit node on Cloudflare, as an opt-in provider",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T43d"
+      ],
+      "decomposed_into": [],
+      "estimate": "L",
+      "capstone": false,
+      "goal": "",
+      "boundary": "",
+      "acceptanceContract": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-5-the-window/E5-T44-tailscale-stack-on-cloudflare.md",
+      "activity": [
+        {
+          "date": "2026-11-27",
+          "commits": 1,
+          "labels": [
+            "File E5-T43a-d (network for the Replay desktop through a public relay) and E5-T44 (Tailscale stack on Cloudflare)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-27",
+      "lastActivity": "2026-11-27",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T01a",

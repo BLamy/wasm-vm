@@ -55,6 +55,19 @@ fn parse_host_map(value: Option<&str>) -> Result<BTreeMap<String, String>, Strin
     Ok(out)
 }
 
+/// Per-token relay limits; `WVRELAY_MAX_BYTES_PER_TOKEN` overrides the byte budget (a token's
+/// budget lasts for every session it opened, so a browser desktop needs more than the default).
+fn relay_limits() -> wasm_vm_slirp::ws_proxy::RelayLimits {
+    let mut limits = wasm_vm_slirp::ws_proxy::RelayLimits::default();
+    if let Some(bytes) = std::env::var("WVRELAY_MAX_BYTES_PER_TOKEN")
+        .ok()
+        .and_then(|v| v.trim().parse::<u64>().ok())
+    {
+        limits.max_bytes_per_token = bytes;
+    }
+    limits
+}
+
 fn parse_origins(value: Option<&str>) -> Result<BTreeSet<String>, String> {
     let mut origins = BTreeSet::new();
     let Some(value) = value.filter(|value| !value.trim().is_empty()) else {
@@ -160,7 +173,7 @@ async fn main() {
                 secret.into_bytes(),
                 allowed_origins,
                 host_map,
-                wasm_vm_slirp::ws_proxy::RelayLimits::default(),
+                relay_limits(),
                 protected_networks,
             )
             .await;

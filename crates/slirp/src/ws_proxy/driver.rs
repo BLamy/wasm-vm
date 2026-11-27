@@ -21,7 +21,13 @@
 
 use super::relay_security::{RelayToken, verify_relay_token};
 use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
-use super::{ProtectedNetwork, RelayLimits, RelayUsageRegistry, destinations_are_allowed};
+use super::{
+    ProtectedNetwork, RelayLimits, RelayUsageRegistry, destinations_are_allowed, port_is_allowed,
+};
+
+/// A secured relay connection that has not sent a valid `HELLO` within this long is closed: an
+/// unauthenticated WebSocket must not hold the server (or keep its container awake).
+pub const HELLO_DEADLINE: std::time::Duration = std::time::Duration::from_secs(10);
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -192,9 +198,15 @@ impl RelayServer {
         let (int_tx, mut int_rx) = mpsc::channel::<Internal>(256);
         let mut streams: HashMap<u32, StreamHandle> = HashMap::new();
         let mut udp: HashMap<u32, UdpHandle> = HashMap::new();
+        let hello_deadline = tokio::time::sleep(HELLO_DEADLINE);
+        tokio::pin!(hello_deadline);
 
         loop {
             tokio::select! {
+                () = &mut hello_deadline, if self.security.is_some() && self.authenticated_token.is_none() => {
+                    eprintln!("{{\"event\":\"relay_hello_deadline\"}}");
+                    break;
+                }
                 msg = self.inbound.recv() => match msg {
                     Some(bytes) => {
                         if self.on_ws_message(&bytes, &int_tx, &mut streams, &mut udp).await.is_err() {
@@ -218,6 +230,9 @@ impl RelayServer {
             h.shutdown();
         }
         self.release_all_quota_streams();
+        if let (Some(security), Some(token)) = (&self.security, &self.authenticated_token) {
+            security.usage.close_session(&token.id);
+        }
     }
 
     /// Decode + route one inbound WS message. Returns `Err` on a protocol error (caller closes).
@@ -257,6 +272,7 @@ impl RelayServer {
                 }
             };
             security.usage.record_authentication(true);
+            security.usage.open_session(&verified);
             eprintln!("{{\"event\":\"relay_session_authenticated\"}}");
             self.authenticated_token = Some(verified);
         }
@@ -706,6 +722,7 @@ async fn resolve_destination(
     // Reject a mixed answer in full. Picking only its public member would let a rebinding attacker
     // race the resolver/connect boundary or steer retries onto a protected address.
     if addresses.is_empty()
+        || (require_public && !port_is_allowed(port))
         || (require_public
             && !destinations_are_allowed(
                 &addresses

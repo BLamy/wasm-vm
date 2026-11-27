@@ -11,13 +11,19 @@
   ],
   "durable_objects": { "bindings": [{ "name": "RELAY", "class_name": "Relay" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Relay"] }],
+  // `/token` per client IP: a non-browser can claim the allowed Origin, so the number of tokens
+  // (each a bounded budget) is what bounds it.
+  "ratelimits": [{ "name": "TOKEN_LIMITER", "namespace_id": "4301", "simple": { "limit": 20, "period": 60 } }],
   "vars": {
     // Exact page origins that may get a token (and that wvrelay accepts as the WebSocket Origin).
     "ALLOWED_ORIGINS": "https://wasm-vm.pages.dev,http://127.0.0.1:8125,http://127.0.0.1:8123,http://localhost:8123",
     // Token lifetime in seconds (wvrelay caps it at 900).
     "TOKEN_TTL_SECS": "600",
+    // Bytes a token may carry across every session it opened (wvrelay's default, 64 MiB, is too
+    // little for a browser session that keeps its budget for its whole life).
+    "MAX_BYTES_PER_TOKEN": "2147483648",
     // The Durable Object (and so container) the WebSocket goes to; change it to start a fresh one.
-    "RELAY_INSTANCE": "relay-2"
+    "RELAY_INSTANCE": "relay-3"
   }
   // Secret, set with `wrangler secret put RELAY_HMAC_SECRET`: shared by the Worker (to sign) and
   // the Container (to verify). Never in this file or the repository.

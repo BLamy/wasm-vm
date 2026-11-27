@@ -140,12 +140,32 @@ pub struct RelayUsageRegistry(Arc<Mutex<RegistryState>>);
 #[derive(Debug, Default)]
 struct TokenUsage {
     expiry_unix_secs: u64,
+    /// Live relay sessions that authenticated with this token. While any is open the entry (and
+    /// with it the byte and connect budget) stays, past the token's expiry: a session must not get
+    /// a fresh budget because its token aged out (E5-T43a verifier).
+    sessions: usize,
     active_streams: usize,
     connect_times: VecDeque<u64>,
     bytes: u64,
 }
 
 impl RelayUsageRegistry {
+    /// A relay session authenticated with `token`; pair with [`Self::close_session`].
+    pub fn open_session(&self, token: &RelayToken) {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        let usage = registry.tokens.entry(token.id.clone()).or_default();
+        usage.expiry_unix_secs = usage.expiry_unix_secs.max(token.expiry_unix_secs);
+        usage.sessions += 1;
+    }
+
+    /// The session opened with [`Self::open_session`] ended.
+    pub fn close_session(&self, token_id: &str) {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        if let Some(usage) = registry.tokens.get_mut(token_id) {
+            usage.sessions = usage.sessions.saturating_sub(1);
+        }
+    }
+
     pub fn record_authentication(&self, accepted: bool) {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
         if accepted {
@@ -162,12 +182,13 @@ impl RelayUsageRegistry {
         limits: RelayLimits,
     ) -> Result<(), RelayQuotaError> {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
-        registry
-            .tokens
-            .retain(|_, usage| usage.expiry_unix_secs > now_unix_secs);
+        // An entry goes only once its token has expired AND no session or stream still holds it.
+        registry.tokens.retain(|_, usage| {
+            usage.expiry_unix_secs > now_unix_secs || usage.sessions > 0 || usage.active_streams > 0
+        });
         let outcome = {
             let usage = registry.tokens.entry(token.id.clone()).or_default();
-            usage.expiry_unix_secs = token.expiry_unix_secs;
+            usage.expiry_unix_secs = usage.expiry_unix_secs.max(token.expiry_unix_secs);
             while usage
                 .connect_times
                 .front()
@@ -351,6 +372,14 @@ pub fn destinations_are_public(addresses: &[IpAddr]) -> bool {
 }
 
 /// Apply both the built-in policy and operator-supplied protected CIDRs to the complete DNS answer.
+/// Destination ports the public relay never dials: SMTP, so the relay cannot carry mail from the
+/// operator's account (E5-T43a verifier).
+pub const BLOCKED_PORTS: &[u16] = &[25];
+
+pub fn port_is_allowed(port: u16) -> bool {
+    !BLOCKED_PORTS.contains(&port)
+}
+
 pub fn destinations_are_allowed(addresses: &[IpAddr], protected: &[ProtectedNetwork]) -> bool {
     destinations_are_public(addresses)
         && addresses
@@ -378,6 +407,27 @@ fn ipv4_is_public(ip: Ipv4Addr) -> bool {
 
 fn ipv6_is_public(ip: Ipv6Addr) -> bool {
     let segments = ip.segments();
+    let octets = ip.octets();
+    let low_v4 = Ipv4Addr::new(octets[12], octets[13], octets[14], octets[15]);
+    // Forms that carry an IPv4 address the host may route as that address (E5-T43a verifier):
+    // IPv4-compatible `::a.b.c.d` and NAT64 `64:ff9b::/96` are judged by the embedded address;
+    // 6to4 `2002::/16` likewise (bits 16..48); local-use NAT64 `64:ff9b:1::/48` and Teredo
+    // `2001::/32` are refused outright.
+    let ipv4_compatible =
+        segments[..6].iter().all(|&s| s == 0) && !ip.is_unspecified() && !ip.is_loopback();
+    let nat64 =
+        segments[0] == 0x64 && segments[1] == 0xff9b && segments[2..6].iter().all(|&s| s == 0);
+    if ipv4_compatible || nat64 {
+        return ipv4_is_public(low_v4);
+    }
+    if segments[0] == 0x2002 {
+        return ipv4_is_public(Ipv4Addr::new(octets[2], octets[3], octets[4], octets[5]));
+    }
+    if (segments[0] == 0x64 && segments[1] == 0xff9b && segments[2] == 0x0001)
+        || (segments[0] == 0x2001 && segments[1] == 0x0000)
+    {
+        return false;
+    }
     !(ip.is_unspecified()
         || ip.is_loopback()
         || ip.is_multicast()
@@ -574,6 +624,74 @@ mod tests {
         for allowed in ["1.1.1.1", "8.8.8.8", "2606:4700:4700::1111"] {
             assert!(destination_is_public(allowed.parse().unwrap()), "{allowed}");
         }
+    }
+
+    /// E5-T43a verifier: IPv6 forms that carry an IPv4 address the host may route as that
+    /// address are judged by it; local NAT64 and Teredo are refused; SMTP is never dialled.
+    #[test]
+    fn embedded_ipv4_forms_and_blocked_ports() {
+        for denied in [
+            "::127.0.0.1",
+            "::10.0.0.1",
+            "64:ff9b::7f00:1",
+            "64:ff9b::a9fe:a9fe",
+            "2002:7f00:1::1",
+            "2002:a00:1::1",
+            "64:ff9b:1::1",
+            "2001:0:4136:e378:8000:63bf:3fff:fdd2",
+        ] {
+            assert!(!destination_is_public(denied.parse().unwrap()), "{denied}");
+        }
+        for allowed in ["::8.8.8.8", "64:ff9b::808:808", "2002:808:808::1"] {
+            assert!(destination_is_public(allowed.parse().unwrap()), "{allowed}");
+        }
+        assert!(!port_is_allowed(25));
+        for port in [80, 443, 53, 587, 465, 8080] {
+            assert!(port_is_allowed(port), "{port}");
+        }
+    }
+
+    /// E5-T43a verifier: a session keeps its token's budget past the token's expiry; the entry
+    /// is not replaced by a fresh one, and it goes only when no session or stream holds it.
+    #[test]
+    fn a_session_keeps_its_budget_after_the_token_expires() {
+        let registry = RelayUsageRegistry::default();
+        let limits = RelayLimits {
+            max_concurrent_streams: 8,
+            max_connects_per_minute: 100,
+            max_bytes_per_token: 100,
+        };
+        let token = RelayToken {
+            expiry_unix_secs: 1_000,
+            origin: "https://vm.example".into(),
+            id: "t1".into(),
+        };
+        registry.open_session(&token);
+        registry.reserve_stream(&token, 900, limits).unwrap();
+        registry.record_bytes("t1", 90, limits).unwrap();
+        registry.release_stream("t1");
+        // Long after expiry, the same session opens another stream: same entry, same budget.
+        registry.reserve_stream(&token, 5_000, limits).unwrap();
+        assert_eq!(
+            registry.record_bytes("t1", 20, limits),
+            Err(RelayQuotaError::ByteLimit),
+            "90 + 20 > 100"
+        );
+        registry.record_bytes("t1", 10, limits).unwrap();
+        registry.release_stream("t1");
+        // Session over: the expired entry goes at the next reservation of any token.
+        registry.close_session("t1");
+        let other = RelayToken {
+            expiry_unix_secs: 9_000,
+            origin: "https://vm.example".into(),
+            id: "t2".into(),
+        };
+        registry.reserve_stream(&other, 5_001, limits).unwrap();
+        assert_eq!(
+            registry.record_bytes("t1", 1, limits),
+            Err(RelayQuotaError::ByteLimit),
+            "t1's entry is gone"
+        );
     }
 
     #[test]

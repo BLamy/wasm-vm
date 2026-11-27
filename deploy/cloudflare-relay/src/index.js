@@ -18,6 +18,7 @@ export class Relay extends Container {
     this.envVars = {
       WVRELAY_HMAC_SECRET: env.RELAY_HMAC_SECRET,
       WVRELAY_ALLOWED_ORIGINS: env.ALLOWED_ORIGINS,
+      WVRELAY_MAX_BYTES_PER_TOKEN: String(env.MAX_BYTES_PER_TOKEN || "2147483648"),
     };
   }
 }
@@ -39,6 +40,10 @@ export default {
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...cors(origin), "Access-Control-Allow-Methods": "GET", "Access-Control-Max-Age": "600" } });
       if (request.method !== "GET") return new Response("method not allowed", { status: 405, headers: cors(origin) });
       if (!env.RELAY_HMAC_SECRET) return new Response("relay not configured", { status: 503, headers: cors(origin) });
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      if (env.TOKEN_LIMITER && !(await env.TOKEN_LIMITER.limit({ key: ip })).success) {
+        return new Response("too many tokens", { status: 429, headers: { ...cors(origin), "Retry-After": "60" } });
+      }
       const t = await issueToken(env.RELAY_HMAC_SECRET, origin, Math.floor(Date.now() / 1000), Number(env.TOKEN_TTL_SECS || 600));
       const ws = `${url.protocol === "https:" ? "wss:" : "ws:"}//${url.host}/ws`;
       return Response.json({ ...t, ws }, { headers: cors(origin) });

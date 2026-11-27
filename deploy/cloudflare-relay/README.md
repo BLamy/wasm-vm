@@ -17,3 +17,10 @@ behind a Worker.
 Deploy: `bash deploy/cloudflare-relay/deploy.sh` (`--secret` the first time, to generate the
 shared `RELAY_HMAC_SECRET`; it is sent to Cloudflare once and never stored). Check:
 `node deploy/cloudflare-relay/smoke.mjs --base https://wasm-vm-relay.<account>.workers.dev`.
+
+Abuse bounds (round 2, after the first verifier): a token's byte and connect budget lasts for
+every session it opened, past the token's expiry (`MAX_BYTES_PER_TOKEN`, 2 GiB); a connection
+that has not authenticated within 10 seconds is closed; SMTP (port 25) is never dialled; IPv6
+forms that embed an IPv4 address are judged by it; `/token` is rate-limited per client IP (20 a
+minute, approximate per Cloudflare location). Check: `node deploy/cloudflare-relay/hardening.mjs
+--base https://wasm-vm-relay.<account>.workers.dev`.

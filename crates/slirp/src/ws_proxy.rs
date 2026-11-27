@@ -19,14 +19,14 @@ pub mod stream;
 #[cfg(feature = "native")]
 pub mod ws_adapter;
 #[cfg(feature = "native")]
-pub use driver::{RelayConnectionSecurity, RelayServer};
+pub use driver::{HELLO_DEADLINE, RelayConnectionSecurity, RelayServer};
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 #[cfg(feature = "native")]
 pub use relay_security::{
-    ProtectedNetwork, RelayLimits, RelayMetrics, RelayQuotaError, RelayToken, RelayTokenError,
-    RelayUsageRegistry, destinations_are_allowed, destinations_are_public, issue_relay_token,
-    verify_relay_token,
+    BLOCKED_PORTS, ProtectedNetwork, RelayLimits, RelayMetrics, RelayQuotaError, RelayToken,
+    RelayTokenError, RelayUsageRegistry, destinations_are_allowed, destinations_are_public,
+    issue_relay_token, port_is_allowed, verify_relay_token,
 };
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
