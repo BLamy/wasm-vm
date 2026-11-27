@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: in-progress
+status: implemented
 depends_on: []
 estimate: S
 risk: high
@@ -167,3 +167,44 @@ Commands: `node deploy/cloudflare-relay/smoke.mjs --base https://wasm-vm-relay.b
 Cloudflare dashboard, Worker logs and egress billing (no account access); whether the deployed image is
 byte-for-byte this head's wvrelay; sustained load, and whether the 120 connects/min and 64 MiB limits
 trip in production (they are only in the code).
+
+### 2026-11-27 — worker — round 2 claim (head `8b3a524bf`)
+
+The refutation is right: wvrelay checked the token only at HELLO and dropped an expired token's
+usage entry, so the next stream started a fresh budget; and nothing closed a connection that
+never authenticated. Fixing that needs wvrelay itself, so this round changes it (the task's
+"wvrelay unchanged" no longer holds; the change is confined to `crates/slirp/src/ws_proxy/` and
+`wvrelay.rs`'s limit setting).
+
+**The bound, as it now is:** a token authorizes opening sessions; its budget (streams, connects
+per minute, bytes — 2 GiB here, `WVRELAY_MAX_BYTES_PER_TOKEN`) is shared by every session it
+opened and lasts as long as any of them, past the token's expiry. A browser desktop keeps one
+session for its life on one token (the client has no reconnect), so a session is not cut at
+expiry — that would take a user's network away after ten minutes. What bounds a non-browser
+claiming the allowed Origin is then the number of tokens it can get: `/token` is rate-limited per
+client IP (Cloudflare's rate-limiting binding, 20 a minute; approximate per location).
+
+**Changed** (commit `8b3a524bf`):
+- `relay_security.rs`: `open_session`/`close_session`; an entry goes only once expired with no
+  session or stream holding it; `BLOCKED_PORTS = [25]`; IPv4-compatible `::a.b.c.d`, NAT64
+  `64:ff9b::/96` and 6to4 `2002::/16` judged by the IPv4 they carry; `64:ff9b:1::/48` and Teredo
+  refused.
+- `driver.rs`: `HELLO_DEADLINE` 10 s for a secured connection; session open/close accounted.
+- `wvrelay.rs`: `WVRELAY_MAX_BYTES_PER_TOKEN`.
+- Worker: `TOKEN_LIMITER`; `MAX_BYTES_PER_TOKEN` to the container; `RELAY_INSTANCE` `relay-3`.
+
+**Tests**: `cargo test -p wasm-vm-slirp --features native --lib` 268 passed (new:
+`embedded_ipv4_forms_and_blocked_ports`, `a_session_keeps_its_budget_after_the_token_expires`,
+`secure_relay_closes_a_connection_that_never_authenticates`); the wvrelay smoke and token-rejection
+integration tests pass; clippy clean.
+
+**Live** (redeployed): `smoke.mjs` passes again (`smoke-live-r2.json`). `hardening.mjs`
+(`hardening-live.json`): `aspmx.l.google.com:25`, `::127.0.0.1`, `64:ff9b::7f00:1` and
+`2002:7f00:1::1` each OPEN_FAIL within 250 ms, `example.com:80` opens; a connection that sends no
+HELLO is closed after 10.2 s (code 1000). `/token`: 26 in a row all 200 (the binding counts
+approximately); 80 in a row: 40 and then 33 got 200, the rest 429 (`token-rate-80.json`).
+
+**Limits**: the byte budget is per token, not per user — 2 GiB a token, and roughly 20-40 tokens a
+minute per IP. The container sleeps after `sleepAfter` (set to 15 minutes in the class) with no
+requests; an open WebSocket keeps it awake. Container and egress cost is the account's. A session
+past its token's expiry keeps working by design (above).
