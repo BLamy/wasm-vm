@@ -502,6 +502,6 @@ if __name__ == "__main__":
     ap.add_argument("--in", dest="inp", default="/in")
     ap.add_argument("--out", default="/out")
     ap.add_argument("--keep-debs", action="store_true", help="dev loop: keep/reuse /scratch/debs")
-    ap.add_argument("--node-sha256", default="0a1942ad5f7c2e751fa619568809c7b5d9b9b84e6b504d326f814efdc4ad4956")
+    ap.add_argument("--node-sha256", default="8c19cbb6c9b1f3b2cca4685e91952e314d8a5825b2a0dfc56bdf748211d7c320")  # E5-T45a
     a = ap.parse_args()
     stage_phase(a) if a.phase == "stage" else pack_phase(a)
