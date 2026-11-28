@@ -1,0 +1,6 @@
+000000000002d54a t fast_composite_over_8888_8888
+000000000002d690 t fast_composite_src_x888_8888
+000000000002db8a t fast_composite_add_8888_8888
+000000000002dc8c t fast_composite_add_1_1
+000000000002dd42 t fast_path_fill
+000000000002e03e t fast_fetch_r5g6b5

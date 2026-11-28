@@ -3,7 +3,7 @@ id: E4-T40c1
 epic: 4
 title: Measure how concentrated the Replay desktop's interactive work is in code pages
 priority: 0.38769
-status: implemented
+status: verified
 depends_on: [E4-T40g]
 estimate: S
 risk: low
@@ -59,3 +59,26 @@ mostly kernel (69 %: faulting in the 117 MB binary and the snapshot).
 Limits: pages are virtual (a library page shared by several processes counts once per address, and two processes'
 different code at the same address count together — the libgobject/libpixman alias above was resolved by symbols);
 sampling is 1 in about 1,024.
+
+### 2026-11-28 — verifier — VERDICT: verified
+
+Low risk: direct-result inspection at head `3a46f316d` (8125 serves this head's web/dist: sha256 of loader.js, wasm,
+sw.js equal local). Predictions written first: `evidence/e4-t40c1/verifier/predictions.md`.
+- P1 profiling off by default — HELD. `profiling: false` (crates/core/src/lib.rs:1085); armed only via
+  `set_profiling`/`set_host_timer`, reached from `?profile=1` (web/loader.js:955, web/main.js:1316, test-only
+  web/desktop-resize.js:51) or CLI `--profile`; no production caller passes `profile: true`. With it off the new
+  `&& !self.profiling` term is `&& true`, so `turbo_ok` is unchanged; `getProfile(topK)` defaults to the old 10.
+  The acceptance's "within noise with and without the profiler armed" was not measured by the worker and cannot
+  hold literally (armed disables turbo by design); read as "off path unchanged", which holds by inspection.
+- P2 concentration rerun — HELD. `node tools/perf/code-page-concentration.mjs --url http://127.0.0.1:8125 --app
+  /app.html --out evidence/e4-t40c1/verifier/concentration.json`: click 353,029 samples/2,497 pages, top 1/10/100/1000
+  42.1/64.1/81.4/98.4 %, kernel 8.6 %; type 158,148/1,690, 23.9/50.3/83.3/99.3 %, kernel 34.2 %; node 233,548/1,300,
+  5.1/35.1/83.6/99.8 %, kernel 76.2 % (claim: 82.4/83.5/84.7 % at top 100). Top click page 7fffadd3e, 148,688 samples.
+- P3 attribution — HELD. `hot-regions-in-page.mjs ... 7fffadd3e` (verifier/hot-regions.log): +0x5c0 58,778,
+  +0xdc0 46,406, +0x640 43,478, +0xc40 773. target/e4-t40c1-libpixman.so and the debug file share build id
+  bb3d57b21ce79c6010f9560d0c25d2f3a50aacdf; PT_LOAD offset 0 = vaddr 0; `riscv64-linux-gnu-nm` (verifier/pixman-symbols.txt):
+  0x2d5c0, 0x2d640 in `fast_composite_over_8888_8888` [0x2d54a,0x2d690); 0x2ddc0 in `fast_path_fill` [0x2dd42,0x2e03e).
+- P4 owner — HELD. `whose-page.mjs` (verifier/whose-page.log): `83 sway r-xp libpixman-1.so.0.42.2 +0x2d000`, aliased
+  with chrome's libgobject-2.0 +0x13000 (the claim's stated virtual-page caveat). Not independently checked: that the
+  guest's libpixman file has the same build id as the target/ copy.
+- SUITE: discard — measurement with sampling noise; the curves are evidence, not a stable assertion.
