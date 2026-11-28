@@ -144,7 +144,9 @@ async function online() {
   const nodeStart = Date.now();
   await typeText(page, command);
   await page.keyboard.press("Enter", { delay: 40 });
-  await page.waitForFunction((re) => new RegExp(re).test(window.__e5t43fSerial), `E5T43F_${nonce} \\d+`, { timeout: 10 * 60_000, polling: 1000 });
+  const enterAt = Date.now();
+  await page.waitForFunction((re) => new RegExp(re).test(window.__e5t43fSerial), `E5T43F_${nonce} \\d+`, { timeout: 10 * 60_000, polling: 250 });
+  result.nodeAnswerAfterEnterMs = Date.now() - enterAt;
   const serial = await page.evaluate(() => window.__e5t43fSerial);
   result.nodeLine = new RegExp(`E5T43F_${nonce} \\d+`, "u").exec(serial)[0];
   result.nodeAnswerAfterTypingMs = Date.now() - nodeStart;

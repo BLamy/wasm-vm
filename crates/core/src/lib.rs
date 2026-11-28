@@ -676,6 +676,11 @@ pub struct Machine {
     /// epoch; cleared at every run entry (the host may have changed device state in between).
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     fabric_idle_epoch: Option<u64>,
+    /// E5-T43h: `Some(epoch)` when the last full boundary sync found every fabric device idle
+    /// except the network, which was busy only waiting on host-delivered I/O
+    /// (`NetState::waiting_on_host`). Cleared with `fabric_idle_epoch`.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    fabric_host_io_epoch: Option<u64>,
     /// Test-only control: force every boundary through the full device sync (the pre-quiescence
     /// behaviour) so equivalence tests can compare both paths.
     #[cfg(all(test, not(feature = "zicsr-stub")))]
@@ -847,6 +852,11 @@ fn chain_edge(terminator: Option<crate::decode::Instr>, code: jit::ExitCode) -> 
 /// pass retires 257-1024 instructions, and every pass that handled an interrupt more than 4096.
 #[cfg(not(feature = "zicsr-stub"))]
 const IDLE_SPIN_INSTRS: u64 = 2048;
+/// E5-T43h: the longest the host sleeps at a time while the guest waits and an open network
+/// connection may deliver a reply (see `paced_wait_holds_but_for_host_io`): short enough that a
+/// reply waits at most this long, long enough that an idle desktop with a keep-alive connection
+/// does not keep a core busy.
+const HOST_IO_IDLE_NAP_NANOS: u64 = 4_000_000;
 
 /// The decoded-block cache capacities a host may select with
 /// [`Machine::set_decoded_cache_entries`] (slots; each resident block also owns its ops).
@@ -1130,6 +1140,7 @@ impl Machine {
             last_time_jump: None,
             fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
             fabric_idle_epoch: None,
+            fabric_host_io_epoch: None,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
             fabric_fast_path_off: false,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
@@ -3648,6 +3659,7 @@ impl Machine {
         self.sync_plic();
         self.drain_code_writes();
         self.fabric_idle_epoch = None;
+        self.fabric_host_io_epoch = None;
         Ok(ready)
     }
 
@@ -5549,18 +5561,28 @@ impl Machine {
         let holds = self.paced_wait_holds();
         #[cfg(feature = "zicsr-stub")]
         let holds = false;
+        // E5-T43h: a wait that holds but for the network waiting on host-delivered I/O is taken
+        // too, in short naps: the host must come back soon to deliver what arrives.
+        #[cfg(not(feature = "zicsr-stub"))]
+        let host_io = !holds && self.paced_wait_holds_but_for_host_io();
+        #[cfg(feature = "zicsr-stub")]
+        let host_io = false;
         let ticks = match &self.idle_pacer {
-            Some(pacer) if holds => pacer.ticks_until(deadline),
+            Some(pacer) if holds || host_io => pacer.ticks_until(deadline),
             _ => 0,
         };
         if ticks == 0 {
             self.idle_wake_pending = false;
             return None;
         }
-        Some(
-            (u128::from(ticks) * 1_000_000_000 / u128::from(platform::virt::TIMEBASE_FREQ_HZ))
-                .min(u128::from(u64::MAX)) as u64,
-        )
+        let nanos = (u128::from(ticks) * 1_000_000_000
+            / u128::from(platform::virt::TIMEBASE_FREQ_HZ))
+        .min(u128::from(u64::MAX)) as u64;
+        Some(if host_io {
+            nanos.min(HOST_IO_IDLE_NAP_NANOS)
+        } else {
+            nanos
+        })
     }
 
     /// E5-T37a: forget a recorded idle wait and the wake that goes with it.
@@ -5583,6 +5605,17 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     fn paced_wait_holds(&self) -> bool {
         self.fabric_idle_epoch == Some(self.fabric_epoch.get())
+            && self.fresh_mip() & self.hart.csr.mie_bits() == 0
+    }
+
+    /// E5-T43h: [`Self::paced_wait_holds`], except that the network may be busy waiting on I/O
+    /// the host delivers between run calls (an open connection's next reply). The host can then
+    /// sleep, but only for [`HOST_IO_IDLE_NAP_NANOS`] at a time, so that a reply is picked up
+    /// promptly; without this the run loop spins at full speed for as long as a connection is
+    /// open (Chrome keeps idle keep-alive connections for minutes).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn paced_wait_holds_but_for_host_io(&self) -> bool {
+        self.fabric_host_io_epoch == Some(self.fabric_epoch.get())
             && self.fresh_mip() & self.hart.csr.mie_bits() == 0
     }
 
@@ -7162,8 +7195,13 @@ impl Machine {
         // E3-T13: service virtio-net kicks (and async backend rx frames) the same
         // boundary, so tx completions + delivered echoes interrupt promptly. The backend is
         // polled every boundary (it may be event-driven) unless it reports `NetBackend::idle`.
-        if let Some((state, rx_vq, tx_vq)) = net {
-            idle &= dev::virtio::net::service(&virtio[1].0, rx_vq, tx_vq, state, bus);
+        // E5-T43h: the network's result is folded in at the end, so the sync can also tell
+        // "every other device idle, the network only waiting on the host" apart.
+        let mut net_busy_waiting_on_host = None;
+        if let Some((state, rx_vq, tx_vq)) = net
+            && !dev::virtio::net::service(&virtio[1].0, rx_vq, tx_vq, state, bus)
+        {
+            net_busy_waiting_on_host = Some(state.borrow().waiting_on_host());
         }
         // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
         // the CRNG seeds without waiting on the run loop.
@@ -7268,7 +7306,11 @@ impl Machine {
         // Finalize derived lifecycle cancellation after queue service, before any paused callback.
         self.sync_session_devices();
         // Idle devices stay idle until a fabric MMIO access (epoch bump) or a new run call.
+        let others_idle = idle;
+        let idle = others_idle && net_busy_waiting_on_host.is_none();
         self.fabric_idle_epoch = idle.then(|| self.fabric_epoch.get());
+        self.fabric_host_io_epoch = (others_idle && net_busy_waiting_on_host == Some(true))
+            .then(|| self.fabric_epoch.get());
     }
 
     /// E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst of
@@ -7496,6 +7538,7 @@ impl Machine {
         // The host may have pushed input, resized a display, restored a snapshot, or otherwise
         // changed device state since the last run: the first boundary performs a full sync.
         self.fabric_idle_epoch = None;
+        self.fabric_host_io_epoch = None;
         // Run-invariant dispatch configuration: only host calls between runs change these, so
         // read them once instead of per retired instruction.
         #[cfg(not(feature = "zicsr-stub"))]
@@ -7548,7 +7591,9 @@ impl Machine {
             // through the guest's idle loop. If it does not hold, the guest is not waiting.
             #[cfg(not(feature = "zicsr-stub"))]
             if self.idle_wait_deadline != u64::MAX {
-                if self.paced_wait_holds() {
+                // E5-T43h: also when only an open connection's host I/O is pending: the host
+                // takes the wait in short naps (`take_idle_wait_nanos`).
+                if self.paced_wait_holds() || self.paced_wait_holds_but_for_host_io() {
                     return RunOutcome::MaxInstrs;
                 }
                 // The guest goes straight on in this run call: no host time passed that a wake

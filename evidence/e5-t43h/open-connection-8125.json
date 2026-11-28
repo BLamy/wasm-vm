@@ -1,0 +1,12 @@
+{
+  "base": "http://127.0.0.1:8125",
+  "noConnection": {
+    "inSlicePct": 1.7,
+    "guestSecondsPerSecond": 1
+  },
+  "tcp": "1",
+  "openConnection": {
+    "inSlicePct": 99.9,
+    "guestSecondsPerSecond": 0.98
+  }
+}

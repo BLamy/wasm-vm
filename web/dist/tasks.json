@@ -24913,15 +24913,16 @@
       "activity": [
         {
           "date": "2026-11-28",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "E5-T43h: the paced clock keeps real time while the guest waits with a connection open",
             "E5-T43f implemented: claim; E5-T43h filed (paced clock with an open connection)"
           ]
         }
       ],
       "firstActivity": "2026-11-28",
       "lastActivity": "2026-11-28",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T44",
