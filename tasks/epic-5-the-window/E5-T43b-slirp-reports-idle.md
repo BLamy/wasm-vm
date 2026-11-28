@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: implemented
+status: evidence-needed
 depends_on: []
 estimate: S
 risk: high
@@ -170,3 +170,91 @@ nothing and is not idle).
 `tools/replay-desktop` mentions it) and its page boots with `fileTransfer: false`, so E5-T43d's
 idle figure does not depend on agent connections. Still not claimed: idle while the guest holds
 an open outbound connection (by design not idle).
+
+### 2026-11-27 — verifier (round 2) — VERDICT: evidence-needed
+
+VERDICT: evidence-needed
+
+Head `7ccf608b8` (change `8a7bb4881`, build id `9ef09b030`). I wrote the predictions first:
+`evidence/e5-t43b/verifier-r2/predictions.md`. I ran the attacks and mutants in a scratch
+`git archive` copy of HEAD (attack source: `attack_tests.rs`, output: `attacks.log`; mutants:
+`mutate.py`, `mutants.log`). The live tree was not changed. I found no reachable state where
+`idle()` is true and a later `poll()` changes anything, so the product claim stands. Two parts of
+the claim are not proven: one half of the file-transfer condition has no test, and the stated
+reason the local-HTTP case is not idle is wrong.
+
+- **R10 condition pinning: file-transfer slot 1 — FAILED (sufficiency).** Prediction: removing
+  any part of the five conditions makes the slirp lib suite fail. Observed: mutant
+  `I5-file_tcp_slot0_only` (`(0..FILE_TRANSFER_SLOTS)` → `(0..1)`) passes all 287 tests
+  (`mutants.log`). The isolating state can be reached: slot 0 established, a second SYN lands on
+  slot 1, then slot 0 closes cleanly. That leaves the sockets in `(Listen, SynReceived)`. Real code:
+  `idle()=false`. Under the mutant: `idle()=true`, and polls over 5 s retransmit 2 frames, which
+  breaks the contract (`attacks.log`, `r2_slot1_isolated_half_open`). The claim's sentence
+  "removing any one makes `cargo test -p wasm-vm-slirp --lib` fail" is false for slot 1. The other
+  mutants hold: I1, I2, I3, I4, I6 and E1/E2 (the `pending_dns` and flow terms of
+  `external_io_pending`) each fail the suite. Demand: promote a test that puts slot 1 out of
+  `Listen` while slot 0 is listening (for example `r2_slot1_isolated_half_open`) and fails under
+  `I5`.
+- **R7 local HTTP rationale — FAILED (claim and code comment).** Prediction: the claim "an
+  attached local HTTP service is reported pending by `external_io_pending`" is false. Observed:
+  with the service attached and no connection, `external_io_pending=false`. `idle()` is false only
+  because `register_http` (`stack.rs:405-408`) aborts the DNS-over-TCP and both file-transfer
+  sockets, and HTTP-mode `service` never relistens them. They stay `Closed`, and after 120 s of
+  quiet polls 0 frames have been sent and `idle()` is still false (`r2_local_http_why_not_idle`).
+  So `idle_condition_local_http` passes because of the `Listen` conditions, and a backend with
+  local HTTP is never idle. That is conservative: it breaks no contract, and the Replay desktop
+  does not use local HTTP. But the reason given in the `idle` doc comment
+  (`local_backend.rs:1096-1097`) and in the round-2 claim is wrong. Also, `idle()` never looks at
+  the four HTTP slot sockets (they have LastAck/FinWait/timeout timers). Only the same `Closed`
+  sockets hide this. Demand: correct the comment and the claim to the real reason. Either keep
+  the reasoning on record ("local HTTP mode closes the internal listeners, so it is never idle"),
+  or restore an explicit `local_http.is_none()` term. Then point the test at that reason, for
+  example by asserting `external_io_pending()==false` and `idle()==false` together.
+- **R3/R4 dropped flow and DNS conditions are redundant — HELD.** `flows` and `udp_flows` are
+  inserted only with a connector and after the manager admits the key. The manager drops a key
+  only in `teardown`, which removes all three. `pending_dns` is a literal term of
+  `external_io_pending`. Scripted NAT TCP lifecycle (connecting → remote data → remote close → host
+  FIN → guest FIN → TimeWait teardown): not idle while a flow exists; after teardown it is idle,
+  and that holds over 120 s of polls (`r2_contract_nat_tcp_lifecycle`).
+- **R5/R6 dropped DNS-over-TCP and file buffers are redundant — HELD.** DNS-over-TCP partial
+  message (5 bytes) then guest FIN: `dns_tcp_rx=5` in `LastAck` with `idle()=false`. After the
+  final ACK the buffer is cleared and the backend is idle, which holds. File slot: an RST in
+  `SynReceived` returns it to `Listen`, and idle holds. Garbage input → error frame and host close
+  → `FinWait1` → guest FIN → `TimeWait`: not idle throughout. The 2MSL timer drains it to `Listen`
+  within 30 s of polls, with `file_connections` empty, `file_tcp_tx` empty, and idle holding
+  (`r2_contract_dns_tcp_and_file_lifecycles`). At each of the 9 idle points (ARP, UDP DNS answered,
+  the closes above, NAT teardown), 240 polls over 120 s produced no frame and `idle()` stayed true.
+- **R2 round-1 P3/P4 — HELD.** The promoted tests assert the contract and pass. Mutant I4 fails
+  them.
+- **R9 idle false forever on the Replay desktop — HELD, by reading.** The browser always
+  attaches a DNS service (`crates/wasm/src/lib.rs:3495`), so `poll()` always runs `service`, and
+  TimeWait/LastAck timers drain back to `Listen`. The only state that is quiet and never idle is
+  the one the claim already excludes (an open outbound flow, or a bound file/DNS connection).
+- **R11 no file agent on the Replay desktop — HELD.** `tools/replay-desktop/rootfs/etc/init.d/rcS`
+  starts no file agent, and the desktop boot options (`web/main.js` replay-desktop and accelerated
+  paths) set `fileTransfer: false` (and today `slirpNet: false`). Note: `fileTransfer:false` only
+  detaches the host UI. The browser still builds the backend with file-transfer listeners
+  (`BrowserFileTransfers::new`), so the agent's absence from the image is what keeps the slots in
+  `Listen`.
+- **R1 suites — HELD.** `cargo test -p wasm-vm-slirp --lib`: 287 passed, 1 ignored (the diff adds
+  no `#[ignore]`). Core `paced`: 25 passed. Core `idle`: 30 passed. `cargo clippy -p wasm-vm-slirp
+  --lib --tests -D warnings` and `cargo fmt --check` are clean, and so is `cargo check -p
+  wasm-vm-wasm --target wasm32-unknown-unknown`. `web/gpu-checkpoint-build.js` equals the dist copy,
+  and its SHA-256 and byte count match `web/dist/pkg/wasm_vm_wasm_bg.wasm` (`suites.log`).
+- **Informational, no demand (pre-existing code, not in this diff).** Mutants E3 (`dns.pending()`)
+  and E4 (`active_transfers()`) survive. E4 is redundant with the file `Listen` condition. E3 is
+  reachable without `pending_dns` only for a query whose TCP generation was reset, and its
+  completion is then dropped without a frame.
+- **Not checked:** a machine-level run (core loop or wasm) showing that idle waits are taken with a
+  slirp backend attached (carried from round 1); a late DNS completion for a reset DNS-over-TCP
+  generation under a service whose `pending()` is false; DHCP renewal under a long wait.
+- SUITE: none promoted (the task is not verified). `attack_tests.rs` (`r2_contract`, the
+  lifecycle, NAT and slot-1 tests) is ready to promote once the two gaps close.
+
+The response needs only a test, a comment and the claim text, with no runtime semantics, so only
+the slirp lib suite and the I5 mutant need rerunning. Carry R1–R6, R8, R9 and R11 forward.
+
+Commands: `cargo test -p wasm-vm-slirp --lib`; `cargo test -p wasm-vm-core --lib paced|idle`;
+`cargo clippy -p wasm-vm-slirp --lib --tests -- -D warnings`; `cargo check -p wasm-vm-wasm --target
+wasm32-unknown-unknown`; in the scratch copy: `cargo test -p wasm-vm-slirp --lib r2_ -- --nocapture
+--test-threads=1` and the mutant loop over `mutate.py` ids.

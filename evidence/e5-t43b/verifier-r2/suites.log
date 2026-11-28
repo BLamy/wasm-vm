@@ -1,0 +1,11 @@
+test ws_proxy::ws_adapter::ws_adapter_tests::a_finished_connection_is_dropped_even_if_the_client_never_answers_close ... ok
+
+test result: ok. 287 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 20.05s
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 486 filtered out; finished in 1.32s
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 481 filtered out; finished in 3.84s
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.33s
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.33s
+fmt-exit=0
