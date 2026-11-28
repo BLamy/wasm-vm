@@ -3,11 +3,12 @@ id: E4-T40c
 epic: 4
 title: Compiled tier for the turbo loop — region-sized units (planning parent)
 priority: 0.38769
-status: pending
+status: cancelled
 depends_on: [E4-T40b]
 estimate: L
 risk: high
 capstone: false
+decomposed_into: [E4-T40c1, E4-T40c2, E4-T40c3, E4-T40c4]
 ---
 
 ## Why this exists
@@ -82,3 +83,8 @@ have to come from Chrome's software raster or from sway's per-event work.
 default, interleaved, two loads a side (`evidence/e4-t40c-tiering-probe/`): click 304.6, 296.0 vs 238.4, 238.3 ms;
 node -e 1810, 1819 vs 1345, 1347 ms; MIPS during clicks 79.5, 78.4 vs 95.3, 96.8. The default tiering already runs
 the turbo loop at its best; forcing TurboFan is slower. The interpreter's per-instruction cost is the code itself.
+
+## Split (2026-11-28)
+
+E4-T40c1 measure, E4-T40c2 page compiler (native, differential), E4-T40c3 turbo-loop integration (native
+equivalence), E4-T40c4 browser install, measurement and the default. Each is S with one acceptance command.
