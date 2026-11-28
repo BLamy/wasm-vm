@@ -4491,10 +4491,13 @@ impl WasmLinux {
     /// E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
     /// collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
     /// `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
+    /// `top_k` (E4-T40c1) bounds the regions returned (default 10).
     #[wasm_bindgen(js_name = getProfile)]
-    pub fn get_profile(&self) -> Result<JsValue, JsError> {
+    pub fn get_profile(&self, top_k: Option<u32>) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        let report = inner.machine.prof_report(inner.machine.prof_total_ns(), 10);
+        let report = inner
+            .machine
+            .prof_report(inner.machine.prof_total_ns(), top_k.unwrap_or(10) as usize);
         let obj = js_sys::Object::new();
         let set = |k: &str, v: &JsValue| {
             let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);

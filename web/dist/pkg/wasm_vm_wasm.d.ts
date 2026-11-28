@@ -282,8 +282,9 @@ export class WasmLinux {
      * E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
      * collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
      * `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
+     * `top_k` (E4-T40c1) bounds the regions returned (default 10).
      */
-    getProfile(): any;
+    getProfile(top_k?: number | null): any;
     gpuCommandTrace(): string;
     /**
      * Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
@@ -1052,7 +1053,7 @@ export interface InitOutput {
     readonly wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_fileTransferStatus: (a: number) => [number, number, number, number];
     readonly wasmlinux_finishFileDownload: (a: number, b: number, c: number) => [number, number];
-    readonly wasmlinux_getProfile: (a: number) => [number, number, number];
+    readonly wasmlinux_getProfile: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_guestClockState: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;

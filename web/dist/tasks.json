@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 594,
-    "total": 820
+    "verified": 595,
+    "total": 824
   },
   "epics": [
     {
@@ -16240,11 +16240,16 @@
       "epicKey": "4",
       "title": "Compiled tier for the turbo loop — region-sized units (planning parent)",
       "priority": null,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E4-T40b"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E4-T40c1",
+        "E4-T40c2",
+        "E4-T40c3",
+        "E4-T40c4"
+      ],
       "estimate": "L",
       "capstone": false,
       "goal": "",
@@ -16266,15 +16271,134 @@
         },
         {
           "date": "2026-11-28",
-          "commits": 1,
+          "commits": 3,
           "labels": [
-            "E4-T40c: profile and guest CPU split after E4-T40f/g"
+            "desktop-latency: --chrome-args; E4-T40c: V8 tiering is not the limit (no-liftoff is slower)",
+            "E4-T40c: profile and guest CPU split after E4-T40f/g",
+            "E4-T40c split into E4-T40c1-c4 (measure, page compiler, turbo integration, browser)"
           ]
         }
       ],
       "firstActivity": "2026-11-24",
       "lastActivity": "2026-11-28",
+      "commitCount": 4
+    },
+    {
+      "id": "E4-T40c1",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Measure how concentrated the Replay desktop's interactive work is in code pages",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E4-T40g"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\nMeasurement only. The hot-PC profiler (`prof::ProfStats`, 64-byte regions, 1-in-~1024 sampling) gains a\ntop-K argument on the worker path (the page talks to the whole-machine worker, where `getProfile` is not\nreachable today), and a script runs the desktop's click, key echo and `node -e` scenarios with it armed,\nthen reports the cumulative share of samples covered by the hottest 1, 10, 100, 1000 physical code pages,\nand how many distinct pages are touched.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`node tools/perf/code-page-concentration.mjs --url http://127.0.0.1:8125 --app /app.html` writes the curves for the\nthree scenarios; profiling off changes nothing measurable (desktop-latency with and without the profiler armed,\nidle and click within noise).\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-4-acceleration/E4-T40c1-desktop-code-page-concentration.md",
+      "activity": [
+        {
+          "date": "2026-11-28",
+          "commits": 2,
+          "labels": [
+            "E4-T40c1 in-progress: code-page concentration measurement",
+            "E4-T40c split into E4-T40c1-c4 (measure, page compiler, turbo integration, browser)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-28",
+      "lastActivity": "2026-11-28",
       "commitCount": 2
+    },
+    {
+      "id": "E4-T40c2",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Page-unit compiler — one wasm function per hot guest code page, differential-tested natively",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T40c1"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`crates/jit-translate` (or a new module beside it): translate the decoded blocks of one physical code page\ninto one wasm function that dispatches by entry offset (`br_table`), follows in-page branches and fall-throughs\ninside the function, checks the retire budget/horizon at block entries, re-validates the page's fetch-TLB entry\nat each in-page block entry, and returns `retired | exit reason | next pc` on anything it does not handle (the\ninterpreter runs it). The machine state contract is E4-T40c's prototype's (`turbo_jit.rs`): registers, PC, fast\nTLB, RAM and the dirty/code-page bitmaps in place, nothing copied.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nNative differential tests: for generated and recorded block sets, executing the compiled page function (in the\nnative wasm runtime the JIT tests already use) and interpreting the same instructions give identical register,\nmemory and retired-count results, including SMC inside the page, a TLB change between entries, and budget exits.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-4-acceleration/E4-T40c2-page-unit-compiler.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T40c3",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "The turbo loop runs compiled page units",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T40c2"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`crates/core/src/turbo.rs`: at a block entry whose page has a compiled unit, call it instead of interpreting;\naccount its retirements exactly as inline interpretation does; fall back on every exit reason. Off by default.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`tools/perf/turbo-equivalence.sh` and `decoded-cache-equivalence.sh` give the E4-T40f digest with compiled pages on\n(native runtime), and the compiled share of retirements on the desktop snapshot run is reported.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-4-acceleration/E4-T40c3-turbo-loop-runs-page-units.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T40c4",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Browser compiled page units — install, evict, measure, default",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T40c3"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`crates/wasm`: compile a page unit once the page is hot (thousands of entries), one module per page,\ninstalled in the Rust module's function table; bounded count with eviction; `?pages=0` turns it off.\n`web/main.js`: on by default for the Replay desktop only if faster.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nSame bundle, interleaved: click result, key echo and node -e faster than the interpreter by a stated margin;\nidle not worse; online acceptance passes; the browser on/off state digest comparison matches.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "",
+      "file": "tasks/epic-4-acceleration/E4-T40c4-browser-page-units.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
     },
     {
       "id": "E4-T40d",
@@ -25126,7 +25250,7 @@
       "epicKey": "5",
       "title": "Replay desktop with the code-cached Node (generation 4)",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T45a",
         "E4-T40g"
@@ -25136,28 +25260,28 @@
       "capstone": false,
       "goal": "",
       "boundary": "## Boundary\n\nThe Replay desktop image carries E5-T45a's Node; decide whether the boot-time user-land snapshot (E5-T41a)\nstill helps on top of the built-in one, and keep it only if it does; new warm snapshot (E5-T43f capture),\nmanifest, roadmap, deploy.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\nOnline desktop (E5-T43f acceptance passes): typed `fetch(\"https://example.com\")` prompt back under 5 s (was\n9.3 s), no-network `fetch` under 2.5 s (3.8 s), `node -e` not slower (about 1.5 s); E5-T41a/E5-T43c acceptances\npass; click and key echo not slower; warm resume passes.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nRevised 2026-11-28, before the claim, from the browser measurements below: the draft's \"typed https fetch\nunder 5 s\" (and no-network fetch under 2.5 s) assumed the code cache would remove undici's first-use cost; on\nthe desktop it does not (433 M vs 468 M guest instructions for the no-network fetch: about 240 M of undici\nmodule setup remain either way; the code cache saves compilation, not that execution). What generation 4\nmust show instead:\n\n- Online desktop (E5-T43f acceptance passes); a typed `node -e` to prompt faster than generation 3 on the\n  same bundle; typed fetch (https and no-network) not slower; E5-T43c's and E5-T36b's acceptances pass on\n  the image; click and key echo not slower; warm resume passes. E5-T41a's acceptance is retired with the\n  per-boot snapshot it tested.\n\n",
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-11-28 — worker — claim (head `e0d7f84e0`)\n\nCommits: `b41942435` (rcS no longer builds a per-boot user-land snapshot; `/usr/local/bin/node` is a plain exec;\nthe monitor drops its Node line; the capture waits for READY), `f3d41fc12` (`assemble.py` pins E5-T45a's node\nsha256 `8c19cbb6…`), `43417cc0d` (image `89b526be8441…`, built at `f3d41fc12`, `evidence/e5-t45b/image-build.json`),\n`e0d7f84e0` (manifest, roadmap row, `native-shell.mjs` drops the cursor answer from command output too).\n\n- Why drop the per-boot snapshot: in the guest the new binary's `node -e 0` is 0.28 guest s alone and 0.32-0.33 with a\n  user-land snapshot built from it on top (`evidence/e5-t45a/compare/result.json`).\n- Capture (`evidence/e5-t45b/capture/`): READY 5.36 s, `REPLAY_CAPTURE_TCP_WAIT seconds=0`, `COMPACTED zeroed_mib=573`;\n  snapshot `18d9473ca78c…` 135,309,357 bytes (generation 3: 135,290,972).\n- Image acceptances (`evidence/e5-t45b/`): E5-T43c slirp / loopback / none pass, READY 5.35 / 5.30 / 5.32 s; E5-T36b\n  passes. (The first slirp run failed on the harness, not the image: the cursor answer `[1;1R` landed inside the\n  route listing; `native-shell.mjs` now strips it from output; rerun passed.)\n- Browser, committed bundle (8125) vs the same bundle with generation 3's manifest (8135), `--query=&net=0`:\n  - typed commands, prompt back after Enter, 3 trials (`browser/zero-*`, `local-*`): `node -e 'console.log(42)'` 1333,\n    1329, 1294 ms / 194 M instr vs 1489, 1530, 1498 ms / 225 M; no-network `fetch` 3259, 3135, 3168 ms / 433 M vs\n    3373, 3273, 3255 ms / 468 M; https `fetch` (online, `browser/fetch-gen4-*`) 8.5-8.9 s / 613-630 M (generation 3\n    earlier: 9.3-9.6 s / 647-656 M, `evidence/e5-t43i/node-fetch.json`).\n  - `desktop-latency` two interleaved loads a side: click 232.6, 236.1 vs 233.4, 241.7 ms; key echo 43.7, 49.1 vs 47.6,\n    49.1 ms; node -e 1338, 1326 vs 1527, 1533 ms; idle 1.0 % both.\n- E5-T43f acceptance (online, off, relay-down, sw) PASS (`online.log`); warm resume PASS (`warm.log`).\n- Live after deploy (served manifest names snapshot `18d9473ca78c`): click 235.7 ms, key echo 48.2 ms, node -e 1346 ms,\n  idle 1.0 % (`live-latency.json`; generation 3 live: 230.3 / 47.8 / 1518 / 1.2).\n\n### 2026-11-28 — verifier — VERDICT: verified\n\nFresh session, head `23ee96b57`. Predictions written first: `evidence/e5-t45b/verifier/predictions.md`.\n\n- P1 built-in snapshot and code cache used at runtime on the published desktop — HELD. Through the page's serial\n  shell on 8125 (gen-4 manifest, snapshot `18d9473ca78c`): `node_use_node_snapshot`/`node_use_node_code_cache` true,\n  v26.13.1 riscv64; `NODE_DEBUG_NATIVE=CODE_CACHE` for https+worker_threads+child_process: 75 accepted, 0 rejected,\n  0 without cache; for a no-network fetch, 125 accepted, `internal/deps/undici/undici ... is accepted`. `node -e 0`\n  0.27 guest s x3 vs `--no-node-snapshot` 0.82, 0.81, 0.82 (`verifier/probe-gen4.json`, cmds 3, 5-10;\n  `verifier/instr-gen4.json` row cc-fetch).\n- P2 nothing depends on the removed per-boot snapshot — HELD. In the guest `/run/replay-node` does not exist,\n  NODE_OPTIONS empty, the wrapper is a plain exec (`probe-gen4.json` cmd 1). `git grep` for `/run/replay-node`,\n  `REPLAY_NODE_SNAPSHOT`, `startup.blob` outside evidence/tasks: only `tools/verify/e5-t41a-node-snapshot.mjs`\n  (the retired acceptance; it would now fail on gen 4 — expected, no make target calls it) and the manifest's\n  `generated` prose, which still says the snapshot was \"captured ... after REPLAY_NODE_SNAPSHOT\" (stale text,\n  `web/artifacts-replay-desktop.json:2`; the capture now waits for READY). Nit: fix the prose when next touched.\n- P3 worker threads and child processes — HELD. Worker posts `worker-ok riscv64 26.13.1`, exits 0, and its loads\n  are code-cache accepted (97, 0 rejected); `execFileSync(process.execPath, [\"-p\",\"6*7\"])` prints 42,\n  `process.execPath` = `/opt/replay-node-26/bin/node`, `spawnSync` status 3 propagates; a child's loads are accepted\n  (118, 0 rejected); uid 1000 (`desktop`) runs `/usr/local/bin/node` (`probe-gen4.json` cmds 11-14, 16). Note, not\n  this diff: a child started with an env that drops `RECORD_REPLAY_DONT_RECORD` prints \"Loading Record Replay\n  driver failed\" (set in /etc/profile and the session script, never by the removed wrapper) and still runs.\n- P4 typed `node -e` faster than gen 3 on the same bundle; click/key echo not slower — HELD. Interleaved\n  gen4/gen3/gen4/gen3 loads (`verifier/lat-*.json|log`): node prompt back 1381, 1316, 1329, 1352, 1376, 1318 ms /\n  192-199 M instr vs 1578, 1515, 1485, 1526, 1508, 1501 ms / 222-230 M (no overlap); click result trials 2-5\n  224.8-245.4 vs 226.3-269.5 ms; key echo 33-68 vs 37-67 ms. No-network fetch, serial shell, through the\n  `/usr/local/bin/node` wrapper on both: 433-442 M instr vs 467-479 M (`instr-gen4.json`, `instr-gen3-wrapper.json`).\n- P5 manifest integrity and deploy — HELD. chunk manifest / img.gz / snap.gz sha256 and sizes match the manifest;\n  identity.imageSha256 = wholeImage uncompressedSha256 = the built ext4's sha; guest node sha256 `8c19cbb6…`\n  (E5-T45a's). Live https://wasm-vm.pages.dev manifest differs from the committed one only by content-addressed R2\n  URLs; the R2 snapshot and image return 200 with the manifest's sizes, the R2 chunk manifest hashes `85fac8bd…`.\n- P6 E5-T43f online/off/relay-down/sw — HELD, all PASS (`verifier/online.log`). E5-T43c slirp rerun on the image\n  PASS, READY 5.35 (`verifier/e5-t43c-slirp/`); E5-T36b PASS (`verifier/e5-t36b/result.json`).\n- P7 novel attack, user-land snapshot on top of the built-in one — HELD: `--build-snapshot` writes a 7.25 MB blob\n  and `--snapshot-blob` runs its deserialize main (`from-user-snapshot 42`; `probe-gen4.json` cmd 15).\n- Acceptance revision — honest, with an inaccurate explanation. It was committed together with the claim\n  (`23ee96b57`), not ahead of it, but it states the original 5 s / 2.5 s fetch targets and that they were missed.\n  Its explanation (\"the code cache saves compilation, not that execution\") is incomplete: generation 3's\n  user-land snapshot ALREADY carried the built-in code cache: on gen 3 through the wrapper, CODE_CACHE shows 125\n  accepted / 0 without, undici accepted (`instr-gen3-wrapper.json` cc-fetch), while the bare gen-3 binary compiles\n  207 without cache, 1,100 M instr per fetch (`instr-gen3.json`). The draft's targets came from E5-T45a's\n  no-snapshot baseline. This does not hide a gen-4 defect (gen 4 uses its own cache, P1), so it is no refutation.\n  Follow-up: correct that sentence.\n- COVERAGE: rcS/wrapper/monitor removals are exercised by the gen-4 guest (P2); the capture script's READY marker\n  by `capture/native-capture.log` (READY 5.36, COMPACTED 573); the `native-shell.mjs` strip by the E5-T43c\n  slirp passes; `assemble.py`/image build pins are confirmed by the guest node sha. No unexecuted hunks.\n- SUITE: discard. The browser/latency probes are one-off measurements; the acceptance commands already exist.\n- Not checked: warm resume (worker's `warm.log` only), the https fetch timing online, the image rebuild\n  from scratch, cold clone (not required for medium).\n\nCommands: probe scripts `scratchpad/v45b/probe.mjs` and `probe2.mjs` (copied to `evidence/e5-t45b/verifier/`);\n`node tools/perf/desktop-latency.mjs --url http://127.0.0.1:{8125,8135} --app /app.html --query='&net=0'\n--scenarios click,type,node --n 5`; `E5_T43F_URL=http://127.0.0.1:8125 E5_T43F_APP=/app.html ...\ne5-t43f-replay-desktop-online.mjs online off relay-down sw`; `e5-t43c-guest-dhcp.mjs --mode slirp\n--baseline-ready 5.32`; `e5-t36b-hardware-cursor.mjs`, both with `--image target/e5-t45b/image/replay-desktop.ext4`.\nThe gen-3 chunk manifest was restored untracked for the 8135 runs and deleted afterwards.",
       "adversarial": "Medium risk (deployment). Attack list: V8 rejecting the built-in snapshot on wasm-vm's CPU (falls back\nsilently to the slow path — check `node_use_node_snapshot` behaviour at runtime, not just the flag); Node\nstarted from both snapshots; worker threads and child processes.",
       "file": "tasks/epic-5-the-window/E5-T45b-replay-desktop-with-node-code-cache.md",
       "activity": [
         {
           "date": "2026-11-28",
-          "commits": 4,
+          "commits": 7,
           "labels": [
+            "E5-T45b verified: verifier",
+            "E5-T45b implemented: claim",
             "E5-T45b in-progress: the image ships the code-cached Node; no per-boot Node snapshot",
-            "E5-T45a implemented: Replay Node 26 with its built-in snapshot and code cache",
-            "E5-T45b: generation 4 image 89b526be8441 (built at f3d41fc12)",
-            "E5-T45b: assemble.py pins the E5-T45a node binary"
+            "E5-T45a implemented: Replay Node 26 with its built-in snapshot and code cache"
           ]
         }
       ],
       "firstActivity": "2026-11-28",
       "lastActivity": "2026-11-28",
-      "commitCount": 4
+      "commitCount": 7
     },
     {
       "id": "E5.5-T01a",
