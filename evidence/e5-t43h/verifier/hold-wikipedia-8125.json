@@ -1,0 +1,22 @@
+{
+  "base": "http://127.0.0.1:8125",
+  "noConnection": {
+    "inSlicePct": 1.7,
+    "guestSecondsPerSecond": 0.999,
+    "idleSleeps": 641,
+    "meanSleepMs": 44.99
+  },
+  "hold": "(node -e \"require('https').get('https://www.wikipedia.org/',()=>{}).on('error',()=>{})\" >/dev/null 2>&1 &) ; sleep 1",
+  "tcpBefore": "1",
+  "sleep20HostMs": 20455,
+  "sleep20GuestUptime": "92.71 73.97|112.71 93.95",
+  "tcpAfterSleep": "1",
+  "openConnection": {
+    "inSlicePct": 7.4,
+    "guestSecondsPerSecond": 0.982,
+    "idleSleeps": 5173,
+    "meanSleepMs": 3.98
+  },
+  "tcpAfterWindow": "1",
+  "pageErrors": []
+}

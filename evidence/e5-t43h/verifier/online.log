@@ -1,0 +1,5 @@
+[e5-t43f 2026-11-28T07:03:25.414Z] desktop ready 3641 ms
+[e5-t43f 2026-11-28T07:03:31.716Z] typed the URL into the guest's Chrome
+[e5-t43f 2026-11-28T07:04:02.012Z] Chrome loaded example.com in 25423 ms
+[e5-t43f 2026-11-28T07:04:55.801Z] node fetch: E5T43F_798A53F3 200
+[e5-t43f 2026-11-28T07:04:55.806Z] online PASS

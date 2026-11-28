@@ -195,3 +195,114 @@ fn external_network_io_suppresses_wfi_deadline_jump() {
         "the timer must not fire before the host can deliver pending I/O"
     );
 }
+
+#[derive(Clone, Default)]
+struct HostClock(std::rc::Rc<std::cell::Cell<u64>>);
+
+impl wasm_vm_core::time::MonotonicClock for HostClock {
+    fn now_nanos(&self) -> u64 {
+        self.0.get()
+    }
+}
+
+/// The machine of `external_network_io_suppresses_wfi_deadline_jump`, but on the paced clock.
+fn paced_machine_with_open_connection(mtimecmp: u64) -> (Machine, HostClock) {
+    let mut m = idle_machine();
+    let clint = m.enable_clint(100);
+    clint.borrow_mut().mtimecmp = mtimecmp;
+    set_csr(&mut m, MIE, 1 << 7);
+    set_csr(&mut m, MSTATUS, 1 << 3);
+    m.enable_plic();
+    m.enable_virtio_slots(None);
+    let _ = m.enable_virtio_net(Box::new(PcapBackend::new(ExternalIoPending)));
+    let clock = HostClock::default();
+    clock.0.set(1_000_000_000);
+    m.set_paced_icount_clock(Box::new(clock.clone())).unwrap();
+    (m, clock)
+}
+
+/// E5-T43h: under the paced clock an idle guest with a connection open keeps real time. The jump
+/// follows the host clock (10 MHz timebase: 20 ms = 200_000 ticks) and never passes it, so the
+/// guest's timer fires only once the host has reached it; without the jump the guest's time
+/// moved only with its idle loop's retirements (a few ticks here).
+#[test]
+fn paced_clock_follows_the_host_with_network_io_pending() {
+    let (mut m, clock) = paced_machine_with_open_connection(500_000);
+    let _ = m.run(20);
+    let start = m.clint_mtime();
+    assert!(start < 1_000, "no host time has passed yet: mtime={start}");
+
+    clock.0.set(1_020_000_000); // 20 ms of host time
+    let _ = m.run(20);
+    let after = m.clint_mtime();
+    assert!(
+        (199_000..=201_000).contains(&(after - start)),
+        "guest time followed the host's 20 ms: {} ticks",
+        after - start
+    );
+    assert_ne!(
+        m.hart_mut().regs.pc,
+        HANDLER,
+        "the timer is still 30 ms away"
+    );
+
+    clock.0.set(1_060_000_000); // past the deadline
+    let _ = m.run(20);
+    assert!(m.clint_mtime() >= 500_000, "mtime reached the deadline");
+    assert_eq!(
+        m.hart_mut().regs.pc,
+        HANDLER,
+        "the timer fired once the host reached it"
+    );
+}
+
+/// E5-T43h: with no host time passing, the paced guest does not run ahead either: a reply in
+/// flight still arrives before any guest timeout that real time has not reached.
+#[test]
+fn paced_clock_never_passes_a_stalled_host_with_network_io_pending() {
+    let (mut m, _clock) = paced_machine_with_open_connection(500_000);
+    for _ in 0..50 {
+        let _ = m.run(20);
+    }
+    assert!(m.clint_mtime() < 1_000, "mtime={}", m.clint_mtime());
+    assert_ne!(m.hart_mut().regs.pc, HANDLER);
+}
+
+/// E5-T43h: with the idle yield on, a guest waiting with only an open connection pending lets
+/// the host sleep, but in naps of at most 4 ms, so a reply that arrives meanwhile is picked up
+/// promptly. Before, the wait did not hold at all and the run loop spun at full speed for as long
+/// as the connection stayed open.
+#[test]
+fn paced_wait_with_network_io_pending_is_taken_in_short_naps() {
+    let (mut m, clock) = paced_machine_with_open_connection(1_000_000); // 100 ms
+    m.set_paced_idle_policy(true, None);
+    clock.0.set(1_010_000_000); // 10 ms in: the timer is 90 ms away
+    let _ = m.run(64);
+    let nap = m.take_idle_wait_nanos();
+    assert!(
+        matches!(nap, Some(n) if n > 0 && n <= 4_000_000),
+        "a short nap, not the 90 ms to the timer and not none: {nap:?}"
+    );
+    assert_ne!(m.hart_mut().regs.pc, HANDLER);
+}
+
+/// The same machine without the network device: the whole wait to the timer is offered.
+#[test]
+fn paced_wait_without_network_is_offered_in_full() {
+    let mut m = idle_machine();
+    let clint = m.enable_clint(100);
+    clint.borrow_mut().mtimecmp = 1_000_000;
+    set_csr(&mut m, MIE, 1 << 7);
+    set_csr(&mut m, MSTATUS, 1 << 3);
+    let clock = HostClock::default();
+    clock.0.set(1_000_000_000);
+    m.set_paced_icount_clock(Box::new(clock.clone())).unwrap();
+    m.set_paced_idle_policy(true, None);
+    clock.0.set(1_010_000_000);
+    let _ = m.run(64);
+    let wait = m.take_idle_wait_nanos();
+    assert!(
+        matches!(wait, Some(n) if n > 80_000_000),
+        "the full ~90 ms wait: {wait:?}"
+    );
+}

@@ -1,0 +1,6 @@
+[e5-t43f 2026-11-28T05:46:17.082Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T05:46:20.731Z] desktop ready 3650 ms
+[e5-t43f 2026-11-28T05:46:27.025Z] typed the URL into the guest's Chrome
+[e5-t43f 2026-11-28T05:46:58.422Z] Chrome loaded example.com in 26522 ms
+[e5-t43f 2026-11-28T05:47:51.969Z] node fetch: E5T43F_439EFD05 200
+[e5-t43f 2026-11-28T05:47:51.974Z] online PASS

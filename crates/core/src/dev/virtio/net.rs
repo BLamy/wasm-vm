@@ -345,6 +345,18 @@ pub struct NetState {
 }
 
 impl NetState {
+    /// E5-T43h: whether a backend that just reported work is busy only because it waits on I/O
+    /// the host delivers between run calls (a WebSocket reply, a host socket): no kick or reset
+    /// for the device to handle and no frame ready for the guest. Nothing in the guest can move
+    /// until the host delivers, so the host may sleep briefly instead of spinning run calls.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    pub(crate) fn waiting_on_host(&self) -> bool {
+        !self.kicked
+            && !self.reset_pending
+            && self.backend.external_io_pending()
+            && !self.backend.rx_ready()
+    }
+
     pub(crate) fn session_flags(&self) -> [bool; 2] {
         [self.kicked, self.reset_pending]
     }
