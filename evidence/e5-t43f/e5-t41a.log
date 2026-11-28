@@ -1,0 +1,24 @@
+{
+  "pass": true,
+  "markers": {
+    "readyUptime": 5.31,
+    "memHwmKibAtReady": 171792,
+    "nodeSnapshotBytes": 6754598,
+    "nodeSnapshotUptime": 9.72,
+    "hostSecondsToNodeLine": 54.047,
+    "baselineReadyUptime": 5.29
+  },
+  "monitor": {
+    "pid": "85",
+    "guestCpuSecondsIn60": 0.06,
+    "memHwmKib": [
+      183644,
+      215752
+    ]
+  },
+  "nodeStartGuestSeconds": {
+    "wrapper": 0.32,
+    "real": 0.8,
+    "wrapperWithoutBlob": 0.81
+  }
+}

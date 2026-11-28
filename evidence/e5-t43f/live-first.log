@@ -1,0 +1,19 @@
+[e5-t43f 2026-11-28T04:52:07.165Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T04:52:57.963Z] desktop ready 50800 ms
+[e5-t43f 2026-11-28T04:52:57.965Z] online FAIL AssertionError [ERR_ASSERTION]: network state: {"state":null,"reason":null,"dataset":null,"banner":null}
+
+null !== 'online'
+
+    at Object.online (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t43f-replay-desktop-online.mjs:112:10)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/e5-t43f-replay-desktop-online.mjs:212:9
+[e5-t43f 2026-11-28T04:52:58.032Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1&net=0#ide
+[e5-t43f 2026-11-28T04:53:35.837Z] desktop ready 37806 ms
+[e5-t43f 2026-11-28T04:53:50.892Z] off PASS
+[e5-t43f 2026-11-28T04:53:50.959Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T04:54:31.782Z] desktop ready 40824 ms
+[e5-t43f 2026-11-28T04:54:31.925Z] relay-down PASS
+[e5-t43f 2026-11-28T04:54:32.000Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T04:55:06.971Z] desktop ready 34973 ms
+[e5-t43f 2026-11-28T04:55:07.048Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T04:56:05.818Z] desktop ready 58776 ms
+[e5-t43f 2026-11-28T04:56:05.830Z] sw PASS

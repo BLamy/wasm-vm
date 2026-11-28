@@ -1,0 +1,12 @@
+{
+  "network": {
+    "state": "disabled",
+    "reason": "?net=0",
+    "dataset": "disabled",
+    "banner": null
+  },
+  "relayRequests": [],
+  "sockets": [],
+  "consoleErrors": [],
+  "eth0": "10.0.2.15/24\n\n"
+}

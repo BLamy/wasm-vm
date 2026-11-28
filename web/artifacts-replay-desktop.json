@@ -1,5 +1,5 @@
 {
-  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill; generation 3 (E5-T43e): the guest takes a DHCP lease and Chrome contacts nothing at startup; E5-T34e warm RAM/device bootSnapshot captured with the slirp NIC (the lease in it) after REPLAY_NODE_SNAPSHOT, 30 guest seconds of settling and a compaction that warms node's start paths and zeroes free memory, from the same image and browser device layout (tools/build-replay-desktop-snapshot.sh; read-only root, no disk delta), fetched in parallel with the whole image",
+  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill; generation 3 (E5-T43e/E5-T43f): the guest takes a DHCP lease, Chrome makes no start-up requests but its sign-in check, and NSS's root certificates are in the image; E5-T34e warm RAM/device bootSnapshot captured with the slirp NIC (the lease in it) after REPLAY_NODE_SNAPSHOT, 30 guest seconds of settling and a compaction that warms node's start paths and zeroes free memory, from the same image and browser device layout (tools/build-replay-desktop-snapshot.sh; read-only root, no disk delta), fetched in parallel with the whole image",
   "artifacts": {
     "kernel": {
       "url": "releases/kernel/6.6.63/Image",
@@ -7,28 +7,28 @@
       "size": 24208896
     },
     "chunkManifest": {
-      "url": "releases/rootfs/replay-desktop-3165a13b8d07.chunks.json",
-      "sha256": "bbf5c32870a397f95d9048fb83a70e118c2671aa04c77887d7cc01438989ad0b",
-      "size": 128555
+      "url": "releases/rootfs/replay-desktop-ec157fd1b3a7.chunks.json",
+      "sha256": "3ee9ab72849d0db0979988d851f0e77bc11ed1641bd6671a846e45b743ba8365",
+      "size": 128843
     },
     "wholeImage": {
-      "url": "releases/rootfs/replay-desktop-3165a13b8d07.img.gz",
-      "sha256": "6e512527d8d8f9657b51269841b03971995f9743dbfaa272974bc3848296c4c1",
-      "size": 189685645,
-      "uncompressedSize": 467664896,
-      "uncompressedSha256": "3165a13b8d0756af13317ba5744749fdf5127006db36a51a69c2ec45c8f0e1c6"
+      "url": "releases/rootfs/replay-desktop-ec157fd1b3a7.img.gz",
+      "sha256": "f7ff2d0cf27f69f44dbbc73d921e5f2f42bf4dc989999a2ae78a5c64126a287c",
+      "size": 189900243,
+      "uncompressedSize": 468713472,
+      "uncompressedSha256": "ec157fd1b3a75dce7e7f41e557522ba635e27ea67d6220d87e226cecd810912b"
     },
     "bootSnapshot": {
-      "url": "releases/boot-snapshot/replay-desktop-ready-87a0cde821f8.snap.gz",
-      "sha256": "87a0cde821f8ea5fbde1cd6cd0e08b3598619db03f7dbbedf1c8c85e89c11ff7",
-      "size": 136668204,
-      "uncompressedSize": 363382531,
-      "uncompressedSha256": "fc60393a38bf9d7968042e466664ff85c931041703566b39b9a09d32626f7bf5",
+      "url": "releases/boot-snapshot/replay-desktop-ready-c5d6ff60fda9.snap.gz",
+      "sha256": "c5d6ff60fda9d8544f3e1f15692409e2838e039bbcf686f7891ba1d0bca58b1a",
+      "size": 135290972,
+      "uncompressedSize": 359088357,
+      "uncompressedSha256": "7a066e0b03ea8f333a300ad7d7386bcfe8979f6c98e21fd33951ff8f5fa7a707",
       "identity": {
-        "imageSha256": "3165a13b8d0756af13317ba5744749fdf5127006db36a51a69c2ec45c8f0e1c6",
+        "imageSha256": "ec157fd1b3a75dce7e7f41e557522ba635e27ea67d6220d87e226cecd810912b",
         "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
         "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
-        "baseId": "77c962873eae2df47c3efc4e351c719f878444792b1b1f13420592743c1ce297",
+        "baseId": "4d0ba37c658e67aaa74c4e5b35fc3fb0e895916ed0badb21598e99af0d8fd98b",
         "ramMib": 1024,
         "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
         "guestClock": "icount",

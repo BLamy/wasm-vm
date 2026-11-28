@@ -1,0 +1,18 @@
+{
+  "network": {
+    "state": "off",
+    "reason": "Failed to fetch",
+    "dataset": "off",
+    "banner": "Network off: Failed to fetch. The desktop runs offline; reload to retry."
+  },
+  "relayRequests": [
+    {
+      "t": 573,
+      "method": "GET",
+      "url": "https://wasm-vm-relay.brett-lamy.workers.dev/token",
+      "failure": "net::ERR_CONNECTION_REFUSED"
+    }
+  ],
+  "sockets": [],
+  "chromeTitle": "\"name\": \"Replay RISC-V PASS #1 - Chromium\""
+}
