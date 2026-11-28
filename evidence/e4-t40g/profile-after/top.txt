@@ -1,0 +1,46 @@
+wall 12022 ms, sampled 12027 ms
+ 64.4%    7741 ms  (idle)
+ 25.0%    3002 ms  wasm_vm_core::Machine::run::haba79fd85bef63d1
+  6.8%     819 ms  wasm_vm_core::Machine::enter_block::h2e6c13ef310e7755
+  0.8%      97 ms  wasm_vm_core::hart::Hart::execute::h2bc469d936cabf4c
+  0.7%      80 ms  wasm_vm_core::dispatch::BlockCache::probe::hd30db5890f792071
+  0.2%      25 ms  wasm_vm_core::dev::virtio::gpu::service_with_cursor::h2ddab72228056279
+  0.2%      19 ms  wasm_vm_core::mmu::translate_cached_slot::hb5b31779b93c57f4
+  0.1%      12 ms  wasm_vm_core::decode::decode::h4801e7c3fe1e00ab
+  0.1%      12 ms  wasm_vm_core::hart::Hart::decode_at::h4c84d2f80bc7a533
+  0.1%      11 ms  wasm_vm_core::mmu::walk_leaf_inner::hf09d34e685227045
+  0.1%      11 ms  wasm_vm_core::dispatch::BlockCache::insert_rc_evicting::hd6d7ed9669a4d859
+  0.1%       9 ms  sha2::sha256::compress256::hf5e2b7ff6db39ece
+  0.1%       9 ms  onDisplayFrame
+  0.1%       7 ms  wasm_vm_core::hart::fast_publish::ha196e251ef5ae398
+  0.1%       6 ms  wasm_vm_core::decode_c::expand_c::hf0ddba8fea29dd67
+  0.1%       6 ms  wasm_vm_core::mmu::finish_leaf::hbf2a13f739388aa4
+  0.0%       5 ms  decode
+  0.0%       5 ms  <dlmalloc[e7770d3bef70d9dc]::dlmalloc::Dlmalloc<dlmalloc[e7770d3bef70d9dc]::sys::System>>::free
+  0.0%       5 ms  <wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::mul::h94bcb406386b3d3f
+  0.0%       5 ms  schedule
+  0.0%       5 ms  wasm_vm_core::csr::Csrs::access::hb8a6bdb91cf0cd88
+  0.0%       5 ms  postTask
+  0.0%       5 ms  wasm_vm_wasm::WasmLinux::run_chunk::h60f1b920b17268b7
+  0.0%       5 ms  (program)
+  0.0%       4 ms  runTick
+  0.0%       4 ms  wasm_vm_core::dispatch::DecodedBlock::new::h6c2fc58e7a3a48e3
+  0.0%       4 ms  <rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::mul_r::hd37643d01f564d3f
+  0.0%       4 ms  rustc_apfloat::ieee::sig::add_or_sub::h111e6f06b9ca416e
+  0.0%       4 ms  wasm_vm_core::hart::xlate_load_slow::h829200665eacd9e4
+  0.0%       3 ms  rustc_apfloat::ieee::sig::mul::hc9eac4ff689b23cc
+  0.0%       3 ms  rustc_apfloat::ieee::IeeeFloat<S>::normalize::h062e46e4a238843f
+  0.0%       3 ms  (wasm_vm_wasm.js)
+  0.0%       3 ms  <rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::add_r::heaab5bb5a6734cd2
+  0.0%       3 ms  wasm_vm_core::session_clock::<impl wasm_vm_core::Machine>::prepare_session_transition::h7bd29da2bcc33011
+  0.0%       3 ms  wasm_vm_core::hart::fetch_xlate_slow::h58738936b438c947
+  0.0%       3 ms  wasm_vm_core::hart::cload64_slow::h4f4cf1a5e29f4e4d
+  0.0%       3 ms  <wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::add::hb3747c1f38190f51
+  0.0%       3 ms  wasm_vm_core::hart::xlate_store_slow::hda9a55722c325fe6
+  0.0%       3 ms  wasm_vm_core::softfloat::F32::arithmetic_flags::hbe1fd5314d63fd56
+  0.0%       2 ms  wasm-to-js
+  0.0%       2 ms  __multi3
+  0.0%       2 ms  rustc_apfloat::ieee::IeeeFloat<S>::normalize::hf09fe177df864bf7
+  0.0%       2 ms  <wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::lt::h301260ee0e22cbde
+  0.0%       2 ms  decodeText
+  0.0%       2 ms  wasm_vm_core::softfloat::f32_minmax::h70c4bd1380f5e4f6

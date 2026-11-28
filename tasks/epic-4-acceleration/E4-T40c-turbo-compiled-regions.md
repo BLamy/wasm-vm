@@ -61,3 +61,17 @@ equivalence gates (boot oracle, `tools/perf/turbo-equivalence.sh`, and a browser
 on/off state comparison) carry over.
 
 This is a planning container; split it into S tasks before starting.
+
+## Measurements after E4-T40f/g (2026-11-28)
+
+Click result on the Replay desktop is now about 230 ms (was 260-265 ms), `node -e` about 1.5 s. A CPU
+profile of the worker during 8 clicks (named wasm build, `evidence/e4-t40g/profile-after/top.txt`):
+`Machine::run` (the turbo loop, everything inlined) 70 % of the busy time, `enter_block` 19 %,
+`Hart::execute` 2 %, the cache probe under 2 %, discovery gone. Trimming `enter_block` further (no weak
+handle on a memo hit) measured within noise (about 1 %) and was not kept. The interpreter costs about
+13 ns per guest instruction; the click itself is about 26 M guest instructions at about 95 MIPS.
+
+Where the guest spends a click (`evidence/e4-t40g/guest-cpu-per-click.json`, per-process utime+stime over 8
+clicks): Chrome's three processes 49 ticks, sway 30 ticks (input handling and pixman composition), the
+monitor 3; 78 user + 14 system ticks in all. So a compiled tier speeds up both; a guest-side reduction would
+have to come from Chrome's software raster or from sway's per-event work.

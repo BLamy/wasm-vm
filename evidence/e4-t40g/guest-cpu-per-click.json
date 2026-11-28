@@ -1,0 +1,44 @@
+{
+  "clicks": 8,
+  "cpu": {
+    "user": 78,
+    "nice": 0,
+    "system": 14,
+    "idle": 1309,
+    "iowait": 0,
+    "irq": 0,
+    "softirq": 0
+  },
+  "rows": [
+    {
+      "pid": "92",
+      "comm": "sway",
+      "ticks": 30
+    },
+    {
+      "pid": "171",
+      "comm": "chrome",
+      "ticks": 20
+    },
+    {
+      "pid": "205",
+      "comm": "chrome",
+      "ticks": 15
+    },
+    {
+      "pid": "116",
+      "comm": "chrome",
+      "ticks": 14
+    },
+    {
+      "pid": "94",
+      "comm": "sh",
+      "ticks": 2
+    },
+    {
+      "pid": "93",
+      "comm": "replay-desktop-",
+      "ticks": 1
+    }
+  ]
+}
