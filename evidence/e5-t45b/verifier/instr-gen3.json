@@ -1,0 +1,105 @@
+{
+  "base": "http://127.0.0.1:8135",
+  "snapshot": "releases/boot-snapshot/replay-desktop-ready-c5d6ff60fda9.snap.gz",
+  "rows": [
+    {
+      "label": "true",
+      "cmd": "true",
+      "ms": 16,
+      "instrM": 1.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "true",
+      "cmd": "true",
+      "ms": 25,
+      "instrM": 1.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "true",
+      "cmd": "true",
+      "ms": 25,
+      "instrM": 1.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "node-e0",
+      "cmd": "/opt/replay-node-26/bin/node -e 0",
+      "ms": 3786,
+      "instrM": 523.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "node-e0",
+      "cmd": "/opt/replay-node-26/bin/node -e 0",
+      "ms": 3654,
+      "instrM": 513.4,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "node-e0",
+      "cmd": "/opt/replay-node-26/bin/node -e 0",
+      "ms": 3717,
+      "instrM": 517.4,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "fetch-local",
+      "cmd": "/opt/replay-node-26/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))'",
+      "ms": 7869,
+      "instrM": 1101.9,
+      "stdout": "undefined\n\n",
+      "exit": 0
+    },
+    {
+      "label": "fetch-local",
+      "cmd": "/opt/replay-node-26/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))'",
+      "ms": 7734,
+      "instrM": 1096.8,
+      "stdout": "undefined\n\n",
+      "exit": 0
+    },
+    {
+      "label": "fetch-local",
+      "cmd": "/opt/replay-node-26/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))'",
+      "ms": 7823,
+      "instrM": 1100.3,
+      "stdout": "undefined\n\n",
+      "exit": 0
+    },
+    {
+      "label": "require8",
+      "cmd": "/opt/replay-node-26/bin/node -e 'for (const m of [\"fs\",\"os\",\"path\",\"http\",\"https\",\"crypto\",\"zlib\",\"stream\"]) require(m)'",
+      "ms": 5052,
+      "instrM": 703.8,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "require8",
+      "cmd": "/opt/replay-node-26/bin/node -e 'for (const m of [\"fs\",\"os\",\"path\",\"http\",\"https\",\"crypto\",\"zlib\",\"stream\"]) require(m)'",
+      "ms": 5028,
+      "instrM": 703.6,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "cc-fetch",
+      "cmd": "NODE_DEBUG_NATIVE=CODE_CACHE /opt/replay-node-26/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))' > /tmp/ccf.log 2>&1; echo accepted=$(grep -c 'is accepted' /tmp/ccf.log) rejected=$(grep -ci 'reject' /tmp/ccf.log) without=$(grep -ci 'without' /tmp/ccf.log); grep -i 'undici' /tmp/ccf.log | head -4",
+      "ms": 7933,
+      "instrM": 1114.4,
+      "stdout": "accepted=0 rejected=0 without=207\nCompiling internal/deps/undici/undici without code cache lazily\n\n",
+      "exit": 0
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+}

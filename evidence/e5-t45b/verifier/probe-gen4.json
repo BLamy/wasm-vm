@@ -1,0 +1,106 @@
+{
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&net=0#ide",
+  "readyS": 3.649,
+  "manifest": "releases/boot-snapshot/replay-desktop-ready-18d9473ca78c.snap.gz",
+  "cmds": [
+    {
+      "cmd": "sha256sum /opt/replay-node-26/bin/node; ls -la /run/replay-node 2>&1; echo \"NODE_OPTIONS=[$NODE_OPTIONS]\"; cat /usr/local/bin/node; id",
+      "wallMs": 39173,
+      "stdout": "8c19cbb6c9b1f3b2cca4685e91952e314d8a5825b2a0dfc56bdf748211d7c320  /opt/replay-node-26/bin/node\nls: /run/replay-node: No such file or directory\nNODE_OPTIONS=[]\n#!/bin/sh\n# Replay Node 26. It starts from its built-in startup snapshot and code cache (E5-T45a); the\n# per-boot snapshot this wrapper used to add (E5-T41a) is gone. Kept as the PATH entry.\nexec /opt/replay-node-26/bin/node \"$@\"\nuid=0(root) gid=0(root)\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "/opt/replay-node-26/bin/node -p 'JSON.stringify({snap:process.config.variables.node_use_node_snapshot,cc:process.config.variables.node_use_node_code_cache,v:process.version,execPath:process.execPath,arch:process.arch})'",
+      "wallMs": 1309,
+      "stdout": "{\"snap\":true,\"cc\":true,\"v\":\"v26.13.1\",\"execPath\":\"/opt/replay-node-26/bin/node\",\"arch\":\"riscv64\"}\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "NODE_DEBUG_NATIVE=CODE_CACHE /opt/replay-node-26/bin/node -e 'require(\"https\");require(\"worker_threads\");require(\"child_process\")' > /tmp/cc.log 2>&1; echo exit=$?; wc -l < /tmp/cc.log; echo accepted=$(grep -c 'is accepted' /tmp/cc.log) rejected=$(grep -ci 'reject' /tmp/cc.log) without=$(grep -c 'without cache' /tmp/cc.log) withcache=$(grep -c 'with cache' /tmp/cc.log); grep -i -m3 'reject\\|without' /tmp/cc.log; head -3 /tmp/cc.log",
+      "wallMs": 1946,
+      "stdout": "exit=0\n151\naccepted=75 rejected=0 without=0 withcache=0\nsnapshot contains 449 code cache\nCompiling internal/main/eval_string with code cache lazily\nCode cache of internal/main/eval_string (BufferNotOwned) is accepted\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "/usr/local/bin/node -e 'console.log(42)'; echo exit=$?",
+      "wallMs": 1298,
+      "stdout": "42\nexit=0\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "s=$(cut -d' ' -f1 /proc/uptime); /opt/replay-node-26/bin/node -e 0; e=$(cut -d' ' -f1 /proc/uptime); echo \"GUEST_S $s $e\"",
+      "wallMs": 1154,
+      "stdout": "GUEST_S 68.33 68.60\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "s=$(cut -d' ' -f1 /proc/uptime); /opt/replay-node-26/bin/node -e 0; e=$(cut -d' ' -f1 /proc/uptime); echo \"GUEST_S $s $e\"",
+      "wallMs": 1157,
+      "stdout": "GUEST_S 68.68 68.95\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "s=$(cut -d' ' -f1 /proc/uptime); /opt/replay-node-26/bin/node -e 0; e=$(cut -d' ' -f1 /proc/uptime); echo \"GUEST_S $s $e\"",
+      "wallMs": 1154,
+      "stdout": "GUEST_S 69.03 69.30\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "s=$(cut -d' ' -f1 /proc/uptime); /opt/replay-node-26/bin/node --no-node-snapshot -e 0; e=$(cut -d' ' -f1 /proc/uptime); echo \"GUEST_S $s $e\"",
+      "wallMs": 3844,
+      "stdout": "GUEST_S 69.38 70.20\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "s=$(cut -d' ' -f1 /proc/uptime); /opt/replay-node-26/bin/node --no-node-snapshot -e 0; e=$(cut -d' ' -f1 /proc/uptime); echo \"GUEST_S $s $e\"",
+      "wallMs": 3753,
+      "stdout": "GUEST_S 70.28 71.09\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "s=$(cut -d' ' -f1 /proc/uptime); /opt/replay-node-26/bin/node --no-node-snapshot -e 0; e=$(cut -d' ' -f1 /proc/uptime); echo \"GUEST_S $s $e\"",
+      "wallMs": 3836,
+      "stdout": "GUEST_S 71.16 71.98\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "/opt/replay-node-26/bin/node -e 'const {Worker}=require(\"worker_threads\");const w=new Worker(\"const p=require(\\\"worker_threads\\\").parentPort;p.postMessage(\\\"worker-ok \\\"+require(\\\"os\\\").arch()+\\\" \\\"+process.versions.node)\",{eval:true});w.on(\"message\",m=>console.log(m));w.on(\"exit\",c=>console.log(\"worker-exit\",c))'; echo exit=$?",
+      "wallMs": 2181,
+      "stdout": "worker-ok riscv64 26.13.1\nworker-exit 0\nexit=0\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "NODE_DEBUG_NATIVE=CODE_CACHE /opt/replay-node-26/bin/node -e 'const {Worker}=require(\"worker_threads\");new Worker(\"require(\\\"zlib\\\")\",{eval:true}).on(\"exit\",c=>console.log(\"wexit\",c))' > /tmp/wcc.log 2>&1; echo exit=$?; echo accepted=$(grep -c 'is accepted' /tmp/wcc.log) rejected=$(grep -ci 'reject' /tmp/wcc.log) without=$(grep -c 'without cache' /tmp/wcc.log); tail -1 /tmp/wcc.log",
+      "wallMs": 2310,
+      "stdout": "exit=0\naccepted=97 rejected=0 without=0\nwexit 0\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "/opt/replay-node-26/bin/node -e 'const cp=require(\"child_process\");console.log(cp.execFileSync(process.execPath,[\"-p\",\"6*7\"]).toString().trim(), process.execPath); console.log(cp.execSync(\"node -p process.execPath\",{env:{PATH:\"/usr/local/bin:/usr/bin:/bin\"}}).toString().trim()); const r=cp.spawnSync(process.execPath,[\"-e\",\"process.exit(3)\"]);console.log(\"status\",r.status)'; echo exit=$?",
+      "wallMs": 5007,
+      "stdout": "42 /opt/replay-node-26/bin/node\nLoading Record Replay driver failed (/tmp/recordreplay.so-R0G2xk: file too short).\n/opt/replay-node-26/bin/node\nstatus 3\nexit=0\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "NODE_DEBUG_NATIVE=CODE_CACHE /opt/replay-node-26/bin/node -e 'require(\"child_process\").execFileSync(process.execPath,[\"-e\",\"require(\\\"http\\\")\"],{stdio:\"inherit\"})' > /tmp/ccc.log 2>&1; echo exit=$?; echo accepted=$(grep -c 'is accepted' /tmp/ccc.log) rejected=$(grep -ci 'reject' /tmp/ccc.log) without=$(grep -c 'without cache' /tmp/ccc.log)",
+      "wallMs": 2683,
+      "stdout": "exit=0\naccepted=118 rejected=0 without=0\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "cd /tmp && echo 'globalThis.x=41+1; require(\"v8\").startupSnapshot.setDeserializeMainFunction(()=>console.log(\"from-user-snapshot\", globalThis.x))' > /tmp/e.js && /opt/replay-node-26/bin/node --snapshot-blob /tmp/s.blob --build-snapshot /tmp/e.js; echo build=$?; ls -l /tmp/s.blob; /opt/replay-node-26/bin/node --snapshot-blob /tmp/s.blob; echo run=$?; rm -f /tmp/s.blob /tmp/e.js",
+      "wallMs": 19825,
+      "stdout": "build=0\n-rw-r--r--    1 root     root       7253110 Nov 28 13:47 /tmp/s.blob\nfrom-user-snapshot 42\nrun=0\n\n",
+      "exit": 0
+    },
+    {
+      "cmd": "su -s /bin/sh $(awk -F: '$3==1000{print $1}' /etc/passwd) -c '/usr/local/bin/node -e \"console.log(\\\"user\\\", process.getuid(), require(\\\"os\\\").userInfo().username)\"' 2>&1; echo exit=$?",
+      "wallMs": 1350,
+      "stdout": "user 1000 desktop\nexit=0\n\n",
+      "exit": 0
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+}
