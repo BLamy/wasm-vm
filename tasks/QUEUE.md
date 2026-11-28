@@ -69,7 +69,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `0.387642` [E4-T40d](epic-4-acceleration/E4-T40d-desktop-decoded-cache.md) — Size the Replay desktop's decoded-block cache to its working set (262144 entries) *(deps: E4-T40b, E5-T26k)*
 - [ ] `0.387643` [E4-T40e](epic-4-acceleration/E4-T40e-decoded-block-exact-ops.md) — Decoded blocks own exactly their ops; report decoded-cache occupancy *(deps: E4-T40d)*
-- [~] `0.3876435` [E4-T40f](epic-4-acceleration/E4-T40f-block-entry-successor-memo.md) — Cheaper block entry — a remembered successor skips the cache probe; no JIT discovery without a JIT *(deps: E4-T40d)*
+- [?] `0.3876435` [E4-T40f](epic-4-acceleration/E4-T40f-block-entry-successor-memo.md) — Cheaper block entry — a remembered successor skips the cache probe; no JIT discovery without a JIT *(deps: E4-T40d)*
 
 ## Epic 5 — `epic-5-the-window`
 

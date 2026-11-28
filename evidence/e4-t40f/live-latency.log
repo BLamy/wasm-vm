@@ -1,0 +1,79 @@
+[desktop-latency 09:21:54.375] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[desktop-latency 09:22:36.003] desktop ready after 41.6 s
+[desktop-latency 09:22:36.017] scenario click
+[desktop-latency 09:22:41.535] click #1: result 269.8 ms, pressed-state frame 86.5 ms, 27.4M instr @ 99.5 MIPS
+[desktop-latency 09:22:44.848] click #2: result 221.3 ms, pressed-state frame 121.1 ms, 26.3M instr @ 96.8 MIPS
+[desktop-latency 09:22:47.911] click #3: result 227.7 ms, pressed-state frame 127.7 ms, 25.9M instr @ 94.4 MIPS
+[desktop-latency 09:22:50.976] click #4: result 228.5 ms, pressed-state frame 129.1 ms, 25.8M instr @ 93.6 MIPS
+[desktop-latency 09:22:54.034] click #5: result 234.1 ms, pressed-state frame 133.7 ms, 26.1M instr @ 96.1 MIPS
+[desktop-latency 09:22:57.084] click #6: result 230.3 ms, pressed-state frame 113.5 ms, 26.5M instr @ 99 MIPS
+[desktop-latency 09:22:59.867] scenario type
+[desktop-latency 09:23:06.835] type #1: echo 57.1 ms
+[desktop-latency 09:23:08.401] type #2: echo 41 ms
+[desktop-latency 09:23:09.966] type #3: echo 42.9 ms
+[desktop-latency 09:23:11.579] type #4: echo 46 ms
+[desktop-latency 09:23:13.194] type #5: echo 49 ms
+[desktop-latency 09:23:14.815] type #6: echo 47.8 ms
+[desktop-latency 09:23:19.152] {"echoMs":{"n":6,"missing":0,"min":41,"median":47.8,"max":57.1}}
+[desktop-latency 09:23:19.153] scenario node
+[desktop-latency 09:23:34.372] node #1: prompt back 1493.3 ms after Enter, 225.4M instr @ 146.7 MIPS
+[desktop-latency 09:23:49.517] node #2: prompt back 1518.3 ms after Enter, 225M instr @ 146 MIPS
+[desktop-latency 09:24:04.731] node #3: prompt back 1528.7 ms after Enter, 233.6M instr @ 147.7 MIPS
+[desktop-latency 09:24:07.258] {"promptMs":{"n":3,"missing":0,"min":1493.3,"median":1518.3,"max":1528.7}}
+[desktop-latency 09:24:07.258] scenario idle
+[desktop-latency 09:24:39.803] {"wallMs":30003,"instructionsM":19.3,"mips":0.6,"inSlicePct":1.2,"guestSecondsPerSecond":1,"idleSleeps":632,"idleSleepMs":28812,"idleWakes":121,"clockMode":"paced-icount","framesReceived":0,"drawnPresents":0}
+[desktop-latency 09:24:39.808] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 6,
+   "missing": 0,
+   "min": 221.3,
+   "median": 230.3,
+   "max": 269.8
+  },
+  "pointerArrivedMs": 132.9,
+  "pressedFrame": {
+   "seen": 6,
+   "none": 0,
+   "ms": {
+    "n": 6,
+    "missing": 0,
+    "min": 86.5,
+    "median": 127.7,
+    "max": 133.7
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 6,
+   "missing": 0,
+   "min": 41,
+   "median": 47.8,
+   "max": 57.1
+  }
+ },
+ "node": {
+  "promptMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 1493.3,
+   "median": 1518.3,
+   "max": 1528.7
+  }
+ },
+ "idle": {
+  "wallMs": 30003,
+  "instructionsM": 19.3,
+  "mips": 0.6,
+  "inSlicePct": 1.2,
+  "guestSecondsPerSecond": 1,
+  "idleSleeps": 632,
+  "idleSleepMs": 28812,
+  "idleWakes": 121,
+  "clockMode": "paced-icount",
+  "framesReceived": 0,
+  "drawnPresents": 0
+ }
+}
+[desktop-latency 09:24:39.872] wrote evidence/e4-t40f/live-latency.json
