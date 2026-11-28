@@ -24679,18 +24679,18 @@
       "activity": [
         {
           "date": "2026-11-27",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "E5-T43b round 2: idle requires the file-transfer sockets to be listening; every condition pinned",
             "E5-T43b refuted: verifier — idle() true with file-transfer sockets in SynReceived/LastAck; 11 of 12 conditions unpinned",
             "E5-T43b implemented: claim",
-            "E5-T43b: the slirp backend reports when it is idle",
-            "E5-T43b: regenerated GPU checkpoint build id (matches web/dist)"
+            "E5-T43b: the slirp backend reports when it is idle"
           ]
         }
       ],
       "firstActivity": "2026-11-27",
       "lastActivity": "2026-11-27",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E5-T43c",
