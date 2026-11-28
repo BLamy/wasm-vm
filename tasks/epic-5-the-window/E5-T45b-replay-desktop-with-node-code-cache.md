@@ -3,7 +3,7 @@ id: E5-T45b
 epic: 5
 title: Replay desktop with the code-cached Node (generation 4)
 priority: 0.3876637
-status: pending
+status: in-progress
 depends_on: [E5-T45a, E4-T40g]
 estimate: S
 risk: medium

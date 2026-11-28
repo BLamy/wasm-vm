@@ -26,8 +26,8 @@ MAX_INSTRS="${MAX_INSTRS:-100000000000}"
 NIC="${REPLAY_DESKTOP_CAPTURE_NIC:---net-slirp}"
 # Must equal web/main.js REPLAY_DESKTOP_BOOTARGS (the browser cold boot's command line).
 APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
-# The monitor prints REPLAY_DESKTOP_READY when the desktop is up and REPLAY_NODE_SNAPSHOT (always
-# after it) once Node's startup snapshot is in tmpfs. The capture then types one command line
+# The monitor prints REPLAY_DESKTOP_READY when the desktop is up (Node needs no per-boot snapshot
+# since E5-T45a: it carries its built-in one). The capture then types one command line
 # into the serial root shell and fires on the line it prints last:
 #
 #   1. `sleep 30` — Chrome schedules start-up work for its first 10-20 guest seconds (measured:
@@ -49,9 +49,8 @@ APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 
 #
 # The marker is typed as two adjacent shell words, so the console's echo of the command line
 # cannot fire the trigger. If any step fails the guest powers off: the capture ends at once
-# with no snapshot instead of running to MAX_INSTRS. A boot whose Node snapshot build failed
-# prints REPLAY_NODE_SNAPSHOT_FAILED and is never captured either.
-NODE_MARKER="REPLAY_NODE_SNAPSHOT bytes="
+# with no snapshot instead of running to MAX_INSTRS.
+NODE_MARKER="REPLAY_DESKTOP_READY uptime="
 SETTLE_GUEST_SECONDS="${REPLAY_DESKTOP_SETTLE_SECONDS:-30}"
 TRIGGER="REPLAY_DESKTOP_COMPACTED zeroed_mib="
 # The compaction is typed as a script, one short line at a time (busybox's line editor cuts a
@@ -170,7 +169,7 @@ FEEDER=$!
   --snapshot-base-id "$BASE_HEX" <"$STDIN_FIFO" 2>&1 | tee "$BOOTLOG"
 T1=$(date +%s)
 kill "$FEEDER" 2>/dev/null || true
-grep -aq "$NODE_MARKER" "$BOOTLOG" || { echo "build-replay-desktop-snapshot: the guest never reported its Node startup snapshot" >&2; exit 1; }
+grep -aq "$NODE_MARKER" "$BOOTLOG" || { echo "build-replay-desktop-snapshot: the desktop never reported READY" >&2; exit 1; }
 [ -s "$RAW_SNAP" ] || { echo "build-replay-desktop-snapshot: no snapshot was written" >&2; exit 1; }
 
 WORK_SHA=$(shasum -a 256 "$WORK" | awk '{print $1}')
