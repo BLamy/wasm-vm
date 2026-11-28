@@ -13,13 +13,17 @@ cd "$(dirname "$0")/.."
 
 BIN="${BIN:-target/release/wasm-vm}"
 KERNEL="${KERNEL:-releases/kernel/6.6.63/Image}"
-IMAGE="${REPLAY_DESKTOP_IMAGE:-target/e5-t41a/image/replay-desktop.ext4}"
-MANIFEST="${REPLAY_DESKTOP_CHUNKS:-releases/rootfs/replay-desktop-20f03da7c51d.chunks.json}"
+IMAGE="${REPLAY_DESKTOP_IMAGE:-target/e5-t43c/image/replay-desktop.ext4}"
+MANIFEST="${REPLAY_DESKTOP_CHUNKS:-releases/rootfs/replay-desktop-2a6e727e346b.chunks.json}"
 OUT_DIR="${REPLAY_DESKTOP_SNAPSHOT_DIR:-releases/boot-snapshot}"
-WORK_DIR="${REPLAY_DESKTOP_SNAPSHOT_WORK:-target/e5-t41b/work}"
-BOOTLOG="${REPLAY_DESKTOP_BOOT_LOG:-evidence/e5-t41b/capture/native-capture.log}"
-RECORD="${REPLAY_DESKTOP_SNAPSHOT_RECORD:-evidence/e5-t41b/capture/snapshot.json}"
+WORK_DIR="${REPLAY_DESKTOP_SNAPSHOT_WORK:-target/e5-t43e/work}"
+BOOTLOG="${REPLAY_DESKTOP_BOOT_LOG:-evidence/e5-t43e/capture/native-capture.log}"
+RECORD="${REPLAY_DESKTOP_SNAPSHOT_RECORD:-evidence/e5-t43e/capture/snapshot.json}"
 MAX_INSTRS="${MAX_INSTRS:-100000000000}"
+# The NIC (E5-T43e): the slirp stack, so the guest holds its DHCP lease when the snapshot is
+# taken and a resumed desktop is online as soon as the page attaches a network. The browser's
+# slirp stack offers the same static lease (crates/slirp/src/dhcp.rs). `--net` is the loopback NIC.
+NIC="${REPLAY_DESKTOP_CAPTURE_NIC:---net-slirp}"
 # Must equal web/main.js REPLAY_DESKTOP_BOOTARGS (the browser cold boot's command line).
 APPEND="root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
 # The monitor prints REPLAY_DESKTOP_READY when the desktop is up and REPLAY_NODE_SNAPSHOT (always
@@ -56,6 +60,7 @@ read -r -d '' COMPACT_SCRIPT <<'SCRIPT' || true
 set -e
 N=/usr/local/bin/node
 sleep __SETTLE__
+__LEASE__
 sync
 echo 1 > /proc/sys/vm/drop_caches
 $N -e 0
@@ -80,6 +85,9 @@ dd if=/dev/zero of=/dev/null bs=${z}M count=1 2>/dev/null
 echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptime)
 SCRIPT
 COMPACT_SCRIPT=${COMPACT_SCRIPT//__SETTLE__/$SETTLE_GUEST_SECONDS}
+# With the slirp NIC the snapshot must hold the lease: no lease line by now, no snapshot.
+if [ "$NIC" = "--net-slirp" ]; then LEASE_STEP="grep -q 'REPLAY_NETWORK bound' /run/replay-desktop/events"; else LEASE_STEP=":"; fi
+COMPACT_SCRIPT=${COMPACT_SCRIPT//__LEASE__/$LEASE_STEP}
 
 for f in "$BIN" "$KERNEL" "$IMAGE" "$MANIFEST"; do
   [ -f "$f" ] || { echo "build-replay-desktop-snapshot: missing $f" >&2; exit 1; }
@@ -130,7 +138,7 @@ FEEDER=$!
   --kernel "$KERNEL" \
   --drive "file=$WORK" \
   --ram-mib 1024 \
-  --net \
+  "$NIC" \
   --virtio-rng \
   --browser-topology \
   --icount-divider 64 \
@@ -168,7 +176,7 @@ mkdir -p "$(dirname "$RECORD")"
 python3 - "$RECORD" <<PY
 import json, sys
 json.dump({
-  "task": "E5-T41b", "url": "releases/boot-snapshot/$NAME", "sha256": "$GZ_SHA", "size": $GZ_LEN,
+  "task": "E5-T43e", "nic": "$NIC", "url": "releases/boot-snapshot/$NAME", "sha256": "$GZ_SHA", "size": $GZ_LEN,
   "uncompressedSize": $RAW_LEN, "uncompressedSha256": "$RAW_SHA",
   "identity": {"imageSha256": "$IMAGE_SHA", "kernelSha256": "$KERNEL_SHA", "coreId": "$CORE_HEX",
     "baseId": "$BASE_HEX", "ramMib": 1024, "bootargs": "$APPEND", "guestClock": "icount",
