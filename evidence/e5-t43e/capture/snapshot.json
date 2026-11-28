@@ -1,0 +1,22 @@
+{
+  "task": "E5-T43e",
+  "nic": "--net-slirp",
+  "url": "releases/boot-snapshot/replay-desktop-ready-d59ef7e56b0d.snap.gz",
+  "sha256": "d59ef7e56b0d5d62ee0083984acb79aa3382bccaae8f8d5d0d1cae3928c4762c",
+  "size": 133399939,
+  "uncompressedSize": 356304290,
+  "uncompressedSha256": "01a1fe32be04c0f463fdc73719283cea5baa94c7cba0fe6b4c29c9cdb10b69a4",
+  "identity": {
+    "imageSha256": "15e1db66d4b45de1021dd4b0d5fa71851310ac68afaff271eacf4a91281993f8",
+    "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "baseId": "b42ac80ffc1a9e168053e40ff9fa468354e527829a61b0676f59f670c31dbeb7",
+    "ramMib": 1024,
+    "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
+    "guestClock": "icount",
+    "icountDivider": 64,
+    "deviceLayout": "browser-topology",
+    "readOnlyRoot": true
+  },
+  "captureHostSeconds": 299
+}
