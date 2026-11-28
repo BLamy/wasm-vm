@@ -1,0 +1,142 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+REPLAY_DESKTOP_MONITOR start uptime=0.89
+root@replay-desktop# [6nREPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.95
+REPLAY_TERMINAL_MAPPED uptime=2.00
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"5577870316AB68AF325969D55370EB5F","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"94122A044A2AAD1F09134C60DCFB60AD"}]}} uptime=4.61
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"F7E3339F657744AC6BE7391D615FA427"} uptime=4.99
+REPLAY_RENDERER_SANDBOX pid=/proc/197 NoNewPrivs=1 Seccomp=2 NSpid=	197	10	1 uptime=5.11
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.16
+REPLAY_CHROME_MAPPED uptime=5.30 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.32 mem_hwm_kib=172600
+REPLAY_NODE_SNAPSHOT bytes=6753854 uptime=9.73
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; printf '%s\n' "require('h
+ttps');" > /tmp/https.js; printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cd /tmp && /opt/replay-no
+de-26/bin/node --snapshot-blob /tmp/https.blob --build-snapshot /tmp/https.js 2>
+&1 | grep -v '^ *[0-9]*: 0x' | head -12; echo "exit $?"; ls -l /tmp/https.blob 2
+>&1; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+(node:262) Warning: It's not yet fully verified whether built-in module "https" works in user snapshot builder scripts.
+It may still work in some cases, but in other cases certain run-time states may be out-of-sync after snapshot deserialization.
+To request support for the module, use the Node.js issue tracker: https://github.com/nodejs/node/issues
+(Use `node --trace-warnings ...` to show where the warning was created)
+global handle not serialized: 0x3fab3f5479: [[api object] 0] in OldSpace
+ - map: 0x003fab219521 <Map[48](HOLEY_ELEMENTS)> [FastProperties]
+ - prototype: 0x0018b4ee1fe9 <Object map = 0x3fab217eb9>
+ - elements: 0x003fab980dd1 <FixedArray[0]> [HOLEY_ELEMENTS]
+ - embedder fields: 2
+ - properties: 0x003fab0c1851 <PropertyArray[6]>
+ - All own properties (excluding elements): {
+    0x3fab20d2e1: [String] in OldSpace: #HTTPParser: 0x003fab218559 <JSFunction HTTPParser (sfi = 0x3fab218511)> (const data field 0, attrs: [WEC]) @ Class(0x3fab218c31), location: properties[0]
+Trace/breakpoint trap
+exit 0
+ls: /tmp/https.blob: No such file or directory
+WVM_DONE_3
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '4'; printf '%s\n' "require('t
+ls');" > /tmp/tls.js; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; cd /tmp && /opt/replay-no
+de-26/bin/node --snapshot-blob /tmp/tls.blob --build-snapshot /tmp/tls.js 2>&1 |
+ grep -v '^ *[0-9]*: 0x' | head -12; echo "exit $?"; ls -l /tmp/tls.blob 2>&1; p
+rintf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+(node:277) Warning: It's not yet fully verified whether built-in module "tls" works in user snapshot builder scripts.
+It may still work in some cases, but in other cases certain run-time states may be out-of-sync after snapshot deserialization.
+To request support for the module, use the Node.js issue tracker: https://github.com/nodejs/node/issues
+(Use `node --trace-warnings ...` to show where the warning was created)
+Unknown external reference 0x5555867de0b6.
+<unresolved>
+Trace/breakpoint trap
+exit 0
+ls: /tmp/tls.blob: No such file or directory
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; printf '%s\n' "require('h
+ttp');" > /tmp/http.js; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; cd /tmp && /opt/replay-no
+de-26/bin/node --snapshot-blob /tmp/http.blob --build-snapshot /tmp/http.js 2>&1
+ | grep -v '^ *[0-9]*: 0x' | head -12; echo "exit $?"; ls -l /tmp/http.blob 2>&1
+; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+(node:294) Warning: It's not yet fully verified whether built-in module "http" works in user snapshot builder scripts.
+It may still work in some cases, but in other cases certain run-time states may be out-of-sync after snapshot deserialization.
+To request support for the module, use the Node.js issue tracker: https://github.com/nodejs/node/issues
+(Use `node --trace-warnings ...` to show where the warning was created)
+global handle not serialized: 0x3f78f247a9: [[api object] 0] in OldSpace
+ - map: 0x003f790340d1 <Map[48](HOLEY_ELEMENTS)> [FastProperties]
+ - prototype: 0x003f78f23e51 <Object map = 0x3f79032ad1>
+ - elements: 0x003f79580dd1 <FixedArray[0]> [HOLEY_ELEMENTS]
+ - embedder fields: 2
+ - properties: 0x003f78f24b49 <PropertyArray[6]>
+ - All own properties (excluding elements): {
+    0x3f7902a741: [String] in OldSpace: #HTTPParser: 0x003f79033171 <JSFunction HTTPParser (sfi = 0x3f79033129)> (const data field 0, attrs: [WEC]) @ Class(0x3f79033829), location: properties[0]
+Trace/breakpoint trap
+exit 0
+ls: /tmp/http.blob: No such file or directory
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; printf '%s\n' "fetch('dat
+a:,x').then((r) => r.text()).catch(() => {});" > /tmp/fetchData.js; printf '%s%s
+\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; cd /tmp && /opt/replay-no
+de-26/bin/node --snapshot-blob /tmp/fetchData.blob --build-snapshot /tmp/fetchDa
+ta.js 2>&1 | grep -v '^ *[0-9]*: 0x' | head -12; echo "exit $?"; ls -l /tmp/fetc
+hData.blob 2>&1; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+global handle not serialized: 0x3ca279ae89: [[api object] 0] in OldSpace
+ - map: 0x003f764832e1 <Map[48](HOLEY_ELEMENTS)> [FastProperties]
+ - prototype: 0x003ca278b9a9 <Object map = 0x3f764820f1>
+ - elements: 0x003f76d80dd1 <FixedArray[0]> [HOLEY_ELEMENTS]
+ - embedder fields: 2
+ - properties: 0x003f760462c9 <PropertyArray[6]>
+ - All own properties (excluding elements): {
+    0x3f7657af99: [String] in OldSpace: #HTTPParser: 0x003f76482791 <JSFunction HTTPParser (sfi = 0x3f76482749)> (const data field 0, attrs: [WEC]) @ Class(0x3f76482e49), location: properties[0]
+    0x3f76a7ba49: [String] in OldSpace: #ConnectionsList: 0x003f76483169 <JSFunction ConnectionsList (sfi = 0x3f76483121)> (const data field 1, attrs: [WEC]) @ Any, location: properties[1]
+    0x30182c0621: [String] in OldSpace: #methods: 0x003f7604aa39 <JSArray[35]> (const data field 2, attrs: [WEC]) @ Any, location: properties[2]
+    0x3f76480159: [String] in OldSpace: #allMethods: 0x003f76084071 <JSArray[47]> (const data field 3, attrs: [WEC]) @ Any, location: properties[3]
+ }
+Trace/breakpoint trap
+exit 0
+ls: /tmp/fetchData.blob: No such file or directory
+WVM_DONE_9
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '10'; printf '%s\n' "void glob
+alThis.fetch;" > /tmp/fetchGetter.js; printf '%s%s\n' 'WVM_DONE_' '10'
+WVM_BEGIN_10
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; cd /tmp && /opt/replay-n
+ode-26/bin/node --snapshot-blob /tmp/fetchGetter.blob --build-snapshot /tmp/fetc
+hGetter.js 2>&1 | grep -v '^ *[0-9]*: 0x' | head -12; echo "exit $?"; ls -l /tmp
+/fetchGetter.blob 2>&1; printf '%s%s\n' 'WVM_DONE_' '11'
+WVM_BEGIN_11
+exit 0
+-rw-r--r--    1 root     root       6765214 Nov 28 08:19 /tmp/fetchGetter.blob
+WVM_DONE_11
+root@replay-desktop# [6n

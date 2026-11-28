@@ -1,0 +1,250 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.87
+REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+REPLAY_CHROMIUM_LAUNCH uptime=1.49
+REPLAY_SWAY_IPC uptime=1.94
+REPLAY_TERMINAL_MAPPED uptime=1.98
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"EAAB6F40F9A7B551D33462162FFF4438","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"899C253BC4F150D01A3D2D4C28F0A2FA"}]}} uptime=4.69
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"0B0D68D970A308DEF3AEF38FE5ACA47B"} uptime=5.11
+REPLAY_RENDERER_SANDBOX pid=/proc/205 NoNewPrivs=1 Seccomp=2 NSpid=	205	10	1 uptime=5.24
+REPLAY_CHROME_MAPPED uptime=5.31 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.33 mem_hwm_kib=169832
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.30
+REPLAY_NODE_SNAPSHOT bytes=6762014 uptime=11.76
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; printf '%s\n' "require('h
+ttps'); require('http'); require('tls');" "fetch('data:,x').then((r) => r.text()
+).catch(() => {});" > /tmp/e.js; printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /tmp/s2.blob --build-snapshot /tmp/e.js 2>&1
+ | tail -5; ls -l /tmp/s2.blob /run/replay-node/startup.blob; printf '%s%s\n' 'W
+VM_DONE_' '3'
+WVM_BEGIN_3
+11: 0x5555713fcc60 _start [/opt/replay-node-26/bin/node]
+Command terminated by signal 5
+real	0m 2.78s
+user	0m 2.64s
+sys	0m 0.13s
+ls: /tmp/s2.blob: No such file or directory
+-rw-r--r--    1 root     root       6762014 Nov 28 08:10 /run/replay-node/startup.blob
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e '0' 2>&1 | 
+tail -4; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+real	0m 0.31s
+user	0m 0.22s
+sys	0m 0.09s
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e '0' 2>&1 | tail -4; printf '
+%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.03s
+sys	0m 0.01s
+WVM_DONE_5
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '6'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e '0' 2>&1 | tail -4; printf '
+%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.04s
+sys	0m 0.01s
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e '0' 2>&1 | 
+tail -4; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+real	0m 0.40s
+user	0m 0.23s
+sys	0m 0.07s
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'fetch("htt
+p://127.0.0.1:9").catch(()=>console.log(1))' 2>&1 | tail -4; printf '%s%s\n' 'WV
+M_DONE_' '8'
+WVM_BEGIN_8
+1
+real	0m 0.73s
+user	0m 0.61s
+sys	0m 0.10s
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; cd /tmp && time /opt/repl
+ay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'fetch("http://127.0.0.1:9")
+.catch(()=>console.log(1))' 2>&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.01s
+sys	0m 0.03s
+WVM_DONE_9
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '10'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'fetch("http://127.0.0.1:9"
+).catch(()=>console.log(1))' 2>&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '10'
+WVM_BEGIN_10
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.02s
+sys	0m 0.02s
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'fetch("ht
+tp://127.0.0.1:9").catch(()=>console.log(1))' 2>&1 | tail -4; printf '%s%s\n' 'W
+VM_DONE_' '11'
+WVM_BEGIN_11
+1
+real	0m 0.72s
+user	0m 0.61s
+sys	0m 0.09s
+WVM_DONE_11
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'require("
+https").get("https://example.com",r=>{console.log(r.statusCode);r.resume()})' 2>
+&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '12'
+WVM_BEGIN_12
+200
+real	0m 0.69s
+user	0m 0.57s
+sys	0m 0.10s
+WVM_DONE_12
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '13'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'require("https").get("http
+s://example.com",r=>{console.log(r.statusCode);r.resume()})' 2>&1 | tail -4; pri
+ntf '%s%s\n' 'WVM_DONE_' '13'
+WVM_BEGIN_13
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.06s
+user	0m 0.04s
+sys	0m 0.01s
+WVM_DONE_13
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '14'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'require("https").get("http
+s://example.com",r=>{console.log(r.statusCode);r.resume()})' 2>&1 | tail -4; pri
+ntf '%s%s\n' 'WVM_DONE_' '14'
+WVM_BEGIN_14
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.02s
+sys	0m 0.02s
+WVM_DONE_14
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '15'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'require("
+https").get("https://example.com",r=>{console.log(r.statusCode);r.resume()})' 2>
+&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '15'
+WVM_BEGIN_15
+200
+real	0m 0.68s
+user	0m 0.57s
+sys	0m 0.10s
+WVM_DONE_15
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '16'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'fetch("ht
+tps://example.com").then(r=>console.log(r.status))' 2>&1 | tail -4; printf '%s%s
+\n' 'WVM_DONE_' '16'
+WVM_BEGIN_16
+200
+real	0m 2.99s
+user	0m 0.90s
+sys	0m 0.09s
+WVM_DONE_16
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '17'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'fetch("https://example.com
+").then(r=>console.log(r.status))' 2>&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '
+17'
+WVM_BEGIN_17
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.02s
+sys	0m 0.02s
+WVM_DONE_17
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '18'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'fetch("https://example.com
+").then(r=>console.log(r.status))' 2>&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '
+18'
+WVM_BEGIN_18
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.02s
+sys	0m 0.02s
+WVM_DONE_18
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '19'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'fetch("ht
+tps://example.com").then(r=>console.log(r.status))' 2>&1 | tail -4; printf '%s%s
+\n' 'WVM_DONE_' '19'
+WVM_BEGIN_19
+200
+real	0m 3.44s
+user	0m 0.88s
+sys	0m 0.11s
+WVM_DONE_19
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '20'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'console.l
+og(Object.getOwnPropertyNames(globalThis).length, Object.getOwnPropertySymbols(g
+lobalThis).map(String).join(), Object.keys(require.cache).length, process.argv.l
+ength)' 2>&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '20'
+WVM_BEGIN_20
+187 Symbol(Symbol.toStringTag) 0 1
+real	0m 0.35s
+user	0m 0.26s
+sys	0m 0.07s
+WVM_DONE_20
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '21'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'console.log(Object.getOwnP
+ropertyNames(globalThis).length, Object.getOwnPropertySymbols(globalThis).map(St
+ring).join(), Object.keys(require.cache).length, process.argv.length)' 2>&1 | ta
+il -4; printf '%s%s\n' 'WVM_DONE_' '21'
+WVM_BEGIN_21
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.02s
+sys	0m 0.02s
+WVM_DONE_21
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '22'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /tmp/s2.blob -e 'console.log(Object.getOwnP
+ropertyNames(globalThis).length, Object.getOwnPropertySymbols(globalThis).map(St
+ring).join(), Object.keys(require.cache).length, process.argv.length)' 2>&1 | ta
+il -4; printf '%s%s\n' 'WVM_DONE_' '22'
+WVM_BEGIN_22
+Cannot open /tmp/s2.blobCommand exited with non-zero status 14
+real	0m 0.05s
+user	0m 0.03s
+sys	0m 0.02s
+WVM_DONE_22
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '23'; cd /tmp && time /opt/rep
+lay-node-26/bin/node --snapshot-blob /run/replay-node/startup.blob -e 'console.l
+og(Object.getOwnPropertyNames(globalThis).length, Object.getOwnPropertySymbols(g
+lobalThis).map(String).join(), Object.keys(require.cache).length, process.argv.l
+ength)' 2>&1 | tail -4; printf '%s%s\n' 'WVM_DONE_' '23'
+WVM_BEGIN_23
+187 Symbol(Symbol.toStringTag) 0 1
+real	0m 0.34s
+user	0m 0.25s
+sys	0m 0.07s
+WVM_DONE_23
+root@replay-desktop# [6n

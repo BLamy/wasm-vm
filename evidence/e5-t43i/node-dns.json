@@ -1,0 +1,162 @@
+{
+  "label": "dns",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "startedAt": "2026-11-28T08:04:55.347Z",
+  "trials": 2,
+  "scenarios": {
+    "node": {
+      "promptMs": {
+        "n": 2,
+        "missing": 0,
+        "min": 1673.6,
+        "median": 1881.3,
+        "max": 1881.3
+      },
+      "raw": {
+        "done": [
+          1881.3,
+          1673.6
+        ],
+        "rates": [
+          {
+            "wallMs": 1902,
+            "instructionsM": 229.1,
+            "mips": 120.5,
+            "inSlicePct": 91.9,
+            "guestSecondsPerSecond": 0.32,
+            "idleSleeps": 24,
+            "idleSleepMs": 277,
+            "idleWakes": 4,
+            "clockMode": "paced-icount",
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 1692,
+            "instructionsM": 230,
+            "mips": 135.9,
+            "inSlicePct": 97.8,
+            "guestSecondsPerSecond": 0.26,
+            "idleSleeps": 3,
+            "idleSleepMs": 129,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 3,
+            "drawnPresents": 3
+          }
+        ]
+      }
+    }
+  },
+  "jit": {
+    "hasExecutor": false,
+    "compiledBlocks": 0,
+    "executedBlocks": 0,
+    "retiredViaJit": 0,
+    "directChainEntries": 0,
+    "directChainLinks": 0,
+    "dynamicLinkAttempts": 0,
+    "dynamicLinkHits": 0,
+    "dynamicLinkRefusals": 0,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 0,
+    "dynamicLinkInstalls": 0,
+    "entryCost": {
+      "timingEnabled": false,
+      "timerReads": 0,
+      "hostEntries": 0,
+      "stateCopyCalls": 0,
+      "stateCopyBytes": 0,
+      "stateCopyNs": 0,
+      "engineEntryNs": 0,
+      "indirectTableDispatches": 0,
+      "authorityChecks": 0,
+      "memorySplitExits": 0,
+      "deviceBoundaries": 0,
+      "deviceBoundaryNs": 0
+    },
+    "jitRegionChaining": false,
+    "jitDynamicChaining": false,
+    "guestRetired": 1033346745,
+    "jitEngineCalls": 0,
+    "jitLogicalBlocksPerEngineCall": 0,
+    "jitRetiredShare": 0,
+    "chainLinksMade": 0,
+    "chainLinksCut": 0,
+    "chainDispatchEntries": 0,
+    "chainMaxDepth": 0,
+    "chainLinksFollowed": 0,
+    "jitResidencyPolicy": "disabled",
+    "jitResidencyCap": 0,
+    "jitSubmittedMembers": 0,
+    "jitCompilePauseNs": 0,
+    "jitCompilePauseMaxNs": 0,
+    "jitCompilePauseSamples": 0,
+    "jitCacheInstalls": 0,
+    "jitCacheRetranslations": 0,
+    "jitCacheEvictions": 0,
+    "jitCacheBatches": 0,
+    "jitCacheCodeBytes": 0,
+    "compileQueue": {
+      "admitted": 0,
+      "droppedBackpressure": 0,
+      "cancelledStale": 0,
+      "popped": 0,
+      "queueHighWater": 0,
+      "queueDepth": 0,
+      "capacity": 256
+    },
+    "discovery": {
+      "nominated": 4096,
+      "deduped": 163662611,
+      "droppedStale": 0,
+      "droppedOverflow": 55005,
+      "countsDropped": 17597409,
+      "excluded": 208,
+      "queueDepth": 4096,
+      "queueHighWater": 4096,
+      "candidates": 24468,
+      "generation": 20
+    },
+    "decodedCacheEntries": 262144,
+    "decodedBlocksDiscarded": 379,
+    "decodedCacheFlushes": 0,
+    "discoveryGeneration": 20,
+    "blockEntryHits": 187344705,
+    "blockBuilds": 312651,
+    "admissionProbe": false,
+    "coldCounterRecycling": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 64,
+      "capacity": 65536
+    },
+    "turbo": {
+      "enabled": true,
+      "entries": 9759352,
+      "blocks": 187602065,
+      "inlineOps": 1017779162,
+      "slowOps": 15225557,
+      "exitHorizon": 468,
+      "exitBudget": 2027,
+      "exitBoundary": 9729379,
+      "exitTrap": 27478
+    }
+  },
+  "disk": {
+    "fetchWaits": 0,
+    "fetchRequestedChunks": 0,
+    "fetchWaitTotalMs": 0,
+    "localImage": true,
+    "localHits": 9,
+    "localBytes": 2359296,
+    "networkFetches": 0
+  },
+  "missing": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "finishedAt": "2026-11-28T08:05:36.212Z"
+}
