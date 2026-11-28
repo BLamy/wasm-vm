@@ -1,0 +1,37 @@
+[
+  {
+    "cmd": "cat /etc/resolv.conf",
+    "hostMs": 34,
+    "stdout": "nameserver 10.0.2.3\n\n"
+  },
+  {
+    "cmd": "time nslookup example.com 2>&1 | tail -4",
+    "hostMs": 295,
+    "stdout": "\nreal\t0m 0.00s\nuser\t0m 0.00s\nsys\t0m 0.00s\n\n"
+  },
+  {
+    "cmd": "time node -e 'require(\"dns\").lookup(\"example.com\",(e,a)=>console.log(e||a))'",
+    "hostMs": 1700,
+    "stdout": "104.20.23.154\nreal\t0m 0.35s\nuser\t0m 0.25s\nsys\t0m 0.09s\n\n"
+  },
+  {
+    "cmd": "time node -e 'fetch(\"http://example.com\").then(r=>console.log(r.status))'",
+    "hostMs": 10453,
+    "stdout": "200\nreal\t0m 1.28s\nuser\t0m 1.11s\nsys\t0m 0.16s\n\n"
+  },
+  {
+    "cmd": "time node -e 'fetch(\"https://example.com\").then(r=>console.log(r.status))'",
+    "hostMs": 8956,
+    "stdout": "200\nreal\t0m 1.01s\nuser\t0m 0.87s\nsys\t0m 0.12s\n\n"
+  },
+  {
+    "cmd": "time node -e 'fetch(\"https://example.com\").then(r=>console.log(r.status))'",
+    "hostMs": 8945,
+    "stdout": "200\nreal\t0m 1.01s\nuser\t0m 0.88s\nsys\t0m 0.11s\n\n"
+  },
+  {
+    "cmd": "time node -e 'require(\"https\").get(\"https://example.com\",r=>console.log(r.statusCode))'",
+    "hostMs": 405023,
+    "stdout": "200\nreal\t0m 16.16s\nuser\t0m 0.55s\nsys\t0m 0.12s\n\n"
+  }
+]

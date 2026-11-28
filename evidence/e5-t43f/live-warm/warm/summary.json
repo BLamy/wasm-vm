@@ -1,0 +1,96 @@
+{
+  "task": "E5-T34e",
+  "mode": "warm",
+  "url": "https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "budgetMs": 15000,
+  "nonce": "425A0DCA",
+  "command": "node -e \"console.log('E5T34E_425A0DCA', process.version)\" | tee -a /run/replay-desktop/events",
+  "times": {
+    "wholeImageFinishedMs": 63296,
+    "snapshotStartedMs": 2290,
+    "snapshotFinishedMs": 62622,
+    "wholeImageStartedMs": 7263,
+    "downloadsFinishedMs": 63296,
+    "desktopVisibleMs": 65330,
+    "downloadEndToDesktopMs": 2034,
+    "runAgainAnsweredMs": 5115,
+    "nodeAnswerAfterTypingMs": 19342
+  },
+  "states": [
+    {
+      "state": "fetching",
+      "at": 2281.25
+    },
+    {
+      "state": "instantiating",
+      "at": 63289.96000003815
+    },
+    {
+      "state": "restoring",
+      "at": 63495.04000008106
+    },
+    {
+      "state": "restored",
+      "at": 64817.81000006199
+    }
+  ],
+  "downloads": {
+    "wholeImage": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f7ff2d0cf27f69f44dbbc73d921e5f2f42bf4dc989999a2ae78a5c64126a287c/releases/rootfs/replay-desktop-ec157fd1b3a7.img.gz",
+      "bytes": 189900243,
+      "declared": 189900243
+    },
+    "snapshot": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/c5d6ff60fda9d8544f3e1f15692409e2838e039bbcf686f7891ba1d0bca58b1a/releases/boot-snapshot/replay-desktop-ready-c5d6ff60fda9.snap.gz",
+      "bytes": 135290972,
+      "declared": 135290972
+    }
+  },
+  "counts": {
+    "total": 178,
+    "wholeImage": 1,
+    "snapshot": 1,
+    "chunkOrRange": 0,
+    "diskRelated": [
+      "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/c5d6ff60fda9d8544f3e1f15692409e2838e039bbcf686f7891ba1d0bca58b1a/releases/boot-snapshot/replay-desktop-ready-c5d6ff60fda9.snap.gz",
+      "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f7ff2d0cf27f69f44dbbc73d921e5f2f42bf4dc989999a2ae78a5c64126a287c/releases/rootfs/replay-desktop-ec157fd1b3a7.img.gz"
+    ],
+    "chunkManifest": 1,
+    "bootDiskRelated": 2
+  },
+  "fetchStats": {
+    "fetches": 0,
+    "bytes": 0,
+    "localHits": 24,
+    "localBytes": 6291456,
+    "localImage": true,
+    "error": null,
+    "cache": {
+      "hits": 346,
+      "misses": 24,
+      "evictions": 0,
+      "residentBytes": 6291456,
+      "budgetBytes": 268435456
+    },
+    "prefetch": {
+      "issued": 0,
+      "used": 0,
+      "profileEntries": 0,
+      "accuracyPct": 0
+    }
+  },
+  "chrome": {
+    "runsBefore": 1,
+    "runsAfter": 2
+  },
+  "node": [
+    "root@replay-desktop# \u001b[6nE5T34E_425A0DCA v26.13.1\r"
+  ],
+  "keyboard": {
+    "framesBefore": 0,
+    "framesAfter": 214,
+    "typedChars": 93
+  },
+  "consoleErrors": []
+}

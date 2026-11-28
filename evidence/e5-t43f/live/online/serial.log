@@ -1,0 +1,35 @@
+
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwzxwpu60\n'; ip -4 -o addr show dev et
+h0 | awk '{print $4}'; ip -4 route | grep default; printf '\n__WVEND_mwzxwpu60_%
+s\n' "$?"
+
+__WVBEGIN_mwzxwpu60
+10.0.2.15/24
+default via 10.0.2.2 dev eth0 
+
+__WVEND_mwzxwpu60_0
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwzxwyk41\n'; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o '"name": "[^"]*Chromium"' | h
+ead -n 3; printf '\n__WVEND_mwzxwyk41_%s\n' "$?"
+
+__WVBEGIN_mwzxwyk41
+"name": "Replay RISC-V PASS #1 - Chromium"
+
+__WVEND_mwzxwyk41_0
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwzxx45k2\n'; SWAYSOCK=$(ls /run/user/1
+000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o '"name": "[^"]*Chromium"' | h
+ead -n 3; printf '\n__WVEND_mwzxx45k2_%s\n' "$?"
+
+__WVBEGIN_mwzxx45k2
+"name": "Replay RISC-V PASS #1 - Chromium"
+
+__WVEND_mwzxx45k2_0
+root@replay-desktop# [6nprintf '\n__WVBEGIN_mwzxx9x03\n'; SWAY
+SOCK=$(ls /run/user/1000/sway-ipc.*.sock) swaymsg -t get_tree | grep -o '"name":
+ "[^"]*Chromium"' | head -n 3; printf '\n__WVEND_mwzxx9x03_%s\n' "$?"
+
+__WVBEGIN_mwzxx9x03
+"name": "Example Domain - Chromium"
+
+__WVEND_mwzxx9x03_0
+root@replay-desktop# [6nE5T43F_AAEDFB55 200

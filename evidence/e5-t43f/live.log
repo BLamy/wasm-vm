@@ -1,0 +1,6 @@
+[e5-t43f 2026-11-28T04:57:51.017Z] open https://wasm-vm.pages.dev/app?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T04:58:34.828Z] desktop ready 43812 ms
+[e5-t43f 2026-11-28T04:58:41.128Z] typed the URL into the guest's Chrome
+[e5-t43f 2026-11-28T04:59:11.051Z] Chrome loaded example.com in 25071 ms
+[e5-t43f 2026-11-28T05:00:46.651Z] node fetch: E5T43F_AAEDFB55 200
+[e5-t43f 2026-11-28T05:00:46.656Z] online PASS
