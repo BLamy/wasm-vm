@@ -35,6 +35,10 @@ impl NetBackend for SharedSlirpBackend {
     fn rx_ready(&self) -> bool {
         NetBackend::rx_ready(&*self.0.borrow())
     }
+
+    fn idle(&self) -> bool {
+        NetBackend::idle(&*self.0.borrow())
+    }
 }
 
 #[derive(Default)]

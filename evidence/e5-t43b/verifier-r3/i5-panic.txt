@@ -1,0 +1,5 @@
+test local_backend::tests::slot1_isolated_half_open_is_not_idle ... FAILED
+---- local_backend::tests::slot1_isolated_half_open_is_not_idle stdout ----
+thread 'local_backend::tests::slot1_isolated_half_open_is_not_idle' (36199707) panicked at crates/slirp/src/local_backend.rs:2527:9:
+    local_backend::tests::slot1_isolated_half_open_is_not_idle
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 288 filtered out; finished in 0.00s

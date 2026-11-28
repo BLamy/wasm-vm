@@ -1086,6 +1086,25 @@ impl NetBackend for SlirpLocalBackend {
         frame
     }
 
+    /// E5-T43b: the run loop may skip this backend (and the paced clock may let the worker sleep)
+    /// only while `poll` would change nothing and stay so until the guest sends a frame or the
+    /// host calls in between run calls. That holds when nothing waits for the guest; nothing is
+    /// in flight outside the stack (`external_io_pending`: no NAT flow with a connector, no DNS
+    /// query, no file transfer, no local HTTP work); the guest's DNS-over-TCP socket and both
+    /// file-transfer sockets are listening — a socket in any other state can carry data, a
+    /// retransmit or a close timer (E5-T43b verifier: SynReceived and LastAck), and the
+    /// connections and buffers bound to them exist only then. (With the local HTTP service
+    /// attached, `register_http` has closed the DNS-over-TCP and file-transfer sockets for good,
+    /// so the Listen checks below report it not idle — its own sockets are not looked at.)
+    /// Listeners carry no timers.
+    fn idle(&self) -> bool {
+        use smoltcp::socket::tcp::State::Listen;
+        self.egress.is_empty()
+            && !NetBackend::external_io_pending(self)
+            && self.stack.dns_tcp_state() == Listen
+            && (0..FILE_TRANSFER_SLOTS).all(|slot| self.stack.file_tcp_state(slot) == Listen)
+    }
+
     fn rx_ready(&self) -> bool {
         // Pure readiness predicate. Event-driven connector work is advanced by `NetBackend::poll`
         // before the device asks this question, so remote data can wake a booted guest even when the
@@ -2112,6 +2131,485 @@ mod tests {
         assert!(
             be.dns_tcp_rx.is_empty(),
             "complete query must not remain buffered"
+        );
+    }
+
+    /// E5-T43b: idle exactly while a poll would change nothing.
+    #[test]
+    fn idle_only_with_nothing_queued_no_flows_and_no_work_in_flight() {
+        let mut offline = SlirpLocalBackend::new(GW_MAC, Box::new(|| 0));
+        assert!(NetBackend::idle(&offline), "a fresh offline stack is idle");
+        offline.tx(&guest_arp_request());
+        assert!(
+            !NetBackend::idle(&offline),
+            "an ARP reply waits for the guest"
+        );
+        while offline.rx().is_some() {}
+        assert!(NetBackend::idle(&offline), "drained: idle again");
+
+        const REMOTE: Ipv4Addr = Ipv4Addr::new(198, 51, 100, 9);
+        let state = Rc::new(RefCell::new(UdpProbeState::default()));
+        let now = Rc::new(Cell::new(1i64));
+        let clock = {
+            let now = now.clone();
+            Box::new(move || now.get())
+        };
+        let mut be =
+            SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(UdpProbe(state.clone())));
+        assert!(NetBackend::idle(&be), "a connector with no flows is idle");
+        let request =
+            build_udp_frame(GUEST_MAC, GW_MAC, GUEST_IP, 41000, REMOTE, 9999, b"q").unwrap();
+        be.tx(&request);
+        while be.rx().is_some() {}
+        assert_eq!(be.flow_count(), 1);
+        assert!(
+            !NetBackend::idle(&be),
+            "an open UDP flow needs polls (replies, NAT expiry)"
+        );
+        now.set(crate::nat::UDP_IDLE_MS as i64 + 1);
+        be.poll();
+        while be.rx().is_some() {}
+        assert_eq!(be.flow_count(), 0);
+        assert!(NetBackend::idle(&be), "expired: idle again");
+        // Polling an idle backend changes nothing it reports.
+        be.poll();
+        assert!(NetBackend::idle(&be) && !NetBackend::rx_ready(&be));
+    }
+
+    // ===== E5-T43b verifier attacks, promoted with assertions (round 2) =====
+    fn browser_shaped(now: Rc<Cell<i64>>) -> SlirpLocalBackend {
+        let clock = Box::new(move || now.get());
+        let state = Rc::new(RefCell::new(UdpProbeState::default()));
+        SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(UdpProbe(state)))
+            .with_dns_service(Box::new(ImmediateDns::new(1, Rc::new(Cell::new(0)))))
+    }
+
+    fn tcp_of(frame: &[u8]) -> Option<(u16, u16, bool, bool, bool, i32)> {
+        let eth = EthernetFrame::new_checked(frame).ok()?;
+        let ip = Ipv4Packet::new_checked(eth.payload()).ok()?;
+        let tcp = TcpPacket::new_checked(ip.payload()).ok()?;
+        Some((
+            tcp.src_port(),
+            tcp.dst_port(),
+            tcp.syn(),
+            tcp.ack(),
+            tcp.fin(),
+            tcp.seq_number().0,
+        ))
+    }
+
+    /// P3: half-open guest handshake to the file-transfer endpoint.
+    #[test]
+    fn verifier_p3_half_open_file_transfer_syn() {
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        assert!(NetBackend::idle(&be), "baseline idle");
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45000,
+            crate::file_transfer::PORT,
+            7000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let mut synacks = 0;
+        while let Some(f) = be.rx() {
+            if let Some((_, _, true, true, _, _)) = tcp_of(&f) {
+                synacks += 1;
+            }
+        }
+        assert_eq!(synacks, 1);
+        let idle_after = NetBackend::idle(&be);
+        eprintln!(
+            "P3 idle() after SYN-ACK drained, socket SynReceived: {idle_after}; state {:?}",
+            be.stack.file_tcp_state(0)
+        );
+        let mut changed_at = None;
+        for step in 1..=120 {
+            now.set(1_000 + step * 500);
+            be.poll();
+            if NetBackend::rx_ready(&be) {
+                changed_at = Some(now.get());
+                break;
+            }
+        }
+        let mut retrans = 0;
+        while let Some(f) = be.rx() {
+            if let Some((_, _, true, true, _, _)) = tcp_of(&f) {
+                retrans += 1;
+            }
+        }
+        eprintln!(
+            "P3 poll() first produced a frame at clock {changed_at:?} ms (SYN-ACK retransmissions drained: {retrans}); idle() was {idle_after}"
+        );
+        assert!(
+            !(idle_after && changed_at.is_some()),
+            "CONTRACT: idle() true but a later poll produced a frame"
+        );
+    }
+
+    /// P4: guest closes an established (HELLO-less) agent slot; host side sits in LastAck.
+    #[test]
+    fn verifier_p4_last_ack_after_guest_fin() {
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let server_isn = establish_file_tcp(&mut be, 45001, 9000);
+        assert!(!NetBackend::idle(&be), "established slot: not idle");
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45001,
+            crate::file_transfer::PORT,
+            9001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Fin,
+            &[],
+        ));
+        let mut fins = 0;
+        while let Some(f) = be.rx() {
+            if let Some((_, _, _, _, true, _)) = tcp_of(&f) {
+                fins += 1;
+            }
+        }
+        let idle_after = NetBackend::idle(&be);
+        eprintln!(
+            "P4 host FINs drained: {fins}; idle()={idle_after}; slot state {:?}; conn {:?}",
+            be.stack.file_tcp_state(0),
+            be.file_connections[0]
+        );
+        let mut changed_at = None;
+        for step in 1..=120 {
+            now.set(1_000 + step * 500);
+            be.poll();
+            if NetBackend::rx_ready(&be) {
+                changed_at = Some(now.get());
+                break;
+            }
+        }
+        eprintln!(
+            "P4 poll() first produced a frame at clock {changed_at:?} ms; state now {:?}",
+            be.stack.file_tcp_state(0)
+        );
+        assert!(
+            !(idle_after && changed_at.is_some()),
+            "CONTRACT: idle() true but a later poll produced a frame"
+        );
+    }
+
+    /// P4b: the same, but the guest ACKs the host FIN (the normal, lossless case).
+    #[test]
+    fn verifier_p4b_full_close_returns_idle() {
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let server_isn = establish_file_tcp(&mut be, 45002, 9100);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45002,
+            crate::file_transfer::PORT,
+            9101,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Fin,
+            &[],
+        ));
+        while be.rx().is_some() {}
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45002,
+            crate::file_transfer::PORT,
+            9102,
+            Some(server_isn.wrapping_add(2)),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+        eprintln!(
+            "P4b after guest ACK of FIN: state {:?} idle()={}",
+            be.stack.file_tcp_state(0),
+            NetBackend::idle(&be)
+        );
+        for step in 1..=120 {
+            now.set(1_000 + step * 500);
+            be.poll();
+            assert!(!NetBackend::rx_ready(&be), "quiet after a clean close");
+        }
+        assert!(NetBackend::idle(&be), "a cleanly closed slot is idle again");
+    }
+
+    /// P6: quiet established agent slot — poll does nothing but idle() stays false.
+    #[test]
+    fn verifier_p6_quiet_established_slot() {
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let _ = establish_file_tcp(&mut be, 45003, 9200);
+        let mut produced = 0;
+        for step in 1..=1200 {
+            now.set(1_000 + step * 500);
+            be.poll();
+            while be.rx().is_some() {
+                produced += 1;
+            }
+        }
+        assert_eq!(produced, 0, "a quiet established slot sends nothing");
+        assert!(
+            !NetBackend::idle(&be),
+            "but a bound connection is not idle (it can receive and close)"
+        );
+    }
+
+    /// P5: DNS-over-TCP full cycle returns idle.
+    #[test]
+    fn verifier_p5_dns_tcp_cycle() {
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let cp = 40600;
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            cp,
+            53,
+            1000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let mut server_isn = None;
+        while let Some(f) = be.rx() {
+            if let Some((53, p, true, true, _, seq)) = tcp_of(&f)
+                && p == cp
+            {
+                server_isn = Some(seq);
+            }
+        }
+        let s = server_isn.expect("syn-ack");
+        assert!(!NetBackend::idle(&be), "DNS TCP in handshake: not idle");
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            cp,
+            53,
+            1001,
+            Some(s.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+        let q = dns::build_query(0x1234, "example.com", dns::TYPE_A);
+        let mut framed = (q.len() as u16).to_be_bytes().to_vec();
+        framed.extend_from_slice(&q);
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            cp,
+            53,
+            1001,
+            Some(s.wrapping_add(1)),
+            TcpControl::Psh,
+            &framed,
+        ));
+        let mut srv_bytes = 0usize;
+        let mut host_fin_seq = None;
+        while let Some(f) = be.rx() {
+            if let Some((53, _, _, _, fin, seq)) = tcp_of(&f)
+                && fin
+            {
+                host_fin_seq = Some(seq);
+            }
+            srv_bytes += 1;
+        }
+        let gseq = 1001 + framed.len() as i32;
+        // Guest ACKs the answer and FINs.
+        let ack_to = s.wrapping_add(1).wrapping_add(2); // placeholder, recomputed below
+        let _ = ack_to;
+        eprintln!(
+            "P5 answer frames {srv_bytes}, idle() with conn open = {}",
+            NetBackend::idle(&be)
+        );
+        // Close: just reset the connection from the guest side (RST) — simplest terminal path.
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            cp,
+            53,
+            gseq,
+            None,
+            TcpControl::Rst,
+            &[],
+        ));
+        while be.rx().is_some() {}
+        let _ = host_fin_seq;
+        assert!(
+            NetBackend::idle(&be),
+            "DNS over TCP reset: idle again ({:?})",
+            be.stack.dns_tcp_state()
+        );
+    }
+
+    /// A local HTTP service attached: never idle. Not because `external_io_pending` reports it
+    /// (with no connection it does not, E5-T43b round-2 verifier) but because registering it
+    /// closes the DNS-over-TCP and file-transfer sockets and HTTP mode never reopens them.
+    #[test]
+    fn idle_condition_local_http() {
+        let mut be = SlirpLocalBackend::new(GW_MAC, Box::new(|| 0));
+        assert!(NetBackend::idle(&be));
+        be.register_e9_local_http().unwrap();
+        assert!(
+            !NetBackend::external_io_pending(&be),
+            "no HTTP connection: nothing pending"
+        );
+        assert_ne!(
+            be.stack.dns_tcp_state(),
+            smoltcp::socket::tcp::State::Listen,
+            "the DNS-over-TCP listener is gone"
+        );
+        assert!(!NetBackend::idle(&be), "a local HTTP service is attached");
+    }
+
+    /// (E5-T43b round-2 verifier's test.) Slot 1 alone out of Listen: slot 0 connects, a second
+    /// SYN lands on slot 1, slot 0 closes cleanly. Not idle, and a later poll retransmits.
+    #[test]
+    fn slot1_isolated_half_open_is_not_idle() {
+        let drain = |be: &mut SlirpLocalBackend| {
+            let mut n = 0;
+            while be.rx().is_some() {
+                n += 1;
+            }
+            n
+        };
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        drain(&mut be);
+        let isn0 = establish_file_tcp(&mut be, 45200, 9000);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45201,
+            crate::file_transfer::PORT,
+            9500,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        drain(&mut be);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45200,
+            crate::file_transfer::PORT,
+            9001,
+            Some(isn0.wrapping_add(1)),
+            TcpControl::Fin,
+            &[],
+        ));
+        drain(&mut be);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45200,
+            crate::file_transfer::PORT,
+            9002,
+            Some(isn0.wrapping_add(2)),
+            TcpControl::None,
+            &[],
+        ));
+        drain(&mut be);
+        assert_eq!(
+            be.stack.file_tcp_state(0),
+            smoltcp::socket::tcp::State::Listen
+        );
+        assert_eq!(
+            be.stack.file_tcp_state(1),
+            smoltcp::socket::tcp::State::SynReceived
+        );
+        assert!(!NetBackend::idle(&be), "slot 1 mid-handshake");
+        let mut frames = 0;
+        for step in 1..=10 {
+            now.set(1_000 + step * 500);
+            be.poll();
+            frames += drain(&mut be);
+        }
+        assert!(
+            frames > 0,
+            "and a later poll does change something (the SYN-ACK is retransmitted)"
+        );
+    }
+
+    /// A DNS service that takes a query and never answers, and never says it is busy: only the
+    /// backend's own record of the query in flight can keep it from being idle.
+    struct QuietStalledDns;
+
+    impl DnsService for QuietStalledDns {
+        fn submit(&mut self, _request: DnsRequest) -> Result<(), DnsRequest> {
+            Ok(())
+        }
+
+        fn poll(&mut self) -> Vec<crate::DnsCompletion> {
+            Vec::new()
+        }
+
+        fn pending(&self) -> bool {
+            false
+        }
+    }
+
+    /// Each remaining condition, alone: a DNS query in flight, and a DNS-over-TCP connection that
+    /// is up but quiet, keep the backend from being idle.
+    #[test]
+    fn idle_conditions_pending_dns_and_dns_tcp_connection() {
+        let now = Rc::new(Cell::new(1_000i64));
+        let clock = {
+            let now = now.clone();
+            Box::new(move || now.get())
+        };
+        let state = Rc::new(RefCell::new(UdpProbeState::default()));
+        // A DNS service that never answers: the query stays pending.
+        let mut be = SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(UdpProbe(state)))
+            .with_dns_service(Box::new(QuietStalledDns));
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        assert!(NetBackend::idle(&be), "baseline idle");
+        let q = dns::build_query(0x4242, "example.com", dns::TYPE_A);
+        let frame =
+            build_udp_frame(GUEST_MAC, GW_MAC, GUEST_IP, 41001, crate::net::DNS, 53, &q).unwrap();
+        be.tx(&frame);
+        while be.rx().is_some() {}
+        assert!(!NetBackend::idle(&be), "a DNS query in flight");
+
+        let now2 = Rc::new(Cell::new(1_000i64));
+        let mut be2 = browser_shaped(now2.clone());
+        be2.tx(&guest_arp_request());
+        while be2.rx().is_some() {}
+        be2.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            40700,
+            53,
+            2000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let mut s = None;
+        while let Some(f) = be2.rx() {
+            if let Some((53, 40700, true, true, _, seq)) = tcp_of(&f) {
+                s = Some(seq);
+            }
+        }
+        be2.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            40700,
+            53,
+            2001,
+            Some(s.unwrap().wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while be2.rx().is_some() {}
+        assert!(
+            !NetBackend::idle(&be2),
+            "an established, quiet DNS-over-TCP connection"
         );
     }
 

@@ -1,0 +1,28 @@
+# HEAD d7dc15904 scratch copy (git archive) + round-2 attack_tests.rs appended to local_backend.rs mod tests; cargo test -p wasm-vm-slirp --lib r2_ -- --nocapture --test-threads=1
+test local_backend::tests::r2_contract_dns_tcp_and_file_lifecycles ... R2 after ARP: idle, held over 120 s of polls
+R2 UDP DNS answered: idle, held over 120 s of polls
+R2 dns partial+FIN: host FIN Some(-34801501), state LastAck, rx 5
+R2 DNS-TCP LastAck: not idle (dns LastAck, file Listen/Listen, xio false)
+R2 DNS-TCP closed after partial message: idle, held over 120 s of polls
+R2 file RST in SynReceived: state Listen
+R2 file RST in SynReceived: idle, held over 120 s of polls
+R2 file garbage: reply 20 bytes, state FinWait1, conn Some(1), close_after [true, false]
+R2 file host-close after garbage: not idle (dns Listen, file FinWait1/Listen, xio false)
+R2 file after guest FIN: state TimeWait
+R2 file TimeWait: not idle (dns Listen, file TimeWait/Listen, xio false)
+R2 file after 30 s: state Listen frames 0
+R2 file back to Listen after TimeWait: idle, held over 120 s of polls
+R2 lifecycles: 5 idle points held
+test local_backend::tests::r2_contract_nat_tcp_lifecycle ... R2 nat baseline: idle, held over 120 s of polls
+R2 nat flow connecting: not idle (dns Listen, file Listen/Listen, xio true)
+R2 nat: frames after remote data 1
+R2 nat: host FIN seq Some(-34801499), flows 1
+R2 nat flow FinWait: not idle (dns Listen, file Listen/Listen, xio true)
+R2 nat: after guest FIN flows 0 manager 0 closed true
+R2 nat flow torn down: idle, held over 120 s of polls
+R2 nat: torn-down idle true
+test local_backend::tests::r2_local_http_why_not_idle ... R2 local_http: external_io_pending=false egress=0 dns_tcp=Closed file=Closed/Closed idle=false
+R2 local_http after 120 s quiet: frames 0, dns_tcp=Closed file=Closed/Closed idle=false
+test local_backend::tests::r2_slot1_isolated_half_open ... R2 slot1 isolated: states (Listen, SynReceived), idle()=false
+R2 slot1 isolated: idle false, frames over 5 s of polls 2
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 289 filtered out; finished in 0.01s

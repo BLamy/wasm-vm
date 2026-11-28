@@ -1,0 +1,36 @@
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/441d5e56-c323-4865-bf98-eefde1d26bf4/scratchpad/tree/crates/slirp)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.86s
+     Running unittests src/lib.rs (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/441d5e56-c323-4865-bf98-eefde1d26bf4/scratchpad/target/debug/deps/wasm_vm_slirp-c19dac03b8a495b6)
+
+running 5 tests
+test local_backend::tests::verifier_p3_half_open_file_transfer_syn ... P3 idle() after SYN-ACK drained, socket SynReceived: true; state SynReceived
+P3 poll() first produced a frame at clock Some(2000) ms (SYN-ACK retransmissions drained: 1); idle() was true
+
+thread 'local_backend::tests::verifier_p3_half_open_file_transfer_syn' (36071812) panicked at crates/slirp/src/local_backend.rs:2620:9:
+CONTRACT: idle() true but a later poll produced a frame
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test local_backend::tests::verifier_p4_last_ack_after_guest_fin ... P4 host FINs drained: 1; idle()=true; slot state LastAck; conn None
+P4 poll() first produced a frame at clock Some(2000) ms; state now LastAck
+
+thread 'local_backend::tests::verifier_p4_last_ack_after_guest_fin' (36071813) panicked at crates/slirp/src/local_backend.rs:2649:9:
+CONTRACT: idle() true but a later poll produced a frame
+FAILED
+test local_backend::tests::verifier_p4b_full_close_returns_idle ... P4b after guest ACK of FIN: state Listen idle()=true
+P4b after 60 s of polls: state Listen idle()=true
+ok
+test local_backend::tests::verifier_p5_dns_tcp_cycle ... P5 answer frames 1, idle() with conn open = false
+P5 after guest RST: dns_tcp_state Listen idle()=true fin_seen=None
+ok
+test local_backend::tests::verifier_p6_quiet_established_slot ... P6 established slot after 600 s of polls: frames 0, idle()=false, state Established
+ok
+
+failures:
+
+failures:
+    local_backend::tests::verifier_p3_half_open_file_transfer_syn
+    local_backend::tests::verifier_p4_last_ack_after_guest_fin
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 281 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p wasm-vm-slirp --lib`
