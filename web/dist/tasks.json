@@ -16308,15 +16308,16 @@
       "activity": [
         {
           "date": "2026-11-28",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "E4-T40c1 in-progress: code-page concentration measurement",
             "E4-T40c split into E4-T40c1-c4 (measure, page compiler, turbo integration, browser)"
           ]
         }
       ],
       "firstActivity": "2026-11-28",
       "lastActivity": "2026-11-28",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T40c2",
