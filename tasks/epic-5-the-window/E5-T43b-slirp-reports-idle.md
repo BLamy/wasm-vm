@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: implemented
+status: refuted
 depends_on: []
 estimate: S
 risk: high
@@ -67,3 +67,73 @@ Replay desktop with networking on until E5-T43d, whose acceptance measures it (w
 generation 2's 1.2 %). With a relay connector and an open flow (a browser holding a keep-alive
 connection), the backend is not idle by this rule — those polls are needed for replies and NAT
 expiry — so idle worker time while the guest holds open connections is not claimed.
+
+### 2026-11-27 — verifier — VERDICT: refuted
+
+Head `04edf1622` (change `b58713070`). Predictions written first:
+`evidence/e5-t43b/verifier/predictions.md`. Attacks were run in a scratch `git archive` copy of
+HEAD with extra tests added to `local_backend.rs`'s test module (source:
+`evidence/e5-t43b/verifier/attack_tests.rs`, output: `attacks.log`). The live tree was not
+changed. The backend under attack has the browser's shape: a connector plus a DNS service, a
+clock the test controls.
+
+- **P3 half-open file-transfer handshake — FAILED (contract).** Predicted `idle()` true while the
+  file-transfer slot socket is in `SynReceived` and a later `poll()` emitting a frame. Observed:
+  guest SYN to `file_transfer::PORT`, SYN-ACK drained → `idle()=true`, state `SynReceived`; at
+  clock +1000 ms `poll()` retransmits the SYN-ACK (`rx_ready()` flips true)
+  (`attacks.log`, `verifier_p3_half_open_file_transfer_syn`). The condition list checks that the
+  DNS-over-TCP socket is back to `Listen`, but not the two file-transfer slot sockets, so the
+  claim "the remaining sockets are listeners, which carry no timers" is false. Demand: require
+  every file-transfer slot socket to be in `Listen` (as for DNS-over-TCP), or report the stack's
+  next timer as a deadline, and pin it with a test.
+- **P4 LastAck after the guest closes an agent slot — FAILED (contract).** Predicted the same for
+  the CloseWait→LastAck path. Observed: established slot, guest FIN → the CloseWait path takes
+  `file_connections[0]` and closes; host FIN drained → `idle()=true`, state `LastAck`,
+  `file_connections[0]=None`; at +1000 ms `poll()` retransmits the FIN
+  (`verifier_p4_last_ack_after_guest_fin`). Impact while the device pass is skipped: the
+  retransmission waits for the next run call or guest kick (`lib.rs:7484` clears the marker at
+  each run entry), i.e. up to one run call plus one paced idle wait. That matters when a frame was
+  dropped on a full receive ring (`net.rs` `rx_dropped`). It breaks the `NetBackend::idle`
+  contract (`net.rs:99-105`) and this task's boundary ("no timer of the stack is due before the
+  wait would end"). Same fix as P3.
+- **P2 condition pinning — FAILED (sufficiency).** The new test only fails when
+  `egress.is_empty()` is removed. Each of the other 11 conditions can be removed alone and both the
+  new test and the whole slirp lib suite (277) still pass (`mutants.log`, script `mutate.py`). The
+  flow conditions overlap with `external_io_pending` (so some overlap is fine), but nothing pins
+  `pending_dns`, `dns_tcp_rx/tx`, `dns_tcp_state()==Listen`, `file_connections`, `file_tcp_tx` or
+  `local_http`. Acceptance also asks for "not reported with … a due DHCP/ARP/TCP timer" and "a
+  reported wait never passes a stack deadline". No test covers either: the claimed test has no
+  TCP state at all. Demand: a test per condition that is not redundant (at least DNS-over-TCP
+  mid-connection, a file-transfer slot in each non-Listen state, and local HTTP), each failing
+  when its condition is removed.
+- **P4b / P5 clean closes return to idle — HELD.** After the guest ACKs the host FIN, the slot is
+  back to `Listen` and `idle()` is true, with no frame over 60 s of polls. DNS-over-TCP mid-
+  connection is not idle; after a guest RST it is back to `Listen` and idle.
+- **P6 quiet established agent slot — NEEDS EVIDENCE (for E5-T43d, not a refutation here).**
+  An established slot with no HELLO or transfer produces 0 frames over 600 s of polls, yet `idle()`
+  stays false. The wvft agent (`crates/file-agent/src/main.rs` `run_service`) keeps both slots
+  connected all the time and sends a heartbeat every 5 s. If the Replay desktop image runs it
+  (`releases/rootfs/FILE-MANIFEST.txt` lists `/etc/init.d/wasm-vm-file-agent`; I did not check
+  which image the desktop boots), the fabric is never quiet with networking on, and E5-T43d's
+  "within 2 points of generation 2" figure is out of reach. The claim does not mention this
+  exclusion.
+- **P7 UDP flow / NAT expiry — HELD** (the claimed test; with a flow open, `external_io_pending`
+  keeps it not idle). **P9 relay data while the worker sleeps — HELD by reading:** with no flow,
+  `SyncConnector` cannot deliver anything (it has no inbound accept), and in-flight DNS is caught
+  by `pending_dns` / `dns.pending()` (`BrowserDnsService::pending` includes completions).
+- **P1 / P8 — HELD.** `cargo test -p wasm-vm-slirp --lib`: 280 passed. `cargo test -p
+  wasm-vm-core --lib paced`: 25 passed. `cargo test -p wasm-vm-core --lib idle`: 30 passed.
+  `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown` is clean. The forward in
+  `SharedSlirpBackend::idle` is correct; `SwitchableNetBackend` and `PcapBackend` already forward.
+- **Browser bullet moved to E5-T43d — accepted.** E5-T43d's acceptance carries the figure, and no
+  page here boots the desktop with networking on. See P6 for the risk it inherits.
+- **Not checked:** a machine-level run (core run loop or wasm) showing that idle waits are
+  actually taken with a slirp backend attached, and DHCP renewal under a long wait (the DHCP
+  server is stateless, `dhcp.rs` `handle(&self)`; renewal is driven by guest `tx`).
+- SUITE: n/a until the refutations clear. The attack tests in `attack_tests.rs` are ready to be
+  promoted once the fix lands.
+
+Commands: `cargo test -p wasm-vm-slirp --lib`; `cargo test -p wasm-vm-core --lib paced|idle`;
+`cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; scratch copy:
+`cargo test -p wasm-vm-slirp --lib local_backend::tests::verifier_ -- --nocapture`; the mutant
+loop in `mutants.log`.
