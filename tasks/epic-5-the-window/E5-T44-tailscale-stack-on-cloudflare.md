@@ -4,7 +4,7 @@ epic: 5
 title: Tailscale for the Replay desktop — own DERP relay, Headscale control plane and exit node on Cloudflare, as an opt-in provider
 priority: 0.38767
 status: pending
-depends_on: [E5-T43d]
+depends_on: [E5-T43f]
 estimate: L
 risk: high
 capstone: false

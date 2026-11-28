@@ -3,12 +3,18 @@ id: E5-T43d
 epic: 5
 title: Publish the Replay desktop online — generation 3 with networking through the public relay
 priority: 0.387663
-status: pending
+status: cancelled
 depends_on: [E5-T43a, E5-T43b, E5-T43c]
-estimate: S
+estimate: M
 risk: medium
 capstone: false
+decomposed_into: [E5-T43e, E5-T43f, E5-T43g]
 ---
+
+Split on 2026-11-27 before start: it held three boundaries (publishing generation 3, the page
+turning networking on, the relay's idle close reaching the page, which needs a relay status the
+worker does not report today). Replaced by E5-T43e, E5-T43f and E5-T43g; the acceptance below is
+distributed among them.
 
 ## Boundary
 
