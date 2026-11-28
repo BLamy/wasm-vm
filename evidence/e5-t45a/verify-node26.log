@@ -1,0 +1,6 @@
+== binary
+local/node-26/node: ELF 64-bit LSB pie executable, UCB RISC-V, RVC, double-float ABI, version 1 (GNU/Linux), dynamically linked, interpreter /lib/ld-linux-riscv64-lp64d.so.1
+8c19cbb6c9b1f3b2cca4685e91952e314d8a5825b2a0dfc56bdf748211d7c320  local/node-26/node
+== offline run (QEMU riscv64, --network none)
+interfaces: lo 
+bash: line 5: /n/pkg/replay-node-26-riscv64/bin/node: cannot execute binary file: Exec format error

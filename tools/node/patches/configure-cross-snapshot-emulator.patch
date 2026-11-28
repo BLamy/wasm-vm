@@ -1,0 +1,38 @@
+diff --git a/configure.py b/configure.py
+index a3769ff2..89ecb2b3 100755
+--- a/configure.py
++++ b/configure.py
+@@ -1972,7 +1972,7 @@ def configure_node(o):
+   if options.without_node_snapshot or options.node_builtin_modules_path:
+     o['variables']['node_use_node_snapshot'] = 'false'
+   else:
+-    o['variables']['node_use_node_snapshot'] = b(not cross_compiling)
++    o['variables']['node_use_node_snapshot'] = b(not cross_compiling or options.emulator is not None)
+ 
+   # Do not use code cache when Node.js is built for collecting coverage of itself, this allows more
+   # precise coverage for the JS built-ins.
+@@ -1980,7 +1980,7 @@ def configure_node(o):
+     o['variables']['node_use_node_code_cache'] = 'false'
+   else:
+     # TODO(refack): fix this when implementing embedded code-cache when cross-compiling.
+-    o['variables']['node_use_node_code_cache'] = b(not cross_compiling)
++    o['variables']['node_use_node_code_cache'] = b(not cross_compiling or options.emulator is not None)
+ 
+   if options.write_snapshot_as_array_literals is not None:
+      o['variables']['node_write_snapshot_as_array_literals'] = b(options.write_snapshot_as_array_literals)
+@@ -3099,12 +3099,9 @@ if flavor == 'win' and python.lower().endswith('.exe'):
+ gyp_args += ['-Dpython=' + python]
+ 
+ if options.emulator is not None:
+-  if not options.cross_compiling:
+-    # Note that emulator is a list so we have to quote the variable.
+-    gyp_args += ['-Demulator=' + shlex.quote(options.emulator)]
+-  else:
+-    # TODO: perhaps use emulator for tests?
+-    warn('The `--emulator` option has no effect when cross-compiling.')
++  # wasm-vm E5-T45: a cross build runs the target node_mksnapshot under the emulator, so the
++  # built-in startup snapshot and code cache are generated for the target.
++  gyp_args += ['-Demulator=' + shlex.quote(options.emulator)]
+ 
+ if not options.v8_disable_temporal_support or not options.shared_temporal_capi:
+   cargo = os.environ.get('CARGO')

@@ -1,0 +1,56 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.547842] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.83
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; mkdir -p /tmp/mk && mount
+ -t ext4 /dev/vdb /tmp/mk && ls -la /tmp/mk && free -m; printf '%s%s\n' 'WVM_DON
+E_' '2'
+WVM_BEGIN_2
+total 127960
+drwxr-xr-x    3 root     root          4096 Nov 28 11:58 .
+drwxrwxrwt    3 root     root            60 Nov 28 11:59 ..
+drwx------    2 root     root         16384 Nov 28 11:58 lost+found
+-rwxr-xr-x    1 501      20       131281904 Nov 23 02:45 node_mksnapshot
+              total        used        free      shared  buff/cache   available
+Mem:            968          23         904           0          41         934
+Swap:             0           0           0
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cd /tmp/mk && a=$(cut -d'
+ ' -f1 /proc/uptime); RECORD_REPLAY_DONT_RECORD=1 ./node_mksnapshot /tmp/mk/node
+_snapshot.cc > /tmp/mk/mksnapshot.log 2>&1; echo "exit $?"; b=$(cut -d' ' -f1 /p
+roc/uptime); echo "guest_s $a $b"; tail -5 /tmp/mk/mksnapshot.log; ls -la /tmp/m
+k; sync; umount /tmp/mk; echo UMOUNTED; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+exit 0
+guest_s 0.90 3.55
+total 135252
+drwxr-xr-x    3 root     root          4096 Nov 28 11:59 .
+drwxrwxrwt    3 root     root            60 Nov 28 11:59 ..
+drwx------    2 root     root         16384 Nov 28 11:58 lost+found
+-rw-r--r--    1 root     root             0 Nov 28 11:59 mksnapshot.log
+-rwxr-xr-x    1 501      20       131281904 Nov 23 02:45 node_mksnapshot
+-rw-r--r--    1 root     root       7466721 Nov 28 11:59 node_snapshot.cc
+umount: can't unmount /tmp/mk: Device or resource busy
+UMOUNTED
+WVM_DONE_3
+root@replay-desktop# [6n

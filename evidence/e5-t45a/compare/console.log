@@ -1,0 +1,247 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.547842] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.80
+REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; mkdir -p /tmp/nn && mount
+ -t ext4 -o ro /dev/vdb /tmp/nn; printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; RECORD_REPLAY_DONT_RECORD
+=1 /tmp/nn/node -p 'JSON.stringify([process.version, process.config.variables.no
+de_use_node_snapshot, process.config.variables.node_use_node_code_cache])'; prin
+tf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+["v26.13.1",true,true]
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; RECORD_REPLAY_DONT_RECORD
+=1 /opt/replay-node-26/bin/node -p 'JSON.stringify([process.version, process.con
+fig.variables.node_use_node_snapshot, process.config.variables.node_use_node_cod
+e_cache])'; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+["v26.13.1",false,false]
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; a=$(cut -d' ' -f1 /proc/u
+ptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e '0' >/tmp/o 2>&1; b=$(cut -d
+' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf
+ '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+T 2.23 2.52 
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; a=$(cut -d' ' -f1 /proc/u
+ptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e '0' >/tmp/o 
+2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\
+n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+T 2.53 3.36 
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; a=$(cut -d' ' -f1 /proc/u
+ptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e '0' >/tmp/o 2>&1; b=$(cut -d
+' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf
+ '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+T 3.38 3.66 
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; a=$(cut -d' ' -f1 /proc/u
+ptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e '0' >/tmp/o 
+2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\
+n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+T 3.68 4.50 
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; a=$(cut -d' ' -f1 /proc/u
+ptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'fetch("http://127.0.0.1:9")
+.catch(()=>console.log(1))' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo 
+"T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+T 4.52 5.22 1 
+WVM_DONE_9
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '10'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'fetch("htt
+p://127.0.0.1:9").catch(()=>console.log(1))' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /pr
+oc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' '
+WVM_DONE_' '10'
+WVM_BEGIN_10
+T 5.25 6.98 1 
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'fetch("http://127.0.0.1:9"
+).catch(()=>console.log(1))' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo
+ "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '11'
+WVM_BEGIN_11
+T 7.00 7.68 1 
+WVM_DONE_11
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'fetch("htt
+p://127.0.0.1:9").catch(()=>console.log(1))' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /pr
+oc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' '
+WVM_DONE_' '12'
+WVM_BEGIN_12
+T 7.70 9.43 1 
+WVM_DONE_12
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '13'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'require("https").get("http
+s://example.com",r=>{console.log(r.statusCode);r.resume()})' >/tmp/o 2>&1; b=$(c
+ut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; p
+rintf '%s%s\n' 'WVM_DONE_' '13'
+WVM_BEGIN_13
+T 9.46 10.13 200 
+WVM_DONE_13
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '14'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'require("h
+ttps").get("https://example.com",r=>{console.log(r.statusCode);r.resume()})' >/t
+mp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | 
+tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '14'
+WVM_BEGIN_14
+T 10.16 11.49 200 
+WVM_DONE_14
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '15'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'require("https").get("http
+s://example.com",r=>{console.log(r.statusCode);r.resume()})' >/tmp/o 2>&1; b=$(c
+ut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; p
+rintf '%s%s\n' 'WVM_DONE_' '15'
+WVM_BEGIN_15
+T 11.53 12.19 200 
+WVM_DONE_15
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '16'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'require("h
+ttps").get("https://example.com",r=>{console.log(r.statusCode);r.resume()})' >/t
+mp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | 
+tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '16'
+WVM_BEGIN_16
+T 12.21 13.54 200 
+WVM_DONE_16
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '17'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'fetch("https://example.com
+").then(r=>console.log(r.status))' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime)
+; echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_'
+ '17'
+WVM_BEGIN_17
+T 13.56 14.55 200 
+WVM_DONE_17
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '18'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'fetch("htt
+ps://example.com").then(r=>console.log(r.status))' >/tmp/o 2>&1; b=$(cut -d' ' -
+f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%
+s\n' 'WVM_DONE_' '18'
+WVM_BEGIN_18
+T 14.57 16.62 200 
+WVM_DONE_18
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '19'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'fetch("https://example.com
+").then(r=>console.log(r.status))' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime)
+; echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_'
+ '19'
+WVM_BEGIN_19
+T 16.64 17.62 200 
+WVM_DONE_19
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '20'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'fetch("htt
+ps://example.com").then(r=>console.log(r.status))' >/tmp/o 2>&1; b=$(cut -d' ' -
+f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%
+s\n' 'WVM_DONE_' '20'
+WVM_BEGIN_20
+T 17.64 19.70 200 
+WVM_DONE_20
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '21'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'for (const m of ["child_pr
+ocess","crypto","zlib","http","worker_threads","readline","stream/web","util"]) 
+require(m); console.log(1)' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo 
+"T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '21'
+WVM_BEGIN_21
+T 19.72 20.10 1 
+WVM_DONE_21
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '22'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'for (const
+ m of ["child_process","crypto","zlib","http","worker_threads","readline","strea
+m/web","util"]) require(m); console.log(1)' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /pro
+c/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'W
+VM_DONE_' '22'
+WVM_BEGIN_22
+T 20.13 21.33 1 
+WVM_DONE_22
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '23'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'for (const m of ["child_pr
+ocess","crypto","zlib","http","worker_threads","readline","stream/web","util"]) 
+require(m); console.log(1)' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo 
+"T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '23'
+WVM_BEGIN_23
+T 21.35 21.73 1 
+WVM_DONE_23
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '24'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /opt/replay-node-26/bin/node -e 'for (const
+ m of ["child_process","crypto","zlib","http","worker_threads","readline","strea
+m/web","util"]) require(m); console.log(1)' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /pro
+c/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'W
+VM_DONE_' '24'
+WVM_BEGIN_24
+T 21.76 22.94 1 
+WVM_DONE_24
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '25'; cd /tmp && RECORD_REPLAY
+_DONT_RECORD=1 /tmp/nn/node --snapshot-blob /tmp/u.blob --build-snapshot /dev/nu
+ll >/tmp/ub.log 2>&1; echo "build $?"; ls -la /tmp/u.blob; tail -2 /tmp/ub.log; 
+printf '%s%s\n' 'WVM_DONE_' '25'
+WVM_BEGIN_25
+build 0
+-rw-r--r--    1 root     root       6754926 Nov 28 13:21 /tmp/u.blob
+WVM_DONE_25
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '26'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node --snapshot-blob /tmp/u.blob -e
+ '0' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /
+tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '26'
+WVM_BEGIN_26
+T 26.97 27.29 
+WVM_DONE_26
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '27'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node --snapshot-blob /tmp/u.blob -e
+ 'fetch("http://127.0.0.1:9").catch(()=>console.log(1))' >/tmp/o 2>&1; b=$(cut -
+d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; print
+f '%s%s\n' 'WVM_DONE_' '27'
+WVM_BEGIN_27
+T 27.31 28.05 1 
+WVM_DONE_27
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '28'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node --snapshot-blob /tmp/u.blob -e
+ '0' >/tmp/o 2>&1; b=$(cut -d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /
+tmp/o | tr '\n' ' ')"; printf '%s%s\n' 'WVM_DONE_' '28'
+WVM_BEGIN_28
+T 28.07 28.40 
+WVM_DONE_28
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '29'; a=$(cut -d' ' -f1 /proc/
+uptime); RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node --snapshot-blob /tmp/u.blob -e
+ 'fetch("http://127.0.0.1:9").catch(()=>console.log(1))' >/tmp/o 2>&1; b=$(cut -
+d' ' -f1 /proc/uptime); echo "T $a $b $(head -c 80 /tmp/o | tr '\n' ' ')"; print
+f '%s%s\n' 'WVM_DONE_' '29'
+WVM_BEGIN_29
+T 28.42 29.14 1 
+WVM_DONE_29
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '30'; RECORD_REPLAY_DONT_RECOR
+D=1 /tmp/nn/node --version; RECORD_REPLAY_DONT_RECORD=1 /tmp/nn/node -e 'const {
+Worker}=require("worker_threads"); new Worker("require(\"worker_threads\").paren
+tPort.postMessage(7)",{eval:true}).on("message",m=>console.log("worker",m))'; pr
+intf '%s%s\n' 'WVM_DONE_' '30'
+WVM_BEGIN_30
+v26.13.1
+worker 7
+WVM_DONE_30
+root@replay-desktop# [6n

@@ -1,0 +1,6 @@
+{
+  "mount": "8c19cbb6c9b1f3b2cca4685e91952e314d8a5825b2a0dfc56bdf748211d7c320  /tmp/s/node\n",
+  "version": "v26.13.1\n",
+  "smoke": "ok   wasm add(40,2)=42\nok   crypto.subtle 4356c5f788ef8195\nok   worker_threads sum=5000050000\nok   fs roundtrip=\"riscv64\\n\"\nok   arch linux/riscv64 v26.13.1\ndigest 4beac4236dda444e1c42992ddf0c8c64f8a553def1975a79fc85c79e580882fa\nexit 0\n",
+  "noEnv": "v26.13.1 riscv64 true\n0\n"
+}

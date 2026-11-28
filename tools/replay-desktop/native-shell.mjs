@@ -17,10 +17,15 @@ export const BOOTARGS = "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/in
 export async function bootNative({ image, out, kernel = path.join(repo, "releases/kernel/6.6.63/Image"),
   cli = path.join(repo, "target/release/wasm-vm"), timeoutMin = 30, maxInstrs = "400000000000",
   // The NIC: "--net" (loopback, no DHCP server), "--net-slirp" (DHCP, DNS, NAT) or null (none).
-  net = "--net" }) {
+  net = "--net",
+  // Further drives (absolute or repo-relative paths), writable, after the root drive.
+  extraDrives = [],
+  // The browser's device layout (its pointer devices take slots 4-5, so no extra drive fits).
+  browserTopology = true }) {
   await mkdir(out, { recursive: true });
   const args = ["boot", "--kernel", kernel, "--drive", `file=${path.resolve(image)},ro`,
-    "--ram-mib", "1024", ...(net ? [net] : []), "--virtio-rng", "--browser-topology", "--icount-divider", "64",
+    ...extraDrives.flatMap((d) => ["--drive", `file=${path.resolve(d)}`]),
+    "--ram-mib", "1024", ...(net ? [net] : []), "--virtio-rng", ...(browserTopology ? ["--browser-topology"] : []), "--icount-divider", "64",
     "--block-cache", "--interrupt-batching", "--quantum", "500000",
     "--max-instrs", maxInstrs, "--no-reboot", "--append", BOOTARGS];
   const live = createWriteStream(path.join(out, "console.log"));

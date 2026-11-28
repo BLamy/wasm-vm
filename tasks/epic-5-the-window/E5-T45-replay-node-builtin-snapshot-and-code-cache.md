@@ -3,11 +3,12 @@ id: E5-T45
 epic: 5
 title: Replay Node 26 with its built-in snapshot and code cache (first fetch, TLS and other built-ins load fast)
 priority: 0.3876635
-status: pending
+status: cancelled
 depends_on: [E5-T43h]
 estimate: M
 risk: medium
 capstone: false
+decomposed_into: [E5-T45a, E5-T45b]
 ---
 
 ## Why
