@@ -1,0 +1,187 @@
+{
+  "startedAt": "2026-11-27T23:37:12.002Z",
+  "base": "https://wasm-vm-relay.brett-lamy.workers.dev",
+  "pageOrigin": "http://127.0.0.1:8125",
+  "browserVersion": "159.0.8154.6",
+  "setup": [
+    {
+      "name": "B1_with_stream",
+      "tokenStatus": 200,
+      "events": [
+        {
+          "ev": "open",
+          "atS": 0.3
+        },
+        {
+          "ev": "msg",
+          "id": 0,
+          "op": 0,
+          "atS": 0.3
+        },
+        {
+          "ev": "msg",
+          "id": 1,
+          "op": 2,
+          "atS": 0.3
+        },
+        {
+          "ev": "msg",
+          "id": 1,
+          "op": 8,
+          "atS": 0.4
+        }
+      ]
+    },
+    {
+      "name": "B2_hello_only",
+      "tokenStatus": 200,
+      "events": [
+        {
+          "ev": "open",
+          "atS": 3.5
+        },
+        {
+          "ev": "msg",
+          "id": 0,
+          "op": 0,
+          "atS": 3.5
+        }
+      ]
+    }
+  ],
+  "progress": {
+    "t0": 1795822632370,
+    "sessions": {
+      "B1_with_stream": {
+        "name": "B1_with_stream",
+        "tokenStatus": 200,
+        "events": [
+          {
+            "ev": "open",
+            "atS": 0.3
+          },
+          {
+            "ev": "msg",
+            "id": 0,
+            "op": 0,
+            "atS": 0.3
+          },
+          {
+            "ev": "msg",
+            "id": 1,
+            "op": 2,
+            "atS": 0.3
+          },
+          {
+            "ev": "msg",
+            "id": 1,
+            "op": 8,
+            "atS": 0.4
+          }
+        ],
+        "lastSentAtS": 0.3,
+        "close": {
+          "code": 1000,
+          "reason": "",
+          "wasClean": true,
+          "atS": 1830.3,
+          "idleS": 1830
+        }
+      },
+      "B2_hello_only": {
+        "name": "B2_hello_only",
+        "tokenStatus": 200,
+        "events": [
+          {
+            "ev": "open",
+            "atS": 3.5
+          },
+          {
+            "ev": "msg",
+            "id": 0,
+            "op": 0,
+            "atS": 3.5
+          }
+        ],
+        "lastSentAtS": 3.5,
+        "close": {
+          "code": 1000,
+          "reason": "",
+          "wasClean": true,
+          "atS": 1833.5,
+          "idleS": 1830
+        }
+      }
+    }
+  },
+  "progressAtMin": 31,
+  "final": {
+    "t0": 1795822632370,
+    "sessions": {
+      "B1_with_stream": {
+        "name": "B1_with_stream",
+        "tokenStatus": 200,
+        "events": [
+          {
+            "ev": "open",
+            "atS": 0.3
+          },
+          {
+            "ev": "msg",
+            "id": 0,
+            "op": 0,
+            "atS": 0.3
+          },
+          {
+            "ev": "msg",
+            "id": 1,
+            "op": 2,
+            "atS": 0.3
+          },
+          {
+            "ev": "msg",
+            "id": 1,
+            "op": 8,
+            "atS": 0.4
+          }
+        ],
+        "lastSentAtS": 0.3,
+        "close": {
+          "code": 1000,
+          "reason": "",
+          "wasClean": true,
+          "atS": 1830.3,
+          "idleS": 1830
+        }
+      },
+      "B2_hello_only": {
+        "name": "B2_hello_only",
+        "tokenStatus": 200,
+        "events": [
+          {
+            "ev": "open",
+            "atS": 3.5
+          },
+          {
+            "ev": "msg",
+            "id": 0,
+            "op": 0,
+            "atS": 3.5
+          }
+        ],
+        "lastSentAtS": 3.5,
+        "close": {
+          "code": 1000,
+          "reason": "",
+          "wasClean": true,
+          "atS": 1833.5,
+          "idleS": 1830
+        }
+      }
+    }
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "finishedAt": "2026-11-28T00:08:18.957Z"
+}

@@ -1,0 +1,7 @@
+== J1_caller_header_kept: KILLED ["not ok 3 - the relay always gets the Worker's value, never the caller's"]
+== J2_constant_key: KILLED ['not ok 1 - IPv4 clients are their address', 'not ok 2 - IPv6 clients are their /48, however written', "not ok 3 - the relay always gets the Worker's value, never the caller's"]
+== J3_ipv6_slash64: KILLED ['not ok 2 - IPv6 clients are their /48, however written']
+== J4_xff_first: KILLED ["not ok 3 - the relay always gets the Worker's value, never the caller's"]
+== J5_no_lowercase: KILLED ['not ok 2 - IPv6 clients are their /48, however written']
+== J6_relay_headers_drop_others: KILLED ["not ok 3 - the relay always gets the Worker's value, never the caller's"]
+== unmutated: PASS ['# pass 3', '# fail 0']

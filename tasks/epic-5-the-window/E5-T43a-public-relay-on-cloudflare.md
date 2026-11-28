@@ -3,7 +3,7 @@ id: E5-T43a
 epic: 5
 title: Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin
 priority: 0.38766
-status: implemented
+status: verified
 depends_on: []
 estimate: S
 risk: high
@@ -614,3 +614,91 @@ only — wvrelay's code is as in round 4.
 3. **Browser-page idle run: moved to E5-T43d**, whose acceptance now has it (a desktop untouched
    for 31 minutes loses its relay session, the page shows it, a reload restores it). It needs the
    online desktop, which this task does not build.
+
+### 2026-11-27 — verifier (round 5) — VERDICT: verified
+
+VERDICT: verified
+
+A fresh session (I was not the implementer or any earlier verifier). I checked head `8a06ef267` (change `db41616ae`;
+wvrelay code as in `edaf2824b`) and the live `https://wasm-vm-relay.brett-lamy.workers.dev` (`relay-5`). I wrote the
+predictions first (`evidence/e5-t43a/verifier-r5/predictions.md`). Then I ran: `header5.mjs` (`header5.json`, sha256
+`28d711f0…`, 8 WebSockets); `browser-idle.mjs` (`browser-idle.json`, `f1b66495…`, headless Chromium 159, 2 WebSockets,
+31 min); `gates.sh` and round 4's mutant runner in a scratch `git clone --shared` sparse clone at this head, with
+RUSTFLAGS, RUST_LOG and CARGO_* unset (`gates.log` `887b0d11…`, `mutants.log` `d61a4d8b…`, `mutants-killers.log`);
+`js-mutants.py` on `src/client.js` (`js-mutants.log`); `smoke.mjs` (`smoke.json`, SMOKE PASS); and read-only checks of the
+deployed Worker (`deployed-worker.log`, `containers-header-path.log`). Round 4's three demands are met or soundly
+substituted. Nothing I ran contradicts the claim.
+
+- Demand (1), per-client keying live: HELD by substitute. A second address is not available here either: no IPv6
+  egress (`second-address.log`, `curl -6` rc 7) and one IPv4. The worker's link-by-link chain holds, and I closed the two
+  links it left open:
+  - (a) Worker source: `node --test test/client.test.mjs` passes 3 of 3. My six mutants of `src/client.js` are all
+    KILLED: caller's header kept, a constant key, a /64 key, `X-Forwarded-For` first, no lowercasing, other headers
+    dropped (`js-mutants.log`).
+  - (b) Deployed Worker = this source (open in the claim): the current deployment is version `731688b9…` (no. 13), made
+    48 s before `db41616ae` was committed. Its `index.js`, fetched read-only from the account's API, is byte-identical to
+    `wrangler deploy --dry-run` of this head, with the `sourceMappingURL` line removed (sha256 `b63cd33a…` for both,
+    diff 0 lines). Its bindings match `wrangler.jsonc`.
+  - (c) The header reaches wvrelay (open in the claim; no single-address test can see it, because a dropped header
+    falls back to the container's TCP peer, the same for everyone): `@cloudflare/containers` 0.3.7, bundled above,
+    passes the whole Request to `tcpPort.fetch(containerUrl, request)` (`container.js:891`). The same path carries the
+    Origin that wvrelay refuses live (round 1 P5/P6). `switchPort` overwrites `cf-container-target-port`, so a caller
+    cannot pick 8081.
+  - (d) wvrelay keys by the header: W2, W3 and V3 are KILLED (below).
+  - Live overwrite (L1): sessions sending their own `x-wvrelay-client` (random, 200 characters, another IPv4), plus
+    `X-Forwarded-For` and `True-Client-IP`. 4 were served (OPEN_OK to example.com:80) and the 5th–7th were closed 1000 at
+    1.6–2.3 s. After all closed, an 8th was served (`header5.json`).
+  - Residual, not refuting: that Cloudflare sets `CF-Connecting-IP` to each real client is the platform's guarantee and
+    untested here. One live run from a second network would still be worth doing once one is to hand.
+- Demand (2), tests that kill the survivors: HELD.
+  - Round 4's runner at this head: 14 of 14 KILLED, no invalid mutant, and the scratch tree clean afterwards
+    (`mutants.log`).
+  - Each round-4 survivor is killed by the test written for it: W5 and V6 by
+    `verifier_hourly_bytes_are_per_client_across_tokens`, V1 by `verifier_idle_close_frees_the_place`, V2 by
+    `outbound_traffic_alone_keeps_a_session_active`, and V3 by the empty-name case of `the_session_cap_is_per_client_name`
+    (`mutants-killers.log`).
+  - The weak hourly test that was removed is superseded: its replacement grants WINDOW credit and kills what the old one
+    could not.
+  - Gates at the head:
+    - `cargo fmt --check` passes.
+    - `cargo test -p wasm-vm-slirp --features native --lib`: 279 passed, 3 runs in a row, so the new timing tests did not
+      flake here.
+    - wvrelay smoke, token-rejection and ws-connector tests: 3 + 1 + 5 passed.
+    - clippy with `-D warnings` is clean.
+    - The diff adds no `#[ignore]` and disables no `debug_assert`.
+- Demand (3), the browser-page idle run: HELD, and the move to E5-T43d is legitimate.
+  - My bounded attack ran a real Chromium page at the allowed origin `http://127.0.0.1:8125`. It fetched `/token` itself
+    (CORS) and opened `wss://…/ws`. B1 sent HELLO + OPEN (OPEN_OK) and B2 sent HELLO only; then both stayed silent. Both
+    got a `close` event with code 1000, `wasClean: true`, at 1830 s after their last frame (`browser-idle.json`).
+  - So the relay's idle Close does reach a browser WebSocket through the Containers proxy. Round 4's idle4 anomaly
+    (`ws` clients never told) does not reproduce in a browser.
+  - What the desktop shows the user is page behaviour that this task does not build. E5-T43d's acceptance now owns it.
+  - Page console: only the 404 of the blank page I used.
+- Worker extraction: no behaviour change, HELD. `clientKey` moved byte-for-byte (diff of the function bodies is empty).
+  `relayHeaders` adds `delete` before `set`, which changes nothing because `set` already replaces. `/token` still keys
+  the limiter by `clientKey`. `smoke.mjs` passes live (happy path TCP/UDP, the protected addresses, and the token and
+  Origin refusals).
+- Secrets: HELD. The round-5 diff adds no 64-hex run and no token. My evidence holds no relay token and no OAuth token
+  (`secret-hygiene.log`; the one 64-hex string is the bundle hash). The deployed bundle has the HMAC secret only as a
+  `secret_text` binding.
+- Carried forward as HELD (code and deployment unchanged on these paths): round 1 P1–P4, P5/P6, P10/P11 and P14; round 2
+  R1, R2, R5–R9 and R12; round 3 Q1–Q4; round 4: demand (1) (the relay drops finished connections), the hourly cap and
+  idle limit as accepted by the user, the idle limit live, and the 1024-in-all lockout as a stated limit.
+- Follow-ups, not refuting, as round 4 filed them: measure the container's fd and memory ceiling against 1024 × 64
+  streams; IPv4-embedded IPv6 classification; a port policy beyond 25.
+- SUITE: the round-4 verifier's two tests are already promoted. I offer `verifier-r5/header5.mjs` (the overwrite and
+  recount) and `browser-idle.mjs` (slow, opt-in) for `hardening.mjs`. Nothing else is promoted.
+
+Commands: `node evidence/e5-t43a/verifier-r5/header5.mjs`; `node evidence/e5-t43a/verifier-r5/browser-idle.mjs`;
+`bash evidence/e5-t43a/verifier-r5/gates.sh <scratch clone>`;
+`python3 -I evidence/e5-t43a/verifier-r4/run-mutants.py <scratch clone>`;
+`python3 -I evidence/e5-t43a/verifier-r5/js-mutants.py <copy of src/client.js + test/>`;
+`node deploy/cloudflare-relay/smoke.mjs --base https://wasm-vm-relay.brett-lamy.workers.dev --out evidence/e5-t43a/verifier-r5/smoke.json`;
+`npx --no-install wrangler deployments list|versions view` and `wrangler deploy --dry-run --outdir <scratch>` (no deploy).
+Not checked:
+- anything from IPv6 or a second address;
+- load: the container's fd and memory ceiling, and what held edge connections cost;
+- a 5 GiB hour spent live;
+- the Cloudflare dashboard, logs and billing;
+- a byte-for-byte match of the deployed container image (only the Worker bundle was compared);
+- the online desktop's UI at the idle limit (E5-T43d).

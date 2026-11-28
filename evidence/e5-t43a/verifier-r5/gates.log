@@ -1,0 +1,21 @@
+# head 8a06ef267298ce122e4f8629a18d67c512175cf6
+$ cargo fmt --check -p wasm-vm-slirp -p wasm-vm-cli
+rc=0
+$ cargo test -p wasm-vm-slirp --features native --lib
+test result: ok. 279 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 20.06s
+rc=0
+$ cargo test -p wasm-vm-slirp --features native --lib
+test result: ok. 279 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 20.05s
+rc=0
+$ cargo test -p wasm-vm-slirp --features native --lib
+test result: ok. 279 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 20.07s
+rc=0
+$ cargo test -p wasm-vm-cli --test wvrelay_smoke --test wvrelay_token_rejection --test ws_connector_over_real_ws
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.61s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.01s
+rc=0
+$ cargo clippy -p wasm-vm-slirp --features native --lib --tests -- -D warnings
+rc=0
+$ node --test test/client.test.mjs
+rc=0

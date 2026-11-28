@@ -1,0 +1,21 @@
+# Does x-wvrelay-client reach wvrelay? @cloudflare/containers 0.3.7 (bundled into the deployed index.js, which equals the local bundle: deployed-worker.log)
+## utils.js switchPort
+44:export function switchPort(request, port) {
+45-    const headers = new Headers(request.headers);
+46-    headers.set('cf-container-target-port', port.toString());
+47-    return new Request(request, { headers });
+48-}
+## container.js fetch -> containerFetch -> tcpPort.fetch(containerUrl, request)
+3:        if (this.defaultPort === undefined && !request.headers.has('cf-container-target-port')) {
+7:        if (request.headers.has('cf-container-target-port')) {
+8:            const portFromHeaders = parseInt(request.headers.get('cf-container-target-port') ?? '');
+17:        return await this.containerFetch(request, portValue);
+        const tcpPort = this.container.getTcpPort(port);
+        // Create URL for the container request
+        const containerUrl = request.url.replace('https:', 'http:');
+        this.inflightRequests++;
+        try {
+            // Renew the activity timeout whenever a request is proxied
+            this.renewActivityTimeout();
+            const res = await tcpPort.fetch(containerUrl, request);
+## so the whole Request (its headers, incl. Origin and x-wvrelay-client) goes to the container; the same path carries Origin, which wvrelay checks live (round 1 P5/P6: the pages.dev token from Origin http://localhost:8123 was closed 1000 by wvrelay)

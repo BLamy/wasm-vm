@@ -1,0 +1,1 @@
+[{"name":"B1_with_stream","close":{"code":1000,"reason":"","wasClean":true,"atS":1830.3,"idleS":1830}},{"name":"B2_hello_only","close":{"code":1000,"reason":"","wasClean":true,"atS":1833.5,"idleS":1830}}]
