@@ -24824,7 +24824,7 @@
       "estimate": "S",
       "capstone": false,
       "goal": "",
-      "boundary": "## Boundary\n\n`web/main.js` Replay desktop boot options: `slirpNet` on with the `websocket` provider pointed at\nthe E5-T43a relay, the token fetched from its `/token` before the boot (fail closed: no token, no\nnetwork, the desktop still boots, and the page says the network is off); `?net=0` turns it off.\nRoadmap, deploy.\n\n",
+      "boundary": "## Boundary\n\n`web/main.js` Replay desktop boot options: `slirpNet` on with the `websocket` provider pointed at\nthe E5-T43a relay, the token fetched from its `/token` before the boot (fail closed: no token, no\nnetwork, the desktop still boots, and the page says the network is off); `?net=0` turns it off.\nRoadmap, deploy.\n\nRevised 2026-11-28, before the claim: the first online run reached example.com but Chrome refused it\nwith `NET::ERR_CERT_AUTHORITY_INVALID` (`evidence/e5-t43f/try/online/chrome-example.png`). The image never\nshipped NSS's built-in roots (`libnssckbi.so`, in the `libnss3` package it already uses). So this task\nalso adds that library to the image (`tools/replay-desktop/assemble.py`) and republishes the desktop with\na new warm snapshot (same capture as E5-T43e); E5-T43c's, E5-T41a's and E5-T36b's acceptances are rerun\non the image.\n\n",
       "acceptanceContract": "## Deterministic acceptance\n\n- Committed bundle and the live site: in the guest's Chrome a typed `https://example.com` loads\n  (title `Example Domain`, read over the serial shell from sway's window title); in the terminal\n  `node -e 'fetch(\"https://example.com\").then(r=>console.log(r.status))'` prints 200.\n- Warm resume still passes; click, key echo and node -e not slower than generation 3 offline on the\n  same bundle; idle worker time within 2 points of generation 3's (E5-T43b).\n- `?net=0`: no relay request at all.\n\n",
       "criteria": [],
       "criteriaTotal": 0,
@@ -24832,10 +24832,20 @@
       "verificationLog": "",
       "adversarial": "Medium risk (deployment claim). Attack list: relay down or `/token` refused (the desktop must boot\nand say so); the service worker caching `/token`; a token from another origin.",
       "file": "tasks/epic-5-the-window/E5-T43f-replay-desktop-networking-on.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-27",
+          "commits": 3,
+          "labels": [
+            "E5-T43f: ship NSS's built-in root certificates (libnssckbi.so); Chrome had no trusted roots",
+            "E5-T43f in-progress: the Replay desktop boots with networking on through the public relay",
+            "E5-T43f: image ec157fd1b3a7 (built at 65fe57fc0) with the root certificates"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-27",
+      "lastActivity": "2026-11-27",
+      "commitCount": 3
     },
     {
       "id": "E5-T43g",

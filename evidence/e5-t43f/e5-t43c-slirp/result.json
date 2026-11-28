@@ -1,0 +1,74 @@
+{
+  "task": "E5-T43c",
+  "mode": "slirp",
+  "startedAt": "2026-11-28T04:05:41.864Z",
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t43f/image/replay-desktop.ext4,ro",
+    "--ram-mib",
+    "1024",
+    "--net-slirp",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--block-cache",
+    "--interrupt-batching",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "400000000000",
+    "--no-reboot",
+    "--append",
+    "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
+  ],
+  "imageSha256": "ec157fd1b3a75dce7e7f41e557522ba635e27ea67d6220d87e226cecd810912b",
+  "checks": {
+    "resolvLink": "/run/resolv.conf",
+    "leaseLine": "REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3",
+    "leaseUptimeAtCheck": 5.47,
+    "addresses": [
+      "10.0.2.15/24"
+    ],
+    "routes": [
+      "default via 10.0.2.2 dev eth0",
+      "10.0.2.0/24 dev eth0 scope link  src 10.0.2.15"
+    ],
+    "resolvConf": [
+      "nameserver 10.0.2.3"
+    ],
+    "lookup": [
+      "ADDR 104.20.23.154"
+    ],
+    "fetchHttp": [
+      "STATUS 200"
+    ],
+    "fetchHttps": [
+      "STATUS 200"
+    ],
+    "renewLine": "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3",
+    "renewSamples": 245,
+    "renewSampleSet": [
+      "S 10.0.2.15/24"
+    ],
+    "fetchAfterRenew": [
+      "STATUS 200"
+    ],
+    "udhcpcLog": [
+      "udhcpc: started, v1.36.1",
+      "udhcpc: broadcasting discover",
+      "udhcpc: broadcasting select for 10.0.2.15, server 10.0.2.2",
+      "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 86400",
+      "udhcpc: sending renew to server 10.0.2.2",
+      "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 86400"
+    ]
+  },
+  "readyUptime": 5.44,
+  "baselineReadyUptime": 5.29,
+  "pass": true,
+  "hostSeconds": 361.918
+}

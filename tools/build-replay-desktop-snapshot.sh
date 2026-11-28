@@ -88,10 +88,22 @@ COMPACT_SCRIPT=${COMPACT_SCRIPT//__SETTLE__/$SETTLE_GUEST_SECONDS}
 # With the slirp NIC the snapshot must hold the lease: no lease line by now, no snapshot.
 # Nor may it hold an open TCP connection (a resumed desktop's peer would not know it). Chrome is
 # kept from most of its start-up traffic (replay-chromium and its managed policy, E5-T43e) but still
-# checks Google sign-in (ListAccounts) and fetches the certificates that follows; it closes those idle
-# connections within about 5 minutes. Wait for that (at most 600 guest seconds), else no snapshot.
+# checks Google sign-in (ListAccounts) and keeps that connection. Chrome drops its pooled and HTTP/2
+# connections when the machine's address changes (as after a laptop resume), so the lease is
+# released and taken again (udhcpc SIGUSR2, then SIGUSR1; E5-T43f); then the capture waits for the
+# guest to hold no ESTABLISHED TCP connection (at most 120 guest seconds), else no snapshot.
 if [ "$NIC" = "--net-slirp" ]; then
-  LEASE_STEP=$'grep -q \'REPLAY_NETWORK bound\' /run/replay-desktop/events\ni=0\nwhile awk \'FNR > 1 { if ($4 == "01") n++ } END { exit (n == 0) }\' /proc/net/tcp /proc/net/tcp6; do i=$((i+1)); [ $i -lt 600 ]; sleep 1; done\necho "REPLAY_CAPTURE_TCP_WAIT seconds=$i"'
+  read -r -d '' LEASE_STEP <<'LEASE' || true
+grep -q 'REPLAY_NETWORK bound' /run/replay-desktop/events
+kill -USR2 $(pidof udhcpc)
+sleep 2
+kill -USR1 $(pidof udhcpc)
+i=0
+while [ $(grep -c 'REPLAY_NETWORK bound' /run/replay-desktop/events) -lt 2 ]; do i=$((i+1)); [ $i -lt 60 ]; sleep 1; done
+i=0
+while awk 'FNR > 1 { if ($4 == "01") n++ } END { exit (n == 0) }' /proc/net/tcp /proc/net/tcp6; do i=$((i+1)); [ $i -lt 120 ]; sleep 1; done
+echo "REPLAY_CAPTURE_TCP_WAIT seconds=$i"
+LEASE
 else LEASE_STEP=":"; fi
 COMPACT_SCRIPT=${COMPACT_SCRIPT//__LEASE__/$LEASE_STEP}
 
