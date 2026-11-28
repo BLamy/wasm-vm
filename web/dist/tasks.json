@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 589,
-    "total": 814
+    "verified": 590,
+    "total": 815
   },
   "epics": [
     {
@@ -68,7 +68,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-11-27"
+    "end": "2026-11-28"
   },
   "tasks": [
     {
@@ -24802,10 +24802,15 @@
             "E5-T43e: manifest names image 3165a13b8d07 and snapshot 87a0cde821f8 (136.7 MB, captured online)",
             "E5-T43e: drop --gaia-url (it puts a warning bar over every page); the capture waits for Chrome's idle connections to close"
           ]
+        },
+        {
+          "date": "2026-11-28",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-11-27",
-      "lastActivity": "2026-11-27",
+      "lastActivity": "2026-11-28",
       "commitCount": 11
     },
     {
@@ -24814,7 +24819,7 @@
       "epicKey": "5",
       "title": "The Replay desktop page turns networking on through the public relay",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T43a",
         "E5-T43b",
@@ -24829,23 +24834,32 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-11-28 — worker — claim (head `6a50ebd0f`)\n\nCommits on `codex/replay-desktop-online`: `99388f8e1` (`web/main.js`: `replayDesktopNetwork`,\n`showReplayDesktopNetwork`, the options; `bootLinux` prefers `opts.slirpRelayToken`; the acceptance script\n`tools/verify/e5-t43f-replay-desktop-online.mjs`), `65fe57fc0` (`assemble.py` ships `libnssckbi.so`),\n`53019092e` (image `ec157fd1b3a7…`, built at `65fe57fc0`, `evidence/e5-t43f/image-build.json`), `c8e8e5fb9`\n(capture re-lease step, manifest, roadmap), `6a50ebd0f` (acceptance script: favicon filter, screenshot after\npaint).\n\n**Image** `ec157fd1b3a7` (E5-T43e's plus `usr/lib/riscv64-linux-gnu/libnssckbi.so` from `libnssckbi`'s package\n`libnss3`): E5-T43c three machines pass (READY slirp 5.44, loopback 5.34, none 5.43 s, baselines 5.29/5.29/5.30;\n`evidence/e5-t43f/e5-t43c-*/result.json`), E5-T41a passes, E5-T36b passes.\n\n**Capture** (`evidence/e5-t43f/capture/`): with the roots, Chrome's sign-in check succeeds and keeps its\nconnection; the first capture waited past 600 guest seconds and powered off (no snapshot). The capture now\nreleases and retakes the lease (udhcpc SIGUSR2/SIGUSR1; Chrome drops pooled and HTTP/2 connections on an\naddress change), then waits: `REPLAY_CAPTURE_TCP_WAIT seconds=0`, two `REPLAY_NETWORK bound` lines,\n`COMPACTED zeroed_mib=575`, snapshot `c5d6ff60fda9…` **135,290,972 bytes**.\n\n**Browser, committed bundle** (`tools/serve-dist.sh 8125`):\n`E5_T43F_OUT=evidence/e5-t43f/browser node tools/verify/e5-t43f-replay-desktop-online.mjs online off relay-down sw`\n— all four PASS (`browser.log`):\n- online: `/token` GET 200 from the network, one WebSocket `wss://wasm-vm-relay.brett-lamy.workers.dev/ws`; guest\n  `10.0.2.15/24`, `default via 10.0.2.2`; a DOM-typed `https://example.com` in the guest's Chrome → sway title\n  `Example Domain - Chromium` (25.0 s from typing; `online/chrome-example.png` shows the page); a DOM-typed\n  `node -e \"fetch('https://example.com')…\"` in the terminal → `E5T43F_A9BFD42A 200` (92.6 s after typing began —\n  see E5-T43h); no console errors but the favicon 404.\n- off (`?net=0`): state `disabled`, no request to the relay host, no WebSocket, no banner, no console errors.\n- relay-down (`/token` refused): state `off`, banner \"Network off: Failed to fetch. The desktop runs offline;\n  reload to retry.\" (`relay-down.png`), no WebSocket, Chrome's smoke page runs.\n- sw (service worker allowed, two loads): both controlled by the SW on the second load; each `/token` 200 from\n  the network (`fromServiceWorker: false`).\n\nLatency on the same bundle, net on vs `?net=0`, interleaved (`evidence/e5-t43f/latency/`): click 259.5, 281.5 vs\n279.9, 280.7 ms; key echo 47.7, 46.1 vs 43.3, 43.5 ms (about 3.5 ms slower with networking on); node -e 1778,\n1792 vs 1776, 1764 ms; idle in run slices 1.4, 1.4 vs 1.4, 1.5 %. (Generation 3 offline: E5-T43e's verifier\nmeasured click ~278, node -e ~1766 on this machine.)\n\n**Live** after `bash tools/deploy-cloudflare.sh`: the first online run right after the deploy found no network\nstate (the edge still served the previous `main.js`; `live-first.log`, where off, relay-down and sw passed a few\nminutes later); rerun: online PASS (`live.log`: Chrome example.com, node fetch 200); warm resume passes\n(`live-warm.log`); `desktop-latency` live: click 261.2, key echo 44.8, node -e 1658 ms, idle 1.2 %.\n\n**Not done / limits**: a token expiring during a long session and the relay's 30-minute idle close are E5-T43g;\nthe slow network waits are E5-T43h (filed).\n\n### 2026-11-28 — verifier — VERDICT: verified\n\nFresh session, head `d2cdbd5c8` (claim head `6a50ebd0f`; nothing after it touches the implementation).\nPredictions written before any run: `evidence/e5-t43f/verifier/predictions.md`. `web/dist` served on 8125\nhashes as committed (`main.js`, `loader.js`, `sw.js`, `artifacts-replay-desktop.json`, `app.html`), and\n`web/main.js` == `web/dist/main.js`. Every manifest artifact under `releases/` matches its declared size and\nsha256. Live: `main.js` and `loader.js` on https://wasm-vm.pages.dev hash as `web/dist`; the live manifest\ndiffers only in R2 content-addressed URLs with the same hashes, and all four R2 objects answer 200 at the\ndeclared sizes.\n\n- P1 online/Chrome — HELD. `/token` 200, network not service worker, one WebSocket\n  `wss://wasm-vm-relay.brett-lamy.workers.dev/ws`; guest `10.0.2.15/24`, default via 10.0.2.2; sway title\n  `\"Example Domain - Chromium\"` 24.3 s after typing (`verifier/browser/online.json`,\n  `browser/online/chrome-example.png` shows the real page with a padlock, so the NSS roots are in use).\n- P2 online/node — HELD. `E5T43F_9DC13526 200`, 94.6 s after typing began (`online.json`). It is slow. The\n  claim states that and files E5-T43h, and this criterion sets no time limit.\n- P3 no console errors — HELD (`online.json` consoleErrors `[]`).\n- P4 `?net=0` — HELD. The worker's script found no relay requests and no WebSocket, state `disabled` and\n  no banner (`browser/off.json`). My own load waited 20 s after ready and saw requests to one host only,\n  `127.0.0.1:8125`, so no relay and no `cloudflare-dns.com` (`attack/attack.json` `net0-all`).\n- P5 relay down (`/token` refused) — HELD. State `off`, banner \"Network off: Failed to fetch. …\", no\n  WebSocket, Chrome's title `Replay RISC-V PASS #1` (`browser/relay-down.json`, `.png`).\n- P6 a 200 answer with garbage — HELD (novel). First body `{\"token\":\"v1.bogus\",\"ws\":\"ws://127.0.0.1:9/ws\"}`:\n  state off, \"the relay's token answer is malformed\", no WebSocket. Second body `<html>`: state off with\n  the JSON parse error, no WebSocket. The desktop ran both times (`attack.json` `garbage-json`, `not-json`).\n- P7 503 — HELD. State off, \"the relay answered 503\", no WebSocket. The browser's own \"Failed to load\n  resource: 503\" console line is expected.\n- Extra: `/token` never answers — state off, \"the relay did not answer\"; the desktop was ready in 11.5 s\n  against about 3.4 s otherwise (the page's 8 s timeout fired). Clicking the banner removed it in every\n  fail-closed case (`bannerAfterClick: false`).\n- P8 service worker — HELD. `web/sw.js` passes cross-origin requests through (`url.origin !==\n  self.location.origin`). Two loads, both under the service worker, each made one `/token` request,\n  answered 200 from the network. The two tokens differ (`attack.json` `sw-tokens.distinct: true`); the\n  worker's script states this in its header but never asserts it.\n- P9 a token from another origin — HELD. `/token` with `Origin: https://evil.example` or with no Origin\n  answers 403 with no CORS header (curl, this session), so a page on another origin cannot get a token.\n  E5-T43a's verified results carry forward for `/ws` refusing a token used from another origin. The token\n  goes in the ws-proxy HELLO frame (`crates/slirp/src/ws_proxy/driver.rs:204`), not in the URL.\n- P10 persistence and the IDE network panel overriding the relay — HELD (novel). I seeded localStorage\n  `wasm-vm.network-config.v1` with provider `relay` and evil websocket, relay and control URLs. The page\n  still connected only to the public relay (`hosts`: page, relay, cloudflare-dns.com), and the guest's\n  `wget http://example.com` printed `Example Domain`. The token string appears in no localStorage,\n  sessionStorage, IndexedDB, Cache Storage or input value, and the saved config is unchanged.\n  Observation, not a finding: the IDE panel then shows provider `websocket` next to the user's saved\n  (unused) websocket URL, not the relay URL in use. That is cosmetic and nothing persists it without a\n  user change.\n- P11 other guests — HELD (source). The only shared change is `opts.slirpRelayToken ?? networkRelayTokenEl?.value`\n  (main.js:1421). The only caller that sets `slirpRelayToken` is `bootReplayDesktop` (main.js:2402), so\n  every other guest takes the previous path.\n- P12 warm resume — HELD (`verifier/warm/warm.log`: PASS, desktop visible 3620 ms, 0 chunk fetches).\n- P13 latency — HELD against the criterion, FAILED against my own stricter bound for key echo. These are\n  two interleaved pairs on 8125, net on vs `?net=0` (`verifier/latency/summary.txt`). Click 259.8 / 262.2\n  vs 260.7 / 263.2 ms. node -e 1663 / 1711 vs 1641 / 1674 ms (+1.4 %, +2.3 %). Idle in run slices 1.1 %\n  on all four, guest seconds per second 1.0. Key echo 45.4 / 46.0 vs 43.2 / 42.4 ms; pooled medians over\n  16 samples are 44.7 vs 41.7 ms, +3.0 ms (+7 %), with fully overlapping ranges. That is above the 5 % I\n  pre-registered. It is within the +5 ms bound E5-T43e's verifier applied to the same \"not slower\"\n  criterion, and inside generation 3's own measured range (41.2-49.3 ms). It is under one frame. The worker\n  disclosed the same ~3.5 ms. Not a refutation.\n- P14 coverage — HELD. Every branch of `replayDesktopNetwork` ran:\n  - disabled, online, `!response.ok`, malformed, JSON parse error, fetch TypeError, and TimeoutError.\n  - `showReplayDesktopNetwork` ran its online, disabled and off branches, plus the dismiss click.\n  - The options merge and main.js:1421 ran online; the relay accepted the token, since the guest reached\n    example.com.\n  - The capture's lease step ran in `evidence/e5-t43f/capture/native-capture.log` (USR2/USR1, 2 bound\n    lines required under `set -e`, `REPLAY_CAPTURE_TCP_WAIT seconds=0`, `COMPACTED`). Its `snapshot.json`\n    sha, size and identity match the manifest.\n  - `assemble.py`: the image hash `ec157fd1b3a7…` matches `target/e5-t43f/image/replay-desktop.ext4` and\n    the e5-t43c/e5-t41a/e5-t36b `result.json` files (all pass). The Chrome padlock shows the library at work.\n  - Waived: the banner's reuse path (`el` already present). One call per boot never reaches it. It is\n    harmless.\n- P15 mock hunt — HELD with two weak spots, neither hiding a defect:\n  - The worker's `sw` mode never asserts distinct tokens. I covered that above.\n  - `tools/perf/desktop-latency.mjs` does not record whether the net-on load was actually online. Every\n    one of my online loads in this window got a token (05:05-05:10), so I accept it.\n  The Chrome check reads sway's tree from the guest, the node check uses a random nonce, and relay-down\n  aborts only `/token`. Each of these discriminates.\n- P16 bundle integrity — HELD (above).\n- E5-T43h — the claim leans on it honestly. The 92-95 s node fetch time is stated, measured\n  (`probe-timing.json`) and filed with a root cause. None of this task's acceptance criteria depend on it.\n\nSUITE: `evidence/e5-t43f/verifier/attack.mjs` holds the fail-closed variants: garbage-json, not-json,\nhttp-503, token-timeout, net0-all, sw-tokens and saved-config. Promoting them into\n`tools/verify/e5-t43f-replay-desktop-online.mjs` is recommended, along with the distinct-token assertion.\nFollow-up for the worker after this verdict: flip the roadmap item \"Replay desktop online\" to `verified`\n(`web/roadmap.js`; the verifier does not edit `web/`).\nNot checked: a cold clone (no portability finding); rerunning the native image acceptances (carried from\nthe worker's `result.json` files, which name image `ec157fd1b3a7`); an online run on the live site (live\nassets hash-checked only); token expiry and the relay's idle close (E5-T43g).\nCommands:\n- `E5_T43F_URL=http://127.0.0.1:8125 E5_T43F_APP=/app.html E5_T43F_OUT=evidence/e5-t43f/verifier/browser node tools/verify/e5-t43f-replay-desktop-online.mjs online off relay-down sw`\n- `node evidence/e5-t43f/verifier/attack.mjs evidence/e5-t43f/verifier/attack garbage-json not-json http-503 token-timeout net0-all sw-tokens saved-config`\n- `E5_T34E_URL=http://127.0.0.1:8125 E5_T34E_APP=/app.html E5_T34E_OUT=evidence/e5-t43f/verifier/warm node tools/verify/e5-t34e-replay-desktop-warm.mjs warm`\n- `node tools/perf/desktop-latency.mjs --url http://127.0.0.1:8125 --app /app.html [--query=&net=0] --scenarios click,type,node,idle --n 8 --idle-s 30` (on/off/on/off)",
       "adversarial": "Medium risk (deployment claim). Attack list: relay down or `/token` refused (the desktop must boot\nand say so); the service worker caching `/token`; a token from another origin.",
       "file": "tasks/epic-5-the-window/E5-T43f-replay-desktop-networking-on.md",
       "activity": [
         {
           "date": "2026-11-27",
-          "commits": 3,
+          "commits": 5,
           "labels": [
             "E5-T43f: ship NSS's built-in root certificates (libnssckbi.so); Chrome had no trusted roots",
             "E5-T43f in-progress: the Replay desktop boots with networking on through the public relay",
-            "E5-T43f: image ec157fd1b3a7 (built at 65fe57fc0) with the root certificates"
+            "E5-T43f: browser proof — favicon 404 filtered by URL, screenshot after paint",
+            "E5-T43f: manifest names image ec157fd1b3a7 and snapshot c5d6ff60fda9 (135.3 MB); the capture re-leases so Chrome drops its connections"
+          ]
+        },
+        {
+          "date": "2026-11-28",
+          "commits": 2,
+          "labels": [
+            "E5-T43f verified: verifier — online Chrome/node, net=0, fail-closed (refused, 503, garbage, timeout), SW, saved-config override, warm, latency",
+            "E5-T43f implemented: claim; E5-T43h filed (paced clock with an open connection)"
           ]
         }
       ],
       "firstActivity": "2026-11-27",
-      "lastActivity": "2026-11-27",
-      "commitCount": 3
+      "lastActivity": "2026-11-28",
+      "commitCount": 7
     },
     {
       "id": "E5-T43g",
@@ -24873,6 +24887,41 @@
       "firstActivity": null,
       "lastActivity": null,
       "commitCount": 0
+    },
+    {
+      "id": "E5-T43h",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Paced clock keeps real time while the guest waits with a network connection open",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T43f"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\n`crates/core/src/lib.rs` `after_wfi_retire`: the WFI fast-forward is skipped whenever a network flow\nhas I/O in flight outside the guest (`external_net_io_pending`). That guard was written for the\ninstruction-count clock, where the jump is instantaneous in host time and a socket timeout could fire\nbefore the browser delivers the WebSocket data. Under the paced clock the jump is already limited to\nthe host's real time (`limit_deadline_after`), so the guard is not needed there; without the jump an\nidle guest's time follows its retire count, about 25 times slower than real time.\n\nFound in E5-T43f (`evidence/e5-t43f/probe-timing.json`): on the online Replay desktop,\n`node -e 'require(\"https\").get(\"https://example.com\", …)'` printed 200 and then took 16.2 guest seconds\n(0.55 s of CPU) and 405 host seconds to exit (the keep-alive socket's timers ran 25 times slow);\na typed `node` fetch answered 92 s after typing began.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n- With the paced clock and a network flow open, an idle guest's `mtime` follows the host clock (core\n  test with a fake monotonic clock and a backend reporting external I/O); with the instruction-count\n  clock the guard still holds (existing tests).\n- Browser, online Replay desktop: the `https.get` above exits within 2x its guest time in host time\n  (was 25x); a typed `node` fetch answers within 30 s of typing ending; idle worker time with networking\n  on and no connection still within 2 points of E5-T43f's.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "High risk (guest time semantics). Attack list: a socket timeout firing before the relay's data arrives\nunder the paced clock (a slow relay); keyboard and GPU pending guards unchanged; the instruction-count\nand recording clocks unchanged (determinism evidence); the worker's CPU while a connection is open and\nthe guest idle.",
+      "file": "tasks/epic-5-the-window/E5-T43h-paced-clock-with-open-connections.md",
+      "activity": [
+        {
+          "date": "2026-11-28",
+          "commits": 1,
+          "labels": [
+            "E5-T43f implemented: claim; E5-T43h filed (paced clock with an open connection)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-28",
+      "lastActivity": "2026-11-28",
+      "commitCount": 1
     },
     {
       "id": "E5-T44",

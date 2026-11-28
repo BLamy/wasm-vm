@@ -7315,9 +7315,23 @@ impl Machine {
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
         // `sleep` into near-real-time. No-op if no timer armed.
-        if !self.external_wake_io_pending() {
+        if !self.external_wake_io_pending_for_idle_jump() {
             self.wfi_fast_forward();
         }
+    }
+
+    /// E5-T43h: the wake conditions that hold back [`Self::wfi_fast_forward`]. Pending network
+    /// I/O holds it back only under the instruction-count clock, whose jump is instantaneous in
+    /// host time: a guest socket timeout could fire before the host delivers a reply already in
+    /// flight. The paced clock's jump never passes the host clock (`limit_deadline_after`), so a
+    /// guest timeout fires only once that much real time has passed, as on real hardware; without
+    /// the jump an idle guest with a connection open kept the time of its idle loop's
+    /// retirements, about 25 times slower than real time on the Replay desktop.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_wake_io_pending_for_idle_jump(&self) -> bool {
+        (self.idle_pacer.is_none() && self.external_net_io_pending())
+            || self.external_gpu_io_pending()
+            || self.external_keyboard_io_pending()
     }
 
     /// Phase-C mid-block replay: run the rest of the decoded block the cursor is inside, one op at

@@ -3,7 +3,7 @@ id: E5-T43h
 epic: 5
 title: Paced clock keeps real time while the guest waits with a network connection open
 priority: 0.3876634
-status: pending
+status: in-progress
 depends_on: [E5-T43f]
 estimate: S
 risk: high
