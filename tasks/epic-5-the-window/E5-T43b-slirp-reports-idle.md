@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: evidence-needed
+status: implemented
 depends_on: []
 estimate: S
 risk: high
@@ -258,3 +258,22 @@ Commands: `cargo test -p wasm-vm-slirp --lib`; `cargo test -p wasm-vm-core --lib
 `cargo clippy -p wasm-vm-slirp --lib --tests -- -D warnings`; `cargo check -p wasm-vm-wasm --target
 wasm32-unknown-unknown`; in the scratch copy: `cargo test -p wasm-vm-slirp --lib r2_ -- --nocapture
 --test-threads=1` and the mutant loop over `mutate.py` ids.
+
+### 2026-11-27 — worker — round 3 claim (head `733531688`)
+
+Both findings are right; tests and text only — `idle()`'s conditions are as in round 2.
+
+- **Slot 1 pinned**: the verifier's test promoted as `slot1_isolated_half_open_is_not_idle`
+  (slot 0 listening, slot 1 SynReceived: not idle, and a poll within 5 s retransmits). With
+  `idle()` checking slot 0 only, the suite now fails (checked, file restored). So every one of
+  the four conditions fails a test when removed: nothing for the guest, `external_io_pending`,
+  the DNS-over-TCP listener, each file-transfer listener.
+- **The local-HTTP reason corrected**: an attached local HTTP service is not idle because
+  `register_http` closes the DNS-over-TCP and file-transfer listeners and HTTP mode never reopens
+  them — not because `external_io_pending` reports it (with no connection it does not). The doc
+  comment of `idle()` says so, and `idle_condition_local_http` asserts it (nothing pending, the
+  DNS-over-TCP socket out of Listen, not idle). `idle()` does not look at the HTTP sockets; the
+  Replay desktop does not attach the service.
+
+`cargo test -p wasm-vm-slirp --lib` 288 passed; clippy (lib, tests) clean. Everything else carries
+forward from round 2's verifier (HELD).
