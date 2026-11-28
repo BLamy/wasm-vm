@@ -24,15 +24,19 @@ connections to Google: the net log shows `accounts.google.com/ListAccounts`, a p
 socket (`evidence/e5-t43e/probe/`). Online, every desktop would carry that traffic through the relay,
 and a snapshot would hold connections its peers do not know. So the image changes:
 `replay-chromium` gains the usual quiet-Chrome flags (no network time, Media Router, Translate,
-optimization hints, pings, sign-in endpoint pointed at a closed local port) and
-`/etc/chromium/policies/managed/replay-desktop.json` turns off sign-in, network prediction and
-search suggestions. The capture refuses to snapshot a guest holding an ESTABLISHED TCP connection.
+optimization hints, pings, domain reliability) and `/etc/chromium/policies/managed/replay-desktop.json`
+turns off sign-in, network prediction and search suggestions. Chrome's sign-in check
+(`ListAccounts`) remains: the only flag that stops it, `--gaia-url`, puts an "unsupported
+command-line flag" warning bar over every page (`evidence/e5-t43e/probe/gen3.png`, which broke the
+latency harness's click). The capture waits (at most 600 guest seconds) until the guest holds no
+ESTABLISHED TCP connection, and refuses to snapshot otherwise.
 
 ## Deterministic acceptance
 
 - The capture's console shows `REPLAY_NETWORK bound` before the compaction trigger, the guest holds
   no TCP connection at capture, and the snapshot is no larger than generation 2's plus 2 MB (134.1 MB).
-- Online (native `--net-slirp`), after the capture's settle, Chrome has contacted no host; E5-T43c's
+- Online (native `--net-slirp`), Chrome contacts nothing at startup but its sign-in check and the
+  certificate fetches that follow it; no warning bar on the page; E5-T43c's
   acceptance (`tools/verify/e5-t43c-guest-dhcp.mjs`, three machines) and the E5-T41a and E5-T36b
   acceptances pass on the new image.
 - Committed bundle and the live site: warm resume passes; click, key echo and `node -e` not slower

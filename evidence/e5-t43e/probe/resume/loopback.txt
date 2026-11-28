@@ -1,0 +1,69 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+wasm-vm: resumed 356304290 bytes from /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/gen3.snap — continuing guest
+root@replay-desktop# [6n
+root@replay-desktop# [6nexport PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/b
+in:/sbin:/bin; cat /proc/uptime; sleep 20; cat /proc/uptime; top -bn1 | head -25
+; cat /proc/loadavg; dmesg | tail -15; tail -5 /run/replay-desktop/events; tail 
+-30 /home/desktop/.local/state/replay-chromium/browser.log; ls /dev/input; echo 
+PROBE_DONE_$((1+1))
+830.40 811.59
+850.40 831.58
+Mem: 388344K used, 603384K free, 49288K shrd, 280K buff, 271720K cached
+CPU:   0% usr   0% sys   0% nic 100% idle   0% io   0% irq   0% sirq
+Load average: 0.00 0.00 0.00 1/120 702
+  PID  PPID USER     STAT   VSZ %VSZ %CPU COMMAND
+  206   151 desktop  S    32.9g3479%   0% /opt/replay-chromium/chrome --type=renderer --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --event-path-policy=0 --change-stack-guard-on-fork=enable --first-renderer-process --disable-breakpad --gaia-url=http://127.0.0.1:9 --remote-debugging-pipe --ozone-platform=wayland --disable-gpu-compositing --lang=en-US --num-raster-threads=1 --renderer-c
+  111     1 desktop  S    1259m 130%   0% foot --app-id=replay-terminal --title=Replay Node 26 terminal
+   93     1 desktop  S    1137m 117%   0% sway -c /etc/replay-desktop/sway.conf
+  117   109 desktop  S     979m 101%   0% /opt/replay-chromium/chrome --ozone-platform=wayland --disable-gpu --no-first-run --no-default-browser-check --disable-background-networking --disable-component-update --disable-sync --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-default-apps --disable-domain-reliability --disable-breakpad --no-pings --metrics-recording-only --safebrowsing-disab
+  171   148 desktop  S     887m  91%   0% /opt/replay-chromium/chrome --type=gpu-process --disable-breakpad --ozone-platform=wayland --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --gpu-preferences=WAAAAAAAAAAgAAAYAAAAAAAAAAAAAAAAAABgAAEAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== -
+  172   117 desktop  S     839m  86%   0% /opt/replay-chromium/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,3808693310818890991,15616850745920143613,131072 --disable-features=Aut
+  174   151 desktop  S     695m  72%   0% /opt/replay-chromium/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable --shared-files=v8_snapshot_data:100 --field-trial-handle=0,i,3808693310818890991,15616850745920143613,131072 --disable-features=
+  151   149 desktop  S     262m  27%   0% /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  148   117 desktop  S     262m  27%   0% /opt/replay-chromium/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  149   117 desktop  S     262m  27%   0% /opt/replay-chromium/chrome --type=zygote --crashpad-handler-pid=0 --enable-crash-reporter=, --user-data-dir=/home/desktop/.config/replay-chromium --change-stack-guard-on-fork=enable
+  142     1 desktop  S    77820   8%   0% /opt/replay-chromium/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Unknown --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=91 --shared-client-connection
+   60     1 root     S     9296   1%   0% /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
+  145     1 desktop  S     4072   0%   0% /opt/replay-chromium/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/desktop/.config/chromium/Crash Reports --annotation=lsb-release=Unknown --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=108.0.5359.0 --initial-client-fd=4 --shared-client-connection
+  109     1 desktop  S     3944   0%   0% {replay-chromium} /bin/bash /usr/local/bin/replay-chromium
+   78     1 root     S     2020   0%   0% seatd -g video
+    1     0 root     S     1992   0%   0% init
+   94     1 root     S     1992   0%   0% {replay-desktop-} /bin/sh /usr/local/sbin/replay-desktop-monitor
+   95     1 root     S     1992   0%   0% -/bin/sh
+   77     1 root     S     1992   0%   0% udhcpc -f -i eth0 -s /usr/local/share/udhcpc/default.script
+  118   111 desktop  S     1992   0%   0% -/bin/sh
+  699    95 root     R     1992   0%   0% top -bn1
+0.00 0.00 0.00 1/119 703
+[    0.618366] clk: Disabling unused clocks
+[    0.618376] ALSA device list:
+[    0.618382]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6
+[    0.620807] EXT4-fs (vda): mounted filesystem e5734b00-0000-4000-8000-000000000034 ro without journal. Quota mode: disabled.
+[    0.620839] VFS: Mounted root (ext4 filesystem) readonly on device 254:0.
+[    0.620983] devtmpfs: mounted
+[    0.621960] Freeing unused kernel image (initmem) memory: 2200K
+[    0.621980] Run /sbin/init as init process
+[    0.621987]   with arguments:
+[    0.621992]     /sbin/init
+[    0.621998]   with environment:
+[    0.622004]     HOME=/
+[    0.622009]     TERM=linux
+[    2.121434] foot[111]: memfd_create() called without MFD_EXEC or MFD_NOEXEC_SEAL set
+[   41.654627] sh (271): drop_caches: 1
+REPLAY_CHROMIUM_LAUNCH uptime=1.50
+REPLAY_CHROMIUM_TARGETS {"id":6,"result":{"targetInfos":[{"targetId":"70E29BEC9A081619E4BA2B319C6315D3","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"2BA3892BB2CD8625A6F5D3CD24CFEA63"}]}} uptime=4.62
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"42CFA5C066A4724CBA8C220ACD367417"} uptime=5.01
+REPLAY_RENDERER_SANDBOX pid=/proc/206 NoNewPrivs=1 Seccomp=2 NSpid=	206	10	1 uptime=5.16
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.23
+[117:162:1128/022128.491476:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[117:162:1128/022128.491877:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[117:117:1128/022128.517162:ERROR:isolated_origin_util.cc(73)] Ignoring port number in isolated origin: http://127.0.0.1:9
+[117:161:1128/022128.917221:ERROR:bus.cc(399)] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[117:161:1128/022128.917296:ERROR:bus.cc(399)] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[117:216:1128/022129.836433:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[117:216:1128/022129.836566:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[117:216:1128/022129.836755:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[117:216:1128/022129.836883:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[117:216:1128/022129.837010:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+event0  event1  event2  mice    mouse0  mouse1
+PROBE_DONE_2
+root@replay-desktop# [6n

@@ -86,10 +86,12 @@ echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptim
 SCRIPT
 COMPACT_SCRIPT=${COMPACT_SCRIPT//__SETTLE__/$SETTLE_GUEST_SECONDS}
 # With the slirp NIC the snapshot must hold the lease: no lease line by now, no snapshot.
-# Nor may it hold a TCP connection (a resumed desktop's peer would not know it): Chrome is kept
-# from contacting anything at startup (replay-chromium, E5-T43e); this proves it at capture time.
+# Nor may it hold an open TCP connection (a resumed desktop's peer would not know it). Chrome is
+# kept from most of its start-up traffic (replay-chromium and its managed policy, E5-T43e) but still
+# checks Google sign-in (ListAccounts) and fetches the certificates that follows; it closes those idle
+# connections within about 5 minutes. Wait for that (at most 600 guest seconds), else no snapshot.
 if [ "$NIC" = "--net-slirp" ]; then
-  LEASE_STEP=$'grep -q \'REPLAY_NETWORK bound\' /run/replay-desktop/events\nawk \'NR > 1 { if ($4 == "01") n++ } END { exit (n > 0) }\' /proc/net/tcp'
+  LEASE_STEP=$'grep -q \'REPLAY_NETWORK bound\' /run/replay-desktop/events\ni=0\nwhile awk \'FNR > 1 { if ($4 == "01") n++ } END { exit (n == 0) }\' /proc/net/tcp /proc/net/tcp6; do i=$((i+1)); [ $i -lt 600 ]; sleep 1; done\necho "REPLAY_CAPTURE_TCP_WAIT seconds=$i"'
 else LEASE_STEP=":"; fi
 COMPACT_SCRIPT=${COMPACT_SCRIPT//__LEASE__/$LEASE_STEP}
 
