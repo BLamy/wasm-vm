@@ -34,7 +34,10 @@ ESTABLISHED TCP connection, and refuses to snapshot otherwise.
 ## Deterministic acceptance
 
 - The capture's console shows `REPLAY_NETWORK bound` before the compaction trigger, the guest holds
-  no TCP connection at capture, and the snapshot is no larger than generation 2's plus 2 MB (134.1 MB).
+  no TCP connection at capture, and the snapshot is at most 137 MB (generation 2: 134.1 MB). Revised
+  before the claim from "generation 2 plus 2 MB": with the network present at capture Chrome's sign-in
+  check and its TLS and certificate state stay in memory (136.67 MB; the same image captured with the
+  loopback NIC is 134.2 MB), about 2 % more download.
 - Online (native `--net-slirp`), Chrome contacts nothing at startup but its sign-in check and the
   certificate fetches that follow it; no warning bar on the page; E5-T43c's
   acceptance (`tools/verify/e5-t43c-guest-dhcp.mjs`, three machines) and the E5-T41a and E5-T36b

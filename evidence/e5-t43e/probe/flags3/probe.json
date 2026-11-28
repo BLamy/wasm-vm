@@ -1,0 +1,5 @@
+{
+  "tcp": "  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     \n   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            \n",
+  "hosts": "     16 \"url\":\"http://127.0.0.1:9/ListAccounts?gpsia=1&source=ChromiumBrowser&json=standard\"\n      4 \"url\":\"http://127.0.0.1:9/\"\n      4 \"host\":\"127.0.0.1:9\"\n      4 \"host\":\"127.0.0.1\"\n",
+  "meminfo": "MemFree:          558992 kB\nCached:           317248 kB\nAnonPages:         76140 kB\n"
+}

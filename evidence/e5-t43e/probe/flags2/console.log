@@ -1,0 +1,74 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.89
+REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.97
+REPLAY_TERMINAL_MAPPED uptime=2.01
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"F7C0B30AA381BB2BF3C59253867E1266","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"03B7148C1C4C02A9525D0BDE5B3DD89B"}]}} uptime=4.88
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"9035AFBE092241065160B732A4B155F6"} uptime=5.17
+REPLAY_CHROME_MAPPED uptime=5.38 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.42 mem_hwm_kib=169712
+REPLAY_RENDERER_SANDBOX pid=/proc/206 NoNewPrivs=1 Seccomp=2 NSpid=	206	9	1 uptime=5.33
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.41
+REPLAY_NODE_SNAPSHOT bytes=6763126 uptime=9.83
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; sleep 30; printf '%s%s\n'
+ 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cat /proc/net/tcp; cat /p
+roc/net/udp; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 0F02000A:9D62 547AFDAC:01BB 06 00000000:00000000 03:00000976 00000000     0        0 0 3 000000002e2c2909                                      
+   1: 0F02000A:B3D0 63D3FB8E:0050 01 00000000:00000000 02:00000309 00000000  1000        0 1470 2 0000000074369418 20 4 28 10 -1                     
+   2: 0F02000A:CC14 547AFDAC:01BB 06 00000000:00000000 03:00000E9F 00000000     0        0 0 3 00000000e80afcb0                                      
+   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; grep -o '"url":"[^"]*"\|"
+host":"[^"]*"' /tmp/chrome-netlog.json 2>/dev/null | sort | uniq -c | sort -rn |
+ head -40; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+     20 "url":"https://accounts.google.com/ListAccounts?gpsia=1&source=ChromiumBrowser&json=standard"
+     11 "host":"https://accounts.google.com"
+     10 "url":"https://accounts.google.com/"
+      8 "host":"i.pki.goog:80"
+      7 "host":"accounts.google.com"
+      5 "host":"accounts.google.com:443"
+      4 "url":"http://i.pki.goog/we2.crt"
+      4 "url":"http://i.pki.goog/r4.crt"
+      4 "url":"http://i.pki.goog/gsr4.crt"
+      4 "url":"http://i.pki.goog/gsr1.crt"
+      4 "url":"http://i.pki.goog/"
+      4 "host":"i.pki.goog"
+      2 "host":"http://i.pki.goog"
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; grep -E 'MemFree|^Cached|
+AnonPages' /proc/meminfo; printf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+MemFree:          555828 kB
+Cached:           319700 kB
+AnonPages:         76892 kB
+WVM_DONE_5
+root@replay-desktop# [6n

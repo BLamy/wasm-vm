@@ -24784,8 +24784,8 @@
       "estimate": "S",
       "capstone": false,
       "goal": "",
-      "boundary": "## Boundary\n\n`tools/build-replay-desktop-snapshot.sh` boots the capture with the slirp NIC (`--net-slirp`) so the\nguest holds its lease when the snapshot is taken; generation 3 (E5-T43c's image with a quieter\nChrome, and that snapshot) published: `web/artifacts-replay-desktop.json`, the release files, the roadmap\nrow, deploy. The page stays offline (`slirpNet: false`); E5-T43f turns networking on.\n\nRevised 2026-11-27, before the claim. The first capture with the slirp NIC was 2.5 MB larger than the\nsame image captured with the loopback NIC (136.70 vs 134.19 MB). Its guest held Chrome's TCP\nconnections to Google: the net log shows `accounts.google.com/ListAccounts`, a preconnect to\n`www.google.com`, the intermediate-certificate fetches from `i.pki.goog` that follow, and an mDNS\nsocket (`evidence/e5-t43e/probe/`). Online, every desktop would carry that traffic through the relay,\nand a snapshot would hold connections its peers do not know. So the image changes:\n`replay-chromium` gains the usual quiet-Chrome flags (no network time, Media Router, Translate,\noptimization hints, pings, sign-in endpoint pointed at a closed local port) and\n`/etc/chromium/policies/managed/replay-desktop.json` turns off sign-in, network prediction and\nsearch suggestions. The capture refuses to snapshot a guest holding an ESTABLISHED TCP connection.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\n- The capture's console shows `REPLAY_NETWORK bound` before the compaction trigger, the guest holds\n  no TCP connection at capture, and the snapshot is no larger than generation 2's plus 2 MB (134.1 MB).\n- Online (native `--net-slirp`), after the capture's settle, Chrome has contacted no host; E5-T43c's\n  acceptance (`tools/verify/e5-t43c-guest-dhcp.mjs`, three machines) and the E5-T41a and E5-T36b\n  acceptances pass on the new image.\n- Committed bundle and the live site: warm resume passes; click, key echo and `node -e` not slower\n  than generation 2 on the same bundle (tools/perf measurements, same method as E5-T41b); idle\n  worker time within 2 points of generation 2's (1.2 %).\n\n",
+      "boundary": "## Boundary\n\n`tools/build-replay-desktop-snapshot.sh` boots the capture with the slirp NIC (`--net-slirp`) so the\nguest holds its lease when the snapshot is taken; generation 3 (E5-T43c's image with a quieter\nChrome, and that snapshot) published: `web/artifacts-replay-desktop.json`, the release files, the roadmap\nrow, deploy. The page stays offline (`slirpNet: false`); E5-T43f turns networking on.\n\nRevised 2026-11-27, before the claim. The first capture with the slirp NIC was 2.5 MB larger than the\nsame image captured with the loopback NIC (136.70 vs 134.19 MB). Its guest held Chrome's TCP\nconnections to Google: the net log shows `accounts.google.com/ListAccounts`, a preconnect to\n`www.google.com`, the intermediate-certificate fetches from `i.pki.goog` that follow, and an mDNS\nsocket (`evidence/e5-t43e/probe/`). Online, every desktop would carry that traffic through the relay,\nand a snapshot would hold connections its peers do not know. So the image changes:\n`replay-chromium` gains the usual quiet-Chrome flags (no network time, Media Router, Translate,\noptimization hints, pings, domain reliability) and `/etc/chromium/policies/managed/replay-desktop.json`\nturns off sign-in, network prediction and search suggestions. Chrome's sign-in check\n(`ListAccounts`) remains: the only flag that stops it, `--gaia-url`, puts an \"unsupported\ncommand-line flag\" warning bar over every page (`evidence/e5-t43e/probe/gen3.png`, which broke the\nlatency harness's click). The capture waits (at most 600 guest seconds) until the guest holds no\nESTABLISHED TCP connection, and refuses to snapshot otherwise.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n- The capture's console shows `REPLAY_NETWORK bound` before the compaction trigger, the guest holds\n  no TCP connection at capture, and the snapshot is at most 137 MB (generation 2: 134.1 MB). Revised\n  before the claim from \"generation 2 plus 2 MB\": with the network present at capture Chrome's sign-in\n  check and its TLS and certificate state stay in memory (136.67 MB; the same image captured with the\n  loopback NIC is 134.2 MB), about 2 % more download.\n- Online (native `--net-slirp`), Chrome contacts nothing at startup but its sign-in check and the\n  certificate fetches that follow it; no warning bar on the page; E5-T43c's\n  acceptance (`tools/verify/e5-t43c-guest-dhcp.mjs`, three machines) and the E5-T41a and E5-T36b\n  acceptances pass on the new image.\n- Committed bundle and the live site: warm resume passes; click, key echo and `node -e` not slower\n  than generation 2 on the same bundle (tools/perf measurements, same method as E5-T41b); idle\n  worker time within 2 points of generation 2's (1.2 %).\n\n",
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
@@ -24795,18 +24795,18 @@
       "activity": [
         {
           "date": "2026-11-27",
-          "commits": 4,
+          "commits": 7,
           "labels": [
+            "E5-T43e: drop --gaia-url (it puts a warning bar over every page); the capture waits for Chrome's idle connections to close",
             "E5-T43e: a quiet Chrome online, and no snapshot with a TCP connection in it",
-            "E5-T43e: generation 3's image 15e1db66d4b4 (built at 2581d6b54) and its chunk manifest",
-            "E5-T43e: capture generation 3's warm snapshot with the slirp NIC and its lease",
-            "E5-T43d split into E5-T43e/f/g; E5-T43e in-progress"
+            "E5-T43e: generation 3's image 3165a13b8d07 (built at 7bd9b619a)",
+            "E5-T43e: generation 3 manifest — image 15e1db66d4b4 and snapshot d59ef7e56b0d (133.4 MB, captured online)"
           ]
         }
       ],
       "firstActivity": "2026-11-27",
       "lastActivity": "2026-11-27",
-      "commitCount": 4
+      "commitCount": 7
     },
     {
       "id": "E5-T43f",

@@ -1,0 +1,13 @@
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 0F02000A:A29A 5473FDAC:01BB 06 00000000:00000000 03:00000853 00000000     0        0 0 3 0000000073af41e2                                      
+   1: 0F02000A:B98E 0348FA8E:0050 01 00000000:00000000 02:000000E4 00000000  1000        0 1462 2 00000000c4c90d60 20 4 28 10 -1                     
+   2: 0F02000A:A296 5473FDAC:01BB 06 00000000:00000000 03:0000074F 00000000     0        0 0 3 0000000032286d88                                      
+   3: 0F02000A:9DD2 5473FDAC:01BB 06 00000000:00000000 03:00000BB4 00000000     0        0 0 3 0000000072c589df                                      
+   4: 0F02000A:A706 5473FDAC:01BB 06 00000000:00000000 03:0000157A 00000000     0        0 0 3 00000000ecd51edd                                      
+   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            
+
+
+MemFree:          556488 kB
+Cached:           319432 kB
+AnonPages:         76972 kB
+

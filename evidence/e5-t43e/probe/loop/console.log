@@ -1,0 +1,100 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.89
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=2.01
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"AC3F86C5CE7F02C55590D994CE437253","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"48F22ECF3F03B33D4A24516DE94ADDF7"}]}} uptime=4.69
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"2B91377F3663BF937AAE60A20BC6BE13"} uptime=4.99
+REPLAY_RENDERER_SANDBOX pid=/proc/198 NoNewPrivs=1 Seccomp=2 NSpid=	198	10	1 uptime=5.13
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.19
+REPLAY_CHROME_MAPPED uptime=5.31 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.32 mem_hwm_kib=171824
+REPLAY_NODE_SNAPSHOT bytes=6754334 uptime=9.74
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; sleep 30; printf '%s%s\n'
+ 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; grep -E 'MemFree|^Cached|
+Buffers|AnonPages|Shmem:|Slab|SUnreclaim|KernelStack|PageTables' /proc/meminfo; 
+printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+MemFree:          559744 kB
+Buffers:             492 kB
+Cached:           317200 kB
+AnonPages:         75884 kB
+Shmem:             44696 kB
+Slab:              23864 kB
+SUnreclaim:        16952 kB
+KernelStack:        1836 kB
+PageTables:         3796 kB
+SecPageTables:         0 kB
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; for p in /proc/[0-9]*; do
+ n=$(cat $p/comm 2>/dev/null); r=$(grep VmRSS $p/status 2>/dev/null | awk '{prin
+t $2}'); [ -n "$r" ] && echo "$r $n"; done | sort -rn | head -25; printf '%s%s\n
+' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+139268 chrome
+95204 chrome
+70400 chrome
+69756 chrome
+54016 chrome
+53760 chrome
+33656 chrome
+25148 sway
+14052 chrome
+10108 foot
+2560 replay-chromium
+2464 systemd-udevd
+2304 chrome_crashpad
+2048 chrome_crashpad
+1280 seatd
+1152 sh
+1152 sh
+1152 replay-desktop-
+1024 udhcpc
+1024 init
+896 sort
+896 sh
+896 head
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; cat /proc/net/tcp /proc/n
+et/udp | wc -l; cat /proc/net/tcp; cat /proc/net/udp; printf '%s%s\n' 'WVM_DONE_
+' '5'
+WVM_BEGIN_5
+2
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; sort -k3 -rn /proc/slabin
+fo 2>/dev/null | head -5 || true; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+kernfs_node_cache  15915  16408    144   28    1 : tunables    0    0    0 : slabdata    586    586      0
+dentry              6048   6048    216   18    1 : tunables    0    0    0 : slabdata    336    336      0
+kmalloc-8           4096   4096      8  512    1 : tunables    0    0    0 : slabdata      8      8      0
+kmalloc-cg-64       3392   3712     64   64    1 : tunables    0    0    0 : slabdata     58     58      0
+vma_lock            3469   3696     72   56    1 : tunables    0    0    0 : slabdata     66     66      0
+WVM_DONE_6
+root@replay-desktop# [6n

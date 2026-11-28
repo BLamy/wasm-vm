@@ -7,28 +7,28 @@
       "size": 24208896
     },
     "chunkManifest": {
-      "url": "releases/rootfs/replay-desktop-15e1db66d4b4.chunks.json",
-      "sha256": "53be323a5fc97bbc9d4666ec94923b201379251974dddb9c7d55bf59c0e48034",
+      "url": "releases/rootfs/replay-desktop-3165a13b8d07.chunks.json",
+      "sha256": "bbf5c32870a397f95d9048fb83a70e118c2671aa04c77887d7cc01438989ad0b",
       "size": 128555
     },
     "wholeImage": {
-      "url": "releases/rootfs/replay-desktop-15e1db66d4b4.img.gz",
-      "sha256": "2e01a6124ea2add7bbacc4a1c120d236d9e8bd6ab09ae10c64745be518987ca4",
-      "size": 189685690,
+      "url": "releases/rootfs/replay-desktop-3165a13b8d07.img.gz",
+      "sha256": "6e512527d8d8f9657b51269841b03971995f9743dbfaa272974bc3848296c4c1",
+      "size": 189685645,
       "uncompressedSize": 467664896,
-      "uncompressedSha256": "15e1db66d4b45de1021dd4b0d5fa71851310ac68afaff271eacf4a91281993f8"
+      "uncompressedSha256": "3165a13b8d0756af13317ba5744749fdf5127006db36a51a69c2ec45c8f0e1c6"
     },
     "bootSnapshot": {
-      "url": "releases/boot-snapshot/replay-desktop-ready-d59ef7e56b0d.snap.gz",
-      "sha256": "d59ef7e56b0d5d62ee0083984acb79aa3382bccaae8f8d5d0d1cae3928c4762c",
-      "size": 133399939,
-      "uncompressedSize": 356304290,
-      "uncompressedSha256": "01a1fe32be04c0f463fdc73719283cea5baa94c7cba0fe6b4c29c9cdb10b69a4",
+      "url": "releases/boot-snapshot/replay-desktop-ready-87a0cde821f8.snap.gz",
+      "sha256": "87a0cde821f8ea5fbde1cd6cd0e08b3598619db03f7dbbedf1c8c85e89c11ff7",
+      "size": 136668204,
+      "uncompressedSize": 363382531,
+      "uncompressedSha256": "fc60393a38bf9d7968042e466664ff85c931041703566b39b9a09d32626f7bf5",
       "identity": {
-        "imageSha256": "15e1db66d4b45de1021dd4b0d5fa71851310ac68afaff271eacf4a91281993f8",
+        "imageSha256": "3165a13b8d0756af13317ba5744749fdf5127006db36a51a69c2ec45c8f0e1c6",
         "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
         "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
-        "baseId": "b42ac80ffc1a9e168053e40ff9fa468354e527829a61b0676f59f670c31dbeb7",
+        "baseId": "77c962873eae2df47c3efc4e351c719f878444792b1b1f13420592743c1ce297",
         "ramMib": 1024,
         "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
         "guestClock": "icount",
