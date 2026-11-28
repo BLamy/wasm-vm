@@ -24676,10 +24676,18 @@
       "verificationLog": "",
       "adversarial": "High risk (guest timing). Attack list: a TCP retransmit timer due during a long idle wait; DHCP\nrenewal; relay data arriving while the worker sleeps (it must wake); a guest polling the NIC.",
       "file": "tasks/epic-5-the-window/E5-T43b-slirp-reports-idle.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-27",
+          "commits": 1,
+          "labels": [
+            "E5-T43b: the slirp backend reports when it is idle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-27",
+      "lastActivity": "2026-11-27",
+      "commitCount": 1
     },
     {
       "id": "E5-T43c",
