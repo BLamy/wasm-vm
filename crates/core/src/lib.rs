@@ -6322,6 +6322,10 @@ impl Machine {
             .prev_block
             .as_ref()
             .and_then(|prev| prev.successor_for(phys, self.block_cache.current_generation()));
+        if let Some(block) = &memo {
+            // E4-T40g: the same second chance a probe hit gives (`get_rc_touch`).
+            block.touch();
+        }
         let discover = self.block_discovery;
         // Entry hit: reuse the cached first op and resume its cursor. Discovery MUST still observe
         // every entry while it is on — otherwise a cache hit would prevent the JIT hotness counter
