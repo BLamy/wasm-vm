@@ -1,0 +1,28 @@
+#!/bin/sh
+# E5-T43c: busybox udhcpc's hook for eth0. The root is read-only, so the resolver configuration
+# goes to /run/resolv.conf (/etc/resolv.conf is a link to it). The lease's address, prefix
+# length ($mask), routers and DNS servers come in udhcpc's environment.
+case "$1" in
+  deconfig)
+    ip -4 addr flush dev "$interface" 2>/dev/null
+    ;;
+  bound|renew)
+    new="$ip/${mask:-24}"
+    # A renewal of the same lease must not take the address away, even for a moment: open
+    # connections would lose it. Only addresses other than the lease's are removed.
+    for a in $(ip -4 -o addr show dev "$interface" 2>/dev/null | awk '{print $4}'); do
+      [ "$a" = "$new" ] || ip -4 addr del "$a" dev "$interface" 2>/dev/null
+    done
+    ip -4 addr replace "$new" dev "$interface"
+    if [ -n "$router" ]; then
+      for r in $router; do ip -4 route replace default via "$r" dev "$interface"; break; done
+    fi
+    tmp=/run/resolv.conf.$$
+    : > "$tmp"
+    for d in $dns; do echo "nameserver $d" >> "$tmp"; done
+    [ -n "$domain" ] && echo "search $domain" >> "$tmp"
+    mv "$tmp" /run/resolv.conf
+    echo "REPLAY_NETWORK $1 ip=$ip router=$router dns=$dns" >> /run/replay-desktop/events
+    ;;
+esac
+exit 0

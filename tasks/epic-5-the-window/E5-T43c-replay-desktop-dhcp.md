@@ -3,7 +3,7 @@ id: E5-T43c
 epic: 5
 title: Replay desktop image — the guest brings up eth0 with DHCP and resolves names
 priority: 0.387662
-status: pending
+status: in-progress
 depends_on: []
 estimate: S
 risk: medium

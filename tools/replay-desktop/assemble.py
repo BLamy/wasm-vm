@@ -372,6 +372,10 @@ def stage_phase(args):
             dst.unlink()
         shutil.copyfile(src, dst)
         dst.chmod(0o755 if os.access(src, os.X_OK) else 0o644)
+    # The root is read-only: the resolver configuration lives in /run, written by udhcpc's hook
+    # (E5-T43c). A dangling link until the first lease, which resolvers treat as "no servers".
+    (stage / "etc/resolv.conf").unlink(missing_ok=True)
+    os.symlink("/run/resolv.conf", stage / "etc/resolv.conf")
     shutil.copyfile(inp / "tools/chromium/guest/smoke.html", chrome_dir / "smoke.html")
     (chrome_dir / "smoke.html").chmod(0o644)
     # /usr/local/bin/node is the overlay's wrapper (startup snapshot, see rcS); it must be there.

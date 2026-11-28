@@ -39,6 +39,14 @@ mkdir -p /run/replay-node
   rm -f /run/replay-node/startup.blob.tmp
   : > /run/replay-node/done
 ) &
+# Network (E5-T43c): eth0 by DHCP, in the background so nothing waits for it. udhcpc keeps the
+# lease (and retries without one); its hook sets the address, the default route and
+# /run/resolv.conf. With no DHCP server the desktop comes up exactly as before, offline.
+ip link set lo up 2>/dev/null
+if [ -d /sys/class/net/eth0 ]; then
+  ip link set eth0 up 2>/dev/null
+  udhcpc -f -i eth0 -s /usr/local/share/udhcpc/default.script >/run/udhcpc.log 2>&1 </dev/null &
+fi
 seatd -g video >/run/seatd.log 2>&1 &
 i=0; while [ ! -S /run/seatd.sock ] && [ $i -lt 600 ]; do sleep 0.1; i=$((i+1)); done
 su -s /bin/sh desktop -c /usr/local/bin/replay-desktop-session </dev/null >/run/session.log 2>&1 &
