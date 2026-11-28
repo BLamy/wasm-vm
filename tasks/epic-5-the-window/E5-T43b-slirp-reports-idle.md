@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: implemented
+status: verified
 depends_on: []
 estimate: S
 risk: high
@@ -277,3 +277,63 @@ Both findings are right; tests and text only — `idle()`'s conditions are as in
 
 `cargo test -p wasm-vm-slirp --lib` 288 passed; clippy (lib, tests) clean. Everything else carries
 forward from round 2's verifier (HELD).
+
+### 2026-11-27 — verifier (round 3) — VERDICT: verified
+
+VERDICT: verified
+
+Head `d7dc15904` (claim) over `733531688` (change). Fresh session, not a worker or earlier
+verifier of this task. I wrote the predictions before running anything
+(`evidence/e5-t43b/verifier-r3/predictions.md`). Every run used a `git archive` scratch copy of
+HEAD with `RUSTFLAGS`/`RUST_LOG` unset. The live tree was not changed.
+
+- **P1 `idle()` unchanged — HELD.** `git diff ce8e83220..HEAD -- crates` changes only the
+  `idle()` doc comment (`local_backend.rs:1096-1099`) and the `#[cfg(test)]` module. The
+  `fn idle` body extracted at `ce8e83220` and at HEAD is byte-identical, and it is the `IDLE`
+  string `mutate.py` matches.
+- **P2 slot 1 pinned (round-2 demand 1) — HELD.** Mutant `I5-file_tcp_slot0_only` now fails the
+  suite: 287 passed, 1 failed. The failing test is `slot1_isolated_half_open_is_not_idle`, on its
+  `!idle` assertion at `local_backend.rs:2527` ("slot 1 mid-handshake")
+  (`verifier-r3/mutants.log`, `i5-panic.txt`).
+- **P3 condition-removal mutants — HELD.** Each of I1, I2, I3, I4 and I6 fails the 288-test
+  suite. I4 now also trips the new slot-1 test (`mutants.log`). The claim's sentence "every one of
+  the four conditions fails a test when removed" is now true.
+- **P4 the local-HTTP test asserts the real reason (round-2 demand 2) — HELD.** This was my
+  novel attack. Mutant `I34-no_listen_terms` drops both `Listen` terms. It fails
+  `idle_condition_local_http` on its final `!idle` assertion (`local_backend.rs:2468`), after its
+  `external_io_pending()==false` and `dns_tcp_state()!=Listen` assertions have passed
+  (`i34-local-http-panic.txt`). So the test depends on the `Listen` conditions, which is the
+  reason it now states.
+- **P5 the corrected comment is true — HELD.** `register_http` aborts the DNS-over-TCP socket and
+  both file-transfer sockets (`stack.rs:405-408`). The only callers of `dns_tcp_relisten` and
+  `file_tcp_relisten` are `pump_dns_tcp` and `pump_file_transfer` (`local_backend.rs:627,682`).
+  `service()` runs those only in the branch where `local_http` is `None` (`:989-1000`). Nothing
+  sets `local_http` back to `None`, because `close_local_http` only calls `fail`. So "closed for
+  good" holds. I reran round 2's `r2_local_http_why_not_idle` at HEAD and it reproduces:
+  `external_io_pending=false`, DNS-over-TCP and both file sockets `Closed`, `idle=false`, and
+  0 frames after 120 s of quiet polls (`verifier-r3/attacks.log`). The comment's aside, "its own
+  sockets are not looked at", matches the code: `idle()` reads no `http_tcp` state.
+- **Round-2 attacks rerun at HEAD — HELD.** All 4 `r2_*` tests pass. That covers the lifecycle
+  contract at 5 idle points, the NAT lifecycle with teardown idle held over 120 s, and slot 1
+  isolated as `(Listen, SynReceived)` with `idle()=false` and 2 retransmits within 5 s
+  (`attacks.log`).
+- **P6 suites — HELD.** `cargo test -p wasm-vm-slirp --lib`: 288 passed, 1 ignored. The diff adds
+  no `#[ignore]`. `cargo clippy -p wasm-vm-slirp --lib --tests -- -D warnings` exits 0, and so
+  does `cargo fmt --check -p wasm-vm-slirp` (`suites.log`).
+- **Carried forward from round 2, unchanged code — HELD.** R1–R6, R8, R9 and R11 (the core
+  `paced`/`idle` suites, the wasm32 check, and the `gpu-checkpoint-build.js` equality). The
+  round-3 diff touches neither `idle()`'s body nor the core.
+- **SUITE.** The worker already promoted the slot-1 test, and I5 now proves it. The other round-2
+  attacks are not promoted: `r2_contract` with the lifecycle and NAT tests are not formatted with
+  rustfmt, and promoting them means editing `crates/`, which this pass is scoped out of. They stay
+  in `evidence/e5-t43b/verifier-r2/attack_tests.rs` as a ready follow-up.
+- **Not checked** (carried from rounds 1–2): a machine-level run showing that idle waits are
+  taken with a slirp backend attached; a late DNS completion for a reset DNS-over-TCP generation;
+  DHCP renewal under a long wait. I reran no core or wasm gates this round, because the code they
+  cover is unchanged.
+
+Commands, in the scratch copy: `cargo test -p wasm-vm-slirp --lib`; mutant loop
+`python3 evidence/e5-t43b/verifier-r3/mutate.py <file> <id>` over I1–I6 and I34, then the lib
+suite; `cargo test -p wasm-vm-slirp --lib r2_ -- --nocapture --test-threads=1` with the round-2
+`attack_tests.rs` appended; `cargo clippy -p wasm-vm-slirp --lib --tests -- -D warnings`;
+`cargo fmt --check -p wasm-vm-slirp`.

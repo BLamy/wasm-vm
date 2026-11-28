@@ -1,0 +1,3 @@
+thread 'local_backend::tests::idle_condition_local_http' (36200055) panicked at crates/slirp/src/local_backend.rs:2468:9:
+a local HTTP service is attached
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 288 filtered out; finished in 0.00s

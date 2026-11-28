@@ -1,0 +1,11 @@
+# HEAD d7dc15904, scratch copy (git archive of crates + workspace files), RUSTFLAGS/RUST_LOG unset
+## cargo test -p wasm-vm-slirp --lib
+test local_backend::tests::idle_condition_local_http ... ok
+test local_backend::tests::slot1_isolated_half_open_is_not_idle ... ok
+test result: ok. 288 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 20.06s
+## cargo clippy -p wasm-vm-slirp --lib --tests -- -D warnings
+    Checking wasm-vm-slirp v0.0.0 (/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/e84b1ae1-8b4c-48b5-8b1f-49e1ae2e393d/scratchpad/wt/crates/slirp)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.46s
+exit 0
+## cargo fmt --check
+exit 0
