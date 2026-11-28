@@ -1,0 +1,12 @@
+{
+  "label": "t",
+  "url": "http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide",
+  "browser": "158.0.8127.88",
+  "startedAt": "2026-11-28T07:40:33.100Z",
+  "trials": 3,
+  "scenarios": {},
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "finishedAt": "2026-11-28T07:40:49.578Z"
+}

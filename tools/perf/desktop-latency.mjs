@@ -37,6 +37,11 @@ const { values: opt } = parseArgs({ options: {
   n: { type: "string", default: "5" }, headed: { type: "boolean", default: false },
   "ready-timeout-min": { type: "string", default: "60" }, "trial-timeout-s": { type: "string", default: "180" },
   "idle-s": { type: "string", default: "8" },
+  // The command the node scenario types (default `node -e 'console.log(6*7)'`).
+  "node-command": { type: "string", default: "node -e 'console.log(6*7)'" },
+  // Typed once before the node trials (for example a shell function, so that the timed command
+  // stays short: a command that wraps moves the prompt off the watched rows).
+  "node-setup": { type: "string", default: "" },
   chrome: { type: "string", default: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
 } });
 const N = Number(opt.n);
@@ -183,10 +188,12 @@ const stats = (xs) => {
   const q = (p) => v[Math.min(v.length - 1, Math.floor(p * v.length))];
   return { n: v.length, missing: xs.length - v.length, min: v[0], median: q(0.5), max: v[v.length - 1] };
 };
-const KEY = { " ": "Space", "-": "Minus", "'": "Quote", ".": "Period", "(": ["Shift", "Digit9"], ")": ["Shift", "Digit0"], "*": ["Shift", "Digit8"] };
+const KEY = { " ": "Space", "-": "Minus", "'": "Quote", ".": "Period", "(": ["Shift", "Digit9"], ")": ["Shift", "Digit0"], "*": ["Shift", "Digit8"],
+  "/": "Slash", "{": ["Shift", "BracketLeft"], "}": ["Shift", "BracketRight"], ",": "Comma", "=": "Equal", ";": "Semicolon", ":": ["Shift", "Semicolon"], ">": ["Shift", "Period"], '"': ["Shift", "Quote"] };
 async function typeText(text, gapMs = 150) {
   for (const ch of text) {
-    const k = /[a-z]/u.test(ch) ? `Key${ch.toUpperCase()}` : /[0-9]/u.test(ch) ? `Digit${ch}` : KEY[ch];
+    const k = /[a-z]/u.test(ch) ? `Key${ch.toUpperCase()}` : /[A-Z]/u.test(ch) ? ["Shift", `Key${ch}`]
+      : /[0-9]/u.test(ch) ? `Digit${ch}` : KEY[ch];
     assert.ok(k, `no key mapping for ${JSON.stringify(ch)}`);
     if (Array.isArray(k)) { await page.keyboard.down(k[0]); await page.keyboard.press(k[1], { delay: 30 }); await page.keyboard.up(k[0]); }
     else await page.keyboard.press(k, { delay: 30 });
@@ -278,9 +285,12 @@ const run = {
   async node() {
     await moveTo(TERMINAL); await page.mouse.down(); await sleep(60); await page.mouse.up(); await settle();
     const done = [], rates = [];
+    if (opt["node-setup"]) {
+      await typeText(opt["node-setup"]); await page.keyboard.press("Enter", { delay: 30 }); await settle();
+    }
     for (let i = 0; i < Math.min(N, 3); i++) {
       await typeText("clear"); await page.keyboard.press("Enter", { delay: 30 }); await settle();
-      await typeText("node -e 'console.log(6*7)'"); await settle();
+      await typeText(opt["node-command"]); await settle();
       await page.evaluate(() => window.__lat.reset());
       const a = await sched();
       await page.keyboard.down("Enter");
