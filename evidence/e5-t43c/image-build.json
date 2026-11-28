@@ -1,0 +1,225 @@
+{
+  "task": "E5-T34b",
+  "head": "32c5e407212016c462950e054dcf69ae2fdc63ef",
+  "image": {
+    "file": "replay-desktop.ext4",
+    "bytes": 467664896,
+    "sha256": "2a6e727e346b9735b21ea5c56b6a0b332801fdef9bbd08b8d2b1b3ad3dc13f72",
+    "fs": "ext4 (no journal), mounted read-only"
+  },
+  "imgGz": {
+    "file": "replay-desktop.img.gz",
+    "bytes": 189684539,
+    "sha256": "d6d69b3559e8c1871ea95a7fad22f37fad138beb992cda99b6e351e998037c15"
+  },
+  "chunkManifest": {
+    "file": "chunked/manifest.json",
+    "sha256": "07ba92627796fab3bb4eff6b2f7b2d02fba1e6e5ec2ef56f01ab5c02abf28f6c",
+    "chunk_size": 262144,
+    "layout": "blob",
+    "chunks": 1784
+  },
+  "stagedRegularBytes": 432962579,
+  "stagedEntries": 1004,
+  "packagesInAptClosure": 208,
+  "packagesContributingFiles": [
+    "bash",
+    "busybox-static",
+    "fontconfig-config",
+    "fonts-dejavu-core",
+    "fonts-dejavu-mono",
+    "foot",
+    "grim",
+    "libacl1",
+    "libasound2t64",
+    "libatk-bridge2.0-0t64",
+    "libatk1.0-0t64",
+    "libatspi2.0-0t64",
+    "libavahi-client3",
+    "libavahi-common3",
+    "libblkid1",
+    "libbrotli1",
+    "libbsd0",
+    "libbz2-1.0",
+    "libc-bin",
+    "libc6",
+    "libcairo2",
+    "libcap2",
+    "libcom-err2",
+    "libcups2t64",
+    "libdatrie1",
+    "libdbus-1-3",
+    "libdisplay-info1",
+    "libdrm2",
+    "libegl1",
+    "libevdev2",
+    "libexpat1",
+    "libfcft4t64",
+    "libffi8",
+    "libfontconfig1",
+    "libfreetype6",
+    "libfribidi0",
+    "libgbm1",
+    "libgcc-s1",
+    "libgcrypt20",
+    "libgles2",
+    "libglib2.0-0t64",
+    "libglvnd0",
+    "libgmp10",
+    "libgnutls30t64",
+    "libgpg-error0",
+    "libgraphite2-3",
+    "libgssapi-krb5-2",
+    "libgudev-1.0-0",
+    "libharfbuzz0b",
+    "libhogweed6t64",
+    "libidn2-0",
+    "libinput-bin",
+    "libinput10",
+    "libjson-c5",
+    "libk5crypto3",
+    "libkeyutils1",
+    "libkmod2",
+    "libkrb5-3",
+    "libkrb5support0",
+    "libliftoff0",
+    "liblz4-1",
+    "liblzma5",
+    "libmd0",
+    "libmount1",
+    "libmtdev1t64",
+    "libnettle8t64",
+    "libnspr4",
+    "libnss3",
+    "libp11-kit0",
+    "libpango-1.0-0",
+    "libpangocairo-1.0-0",
+    "libpangoft2-1.0-0",
+    "libpcre2-8-0",
+    "libpixman-1-0",
+    "libpng16-16t64",
+    "libseat1",
+    "libselinux1",
+    "libsqlite3-0",
+    "libssl3t64",
+    "libstdc++6",
+    "libsystemd0",
+    "libtasn1-6",
+    "libthai0",
+    "libtinfo6",
+    "libudev1",
+    "libunistring5",
+    "libutf8proc3",
+    "libvulkan1",
+    "libwacom9",
+    "libwayland-client0",
+    "libwayland-cursor0",
+    "libwayland-server0",
+    "libwlroots12t64",
+    "libx11-6",
+    "libxau6",
+    "libxcb-composite0",
+    "libxcb-dri3-0",
+    "libxcb-ewmh2",
+    "libxcb-icccm4",
+    "libxcb-present0",
+    "libxcb-render-util0",
+    "libxcb-render0",
+    "libxcb-res0",
+    "libxcb-shm0",
+    "libxcb-xfixes0",
+    "libxcb-xinput0",
+    "libxcb1",
+    "libxcomposite1",
+    "libxdamage1",
+    "libxdmcp6",
+    "libxext6",
+    "libxfixes3",
+    "libxi6",
+    "libxkbcommon0",
+    "libxrandr2",
+    "libxrender1",
+    "libzstd1",
+    "ncurses-term",
+    "seatd",
+    "sway",
+    "udev",
+    "xkb-data",
+    "zlib1g"
+  ],
+  "payload": {
+    "chromium": {
+      "bundle": "replay-chromium-riscv64.tar.gz",
+      "bundleSha256": "fae3717a934ea33d0a47d258a921c9d9643fe1a595d1eb9e3238a029e21ad42e",
+      "files": {
+        "chrome_100_percent.pak": {
+          "verifiedSha256": "b9e388df551fc3fbe23b13441577d001a2fe3cb208e7afe91cd72b44c9c1470e"
+        },
+        "locales/en-US.pak": {
+          "verifiedSha256": "5f017fec41b7e6b5fa011a874a07892086ba301c4ff35e7fa0ca0a758aceb681"
+        },
+        "icudtl.dat": {
+          "verifiedSha256": "762a0ae89a8cbf8b5173cc33e1104c6b9321251588a7baa445156a69ba4f69c9"
+        },
+        "chrome_200_percent.pak": {
+          "verifiedSha256": "6c8a8e65ff5fe21a3c31a3eb5be1642adcb600903e5d1dad2f9173b6b48056ee"
+        },
+        "chrome_crashpad_handler": {
+          "verifiedSha256": "65d5c7826b72225e0a80e23a11b89dd90d189443bf530547e2003debb77e6107",
+          "strippedSha256": "0f4a3186fe8e2c849bb27a3ac0f99c6492d793f263cd1b6ec938e1edd4c8aa99",
+          "bytesBefore": 2578512,
+          "bytesAfter": 1453432
+        },
+        "libGLESv2.so": {
+          "verifiedSha256": "d51c3f53b4944bae1132ea3f0aef22a37a28e631eed3dd1adda6b4c06eb2b83c",
+          "strippedSha256": "74dc95e2180ea27ab599e2d2a53323148f3b4647503e992f3ff79b8fe2584ef1",
+          "bytesBefore": 10979680,
+          "bytesAfter": 7155824
+        },
+        "vk_swiftshader_icd.json": {
+          "verifiedSha256": "c9eef28b6b984fec220ef0abfecc40b502d46946706e47bfe97707027cb818bd"
+        },
+        "snapshot_blob.bin": {
+          "verifiedSha256": "f78b815ec3f7b46f72d24282f734dcb2ed48ceadebc8af7925d53d7553dd2a32"
+        },
+        "resources.pak": {
+          "verifiedSha256": "de7504c00ce5d94eb8193c17bdc2635a9d736ddf13726e5e476fcd9a4d8b8ac1"
+        },
+        "libEGL.so": {
+          "verifiedSha256": "2bedc402f48a4a0616644812aaa2ef1b6b9824742f3d58550a5912c83e0982c8",
+          "strippedSha256": "3c48e3cf5a37b0d4c2af1adcc607b42b9361672667ed0b33a86dcdeaedbf61de",
+          "bytesBefore": 1097832,
+          "bytesAfter": 625320
+        },
+        "libvk_swiftshader.so": {
+          "verifiedSha256": "8fb66ed5e3573c535eec46559941596dbcb5c59e13d340a6f4a9f1fa606fc80c",
+          "strippedSha256": "eb900748d1e4a3fdd602cf7103426465e802c84e7c5808b13f2042b289c34541",
+          "bytesBefore": 23329968,
+          "bytesAfter": 14563288
+        },
+        "libvulkan.so.1": {
+          "verifiedSha256": "2fdb88b5143f99199423aaf1aebb8fd7d18e45752ffa180084eaee84c75b81ed",
+          "strippedSha256": "703722ec6d14f3a15ff99ef0628c8808671ddf25a4fa6f17fb0f4b6089cdcdb4",
+          "bytesBefore": 1624040,
+          "bytesAfter": 984672
+        },
+        "chrome": {
+          "verifiedSha256": "df9b431511f435c463e5d39f3dde30d2d204e06105685b601b8ce2372819b8ef",
+          "strippedSha256": "ddc5859233b8fac2e909898f8c869f583ffff751dac9f22aaf7793e36b21e9c1",
+          "bytesBefore": 387891736,
+          "bytesAfter": 220220600
+        }
+      }
+    },
+    "node": {
+      "bundle": "replay-node-26-riscv64.tar.xz",
+      "bundleSha256": "e5c6c904abbf9a6cead65be2f81f0c1b601ca2ac3544c5175623f80261b8873d",
+      "nodeSha256": "0a1942ad5f7c2e751fa619568809c7b5d9b9b84e6b504d326f814efdc4ad4956"
+    }
+  },
+  "privacy": {
+    "stage": "[privacy] OK: 707 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)",
+    "image": "[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)",
+    "imgGz": "[privacy] OK: 1 file(s) scanned, no Replay backend material (12 markers, 11 driver digests)"
+  }
+}

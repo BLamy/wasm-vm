@@ -1,0 +1,366 @@
+{
+  "checks": {
+    "p7": {
+      "xtrace": [
+        "HOOK renew ip=10.0.2.15 mask=24 lease=30 t=15.87",
+        "+ new=10.0.2.15/24",
+        "+ ip -4 -o addr show dev eth0",
+        "+ awk '{print $4}'",
+        "+ '[' 10.0.2.15/24 '=' 10.0.2.15/24 ]",
+        "+ ip -4 addr replace 10.0.2.15/24 dev eth0",
+        "+ '[' -n 10.0.2.2 ]",
+        "+ ip -4 route replace default via 10.0.2.2 dev eth0",
+        "+ break",
+        "+ tmp=/run/resolv.conf.279",
+        "+ :",
+        "+ echo 'nameserver 10.0.2.3'",
+        "+ '[' -n  ]",
+        "+ mv /run/resolv.conf.279 /run/resolv.conf",
+        "+ echo 'REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3'",
+        "+ exit 0",
+        "HOOK renew ip=10.0.2.15 mask=24 lease=30 t=30.90",
+        "+ new=10.0.2.15/24",
+        "+ awk '{print $4}'",
+        "+ ip -4 -o addr show dev eth0",
+        "+ '[' 10.0.2.15/24 '=' 10.0.2.15/24 ]",
+        "+ ip -4 addr replace 10.0.2.15/24 dev eth0",
+        "+ '[' -n 10.0.2.2 ]",
+        "+ ip -4 route replace default via 10.0.2.2 dev eth0",
+        "+ break",
+        "+ tmp=/run/resolv.conf.294",
+        "+ :",
+        "+ echo 'nameserver 10.0.2.3'",
+        "+ '[' -n  ]",
+        "+ mv /run/resolv.conf.294 /run/resolv.conf",
+        "+ echo 'REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3'",
+        "+ exit 0",
+        "HOOK renew ip=10.0.2.15 mask=24 lease=30 t=40.78",
+        "+ new=10.0.2.15/24",
+        "+ ip -4 -o addr show dev eth0",
+        "+ awk '{print $4}'",
+        "+ '[' 10.0.2.15/24 '=' 10.0.2.15/24 ]",
+        "+ ip -4 addr replace 10.0.2.15/24 dev eth0",
+        "+ '[' -n 10.0.2.2 ]",
+        "+ ip -4 route replace default via 10.0.2.2 dev eth0",
+        "+ break",
+        "+ tmp=/run/resolv.conf.308",
+        "+ :",
+        "+ echo 'nameserver 10.0.2.3'",
+        "+ '[' -n  ]",
+        "+ mv /run/resolv.conf.308 /run/resolv.conf",
+        "+ echo 'REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3'",
+        "+ exit 0"
+      ],
+      "addresses": [
+        "10.0.2.15/24"
+      ],
+      "routes": [
+        "default via 10.0.2.2 dev eth0",
+        "10.0.2.0/24 dev eth0 scope link  src 10.0.2.15"
+      ],
+      "resolv": [
+        "nameserver 10.0.2.3"
+      ],
+      "udhcpcLog": [
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30"
+      ],
+      "summary": {
+        "hookRuns": 3,
+        "addrDel": [],
+        "flush": [],
+        "replace": [
+          "+ ip -4 addr replace 10.0.2.15/24 dev eth0",
+          "+ ip -4 addr replace 10.0.2.15/24 dev eth0",
+          "+ ip -4 addr replace 10.0.2.15/24 dev eth0"
+        ]
+      }
+    },
+    "p8": [
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "window": {
+          "START": 71.22,
+          "END": 73.24
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 70.86
+          },
+          {
+            "k": "ADDED",
+            "t": 70.86
+          },
+          {
+            "k": "FLUSH",
+            "t": 71.74
+          },
+          {
+            "k": "ADDED",
+            "t": 71.75
+          },
+          {
+            "k": "FLUSH",
+            "t": 86.78
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 1,
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 301,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "window": {
+          "START": 91.8,
+          "END": 93.34
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 92.32
+          },
+          {
+            "k": "ADDED",
+            "t": 92.34
+          },
+          {
+            "k": "REPLAY_NETWORK",
+            "t": null
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 1,
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "window": {
+          "START": 107.37,
+          "END": 109.38
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 107.36
+          },
+          {
+            "k": "ADDED",
+            "t": 107.37
+          },
+          {
+            "k": "FLUSH",
+            "t": 107.9
+          },
+          {
+            "k": "ADDED",
+            "t": 107.91
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 1,
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "window": {
+          "START": 123.64,
+          "END": 125.65
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 122.94
+          },
+          {
+            "k": "ADDED",
+            "t": 122.94
+          },
+          {
+            "k": "FLUSH",
+            "t": 124.16
+          },
+          {
+            "k": "ADDED",
+            "t": 124.18
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 1,
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 306,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "window": {
+          "START": 141.22,
+          "END": 142.77
+        },
+        "sablog": [
+          {
+            "k": "ADDED",
+            "t": 139.22
+          },
+          {
+            "k": "FLUSH",
+            "t": 141.75
+          },
+          {
+            "k": "ADDED",
+            "t": 141.77
+          },
+          {
+            "k": "REPLAY_NETWORK",
+            "t": null
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 1,
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24"
+        ],
+        "window": {
+          "START": 156.8,
+          "END": 158.81
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 156.79
+          },
+          {
+            "k": "ADDED",
+            "t": 156.8
+          },
+          {
+            "k": "FLUSH",
+            "t": 157.33
+          },
+          {
+            "k": "ADDED",
+            "t": 157.34
+          },
+          {
+            "k": "FLUSH",
+            "t": 172.36
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 0,
+        "workerAssertionWouldPass": true
+      },
+      {
+        "samples": 305,
+        "set": [
+          "S 10.0.2.15/24"
+        ],
+        "window": {
+          "START": 177.39,
+          "END": 178.94
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 177.92
+          },
+          {
+            "k": "ADDED",
+            "t": 177.94
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 0,
+        "workerAssertionWouldPass": true
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24"
+        ],
+        "window": {
+          "START": 192.33,
+          "END": 194.35
+        },
+        "sablog": [
+          {
+            "k": "FLUSH",
+            "t": 192.86
+          },
+          {
+            "k": "ADDED",
+            "t": 192.87
+          },
+          {
+            "k": "FLUSH",
+            "t": 207.89
+          }
+        ],
+        "spanned": true,
+        "gapSamples": 0,
+        "workerAssertionWouldPass": true
+      }
+    ],
+    "p8summary": {
+      "trials": 8,
+      "spanned": 8,
+      "caughtWhenSpanned": 5,
+      "missedWhenSpanned": 3
+    }
+  },
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t43c/verifier/cli-lease30.sh",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t43c/image/replay-desktop.ext4,ro",
+    "--ram-mib",
+    "1024",
+    "--net-slirp",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--block-cache",
+    "--interrupt-batching",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "400000000000",
+    "--no-reboot",
+    "--append",
+    "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
+  ],
+  "readyUptime": 5.32,
+  "done": true,
+  "hostSeconds": 618.955
+}
