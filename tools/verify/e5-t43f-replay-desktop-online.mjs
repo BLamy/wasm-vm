@@ -72,9 +72,10 @@ async function openPage(query, { routes = async () => {}, serviceWorkers = "bloc
   page.on("websocket", (ws) => sockets.push({ t: Date.now() - t0, url: ws.url() }));
   page.on("worker", (worker) => worker.on("console", () => {}));
   page.on("console", (m) => {
-    const e = { t: Date.now() - t0, type: m.type(), text: m.text().slice(0, 1000) };
+    const e = { t: Date.now() - t0, type: m.type(), text: m.text().slice(0, 1000), url: m.location().url ?? "" };
     consoleLog.push(e);
-    if (e.type === "error" && !e.text.includes("favicon")) consoleErrors.push(e.text);
+    // The page has no favicon; its 404 is the one expected console error (as in E5-T34e).
+    if (e.type === "error" && !e.text.includes("favicon.ico") && !e.url.endsWith("/favicon.ico")) consoleErrors.push(e.text);
   });
   page.on("pageerror", (e) => consoleErrors.push(String(e)));
   await page.addInitScript(() => {
@@ -131,6 +132,7 @@ async function online() {
   }
   result.chromeTitle = title.trim();
   result.chromeLoadMs = Date.now() - chromeStart;
+  await page.waitForTimeout(8000); // the title changes before the page is painted
   await page.screenshot({ path: path.join(dir, "chrome-example.png") });
   assert.match(title, /"name": "Example Domain - Chromium"/u, `sway's window title: ${title}`);
   log("Chrome loaded example.com in", result.chromeLoadMs, "ms");
