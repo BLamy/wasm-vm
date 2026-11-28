@@ -1,0 +1,12 @@
+{
+  "base": "https://wasm-vm.pages.dev",
+  "noConnection": {
+    "inSlicePct": 2.1,
+    "guestSecondsPerSecond": 1
+  },
+  "tcp": "1",
+  "openConnection": {
+    "inSlicePct": 8.5,
+    "guestSecondsPerSecond": 0.98
+  }
+}

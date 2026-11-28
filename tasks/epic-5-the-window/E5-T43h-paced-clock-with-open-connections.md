@@ -3,7 +3,7 @@ id: E5-T43h
 epic: 5
 title: Paced clock keeps real time while the guest waits with a network connection open
 priority: 0.3876634
-status: in-progress
+status: implemented
 depends_on: [E5-T43f]
 estimate: S
 risk: high
@@ -26,12 +26,22 @@ a typed `node` fetch answered 92 s after typing began.
 
 ## Deterministic acceptance
 
-- With the paced clock and a network flow open, an idle guest's `mtime` follows the host clock (core
-  test with a fake monotonic clock and a backend reporting external I/O); with the instruction-count
-  clock the guard still holds (existing tests).
-- Browser, online Replay desktop: the `https.get` above exits within 2x its guest time in host time
-  (was 25x); a typed `node` fetch answers within 30 s of typing ending; idle worker time with networking
-  on and no connection still within 2 points of E5-T43f's.
+Revised 2026-11-28, before the claim. With the jump restored the guest kept real time, but the run
+loop then spun at 99.9 % of the worker for as long as a connection stayed open (the wait never
+"held" while the network was busy). So the boundary also covers the host's wait: a sync that finds
+every device idle but the network, which only waits on host-delivered I/O, lets the run call end at
+the guest's `wfi` and the host sleep in naps of at most 4 ms (`HOST_IO_IDLE_NAP_NANOS`). And the
+`https.get` example turned out to keep its socket open by itself (its response body is never read):
+it takes 405 host seconds before and after, now with 394 guest seconds instead of 16.
+
+- Core tests: with the paced clock and network I/O pending, an idle guest's `mtime` follows the host
+  clock and never passes it; the wait is offered in naps of at most 4 ms; without the network device
+  the full wait is offered; the instruction-count clock keeps the guard (existing test). Each new test
+  fails when its change is reverted.
+- Browser, online Replay desktop: with a connection open and the guest idle, guest time runs at about
+  real speed (was about 1/25) and the worker spends under 15 % of its time in run slices; a typed
+  `node` fetch answers sooner than before (92.6 s after typing began); with no connection, idle and
+  click, key echo and node -e as before (same bundle, previous wasm).
 
 ## Adversarial verification
 
@@ -41,3 +51,45 @@ and recording clocks unchanged (determinism evidence); the worker's CPU while a 
 the guest idle.
 
 ## Verification log
+
+### 2026-11-28 — worker — claim (head `e0a100b91`)
+
+Commits on `codex/paced-clock-open-connections`: `7d69ecc80` (the jump: `after_wfi_retire` uses
+`external_wake_io_pending_for_idle_jump`, which ignores network I/O under the paced clock; two tests),
+`70b19c706` (the naps: `NetState::waiting_on_host`, `fabric_host_io_epoch` set by `boundary_sync_full`,
+`paced_wait_holds_but_for_host_io`, the run loop and `take_idle_wait_nanos` use it, `HOST_IO_IDLE_NAP_NANOS`
+= 4 ms; two tests; the E5-T43f acceptance script also records `nodeAnswerAfterEnterMs`), `e0a100b91`
+(generated build id, evidence). The session paths (`session_live.rs`) still use `external_wake_io_pending`,
+unchanged.
+
+**Native gates**: `cargo fmt --check`; `cargo clippy -p wasm-vm-core --all-targets --features trace -- -D warnings`
+clean (without `trace`, two test targets that import `VecSink` do not build — pre-existing, feature-gated;
+`--features zicsr-stub --lib` has the same 5 dead-code errors as before, none in this diff);
+`cargo test -p wasm-vm-core --features trace`: 1372 passed, 0 failed (`evidence/e5-t43h/core-tests-summary.log`);
+`cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown` clean. Sabotage: reverting the jump condition
+fails `paced_clock_follows_the_host_with_network_io_pending`; making the host-I/O hold false fails
+`paced_wait_with_network_io_pending_is_taken_in_short_naps`.
+
+**Browser, committed bundle** (8125 = this head; 8130 = `7dbe62453`'s `web/dist`, the previous wasm):
+- `evidence/e5-t43h/open-connection-8125.json` (`probe-open-connection.mjs`: 30 s idle, then 30 s with a
+  background `https.get` holding an ESTABLISHED socket): no connection 1.9 % in run slices, 1.00 guest s/s;
+  connection open 7.1 %, 0.98 guest s/s. With only the first commit it was 99.9 %, 0.98 (the run before
+  `70b19c706`, same file name, recorded in this log's predecessor run: `{"inSlicePct":99.9,…}`). The previous
+  wasm's run never got its connection ESTABLISHED within 3 minutes (`open-connection-8130.json` tcp 0).
+- `probe-timing.json` (before, in E5-T43f) vs `evidence/e5-t43h/probe-timing.json` (after the first commit): the
+  `https.get` that never reads its body: 16.16 guest s → 6 m 34 s guest for ~405 host s both times (guest time
+  now follows real time); `fetch` 1.0-1.3 guest s, ~9 host s in both (CPU-bound).
+- E5-T43f acceptance (`online off relay-down sw`) all PASS on this head (`online3.log`); the typed node fetch:
+  54.7 s after typing began, 34.3 s after Enter (E5-T43f: 92.6 / 94.6 s after typing began). Over the serial
+  shell the same pipeline answers in about 9 s (`probe-pipeline.json`): the rest is the desktop terminal path,
+  not the network or the clock.
+- `desktop-latency` interleaved, this head vs previous wasm (`latency/`): click 255.2, 262.9 vs 264.1, 284.8 ms;
+  key echo 43.0, 46.4 vs 44.8, 44.2 ms; node -e 1682, 1743 vs 1676, 1762 ms; idle 1.1, 1.5 vs 1.1, 1.4 %.
+
+**Live** after `bash tools/deploy-cloudflare.sh` (the served wasm hashes as `web/dist`'s): online PASS, Chrome
+example.com, node fetch 200 answered 29.2 s after Enter (`live.log`); `open-connection-live.json`: no connection
+2.1 %, connection open 8.5 %, 0.98 guest s/s.
+
+**Limits**: a reply arriving while the host naps waits up to 4 ms more. Under the paced clock a guest timeout can
+now fire during a run chunk in which a reply is already queued in the browser (the race the old guard closed for
+the instruction-count clock); the window is one chunk, and the timeout must also have passed in real time.
