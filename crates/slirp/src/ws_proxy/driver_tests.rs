@@ -559,3 +559,25 @@ async fn a_stalled_backend_does_not_freeze_other_streams() {
         .expect("stream 2 froze — the stalled backend wedged the relay (Finding 2)");
     assert_eq!(echoed, b"still-alive");
 }
+
+/// E5-T43a round-2 verifier: the blocked-port check is where connections are made, not only in
+/// the helper (a mutant removing it from `resolve_destination` survived).
+#[tokio::test]
+async fn the_public_relay_never_resolves_a_blocked_port() {
+    assert!(
+        super::resolve_destination("1.1.1.1", 25, true, &[])
+            .await
+            .is_err()
+    );
+    assert!(
+        super::resolve_destination("1.1.1.1", 80, true, &[])
+            .await
+            .is_ok()
+    );
+    // Development (non-public) relays keep their old behaviour.
+    assert!(
+        super::resolve_destination("1.1.1.1", 25, false, &[])
+            .await
+            .is_ok()
+    );
+}

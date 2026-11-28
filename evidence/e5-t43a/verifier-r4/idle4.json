@@ -1,0 +1,490 @@
+{
+  "startedAt": "2026-11-27T22:05:15.264Z",
+  "base": "https://wasm-vm-relay.brett-lamy.workers.dev",
+  "opened": [
+    {
+      "name": "A_idle_with_stream",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 0,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 0
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 0
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 0
+        }
+      ]
+    },
+    {
+      "name": "D_idle_no_stream",
+      "result": "hello sent",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1,
+      "sent": 1,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1
+        }
+      ]
+    },
+    {
+      "name": "B_window_only",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 2,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 5,
+          "atS": 243
+        }
+      ]
+    },
+    {
+      "name": "C_window_only",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 3,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 5,
+          "atS": 243
+        }
+      ]
+    }
+  ],
+  "progress": {
+    "atS": 1923,
+    "sessions": [
+      {
+        "name": "A_idle_with_stream",
+        "closed": null,
+        "closedAtS": null,
+        "sent": 2
+      },
+      {
+        "name": "D_idle_no_stream",
+        "closed": null,
+        "closedAtS": null,
+        "sent": 1
+      },
+      {
+        "name": "B_window_only",
+        "closed": null,
+        "closedAtS": null,
+        "sent": 10
+      },
+      {
+        "name": "C_window_only",
+        "closed": null,
+        "closedAtS": null,
+        "sent": 10
+      }
+    ]
+  },
+  "at31": [
+    {
+      "name": "A_idle_with_stream",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 0,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 0
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 0
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 0
+        }
+      ]
+    },
+    {
+      "name": "D_idle_no_stream",
+      "result": "hello sent",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1,
+      "sent": 1,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1
+        }
+      ]
+    },
+    {
+      "name": "B_window_only",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 10,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 5,
+          "atS": 243
+        }
+      ]
+    },
+    {
+      "name": "C_window_only",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 10,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 5,
+          "atS": 243
+        }
+      ]
+    }
+  ],
+  "afterIdle": [
+    {
+      "name": "E_new",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 1923
+        }
+      ]
+    },
+    {
+      "name": "F_new",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 1923
+        }
+      ]
+    },
+    {
+      "name": "G_new",
+      "result": "closed 1000",
+      "closed": 1000,
+      "closedAtS": 1924,
+      "lastSentAtS": 1924,
+      "sent": 2,
+      "idleBeforeCloseS": 0,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1924
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "name": "A_idle_with_stream",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 0,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 0
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 0
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 0
+        }
+      ]
+    },
+    {
+      "name": "D_idle_no_stream",
+      "result": "hello sent",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1,
+      "sent": 1,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1
+        }
+      ]
+    },
+    {
+      "name": "B_window_only",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 10,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 2
+        },
+        {
+          "id": 1,
+          "op": 5,
+          "atS": 243
+        }
+      ]
+    },
+    {
+      "name": "C_window_only",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 10,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 3
+        },
+        {
+          "id": 1,
+          "op": 5,
+          "atS": 243
+        }
+      ]
+    },
+    {
+      "name": "E_new",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 1923
+        }
+      ]
+    },
+    {
+      "name": "F_new",
+      "result": "served",
+      "closed": null,
+      "closedAtS": null,
+      "lastSentAtS": 1923,
+      "sent": 2,
+      "idleBeforeCloseS": null,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 2,
+          "atS": 1923
+        },
+        {
+          "id": 1,
+          "op": 8,
+          "atS": 1923
+        }
+      ]
+    },
+    {
+      "name": "G_new",
+      "result": "closed 1000",
+      "closed": 1000,
+      "closedAtS": 1924,
+      "lastSentAtS": 1924,
+      "sent": 2,
+      "idleBeforeCloseS": 0,
+      "frames": [
+        {
+          "id": 0,
+          "op": 0,
+          "atS": 1924
+        }
+      ]
+    }
+  ],
+  "finishedAt": "2026-11-27T22:37:20.959Z"
+}

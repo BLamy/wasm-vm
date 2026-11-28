@@ -97,6 +97,18 @@ pub struct RelayLimits {
     pub max_concurrent_streams: usize,
     pub max_connects_per_minute: usize,
     pub max_bytes_per_token: u64,
+    /// Authenticated sessions one client (an IPv4 address or IPv6 /64, as the front end names it)
+    /// may hold at once. An authenticated session is never ended by its token's expiry, so this —
+    /// not the number of tokens — is what bounds one client (E5-T43a round-2 verifier).
+    pub max_sessions_per_client: usize,
+    /// Authenticated sessions the whole relay holds at once.
+    pub max_sessions_total: usize,
+    /// Bytes one client may move through the relay per clock hour, across all its sessions and
+    /// tokens (the user's choice after the round-3 verifier: total traffic over time is capped).
+    pub max_bytes_per_client_per_hour: u64,
+    /// A session with no traffic in either direction for this long is closed, open streams or
+    /// not, so idle sessions cannot hold the relay's places (the user's choice, round 3).
+    pub session_idle_secs: u64,
 }
 
 impl Default for RelayLimits {
@@ -105,6 +117,10 @@ impl Default for RelayLimits {
             max_concurrent_streams: 64,
             max_connects_per_minute: 120,
             max_bytes_per_token: 64 * 1024 * 1024,
+            max_sessions_per_client: 4,
+            max_sessions_total: 1024,
+            max_bytes_per_client_per_hour: 5 * 1024 * 1024 * 1024,
+            session_idle_secs: 30 * 60,
         }
     }
 }
@@ -114,6 +130,8 @@ pub enum RelayQuotaError {
     ConcurrentStreams,
     ConnectRate,
     ByteLimit,
+    SessionsPerClient,
+    SessionsTotal,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -131,6 +149,11 @@ pub struct RelayMetrics {
 #[derive(Debug, Default)]
 struct RegistryState {
     tokens: HashMap<String, TokenUsage>,
+    /// Authenticated sessions per client key, and in all.
+    client_sessions: HashMap<String, usize>,
+    /// Bytes per client key in the current clock hour: (hour, bytes).
+    client_bytes: HashMap<String, (u64, u64)>,
+    total_sessions: usize,
     metrics: RelayMetrics,
 }
 
@@ -140,12 +163,96 @@ pub struct RelayUsageRegistry(Arc<Mutex<RegistryState>>);
 #[derive(Debug, Default)]
 struct TokenUsage {
     expiry_unix_secs: u64,
+    /// Live relay sessions that authenticated with this token. While any is open the entry (and
+    /// with it the byte and connect budget) stays, past the token's expiry: a session must not get
+    /// a fresh budget because its token aged out (E5-T43a verifier).
+    sessions: usize,
     active_streams: usize,
     connect_times: VecDeque<u64>,
     bytes: u64,
 }
 
 impl RelayUsageRegistry {
+    /// A relay session of `client` authenticated with `token`, if the client's and the relay's
+    /// session caps allow it; pair a success with [`Self::close_session`].
+    pub fn open_session(
+        &self,
+        token: &RelayToken,
+        client: &str,
+        limits: RelayLimits,
+    ) -> Result<(), RelayQuotaError> {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        if registry.total_sessions >= limits.max_sessions_total {
+            return Err(RelayQuotaError::SessionsTotal);
+        }
+        if registry.client_sessions.get(client).copied().unwrap_or(0)
+            >= limits.max_sessions_per_client
+        {
+            return Err(RelayQuotaError::SessionsPerClient);
+        }
+        *registry
+            .client_sessions
+            .entry(client.to_owned())
+            .or_default() += 1;
+        registry.total_sessions += 1;
+        let usage = registry.tokens.entry(token.id.clone()).or_default();
+        usage.expiry_unix_secs = usage.expiry_unix_secs.max(token.expiry_unix_secs);
+        usage.sessions += 1;
+        Ok(())
+    }
+
+    /// The session opened with [`Self::open_session`] ended.
+    pub fn close_session(&self, token_id: &str, client: &str) {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        if let Some(usage) = registry.tokens.get_mut(token_id) {
+            usage.sessions = usage.sessions.saturating_sub(1);
+        }
+        if let Some(count) = registry.client_sessions.get_mut(client) {
+            *count = count.saturating_sub(1);
+            if *count == 0 {
+                registry.client_sessions.remove(client);
+            }
+        }
+        registry.total_sessions = registry.total_sessions.saturating_sub(1);
+    }
+
+    /// Account `count` bytes to `client` for the clock hour of `now_unix_secs`; refused once the
+    /// client's hourly budget would be exceeded.
+    pub fn record_client_bytes(
+        &self,
+        client: &str,
+        count: usize,
+        now_unix_secs: u64,
+        limits: RelayLimits,
+    ) -> Result<(), RelayQuotaError> {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        let hour = now_unix_secs / 3600;
+        registry.client_bytes.retain(|_, (h, _)| *h == hour);
+        let entry = registry
+            .client_bytes
+            .entry(client.to_owned())
+            .or_insert((hour, 0));
+        match entry.1.checked_add(count as u64) {
+            Some(next) if next <= limits.max_bytes_per_client_per_hour => {
+                entry.1 = next;
+                Ok(())
+            }
+            _ => {
+                registry.metrics.rejected_bytes += 1;
+                Err(RelayQuotaError::ByteLimit)
+            }
+        }
+    }
+
+    /// Authenticated sessions held now: in all, and by `client`.
+    pub fn sessions(&self, client: &str) -> (usize, usize) {
+        let registry = self.0.lock().expect("relay usage registry poisoned");
+        (
+            registry.total_sessions,
+            registry.client_sessions.get(client).copied().unwrap_or(0),
+        )
+    }
+
     pub fn record_authentication(&self, accepted: bool) {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
         if accepted {
@@ -162,12 +269,13 @@ impl RelayUsageRegistry {
         limits: RelayLimits,
     ) -> Result<(), RelayQuotaError> {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
-        registry
-            .tokens
-            .retain(|_, usage| usage.expiry_unix_secs > now_unix_secs);
+        // An entry goes only once its token has expired AND no session or stream still holds it.
+        registry.tokens.retain(|_, usage| {
+            usage.expiry_unix_secs > now_unix_secs || usage.sessions > 0 || usage.active_streams > 0
+        });
         let outcome = {
             let usage = registry.tokens.entry(token.id.clone()).or_default();
-            usage.expiry_unix_secs = token.expiry_unix_secs;
+            usage.expiry_unix_secs = usage.expiry_unix_secs.max(token.expiry_unix_secs);
             while usage
                 .connect_times
                 .front()
@@ -194,7 +302,11 @@ impl RelayUsageRegistry {
                 registry.metrics.rejected_rate += 1;
                 return Err(RelayQuotaError::ConnectRate);
             }
-            Err(RelayQuotaError::ByteLimit) => unreachable!(),
+            Err(
+                RelayQuotaError::ByteLimit
+                | RelayQuotaError::SessionsPerClient
+                | RelayQuotaError::SessionsTotal,
+            ) => unreachable!(),
             Ok(()) => {}
         }
         registry.metrics.active_streams += 1;
@@ -351,6 +463,14 @@ pub fn destinations_are_public(addresses: &[IpAddr]) -> bool {
 }
 
 /// Apply both the built-in policy and operator-supplied protected CIDRs to the complete DNS answer.
+/// Destination ports the public relay never dials: SMTP, so the relay cannot carry mail from the
+/// operator's account (E5-T43a verifier).
+pub const BLOCKED_PORTS: &[u16] = &[25];
+
+pub fn port_is_allowed(port: u16) -> bool {
+    !BLOCKED_PORTS.contains(&port)
+}
+
 pub fn destinations_are_allowed(addresses: &[IpAddr], protected: &[ProtectedNetwork]) -> bool {
     destinations_are_public(addresses)
         && addresses
@@ -378,6 +498,27 @@ fn ipv4_is_public(ip: Ipv4Addr) -> bool {
 
 fn ipv6_is_public(ip: Ipv6Addr) -> bool {
     let segments = ip.segments();
+    let octets = ip.octets();
+    let low_v4 = Ipv4Addr::new(octets[12], octets[13], octets[14], octets[15]);
+    // Forms that carry an IPv4 address the host may route as that address (E5-T43a verifier):
+    // IPv4-compatible `::a.b.c.d` and NAT64 `64:ff9b::/96` are judged by the embedded address;
+    // 6to4 `2002::/16` likewise (bits 16..48); local-use NAT64 `64:ff9b:1::/48` and Teredo
+    // `2001::/32` are refused outright.
+    let ipv4_compatible =
+        segments[..6].iter().all(|&s| s == 0) && !ip.is_unspecified() && !ip.is_loopback();
+    let nat64 =
+        segments[0] == 0x64 && segments[1] == 0xff9b && segments[2..6].iter().all(|&s| s == 0);
+    if ipv4_compatible || nat64 {
+        return ipv4_is_public(low_v4);
+    }
+    if segments[0] == 0x2002 {
+        return ipv4_is_public(Ipv4Addr::new(octets[2], octets[3], octets[4], octets[5]));
+    }
+    if (segments[0] == 0x64 && segments[1] == 0xff9b && segments[2] == 0x0001)
+        || (segments[0] == 0x2001 && segments[1] == 0x0000)
+    {
+        return false;
+    }
     !(ip.is_unspecified()
         || ip.is_loopback()
         || ip.is_multicast()
@@ -576,6 +717,150 @@ mod tests {
         }
     }
 
+    /// E5-T43a verifier: IPv6 forms that carry an IPv4 address the host may route as that
+    /// address are judged by it; local NAT64 and Teredo are refused; SMTP is never dialled.
+    #[test]
+    fn embedded_ipv4_forms_and_blocked_ports() {
+        for denied in [
+            "::127.0.0.1",
+            "::10.0.0.1",
+            "64:ff9b::7f00:1",
+            "64:ff9b::a9fe:a9fe",
+            "2002:7f00:1::1",
+            "2002:a00:1::1",
+            "64:ff9b:1::1",
+            "2001:0:4136:e378:8000:63bf:3fff:fdd2",
+        ] {
+            assert!(!destination_is_public(denied.parse().unwrap()), "{denied}");
+        }
+        for allowed in ["::8.8.8.8", "64:ff9b::808:808", "2002:808:808::1"] {
+            assert!(destination_is_public(allowed.parse().unwrap()), "{allowed}");
+        }
+        assert!(!port_is_allowed(25));
+        for port in [80, 443, 53, 587, 465, 8080] {
+            assert!(port_is_allowed(port), "{port}");
+        }
+    }
+
+    /// E5-T43a verifier: a session keeps its token's budget past the token's expiry; the entry
+    /// is not replaced by a fresh one, and it goes only when no session or stream holds it.
+    #[test]
+    fn a_session_keeps_its_budget_after_the_token_expires() {
+        let registry = RelayUsageRegistry::default();
+        let limits = RelayLimits {
+            max_concurrent_streams: 8,
+            max_connects_per_minute: 100,
+            max_bytes_per_token: 100,
+            ..RelayLimits::default()
+        };
+        let token = RelayToken {
+            expiry_unix_secs: 1_000,
+            origin: "https://vm.example".into(),
+            id: "t1".into(),
+        };
+        registry
+            .open_session(&token, "203.0.113.1", limits)
+            .unwrap();
+        registry.reserve_stream(&token, 900, limits).unwrap();
+        registry.record_bytes("t1", 90, limits).unwrap();
+        registry.release_stream("t1");
+        // Long after expiry, the same session opens another stream: same entry, same budget.
+        registry.reserve_stream(&token, 5_000, limits).unwrap();
+        assert_eq!(
+            registry.record_bytes("t1", 20, limits),
+            Err(RelayQuotaError::ByteLimit),
+            "90 + 20 > 100"
+        );
+        registry.record_bytes("t1", 10, limits).unwrap();
+        registry.release_stream("t1");
+        // Session over: the expired entry goes at the next reservation of any token, and the
+        // client's session count is back to zero.
+        registry.close_session("t1", "203.0.113.1");
+        assert_eq!(registry.sessions("203.0.113.1"), (0, 0));
+        let other = RelayToken {
+            expiry_unix_secs: 9_000,
+            origin: "https://vm.example".into(),
+            id: "t2".into(),
+        };
+        registry.reserve_stream(&other, 5_001, limits).unwrap();
+        assert_eq!(
+            registry.record_bytes("t1", 0, limits),
+            Err(RelayQuotaError::ByteLimit),
+            "t1's entry is gone (with it present, 100 + 0 bytes would fit)"
+        );
+    }
+
+    /// E5-T43a round-2 verifier: sessions are capped per client and in total; a closed session
+    /// frees its place, so the counts return to zero (no leak).
+    #[test]
+    fn sessions_are_capped_per_client_and_in_total() {
+        let registry = RelayUsageRegistry::default();
+        let limits = RelayLimits {
+            max_sessions_per_client: 2,
+            max_sessions_total: 3,
+            ..RelayLimits::default()
+        };
+        let token = |id: &str| RelayToken {
+            expiry_unix_secs: 1_000,
+            origin: "https://vm.example".into(),
+            id: id.into(),
+        };
+        registry.open_session(&token("a"), "c1", limits).unwrap();
+        registry.open_session(&token("b"), "c1", limits).unwrap();
+        assert_eq!(
+            registry.open_session(&token("c"), "c1", limits),
+            Err(RelayQuotaError::SessionsPerClient)
+        );
+        registry.open_session(&token("d"), "c2", limits).unwrap();
+        assert_eq!(
+            registry.open_session(&token("e"), "c3", limits),
+            Err(RelayQuotaError::SessionsTotal)
+        );
+        assert_eq!(registry.sessions("c1"), (3, 2));
+        registry.close_session("a", "c1");
+        registry.open_session(&token("f"), "c3", limits).unwrap();
+        for (id, client) in [("b", "c1"), ("d", "c2"), ("f", "c3")] {
+            registry.close_session(id, client);
+        }
+        assert_eq!(registry.sessions("c1"), (0, 0), "every place freed");
+        for i in 0..10 {
+            registry.open_session(&token("g"), "c1", limits).unwrap();
+            registry.close_session("g", "c1");
+            assert_eq!(registry.sessions("c1"), (0, 0), "round {i}");
+        }
+    }
+
+    /// The user's hourly byte cap per client: shared by its sessions, refused when spent, reset
+    /// at the next clock hour, separate for each client.
+    #[test]
+    fn a_client_byte_budget_per_clock_hour() {
+        let registry = RelayUsageRegistry::default();
+        let limits = RelayLimits {
+            max_bytes_per_client_per_hour: 100,
+            ..RelayLimits::default()
+        };
+        registry
+            .record_client_bytes("c1", 60, 7_200, limits)
+            .unwrap();
+        registry
+            .record_client_bytes("c1", 40, 7_300, limits)
+            .unwrap();
+        assert_eq!(
+            registry.record_client_bytes("c1", 1, 7_400, limits),
+            Err(RelayQuotaError::ByteLimit)
+        );
+        registry
+            .record_client_bytes("c2", 100, 7_400, limits)
+            .unwrap();
+        registry
+            .record_client_bytes("c1", 100, 10_800, limits)
+            .unwrap();
+        assert_eq!(
+            registry.record_client_bytes("c1", 1, 10_801, limits),
+            Err(RelayQuotaError::ByteLimit)
+        );
+    }
+
     #[test]
     fn destination_policy_rejects_empty_and_mixed_dns_answers() {
         assert!(!destinations_are_public(&[]));
@@ -623,6 +908,7 @@ mod tests {
             max_concurrent_streams: 1,
             max_connects_per_minute: 2,
             max_bytes_per_token: 5,
+            ..RelayLimits::default()
         };
         registry.reserve_stream(&token, NOW, limits).unwrap();
         assert_eq!(

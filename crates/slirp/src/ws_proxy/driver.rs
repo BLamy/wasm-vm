@@ -21,7 +21,13 @@
 
 use super::relay_security::{RelayToken, verify_relay_token};
 use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
-use super::{ProtectedNetwork, RelayLimits, RelayUsageRegistry, destinations_are_allowed};
+use super::{
+    ProtectedNetwork, RelayLimits, RelayUsageRegistry, destinations_are_allowed, port_is_allowed,
+};
+
+/// A secured relay connection that has not sent a valid `HELLO` within this long is closed: an
+/// unauthenticated WebSocket must not hold the server (or keep its container awake).
+pub const HELLO_DEADLINE: std::time::Duration = std::time::Duration::from_secs(10);
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -118,12 +124,17 @@ pub struct RelayServer {
     security: Option<RelayConnectionSecurity>,
     authenticated_token: Option<RelayToken>,
     quota_streams: HashSet<u32>,
+    /// Last traffic in either direction, for the idle limit.
+    last_activity: std::sync::Mutex<tokio::time::Instant>,
 }
 
 #[derive(Debug, Clone)]
 pub struct RelayConnectionSecurity {
     pub hmac_secret: Vec<u8>,
     pub origin: String,
+    /// Who the connection is for, as the front end names it (an IPv4 address or IPv6 /64), for
+    /// the per-client session cap.
+    pub client: String,
     pub limits: RelayLimits,
     pub usage: RelayUsageRegistry,
     pub protected_networks: Vec<ProtectedNetwork>,
@@ -144,6 +155,7 @@ impl RelayServer {
             security: None,
             authenticated_token: None,
             quota_streams: HashSet::new(),
+            last_activity: std::sync::Mutex::new(tokio::time::Instant::now()),
         }
     }
 
@@ -162,6 +174,7 @@ impl RelayServer {
             security: None,
             authenticated_token: None,
             quota_streams: HashSet::new(),
+            last_activity: std::sync::Mutex::new(tokio::time::Instant::now()),
         }
     }
 
@@ -180,6 +193,7 @@ impl RelayServer {
             security: Some(security),
             authenticated_token: None,
             quota_streams: HashSet::new(),
+            last_activity: std::sync::Mutex::new(tokio::time::Instant::now()),
         }
     }
 
@@ -192,9 +206,34 @@ impl RelayServer {
         let (int_tx, mut int_rx) = mpsc::channel::<Internal>(256);
         let mut streams: HashMap<u32, StreamHandle> = HashMap::new();
         let mut udp: HashMap<u32, UdpHandle> = HashMap::new();
+        let hello_deadline = tokio::time::sleep(HELLO_DEADLINE);
+        tokio::pin!(hello_deadline);
+        let idle_limit = self
+            .security
+            .as_ref()
+            .map(|s| std::time::Duration::from_secs(s.limits.session_idle_secs.max(1)));
+        let mut idle_check = tokio::time::interval(idle_limit.map_or(
+            std::time::Duration::from_secs(3600),
+            |l| {
+                (l / 4).clamp(
+                    std::time::Duration::from_millis(250),
+                    std::time::Duration::from_secs(30),
+                )
+            },
+        ));
 
         loop {
             tokio::select! {
+                _ = idle_check.tick(), if idle_limit.is_some() && self.authenticated_token.is_some() => {
+                    if idle_limit.is_some_and(|limit| self.last_activity.lock().expect("activity clock poisoned").elapsed() >= limit) {
+                        eprintln!("{{\"event\":\"relay_session_idle_closed\"}}");
+                        break;
+                    }
+                }
+                () = &mut hello_deadline, if self.security.is_some() && self.authenticated_token.is_none() => {
+                    eprintln!("{{\"event\":\"relay_hello_deadline\"}}");
+                    break;
+                }
                 msg = self.inbound.recv() => match msg {
                     Some(bytes) => {
                         if self.on_ws_message(&bytes, &int_tx, &mut streams, &mut udp).await.is_err() {
@@ -218,6 +257,9 @@ impl RelayServer {
             h.shutdown();
         }
         self.release_all_quota_streams();
+        if let (Some(security), Some(token)) = (&self.security, &self.authenticated_token) {
+            security.usage.close_session(&token.id, &security.client);
+        }
     }
 
     /// Decode + route one inbound WS message. Returns `Err` on a protocol error (caller closes).
@@ -231,6 +273,7 @@ impl RelayServer {
         let Some(frame) = Frame::decode(bytes) else {
             return Err(RelayError::UnknownStream(0)); // undecodable → protocol error
         };
+        *self.last_activity.lock().expect("activity clock poisoned") = tokio::time::Instant::now();
         if !self.core.is_ready()
             && let Some(security) = &self.security
         {
@@ -256,6 +299,15 @@ impl RelayServer {
                     return Err(RelayError::Authentication);
                 }
             };
+            if let Err(reason) =
+                security
+                    .usage
+                    .open_session(&verified, &security.client, security.limits)
+            {
+                security.usage.record_authentication(false);
+                eprintln!("{{\"event\":\"relay_session_refused\",\"reason\":\"{reason:?}\"}}");
+                return Err(RelayError::Authentication);
+            }
             security.usage.record_authentication(true);
             eprintln!("{{\"event\":\"relay_session_authenticated\"}}");
             self.authenticated_token = Some(verified);
@@ -660,10 +712,18 @@ impl RelayServer {
         let Some(token) = &self.authenticated_token else {
             return false;
         };
+        *self.last_activity.lock().expect("activity clock poisoned") = tokio::time::Instant::now();
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs());
         let accepted = security
             .usage
-            .record_bytes(&token.id, bytes, security.limits)
-            .is_ok();
+            .record_client_bytes(&security.client, bytes, now, security.limits)
+            .is_ok()
+            && security
+                .usage
+                .record_bytes(&token.id, bytes, security.limits)
+                .is_ok();
         if !accepted {
             let metrics = security.usage.metrics();
             eprintln!(
@@ -706,6 +766,7 @@ async fn resolve_destination(
     // Reject a mixed answer in full. Picking only its public member would let a rebinding attacker
     // race the resolver/connect boundary or steer retries onto a protected address.
     if addresses.is_empty()
+        || (require_public && !port_is_allowed(port))
         || (require_public
             && !destinations_are_allowed(
                 &addresses

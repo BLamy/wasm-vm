@@ -1,0 +1,16 @@
+# E5-T43a round-5 verifier: is the deployed Worker this head's src/?
+# read-only: wrangler deployments list / versions view; GET accounts/:acct/workers/scripts/wasm-vm-relay/content/v2 (the account's own API, OAuth token read in memory, never written)
+current deployment: version 731688b9-3493-4e0d-a5f4-eaec5567c5df (number 13), created 2026-11-27T23:20:50Z; commit db41616ae is 2026-11-27T23:21:38Z
+bindings: ALLOWED_ORIGINS as wrangler.jsonc, RELAY_INSTANCE relay-5, TOKEN_LIMITER 20/60s, TOKEN_TTL_SECS 600, MAX_BYTES_PER_TOKEN 2147483648, RELAY_HMAC_SECRET secret_text
+local: npx --no-install wrangler deploy --dry-run --outdir <scratch>/bundle at HEAD 8a06ef267 (deploy/ unchanged since db41616ae)
+deployed/index.js sha256(without sourceMappingURL line, trailing newline stripped) b63cd33a33454ac0eb9eaea4ce4b292efc8d23f33755e7d0bd88975146e59490
+bundle/index.js sha256(without sourceMappingURL line, trailing newline stripped) b63cd33a33454ac0eb9eaea4ce4b292efc8d23f33755e7d0bd88975146e59490
+diff deployed vs local bundle (sourceMappingURL removed):        0 lines
+deployed relayHeaders:
+1474:function relayHeaders(request) {
+1475-  const headers = new Headers(request.headers);
+1476-  headers.delete("x-wvrelay-client");
+1477-  headers.set("x-wvrelay-client", clientKey(request));
+1478-  return headers;
+1479-}
+1524:      return relay.fetch(switchPort(new Request(request, { headers: relayHeaders(request) }), 8080));

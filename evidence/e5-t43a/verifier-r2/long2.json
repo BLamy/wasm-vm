@@ -1,0 +1,86 @@
+{
+  "startedAt": "2026-11-27T20:23:40.843Z",
+  "token": {
+    "status": 200,
+    "expiresAt": 1795811621,
+    "issuedAt": 1795811020
+  },
+  "A_first": {
+    "result": "OPEN_FAIL:1",
+    "ms": 41
+  },
+  "B_first": {
+    "result": "OPEN_FAIL:1",
+    "ms": 69
+  },
+  "burnStart": -41,
+  "burnEnd": -36,
+  "burn": {
+    "OPEN_FAIL:1": 100
+  },
+  "afterExpiryAt": 8,
+  "B_alive_at_expiry": true,
+  "B_after": {
+    "tally": {
+      "OPEN_FAIL:1": 10
+    },
+    "seq": [
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1"
+    ]
+  },
+  "A_after": {
+    "tally": {
+      "OPEN_FAIL:1": 10,
+      "OPEN_FAIL:2": 10
+    },
+    "seq": [
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:1",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2",
+      "OPEN_FAIL:2"
+    ]
+  },
+  "afterExpiryEnd": 9,
+  "D_expired": {
+    "result": "closed:1000",
+    "ms": 59
+  },
+  "D_closed": 1000,
+  "windowClearedAt": 75,
+  "A_late": {
+    "result": "OPEN_OK",
+    "ms": 32,
+    "http": "200"
+  },
+  "B_end": {
+    "alive": true,
+    "closed": null,
+    "aliveForS": 675
+  },
+  "finishedAt": "2026-11-27T20:34:56.119Z"
+}

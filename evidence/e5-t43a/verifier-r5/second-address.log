@@ -1,0 +1,8 @@
+$ curl -6 -sS -m 10 https://wasm-vm-relay.brett-lamy.workers.dev/health
+curl: (7) Failed to connect to wasm-vm-relay.brett-lamy.workers.dev port 443 after 1 ms: Couldn't connect to server
+000
+rc=7
+$ ifconfig | grep -c 'inet6 ' (global scope, non-link-local)
+2
+$ netstat -rn -f inet6 | grep -c '^default'
+6

@@ -1,0 +1,55 @@
+{
+  "token": {
+    "status": 200,
+    "cors": "https://wasm-vm.pages.dev",
+    "length": 183
+  },
+  "fetch": {
+    "status": "200",
+    "title": "Example Domain",
+    "events": [
+      2,
+      8,
+      8,
+      4,
+      5
+    ],
+    "error": null
+  },
+  "udpDns": {
+    "bytes": 61,
+    "id": 4660,
+    "answers": 2
+  },
+  "protected": {
+    "127.0.0.1": 1,
+    "10.0.0.1": 1,
+    "169.254.169.254": 1,
+    "localhost": 1
+  },
+  "noToken": {
+    "opened": true,
+    "hello": 0,
+    "streams": {},
+    "closed": 1000,
+    "error": null
+  },
+  "forged": {
+    "opened": true,
+    "hello": 0,
+    "streams": {},
+    "closed": 1000,
+    "error": null
+  },
+  "wrongOrigin": {
+    "opened": false,
+    "hello": null,
+    "streams": {},
+    "closed": 1006,
+    "error": "WebSocket was closed before the connection was established"
+  },
+  "tokenForOtherOrigin": {
+    "status": 403,
+    "cors": null
+  }
+}

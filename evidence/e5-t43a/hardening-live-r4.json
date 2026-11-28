@@ -1,0 +1,81 @@
+{
+  "opens": {
+    "::127.0.0.1:80": {
+      "result": "fail 1",
+      "ms": 206
+    },
+    "64:ff9b::7f00:1:80": {
+      "result": "fail 1",
+      "ms": 206
+    },
+    "2002:7f00:1::1:80": {
+      "result": "fail 1",
+      "ms": 206
+    },
+    "aspmx.l.google.com:25": {
+      "result": "fail 1",
+      "ms": 209
+    },
+    "example.com:80": {
+      "result": "open",
+      "ms": 209
+    }
+  },
+  "noHello": {
+    "closed": true,
+    "code": 1000,
+    "afterMs": 10210
+  },
+  "rawNoHello": {
+    "dropped": false,
+    "afterMs": 29785
+  },
+  "rawRefusedAtCap": {
+    "dropped": false,
+    "afterMs": 19833
+  },
+  "sessionsPerClient": {
+    "served": [
+      "served",
+      "served",
+      "served",
+      "served",
+      "closed",
+      "closed"
+    ],
+    "count": 4,
+    "afterClose": "served"
+  },
+  "tokenRate": {
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "ok": 26,
+    "limited": 0
+  }
+}

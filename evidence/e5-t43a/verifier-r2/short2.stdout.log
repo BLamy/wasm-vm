@@ -1,0 +1,115 @@
+{
+  "startedAt": "2026-11-27T20:24:09.959Z",
+  "hello_at_9s": {
+    "delayMs": 9000,
+    "closedBeforeHello": null,
+    "open": {
+      "result": "OPEN_OK",
+      "ms": 43
+    },
+    "http": "200",
+    "aliveAt": 12,
+    "alive": true
+  },
+  "hello_at_12s": {
+    "delayMs": 12000,
+    "closedBeforeHello": 1000,
+    "closedAtMs": 10202
+  },
+  "partialHello": {
+    "why": "close frame",
+    "status": "HTTP/1.1 101 Switching Protocols",
+    "bytesTrickled": 10,
+    "closedAfterUpgradeMs": 10021
+  },
+  "portsAndV6": {
+    "::127.0.0.1:80": {
+      "result": "OPEN_FAIL:1",
+      "ms": 42
+    },
+    "aspmx.l.google.com:25": {
+      "result": "closed:1000",
+      "ms": 69
+    },
+    "smtp.gmail.com:587": {
+      "result": "closed:1000",
+      "ms": 8001
+    },
+    "smtp.gmail.com:465": {
+      "result": "closed:1000",
+      "ms": 8001
+    },
+    "::ffff:0:7f00:1:80": {
+      "result": "closed:1000",
+      "ms": 3002
+    },
+    "fec0::1:80": {
+      "result": "closed:1000",
+      "ms": 3000
+    },
+    "::ffff:0:a9fe:a9fe:80": {
+      "result": "closed:1000",
+      "ms": 3001
+    }
+  },
+  "tokenRate": {
+    "plain": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      429
+    ],
+    "firstLimitedAt": 42,
+    "spoofed": {
+      "CF-Connecting-IP": 403,
+      "X-Forwarded-For": 429,
+      "True-Client-IP": 429,
+      "X-Real-IP": 429,
+      "CF-Connecting-IPv6": 429,
+      "Forwarded": 429
+    },
+    "plainAfter": [
+      429,
+      429
+    ]
+  },
+  "finishedAt": "2026-11-27T20:25:12.532Z"
+}

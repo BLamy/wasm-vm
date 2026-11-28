@@ -1,0 +1,248 @@
+{
+  "P1": {
+    "status": 200,
+    "acao": "https://wasm-vm.pages.dev",
+    "vary": "Origin",
+    "cc": "no-store",
+    "keys": [
+      "expiresAt",
+      "token",
+      "ws"
+    ],
+    "ws": "wss://wasm-vm-relay.brett-lamy.workers.dev/ws"
+  },
+  "P2": {
+    "fields": 5,
+    "version": "v1",
+    "ttl": 600,
+    "expiresAtMatches": true,
+    "origin": "https://wasm-vm.pages.dev",
+    "idHex32": true,
+    "macHex64": true,
+    "idsDiffer": true
+  },
+  "P3": {
+    "https://evil.example": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    },
+    "HTTPS://WASM-VM.PAGES.DEV": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    },
+    "https://wasm-vm.pages.dev/": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    },
+    "https://wasm-vm.pages.dev:443": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    },
+    "null": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    },
+    "https://x.wasm-vm.pages.dev": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    },
+    "(none)": {
+      "status": 403,
+      "acao": null,
+      "bodyHasToken": false
+    }
+  },
+  "P4": {
+    "optionsAllowed": {
+      "status": 204,
+      "acao": "https://wasm-vm.pages.dev",
+      "vary": "Origin",
+      "cc": "no-store",
+      "body": ""
+    },
+    "optionsEvil": {
+      "status": 403,
+      "acao": null,
+      "vary": null,
+      "cc": "no-store",
+      "body": "origin not allowed"
+    },
+    "post": {
+      "status": 405,
+      "acao": "https://wasm-vm.pages.dev",
+      "vary": "Origin",
+      "cc": "no-store",
+      "body": "method not allowed"
+    },
+    "health": {
+      "status": 200,
+      "acao": null,
+      "vary": null,
+      "cc": "no-store",
+      "body": "ok"
+    },
+    "wsNoUpgrade": {
+      "status": 426,
+      "acao": null,
+      "vary": null,
+      "cc": null,
+      "body": "websocket expected"
+    },
+    "notFound": {
+      "status": 404,
+      "acao": null,
+      "vary": null,
+      "cc": null,
+      "body": "not found"
+    },
+    "tokenQueryTtl": {
+      "ttl": 600
+    }
+  },
+  "P5": {
+    "upgraded": true,
+    "open": {
+      "result": "closed:1000",
+      "ms": 53
+    },
+    "closed": 1000
+  },
+  "P6": {
+    "upgraded": true,
+    "open": {
+      "result": "closed:1000",
+      "ms": 69
+    },
+    "closed": 1000
+  },
+  "P6b": {
+    "open": {
+      "result": "closed:1000",
+      "ms": 63
+    },
+    "closed": 1000
+  },
+  "P7": {
+    "a": "OPEN_OK",
+    "b": "OPEN_OK",
+    "aHttp": "200",
+    "bHttp": "200"
+  },
+  "P10_P12": {
+    "2130706433": {
+      "result": "OPEN_FAIL:1",
+      "ms": 38
+    },
+    "::1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 37
+    },
+    "[::1]": {
+      "result": "OPEN_FAIL:1",
+      "ms": 38
+    },
+    "fd00::1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 37
+    },
+    "fe80::1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 40
+    },
+    "::ffff:127.0.0.1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 41
+    },
+    "::ffff:10.0.0.1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 35
+    },
+    "0.0.0.0": {
+      "result": "OPEN_FAIL:1",
+      "ms": 35
+    },
+    "127.1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 49
+    },
+    "100.64.0.1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 42
+    },
+    "172.16.0.1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 39
+    },
+    "192.168.0.1": {
+      "result": "OPEN_FAIL:1",
+      "ms": 38
+    },
+    "169.254.169.254": {
+      "result": "OPEN_FAIL:1",
+      "ms": 33
+    },
+    "127.0.0.1.nip.io": {
+      "result": "OPEN_FAIL:1",
+      "ms": 151
+    },
+    "10.0.0.1.sslip.io": {
+      "result": "OPEN_FAIL:1",
+      "ms": 137
+    },
+    "169.254.169.254.nip.io": {
+      "result": "OPEN_FAIL:1",
+      "ms": 522
+    },
+    "::127.0.0.1": {
+      "result": "none",
+      "ms": 15002
+    },
+    "64:ff9b::7f00:1": {
+      "result": "none",
+      "ms": 15002
+    }
+  },
+  "P11": {
+    "127.0.0.1": {
+      "result": "UDP_OPEN_FAIL:1",
+      "ms": 29
+    },
+    "10.0.0.1": {
+      "result": "UDP_OPEN_FAIL:1",
+      "ms": 37
+    },
+    "169.254.169.254": {
+      "result": "UDP_OPEN_FAIL:1",
+      "ms": 40
+    },
+    "127.0.0.1.nip.io": {
+      "result": "UDP_OPEN_FAIL:1",
+      "ms": 36
+    }
+  },
+  "control": {
+    "ipv6Public": {
+      "result": "OPEN_OK",
+      "ms": 41
+    },
+    "example80": {
+      "result": "OPEN_OK",
+      "ms": 73,
+      "http": "200"
+    }
+  },
+  "P13": {
+    "mx25": {
+      "result": "OPEN_OK",
+      "ms": 55
+    }
+  },
+  "sessionClosed": null,
+  "finishedAt": "2026-11-27T20:00:08.636Z"
+}
