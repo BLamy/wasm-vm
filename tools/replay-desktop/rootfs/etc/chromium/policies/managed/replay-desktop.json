@@ -1,0 +1,10 @@
+{
+  "BrowserSignin": 0,
+  "NetworkPredictionOptions": 2,
+  "SearchSuggestEnabled": false,
+  "MetricsReportingEnabled": false,
+  "TranslateEnabled": false,
+  "SpellcheckEnabled": false,
+  "PromotionalTabsEnabled": false,
+  "BackgroundModeEnabled": false
+}

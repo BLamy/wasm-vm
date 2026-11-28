@@ -21,6 +21,10 @@ say REPLAY_CHROMIUM_LAUNCH
   --ozone-platform=wayland --disable-gpu \
   --no-first-run --no-default-browser-check \
   --disable-background-networking --disable-component-update --disable-sync \
+  --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages \
+  --disable-default-apps --disable-domain-reliability --disable-breakpad --no-pings \
+  --metrics-recording-only --safebrowsing-disable-auto-update --gaia-url=http://127.0.0.1:9 \
+  --disable-features=Translate,MediaRouter,DialMediaRouteProvider,OptimizationHints,OptimizationHintsFetching,OptimizationGuideModelDownloading,NetworkTimeServiceQuerying,AutofillServerCommunication,CertificateTransparencyComponentUpdater \
   --password-store=basic --lang=en-US \
   --num-raster-threads=1 --renderer-process-limit=1 \
   --user-data-dir="$HOME/.config/replay-chromium" --remote-debugging-pipe \

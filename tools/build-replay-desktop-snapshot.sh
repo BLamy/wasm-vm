@@ -86,7 +86,11 @@ echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/uptim
 SCRIPT
 COMPACT_SCRIPT=${COMPACT_SCRIPT//__SETTLE__/$SETTLE_GUEST_SECONDS}
 # With the slirp NIC the snapshot must hold the lease: no lease line by now, no snapshot.
-if [ "$NIC" = "--net-slirp" ]; then LEASE_STEP="grep -q 'REPLAY_NETWORK bound' /run/replay-desktop/events"; else LEASE_STEP=":"; fi
+# Nor may it hold a TCP connection (a resumed desktop's peer would not know it): Chrome is kept
+# from contacting anything at startup (replay-chromium, E5-T43e); this proves it at capture time.
+if [ "$NIC" = "--net-slirp" ]; then
+  LEASE_STEP=$'grep -q \'REPLAY_NETWORK bound\' /run/replay-desktop/events\nawk \'NR > 1 { if ($4 == "01") n++ } END { exit (n > 0) }\' /proc/net/tcp'
+else LEASE_STEP=":"; fi
 COMPACT_SCRIPT=${COMPACT_SCRIPT//__LEASE__/$LEASE_STEP}
 
 for f in "$BIN" "$KERNEL" "$IMAGE" "$MANIFEST"; do
