@@ -1,0 +1,19 @@
+[desktop-latency 15:28:19.806] open http://127.0.0.1:8135/app.html?guest=replay-desktop&desktop=1&net=0#ide
+[desktop-latency 15:28:23.436] desktop ready after 3.6 s
+[desktop-latency 15:28:23.448] scenario node
+[desktop-latency 15:28:42.875] node #1: prompt back 1488.6 ms after Enter, 222.3M instr @ 145.2 MIPS
+[desktop-latency 15:28:53.387] node #2: prompt back 1529.8 ms after Enter, 229M instr @ 149.3 MIPS
+[desktop-latency 15:29:03.904] node #3: prompt back 1498.2 ms after Enter, 225.8M instr @ 147.2 MIPS
+[desktop-latency 15:29:06.436] {"promptMs":{"n":3,"missing":0,"min":1488.6,"median":1498.2,"max":1529.8}}
+[desktop-latency 15:29:06.441] SUMMARY {
+ "node": {
+  "promptMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 1488.6,
+   "median": 1498.2,
+   "max": 1529.8
+  }
+ }
+}
+[desktop-latency 15:29:06.522] wrote evidence/e5-t45b/browser/zero-gen3.json

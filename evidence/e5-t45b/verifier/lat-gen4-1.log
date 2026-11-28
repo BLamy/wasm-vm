@@ -1,0 +1,62 @@
+[desktop-latency 15:56:58.857] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&net=0#ide
+[desktop-latency 15:57:02.504] desktop ready after 3.6 s
+[desktop-latency 15:57:02.514] scenario click
+[desktop-latency 15:57:08.076] click #1: result 302.6 ms, pressed-state frame 101.3 ms, 28.4M instr @ 87.9 MIPS
+[desktop-latency 15:57:11.380] click #2: result 245.4 ms, pressed-state frame 128.9 ms, 26M instr @ 96.5 MIPS
+[desktop-latency 15:57:14.687] click #3: result 244 ms, pressed-state frame 127.1 ms, 25.8M instr @ 93.7 MIPS
+[desktop-latency 15:57:17.740] click #4: result 238.2 ms, pressed-state frame 121.2 ms, 26.3M instr @ 96.8 MIPS
+[desktop-latency 15:57:20.794] click #5: result 228.3 ms, pressed-state frame 129.9 ms, 25.6M instr @ 95.5 MIPS
+[desktop-latency 15:57:23.574] scenario type
+[desktop-latency 15:57:30.515] type #1: echo 68.3 ms
+[desktop-latency 15:57:32.076] type #2: echo 40.4 ms
+[desktop-latency 15:57:33.688] type #3: echo 44.7 ms
+[desktop-latency 15:57:35.252] type #4: echo 33.4 ms
+[desktop-latency 15:57:36.813] type #5: echo 37.5 ms
+[desktop-latency 15:57:41.142] {"echoMs":{"n":5,"missing":0,"min":33.4,"median":40.4,"max":68.3}}
+[desktop-latency 15:57:41.142] scenario node
+[desktop-latency 15:57:56.240] node #1: prompt back 1381.3 ms after Enter, 197M instr @ 137.5 MIPS
+[desktop-latency 15:58:11.173] node #2: prompt back 1316.4 ms after Enter, 192.3M instr @ 143.9 MIPS
+[desktop-latency 15:58:26.139] node #3: prompt back 1329.3 ms after Enter, 195.6M instr @ 141.5 MIPS
+[desktop-latency 15:58:28.666] {"promptMs":{"n":3,"missing":0,"min":1316.4,"median":1329.3,"max":1381.3}}
+[desktop-latency 15:58:28.670] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 5,
+   "missing": 0,
+   "min": 228.3,
+   "median": 244,
+   "max": 302.6
+  },
+  "pointerArrivedMs": 133.2,
+  "pressedFrame": {
+   "seen": 5,
+   "none": 0,
+   "ms": {
+    "n": 5,
+    "missing": 0,
+    "min": 101.3,
+    "median": 127.1,
+    "max": 129.9
+   }
+  }
+ },
+ "type": {
+  "echoMs": {
+   "n": 5,
+   "missing": 0,
+   "min": 33.4,
+   "median": 40.4,
+   "max": 68.3
+  }
+ },
+ "node": {
+  "promptMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 1316.4,
+   "median": 1329.3,
+   "max": 1381.3
+  }
+ }
+}
+[desktop-latency 15:58:28.808] wrote evidence/e5-t45b/verifier/lat-gen4-1.json

@@ -1,0 +1,33 @@
+// E5-T45b verifier probe 2: retired guest instructions per serial-shell command, gen-4 vs gen-3.
+import fs from "node:fs";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+const [base, out] = process.argv.slice(2);
+const repo = "/Users/blamy/Documents/Codex/wasm-vm";
+const { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
+const browser = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, serviceWorkers: "block" });
+const errors = [];
+page.on("console", (m) => { if (m.type() === "error" && !m.text().includes("favicon")) errors.push(m.text().slice(0, 300)); });
+page.on("pageerror", (e) => errors.push(String(e).slice(0, 300)));
+await page.addInitScript(() => { window.addEventListener("wvm:desktop-ready", () => { window.__r = performance.now(); }); });
+await page.goto(`${base}/app.html?guest=replay-desktop&desktop=1&net=0#ide`);
+await page.waitForFunction(() => window.__r !== undefined && document.getElementById("omarchy-boot-overlay")?.hidden === true, null, { timeout: 1_800_000, polling: 250 });
+const manifest = await (await fetch(`${base}/artifacts-replay-desktop.json`)).json();
+const report = { base, snapshot: manifest.artifacts.bootSnapshot.url, rows: [] };
+const N = "/usr/local/bin/node";
+const run = async (label, c) => page.evaluate(async (c) => {
+  const a = (await window.__schedulerStats()).retiredInstructions; const t = performance.now();
+  const r = await window.wvmDemo.exec(c, 600_000, { quiet: true });
+  const b = (await window.__schedulerStats()).retiredInstructions;
+  return { ms: Math.round(performance.now() - t), instrM: +((b - a) / 1e6).toFixed(1), stdout: r.stdout, exit: r.exit };
+}, c).then((r) => { report.rows.push({ label, cmd: c, ...r }); console.log(label, r.instrM, "M", r.ms, "ms", JSON.stringify(r.stdout).slice(0, 300)); });
+const fetchLocal = `${N} -e 'fetch("http://127.0.0.1:1/").catch(e=>console.log(e.cause&&e.cause.code))'`;
+for (let i = 0; i < 3; i++) await run("true", "true");
+for (let i = 0; i < 3; i++) await run("node-e0", `${N} -e 0`);
+for (let i = 0; i < 3; i++) await run("fetch-local", fetchLocal);
+for (let i = 0; i < 2; i++) await run("require8", `${N} -e 'for (const m of ["fs","os","path","http","https","crypto","zlib","stream"]) require(m)'`);
+await run("cc-fetch", `NODE_DEBUG_NATIVE=CODE_CACHE ${fetchLocal} > /tmp/ccf.log 2>&1; echo accepted=$(grep -c 'is accepted' /tmp/ccf.log) rejected=$(grep -ci 'reject' /tmp/ccf.log) without=$(grep -ci 'without' /tmp/ccf.log); grep -i 'undici' /tmp/ccf.log | head -4`);
+report.consoleErrors = errors;
+fs.writeFileSync(out, JSON.stringify(report, null, 2));
+await browser.close();

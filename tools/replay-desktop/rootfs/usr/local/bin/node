@@ -1,14 +1,4 @@
 #!/bin/sh
-# Replay Node 26, started from the startup snapshot rcS builds at boot when it is there (see
-# /etc/init.d/rcS). The snapshot goes in through NODE_OPTIONS, so `process.execArgv` stays what
-# the user typed and children started with `process.execPath` get it too. Left alone: a caller
-# who names a snapshot of their own, and `--build-snapshot`, whose `--snapshot-blob` is the
-# output file.
-blob=/run/replay-node/startup.blob
-if [ -r "$blob" ]; then
-  case " ${NODE_OPTIONS-} $* " in
-    *snapshot-blob* | *--build-snapshot*) ;;
-    *) export NODE_OPTIONS="--snapshot-blob=$blob${NODE_OPTIONS:+ $NODE_OPTIONS}" ;;
-  esac
-fi
+# Replay Node 26. It starts from its built-in startup snapshot and code cache (E5-T45a); the
+# per-boot snapshot this wrapper used to add (E5-T41a) is gone. Kept as the PATH entry.
 exec /opt/replay-node-26/bin/node "$@"

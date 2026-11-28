@@ -1,0 +1,105 @@
+{
+  "base": "http://127.0.0.1:8135",
+  "snapshot": "releases/boot-snapshot/replay-desktop-ready-c5d6ff60fda9.snap.gz",
+  "rows": [
+    {
+      "label": "true",
+      "cmd": "true",
+      "ms": 15,
+      "instrM": 1.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "true",
+      "cmd": "true",
+      "ms": 30,
+      "instrM": 1.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "true",
+      "cmd": "true",
+      "ms": 29,
+      "instrM": 1.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "node-e0",
+      "cmd": "/usr/local/bin/node -e 0",
+      "ms": 1357,
+      "instrM": 207.3,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "node-e0",
+      "cmd": "/usr/local/bin/node -e 0",
+      "ms": 1324,
+      "instrM": 207.7,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "node-e0",
+      "cmd": "/usr/local/bin/node -e 0",
+      "ms": 1386,
+      "instrM": 212.2,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "fetch-local",
+      "cmd": "/usr/local/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))'",
+      "ms": 3394,
+      "instrM": 478.7,
+      "stdout": "undefined\n\n",
+      "exit": 0
+    },
+    {
+      "label": "fetch-local",
+      "cmd": "/usr/local/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))'",
+      "ms": 3278,
+      "instrM": 467,
+      "stdout": "undefined\n\n",
+      "exit": 0
+    },
+    {
+      "label": "fetch-local",
+      "cmd": "/usr/local/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))'",
+      "ms": 3362,
+      "instrM": 478.9,
+      "stdout": "undefined\n\n",
+      "exit": 0
+    },
+    {
+      "label": "require8",
+      "cmd": "/usr/local/bin/node -e 'for (const m of [\"fs\",\"os\",\"path\",\"http\",\"https\",\"crypto\",\"zlib\",\"stream\"]) require(m)'",
+      "ms": 2029,
+      "instrM": 303,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "require8",
+      "cmd": "/usr/local/bin/node -e 'for (const m of [\"fs\",\"os\",\"path\",\"http\",\"https\",\"crypto\",\"zlib\",\"stream\"]) require(m)'",
+      "ms": 2039,
+      "instrM": 305.8,
+      "stdout": "\n",
+      "exit": 0
+    },
+    {
+      "label": "cc-fetch",
+      "cmd": "NODE_DEBUG_NATIVE=CODE_CACHE /usr/local/bin/node -e 'fetch(\"http://127.0.0.1:1/\").catch(e=>console.log(e.cause&&e.cause.code))' > /tmp/ccf.log 2>&1; echo accepted=$(grep -c 'is accepted' /tmp/ccf.log) rejected=$(grep -ci 'reject' /tmp/ccf.log) without=$(grep -ci 'without' /tmp/ccf.log); grep -i 'undici' /tmp/ccf.log | head -4",
+      "ms": 3446,
+      "instrM": 496.2,
+      "stdout": "accepted=125 rejected=0 without=0\nCompiling internal/deps/undici/undici with code cache lazily\nCode cache of internal/deps/undici/undici (BufferNotOwned) is accepted\n\n",
+      "exit": 0
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+}

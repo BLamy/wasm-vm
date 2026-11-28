@@ -1,0 +1,85 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578066] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_CHROMIUM_LAUNCH uptime=1.48
+REPLAY_SWAY_IPC uptime=1.94
+REPLAY_TERMINAL_MAPPED uptime=1.98
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"FE2D75708B9ECBC23DCAA6CED387BBD9","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"28E14E47EFCCC8ABCB847C8DA07E9039"}]}} uptime=4.65
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"5ACF05F5B55C74EE1234F28045F16E69"} uptime=4.94
+REPLAY_RENDERER_SANDBOX pid=/proc/184 NoNewPrivs=1 Seccomp=2 NSpid=	184	10	1 uptime=5.05
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.13
+REPLAY_CHROME_MAPPED uptime=5.30 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.32 mem_hwm_kib=162260
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; readlink /etc/resolv.conf
+; printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+/run/resolv.conf
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cut -d' ' -f1 /proc/uptim
+e; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+8.25
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; sleep 20; printf '%s%s\n'
+ 'WVM_DONE_' '4'
+WVM_BEGIN_4
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; cut -d' ' -f1 /proc/uptim
+e; printf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+30.34
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; pidof udhcpc || echo none
+; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+none
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; [ -d /sys/class/net/eth0 
+] && echo present || echo absent; printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+absent
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; ip -4 -o addr show dev et
+h0 2>/dev/null | awk '{print $4}'; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+WVM_DONE_8
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '9'; ip -4 route | grep defaul
+t || true; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+WVM_DONE_9
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '10'; [ -e /etc/resolv.conf ] 
+&& echo yes || echo no; printf '%s%s\n' 'WVM_DONE_' '10'
+WVM_BEGIN_10
+no
+WVM_DONE_10
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '11'; node -e 'console.log("NO
+DE_OK")'; printf '%s%s\n' 'WVM_DONE_' '11'
+WVM_BEGIN_11
+NODE_OK
+WVM_DONE_11
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; cat /run/udhcpc.log 2>/d
+ev/null | head -20; printf '%s%s\n' 'WVM_DONE_' '12'
+WVM_BEGIN_12
+WVM_DONE_12
+root@replay-desktop# [6n

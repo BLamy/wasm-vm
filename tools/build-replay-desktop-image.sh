@@ -11,7 +11,7 @@
 # The Replay backend privacy check runs on the staged tree BEFORE packing and on the packed image
 # and the compressed artifact AFTER; any failure aborts. Inputs are gitignored local artifacts:
 #   local/chromium-riscv64/artifacts/2026-11-03/build20/replay-chromium-riscv64.tar.gz  (E0-T34)
-#   local/node-26/replay-node-26-riscv64.tar.xz                                         (E5-T33)
+#   local/node-26/replay-node-26-riscv64.tar.xz                                         (E5-T45a)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT=$PWD
@@ -21,7 +21,7 @@ TOOL_IMAGE=wasm-vm-replay-desktop-build:local
 CHROME_TAR=local/chromium-riscv64/artifacts/2026-11-03/build20/replay-chromium-riscv64.tar.gz
 CHROME_SHA=fae3717a934ea33d0a47d258a921c9d9643fe1a595d1eb9e3238a029e21ad42e
 NODE_TAR=local/node-26/replay-node-26-riscv64.tar.xz
-NODE_SHA=e5c6c904abbf9a6cead65be2f81f0c1b601ca2ac3544c5175623f80261b8873d
+NODE_SHA=6d504bc599792a10b4abbc884a3a5c2d39ad8651aa5806878cf3d5effc6e4c39
 CHUNK_SIZE=262144
 
 sha() { shasum -a 256 "$1" | awk '{print $1}'; }

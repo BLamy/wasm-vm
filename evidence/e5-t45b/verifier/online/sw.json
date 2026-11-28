@@ -1,0 +1,28 @@
+{
+  "loads": [
+    {
+      "token": [
+        {
+          "t": 577,
+          "method": "GET",
+          "url": "https://wasm-vm-relay.brett-lamy.workers.dev/token",
+          "status": 200,
+          "fromServiceWorker": false
+        }
+      ],
+      "controlled": true
+    },
+    {
+      "token": [
+        {
+          "t": 502,
+          "method": "GET",
+          "url": "https://wasm-vm-relay.brett-lamy.workers.dev/token",
+          "status": 200,
+          "fromServiceWorker": false
+        }
+      ],
+      "controlled": true
+    }
+  ]
+}
