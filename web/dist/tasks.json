@@ -24795,18 +24795,18 @@
       "activity": [
         {
           "date": "2026-11-27",
-          "commits": 7,
+          "commits": 8,
           "labels": [
+            "E5-T43e: manifest names image 3165a13b8d07 and snapshot 87a0cde821f8 (136.7 MB, captured online)",
             "E5-T43e: drop --gaia-url (it puts a warning bar over every page); the capture waits for Chrome's idle connections to close",
             "E5-T43e: a quiet Chrome online, and no snapshot with a TCP connection in it",
-            "E5-T43e: generation 3's image 3165a13b8d07 (built at 7bd9b619a)",
-            "E5-T43e: generation 3 manifest — image 15e1db66d4b4 and snapshot d59ef7e56b0d (133.4 MB, captured online)"
+            "E5-T43e: generation 3's image 3165a13b8d07 (built at 7bd9b619a)"
           ]
         }
       ],
       "firstActivity": "2026-11-27",
       "lastActivity": "2026-11-27",
-      "commitCount": 7
+      "commitCount": 8
     },
     {
       "id": "E5-T43f",

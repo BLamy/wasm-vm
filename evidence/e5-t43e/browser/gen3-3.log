@@ -1,0 +1,35 @@
+[desktop-latency 03:12:42.869] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[desktop-latency 03:12:46.516] desktop ready after 3.6 s
+[desktop-latency 03:12:46.532] scenario click
+[desktop-latency 03:12:52.144] click #1: result 336.3 ms, pressed-state frame 104 ms, 27.7M instr @ 74 MIPS
+[desktop-latency 03:12:55.446] click #2: result 265.6 ms, pressed-state frame 131.5 ms, 25.9M instr @ 95.9 MIPS
+[desktop-latency 03:12:58.756] click #3: result 261 ms, pressed-state frame 129.2 ms, 25.4M instr @ 91.6 MIPS
+[desktop-latency 03:13:02.063] click #4: result 254.4 ms, pressed-state frame 122.1 ms, 25.7M instr @ 92.7 MIPS
+[desktop-latency 03:13:05.365] click #5: result 266 ms, pressed-state frame 149.4 ms, 26M instr @ 95.3 MIPS
+[desktop-latency 03:13:08.673] click #6: result 257.8 ms, pressed-state frame 139.2 ms, 25.3M instr @ 92.5 MIPS
+[desktop-latency 03:13:11.975] click #7: result 255.7 ms, pressed-state frame 137.5 ms, 26M instr @ 94.9 MIPS
+[desktop-latency 03:13:15.271] click #8: result 254.4 ms, pressed-state frame 137.7 ms, 25.1M instr @ 93.4 MIPS
+[desktop-latency 03:13:18.304] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 254.4,
+   "median": 261,
+   "max": 336.3
+  },
+  "pointerArrivedMs": 150.5,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 104,
+    "median": 137.5,
+    "max": 149.4
+   }
+  }
+ }
+}
+[desktop-latency 03:13:18.379] wrote evidence/e5-t43e/browser/gen3-3.json
