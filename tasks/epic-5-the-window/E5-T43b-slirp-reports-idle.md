@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: pending
+status: in-progress
 depends_on: []
 estimate: S
 risk: high
@@ -29,8 +29,9 @@ device changes.
 - Core/slirp tests: idle is reported with an empty, quiet stack; not reported with a queued
   frame, a due DHCP/ARP/TCP timer, or pending relay data; a reported wait never passes a stack
   deadline; the existing paced-idle tests (E5-T37a) pass.
-- Browser, committed bundle, Replay desktop with `slirpNet` on (offline provider is enough):
-  idle worker time in run slices within 2 points of the networking-off figure.
+- (Moved to E5-T43d, which turns networking on for the Replay desktop and already measures it:
+  idle worker time with networking on within 2 points of generation 2's. No page here can boot
+  the desktop with networking on.)
 
 ## Adversarial verification
 

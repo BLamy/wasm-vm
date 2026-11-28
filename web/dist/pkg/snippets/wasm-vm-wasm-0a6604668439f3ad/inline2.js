@@ -1,28 +1,16 @@
 
-// Do not invoke result accessors or assimilate promises. The Rust sink is synchronous.
-export function invokeVirglControl(callback, event) {
-  try {
-    const result = callback(event);
-    const data = (value, keys) => {
-      if (!value || typeof value !== 'object' || Array.isArray(value) || 'then' in value) throw 0;
-      const fields = Object.getOwnPropertyDescriptors(value);
-      if (Reflect.ownKeys(fields).length !== keys.length) throw 0;
-      const out = {};
-      for (const key of keys) {
-        if (!Object.hasOwn(fields, key) || !Object.hasOwn(fields[key], 'value')) throw 0;
-        out[key] = fields[key].value;
-      }
-      return out;
-    };
-    const descriptors = Object.getOwnPropertyDescriptors(result);
-    if (Object.hasOwn(descriptors, 'ok') && Object.hasOwn(descriptors.ok, 'value') && descriptors.ok.value === true) {
-      data(result, ['ok']); return 0;
-    }
-    const failed = data(result, ['ok', 'error']);
-    if (failed.ok !== false) return 6;
-    const error = data(failed.error, ['code', 'message']);
-    if (typeof error.message !== 'string') return 6;
-    const code = ['invalid-context-id', 'invalid-resource-id', 'invalid-parameter', 'out-of-memory', 'unspecified', 'bridge-poisoned'].indexOf(error.code);
-    return code < 0 ? 6 : code + 1;
-  } catch { return 6; }
+const clockU8 = Uint8Array;
+const clockTyped = Object.getPrototypeOf(clockU8.prototype);
+const clockTag = Object.getOwnPropertyDescriptor(clockTyped, Symbol.toStringTag).get;
+const clockBuffer = Object.getOwnPropertyDescriptor(clockTyped, 'buffer').get;
+const clockLength = Object.getOwnPropertyDescriptor(clockTyped, 'length').get;
+const clockOffset = Object.getOwnPropertyDescriptor(clockTyped, 'byteOffset').get;
+const clockAbLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get;
+export function ownedClockOriginBytes(value, limit) {
+  if (clockTag.call(value) !== 'Uint8Array') throw Error('clock origin byte type');
+  const buffer = clockBuffer.call(value);
+  clockAbLength.call(buffer); // Reject shared buffers before the Rust copy, including shadowed properties.
+  const length = clockLength.call(value), offset = clockOffset.call(value);
+  if (length > limit) throw Error('clock origin byte bound');
+  return new clockU8(buffer, offset, length);
 }

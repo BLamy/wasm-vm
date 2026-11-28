@@ -1,8 +1,8 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
 import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
-import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
+import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
+import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
 
 /**
@@ -4521,8 +4521,8 @@ function __wbg_get_imports() {
     return {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import2,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import2,
     };
 }
 

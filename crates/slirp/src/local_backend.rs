@@ -1086,6 +1086,27 @@ impl NetBackend for SlirpLocalBackend {
         frame
     }
 
+    /// E5-T43b: the run loop may skip this backend (and the paced clock may let the worker sleep)
+    /// only while `poll` would change nothing and stay so until the guest sends a frame or the
+    /// host calls in between run calls. That holds when nothing waits for the guest, no TCP or UDP
+    /// flow exists (their data, timeouts and NAT expiry need polls), no DNS query or file
+    /// transfer is in flight, the guest's DNS-over-TCP socket is back to listening, and no local
+    /// HTTP service is attached. The remaining sockets are listeners, which carry no timers.
+    fn idle(&self) -> bool {
+        self.egress.is_empty()
+            && !NetBackend::external_io_pending(self)
+            && self.flows.is_empty()
+            && self.udp_flows.is_empty()
+            && self.manager.flow_count() == 0
+            && self.pending_dns.is_empty()
+            && self.dns_tcp_rx.is_empty()
+            && self.dns_tcp_tx.is_empty()
+            && self.stack.dns_tcp_state() == smoltcp::socket::tcp::State::Listen
+            && self.file_connections.iter().all(Option::is_none)
+            && self.file_tcp_tx.iter().all(VecDeque::is_empty)
+            && self.local_http.is_none()
+    }
+
     fn rx_ready(&self) -> bool {
         // Pure readiness predicate. Event-driven connector work is advanced by `NetBackend::poll`
         // before the device asks this question, so remote data can wake a booted guest even when the
@@ -2113,6 +2134,48 @@ mod tests {
             be.dns_tcp_rx.is_empty(),
             "complete query must not remain buffered"
         );
+    }
+
+    /// E5-T43b: idle exactly while a poll would change nothing.
+    #[test]
+    fn idle_only_with_nothing_queued_no_flows_and_no_work_in_flight() {
+        let mut offline = SlirpLocalBackend::new(GW_MAC, Box::new(|| 0));
+        assert!(NetBackend::idle(&offline), "a fresh offline stack is idle");
+        offline.tx(&guest_arp_request());
+        assert!(
+            !NetBackend::idle(&offline),
+            "an ARP reply waits for the guest"
+        );
+        while offline.rx().is_some() {}
+        assert!(NetBackend::idle(&offline), "drained: idle again");
+
+        const REMOTE: Ipv4Addr = Ipv4Addr::new(198, 51, 100, 9);
+        let state = Rc::new(RefCell::new(UdpProbeState::default()));
+        let now = Rc::new(Cell::new(1i64));
+        let clock = {
+            let now = now.clone();
+            Box::new(move || now.get())
+        };
+        let mut be =
+            SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(UdpProbe(state.clone())));
+        assert!(NetBackend::idle(&be), "a connector with no flows is idle");
+        let request =
+            build_udp_frame(GUEST_MAC, GW_MAC, GUEST_IP, 41000, REMOTE, 9999, b"q").unwrap();
+        be.tx(&request);
+        while be.rx().is_some() {}
+        assert_eq!(be.flow_count(), 1);
+        assert!(
+            !NetBackend::idle(&be),
+            "an open UDP flow needs polls (replies, NAT expiry)"
+        );
+        now.set(crate::nat::UDP_IDLE_MS as i64 + 1);
+        be.poll();
+        while be.rx().is_some() {}
+        assert_eq!(be.flow_count(), 0);
+        assert!(NetBackend::idle(&be), "expired: idle again");
+        // Polling an idle backend changes nothing it reports.
+        be.poll();
+        assert!(NetBackend::idle(&be) && !NetBackend::rx_ready(&be));
     }
 
     #[test]
