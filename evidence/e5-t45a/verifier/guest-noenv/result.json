@@ -1,0 +1,9 @@
+{
+  "mount": "8c19cbb6c9b1f3b2cca4685e91952e314d8a5825b2a0dfc56bdf748211d7c320  /tmp/v/node\n0a1942ad5f7c2e751fa619568809c7b5d9b9b84e6b504d326f814efdc4ad4956  /tmp/v/oldnode\n1\n0\n",
+  "node.noEnv": "exit 0\nran v26.13.1 riscv64 undefined true\n-- stderr:\nLoading Record Replay driver failed (/tmp/recordreplay.so-J47qkt: file too short).\nls: /tmp/recordreplay.so-*: No such file or directory\n",
+  "node.badDriver": "Loading Record Replay driver failed (/nonexistent/driver.so: cannot open shared object file: No such file or directory).\nran x\nexit 0\n",
+  "node.noEnvSmoke": "ok   arch linux/riscv64 v26.13.1\ndigest 4beac4236dda444e1c42992ddf0c8c64f8a553def1975a79fc85c79e580882fa\nexit 0\n",
+  "oldnode.noEnv": "exit 0\nran v26.13.1 riscv64 undefined false\n-- stderr:\nLoading Record Replay driver failed (/tmp/recordreplay.so-1LfGHS: file too short).\nls: /tmp/recordreplay.so-*: No such file or directory\n",
+  "oldnode.badDriver": "Loading Record Replay driver failed (/nonexistent/driver.so: cannot open shared object file: No such file or directory).\nran x\nexit 0\n",
+  "oldnode.noEnvSmoke": "ok   arch linux/riscv64 v26.13.1\ndigest 4beac4236dda444e1c42992ddf0c8c64f8a553def1975a79fc85c79e580882fa\nexit 0\n"
+}

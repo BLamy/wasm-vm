@@ -1,0 +1,93 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.547844] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.82
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; mkdir -p /tmp/v && mount 
+-t ext4 -o ro /dev/vdb /tmp/v && sha256sum /tmp/v/node /tmp/v/oldnode; env | gre
+p -c RECORD_REPLAY; env -u RECORD_REPLAY_DONT_RECORD env | grep -c RECORD_REPLAY
+; printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+8c19cbb6c9b1f3b2cca4685e91952e314d8a5825b2a0dfc56bdf748211d7c320  /tmp/v/node
+0a1942ad5f7c2e751fa619568809c7b5d9b9b84e6b504d326f814efdc4ad4956  /tmp/v/oldnode
+1
+0
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; env -u RECORD_REPLAY_DONT
+_RECORD /tmp/v/node -e 'console.log("ran", process.version, process.arch, typeof
+ process.recordreplay, process.config.variables.node_use_node_code_cache)' >/tmp
+/o 2>/tmp/e; echo "exit $?"; cat /tmp/o; echo '-- stderr:'; cat /tmp/e; ls /tmp/
+recordreplay.so-* 2>&1 | head -2; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+exit 0
+ran v26.13.1 riscv64 undefined true
+-- stderr:
+Loading Record Replay driver failed (/tmp/recordreplay.so-J47qkt: file too short).
+ls: /tmp/recordreplay.so-*: No such file or directory
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; env -u RECORD_REPLAY_DONT
+_RECORD RECORD_REPLAY_DRIVER=/nonexistent/driver.so /tmp/v/node -e 'fetch("data:
+,x").then(r=>r.text()).then(t=>console.log("ran", t))' 2>&1; echo "exit $?"; pri
+ntf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+Loading Record Replay driver failed (/nonexistent/driver.so: cannot open shared object file: No such file or directory).
+ran x
+exit 0
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; cd /tmp && env -u RECORD_
+REPLAY_DONT_RECORD /tmp/v/node /tmp/v/smoke-node26.mjs 2>&1 | tail -2; echo "exi
+t $?"; printf '%s%s\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+ok   arch linux/riscv64 v26.13.1
+digest 4beac4236dda444e1c42992ddf0c8c64f8a553def1975a79fc85c79e580882fa
+exit 0
+WVM_DONE_5
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '6'; env -u RECORD_REPLAY_DONT
+_RECORD /tmp/v/oldnode -e 'console.log("ran", process.version, process.arch, typ
+eof process.recordreplay, process.config.variables.node_use_node_code_cache)' >/
+tmp/o 2>/tmp/e; echo "exit $?"; cat /tmp/o; echo '-- stderr:'; cat /tmp/e; ls /t
+mp/recordreplay.so-* 2>&1 | head -2; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+exit 0
+ran v26.13.1 riscv64 undefined false
+-- stderr:
+Loading Record Replay driver failed (/tmp/recordreplay.so-1LfGHS: file too short).
+ls: /tmp/recordreplay.so-*: No such file or directory
+WVM_DONE_6
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '7'; env -u RECORD_REPLAY_DONT
+_RECORD RECORD_REPLAY_DRIVER=/nonexistent/driver.so /tmp/v/oldnode -e 'fetch("da
+ta:,x").then(r=>r.text()).then(t=>console.log("ran", t))' 2>&1; echo "exit $?"; 
+printf '%s%s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+Loading Record Replay driver failed (/nonexistent/driver.so: cannot open shared object file: No such file or directory).
+ran x
+exit 0
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; cd /tmp && env -u RECORD_
+REPLAY_DONT_RECORD /tmp/v/oldnode /tmp/v/smoke-node26.mjs 2>&1 | tail -2; echo "
+exit $?"; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+ok   arch linux/riscv64 v26.13.1
+digest 4beac4236dda444e1c42992ddf0c8c64f8a553def1975a79fc85c79e580882fa
+exit 0
+WVM_DONE_8
+root@replay-desktop# [6n

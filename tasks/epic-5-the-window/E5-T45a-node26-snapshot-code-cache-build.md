@@ -3,7 +3,7 @@ id: E5-T45a
 epic: 5
 title: Replay Node 26 for riscv64 built with its built-in startup snapshot and code cache
 priority: 0.3876636
-status: implemented
+status: verified
 depends_on: [E5-T33]
 estimate: S
 risk: medium
@@ -71,3 +71,65 @@ Acceptance:
   2.05, 2.06; requiring 8 common built-ins 0.38, 0.38 vs 1.20, 1.18. A user-land snapshot built from the new binary
   on top (what the E5-T41a wrapper would do) gives `node -e 0` 0.32, 0.33 and the local fetch 0.74, 0.72 — no
   better than the built-in snapshot alone (E5-T45b decides).
+
+### 2026-11-28 — verifier — VERDICT: verified
+
+Fresh session, head `318c051bf`, medium risk: the acceptance criteria plus one bounded novel attack. The
+predictions (`evidence/e5-t45a/verifier/predictions.md`) were written before any run. Boots: native wasm-vm,
+E5-T43f image, loopback NIC, a second drive holding the new `node` (sha256 `8c19cbb6…`) and the E5-T33 `node`
+(`0a1942ad…`, extracted from the kept `-e5t33` package), scripts `evidence/e5-t45a/verifier/verify-in-guest.mjs`
+(results `verifier/guest/result.json`) and `verifier/noenv-in-guest.mjs` (`verifier/guest-noenv/result.json`).
+- P1 package identity — HELD. `local/node-26/node`, the package's extracted `bin/node`, the container's
+  `out/Release/node.stripped` and `out/pkg/.../bin/node` all hash `8c19cbb6…`; package `6d504bc5…`. The snapshot
+  embedded by the build (`out/Release/obj/gen/node_snapshot.cc`), `/opt/node-snapshot/node_snapshot.cc` and
+  `target/e5-t45a/node_snapshot.cc` all hash `5b25a051…`. The generator that ran in the guest
+  (`target/e5-t45a/node_mksnapshot`, `84f83b5d…`) equals the one phase 3 relinked (same hash), so the snapshot's
+  external-reference layout matches the shipped binary.
+- P2 privacy — HELD. `check-no-replay-backend.py` OK on the binary, the package, `node_snapshot.cc` and
+  `node_mksnapshot` (`verifier/privacy.log`, 4 files, 12 markers, 11 digests). The snapshot's code cache lists
+  six `internal/recordreplay/*` modules; they come from `lib/internal/recordreplay/` of the public fork at
+  `333e17df`, which `git status` in `/opt/replay-node-26` shows unmodified (only `configure.py`, the V8 riscv
+  masm and `highway.gyp` are changed — the three tools/node patches).
+- P3 config — HELD. New `["v26.13.1",true,true]`, old `[...,false,false]` (`guest/result.json` `node.config`,
+  `oldnode.config`); `config.gypi` in the container agrees.
+- P4 snapshot and code cache accepted on wasm-vm's CPU — HELD. With `NODE_DEBUG_NATIVE=CODE_CACHE`, requiring
+  `https`, `child_process` and starting a Worker: new binary "snapshot contains 449 code cache", 104 builtins
+  compiled with cache, 104 "is accepted", 0 rejected, 0 compiled without cache, no "EmbedderBuiltinCodeCache
+  rejected"; `https` "is accepted". Old binary: 161 compiled without cache (`node.codeCache` /
+  `oldnode.codeCache`). Guest seconds for `node -e 'require("https")'`: new 0.41, 0.39; new with
+  `--no-node-snapshot` 1.03; old 1.03, 1.03 (`node.time`, `oldnode.time`). The guest CPU reports
+  `isa rv64imafdc_zicntr_zicsr_zifencei_zihpm` (`mount`), so both generation and use were on an RV64GC-only CPU,
+  which covers the "RV64GC-only CPU model" criterion on the real target.
+- P5 driver slot — HELD, with a correction to the claim. The worker's "no-env" run was not one: the E5-T43f image
+  exports `RECORD_REPLAY_DONT_RECORD=1` from `/etc/profile` (`tools/replay-desktop/rootfs/etc/profile:4`), and the
+  root shell has it (`guest/result.json` `mount`: `RECORD_REPLAY_DONT_RECORD=1`). That, not the binary, is why the
+  warning count was 0; the driver load is C++ (`src/node.cc:1199` `InitializeRecordReplay`, before V8), which the
+  snapshot cannot change. Re-run with `env -u RECORD_REPLAY_DONT_RECORD` (`guest-noenv/result.json`): new and old
+  both print "Loading Record Replay driver failed (/tmp/recordreplay.so-…: file too short)", exit 0, leave no temp
+  file; with `RECORD_REPLAY_DRIVER=/nonexistent/driver.so` both warn and `fetch('data:,x')` prints `ran x`; the
+  smoke without the variable passes with digest `4beac423…`. The empty slot still degrades.
+- P6 reproducibility — HELD with a note. `build-node26-snapshot.sh` matches the container state (configure.py
+  patched, `--emulator=/opt/emu-copy.sh`, emu script present, the guest-generated file embedded), and phase 1's
+  configure line equals `build-node26.sh`'s plus `--emulator`; `build-node26.sh` applying the new patch without
+  `--emulator` leaves snapshot/code cache off, so the E5-T33 path is unchanged. Not scripted (as in E5-T33): the
+  copy of `node.stripped` into `out/pkg/replay-node-26-riscv64/bin/` and the `tar -cJ` of the package. Not a
+  refutation (pre-existing gap); follow-up: script the packaging step.
+- P7 novel attack — HELD. On new and old: ESM import of a sibling `.mjs`, `node:sqlite` in-memory query, `Intl`
+  (de-DE date, ja-JP currency, Thai segmenter) and `process.execArgv`/`argv` give the same output and digest
+  `d8789f5677040792` (`node.esm` / `oldnode.esm`); the REPL evaluates `1+2` → 3; `--build-snapshot` of a user
+  entry builds (7,268,310-byte blob) and `--snapshot-blob` runs its deserialize main (`from-snapshot 2000 17389`);
+  `--no-node-snapshot` works; startup RSS 49.4 MB new vs 52.8 MB old.
+- Acceptance substitution: `verify-node26.sh`'s QEMU step cannot run (binfmt gone; re-registering it is a change
+  to the shared VM, correctly not done). The target runs above cover version, smoke digest, no-driver degrade
+  and privacy, and are stronger evidence for the CPU-match risk than QEMU would be. The task's Boundary and
+  acceptance text still describe qemu-user generation; the claim documents the change.
+- COVERAGE: patch (both hunks: variables true, `-Demulator` passed) shown by `config.gypi` and the embedded
+  file; emu script's copy branch shown by the embedded file's hash, its exec branch by a completed build;
+  `native-shell.mjs` `extraDrives`/`browserTopology: false` exercised by both verifier boots; defaults unchanged
+  by diff inspection.
+- SUITE: `evidence/e5-t45a/verifier/verify-in-guest.mjs` and `noenv-in-guest.mjs` kept as repeatable checks
+  (they need the gitignored binaries); no unit test applies.
+Commands: `node evidence/e5-t45a/verifier/verify-in-guest.mjs target/e5-t43f/image/replay-desktop.ext4 <drive>
+evidence/e5-t45a/verifier/guest`; same for `noenv-in-guest.mjs` → `verifier/guest-noenv`;
+`python3 tools/privacy/check-no-replay-backend.py local/node-26/node local/node-26/replay-node-26-riscv64.tar.xz
+target/e5-t45a/node_snapshot.cc target/e5-t45a/node_mksnapshot`.
