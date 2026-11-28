@@ -75,3 +75,10 @@ Where the guest spends a click (`evidence/e4-t40g/guest-cpu-per-click.json`, per
 clicks): Chrome's three processes 49 ticks, sway 30 ticks (input handling and pixman composition), the
 monitor 3; 78 user + 14 system ticks in all. So a compiled tier speeds up both; a guest-side reduction would
 have to come from Chrome's software raster or from sway's per-event work.
+
+### V8 tiering is not the limit (2026-11-28)
+
+`desktop-latency --chrome-args=--js-flags=--no-liftoff` (TurboFan for everything from the start) against the
+default, interleaved, two loads a side (`evidence/e4-t40c-tiering-probe/`): click 304.6, 296.0 vs 238.4, 238.3 ms;
+node -e 1810, 1819 vs 1345, 1347 ms; MIPS during clicks 79.5, 78.4 vs 95.3, 96.8. The default tiering already runs
+the turbo loop at its best; forcing TurboFan is slower. The interpreter's per-instruction cost is the code itself.

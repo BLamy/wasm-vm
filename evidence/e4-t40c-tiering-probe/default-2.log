@@ -1,0 +1,49 @@
+[desktop-latency 16:18:26.320] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&net=0#ide
+[desktop-latency 16:18:29.961] desktop ready after 3.6 s
+[desktop-latency 16:18:29.974] scenario click
+[desktop-latency 16:18:35.551] click #1: result 302.6 ms, pressed-state frame 101.4 ms, 28.7M instr @ 89 MIPS
+[desktop-latency 16:18:38.857] click #2: result 243.5 ms, pressed-state frame 127.4 ms, 26.5M instr @ 97.8 MIPS
+[desktop-latency 16:18:42.162] click #3: result 224.7 ms, pressed-state frame 125.4 ms, 25.7M instr @ 94.3 MIPS
+[desktop-latency 16:18:45.468] click #4: result 234.4 ms, pressed-state frame 134.4 ms, 25.6M instr @ 94.4 MIPS
+[desktop-latency 16:18:48.520] click #5: result 231.4 ms, pressed-state frame 131.5 ms, 25.8M instr @ 95.3 MIPS
+[desktop-latency 16:18:51.573] click #6: result 262.2 ms, pressed-state frame 129.4 ms, 28.4M instr @ 104.7 MIPS
+[desktop-latency 16:18:54.879] click #7: result 238.3 ms, pressed-state frame 138.1 ms, 27M instr @ 100.1 MIPS
+[desktop-latency 16:18:58.182] click #8: result 237.5 ms, pressed-state frame 137.1 ms, 26.3M instr @ 96.8 MIPS
+[desktop-latency 16:19:01.208] scenario node
+[desktop-latency 16:19:16.760] node #1: prompt back 1347.4 ms after Enter, 192.3M instr @ 139.5 MIPS
+[desktop-latency 16:19:31.710] node #2: prompt back 1330.6 ms after Enter, 193.3M instr @ 140.3 MIPS
+[desktop-latency 16:19:46.681] node #3: prompt back 1349.3 ms after Enter, 196.3M instr @ 141.7 MIPS
+[desktop-latency 16:19:49.207] {"promptMs":{"n":3,"missing":0,"min":1330.6,"median":1347.4,"max":1349.3}}
+[desktop-latency 16:19:49.209] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 224.7,
+   "median": 238.3,
+   "max": 302.6
+  },
+  "pointerArrivedMs": 133.4,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 101.4,
+    "median": 131.5,
+    "max": 138.1
+   }
+  }
+ },
+ "node": {
+  "promptMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 1330.6,
+   "median": 1347.4,
+   "max": 1349.3
+  }
+ }
+}
+[desktop-latency 16:19:49.338] wrote evidence/e4-t40h-probe/default-2.json
