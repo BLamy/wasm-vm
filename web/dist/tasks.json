@@ -16413,15 +16413,16 @@
       "activity": [
         {
           "date": "2026-11-28",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "E4-T40g: the second-chance bit lives on the block, so successor-memo entries keep it",
             "E4-T40g filed: memo hits should keep the block cache's second chance"
           ]
         }
       ],
       "firstActivity": "2026-11-28",
       "lastActivity": "2026-11-28",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T01",
