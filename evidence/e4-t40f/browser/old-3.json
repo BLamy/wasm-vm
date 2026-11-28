@@ -1,0 +1,362 @@
+{
+  "label": "old-3",
+  "url": "http://127.0.0.1:8133/app.html?guest=replay-desktop&desktop=1&net=0#ide",
+  "browser": "158.0.8127.88",
+  "startedAt": "2026-11-28T09:12:15.918Z",
+  "trials": 8,
+  "scenarios": {
+    "click": {
+      "resultMs": {
+        "n": 8,
+        "missing": 0,
+        "min": 251.5,
+        "median": 267.8,
+        "max": 327
+      },
+      "pointerArrivedMs": 151.2,
+      "pressedFrame": {
+        "seen": 8,
+        "none": 0,
+        "ms": {
+          "n": 8,
+          "missing": 0,
+          "min": 110.1,
+          "median": 141.4,
+          "max": 148.5
+        }
+      },
+      "raw": {
+        "pressed": [
+          110.1,
+          148,
+          137.8,
+          148.5,
+          136,
+          141.4,
+          135.8,
+          142.2
+        ],
+        "answered": [
+          327,
+          264.8,
+          271.1,
+          263.7,
+          267.8,
+          274.7,
+          251.5,
+          258.8
+        ],
+        "rates": [
+          {
+            "wallMs": 379,
+            "instructionsM": 28.2,
+            "mips": 74.4,
+            "inSlicePct": 86.5,
+            "guestSecondsPerSecond": 0.47,
+            "idleSleeps": 5,
+            "idleSleepMs": 164,
+            "idleWakes": 5,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 269,
+            "instructionsM": 25.9,
+            "mips": 96,
+            "inSlicePct": 95.3,
+            "guestSecondsPerSecond": 0.49,
+            "idleSleeps": 3,
+            "idleSleepMs": 120,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 275,
+            "instructionsM": 25.9,
+            "mips": 94.3,
+            "inSlicePct": 94.4,
+            "guestSecondsPerSecond": 0.45,
+            "idleSleeps": 3,
+            "idleSleepMs": 113,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 268,
+            "instructionsM": 25.9,
+            "mips": 96.4,
+            "inSlicePct": 92.2,
+            "guestSecondsPerSecond": 0.51,
+            "idleSleeps": 3,
+            "idleSleepMs": 126,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 274,
+            "instructionsM": 25.8,
+            "mips": 94,
+            "inSlicePct": 95.6,
+            "guestSecondsPerSecond": 0.49,
+            "idleSleeps": 3,
+            "idleSleepMs": 117,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 325,
+            "instructionsM": 25.7,
+            "mips": 79.1,
+            "inSlicePct": 78.4,
+            "guestSecondsPerSecond": 0.56,
+            "idleSleeps": 4,
+            "idleSleepMs": 183,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 274,
+            "instructionsM": 25.7,
+            "mips": 93.7,
+            "inSlicePct": 92.6,
+            "guestSecondsPerSecond": 0.51,
+            "idleSleeps": 5,
+            "idleSleepMs": 126,
+            "idleWakes": 4,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          },
+          {
+            "wallMs": 272,
+            "instructionsM": 26.1,
+            "mips": 96,
+            "inSlicePct": 92,
+            "guestSecondsPerSecond": 0.51,
+            "idleSleeps": 3,
+            "idleSleepMs": 125,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 2,
+            "drawnPresents": 2
+          }
+        ]
+      }
+    },
+    "type": {
+      "echoMs": {
+        "n": 8,
+        "missing": 0,
+        "min": 41.7,
+        "median": 44.1,
+        "max": 62.3
+      },
+      "raw": {
+        "echo": [
+          62.3,
+          47.5,
+          44.4,
+          43.5,
+          41.7,
+          42.3,
+          42.2,
+          44.1
+        ]
+      }
+    },
+    "node": {
+      "promptMs": {
+        "n": 3,
+        "missing": 0,
+        "min": 1663.3,
+        "median": 1671.7,
+        "max": 1738.8
+      },
+      "raw": {
+        "done": [
+          1738.8,
+          1663.3,
+          1671.7
+        ],
+        "rates": [
+          {
+            "wallMs": 1744,
+            "instructionsM": 225,
+            "mips": 129,
+            "inSlicePct": 98.5,
+            "guestSecondsPerSecond": 0.24,
+            "idleSleeps": 3,
+            "idleSleepMs": 129,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 1687,
+            "instructionsM": 225.2,
+            "mips": 133.5,
+            "inSlicePct": 97.1,
+            "guestSecondsPerSecond": 0.27,
+            "idleSleeps": 3,
+            "idleSleepMs": 150,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 3,
+            "drawnPresents": 3
+          },
+          {
+            "wallMs": 1697,
+            "instructionsM": 229.3,
+            "mips": 135.1,
+            "inSlicePct": 97.5,
+            "guestSecondsPerSecond": 0.27,
+            "idleSleeps": 3,
+            "idleSleepMs": 119,
+            "idleWakes": 3,
+            "clockMode": "paced-icount",
+            "framesReceived": 3,
+            "drawnPresents": 3
+          }
+        ]
+      }
+    },
+    "idle": {
+      "wallMs": 30004,
+      "instructionsM": 18.9,
+      "mips": 0.6,
+      "inSlicePct": 1.3,
+      "guestSecondsPerSecond": 1,
+      "idleSleeps": 642,
+      "idleSleepMs": 29197,
+      "idleWakes": 120,
+      "clockMode": "paced-icount",
+      "framesReceived": 0,
+      "drawnPresents": 0
+    }
+  },
+  "yieldMode": "scheduler.postTask",
+  "maxSliceMs": 17.834999918937683,
+  "maxStretchGapMs": 68.03999996185303,
+  "jit": {
+    "hasExecutor": false,
+    "compiledBlocks": 0,
+    "executedBlocks": 0,
+    "retiredViaJit": 0,
+    "directChainEntries": 0,
+    "directChainLinks": 0,
+    "dynamicLinkAttempts": 0,
+    "dynamicLinkHits": 0,
+    "dynamicLinkRefusals": 0,
+    "dynamicLinkRetargets": 0,
+    "dynamicLinkLiveEntries": 0,
+    "dynamicLinkInstalls": 0,
+    "entryCost": {
+      "timingEnabled": false,
+      "timerReads": 0,
+      "hostEntries": 0,
+      "stateCopyCalls": 0,
+      "stateCopyBytes": 0,
+      "stateCopyNs": 0,
+      "engineEntryNs": 0,
+      "indirectTableDispatches": 0,
+      "authorityChecks": 0,
+      "memorySplitExits": 0,
+      "deviceBoundaries": 0,
+      "deviceBoundaryNs": 0
+    },
+    "jitRegionChaining": false,
+    "jitDynamicChaining": false,
+    "guestRetired": 1953575744,
+    "jitEngineCalls": 0,
+    "jitLogicalBlocksPerEngineCall": 0,
+    "jitRetiredShare": 0,
+    "chainLinksMade": 0,
+    "chainLinksCut": 0,
+    "chainDispatchEntries": 0,
+    "chainMaxDepth": 0,
+    "chainLinksFollowed": 0,
+    "jitResidencyPolicy": "disabled",
+    "jitResidencyCap": 0,
+    "jitSubmittedMembers": 0,
+    "jitCompilePauseNs": 0,
+    "jitCompilePauseMaxNs": 0,
+    "jitCompilePauseSamples": 0,
+    "jitCacheInstalls": 0,
+    "jitCacheRetranslations": 0,
+    "jitCacheEvictions": 0,
+    "jitCacheBatches": 0,
+    "jitCacheCodeBytes": 0,
+    "compileQueue": {
+      "admitted": 0,
+      "droppedBackpressure": 0,
+      "cancelledStale": 0,
+      "popped": 0,
+      "queueHighWater": 0,
+      "queueDepth": 0,
+      "capacity": 256
+    },
+    "discovery": {
+      "nominated": 4096,
+      "deduped": 310968663,
+      "droppedStale": 0,
+      "droppedOverflow": 156639,
+      "countsDropped": 26518821,
+      "excluded": 416,
+      "queueDepth": 4096,
+      "queueHighWater": 4096,
+      "candidates": 63019,
+      "generation": 25
+    },
+    "decodedCacheEntries": 262144,
+    "decodedBlocksDiscarded": 746,
+    "decodedCacheFlushes": 0,
+    "discoveryGeneration": 25,
+    "blockEntryHits": 354660389,
+    "blockBuilds": 556436,
+    "admissionProbe": false,
+    "coldCounterRecycling": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 64,
+      "capacity": 65536
+    },
+    "turbo": {
+      "enabled": true,
+      "entries": 13492252,
+      "blocks": 355206926,
+      "inlineOps": 1923226260,
+      "slowOps": 30275827,
+      "exitHorizon": 849,
+      "exitBudget": 3806,
+      "exitBoundary": 13427911,
+      "exitTrap": 59686
+    }
+  },
+  "disk": {
+    "fetchWaits": 0,
+    "fetchRequestedChunks": 0,
+    "fetchWaitTotalMs": 0,
+    "localImage": true,
+    "localHits": 23,
+    "localBytes": 6029312,
+    "networkFetches": 0
+  },
+  "missing": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "finishedAt": "2026-11-28T09:14:31.400Z"
+}

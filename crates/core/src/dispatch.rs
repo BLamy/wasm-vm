@@ -326,6 +326,15 @@ pub struct DecodedBlock {
     /// Derived host state, never serialized.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) disc: Cell<DiscMemo>,
+    /// E4-T40f: `false` once the block has left the cache (an evicting insert, a page flush, a
+    /// cache replacement). Derived host state, never serialized.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    live: Cell<bool>,
+    /// E4-T40f: the block entered after this one last time (its physical entry address and a weak
+    /// handle). A prediction only: block entry still translates the PC and uses it only for the
+    /// same physical address, while that block is live in the current generation.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    successor: core::cell::RefCell<Option<(u64, alloc::rc::Weak<DecodedBlock>)>>,
 }
 
 /// `true` for a pure integer register op: it reads and writes only integer registers and the PC,
@@ -409,6 +418,33 @@ impl DecodedBlock {
             block_gen: 0,
             deferrable,
             disc: Cell::new(DiscMemo::default()),
+            live: Cell::new(true),
+            successor: core::cell::RefCell::new(None),
+        }
+    }
+
+    /// E4-T40f: the remembered successor, if it is the live block for `phys` in `generation`.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    #[inline]
+    pub(crate) fn successor_for(&self, phys: u64, generation: u64) -> Option<Rc<DecodedBlock>> {
+        let memo = self.successor.borrow();
+        let (at, weak) = memo.as_ref()?;
+        if *at != phys {
+            return None;
+        }
+        let block = weak.upgrade()?;
+        (block.live.get() && block.block_gen == generation && block.phys_start == phys)
+            .then_some(block)
+    }
+
+    /// E4-T40f: remember `next` as the block entered after this one.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    #[inline]
+    pub(crate) fn remember_successor(&self, next: &Rc<DecodedBlock>) {
+        let mut memo = self.successor.borrow_mut();
+        if !matches!(&*memo, Some((at, weak)) if *at == next.phys_start && weak.ptr_eq(&Rc::downgrade(next)))
+        {
+            *memo = Some((next.phys_start, Rc::downgrade(next)));
         }
     }
 
@@ -597,6 +633,23 @@ impl BlockCache {
     /// generation becomes invisible. The page index remains in place with its old generation and
     /// slot ownership; a later insertion can reactivate that page without losing stale slots that
     /// the legacy page scan would still count.
+    /// E4-T40f: the generation blocks are stamped with (see [`DecodedBlock::successor_for`]).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    #[inline(always)]
+    pub(crate) fn current_generation(&self) -> u64 {
+        self.generation
+    }
+
+    /// E4-T40f: mark every resident block as gone, before the whole cache is replaced (a new
+    /// cache starts its generations again, so a stale block's generation could match).
+    pub(crate) fn retire_all(&self) {
+        for slot in &self.slots {
+            if let Some(block) = &slot.block {
+                block.live.set(false);
+            }
+        }
+    }
+
     pub fn flush(&mut self) {
         self.generation = self.generation.wrapping_add(1);
         self.flushes = self.flushes.saturating_add(1);
@@ -632,7 +685,9 @@ impl BlockCache {
                 .and_then(|slot| slot.block.as_ref())
                 .is_some_and(|b| b.page_frame == frame)
             {
-                self.slots[index].block = None;
+                if let Some(block) = self.slots[index].block.take() {
+                    block.live.set(false);
+                }
                 self.blocks_discarded = self.blocks_discarded.saturating_add(1);
             }
         }
@@ -784,6 +839,9 @@ impl BlockCache {
         let (phys, block_gen) = (block.phys_start, block.block_gen);
         let block = Rc::new(block);
         let evicted = self.slots[index].block.take();
+        if let Some(old) = &evicted {
+            old.live.set(false);
+        }
         self.slots[index] = CacheSlot {
             phys,
             block_gen,
@@ -1710,6 +1768,79 @@ impl BlockDiscovery {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// E4-T40f: a remembered successor answers only for its own physical address, and only while
+    /// it is the live block of the current generation: a page flush, an eviction, a whole-cache
+    /// flush and a cache replacement each end it.
+    #[test]
+    fn successor_memo_answers_only_for_a_live_block_of_the_current_generation() {
+        let page_a = 0x8000_0000;
+        let page_b = page_a + PAGE;
+        let mut cache = BlockCache::with_capacity(64);
+        let a = cache.insert_rc(DecodedBlock::new(page_a, block().to_vec(), 8));
+        let b = cache.insert_rc(DecodedBlock::new(page_b, block().to_vec(), 8));
+        a.remember_successor(&b);
+        let generation = cache.current_generation();
+        let hit = a.successor_for(page_b, generation).expect("live successor");
+        assert!(Rc::ptr_eq(&hit, &b));
+        assert!(
+            a.successor_for(page_b + 2, generation).is_none(),
+            "another address"
+        );
+        assert!(
+            a.successor_for(page_b, generation + 1).is_none(),
+            "another generation"
+        );
+
+        // A store to the successor's page drops it: the memo must not hand out stale code, even
+        // while something still holds the block.
+        assert!(cache.flush_page(page_b >> 12));
+        assert!(
+            a.successor_for(page_b, generation).is_none(),
+            "flushed page"
+        );
+
+        // An evicting insert (a 1-slot cache replaces whatever it holds).
+        let mut tiny = BlockCache::with_capacity(1);
+        let c = tiny.insert_rc(DecodedBlock::new(page_a, block().to_vec(), 8));
+        let d = tiny.insert_rc(DecodedBlock::new(page_b, block().to_vec(), 8));
+        d.remember_successor(&c);
+        assert!(
+            d.successor_for(page_a, tiny.current_generation()).is_none(),
+            "evicted"
+        );
+        let e = tiny.insert_rc(DecodedBlock::new(page_a, block().to_vec(), 8));
+        e.remember_successor(&e);
+        assert!(e.successor_for(page_a, tiny.current_generation()).is_some());
+        tiny.flush();
+        assert!(
+            e.successor_for(page_a, tiny.current_generation()).is_none(),
+            "whole-cache flush"
+        );
+
+        // A replaced cache starts its generations again: retire_all ends every memo first.
+        let mut fresh = BlockCache::with_capacity(64);
+        let f = fresh.insert_rc(DecodedBlock::new(page_a, block().to_vec(), 8));
+        f.remember_successor(&f);
+        fresh.retire_all();
+        let replacement = BlockCache::with_capacity(64);
+        assert!(
+            f.successor_for(page_a, replacement.current_generation())
+                .is_none(),
+            "replaced cache"
+        );
+
+        // Dropped everywhere: the weak handle no longer upgrades.
+        let g = cache.insert_rc(DecodedBlock::new(page_b, block().to_vec(), 8));
+        let h = Rc::new(DecodedBlock::new(page_a, block().to_vec(), 8));
+        h.remember_successor(&g);
+        drop(g);
+        cache.flush();
+        assert!(
+            h.successor_for(page_b, cache.current_generation())
+                .is_none()
+        );
+    }
 
     #[test]
     fn block_cache_page_index_invalidates_only_indexed_live_slots() {

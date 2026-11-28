@@ -593,6 +593,7 @@ fn enable_browser_jit(
     machine.set_block_cache(true);
     machine.set_interrupt_batching(true);
     machine.set_hotness_threshold(threshold.max(1));
+    machine.set_block_discovery(true);
     machine.set_jit(true);
     Ok(())
 }
@@ -1185,6 +1186,8 @@ impl WasmMachine {
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
         let mut machine = Machine::try_new(bytes)
             .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
+        // E4-T40f: block discovery only feeds the JIT; `enableJit` turns it back on.
+        machine.set_block_discovery(false);
         let console = std::rc::Rc::new(RefCell::new(None));
         // The console device is always attached: guests store to UART0 to print, and an
         // unmapped store would trap. Until set_console runs, bytes are simply dropped.
@@ -3187,6 +3190,8 @@ impl WasmLinux {
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
         let mut machine = Machine::try_new(bytes)
             .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
+        // E4-T40f: block discovery only feeds the JIT; `enableJit` turns it back on.
+        machine.set_block_discovery(false);
         let owned_mode = match &disk {
             DiskChoice::ExactSession { mode, .. } => Some(*mode),
             _ => None,

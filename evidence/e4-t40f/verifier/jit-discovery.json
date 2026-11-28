@@ -1,0 +1,18 @@
+{
+ "noJit": {
+  "hasExecutor": false,
+  "nominated": 0,
+  "deduped": 0,
+  "compiledBlocks": 0,
+  "executedBlocks": 0,
+  "retiredViaJit": 0
+ },
+ "enableJit": {
+  "hasExecutor": true,
+  "nominated": 1,
+  "deduped": 193,
+  "compiledBlocks": 1,
+  "executedBlocks": 15997,
+  "retiredViaJit": 1998822
+ }
+}

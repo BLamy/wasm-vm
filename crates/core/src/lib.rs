@@ -571,6 +571,13 @@ pub struct Machine {
     /// and the batching boundary test are O(1) with no cache probe; every path that drops a live
     /// block from the cache (generation flush, page flush) clears it. Never serialized.
     block_cursor: Option<BlockCursor>,
+    /// E4-T40f: the block entered last, whose remembered successor the next block entry tries
+    /// before probing the cache. Host state only; a prediction validated at every use.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prev_block: Option<alloc::rc::Rc<dispatch::DecodedBlock>>,
+    /// E4-T40f: whether block entries feed JIT discovery (hotness counts and nominations). On by
+    /// default; a host that never attaches a JIT turns it off (see [`Self::set_block_discovery`]).
+    block_discovery: bool,
     /// E4-T30: production-visible proof that entry PCs reuse the predecoded cache instead of
     /// rebuilding it. `(hits, builds)` is deliberately separate from `BlockDiscovery`: discovery
     /// counts every execution for JIT tier-up, while these counters describe decode-cache work.
@@ -1104,6 +1111,8 @@ impl Machine {
             block_cache: dispatch::BlockCache::with_capacity(1 << 12),
             discovery: dispatch::BlockDiscovery::new(),
             block_cursor: None,
+            prev_block: None,
+            block_discovery: true,
             block_entry_hits: 0,
             block_builds: 0,
             jit_partial_resume_rebuilds: 0,
@@ -1322,8 +1331,10 @@ impl Machine {
     /// E4-T05: resize the block cache (rounded up to a power of two). `capacity == 1` is the
     /// adversarial pathological-eviction mode — a 1-entry cache that must STILL be byte-identical.
     pub fn set_block_cache_capacity(&mut self, capacity: usize) {
+        self.block_cache.retire_all();
         self.block_cache = dispatch::BlockCache::with_capacity(capacity);
         self.block_cursor = None;
+        self.prev_block = None;
         self.block_entry_hits = 0;
         self.block_builds = 0;
         self.pmp_revision_seen = self.hart.csr.pmp.revision();
@@ -1445,6 +1456,13 @@ impl Machine {
         } else if let Some(e) = self.executor.as_mut() {
             e.invalidate_all();
         }
+    }
+
+    /// E4-T40f: whether block entries feed JIT discovery (on by default). Discovery only observes:
+    /// it never changes what executes, so a host that never attaches a JIT executor can turn it off
+    /// and save its per-entry work. Attaching a JIT needs it on.
+    pub fn set_block_discovery(&mut self, on: bool) {
+        self.block_discovery = on;
     }
 
     /// E4-T10: is the JIT effectively active — enabled, an executor installed, and the block cache
@@ -6298,14 +6316,28 @@ impl Machine {
         // the whole block at every branch target, making the "cache" ~4.7x slower on a hot loop.
         let phys = self.hart.fetch_phys(&mut self.bus, pc)?;
 
+        // E4-T40f: the block entered after the previous one last time, if it is the live block
+        // for this physical address: no cache probe. Otherwise the probe below.
+        let memo = self
+            .prev_block
+            .as_ref()
+            .and_then(|prev| prev.successor_for(phys, self.block_cache.current_generation()));
+        let discover = self.block_discovery;
         // Entry hit: reuse the cached first op and resume its cursor. Discovery MUST still observe
-        // every entry — otherwise a cache hit would prevent the JIT hotness counter reaching its
-        // threshold. SMC/DMA writes already remove the whole physical page before this lookup.
-        if let Some(block) = self.block_cache.get_rc_touch(phys)
+        // every entry while it is on — otherwise a cache hit would prevent the JIT hotness counter
+        // reaching its threshold. A host without a JIT turns it off (E4-T40f).
+        // SMC/DMA writes already remove the whole physical page before this lookup.
+        if let Some(block) = memo.or_else(|| self.block_cache.get_rc_touch(phys))
             && let Some(first) = block.ops.first().copied()
         {
-            self.discovery
-                .on_block_entry_memo(phys, &block.ops, &block.disc);
+            if discover {
+                self.discovery
+                    .on_block_entry_memo(phys, &block.ops, &block.disc);
+            }
+            if let Some(prev) = &self.prev_block {
+                prev.remember_successor(&block);
+            }
+            self.prev_block = Some(alloc::rc::Rc::clone(&block));
             self.block_cursor = Some(BlockCursor {
                 block,
                 idx: 1,
@@ -6369,13 +6401,19 @@ impl Machine {
         // Observation-only: it reads the walked ops and mutates only the discovery side-structure,
         // never the executed sequence — so the retire trace is byte-identical (`predecode_diff`).
         let block = dispatch::DecodedBlock::new(phys, ops, total_len);
-        self.discovery
-            .on_block_entry_memo(phys, &block.ops, &block.disc);
+        if discover {
+            self.discovery
+                .on_block_entry_memo(phys, &block.ops, &block.disc);
+        }
         let (block, evicted) = self.block_cache.insert_rc_evicting(block);
         // A replaced block leaves the cache: fold any queued hits it buffered into discovery.
         if let Some(old) = evicted {
             self.discovery.settle_memo(old.phys_start, &old.disc);
         }
+        if let Some(prev) = &self.prev_block {
+            prev.remember_successor(&block);
+        }
+        self.prev_block = Some(alloc::rc::Rc::clone(&block));
         // Entry op (index 0) is consumed now; the cursor resumes at index 1.
         self.block_cursor = Some(BlockCursor {
             block,

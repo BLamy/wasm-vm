@@ -1,0 +1,17 @@
+[e5-t43f 2026-11-28T09:52:23.019Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T09:52:26.936Z] desktop ready 3919 ms
+[e5-t43f 2026-11-28T09:52:33.222Z] typed the URL into the guest's Chrome
+[e5-t43f 2026-11-28T09:53:02.818Z] Chrome loaded example.com in 24713 ms
+[e5-t43f 2026-11-28T09:53:55.282Z] node fetch: E5T43F_F7C13FDA 200
+[e5-t43f 2026-11-28T09:53:55.287Z] online PASS
+[e5-t43f 2026-11-28T09:53:55.359Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&net=0#ide
+[e5-t43f 2026-11-28T09:53:58.745Z] desktop ready 3387 ms
+[e5-t43f 2026-11-28T09:54:13.791Z] off PASS
+[e5-t43f 2026-11-28T09:54:13.864Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T09:54:17.492Z] desktop ready 3629 ms
+[e5-t43f 2026-11-28T09:54:17.624Z] relay-down PASS
+[e5-t43f 2026-11-28T09:54:17.693Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T09:54:21.324Z] desktop ready 3632 ms
+[e5-t43f 2026-11-28T09:54:21.399Z] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1#ide
+[e5-t43f 2026-11-28T09:54:24.981Z] desktop ready 3586 ms
+[e5-t43f 2026-11-28T09:54:25.003Z] sw PASS

@@ -1,8 +1,8 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
-import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
-import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
+import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
+import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
 
 
 /**
@@ -4484,7 +4484,7 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 115, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 114, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1);
             return ret;
         },
@@ -4521,8 +4521,8 @@ function __wbg_get_imports() {
     return {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import2,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import1,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import2,
     };
 }
 

@@ -1,0 +1,4 @@
+test verifier_self_loop_rewritten_between_chunks_runs_new_code ... FAILED
+thread 'verifier_self_loop_rewritten_between_chunks_runs_new_code' (37716583) panicked at crates/core/tests/verifier_e4t40f.rs:123:9:
+assertion `left == right` failed: mode on: stale self-loop replayed (delta 1000)
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
