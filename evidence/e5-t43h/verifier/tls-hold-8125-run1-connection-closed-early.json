@@ -1,0 +1,21 @@
+{
+  "base": "http://127.0.0.1:8125",
+  "noConnection": {
+    "inSlicePct": 1.7,
+    "guestSecondsPerSecond": 0.999,
+    "idleSleeps": 647,
+    "meanSleepMs": 44.3
+  },
+  "tcpBefore": "1",
+  "openConnection": {
+    "inSlicePct": 3.5,
+    "guestSecondsPerSecond": 0.987,
+    "idleSleeps": 1753,
+    "meanSleepMs": 15.13
+  },
+  "tcpAfterWindow": "0",
+  "sleep20HostMs": 20046,
+  "sleep20GuestUptime": "122.40 103.69|142.40 123.67",
+  "tcpAfterSleep": "0",
+  "pageErrors": []
+}

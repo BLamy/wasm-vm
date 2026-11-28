@@ -3,7 +3,7 @@ id: E5-T43h
 epic: 5
 title: Paced clock keeps real time while the guest waits with a network connection open
 priority: 0.3876634
-status: implemented
+status: verified
 depends_on: [E5-T43f]
 estimate: S
 risk: high
@@ -93,3 +93,33 @@ example.com, node fetch 200 answered 29.2 s after Enter (`live.log`); `open-conn
 **Limits**: a reply arriving while the host naps waits up to 4 ms more. Under the paced clock a guest timeout can
 now fire during a run chunk in which a reply is already queued in the browser (the race the old guard closed for
 the instruction-count clock); the window is one chunk, and the timeout must also have passed in real time.
+
+### 2026-11-28 — verifier — VERDICT: verified
+
+Fresh session. Predictions `evidence/e5-t43h/verifier/predictions.md` (written before any run); table and
+citations `evidence/e5-t43h/verifier/verdict.md`.
+- P1 gates — HELD. clippy `--all-targets --features trace` exit 0 (`verifier/clippy.log`); `cargo test -p wasm-vm-core --features trace`
+  1372 passed, 0 failed (`verifier/core-tests.log`); wasm32 build clean.
+- P2 instruction-count clock — HELD. With `idle_pacer` None the new jump guard equals the old one, `idle_wait_deadline` is never set
+  (so the run-loop and `take_idle_wait_nanos` branches are unreachable) and the `fabric_idle_epoch` boolean is unchanged.
+- P3 recording/session clocks — HELD. `after_wfi_retire` returns before the guard for live/session clocks; `session_live.rs:121` unchanged.
+- P4 keyboard/GPU — HELD. Both terms kept; paced keyboard test passes. GPU by inspection only (virgl feature not run).
+- Sabotage (scratch sparse worktree, `verifier/sabotage.{py,log}`) — HELD: revert jump fails `follows_the_host` (and `never_passes` survives
+  it, as predicted); hold false / no 4 ms cap fail `short_naps`; pacer bypass fails 4 tests. Gaps: ignoring `others_idle` (S5) or
+  `rx_ready` in `waiting_on_host` (S6) fails no worker test — closed by the promoted tests below.
+- Mock — HELD. `SlirpLocalBackend` with a NAT flow and empty egress reports pending/!ready/!idle like the fake
+  (`crates/slirp/src/local_backend.rs:1030-1113`); in the browser naps average 3.98 ms while a flow is open.
+- Own attack (frame during a nap) — HELD. A frame ready after a nap ends it (`take_idle_wait_nanos` None, mtime 340000 = host 34 ms);
+  the connection closing restores the full 160 ms wait; reopen naps again; the timer fires at 2.0 s host. Busy guest with
+  external I/O forever never naps; pending MSIP is not napped past; an armed RTC alarm + waiting network offers no nap.
+- Browser (8125 hashes as `web/dist`) — HELD. Independent held connection (`https.get` to wikipedia, body unread,
+  `verifier/hold-wikipedia-8125.json`): open 7.4 % in slice, 0.982 guest s/s, tcp ESTABLISHED before and after; none 1.7 %, 0.999.
+  Slow-relay timeout attack: a guest `sleep 20` with the connection open took 20.00 guest s and 20.455 host s — no early timer.
+  Own `online` acceptance: PASS, node answer 31.3 s after Enter, 51.7 s after typing began (`verifier/online/online.json`).
+- Acceptance revision — HELD with note. The host-wait change falls within the boundary (same paced-clock/open-connection wait;
+  the attack list already named the worker's CPU). But the revision went in with the claim commit `8a26a2d9b`, not before it, and
+  it swapped "node fetch within 30 s of typing ending" for "sooner than 92.6 s". Measured against the old criterion: 34.3 s
+  (worker) and 31.3 s (mine) miss it narrowly, and 29.2 s (live) meets it. The serial pipeline answers in ~9 s and guest time
+  runs at real speed, so the rest is outside this boundary (the desktop terminal path and Chrome running alongside). Follow-up worth filing.
+- SUITE: promoted `crates/core/tests/e5_t43h_host_io_nap_verifier.rs` (4 tests; each fails under S1/S2/S4, S3, S5 or S6).
+Not checked: GPU external-I/O guard under the paced clock (virgl); desktop-latency rerun; `relay-down`/`sw`/`off` reruns; live site.
