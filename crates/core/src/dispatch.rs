@@ -330,6 +330,12 @@ pub struct DecodedBlock {
     /// cache replacement). Derived host state, never serialized.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     live: Cell<bool>,
+    /// Second-chance reference bit (E4-T40g: on the block, so a successor-memo entry marks it
+    /// without touching the slot table): set on every ENTRY of the block, cleared as the
+    /// replacement scan passes over it. Only the choice of victim within a full probe window
+    /// depends on it — never whether a lookup hits a resident block — so it shapes hit rate, not
+    /// behaviour.
+    referenced: Cell<bool>,
     /// E4-T40f: the block entered after this one last time (its physical entry address and a weak
     /// handle). A prediction only: block entry still translates the PC and uses it only for the
     /// same physical address, while that block is live in the current generation.
@@ -419,6 +425,7 @@ impl DecodedBlock {
             deferrable,
             disc: Cell::new(DiscMemo::default()),
             live: Cell::new(true),
+            referenced: Cell::new(false),
             successor: core::cell::RefCell::new(None),
         }
     }
@@ -435,6 +442,13 @@ impl DecodedBlock {
         let block = weak.upgrade()?;
         (block.live.get() && block.block_gen == generation && block.phys_start == phys)
             .then_some(block)
+    }
+
+    /// E4-T40g: an entry re-used this block: give it a second chance against eviction.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    #[inline(always)]
+    pub(crate) fn touch(&self) {
+        self.referenced.set(true);
     }
 
     /// E4-T40f: remember `next` as the block entered after this one.
@@ -534,11 +548,6 @@ struct CacheSlot {
     /// `block_gen` of the resident block, under the same rule as `phys`.
     block_gen: u64,
     block: Option<Rc<DecodedBlock>>,
-    /// Second-chance reference bit: set when an ENTRY re-uses the slot's block
-    /// ([`BlockCache::get_rc_touch`]), cleared as the replacement scan passes over it. Only the
-    /// choice of victim within a full probe window depends on it — never whether a lookup hits a
-    /// resident block — so it shapes hit rate, not behaviour.
-    referenced: bool,
     /// Position of this slot's index in its page's [`CodePageSlots::slots`] list while `block` is
     /// `Some`, so replacing the block unlinks it in O(1) instead of scanning the page's list.
     page_pos: u32,
@@ -760,9 +769,11 @@ impl BlockCache {
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) fn get_rc_touch(&mut self, phys_start: u64) -> Option<Rc<DecodedBlock>> {
         let idx = self.probe(phys_start)?;
-        let slot = &mut self.slots[idx];
-        slot.referenced = true;
-        slot.block.clone()
+        let block = self.slots[idx].block.clone();
+        if let Some(b) = &block {
+            b.touch();
+        }
+        block
     }
 
     /// The slot holding the live block keyed `phys_start`, if any.
@@ -831,7 +842,12 @@ impl BlockCache {
                 // since the scan last passed it (second chance), else the window head.
                 (0..MAX_PROBE)
                     .map(|i| (start + i) & self.mask)
-                    .find(|&idx| !core::mem::replace(&mut self.slots[idx].referenced, false))
+                    .find(|&idx| {
+                        !self.slots[idx]
+                            .block
+                            .as_ref()
+                            .is_some_and(|b| b.referenced.replace(false))
+                    })
                     .unwrap_or(start)
             });
         self.unlink_code_slot(index);
@@ -846,7 +862,6 @@ impl BlockCache {
             phys,
             block_gen,
             block: Some(Rc::clone(&block)),
-            referenced: false,
             page_pos: 0,
         };
         let generation = self.generation;

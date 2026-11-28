@@ -3,7 +3,7 @@ id: E4-T40g
 epic: 4
 title: Successor-memo hits keep the block cache's second chance; promote the self-loop test
 priority: 0.3876436
-status: pending
+status: in-progress
 depends_on: [E4-T40f]
 estimate: S
 risk: high
