@@ -1,0 +1,23 @@
+[
+ {
+  "mangle": "",
+  "ok": true,
+  "value": "1\n"
+ },
+ {
+  "mangle": "1",
+  "ok": true,
+  "value": "2\n"
+ },
+ {
+  "mangle": "1,2",
+  "ok": false,
+  "error": "no begin marker for probe (twice)"
+ },
+ {
+  "mangle": "1",
+  "case": "mv-twice",
+  "ok": true,
+  "value": "MV_FAILED\n"
+ }
+]

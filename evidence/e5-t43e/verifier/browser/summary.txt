@@ -1,0 +1,4 @@
+gen3 click pooled median 280.4 per-load medians [281.6, 281.3, 276.9] | key echo pooled median 41.15 | node -e pooled median 1780.3 | idle [1.2, 1.4, 1.3]
+gen2 click pooled median 273.9 per-load medians [273.9, 278.5, 273.3] | key echo pooled median 42.4 | node -e pooled median 1752.3 | idle [1.5, 1.4, 1.4]
+click mean-of-load-medians gen3-gen2 = 4.7 ms (1.7%)
+gen3>gen2 load-median pairs 8 of 9

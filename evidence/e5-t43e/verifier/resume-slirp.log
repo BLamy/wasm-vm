@@ -1,0 +1,40 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+wasm-vm: resumed 363382531 bytes from /private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/358f3812-2a26-47fa-96c6-985caf0a6f11/scratchpad/verifier-gen3.snap — continuing guest
+root@replay-desktop# [6n
+root@replay-desktop# [6nexport PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/b
+in:/sbin:/bin; echo V_BEGIN; cat /proc/uptime; echo TCP; cat /proc/net/tcp; echo
+ TCP6; cat /proc/net/tcp6; echo UDP; cat /proc/net/udp /proc/net/udp6; echo ADDR
+; ip -4 -o addr show dev eth0; ip -4 route; cat /etc/resolv.conf; pidof udhcpc; 
+echo TX0 $(cat /sys/class/net/eth0/statistics/tx_packets) RX0 $(cat /sys/class/n
+et/eth0/statistics/rx_packets); sleep 30; echo TX1 $(cat /sys/class/net/eth0/sta
+tistics/tx_packets) RX1 $(cat /sys/class/net/eth0/statistics/rx_packets); cat /p
+roc/loadavg; cat /proc/uptime; echo FETCH; /usr/local/bin/node -e 'fetch("http:/
+/example.com").then(r=>console.log("STATUS",r.status),e=>console.log("ERR",e.cau
+se?.code??e.message))'; echo TCP_AFTER_FETCH; cat /proc/net/tcp; echo V_DONE_$((
+2+3))
+V_BEGIN
+715.40 695.15
+TCP
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+TCP6
+  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
+UDP
+   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            
+  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops
+ADDR
+3: eth0    inet 10.0.2.15/24 scope global eth0\       valid_lft forever preferred_lft forever
+default via 10.0.2.2 dev eth0 
+10.0.2.0/24 dev eth0 scope link  src 10.0.2.15 
+nameserver 10.0.2.3
+76
+TX0 110 RX0 88
+TX1 110 RX1 88
+0.00 0.00 0.00 1/119 964
+745.44 725.06
+FETCH
+STATUS 200
+TCP_AFTER_FETCH
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 0F02000A:A538 9A171468:0050 06 00000000:00000000 03:0000174C 00000000     0        0 0 3 00000000e278c017                                      
+V_DONE_5
+root@replay-desktop# [6n

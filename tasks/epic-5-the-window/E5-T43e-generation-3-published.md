@@ -3,7 +3,7 @@ id: E5-T43e
 epic: 5
 title: Generation 3 published — E5-T43c's image and a warm snapshot captured with the DHCP lease
 priority: 0.3876631
-status: implemented
+status: verified
 depends_on: [E5-T43c]
 estimate: S
 risk: medium
@@ -117,3 +117,59 @@ same (`crates/cli/src/net_backend.rs:26`, `crates/wasm/src/lib.rs:92`), so the c
 stack's lease too. Offline resume (the browser attaches the loopback NIC while the guest holds the lease): idle
 is unchanged (1.1-1.2 %, as generation 2) and the native resume on `--net` shows load 0.00 and the guest asleep
 (`probe/resume/loopback.txt`).
+
+### 2026-11-28 — verifier — VERDICT: verified
+
+Fresh session, head `f33a9f9e4` (claim at `7808a5173`). Predictions written first:
+`evidence/e5-t43e/verifier/predictions.md`. No implementation file edited.
+
+- P1 capture order and size: HELD. `evidence/e5-t43e/capture/native-capture.log` has `REPLAY_NETWORK bound` at :20,
+  `REPLAY_CAPTURE_TCP_WAIT seconds=294` at :74 and `REPLAY_DESKTOP_COMPACTED` at :75; `snapshot.json` records nic `--net-slirp`,
+  136,668,204 bytes, under 137 MB. The budget revision is disclosed in the Boundary and the acceptance text before the claim, and has a
+  measured cause (the alternative `--gaia-url` breaks the page). But the bound was set just above the measured result (0.33 MB of
+  headroom), and the comparison figure it cites ("loopback capture 134.2 MB") has no artifact. My own loopback capture of the same image
+  (`REPLAY_DESKTOP_CAPTURE_NIC=--net`, outputs redirected to `evidence/e5-t43e/verifier/loopback-capture/`) is **133,301,497 bytes**.
+  So being online at capture costs 3.37 MB (2.5 %), not 2.5 MB. That is still within the revised budget. I accept the revision.
+- P2 artifact identity: HELD. The snapshot gz sha256 is `87a0cde8…` and gunzips to `fc60393a…`; the chunk manifest is `bbf5c328…`;
+  the image is `3165a13b…`; the img.gz is `6e512527…`. All match `web/artifacts-replay-desktop.json`. `web/dist` and :8125 serve that
+  manifest byte-for-byte. The live manifest differs only in its R2 URL rewrites, and all four R2 objects answer with the manifest's
+  lengths. The live snapshot's bytes hash to `87a0cde8…`.
+- P3 shipped image content: HELD. The bytes of `replay-chromium` and `replay-desktop.json` from source both occur in the ext4
+  (4096-aligned offsets 427646976 and 868352, each followed by NUL). There is no `--gaia-url` anywhere in the image.
+- P4 novel attack, TCP and UDP state inside the snapshot: HELD. Natively resumed on `--net-slirp`, the guest's /proc/net/tcp, tcp6,
+  udp and udp6 hold no socket at all, not even LISTEN (`evidence/e5-t43e/verifier/resume-slirp.log`). The capture loop counts only
+  state 01, but no other state survived either.
+- P5 stale lease on resume: HELD. Source check: the wasm stack uses the same `wasm_vm_slirp::DhcpServer` with `DEFAULT_LEASE_SECS`
+  (crates/wasm/src/lib.rs:97,3491) and the same constants as the CLI. A renew for 10.0.2.15 is ACKed (crates/slirp/src/dhcp.rs). Run
+  check: resumed on slirp, the guest keeps 10.0.2.15/24, the default route via 10.0.2.2 and nameserver 10.0.2.3, with udhcpc pid 76
+  still running. A node `fetch http://example.com` answers `STATUS 200` with no re-lease (`resume-slirp.log`).
+- P6 offline resume with the lease: HELD. Resumed on `--net` (loopback), the eth0 tx/rx counters were 125/104 both before and after
+  30 guest seconds (0 packets) and loadavg was 0.06 (`evidence/e5-t43e/verifier/resume-loopback.log`). No storm.
+- P7 browser, not slower than generation 2: HELD within my pre-registered bound (under +5 ms with overlapping ranges; key echo and
+  node -e within +5 %), though only just. I ran 3 interleaved loads a side (gen3 :8125, gen2 :8129, order 3-2-2-3-3-2, n 8). Click
+  per-load medians were 281.6/281.3/276.9 for gen 3 against 273.9/278.5/273.3 for gen 2: +4.7 ms (+1.7 %), with gen 3 slower in 8
+  of 9 load pairs. Key echo pooled median 41.2 vs 42.4 ms. node -e pooled median 1780 vs 1752 ms (+1.6 %; gen 3 slower in all 3
+  pairings). Idle 1.2–1.4 % vs 1.4–1.5 % (`evidence/e5-t43e/verifier/browser/summary.txt`). The worker's 6 loads point the same way
+  (+5.3 ms click, +3 % node -e). So a real ~2 % click cost and ~2–3 % node -e cost are likely, and the roadmap phrase "node -e
+  unchanged" is slightly generous. Both effects are inside the load-to-load spread, so I treat them as within noise, not a
+  regression. The worker's live-site run (click 264 ms) is consistent; I did not re-run it.
+- P8 harness retry: HELD. The worker's passing console logs (e5-t41a, e5-t36b, e5-t43c-*) contain no `Rprintf`/`not found`, so the
+  retry never ran in the evidence. I exercised it deterministically against a fake CLI, a real /bin/sh that mangles chosen begin
+  markers (`evidence/e5-t43e/verifier/retry/result.json`). No miss gives the output. One miss gives the output and the command runs
+  twice (counter 2). Two misses throw `no begin marker … (twice)`. A non-idempotent `mv` returns only its second run's result. That
+  can surface a spurious failure but cannot hide a real one: only the mangled printf is retried, and a second miss is an error. The
+  current callers are effectively idempotent (e5-t41a's mv/mv-back pair, the renew sampler).
+- P9 coverage: the new `else LEASE_STEP=":"` branch is now executed (my loopback capture, exit 0). Every other hunk of
+  build-replay-desktop-snapshot.sh executed in the worker's capture (the nic field appears in snapshot.json). The manifest and
+  roadmap hunks were exercised by the browser loads. The image hunks are shown by P3 and the probes. The `[ $i -lt 600 ]` refusal
+  path was waived: under `set -e` it exits `compact.sh` → `poweroff -f` → "no snapshot was written".
+- Note (no-fire, wording): the manifest's `generated` string says "Chrome contacts nothing at startup", but the task says the
+  sign-in check remains.
+- SUITE: kept `evidence/e5-t43e/verifier/retry/` (fake-CLI test of sh()'s retry) and `resume-attack.mjs` (a resume socket/lease
+  probe) as reusable verifier tools; no new gate promoted.
+
+Commands: `node evidence/e5-t43e/verifier/resume-attack.mjs <gen3.snap> target/e5-t43e/image2/replay-desktop.ext4 --net-slirp|--net …`;
+`REPLAY_DESKTOP_CAPTURE_NIC=--net … bash tools/build-replay-desktop-snapshot.sh` (outputs redirected);
+`node evidence/e5-t43e/verifier/retry/retry-test.mjs`; `bash evidence/e5-t43e/verifier/browser/run-ab.sh`. Not checked: a cold
+clone, a fresh re-run of the E5-T43c/E5-T41a/E5-T36b acceptances (I read the worker's results instead), the live-site latency,
+and the browser stack resuming *online* (the page stays offline in this task).
