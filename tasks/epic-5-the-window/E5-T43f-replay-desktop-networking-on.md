@@ -3,7 +3,7 @@ id: E5-T43f
 epic: 5
 title: The Replay desktop page turns networking on through the public relay
 priority: 0.3876632
-status: pending
+status: in-progress
 depends_on: [E5-T43a, E5-T43b, E5-T43e]
 estimate: S
 risk: medium

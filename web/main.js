@@ -1418,7 +1418,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       slirpProvider,
       slirpRelay,
       slirpRelayToken: slirpProvider === "relay" || slirpProvider === "websocket"
-        ? networkRelayTokenEl?.value ?? ""
+        ? opts.slirpRelayToken ?? networkRelayTokenEl?.value ?? ""
         : "",
       slirpTailscale,
       slirpDoh,
@@ -2342,12 +2342,64 @@ function replayDesktopBootOptions(manifest) {
     quantum: 500_000,
   };
 }
+// E5-T43f: the Replay desktop's network. The guest's virtio-net runs the slirp stack in the page; its
+// outbound TCP/UDP goes through one WebSocket to the public relay (E5-T43a, a Cloudflare Worker in
+// front of wvrelay), which needs a short-lived token for this page's origin from the relay's /token.
+// DNS goes over DoH from the page. Fail closed: no token, no network, the desktop still boots and
+// the page says the network is off. `?net=0` turns it off without asking the relay anything.
+const REPLAY_DESKTOP_RELAY = "https://wasm-vm-relay.brett-lamy.workers.dev";
+const REPLAY_DESKTOP_TOKEN_TIMEOUT_MS = 8000;
+async function replayDesktopNetwork(search = location.search, fetchImpl = fetch) {
+  if (new URLSearchParams(search).get("net") === "0") return { state: "disabled", reason: "?net=0" };
+  try {
+    const response = await fetchImpl(`${REPLAY_DESKTOP_RELAY}/token`, {
+      cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(REPLAY_DESKTOP_TOKEN_TIMEOUT_MS),
+    });
+    if (!response.ok) throw new Error(`the relay answered ${response.status}`);
+    const body = await response.json();
+    if (typeof body?.token !== "string" || !body.token
+      || typeof body.ws !== "string" || !body.ws.startsWith("wss://")) {
+      throw new Error("the relay's token answer is malformed");
+    }
+    return { state: "online", token: body.token, ws: body.ws };
+  } catch (error) {
+    return { state: "off", reason: error?.name === "TimeoutError" ? "the relay did not answer" : String(error?.message || error) };
+  }
+}
+function showReplayDesktopNetwork(network) {
+  document.documentElement.dataset.replayNetwork = network.state;
+  const text = network.state === "online"
+    ? "network: online through the relay"
+    : `network: off (${network.reason})`;
+  try { window.__replayDesktopNetwork = { state: network.state, reason: network.reason ?? null }; } catch { /* test hook */ }
+  (network.state === "off" ? console.warn : console.info)(`wasm-vm: Replay desktop ${text}`);
+  if (network.state !== "off") return;
+  // Only a failure is shown on the desktop itself; `?net=0` is the user's own choice.
+  let el = document.getElementById("replay-network-off");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "replay-network-off";
+    el.setAttribute("role", "status");
+    el.style.cssText = "position:fixed;left:12px;bottom:12px;z-index:50;padding:6px 10px;border-radius:6px;"
+      + "background:rgba(60,20,20,.9);color:#fdd;font:12px/1.3 system-ui,sans-serif;cursor:pointer";
+    el.title = "Click to dismiss";
+    el.addEventListener("click", () => el.remove());
+    document.body.appendChild(el);
+  }
+  el.textContent = `Network off: ${network.reason}. The desktop runs offline; reload to retry.`;
+}
 async function bootReplayDesktop() {
   let options;
   try {
     options = replayDesktopBootOptions(replayDesktopManifest);
   } catch (error) {
     return { ok: false, error: error?.message || String(error) };
+  }
+  const network = await replayDesktopNetwork();
+  showReplayDesktopNetwork(network);
+  if (network.state === "online") {
+    options = { ...options, slirpNet: true, slirpProvider: "websocket", slirpWebsocket: network.ws,
+      slirpRelayToken: network.token };
   }
   const boot = await runLinuxBoot(
     options,

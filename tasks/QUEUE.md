@@ -91,7 +91,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `0.387662` [E5-T43c](epic-5-the-window/E5-T43c-replay-desktop-dhcp.md) — Replay desktop image — the guest brings up eth0 with DHCP and resolves names *(deps: —)*
 - [-] `0.387663` [E5-T43d](epic-5-the-window/E5-T43d-replay-desktop-online.md) — Publish the Replay desktop online — generation 3 with networking through the public relay *(deps: E5-T43a, E5-T43b, E5-T43c)*
 - [x] `0.3876631` [E5-T43e](epic-5-the-window/E5-T43e-generation-3-published.md) — Generation 3 published — E5-T43c's image and a warm snapshot captured with the DHCP lease *(deps: E5-T43c)*
-- [ ] `0.3876632` [E5-T43f](epic-5-the-window/E5-T43f-replay-desktop-networking-on.md) — The Replay desktop page turns networking on through the public relay *(deps: E5-T43a, E5-T43b, E5-T43e)*
+- [~] `0.3876632` [E5-T43f](epic-5-the-window/E5-T43f-replay-desktop-networking-on.md) — The Replay desktop page turns networking on through the public relay *(deps: E5-T43a, E5-T43b, E5-T43e)*
 - [ ] `0.3876633` [E5-T43g](epic-5-the-window/E5-T43g-relay-idle-close-reaches-page.md) — The page shows when the relay closes the Replay desktop's network *(deps: E5-T43f)*
 - [ ] `0.38767` [E5-T44](epic-5-the-window/E5-T44-tailscale-stack-on-cloudflare.md) — Tailscale for the Replay desktop — own DERP relay, Headscale control plane and exit node on Cloudflare, as an opt-in provider *(deps: E5-T43f)*
 
