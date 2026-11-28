@@ -24913,16 +24913,17 @@
       "activity": [
         {
           "date": "2026-11-28",
-          "commits": 2,
+          "commits": 3,
           "labels": [
             "E5-T43h: the paced clock keeps real time while the guest waits with a connection open",
-            "E5-T43f implemented: claim; E5-T43h filed (paced clock with an open connection)"
+            "E5-T43f implemented: claim; E5-T43h filed (paced clock with an open connection)",
+            "E5-T43h: with only an open connection's host I/O pending, the host takes the guest's wait in 4 ms naps"
           ]
         }
       ],
       "firstActivity": "2026-11-28",
       "lastActivity": "2026-11-28",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T44",

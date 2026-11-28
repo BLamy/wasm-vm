@@ -18,8 +18,12 @@ const window30 = async () => { const a = await snap(); await p.waitForTimeout(30
   return { inSlicePct: +(100 * (z.sliceMs - a.sliceMs) / (z.at - a.at)).toFixed(1), guestSecondsPerSecond: +((z.guestS - a.guestS) / ((z.at - a.at) / 1000)).toFixed(2) }; };
 const out = { base, noConnection: await window30() };
 await p.evaluate(() => window.wvmDemo.exec("(node -e \"require('https').get('https://example.com',()=>{})\" >/dev/null 2>&1 &) ; sleep 1", 60000, { quiet: true }));
-await p.waitForTimeout(20000);
-out.tcp = (await p.evaluate(() => window.wvmDemo.exec("awk 'FNR>1 && $4==\"01\"' /proc/net/tcp | wc -l", 60000, { quiet: true })))?.stdout?.trim();
+// Wait (up to 3 min) until the connection is established.
+for (let i = 0; i < 36; i++) {
+  await p.waitForTimeout(5000);
+  out.tcp = (await p.evaluate(() => window.wvmDemo.exec("awk 'FNR>1 && $4==\"01\"' /proc/net/tcp | wc -l", 60000, { quiet: true })))?.stdout?.trim();
+  if (out.tcp === "1") break;
+}
 out.openConnection = await window30();
 console.log(JSON.stringify(out));
 fs.writeFileSync(outFile, JSON.stringify(out, null, 2));

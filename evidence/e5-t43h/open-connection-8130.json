@@ -6,7 +6,7 @@
   },
   "tcp": "0",
   "openConnection": {
-    "inSlicePct": 1.4,
+    "inSlicePct": 1.1,
     "guestSecondsPerSecond": 1
   }
 }
