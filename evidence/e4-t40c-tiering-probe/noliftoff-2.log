@@ -1,0 +1,49 @@
+[desktop-latency 16:19:50.451] open http://127.0.0.1:8125/app.html?guest=replay-desktop&desktop=1&net=0#ide
+[desktop-latency 16:19:54.618] desktop ready after 4.2 s
+[desktop-latency 16:19:54.634] scenario click
+[desktop-latency 16:20:00.361] click #1: result 379.8 ms, pressed-state frame 115 ms, 29M instr @ 67.1 MIPS
+[desktop-latency 16:20:03.719] click #2: result 299.9 ms, pressed-state frame 167 ms, 25.6M instr @ 78.4 MIPS
+[desktop-latency 16:20:07.082] click #3: result 291.3 ms, pressed-state frame 174.4 ms, 25.2M instr @ 76.8 MIPS
+[desktop-latency 16:20:10.437] click #4: result 280.5 ms, pressed-state frame 163.8 ms, 25.6M instr @ 79.1 MIPS
+[desktop-latency 16:20:13.794] click #5: result 290.7 ms, pressed-state frame 155.7 ms, 25.6M instr @ 79.1 MIPS
+[desktop-latency 16:20:17.155] click #6: result 296 ms, pressed-state frame 164.5 ms, 25.5M instr @ 78.3 MIPS
+[desktop-latency 16:20:20.517] click #7: result 302.2 ms, pressed-state frame 170.5 ms, 25.5M instr @ 77.9 MIPS
+[desktop-latency 16:20:23.878] click #8: result 290.8 ms, pressed-state frame 158 ms, 25.7M instr @ 79 MIPS
+[desktop-latency 16:20:26.909] scenario node
+[desktop-latency 16:20:43.191] node #1: prompt back 1833.7 ms after Enter, 193M instr @ 104.3 MIPS
+[desktop-latency 16:20:58.625] node #2: prompt back 1819 ms after Enter, 193.5M instr @ 104.5 MIPS
+[desktop-latency 16:21:14.079] node #3: prompt back 1818.1 ms after Enter, 195.2M instr @ 106 MIPS
+[desktop-latency 16:21:16.607] {"promptMs":{"n":3,"missing":0,"min":1818.1,"median":1819,"max":1833.7}}
+[desktop-latency 16:21:16.619] SUMMARY {
+ "click": {
+  "resultMs": {
+   "n": 8,
+   "missing": 0,
+   "min": 280.5,
+   "median": 296,
+   "max": 379.8
+  },
+  "pointerArrivedMs": 166.5,
+  "pressedFrame": {
+   "seen": 8,
+   "none": 0,
+   "ms": {
+    "n": 8,
+    "missing": 0,
+    "min": 115,
+    "median": 164.5,
+    "max": 174.4
+   }
+  }
+ },
+ "node": {
+  "promptMs": {
+   "n": 3,
+   "missing": 0,
+   "min": 1818.1,
+   "median": 1819,
+   "max": 1833.7
+  }
+ }
+}
+[desktop-latency 16:21:16.742] wrote evidence/e4-t40h-probe/noliftoff-2.json

@@ -43,6 +43,8 @@ const { values: opt } = parseArgs({ options: {
   // stays short: a command that wraps moves the prompt off the watched rows).
   "node-setup": { type: "string", default: "" },
   chrome: { type: "string", default: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+  // Extra Chrome command-line arguments, space-separated (for example "--js-flags=--no-liftoff").
+  "chrome-args": { type: "string", default: "" },
 } });
 const N = Number(opt.n);
 const TRIAL_TIMEOUT_MS = Number(opt["trial-timeout-s"]) * 1000;
@@ -64,7 +66,8 @@ const REGIONS = {
 };
 
 const { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
-const browser = await chromium.launch({ executablePath: opt.chrome, headless: !opt.headed });
+const browser = await chromium.launch({ executablePath: opt.chrome, headless: !opt.headed,
+  args: opt["chrome-args"].split(" ").filter(Boolean) });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, serviceWorkers: "block" });
 const consoleErrors = [];
 page.on("console", (m) => { if (m.type() === "error" && !m.text().includes("favicon")) consoleErrors.push(m.text().slice(0, 500)); });
