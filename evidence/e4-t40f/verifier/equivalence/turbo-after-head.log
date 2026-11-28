@@ -1,0 +1,17 @@
+turbo: exit 102, 32 s, turbo: enabled=true entries=15459731 blocks=383649867 inline_ops=1970688192 slow_ops=29091478 ops_per_entry=129.4 exits: horizon=645 budget=3999 boundary=15269434 trap=185653
+ordinary: exit 102, 42 s, turbo: enabled=false entries=0 blocks=0 inline_ops=0 slow_ops=0 ops_per_entry=0.0 exits: horizon=0 budget=0 boundary=0 trap=0
+--- turbo
+wasm-vm boot evidence v1
+trace fnv64=eea93e63da8eb29b
+trace retired=1999798762
+trace mode=retirement-records
+state sha256=af37489250dccfed1d9fcec14e88e8583ded46531186f8ed3bde95cbcfcd3d70
+outcome=MaxInstrs
+--- ordinary
+wasm-vm boot evidence v1
+trace fnv64=eea93e63da8eb29b
+trace retired=1999798762
+trace mode=retirement-records
+state sha256=af37489250dccfed1d9fcec14e88e8583ded46531186f8ed3bde95cbcfcd3d70
+outcome=MaxInstrs
+EQUIVALENT (2000000000 instructions)

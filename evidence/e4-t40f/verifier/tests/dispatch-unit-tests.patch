@@ -1,0 +1,63 @@
+diff --git a/crates/core/src/dispatch.rs b/crates/core/src/dispatch.rs
+index 1a338471b..bc4a397ce 100644
+--- a/crates/core/src/dispatch.rs
++++ b/crates/core/src/dispatch.rs
+@@ -1842,6 +1842,58 @@ mod tests {
+         );
+     }
+ 
++    /// VERIFIER E4-T40f: own attack — a shadowed duplicate live block for one phys.
++    #[test]
++    fn verifier_shadowed_duplicate_is_reachable_by_memo_and_dies_with_its_page() {
++        let mut cache = BlockCache::with_capacity(8);
++        let p = 0x8000_0000u64 + 3 * PAGE;
++        // find q on another page whose hash starts the same chain as p
++        let mut q = 0x8000_0000u64 + 64 * PAGE;
++        while cache.hash(q) != cache.hash(p) {
++            q += PAGE;
++        }
++        let _qb = cache.insert_rc(DecodedBlock::new(q, block().to_vec(), 8));
++        let p1 = cache.insert_rc(DecodedBlock::new(p, block().to_vec(), 8));
++        let holder = Rc::new(DecodedBlock::new(0x8000_0000, block().to_vec(), 8));
++        holder.remember_successor(&p1);
++        assert!(cache.flush_page(q >> 12));
++        assert!(
++            cache.get(p).is_none(),
++            "probe stops at the emptied head slot: p1 is shadowed"
++        );
++        let p2 = cache.insert_rc(DecodedBlock::new(p, block().to_vec(), 8));
++        let g = cache.current_generation();
++        let via_memo = holder.successor_for(p, g).expect("memo still answers");
++        let duplicate = Rc::ptr_eq(&via_memo, &p1) && !Rc::ptr_eq(&via_memo, &p2);
++        std::println!("VERIFIER duplicate-reachable={duplicate}");
++        // a store into p's page must end both copies
++        assert!(cache.flush_page(p >> 12));
++        assert!(
++            holder.successor_for(p, g).is_none(),
++            "duplicate survived its page flush"
++        );
++        assert!(!p1.live.get() && !p2.live.get());
++    }
++
++    /// VERIFIER E4-T40f: memory — a self-successor and a 2-cycle leave no strong cycle.
++    #[test]
++    fn verifier_memo_holds_no_strong_cycle() {
++        let mut cache = BlockCache::with_capacity(4);
++        let a = cache.insert_rc(DecodedBlock::new(0x8000_0000, block().to_vec(), 8));
++        let b = cache.insert_rc(DecodedBlock::new(0x8000_1000, block().to_vec(), 8));
++        a.remember_successor(&b);
++        b.remember_successor(&a);
++        a.remember_successor(&a);
++        assert_eq!(Rc::strong_count(&a), 2, "cache + local only");
++        assert_eq!(Rc::strong_count(&b), 2);
++        let wa = Rc::downgrade(&a);
++        let wb = Rc::downgrade(&b);
++        drop(cache);
++        drop(a);
++        drop(b);
++        assert!(wa.upgrade().is_none() && wb.upgrade().is_none(), "leaked");
++    }
++
+     #[test]
+     fn block_cache_page_index_invalidates_only_indexed_live_slots() {
+         let mut cache = BlockCache::with_capacity(64);

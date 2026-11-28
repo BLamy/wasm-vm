@@ -1,0 +1,7 @@
+before 4096: block cache: entries=4096 entry_hits=357916021 builds=25733847
+after  4096: block cache: entries=4096 entry_hits=347660107 builds=35989761
+before dce: block cache: entries=16384 entry_hits=377848066 builds=5801802
+before dce: block cache: entries=262144 entry_hits=383378802 builds=271066
+after  dce: block cache: entries=4096 entry_hits=347660107 builds=35989761
+after  dce: block cache: entries=16384 entry_hits=373334825 builds=10315043
+after  dce: block cache: entries=262144 entry_hits=383375996 builds=273872

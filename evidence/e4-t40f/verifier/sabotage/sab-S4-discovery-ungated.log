@@ -1,0 +1,9 @@
+test dispatch::tests::verifier_memo_holds_no_strong_cycle ... ok
+test dispatch::tests::verifier_shadowed_duplicate_is_reachable_by_memo_and_dies_with_its_page ... ok
+test dispatch::tests::successor_memo_answers_only_for_a_live_block_of_the_current_generation ... ok
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 511 filtered out; finished in 0.00s
+test successor_rewritten_by_a_store_runs_its_new_code ... ok
+test discovery_off_runs_the_same_guest_and_records_nothing ... FAILED
+thread 'discovery_off_runs_the_same_guest_and_records_nothing' (37711322) panicked at crates/core/tests/block_discovery_switch.rs:66:5:
+assertion `left == right` failed: discovery off records nothing
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
