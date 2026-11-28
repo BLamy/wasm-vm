@@ -17,6 +17,13 @@ the E5-T43a relay, the token fetched from its `/token` before the boot (fail clo
 network, the desktop still boots, and the page says the network is off); `?net=0` turns it off.
 Roadmap, deploy.
 
+Revised 2026-11-28, before the claim: the first online run reached example.com but Chrome refused it
+with `NET::ERR_CERT_AUTHORITY_INVALID` (`evidence/e5-t43f/try/online/chrome-example.png`). The image never
+shipped NSS's built-in roots (`libnssckbi.so`, in the `libnss3` package it already uses). So this task
+also adds that library to the image (`tools/replay-desktop/assemble.py`) and republishes the desktop with
+a new warm snapshot (same capture as E5-T43e); E5-T43c's, E5-T41a's and E5-T36b's acceptances are rerun
+on the image.
+
 ## Deterministic acceptance
 
 - Committed bundle and the live site: in the guest's Chrome a typed `https://example.com` loads

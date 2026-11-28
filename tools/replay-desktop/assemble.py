@@ -52,6 +52,9 @@ ROOT_ELFS = [
     f"usr/lib/{TRIPLET}/libsoftokn3.so",
     f"usr/lib/{TRIPLET}/libfreebl3.so",
     f"usr/lib/{TRIPLET}/libfreeblpriv3.so",
+    # NSS's built-in root certificates (Mozilla's store), which Chrome loads as its "Root Certs"
+    # module. Without it every HTTPS site fails with ERR_CERT_AUTHORITY_INVALID (E5-T43f).
+    f"usr/lib/{TRIPLET}/libnssckbi.so",
 ]
 # Static binaries (no NEEDED walk).
 STATIC_ELFS = ["usr/bin/busybox", "usr/sbin/ldconfig.real"]
