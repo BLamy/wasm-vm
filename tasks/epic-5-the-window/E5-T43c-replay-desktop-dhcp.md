@@ -3,7 +3,7 @@ id: E5-T43c
 epic: 5
 title: Replay desktop image — the guest brings up eth0 with DHCP and resolves names
 priority: 0.387662
-status: implemented
+status: verified
 depends_on: []
 estimate: S
 risk: medium
@@ -75,3 +75,56 @@ Limits: the warm snapshot (E5-T43d) must be captured with the slirp NIC so the l
 on another network would keep the old lease until udhcpc renews (12 h of a 24 h lease) — E5-T43d's concern,
 as the attack list says. Offline with a NIC, udhcpc wakes every few seconds to broadcast; E5-T43d measures
 idle with networking on, the page's offline mode is unchanged by this task.
+
+### 2026-11-27 — verifier — VERDICT: verified
+
+Fresh session, head `358f23b67` (claim on `8f72805bf`). Predictions written first:
+`evidence/e5-t43c/verifier/predictions.md`. Image `target/e5-t43c/image/replay-desktop.ext4` sha256
+`2a6e727e346b…` (`build.json` head `32c5e4072`; `git diff 32c5e4072..HEAD` touches no image source).
+Two verifier boots on it, `--net-slirp --net-slirp-lease-secs 30` (`verifier/cli-lease30.sh`):
+`verifier/attack/` and `verifier/attack2/` (result.json sha256 `a6b8c769ea82…`, `368a4f61fae0…`).
+
+- P1 READY not delayed — HELD. `readyUptime` slirp 5.43 / loopback 5.34 / none 5.32 against measured gen-2
+  baselines 5.29 / 5.29 / 5.30 (`baseline-gen2-*/result.json`, image `20f03da7c51d…`); my boots 5.36
+  (`attack/console.log:27`) and 5.32 (`attack2/console.log:29`).
+- P2 lease, route, resolver, fetch — HELD. `slirp/result.json` checks: addresses `["10.0.2.15/24"]`,
+  `default via 10.0.2.2 dev eth0`, resolvConf `["nameserver 10.0.2.3"]`, lookup `ADDR 104.20.23.154`,
+  fetchHttp/fetchHttps `STATUS 200`; bound line at `slirp/console.log:20`, before READY at :27.
+- P3 no DHCP answer (`--net`) — HELD. `loopback/result.json`: no address, no default route,
+  resolvConfExists `no`, udhcpc pid 76 still broadcasting, no REPLAY_NETWORK line, `NODE_OK`, READY +0.05 s.
+- P4 no NIC — HELD. `none/result.json`: eth0 `absent`, udhcpc `none`.
+- P5 regressions — HELD. `e5-t41a/result.json` and `e5-t36b/result.json` pass:true on imageSha256 `2a6e727e…`.
+- P6 image == tree — HELD. In-guest sha256 of the hook `be821526…` and rcS `63419e63…` equal the repo files
+  (`attack/result.json` checks.p6); udhcpc cmdline is rcS's.
+- P7 renewal, novel attack — HELD. Real T1 renewals (30 s lease, no USR1) plus one USR1, hook traced with
+  `sh -x` through a bind mount: 3 hook runs at guest 15.87 / 30.90 / 40.78 s, each `ip -4 addr replace
+  10.0.2.15/24` and `route replace default via 10.0.2.2`, zero `addr del`, zero `flush`
+  (`attack2/result.json` checks.p7.xtrace/summary); after them eth0 is `10.0.2.15/24` alone, resolv.conf
+  unchanged, and a fetch is 200 (`attack/result.json` checks.p7.fetch). The first boot's `ip` PATH wrapper
+  never ran (busybox ash runs its `ip` applet directly; `command -v ip` → `ip`): its iplog is void, the
+  `sh -x` trace replaces it.
+- P8 mock hunt, does the worker's renewal sampler discriminate — HELD as predicted (weak). The worker's exact
+  sampler against a run-time flush+re-add hook: boot 1 caught 2 of 5; boot 2, with the window and the flush
+  timestamped, the flush fell inside the window in 8 of 8 and the sampler still missed it in 3 (trials 6-8,
+  `attack2/result.json` checks.p8). The renewal assertion in `tools/verify/e5-t43c-guest-dhcp.mjs` is
+  probabilistic and would pass a flushing hook about 4 runs in 10; it is not what proves "the hook never
+  removes the address" — the deterministic `sh -x` trace above is. Not a refutation: the product claim
+  stands on P7; the sampler is a weak check, not a self-licking one.
+- P9 snapshot timing — HELD (belongs to E5-T43d). E5-T43c has no snapshot in its boundary; capture is
+  E5-T43d's ("a warm snapshot captured with the DHCP lease logic in place"). E5-T43d's own attack list does
+  not yet name the stale-lease resume; its worker should carry this task's third attack across.
+- P10 coverage. Executed: rcS hunk (all NIC runs; the `[ -d eth0 ]` false branch in `none`), hook bound/renew
+  (every line on the true path, `attack2` xtrace), assemble.py link (`resolvLink` in every run),
+  native-shell `net` (all three values), the script's three modes. Waived: hook `deconfig` (udhcpc runs it at
+  start on an address-less eth0, no observable effect, not traced), `search $domain` true side (slirp sends no
+  domain; the false test is traced). Redundant: rcS's new `ip link set lo up` repeats rcS line 15 (harmless
+  no-op; delete when next touched).
+- P11 flag mapping — HELD. `crates/cli/src/boot.rs:402-410`: `--net` is the loopback echo backend with no
+  DHCP; only `--net-slirp` can satisfy "gets an address"; running the acceptance as `--mode slirp` and using
+  `--net` as the no-answer attack is correct.
+
+SUITE: discard — the deterministic check (P7) needs a guest-side `sh -x` bind mount; the scripts stay in
+`evidence/e5-t43c/verifier/` (`attack2.mjs`) for whoever next touches the hook. Not checked: idle cost of
+udhcpc's offline discover loop (no budget stated), browser path (E5-T43d), a lease change of address (slirp
+always offers 10.0.2.15).
+Commands: `node evidence/e5-t43c/verifier/attack.mjs`; `node evidence/e5-t43c/verifier/attack2.mjs`.

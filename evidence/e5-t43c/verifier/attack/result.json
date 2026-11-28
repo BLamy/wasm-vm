@@ -1,0 +1,144 @@
+{
+  "checks": {
+    "p6": {
+      "guestHook": "be821526c5630c8dd06d5d72fdba17150a1d027f4676d3a41cb60a22dcdaacc4",
+      "repoHook": "be821526c5630c8dd06d5d72fdba17150a1d027f4676d3a41cb60a22dcdaacc4",
+      "guestRcS": "63419e63e12e5480dc1799780bd358208813a5e1753bbed3f223b122acff4611",
+      "repoRcS": "63419e63e12e5480dc1799780bd358208813a5e1753bbed3f223b122acff4611",
+      "udhcpcCmdline": "udhcpc -f -i eth0 -s /usr/local/share/udhcpc/default.script",
+      "ipPath": "ip\nls: ip: No such file or directory"
+    },
+    "p7": {
+      "wrapperFiles": [
+        "#!/bin/sh",
+        "echo \"$(cut -d\\\" \\\" -f1 /proc/uptime) $*\" >> /tmp/iplog",
+        "exec ip \"$@\"",
+        "#!/bin/sh",
+        "echo \"HOOK $(cut -d\\\" \\\" -f1 /proc/uptime) $1 ip=$ip mask=$mask lease=$lease\" >> /tmp/iplog",
+        "PATH=/tmp/wrap:$PATH exec /tmp/orig.script \"$@\""
+      ],
+      "waitedGuest": 40.47,
+      "iplog": [
+        "HOOK 15.88 4.30 renew ip=10.0.2.15 mask=24 lease=30",
+        "HOOK 30.91 19.24 renew ip=10.0.2.15 mask=24 lease=30",
+        "HOOK 45.93 34.12 renew ip=10.0.2.15 mask=24 lease=30"
+      ],
+      "consoleRenewLines": [
+        "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3",
+        "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3"
+      ],
+      "udhcpcLog": [
+        "udhcpc: broadcasting discover",
+        "udhcpc: broadcasting select for 10.0.2.15, server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "cut: \": No such file or directory",
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "cut: \": No such file or directory",
+        "udhcpc: sending renew to server 10.0.2.2",
+        "udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 30",
+        "cut: \": No such file or directory"
+      ],
+      "addresses": [
+        "10.0.2.15/24"
+      ],
+      "routes": [
+        "default via 10.0.2.2 dev eth0",
+        "10.0.2.0/24 dev eth0 scope link  src 10.0.2.15"
+      ],
+      "fetch": [
+        "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3",
+        "STATUS 200"
+      ]
+    },
+    "p8": [
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "renewLines": [
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE"
+        ],
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24"
+        ],
+        "renewLines": [
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE",
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE"
+        ],
+        "workerAssertionWouldPass": true
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24"
+        ],
+        "renewLines": [
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE"
+        ],
+        "workerAssertionWouldPass": true
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24",
+          "S"
+        ],
+        "renewLines": [
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE",
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE"
+        ],
+        "workerAssertionWouldPass": false
+      },
+      {
+        "samples": 400,
+        "set": [
+          "S 10.0.2.15/24"
+        ],
+        "renewLines": [
+          "REPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3 SABOTAGE"
+        ],
+        "workerAssertionWouldPass": true
+      }
+    ],
+    "p8summary": {
+      "trials": 5,
+      "caught": 2
+    }
+  },
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t43c/verifier/cli-lease30.sh",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm/target/e5-t43c/image/replay-desktop.ext4,ro",
+    "--ram-mib",
+    "1024",
+    "--net-slirp",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--block-cache",
+    "--interrupt-batching",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "400000000000",
+    "--no-reboot",
+    "--append",
+    "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4"
+  ],
+  "readyUptime": 5.36,
+  "done": true,
+  "hostSeconds": 529.726
+}

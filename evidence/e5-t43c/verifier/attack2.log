@@ -1,0 +1,1 @@
+{"done":true,"p7":{"hookRuns":3,"addrDel":[],"flush":[],"replace":["+ ip -4 addr replace 10.0.2.15/24 dev eth0","+ ip -4 addr replace 10.0.2.15/24 dev eth0","+ ip -4 addr replace 10.0.2.15/24 dev eth0"]},"p8":{"trials":8,"spanned":8,"caughtWhenSpanned":5,"missedWhenSpanned":3}}
