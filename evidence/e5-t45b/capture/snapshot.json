@@ -1,0 +1,22 @@
+{
+  "task": "E5-T45b",
+  "nic": "--net-slirp",
+  "url": "releases/boot-snapshot/replay-desktop-ready-18d9473ca78c.snap.gz",
+  "sha256": "18d9473ca78c7be72766a6e7238f61eb0760c2dde8965431ada5e33b0e5c0e70",
+  "size": 135309357,
+  "uncompressedSize": 359537802,
+  "uncompressedSha256": "5832306db9e55dc5dc44510aa5f5ef6e166014f40308981acdca7e49e843b27f",
+  "identity": {
+    "imageSha256": "89b526be8441cb13ec5dc963a84a86ae48ed3db5c79854656815ae6195e3cd6d",
+    "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "baseId": "fe301b3e1d373ae8940b9c212ca7c1d6858d3ca3f63a3ce13cc613918db38955",
+    "ramMib": 1024,
+    "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
+    "guestClock": "icount",
+    "icountDivider": 64,
+    "deviceLayout": "browser-topology",
+    "readOnlyRoot": true
+  },
+  "captureHostSeconds": 251
+}

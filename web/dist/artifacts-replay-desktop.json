@@ -1,5 +1,5 @@
 {
-  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill; generation 3 (E5-T43e/E5-T43f): the guest takes a DHCP lease, Chrome makes no start-up requests but its sign-in check, and NSS's root certificates are in the image; E5-T34e warm RAM/device bootSnapshot captured with the slirp NIC (the lease in it) after REPLAY_NODE_SNAPSHOT, 30 guest seconds of settling and a compaction that warms node's start paths and zeroes free memory, from the same image and browser device layout (tools/build-replay-desktop-snapshot.sh; read-only root, no disk delta), fetched in parallel with the whole image",
+  "generated": "E5-T34c shared Replay Chrome 108 + Node 26 desktop: the E5-T34b image (tools/build-replay-desktop-image.sh) as a raw ext4 chunk manifest plus its whole-image .img.gz for the E5-T34a single-fetch prefill; generation 4 (E5-T45b; Replay Node with its built-in snapshot and code cache, E5-T45a) on generation 3 (E5-T43e/E5-T43f): the guest takes a DHCP lease, Chrome makes no start-up requests but its sign-in check, and NSS's root certificates are in the image; E5-T34e warm RAM/device bootSnapshot captured with the slirp NIC (the lease in it) after REPLAY_NODE_SNAPSHOT, 30 guest seconds of settling and a compaction that warms node's start paths and zeroes free memory, from the same image and browser device layout (tools/build-replay-desktop-snapshot.sh; read-only root, no disk delta), fetched in parallel with the whole image",
   "artifacts": {
     "kernel": {
       "url": "releases/kernel/6.6.63/Image",
@@ -7,28 +7,28 @@
       "size": 24208896
     },
     "chunkManifest": {
-      "url": "releases/rootfs/replay-desktop-ec157fd1b3a7.chunks.json",
-      "sha256": "3ee9ab72849d0db0979988d851f0e77bc11ed1641bd6671a846e45b743ba8365",
-      "size": 128843
+      "url": "releases/rootfs/replay-desktop-89b526be8441.chunks.json",
+      "sha256": "85fac8bd581fe825cb31e5013aef016da7b1443ccf0c0ff7b4a084747d0e4f49",
+      "size": 130571
     },
     "wholeImage": {
-      "url": "releases/rootfs/replay-desktop-ec157fd1b3a7.img.gz",
-      "sha256": "f7ff2d0cf27f69f44dbbc73d921e5f2f42bf4dc989999a2ae78a5c64126a287c",
-      "size": 189900243,
-      "uncompressedSize": 468713472,
-      "uncompressedSha256": "ec157fd1b3a75dce7e7f41e557522ba635e27ea67d6220d87e226cecd810912b"
+      "url": "releases/rootfs/replay-desktop-89b526be8441.img.gz",
+      "sha256": "2c142bff9f94f6afcfc39ad39cdea0560dba4e5915eb9308a75d590a8651f251",
+      "size": 192408629,
+      "uncompressedSize": 475004928,
+      "uncompressedSha256": "89b526be8441cb13ec5dc963a84a86ae48ed3db5c79854656815ae6195e3cd6d"
     },
     "bootSnapshot": {
-      "url": "releases/boot-snapshot/replay-desktop-ready-c5d6ff60fda9.snap.gz",
-      "sha256": "c5d6ff60fda9d8544f3e1f15692409e2838e039bbcf686f7891ba1d0bca58b1a",
-      "size": 135290972,
-      "uncompressedSize": 359088357,
-      "uncompressedSha256": "7a066e0b03ea8f333a300ad7d7386bcfe8979f6c98e21fd33951ff8f5fa7a707",
+      "url": "releases/boot-snapshot/replay-desktop-ready-18d9473ca78c.snap.gz",
+      "sha256": "18d9473ca78c7be72766a6e7238f61eb0760c2dde8965431ada5e33b0e5c0e70",
+      "size": 135309357,
+      "uncompressedSize": 359537802,
+      "uncompressedSha256": "5832306db9e55dc5dc44510aa5f5ef6e166014f40308981acdca7e49e843b27f",
       "identity": {
-        "imageSha256": "ec157fd1b3a75dce7e7f41e557522ba635e27ea67d6220d87e226cecd810912b",
+        "imageSha256": "89b526be8441cb13ec5dc963a84a86ae48ed3db5c79854656815ae6195e3cd6d",
         "kernelSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
         "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
-        "baseId": "4d0ba37c658e67aaa74c4e5b35fc3fb0e895916ed0badb21598e99af0d8fd98b",
+        "baseId": "fe301b3e1d373ae8940b9c212ca7c1d6858d3ca3f63a3ce13cc613918db38955",
         "ramMib": 1024,
         "bootargs": "root=/dev/vda ro rootfstype=ext4 rootwait init=/sbin/init console=ttyS0 earlycon=sbi quiet loglevel=4",
         "guestClock": "icount",

@@ -1,0 +1,1 @@
+{"mode":"slirp","pass":false,"readyUptime":5.32,"error":"AssertionError [ERR_ASSERTION]: a default route via 10.0.2.2: [1;1Rdefault via 10.0.2.2 dev eth0,10.0.2.0/24 dev eth0 scope link  src 10.0.2.15"}

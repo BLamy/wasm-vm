@@ -70,7 +70,10 @@ export async function bootNative({ image, out, kernel = path.join(repo, "release
       if (attempt > 1) throw new Error(`no begin marker for ${what} (twice)`);
       return sh(cmd, what, attempt + 1);
     }
-    return serial.slice(serial.indexOf("\n", start) + 1, serial.indexOf(end, start)).replace(/\r/g, "");
+    // The cursor answer can also land inside a command's output as a bare `[1;1R` (its ESC eaten):
+    // drop it, as no command here prints that sequence.
+    return serial.slice(serial.indexOf("\n", start) + 1, serial.indexOf(end, start)).replace(/\r/g, "")
+      .replace(/\x1b?\[1;1R/g, "");
   }
   // Wake the respawned serial shell and give it the image's PATH (rcS's does not reach it).
   async function rootShell() {
