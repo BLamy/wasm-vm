@@ -7605,8 +7605,14 @@ impl Machine {
         // no retire-count horizon), no JIT (compiled blocks are chosen at the same boundaries)
         // and no observation scopes.
         #[cfg(not(feature = "zicsr-stub"))]
-        let turbo_ok =
-            tail_ok && self.turbo_enabled && !jit_on && !source_capture && self.wall_time.is_none();
+        // E4-T40c1: the hot-PC profiler samples in the ordinary loop only; while it is armed
+        // (opt-in measurement), the turbo loop stands aside so every retirement can be sampled.
+        let turbo_ok = tail_ok
+            && self.turbo_enabled
+            && !jit_on
+            && !source_capture
+            && self.wall_time.is_none()
+            && !self.profiling;
         let mut remaining_work = self.live_work_budget(max_instrs);
         if max_instrs != 0 && remaining_work == 0 {
             return RunOutcome::SessionStopped(

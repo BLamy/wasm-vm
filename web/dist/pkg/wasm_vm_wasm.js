@@ -1351,10 +1351,12 @@ export class WasmLinux {
      * E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
      * collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
      * `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
+     * `top_k` (E4-T40c1) bounds the regions returned (default 10).
+     * @param {number | null} [top_k]
      * @returns {any}
      */
-    getProfile() {
-        const ret = wasm.wasmlinux_getProfile(this.__wbg_ptr);
+    getProfile(top_k) {
+        const ret = wasm.wasmlinux_getProfile(this.__wbg_ptr, isLikeNone(top_k) ? Number.MAX_SAFE_INTEGER : (top_k) >>> 0);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }

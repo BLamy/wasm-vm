@@ -104,7 +104,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Epic 4 — `epic-4-acceleration`
 
 - [-] `0.38769` [E4-T40c](epic-4-acceleration/E4-T40c-turbo-compiled-regions.md) — Compiled tier for the turbo loop — region-sized units (planning parent) *(deps: E4-T40b)*
-- [ ] `0.38769` [E4-T40c1](epic-4-acceleration/E4-T40c1-desktop-code-page-concentration.md) — Measure how concentrated the Replay desktop's interactive work is in code pages *(deps: E4-T40g)*
+- [~] `0.38769` [E4-T40c1](epic-4-acceleration/E4-T40c1-desktop-code-page-concentration.md) — Measure how concentrated the Replay desktop's interactive work is in code pages *(deps: E4-T40g)*
 - [ ] `0.387691` [E4-T40c2](epic-4-acceleration/E4-T40c2-page-unit-compiler.md) — Page-unit compiler — one wasm function per hot guest code page, differential-tested natively *(deps: E4-T40c1)*
 - [ ] `0.387692` [E4-T40c3](epic-4-acceleration/E4-T40c3-turbo-loop-runs-page-units.md) — The turbo loop runs compiled page units *(deps: E4-T40c2)*
 - [ ] `0.387693` [E4-T40c4](epic-4-acceleration/E4-T40c4-browser-page-units.md) — Browser compiled page units — install, evict, measure, default *(deps: E4-T40c3)*

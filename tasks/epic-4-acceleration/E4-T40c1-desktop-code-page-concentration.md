@@ -3,7 +3,7 @@ id: E4-T40c1
 epic: 4
 title: Measure how concentrated the Replay desktop's interactive work is in code pages
 priority: 0.38769
-status: pending
+status: in-progress
 depends_on: [E4-T40g]
 estimate: S
 risk: low

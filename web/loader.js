@@ -1813,7 +1813,7 @@ export async function startLinuxBoot(opts = {}) {
         return machine.restoreDesktopSnapshot(bytes, width, height);
       },
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
-      profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),
+      profileStats: (topK) => (typeof machine.getProfile === "function" ? machine.getProfile(topK) : null),
       schedulerStats: () => ({
         quantum: runQuantum,
         maxQuantum,
