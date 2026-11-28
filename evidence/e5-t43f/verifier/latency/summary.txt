@@ -1,0 +1,4 @@
+neton-1: click 259.8 ms, key echo 45.4 ms, node -e 1663.3 ms (n=3), idle inSlice 1.1%, guest s/s 1
+netoff-1: click 260.7 ms, key echo 43.2 ms, node -e 1640.8 ms (n=3), idle inSlice 1.1%, guest s/s 1
+neton-2: click 262.2 ms, key echo 46 ms, node -e 1711.4 ms (n=3), idle inSlice 1.1%, guest s/s 1
+netoff-2: click 263.2 ms, key echo 42.4 ms, node -e 1673.5 ms (n=3), idle inSlice 1.1%, guest s/s 1

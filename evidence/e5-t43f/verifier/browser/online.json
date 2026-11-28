@@ -1,0 +1,29 @@
+{
+  "network": {
+    "state": "online",
+    "reason": null,
+    "dataset": "online",
+    "banner": null
+  },
+  "guestAddress": "10.0.2.15/24\ndefault via 10.0.2.2 dev eth0 \n\n",
+  "chromeTitle": "\"name\": \"Example Domain - Chromium\"",
+  "chromeLoadMs": 24279,
+  "nodeLine": "E5T43F_9DC13526 200",
+  "nodeAnswerAfterTypingMs": 94564,
+  "relayRequests": [
+    {
+      "t": 732,
+      "method": "GET",
+      "url": "https://wasm-vm-relay.brett-lamy.workers.dev/token",
+      "status": 200,
+      "fromServiceWorker": false
+    }
+  ],
+  "sockets": [
+    {
+      "t": 3322,
+      "url": "wss://wasm-vm-relay.brett-lamy.workers.dev/ws"
+    }
+  ],
+  "consoleErrors": []
+}
