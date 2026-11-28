@@ -1093,8 +1093,10 @@ impl NetBackend for SlirpLocalBackend {
     /// query, no file transfer, no local HTTP work); the guest's DNS-over-TCP socket and both
     /// file-transfer sockets are listening — a socket in any other state can carry data, a
     /// retransmit or a close timer (E5-T43b verifier: SynReceived and LastAck), and the
-    /// connections and buffers bound to them exist only then. (An attached local HTTP service
-    /// counts as pending in `external_io_pending`.) Listeners carry no timers.
+    /// connections and buffers bound to them exist only then. (With the local HTTP service
+    /// attached, `register_http` has closed the DNS-over-TCP and file-transfer sockets for good,
+    /// so the Listen checks below report it not idle — its own sockets are not looked at.)
+    /// Listeners carry no timers.
     fn idle(&self) -> bool {
         use smoltcp::socket::tcp::State::Listen;
         self.egress.is_empty()
@@ -2448,14 +2450,91 @@ mod tests {
         );
     }
 
-    /// A local HTTP service attached: its pump runs on every poll, so not idle
-    /// (`external_io_pending` reports it).
+    /// A local HTTP service attached: never idle. Not because `external_io_pending` reports it
+    /// (with no connection it does not, E5-T43b round-2 verifier) but because registering it
+    /// closes the DNS-over-TCP and file-transfer sockets and HTTP mode never reopens them.
     #[test]
     fn idle_condition_local_http() {
         let mut be = SlirpLocalBackend::new(GW_MAC, Box::new(|| 0));
         assert!(NetBackend::idle(&be));
         be.register_e9_local_http().unwrap();
+        assert!(
+            !NetBackend::external_io_pending(&be),
+            "no HTTP connection: nothing pending"
+        );
+        assert_ne!(
+            be.stack.dns_tcp_state(),
+            smoltcp::socket::tcp::State::Listen,
+            "the DNS-over-TCP listener is gone"
+        );
         assert!(!NetBackend::idle(&be), "a local HTTP service is attached");
+    }
+
+    /// (E5-T43b round-2 verifier's test.) Slot 1 alone out of Listen: slot 0 connects, a second
+    /// SYN lands on slot 1, slot 0 closes cleanly. Not idle, and a later poll retransmits.
+    #[test]
+    fn slot1_isolated_half_open_is_not_idle() {
+        let drain = |be: &mut SlirpLocalBackend| {
+            let mut n = 0;
+            while be.rx().is_some() {
+                n += 1;
+            }
+            n
+        };
+        let now = Rc::new(Cell::new(1_000i64));
+        let mut be = browser_shaped(now.clone());
+        be.tx(&guest_arp_request());
+        drain(&mut be);
+        let isn0 = establish_file_tcp(&mut be, 45200, 9000);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45201,
+            crate::file_transfer::PORT,
+            9500,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        drain(&mut be);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45200,
+            crate::file_transfer::PORT,
+            9001,
+            Some(isn0.wrapping_add(1)),
+            TcpControl::Fin,
+            &[],
+        ));
+        drain(&mut be);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            45200,
+            crate::file_transfer::PORT,
+            9002,
+            Some(isn0.wrapping_add(2)),
+            TcpControl::None,
+            &[],
+        ));
+        drain(&mut be);
+        assert_eq!(
+            be.stack.file_tcp_state(0),
+            smoltcp::socket::tcp::State::Listen
+        );
+        assert_eq!(
+            be.stack.file_tcp_state(1),
+            smoltcp::socket::tcp::State::SynReceived
+        );
+        assert!(!NetBackend::idle(&be), "slot 1 mid-handshake");
+        let mut frames = 0;
+        for step in 1..=10 {
+            now.set(1_000 + step * 500);
+            be.poll();
+            frames += drain(&mut be);
+        }
+        assert!(
+            frames > 0,
+            "and a later poll does change something (the SYN-ACK is retransmitted)"
+        );
     }
 
     /// A DNS service that takes a query and never answers, and never says it is busy: only the
