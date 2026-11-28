@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: refuted
+status: in-progress
 depends_on: []
 estimate: S
 risk: high
