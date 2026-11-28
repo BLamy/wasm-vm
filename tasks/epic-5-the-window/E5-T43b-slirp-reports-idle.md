@@ -3,7 +3,7 @@ id: E5-T43b
 epic: 5
 title: Paced idle with networking on — the slirp backend reports when it is idle
 priority: 0.387661
-status: in-progress
+status: implemented
 depends_on: []
 estimate: S
 risk: high
@@ -137,3 +137,36 @@ Commands: `cargo test -p wasm-vm-slirp --lib`; `cargo test -p wasm-vm-core --lib
 `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; scratch copy:
 `cargo test -p wasm-vm-slirp --lib local_backend::tests::verifier_ -- --nocapture`; the mutant
 loop in `mutants.log`.
+
+### 2026-11-27 — worker — round 2 claim (head `9ef09b030`)
+
+The refutation is right: a file-transfer socket mid-handshake (SynReceived) or mid-close
+(LastAck) has a retransmit timer with no connection bound to it, and `idle()` did not look at it.
+Commits `8a7bb4881` and `9ef09b030` (build id matching `web/dist`).
+
+**`idle()` is now five conditions**, each pinned by a test:
+
+| condition | a test that fails without it |
+|---|---|
+| nothing waits for the guest (`egress` empty) | `idle_only_with_nothing_queued_…` (ARP reply waiting) |
+| nothing in flight outside the stack (`external_io_pending`: NAT flows with a connector, pending DNS, file transfers, local HTTP) | `idle_conditions_pending_dns_and_dns_tcp_connection` (a DNS query that is never answered, by a service that never says it is busy), the UDP-flow test, `idle_condition_local_http` |
+| the DNS-over-TCP socket is listening | the same test (an established, quiet DNS-over-TCP connection) and `verifier_p5_dns_tcp_cycle` |
+| both file-transfer sockets are listening | `verifier_p3_half_open_file_transfer_syn`, `verifier_p4_last_ack_after_guest_fin` |
+
+Removing any one makes `cargo test -p wasm-vm-slirp --lib` fail (each removed and restored in
+turn). The seven round-1 conditions that no reachable state could isolate are gone: flows, UDP
+flows and the flow manager, and pending DNS, are what `external_io_pending` already reports; the
+DNS-over-TCP buffers and the file-transfer connections and buffers exist only while their socket
+is out of `Listen`; an attached local HTTP service is reported pending by `external_io_pending`.
+
+**Promoted from the verifier** (with assertions where it printed): P3 and P4 (the contract —
+idle() is false while a later poll would emit a frame), P4b (a cleanly closed slot is idle again),
+P5 (DNS over TCP: not idle in the handshake, idle after reset), P6 (a quiet established slot sends
+nothing and is not idle).
+
+`cargo test -p wasm-vm-slirp --lib` 287 passed; clippy (lib, tests) clean; wasm32 build clean.
+
+**The file agent risk**: the Replay desktop's image has no file agent (nothing under
+`tools/replay-desktop` mentions it) and its page boots with `fileTransfer: false`, so E5-T43d's
+idle figure does not depend on agent connections. Still not claimed: idle while the guest holds
+an open outbound connection (by design not idle).

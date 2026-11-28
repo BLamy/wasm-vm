@@ -16,8 +16,8 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 1. **E5-T37c** — Paced idle — measure the devices that keep a wait from being reported, and file the fixes
 1. **E5-T36d** — Replay desktop on legacy KMS — a cursor image larger than the 64x64 plane still shows a pointer
 1. **E5-T38** — Repair or retire verification tooling that has drifted (E5-T26k cache test, latency favicon filter)
-1. **E5-T43b** — Paced idle with networking on — the slirp backend reports when it is idle
 1. **E5-T39** — Show a boot failure on the desktop page instead of a black screen
+1. **E5-T40** — `clippy --all-targets` builds for the core alone and in a clone without evidence/
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -85,7 +85,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `0.38766` [E5-T37](epic-5-the-window/E5-T37-idle-yield-and-pacing.md) — Stop spinning a host core while the desktop is idle (planning parent) *(deps: E5-T34g)*
 - [x] `0.38766` [E5-T43a](epic-5-the-window/E5-T43a-public-relay-on-cloudflare.md) — Network for everyone — the wvrelay WebSocket relay deployed on Cloudflare, with tokens for the page's origin *(deps: —)*
 - [ ] `0.387661` [E5-T38](epic-5-the-window/E5-T38-decoded-cache-tooling-drift.md) — Repair or retire verification tooling that has drifted (E5-T26k cache test, latency favicon filter) *(deps: E4-T40d)*
-- [!] `0.387661` [E5-T43b](epic-5-the-window/E5-T43b-slirp-reports-idle.md) — Paced idle with networking on — the slirp backend reports when it is idle *(deps: —)*
+- [?] `0.387661` [E5-T43b](epic-5-the-window/E5-T43b-slirp-reports-idle.md) — Paced idle with networking on — the slirp backend reports when it is idle *(deps: —)*
 - [ ] `0.387662` [E5-T39](epic-5-the-window/E5-T39-desktop-boot-failure-visible.md) — Show a boot failure on the desktop page instead of a black screen *(deps: E4-T40d)*
 - [ ] `0.387662` [E5-T40](epic-5-the-window/E5-T40-clippy-all-targets-without-evidence.md) — `clippy --all-targets` builds for the core alone and in a clone without evidence/ *(deps: E5-T37a)*
 - [ ] `0.387662` [E5-T43c](epic-5-the-window/E5-T43c-replay-desktop-dhcp.md) — Replay desktop image — the guest brings up eth0 with DHCP and resolves names *(deps: —)*
