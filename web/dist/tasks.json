@@ -16372,10 +16372,18 @@
       "verificationLog": "",
       "adversarial": "High risk (core execution path). Attack list: a memo hit on a block that was flushed, evicted or rebuilt\n(SMC within the same page, a DMA into code, a fence.i, satp/sfence remapping the same VA to another\nphysical page, a PMP change making the entry non-executable); the 1-slot cache; snapshot/restore and\ncache-capacity changes; the JIT path still nominating (discovery on with `enableJit`); memory: memos hold\nweak handles only (no cycles).",
       "file": "tasks/epic-4-acceleration/E4-T40f-block-entry-successor-memo.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-11-28",
+          "commits": 1,
+          "labels": [
+            "E4-T40f in-progress: a remembered successor skips the block-cache probe; no JIT discovery without a JIT"
+          ]
+        }
+      ],
+      "firstActivity": "2026-11-28",
+      "lastActivity": "2026-11-28",
+      "commitCount": 1
     },
     {
       "id": "E5-T01",
