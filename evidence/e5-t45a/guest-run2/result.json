@@ -1,0 +1,5 @@
+{
+  "mount": "total 127960\ndrwxr-xr-x    3 root     root          4096 Nov 28 13:18 .\ndrwxrwxrwt    3 root     root            60 Nov 28 13:18 ..\ndrwx------    2 root     root         16384 Nov 28 13:18 lost+found\n-rwxr-xr-x    1 501      20       131281904 Nov 28 13:17 node_mksnapshot\n              total        used        free      shared  buff/cache   available\nMem:            968          23         907           0          39         934\nSwap:             0           0           0\n",
+  "run": "exit 0\nguest_s 0.89 8.24\ntotal 149400\ndrwxr-xr-x    3 root     root          4096 Nov 28 13:18 .\ndrwxrwxrwt    3 root     root            60 Nov 28 13:18 ..\ndrwx------    2 root     root         16384 Nov 28 13:18 lost+found\n-rw-r--r--    1 root     root             0 Nov 28 13:18 mksnapshot.log\n-rwxr-xr-x    1 501      20       131281904 Nov 28 13:17 node_mksnapshot\n-rw-r--r--    1 root     root      21951716 Nov 28 13:18 node_snapshot.cc\numount: can't unmount /tmp/mk: Device or resource busy\nUMOUNTED\n",
+  "hostSeconds": 30.53
+}
