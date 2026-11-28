@@ -1,0 +1,110 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.89
+REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=2.00
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"1E5ED141066EEB11E8CE8A4D55510B2C","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"72358139982049C85CA8AE5063A0DAC1"}]}} uptime=4.84
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"CAD8B0240321062B458870E04C0C47AD"} uptime=5.17
+REPLAY_CHROME_MAPPED uptime=5.38 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.40 mem_hwm_kib=169808
+REPLAY_RENDERER_SANDBOX pid=/proc/204 NoNewPrivs=1 Seccomp=2 NSpid=	204	9	1 uptime=5.32
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.38
+REPLAY_NODE_SNAPSHOT bytes=6754790 uptime=11.85
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; sleep 30; printf '%s%s\n'
+ 'WVM_DONE_' '2'
+WVM_BEGIN_2
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; grep -E 'MemFree|^Cached|
+Buffers|AnonPages|Shmem:|Slab|SUnreclaim|KernelStack|PageTables' /proc/meminfo; 
+printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+MemFree:          555736 kB
+Buffers:             492 kB
+Cached:           320284 kB
+AnonPages:         77280 kB
+Shmem:             44788 kB
+Slab:              23968 kB
+SUnreclaim:        17032 kB
+KernelStack:        1840 kB
+PageTables:         3836 kB
+SecPageTables:         0 kB
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; for p in /proc/[0-9]*; do
+ n=$(cat $p/comm 2>/dev/null); r=$(grep VmRSS $p/status 2>/dev/null | awk '{prin
+t $2}'); [ -n "$r" ] && echo "$r $n"; done | sort -rn | head -25; printf '%s%s\n
+' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+142356 chrome
+95204 chrome
+73088 chrome
+69588 chrome
+53760 chrome
+53632 chrome
+33528 chrome
+26612 sway
+14052 chrome
+9848 foot
+2688 replay-chromium
+2464 systemd-udevd
+2304 chrome_crashpad
+2048 chrome_crashpad
+1280 seatd
+1152 sh
+1152 sh
+1152 replay-desktop-
+1024 udhcpc
+1024 init
+896 sort
+896 sh
+896 head
+WVM_DONE_4
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '5'; cat /proc/net/tcp /proc/n
+et/udp | wc -l; cat /proc/net/tcp; cat /proc/net/udp; printf '%s%s\n' 'WVM_DONE_
+' '5'
+WVM_BEGIN_5
+11
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 0F02000A:D7F6 7796FB8E:01BB 06 00000000:00000000 03:00000151 00000000     0        0 0 3 0000000090c751c1                                      
+   1: 0F02000A:A5CC 63D3FB8E:0050 01 00000000:00000000 02:00000BE6 00000000  1000        0 1479 2 000000006eec2ad1 20 4 28 10 -1                     
+   2: 0F02000A:9200 5410FB8E:01BB 06 00000000:00000000 03:00000E88 00000000     0        0 0 3 000000001fbc7545                                      
+   3: 0F02000A:CD1C 0470D9AC:01BB 06 00000000:00000000 03:000006B9 00000000     0        0 0 3 00000000a29d9962                                      
+   4: 0F02000A:DB3C 5410FB8E:01BB 06 00000000:00000000 03:00000477 00000000     0        0 0 3 00000000cc381cfd                                      
+   5: 0F02000A:BC26 AE2DFB8E:0050 01 00000000:00000000 02:00000DE6 00000000  1000        0 1425 2 00000000a4e06fd2 20 4 30 10 -1                     
+   6: 0F02000A:D34C 5410FB8E:01BB 06 00000000:00000000 03:00000162 00000000     0        0 0 3 00000000a462546d                                      
+   7: 0F02000A:D340 5410FB8E:01BB 06 00000000:00000000 03:00000058 00000000     0        0 0 3 00000000dcdfef99                                      
+   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            
+  500: FB0000E0:14E9 00000000:0000 07 00000000:00000000 00:00000000 00000000  1000        0 1681 2 0000000089c3dcf4 0          
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; sort -k3 -rn /proc/slabin
+fo 2>/dev/null | head -5 || true; printf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+kernfs_node_cache  15915  16408    144   28    1 : tunables    0    0    0 : slabdata    586    586      0
+dentry              6084   6084    216   18    1 : tunables    0    0    0 : slabdata    338    338      0
+kmalloc-8           4096   4096      8  512    1 : tunables    0    0    0 : slabdata      8      8      0
+kmalloc-cg-64       3387   3776     64   64    1 : tunables    0    0    0 : slabdata     59     59      0
+vma_lock            3455   3696     72   56    1 : tunables    0    0    0 : slabdata     66     66      0
+WVM_DONE_6
+root@replay-desktop# [6n

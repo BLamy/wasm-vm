@@ -1,0 +1,77 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578773] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.88
+REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=1.99
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"B0F097A8A6F0F762AB87713E45A0BCFD","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"1A543BAB755003F363D488EA270D6023"}]}} uptime=4.82
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"2986C0F3A9B5EBD1E14530E8BC23E5F1"} uptime=5.15
+REPLAY_CHROME_MAPPED uptime=5.37 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.39 mem_hwm_kib=169340
+REPLAY_RENDERER_SANDBOX pid=/proc/205 NoNewPrivs=1 Seccomp=2 NSpid=	205	10	1 uptime=5.31
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.37
+REPLAY_NODE_SNAPSHOT bytes=6753774 uptime=9.81
+cat > /tmp/compact.sh <<'COMPACT_EOF'
+> set -e
+> N=/usr/local/bin/node
+e");cp.execFileSync(process.exec> sleep 30
+> grep -q 'REPLAY_NETWORK bound' /run/replay-desktop/events
+> i=0
+> while awk 'FNR > 1 { if ($4 == "01") n++ } END { exit (n == 0) }' /proc/net/tc
+p /proc/net/tcp6; do i=$((i+1)); [ $i -lt 600 ]; sleep 1; done
+> echo "REPLAY_CAPTURE_TCP_WAIT seconds=$i"
+od +x /tmp/warm
+/tmp/warm >/dev/null
+printf '1+1> sync
+> echo 1 > /proc/sys/vm/drop_caches
+> $N -e 0
+> $N -e 'console.log(1)' >/dev/null
+> $N -p process.version >/dev/null
+> $N -e 'const cp=require("child_process"),fs=require("fs"),os=require("os"),pat
+h=require("path");fs.readFileSync("/etc/hostname");cp.execFileSync(process.execP
+ath,["-p","6*7"]);console.log(os.arch(),path.sep)' >/dev/null
+024)}' /proc/meminfo) - 16))
+[ $z -gt 0 ]
+dd if=/dev/zero of=/de> echo 'console.log(1)' > /tmp/warm.js
+> echo 'import os from "node:os"; console.log(os.arch())' > /tmp/warm.mjs
+d' ' -f1 /proc/uptime)
+COMPACT_E> $N /tmp/warm.js >/dev/null
+> $N /tmp/warm.mjs >/dev/null
+> echo '#!/usr/bin/env node' > /tmp/warm
+> echo 'console.log(1)' >> /tmp/warm
+> chmod +x /tmp/warm
+> /tmp/warm >/dev/null
+> printf '1+1\n.exit\n' | $N -i >/dev/null
+> $N -e 'require("crypto").createHash("sha256").update("x").digest("hex");requir
+e("zlib").gzipSync("x")' >/dev/null
+> $N -e 'console.log(new Intl.DateTimeFormat("de",{month:"long"}).format(0),new 
+Intl.NumberFormat("en").format(1234.5),new Date(0).toLocaleString())' >/dev/null
+> rm -f /tmp/warm /tmp/warm.js /tmp/warm.mjs
+> z=$(($(awk '/^MemFree:/{print int($2/1024)}' /proc/meminfo) - 16))
+> [ $z -gt 0 ]
+> dd if=/dev/zero of=/dev/null bs=${z}M count=1 2>/dev/null
+> echo REPLAY_DESKTOP_COMPACT''ED zeroed_mib=$z uptime=$(cut -d' ' -f1 /proc/upt
+ime)
+> COMPACT_EOF
+root@replay-desktop# sh /tmp/compact.sh || poweroff -f
+REPLAY_CAPTURE_TCP_WAIT seconds=294
+REPLAY_DESKTOP_COMPACTED zeroed_mib=571 uptime=343.33
+wasm-vm: snapshot (363382531 bytes) written to target/e5-t43e/work/replay-desktop-ready.snap at trigger "REPLAY_DESKTOP_COMPACTED zeroed_mib="
+wasm-vm: snapshot complete — exiting

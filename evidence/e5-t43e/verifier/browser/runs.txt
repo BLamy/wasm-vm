@@ -1,0 +1,7 @@
+1 gen3 exit 0
+2 gen2 exit 0
+3 gen2 exit 0
+4 gen3 exit 0
+5 gen3 exit 0
+6 gen2 exit 0
+DONE

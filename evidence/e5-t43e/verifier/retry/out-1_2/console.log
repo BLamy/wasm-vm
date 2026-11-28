@@ -1,0 +1,8 @@
+/bin/sh: line 1: [1: command not found
+/bin/sh: line 1: 1Rprintf: command not found
+1
+WVM_DONE_1
+/bin/sh: line 2: [1: command not found
+/bin/sh: line 2: 1Rprintf: command not found
+2
+WVM_DONE_2

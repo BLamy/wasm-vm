@@ -1,0 +1,344 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2962 bytes @ 0xbfffb468, 1024 MiB RAM
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.578775] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+Starting systemd-udevd version 255.4-1ubuntu8.19
+
+
+BusyBox v1.36.1 (Ubuntu 1:1.36.1-6ubuntu3.1) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@replay-desktop# [6nREPLAY_DESKTOP_MONITOR start uptime=0.89
+REPLAY_NETWORK bound ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+REPLAY_CHROMIUM_LAUNCH uptime=1.51
+REPLAY_SWAY_IPC uptime=1.96
+REPLAY_TERMINAL_MAPPED uptime=2.01
+REPLAY_CHROMIUM_TARGETS {"id":7,"result":{"targetInfos":[{"targetId":"2E1BAA194DA3A165B32AA8D5686B216F","type":"page","title":"Replay RISC-V PASS #1","url":"file:///opt/replay-chromium/smoke.html","attached":false,"canAccessOpener":false,"browserContextId":"408332B8A884B9C8012798838F72F45C"}]}} uptime=4.81
+REPLAY_CHROMIUM_PAGE {"id":900002,"result":{"result":{"type":"string","value":"pass {\n  \"pass\": true,\n  \"runs\": 1,\n  \"javascript\": 42,\n  \"webassembly\": 42,\n  \"pixel\": [\n    42,\n    128,\n    64,\n    255\n  ],\n  \"browser\": \"Chrome/108.0.0.0\"\n}"}},"sessionId":"C549AB1DC9E9453B40ABC0C8161A1E9F"} uptime=5.05
+REPLAY_RENDERER_SANDBOX pid=/proc/205 NoNewPrivs=1 Seccomp=2 NSpid=	205	10	1 uptime=5.19
+REPLAY_CHROMIUM_READY renderers=1 sandboxed=1 uptime=5.24
+REPLAY_CHROME_MAPPED uptime=5.29 "app_id": "chromium-browser (\/home\/desktop\/.config\/replay-chromium)"
+REPLAY_DESKTOP_READY uptime=5.31 mem_hwm_kib=169580
+
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '1'; cd /tmp; export PATH=/usr
+/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin; printf '%s%s\n' 'WVM_DONE_' '1'
+WVM_BEGIN_1
+WVM_DONE_1
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '2'; readlink /etc/resolv.conf
+; printf '%s%s\n' 'WVM_DONE_' '2'
+WVM_BEGIN_2
+/run/resolv.conf
+WVM_DONE_2
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '3'; cut -d' ' -f1 /proc/uptim
+e; printf '%s%s\n' 'WVM_DONE_' '3'
+WVM_BEGIN_3
+5.33
+WVM_DONE_3
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '4'; ip -4 -o addr show dev et
+h0 | awk '{print $4}'; printf '%s%s\n' 'WVM_DONE_' '4'
+WVM_BEGIN_4
+10.0.2.15/24
+WVM_DONE_4
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '5'; ip -4 route; printf '%s%s
+\n' 'WVM_DONE_' '5'
+WVM_BEGIN_5
+default via 10.0.2.2 dev eth0 
+10.0.2.0/24 dev eth0 scope link  src 10.0.2.15 
+WVM_DONE_5
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '6'; cat /etc/resolv.conf; pri
+ntf '%s%s\n' 'WVM_DONE_' '6'
+WVM_BEGIN_6
+nameserver 10.0.2.3
+WVM_DONE_6
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '7'; node -e 'require("dns").l
+ookup("example.com",(e,a)=>console.log(e?"ERR "+e.code:"ADDR "+a))'; printf '%s%
+s\n' 'WVM_DONE_' '7'
+WVM_BEGIN_7
+ADDR 104.20.23.154
+WVM_DONE_7
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '8'; node -e 'fetch("http://ex
+ample.com").then(r=>console.log("STATUS",r.status),e=>console.log("ERR",e.cause?
+.code??e.message))'; printf '%s%s\n' 'WVM_DONE_' '8'
+WVM_BEGIN_8
+STATUS 200
+WVM_DONE_8
+root@replay-desktop# printf '%s%s\n' 'WVM_BEGIN_' '9'; node -e 'fetch("https://e
+xample.com").then(r=>console.log("STATUS",r.status),e=>console.log("ERR",e.cause
+?.code??e.message))'; printf '%s%s\n' 'WVM_DONE_' '9'
+WVM_BEGIN_9
+STATUS 200
+WVM_DONE_9
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '10'; ( i=0; while [ $i -lt 40
+0 ]; do echo "S $(ip -4 -o addr show dev eth0 | awk '{print $4}' | tr '\n' ' ')"
+; i=$((i+1)); [ -f /tmp/renewed ] && break; done > /tmp/samples ) & echo $! > /t
+mp/sampler; sleep 0.5; kill -USR1 $(pidof udhcpc); printf '%s%s\n' 'WVM_DONE_' '
+10'
+WVM_BEGIN_10
+WVM_DONE_10
+root@replay-desktop# [6nREPLAY_NETWORK renew ip=10.0.2.15 router=10.0.2.2 dns=10.0.2.3
+printf '%s%s\n' 'WVM_BEGIN_' '11'; sleep 1; : > /tmp/renewe
+d; while kill -0 $(cat /tmp/sampler) 2>/dev/null; do sleep 0.1; done; cat /tmp/s
+amples; printf '%s%s\n' 'WVM_DONE_' '11'
+WVM_BEGIN_11
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+S 10.0.2.15/24 
+WVM_DONE_11
+[1]+  Done                       (; while [ ${i} -lt 400 ]; do echo "S $(...)"; ; [ -f /tmp/renewed ] && break; done)
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '12'; node -e 'fetch("http://e
+xample.com").then(r=>console.log("STATUS",r.status),e=>console.log("ERR",e.cause
+?.code??e.message))'; printf '%s%s\n' 'WVM_DONE_' '12'
+WVM_BEGIN_12
+STATUS 200
+WVM_DONE_12
+root@replay-desktop# [6nprintf '%s%s\n' 'WVM_BEGIN_' '13'; cat /run/udhcpc.log 2>/d
+ev/null | head -20; printf '%s%s\n' 'WVM_DONE_' '13'
+WVM_BEGIN_13
+udhcpc: started, v1.36.1
+udhcpc: broadcasting discover
+udhcpc: broadcasting select for 10.0.2.15, server 10.0.2.2
+udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 86400
+udhcpc: sending renew to server 10.0.2.2
+udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 86400
+WVM_DONE_13
+root@replay-desktop# 

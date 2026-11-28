@@ -49,13 +49,22 @@ export async function bootNative({ image, out, kernel = path.join(repo, "release
   // Run a root-shell command and return its output: the text between a begin and an end
   // marker the shell prints around it. Both are assembled from two shell words, so the echoed
   // command line (which the line editor may wrap anywhere) can never contain either.
-  async function sh(cmd, what = cmd) {
+  //
+  // The answer to the line editor's cursor query can land on a slow guest as a lone ESC followed
+  // by `[1;1R` typed in front of the command, which then fails as `[1;1Rprintf: not found`: the
+  // begin marker never prints (E5-T43e). Such a command is run once more, so commands given to
+  // sh() must be safe to repeat; a second miss is an error, never a slice of the whole console.
+  async function sh(cmd, what = cmd, attempt = 1) {
     const n = ++seq;
     const begin = `WVM_BEGIN_${n}`, end = `WVM_DONE_${n}`;
     const from = serial.length;
     child.stdin.write(`printf '%s%s\\n' 'WVM_BEGIN_' '${n}'; ${cmd}; printf '%s%s\\n' 'WVM_DONE_' '${n}'\n`);
     await waitFor((s) => s.indexOf(`${end}\n`, from) >= 0 || s.indexOf(`${end}\r\n`, from) >= 0, what);
     const start = serial.indexOf(begin, from);
+    if (start < 0) {
+      if (attempt > 1) throw new Error(`no begin marker for ${what} (twice)`);
+      return sh(cmd, what, attempt + 1);
+    }
     return serial.slice(serial.indexOf("\n", start) + 1, serial.indexOf(end, start)).replace(/\r/g, "");
   }
   // Wake the respawned serial shell and give it the image's PATH (rcS's does not reach it).
