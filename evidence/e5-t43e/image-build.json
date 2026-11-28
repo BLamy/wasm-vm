@@ -1,25 +1,25 @@
 {
   "task": "E5-T34b",
-  "head": "2581d6b54c2d8da1b216fd2aea2d05e6436daf47",
+  "head": "7bd9b619ac01c66578d6ef0dacaf3ed8320a3f30",
   "image": {
     "file": "replay-desktop.ext4",
     "bytes": 467664896,
-    "sha256": "15e1db66d4b45de1021dd4b0d5fa71851310ac68afaff271eacf4a91281993f8",
+    "sha256": "3165a13b8d0756af13317ba5744749fdf5127006db36a51a69c2ec45c8f0e1c6",
     "fs": "ext4 (no journal), mounted read-only"
   },
   "imgGz": {
     "file": "replay-desktop.img.gz",
-    "bytes": 189685690,
-    "sha256": "2e01a6124ea2add7bbacc4a1c120d236d9e8bd6ab09ae10c64745be518987ca4"
+    "bytes": 189685645,
+    "sha256": "6e512527d8d8f9657b51269841b03971995f9743dbfaa272974bc3848296c4c1"
   },
   "chunkManifest": {
     "file": "chunked/manifest.json",
-    "sha256": "53be323a5fc97bbc9d4666ec94923b201379251974dddb9c7d55bf59c0e48034",
+    "sha256": "bbf5c32870a397f95d9048fb83a70e118c2671aa04c77887d7cc01438989ad0b",
     "chunk_size": 262144,
     "layout": "blob",
     "chunks": 1784
   },
-  "stagedRegularBytes": 432963353,
+  "stagedRegularBytes": 432963323,
   "stagedEntries": 1005,
   "packagesInAptClosure": 208,
   "packagesContributingFiles": [
